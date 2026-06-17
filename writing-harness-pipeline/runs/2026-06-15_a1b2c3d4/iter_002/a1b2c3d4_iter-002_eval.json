@@ -1,0 +1,42 @@
+{
+  "brief_hash": "a1b2c3d4",
+  "iteration": "002",
+  "rubric_name": "writing:v1",
+  "rubric_scores": {
+    "scores": {
+      "structure": 4,
+      "evidence": 3.5,
+      "sentence": 4,
+      "originality": 3.5
+    },
+    "weights": {
+      "structure": 0.3,
+      "evidence": 0.3,
+      "sentence": 0.2,
+      "originality": 0.2
+    },
+    "weighted_total": 3.75
+  },
+  "axis_rationales": {
+    "structure": "문제 제기, 시행착오, 원칙 정리, 다음 실험, 결론의 흐름이 자연스럽고 각 문단의 역할도 분명하다.",
+    "evidence": "runner.py가 과부하된 지점과 역할 분리 후의 설계가 구체적으로 적혀 있어 핵심 주장에 실제 경험이 붙는다.",
+    "sentence": "문장이 전반적으로 매끄럽고 개발자 회고 톤에 맞지만, 일부 문장은 길어져 같은 개념을 조금 반복한다.",
+    "originality": "'병목은 문장보다 경계에 있었다' 같은 관점은 인상적이지만, 표현과 통찰은 아직 익숙한 개발 회고의 범위 안에 있다."
+  },
+  "calibration_note": "평균 3.0 기준으로 보되, 과장 없이 구체성이 확보된 축만 4점대에 두었다.",
+  "evaluated_at": "2026-06-15T14:32:10+09:00",
+  "model": "gpt-5.4-mini",
+  "metadata": {
+    "prompt_version": "eval_system:v1",
+    "source_files": [
+      "a1b2c3d4_input.json",
+      "a1b2c3d4_iter-002_draft.json"
+    ],
+    "token_usage": {
+      "input_tokens": 39792,
+      "cached_input_tokens": 21760,
+      "output_tokens": 2071,
+      "reasoning_output_tokens": 1708
+    }
+  }
+}
