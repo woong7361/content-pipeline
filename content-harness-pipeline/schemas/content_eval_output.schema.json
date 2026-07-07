@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Content Evaluator Direct Output",
+  "type": "object",
+  "required": [
+    "rubric_name",
+    "verdict",
+    "rubric_scores",
+    "axis_rationales",
+    "weak_axes",
+    "calibration_note"
+  ],
+  "properties": {
+    "rubric_name": {
+      "type": "string",
+      "const": "content-html:v3"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "REJECT"]
+    },
+    "rubric_scores": {
+      "type": "object",
+      "required": ["scores", "weights", "weighted_total"],
+      "properties": {
+        "scores": {
+          "type": "object",
+          "required": [
+            "storyboard_fidelity",
+            "learning_goal_alignment",
+            "interaction_flow_clarity",
+            "feedback_scaffolding",
+            "content_completeness",
+            "functional_integrity"
+          ],
+          "properties": {
+            "storyboard_fidelity": { "type": "number", "minimum": 0, "maximum": 5 },
+            "learning_goal_alignment": { "type": "number", "minimum": 0, "maximum": 5 },
+            "interaction_flow_clarity": { "type": "number", "minimum": 0, "maximum": 5 },
+            "feedback_scaffolding": { "type": "number", "minimum": 0, "maximum": 5 },
+            "content_completeness": { "type": "number", "minimum": 0, "maximum": 5 },
+            "functional_integrity": { "type": "number", "minimum": 0, "maximum": 5 }
+          },
+          "additionalProperties": false
+        },
+        "weights": {
+          "type": "object",
+          "required": [
+            "storyboard_fidelity",
+            "learning_goal_alignment",
+            "interaction_flow_clarity",
+            "feedback_scaffolding",
+            "content_completeness",
+            "functional_integrity"
+          ],
+          "properties": {
+            "storyboard_fidelity": { "type": "number", "const": 0.2 },
+            "learning_goal_alignment": { "type": "number", "const": 0.18 },
+            "interaction_flow_clarity": { "type": "number", "const": 0.17 },
+            "feedback_scaffolding": { "type": "number", "const": 0.17 },
+            "content_completeness": { "type": "number", "const": 0.18 },
+            "functional_integrity": { "type": "number", "const": 0.1 }
+          },
+          "additionalProperties": false
+        },
+        "weighted_total": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        }
+      },
+      "additionalProperties": false
+    },
+    "axis_rationales": {
+      "type": "object",
+      "required": [
+        "storyboard_fidelity",
+        "learning_goal_alignment",
+        "interaction_flow_clarity",
+        "feedback_scaffolding",
+        "content_completeness",
+        "functional_integrity"
+      ],
+      "properties": {
+        "storyboard_fidelity": { "type": "string", "minLength": 1 },
+        "learning_goal_alignment": { "type": "string", "minLength": 1 },
+        "interaction_flow_clarity": { "type": "string", "minLength": 1 },
+        "feedback_scaffolding": { "type": "string", "minLength": 1 },
+        "content_completeness": { "type": "string", "minLength": 1 },
+        "functional_integrity": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "weak_axes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contentAxis"
+      }
+    },
+    "calibration_note": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "$defs": {
+    "contentAxis": {
+      "type": "string",
+      "enum": [
+        "storyboard_fidelity",
+        "learning_goal_alignment",
+        "interaction_flow_clarity",
+        "feedback_scaffolding",
+        "content_completeness",
+        "functional_integrity"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

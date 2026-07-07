@@ -1,0 +1,36 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "PASS",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.4,
+      "learning_goal_alignment": 4.3,
+      "interaction_flow_clarity": 4.2,
+      "feedback_scaffolding": 4,
+      "content_completeness": 4.3,
+      "functional_integrity": 4.1
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.232
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본 storyboard의 STEP 1 혼란, STEP 2 카드 튜토리얼, STEP 3 5문제 수리 게임, STEP 4 생활 연결, 완료 보상 순서가 모두 보존되어 있다. 일부 대사는 축약되었지만 네 자리 수 순서 수리 모험이라는 핵심 맥락과 사건 흐름은 선명하다.",
+    "learning_goal_alignment": "튜토리얼의 1씩 증가와 10씩 뛰어 세기, 본 게임의 일의 자리, 십의 자리, 백의 자리, 천의 자리 변화, 보스의 크기 비교가 학습 목표와 직접 연결된다. 생활 사례도 숫자 순서의 의미를 연결하지만, 일부 정답 피드백은 개념 확인보다 게임 보상 표현에 머문다.",
+    "interaction_flow_clarity": "시작 버튼, 튜토리얼 완료 후 본 게임 버튼, 5문제 진행도, 수리 이야기 보기, 완료 확인 흐름이 명확하다. 본 게임 완료 후 사용자가 별도 버튼을 눌러 STEP 4로 가야 하는 구조도 안내 문구로 이해 가능하다. 다만 보스 문제 완료 후 선택지가 계속 남아 있어 완료 상태의 조작 가능성이 약간 혼동될 수 있다.",
+    "feedback_scaffolding": "오답 피드백은 바뀌는 자릿값을 보게 하며 튜토리얼과 게임 문제 모두 재시도 단서를 제공한다. 정답 피드백은 대체로 긍정 보상과 진행 알림 중심이라 왜 맞는지 설명하는 밀도는 축마다 고르지 않다. 완료 피드백과 생활 연결 피드백은 학습 의미를 닫는 데 충분하다.",
+    "content_completeness": "필수 섹션, 튜토리얼 2문항, 본 게임 5문항, 보스 크기 비교, 생활 사례 3개, 완료 도장, 황금 기차표 1호, 다음 차시 CTA가 모두 포함되어 있다. 황금 기차표 주머니는 완료 시 1/5로 갱신되어 보상 조건도 닫힌다.",
+    "functional_integrity": "필수 버튼, 카드 선택과 드롭, 키패드 입력, 정답 확인, 진행도 갱신, 생활 슬라이드, 완료 CTA가 동작하도록 연결되어 있다. blocking runtime error는 보이지 않는다. 다만 보스 정답 이후 선택 버튼이 비활성화되지 않아 반복 클릭 시 진행 수치가 과증가할 수 있는 안정성 약점이 있다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "모든 필수 학습 내용과 interaction이 도달 가능하며, 각 축이 rubric의 min_axis 기준을 넘는다. 점수는 기능 구현 자체보다 네 자리 수 순서, 뛰어 세기, 크기 비교 학습과 피드백의 구체성에 근거해 산정했다."
+}

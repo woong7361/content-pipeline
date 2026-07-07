@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Content Critique Direct Output",
+  "type": "object",
+  "required": [
+    "axis_critiques",
+    "priority_issues",
+    "refine_suggestions"
+  ],
+  "properties": {
+    "axis_critiques": {
+      "type": "object",
+      "required": [
+        "storyboard_fidelity",
+        "learning_goal_alignment",
+        "interaction_flow_clarity",
+        "feedback_scaffolding",
+        "content_completeness",
+        "functional_integrity"
+      ],
+      "properties": {
+        "storyboard_fidelity": { "$ref": "#/$defs/axisCritique" },
+        "learning_goal_alignment": { "$ref": "#/$defs/axisCritique" },
+        "interaction_flow_clarity": { "$ref": "#/$defs/axisCritique" },
+        "feedback_scaffolding": { "$ref": "#/$defs/axisCritique" },
+        "content_completeness": { "$ref": "#/$defs/axisCritique" },
+        "functional_integrity": { "$ref": "#/$defs/axisCritique" }
+      },
+      "additionalProperties": false
+    },
+    "priority_issues": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["axis", "issue", "why_it_matters", "suggested_fix"],
+        "properties": {
+          "axis": {
+            "type": "string",
+            "enum": [
+              "storyboard_fidelity",
+              "learning_goal_alignment",
+              "interaction_flow_clarity",
+              "feedback_scaffolding",
+              "content_completeness",
+              "functional_integrity"
+            ]
+          },
+          "issue": { "type": "string", "minLength": 1 },
+          "why_it_matters": { "type": "string", "minLength": 1 },
+          "suggested_fix": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "refine_suggestions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "axisCritique": {
+      "type": "object",
+      "required": ["strengths", "problems", "recommendations"],
+      "properties": {
+        "strengths": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "problems": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "recommendations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

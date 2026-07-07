@@ -1,30 +1,47 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Pipeline Input",
+  "title": "Content Harness Input",
   "type": "object",
-  "required": ["brief_hash", "brief", "created_at"],
+  "required": ["brief_hash", "created_at", "brief"],
   "properties": {
     "brief_hash": {
       "type": "string",
       "pattern": "^[a-f0-9]{8,}$",
-      "description": "브리프 해시. 한 건을 관통하는 유일 식별자"
-    },
-    "brief": {
-      "type": "object",
-      "description": "글쓰기 요청 본문. 내부 확장 허용",
-      "required": ["topic"],
-      "properties": {
-        "topic": {
-          "type": "string",
-          "description": "글의 주제"
-        }
-      },
-      "additionalProperties": true
+      "description": "입력 식별자"
     },
     "created_at": {
       "type": "string",
       "format": "date-time",
-      "description": "입력 파일이 생성된 시각"
+      "description": "입력 JSON 생성 시각"
+    },
+    "brief": {
+      "type": "object",
+      "description": "콘텐츠 생성을 위한 사용자 입력",
+      "required": ["md_path"],
+      "properties": {
+        "md_path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^.*\\.md$",
+          "description": "story board Markdown 파일 경로"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "콘텐츠 제목"
+        },
+        "user_request": {
+          "type": "string",
+          "minLength": 1,
+          "description": "story board 외에 사용자가 추가로 전달하는 선택 요청"
+        }
+      },
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "description": "선택 부가 정보",
+      "additionalProperties": true
     }
   },
   "additionalProperties": false

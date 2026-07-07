@@ -63,3 +63,27 @@ Level 3 | 인라인 에이전트 | Claude Code/Cursor, 파일 단위
 Level 2 | 채팅           | ChatGPT에 코드 붙여넣기
 Level 1 | 자동완성       | Copilot, 코드 서제스천
 ```
+
+## 문제사항과 교훈
+
+### Codex structured output schema 제약
+
+문제:
+
+- Codex CLI의 `--output-schema`에 일반 JSON Schema를 그대로 넘겼을 때 실패할 수 있다.
+- 특히 object schema에서 `properties`에 정의한 키가 `required` 배열에 모두 포함되어 있지 않으면 `invalid_json_schema` 오류가 발생한다.
+- 실제 오류 예시는 다음과 같았다.
+
+```text
+Invalid schema for response_format 'codex_output_schema':
+In context=('properties', 'sections', 'items'),
+'required' is required to be supplied and to be an array including every key in properties.
+Missing 'interaction_ids'.
+```
+
+교훈:
+
+- Codex structured output용 schema는 일반 JSON Schema보다 더 닫힌 형태로 작성한다.
+- object의 `properties`에 있는 모든 필드는 기본적으로 `required`에 포함한다.
+- 선택 값이 필요하면 필드를 optional로 빼기보다 빈 배열, 빈 문자열 정책, `null` 허용 등 명시적인 표현 방식을 먼저 고려한다.
+- 로컬 `jsonschema` 검증이 통과해도 Codex structured output에서 거절될 수 있으므로, 새 output schema를 만들면 반드시 실제 `codex exec --output-schema` 경로까지 한 번 검증한다.

@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Design Review Output",
+  "type": "object",
+  "required": [
+    "status",
+    "checked_at",
+    "html_path",
+    "reviewed_screenshots",
+    "render_evidence",
+    "designer_review",
+    "asset_review",
+    "priority_findings",
+    "refine_suggestions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "REJECT"]
+    },
+    "checked_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "html_path": {
+      "type": "string",
+      "const": "output/index.html"
+    },
+    "reviewed_screenshots": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/reviewedScreenshot" }
+    },
+    "render_evidence": {
+      "type": "object",
+      "required": [
+        "status",
+        "checked_at",
+        "html_path",
+        "viewports",
+        "screenshots",
+        "render_checks",
+        "design_review",
+        "priority_findings",
+        "refine_suggestions"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "REJECT"]
+        },
+        "checked_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "html_path": {
+          "type": "string",
+          "const": "output/index.html"
+        },
+        "viewports": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "screenshots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["viewport", "path", "width", "height"],
+            "properties": {
+              "viewport": { "type": "string", "minLength": 1 },
+              "capture_label": { "type": "string" },
+              "path": { "type": "string", "minLength": 1 },
+              "width": { "type": "integer", "minimum": 1 },
+              "height": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "render_checks": {
+          "type": "object"
+        },
+        "design_review": {
+          "type": "object"
+        },
+        "priority_findings": {
+          "type": "array"
+        },
+        "refine_suggestions": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": false
+    },
+    "designer_review": {
+      "type": "object",
+      "required": [
+        "overall_assessment",
+        "visual_hierarchy",
+        "composition",
+        "asset_integration",
+        "interaction_affordance",
+        "originality",
+        "mobile_design"
+      ],
+      "properties": {
+        "overall_assessment": { "type": "string", "minLength": 1 },
+        "visual_hierarchy": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "composition": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "asset_integration": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "interaction_affordance": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "originality": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "mobile_design": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "priority_findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/priorityFinding" }
+    },
+    "asset_review": {
+      "type": "object",
+      "required": [
+        "overall_asset_fit",
+        "keep_assets",
+        "reposition_assets",
+        "remove_assets",
+        "regenerate_assets",
+        "new_asset_requests"
+      ],
+      "properties": {
+        "overall_asset_fit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keep_assets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/assetDecision" }
+        },
+        "reposition_assets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/assetDecision" }
+        },
+        "remove_assets": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/assetDecision" }
+        },
+        "regenerate_assets": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/assetRegenerationRequest" }
+        },
+        "new_asset_requests": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/newAssetRequest" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "refine_suggestions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "reviewedScreenshot": {
+      "type": "object",
+      "required": ["viewport", "capture_label", "path", "absolute_path", "width", "height"],
+      "properties": {
+        "viewport": { "type": "string", "minLength": 1 },
+        "capture_label": { "type": "string" },
+        "path": { "type": "string", "minLength": 1 },
+        "absolute_path": { "type": "string", "minLength": 1 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "designFinding": {
+      "type": "object",
+      "required": ["severity", "issue", "evidence", "suggested_fix"],
+      "properties": {
+        "severity": { "$ref": "#/$defs/severity" },
+        "issue": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "suggested_fix": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "priorityFinding": {
+      "type": "object",
+      "required": ["severity", "axis", "issue", "evidence", "suggested_fix"],
+      "properties": {
+        "severity": { "$ref": "#/$defs/severity" },
+        "axis": {
+          "type": "string",
+          "enum": [
+            "visual_hierarchy",
+            "composition",
+            "asset_integration",
+            "interaction_affordance",
+            "originality",
+            "mobile_design"
+          ]
+        },
+        "issue": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "suggested_fix": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "assetDecision": {
+      "type": "object",
+      "required": ["asset_id", "reason", "suggested_action"],
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "suggested_action": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "assetRegenerationRequest": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "reason",
+        "suggested_action",
+        "revised_prompt_brief",
+        "visual_role",
+        "style_constraints",
+        "composition_notes",
+        "negative_prompt",
+        "usage_section_ids"
+      ],
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "reason": { "type": "string", "minLength": 1 },
+        "suggested_action": { "type": "string", "minLength": 1 },
+        "revised_prompt_brief": { "type": "string", "minLength": 1 },
+        "visual_role": { "type": "string", "minLength": 1 },
+        "style_constraints": { "type": "string", "minLength": 1 },
+        "composition_notes": { "type": "string", "minLength": 1 },
+        "negative_prompt": { "type": "string", "minLength": 1 },
+        "usage_section_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "newAssetRequest": {
+      "type": "object",
+      "required": [
+        "suggested_id",
+        "kind",
+        "intended_path",
+        "usage_section_ids",
+        "purpose",
+        "prompt_brief",
+        "visual_role",
+        "style_constraints",
+        "composition_notes",
+        "negative_prompt",
+        "why_needed"
+      ],
+      "properties": {
+        "suggested_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["image"]
+        },
+        "intended_path": {
+          "type": "string",
+          "pattern": "^output/assets/[^/\\\\]+\\.(png|jpg|jpeg|webp)$"
+        },
+        "usage_section_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          }
+        },
+        "purpose": { "type": "string", "minLength": 1 },
+        "prompt_brief": { "type": "string", "minLength": 1 },
+        "visual_role": { "type": "string", "minLength": 1 },
+        "style_constraints": { "type": "string", "minLength": 1 },
+        "composition_notes": { "type": "string", "minLength": 1 },
+        "negative_prompt": { "type": "string", "minLength": 1 },
+        "why_needed": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

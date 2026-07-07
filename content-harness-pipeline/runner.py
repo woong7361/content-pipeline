@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 import json
 import shutil
@@ -16,7 +17,15 @@ sys.dont_write_bytecode = True
 
 from stages.critique import critique
 from stages.evaluator import evaluate
+from stages.asset_generator import generate_assets
+from stages.builder import build_html
+from stages.content_critic import critique_content
+from stages.content_evaluator import evaluate_content
+from stages.content_refiner import refine_content
+from stages.design_review import review_design
+from stages.design_refiner import refine_design
 from stages.generator import generate
+from stages.planner import plan
 from stages.refine import refine
 from validate import validate_file, write_result
 
@@ -24,6 +33,7 @@ from validate import validate_file, write_result
 PROJECT_DIR = Path(__file__).resolve().parent
 RUNS_DIR = PROJECT_DIR / "runs"
 RUBRIC_PATH = PROJECT_DIR / "rubric.yaml"
+CONTENT_RUBRIC_PATH = PROJECT_DIR / "content_rubric.yaml"
 KST = timezone(timedelta(hours=9))
 
 MODEL_CODEX_DEFAULT = None
@@ -33,11 +43,27 @@ MODEL_GPT_5_4_MINI = "gpt-5.4-mini"
 MODEL_O3 = "o3"
 
 AGENT_GEN = "gen"
+AGENT_PLANNER = "planner"
+AGENT_ASSET_GENERATOR = "asset_generator"
+AGENT_BUILDER = "builder"
+AGENT_DESIGN_REVIEW = "design_review"
+AGENT_DESIGN_REFINE = "design_refine"
+AGENT_CONTENT_CRITIQUE = "content_critique"
+AGENT_CONTENT_EVAL = "content_eval"
+AGENT_CONTENT_REFINE = "content_refine"
 AGENT_CRITIQUE = "critique"
 AGENT_EVAL = "eval"
 AGENT_REFINE = "refine"
 
 AGENT_MODELS = {
+    AGENT_PLANNER: MODEL_GPT_5_5,
+    AGENT_ASSET_GENERATOR: MODEL_GPT_5_5,
+    AGENT_BUILDER: MODEL_GPT_5_5,
+    AGENT_DESIGN_REVIEW: MODEL_GPT_5_5,
+    AGENT_DESIGN_REFINE: MODEL_GPT_5_5,
+    AGENT_CONTENT_CRITIQUE: MODEL_GPT_5_5,
+    AGENT_CONTENT_EVAL: MODEL_GPT_5_5,
+    AGENT_CONTENT_REFINE: MODEL_GPT_5_5,
     AGENT_GEN: MODEL_GPT_5_5,
     AGENT_CRITIQUE: MODEL_GPT_5_5,
     AGENT_EVAL: MODEL_GPT_5_5,
@@ -45,6 +71,11 @@ AGENT_MODELS = {
 }
 
 FINAL_CHECKED_RULES = ["schema", "brief_hash", "min_total", "min_axis"]
+DEFAULT_ASSET_BATCH_SIZE = 3
+DEFAULT_ASSET_PARALLELISM = 5
+DEFAULT_CONTENT_MAX_ITERATIONS = 5
+MAX_ASSET_REVISION_REQUESTS = 3
+DEFAULT_TIMEOUT_SECONDS = 1200
 
 
 def format_duration(seconds: float) -> str:
@@ -193,13 +224,13 @@ class RunContext:
     run_id: str
 
     @classmethod
-    def create(cls, brief_hash: str, iteration: str, runs_dir: Path) -> "RunContext":
+    def create(cls, brief_hash: str, iteration: str, runs_dir: Path, run_id: str | None = None) -> "RunContext":
         today = datetime.now(KST).date().isoformat()
         return cls(
             brief_hash=brief_hash,
             iteration=iteration,
             runs_dir=runs_dir.resolve(),
-            run_id=f"{today}_{brief_hash}",
+            run_id=run_id or f"{today}_{brief_hash}",
         )
 
     @property
@@ -213,6 +244,62 @@ class RunContext:
     @property
     def copied_input_path(self) -> Path:
         return self.run_dir / f"{self.brief_hash}_input.json"
+
+    @property
+    def planner_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_planner.json"
+
+    @property
+    def planner_validation_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_planner.validation.json"
+
+    @property
+    def asset_generator_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_asset_generator.json"
+
+    @property
+    def asset_generator_validation_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_asset_generator.validation.json"
+
+    @property
+    def builder_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_builder.json"
+
+    @property
+    def builder_validation_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_builder.validation.json"
+
+    @property
+    def design_review_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_design_review.json"
+
+    @property
+    def design_review_validation_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_design_review.validation.json"
+
+    @property
+    def content_critique_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_critique.json"
+
+    @property
+    def content_critique_validation_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_critique.validation.json"
+
+    @property
+    def content_eval_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_eval.json"
+
+    @property
+    def content_eval_validation_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_eval.validation.json"
+
+    @property
+    def output_dir(self) -> Path:
+        return self.run_dir / "output"
+
+    @property
+    def html_path(self) -> Path:
+        return self.output_dir / "index.html"
 
     @property
     def draft_path(self) -> Path:
@@ -253,6 +340,15 @@ def load_json(path: Path) -> dict:
     if not isinstance(data, dict):
         raise ValueError(f"expected JSON object: {path}")
     return data
+
+
+def create_run_context(args: argparse.Namespace, brief_hash: str, iteration: str) -> RunContext:
+    return RunContext.create(
+        brief_hash=brief_hash,
+        iteration=iteration,
+        runs_dir=args.runs_dir,
+        run_id=getattr(args, "run_id", None),
+    )
 
 
 def write_json(path: Path, data: dict, overwrite: bool = False) -> None:
@@ -565,7 +661,1401 @@ def failure_rule(error: str) -> str:
     return error
 
 
-def run(args: argparse.Namespace) -> dict:
+def run_planner_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    stage = "input_validate"
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation(stage, input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    lineage = {
+        "input": str(context.copied_input_path),
+        "planner": str(context.planner_path),
+    }
+    config = {
+        "codex_bin": args.codex_bin,
+        "codex_access": "dangerously-bypass-approvals-and-sandbox",
+        "agent_models": resolve_agent_models(args),
+        "timeout_seconds": args.timeout_seconds,
+        "mode": "planner_only",
+    }
+    progress.line(f"planner-only start brief={brief_hash} run_id={context.run_id}")
+
+    try:
+        stage = "prepare"
+        copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+
+        with tempfile.TemporaryDirectory(prefix="content-harness-planner-") as temp_dir:
+            temp_planner_output_path = Path(temp_dir) / "planner-output.json"
+
+            stage = "planner"
+            with progress.step(
+                f"planner model={display_model(config['agent_models'][AGENT_PLANNER])}",
+                live=True,
+            ):
+                plan(
+                    input_path=input_path,
+                    output_path=temp_planner_output_path,
+                    codex_bin=args.codex_bin,
+                    model=config["agent_models"][AGENT_PLANNER],
+                    timeout_seconds=args.timeout_seconds,
+                )
+
+            stage = "planner_output_validate"
+            planner_result = validate_file(temp_planner_output_path, artifact="planner_output")
+            progress.validation("planner_output_validate", planner_result)
+            ensure_pass(planner_result, context.planner_validation_path)
+            planner_output = load_json(temp_planner_output_path)
+
+        stage = "planner_write"
+        write_json(context.planner_path, planner_output, overwrite=args.overwrite)
+        progress.line(f"planner-only PASS total_elapsed={format_duration(time.perf_counter() - started_at)}")
+        return {
+            "status": "PASS",
+            "run_id": context.run_id,
+            "input": str(context.copied_input_path),
+            "planner": str(context.planner_path),
+        }
+    except Exception as exc:
+        progress.line(
+            f"planner-only ERROR stage={stage} total_elapsed={format_duration(time.perf_counter() - started_at)} "
+            f"error={type(exc).__name__}"
+        )
+        failed_path = write_failed(context.run_dir, brief_hash, context.run_id, stage, exc, lineage, config)
+        progress.line(f"planner-only failed artifact={failed_path}")
+        raise RuntimeError(f"planner-only failed at {stage}; wrote {failed_path}") from exc
+
+
+def split_items(items: list[dict], max_size: int) -> list[list[dict]]:
+    return [items[index : index + max_size] for index in range(0, len(items), max_size)]
+
+
+def build_asset_batches(planner_output: dict, max_batch_size: int) -> list[list[dict]]:
+    asset_plan = planner_output.get("asset_plan", [])
+    if not isinstance(asset_plan, list):
+        raise ValueError("planner output asset_plan must be an array")
+    if max_batch_size < 1:
+        raise ValueError("--asset-batch-size must be at least 1")
+
+    assets_by_id: dict[str, dict] = {}
+    for asset in asset_plan:
+        if not isinstance(asset, dict) or not isinstance(asset.get("id"), str):
+            raise ValueError("each asset_plan entry must include a string id")
+        assets_by_id[asset["id"]] = asset
+
+    batches: list[list[dict]] = []
+    consumed_ids: set[str] = set()
+    asset_groups = planner_output.get("asset_groups", [])
+    if not isinstance(asset_groups, list):
+        raise ValueError("planner output asset_groups must be an array")
+
+    for group in asset_groups:
+        if not isinstance(group, dict):
+            raise ValueError("each asset_groups entry must be an object")
+        group_assets: list[dict] = []
+        for asset_id in group.get("asset_ids", []):
+            if asset_id not in assets_by_id:
+                raise ValueError(f"asset_groups references unknown asset id: {asset_id}")
+            if asset_id in consumed_ids:
+                continue
+            group_assets.append(assets_by_id[asset_id])
+            consumed_ids.add(asset_id)
+        batches.extend(split_items(group_assets, max_batch_size))
+
+    remaining_assets = [
+        asset for asset in asset_plan if isinstance(asset, dict) and asset.get("id") not in consumed_ids
+    ]
+    batches.extend(split_items(remaining_assets, max_batch_size))
+    return [batch for batch in batches if batch]
+
+
+def build_batch_planner_output(planner_output: dict, asset_batch: list[dict]) -> dict:
+    batch_asset_ids = {asset["id"] for asset in asset_batch}
+    batch_groups = []
+    for group in planner_output.get("asset_groups", []):
+        if not isinstance(group, dict):
+            continue
+        asset_ids = [asset_id for asset_id in group.get("asset_ids", []) if asset_id in batch_asset_ids]
+        if asset_ids:
+            batch_groups.append(
+                {
+                    "id": group["id"],
+                    "asset_ids": asset_ids,
+                    "grouping_reason": group["grouping_reason"],
+                }
+            )
+
+    batch_output = planner_output.copy()
+    batch_output["asset_plan"] = asset_batch
+    batch_output["asset_groups"] = batch_groups
+    return batch_output
+
+
+def merge_asset_outputs(asset_outputs: list[dict], planner_output: dict) -> dict:
+    asset_order = {
+        asset["id"]: index
+        for index, asset in enumerate(planner_output.get("asset_plan", []))
+        if isinstance(asset, dict) and isinstance(asset.get("id"), str)
+    }
+    merged_assets = []
+    for asset_output in asset_outputs:
+        assets = asset_output.get("assets", [])
+        if not isinstance(assets, list):
+            raise ValueError("asset generator output assets must be an array")
+        merged_assets.extend(assets)
+    merged_assets.sort(key=lambda asset: asset_order.get(asset.get("id"), len(asset_order)))
+    return {"assets": merged_assets}
+
+
+def build_existing_asset_output(asset_plan: list[dict], run_dir: Path) -> tuple[dict, list[dict]]:
+    existing_assets = []
+    missing_assets = []
+    for asset in asset_plan:
+        if not isinstance(asset, dict):
+            continue
+        intended_path = asset.get("intended_path")
+        if not isinstance(intended_path, str):
+            missing_assets.append(asset)
+            continue
+        asset_path = run_dir / intended_path
+        if not asset_path.exists():
+            missing_assets.append(asset)
+            continue
+        existing_assets.append(
+            {
+                "id": asset["id"],
+                "kind": "image",
+                "path": intended_path,
+                "status": "generated",
+                "usage_section_ids": asset.get("usage_section_ids", []),
+                "alt_text": asset.get("alt_text") or asset.get("purpose") or asset.get("prompt_brief") or asset["id"],
+            }
+        )
+    return {"assets": existing_assets}, missing_assets
+
+
+def validate_asset_output_matches_plan(asset_output: dict, asset_plan: list[dict]) -> list[str]:
+    expected_ids = [asset.get("id") for asset in asset_plan if isinstance(asset, dict)]
+    actual_ids = [asset.get("id") for asset in asset_output.get("assets", []) if isinstance(asset, dict)]
+    errors = []
+
+    missing_ids = [asset_id for asset_id in expected_ids if asset_id not in actual_ids]
+    if missing_ids:
+        errors.append(f"asset generator output missing asset ids: {', '.join(missing_ids)}")
+
+    unexpected_ids = [asset_id for asset_id in actual_ids if asset_id not in expected_ids]
+    if unexpected_ids:
+        errors.append(f"asset generator output includes unexpected asset ids: {', '.join(unexpected_ids)}")
+
+    duplicate_ids = sorted({asset_id for asset_id in actual_ids if actual_ids.count(asset_id) > 1})
+    if duplicate_ids:
+        errors.append(f"asset generator output includes duplicate asset ids: {', '.join(duplicate_ids)}")
+
+    return errors
+
+
+def generate_asset_batch(
+    *,
+    batch_index: int,
+    asset_batch: list[dict],
+    temp_dir: Path,
+    input_path: Path,
+    planner_output: dict,
+    run_dir: Path,
+    codex_bin: str,
+    model: str | None,
+    timeout_seconds: int,
+) -> tuple[int, dict]:
+    batch_planner_path = temp_dir / f"planner-batch-{batch_index:03d}.json"
+    batch_output_path = temp_dir / f"asset-generator-batch-{batch_index:03d}.json"
+    write_json(
+        batch_planner_path,
+        build_batch_planner_output(planner_output, asset_batch),
+        overwrite=True,
+    )
+    generate_assets(
+        input_path=input_path,
+        planner_path=batch_planner_path,
+        run_dir=run_dir,
+        output_path=batch_output_path,
+        codex_bin=codex_bin,
+        model=model,
+        timeout_seconds=timeout_seconds,
+    )
+
+    batch_result = validate_file(batch_output_path, artifact="asset_generator_output")
+    ensure_pass(batch_result)
+    return batch_index, load_json(batch_output_path)
+
+
+def run_asset_generator_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    stage = "input_validate"
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation(stage, input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    lineage = {
+        "input": str(context.copied_input_path),
+        "planner": str(context.planner_path),
+        "asset_generator": str(context.asset_generator_path),
+    }
+    config = {
+        "codex_bin": args.codex_bin,
+        "codex_access": "dangerously-bypass-approvals-and-sandbox",
+        "agent_models": resolve_agent_models(args),
+        "timeout_seconds": args.timeout_seconds,
+        "asset_batch_size": args.asset_batch_size,
+        "asset_parallelism": args.asset_parallelism,
+        "asset_generator_missing_only": args.asset_generator_missing_only,
+        "mode": "asset_generator_only",
+    }
+    progress.line(f"asset-generator-only start brief={brief_hash} run_id={context.run_id}")
+
+    try:
+        stage = "prepare"
+        copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+        if not context.planner_path.exists():
+            raise FileNotFoundError(f"planner output not found: {context.planner_path}")
+
+        stage = "planner_output_validate"
+        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        progress.validation("planner_output_validate", planner_result)
+        ensure_pass(planner_result, context.planner_validation_path)
+        planner_output = load_json(context.planner_path)
+        asset_plan = planner_output.get("asset_plan", [])
+        if not asset_plan:
+            progress.line("asset-generator-only SKIPPED no asset_plan")
+            return {
+                "status": "SKIPPED",
+                "run_id": context.run_id,
+                "reason": "no asset_plan",
+                "planner": str(context.planner_path),
+            }
+
+        context.output_dir.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="content-harness-assets-") as temp_dir:
+            temp_dir_path = Path(temp_dir)
+            temp_asset_output_path = Path(temp_dir) / "asset-generator-output.json"
+
+            stage = "asset_generator"
+            existing_asset_output = {"assets": []}
+            assets_to_generate = asset_plan
+            generation_planner_output = planner_output
+            if args.asset_generator_missing_only:
+                existing_asset_output, assets_to_generate = build_existing_asset_output(asset_plan, context.run_dir)
+                generation_planner_output = build_batch_planner_output(planner_output, assets_to_generate)
+                progress.line(
+                    "asset_generator missing_only "
+                    f"existing={len(existing_asset_output['assets'])} missing={len(assets_to_generate)}"
+                )
+
+            if assets_to_generate:
+                asset_batches = build_asset_batches(generation_planner_output, args.asset_batch_size)
+                worker_count = min(args.asset_parallelism, len(asset_batches))
+                progress.line(
+                    "asset_generator batches="
+                    f"{len(asset_batches)} batch_size={args.asset_batch_size} parallelism={worker_count} "
+                    f"model={display_model(config['agent_models'][AGENT_ASSET_GENERATOR])}"
+                )
+                with progress.step("asset_generator parallel", live=False):
+                    batch_outputs: list[dict | None] = [None] * len(asset_batches)
+                    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+                        futures = {
+                            executor.submit(
+                                generate_asset_batch,
+                                batch_index=index,
+                                asset_batch=asset_batch,
+                                temp_dir=temp_dir_path,
+                                input_path=input_path,
+                                planner_output=generation_planner_output,
+                                run_dir=context.run_dir,
+                                codex_bin=args.codex_bin,
+                                model=config["agent_models"][AGENT_ASSET_GENERATOR],
+                                timeout_seconds=args.timeout_seconds,
+                            ): index
+                            for index, asset_batch in enumerate(asset_batches, start=1)
+                        }
+                        for future in as_completed(futures):
+                            batch_index, batch_output = future.result()
+                            batch_outputs[batch_index - 1] = batch_output
+                            progress.line(f"asset_generator batch {batch_index:03d}/{len(asset_batches):03d} PASS")
+
+                    asset_output = merge_asset_outputs(
+                        [existing_asset_output]
+                        + [batch_output for batch_output in batch_outputs if batch_output is not None],
+                        planner_output,
+                    )
+                    write_json(temp_asset_output_path, asset_output, overwrite=True)
+            else:
+                asset_output = merge_asset_outputs([existing_asset_output], planner_output)
+                write_json(temp_asset_output_path, asset_output, overwrite=True)
+                progress.line("asset_generator missing_only SKIPPED all planned asset files already exist")
+
+            stage = "asset_generator_output_validate"
+            asset_result = validate_file(temp_asset_output_path, artifact="asset_generator_output")
+            progress.validation("asset_generator_output_validate", asset_result)
+            ensure_pass(asset_result, context.asset_generator_validation_path)
+            asset_output = load_json(temp_asset_output_path)
+
+        stage = "asset_plan_match_validate"
+        asset_plan_errors = validate_asset_output_matches_plan(asset_output, asset_plan)
+        if asset_plan_errors:
+            raise ValueError("; ".join(asset_plan_errors))
+
+        stage = "asset_files_validate"
+        asset_file_errors = validate_asset_files(context.run_dir, asset_output)
+        if asset_file_errors:
+            raise FileNotFoundError("; ".join(asset_file_errors))
+
+        stage = "asset_generator_write"
+        write_json(context.asset_generator_path, asset_output, overwrite=args.overwrite)
+        progress.line(f"asset-generator-only PASS total_elapsed={format_duration(time.perf_counter() - started_at)}")
+        return {
+            "status": "PASS",
+            "run_id": context.run_id,
+            "input": str(context.copied_input_path),
+            "planner": str(context.planner_path),
+            "asset_generator": str(context.asset_generator_path),
+            "output": str(context.output_dir),
+        }
+    except Exception as exc:
+        progress.line(
+            f"asset-generator-only ERROR stage={stage} total_elapsed={format_duration(time.perf_counter() - started_at)} "
+            f"error={type(exc).__name__}"
+        )
+        failed_path = write_failed(context.run_dir, brief_hash, context.run_id, stage, exc, lineage, config)
+        progress.line(f"asset-generator-only failed artifact={failed_path}")
+        raise RuntimeError(f"asset-generator-only failed at {stage}; wrote {failed_path}") from exc
+
+
+def run_asset_generator_for_asset_ids(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+    asset_ids: list[str],
+) -> dict:
+    requested_ids = {asset_id for asset_id in asset_ids if isinstance(asset_id, str)}
+    planner_output = load_json(context.planner_path)
+    asset_plan = planner_output.get("asset_plan", [])
+    if not isinstance(asset_plan, list):
+        raise ValueError("planner output asset_plan must be an array")
+
+    planned_ids = {asset.get("id") for asset in asset_plan if isinstance(asset, dict)}
+    target_ids = requested_ids & planned_ids
+    if not target_ids:
+        progress.line("asset_revision asset_generator SKIPPED no planned asset ids to generate")
+        return {
+            "status": "SKIPPED",
+            "run_id": context.run_id,
+            "asset_generator": str(context.asset_generator_path),
+        }
+
+    target_assets = [
+        asset
+        for asset in asset_plan
+        if isinstance(asset, dict) and asset.get("id") in target_ids
+    ]
+    if context.asset_generator_path.exists():
+        previous_asset_output = load_json(context.asset_generator_path)
+        preserved_assets = [
+            asset
+            for asset in previous_asset_output.get("assets", [])
+            if isinstance(asset, dict)
+            and asset.get("id") in planned_ids
+            and asset.get("id") not in target_ids
+        ]
+        preserved_asset_output = {"assets": preserved_assets}
+    else:
+        non_target_assets = [
+            asset
+            for asset in asset_plan
+            if isinstance(asset, dict) and asset.get("id") not in target_ids
+        ]
+        preserved_asset_output, _ = build_existing_asset_output(non_target_assets, context.run_dir)
+
+    with tempfile.TemporaryDirectory(prefix="content-harness-asset-revision-") as temp_dir:
+        temp_dir_path = Path(temp_dir)
+        temp_asset_output_path = temp_dir_path / "asset-generator-output.json"
+        generation_planner_output = build_batch_planner_output(planner_output, target_assets)
+        asset_batches = build_asset_batches(generation_planner_output, args.asset_batch_size)
+        worker_count = min(args.asset_parallelism, len(asset_batches))
+        progress.line(
+            "asset_revision asset_generator ids="
+            f"{','.join(asset['id'] for asset in target_assets)} batches={len(asset_batches)} "
+            f"batch_size={args.asset_batch_size} parallelism={worker_count} "
+            f"model={display_model(resolve_agent_models(args)[AGENT_ASSET_GENERATOR])}"
+        )
+        with progress.step("asset_revision asset_generator parallel", live=False):
+            batch_outputs: list[dict | None] = [None] * len(asset_batches)
+            with ThreadPoolExecutor(max_workers=worker_count) as executor:
+                futures = {
+                    executor.submit(
+                        generate_asset_batch,
+                        batch_index=index,
+                        asset_batch=asset_batch,
+                        temp_dir=temp_dir_path,
+                        input_path=args.input.resolve(),
+                        planner_output=generation_planner_output,
+                        run_dir=context.run_dir,
+                        codex_bin=args.codex_bin,
+                        model=resolve_agent_models(args)[AGENT_ASSET_GENERATOR],
+                        timeout_seconds=args.timeout_seconds,
+                    ): index
+                    for index, asset_batch in enumerate(asset_batches, start=1)
+                }
+                for future in as_completed(futures):
+                    batch_index, batch_output = future.result()
+                    batch_outputs[batch_index - 1] = batch_output
+                    progress.line(f"asset_revision asset_generator batch {batch_index:03d}/{len(asset_batches):03d} PASS")
+
+            asset_output = merge_asset_outputs(
+                [preserved_asset_output]
+                + [batch_output for batch_output in batch_outputs if batch_output is not None],
+                planner_output,
+            )
+            write_json(temp_asset_output_path, asset_output, overwrite=True)
+
+        asset_result = validate_file(temp_asset_output_path, artifact="asset_generator_output")
+        progress.validation("asset_revision asset_generator_output_validate", asset_result)
+        ensure_pass(asset_result, context.asset_generator_validation_path)
+        asset_output = load_json(temp_asset_output_path)
+
+    asset_plan_errors = validate_asset_output_matches_plan(asset_output, asset_plan)
+    if asset_plan_errors:
+        raise ValueError("; ".join(asset_plan_errors))
+
+    asset_file_errors = validate_asset_files(context.run_dir, asset_output)
+    if asset_file_errors:
+        raise FileNotFoundError("; ".join(asset_file_errors))
+
+    write_json(context.asset_generator_path, asset_output, overwrite=True)
+    return {
+        "status": "PASS",
+        "run_id": context.run_id,
+        "asset_generator": str(context.asset_generator_path),
+        "output": str(context.output_dir),
+    }
+
+
+def run_builder_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    stage = "input_validate"
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation(stage, input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    lineage = {
+        "input": str(context.copied_input_path),
+        "planner": str(context.planner_path),
+        "asset_generator": str(context.asset_generator_path),
+        "builder": str(context.builder_path),
+        "html": str(context.html_path),
+    }
+    config = {
+        "codex_bin": args.codex_bin,
+        "codex_access": "dangerously-bypass-approvals-and-sandbox",
+        "agent_models": resolve_agent_models(args),
+        "timeout_seconds": args.timeout_seconds,
+        "mode": "builder_only",
+    }
+    progress.line(f"builder-only start brief={brief_hash} run_id={context.run_id}")
+
+    try:
+        stage = "prepare"
+        copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+        if not context.planner_path.exists():
+            raise FileNotFoundError(f"planner output not found: {context.planner_path}")
+
+        stage = "planner_output_validate"
+        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        progress.validation("planner_output_validate", planner_result)
+        ensure_pass(planner_result, context.planner_validation_path)
+        planner_output = load_json(context.planner_path)
+        asset_generator_path: Path | None = None
+        if planner_output.get("asset_plan"):
+            if not context.asset_generator_path.exists():
+                raise FileNotFoundError(f"asset generator output not found: {context.asset_generator_path}")
+            asset_generator_path = context.asset_generator_path
+
+        context.output_dir.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="content-harness-builder-") as temp_dir:
+            temp_builder_output_path = Path(temp_dir) / "builder-output.json"
+
+            stage = "builder"
+            with progress.step(
+                f"builder model={display_model(config['agent_models'][AGENT_BUILDER])}",
+                live=True,
+            ):
+                build_html(
+                    input_path=input_path,
+                    planner_path=context.planner_path,
+                    asset_generator_path=asset_generator_path,
+                    run_dir=context.run_dir,
+                    output_path=temp_builder_output_path,
+                    codex_bin=args.codex_bin,
+                    model=config["agent_models"][AGENT_BUILDER],
+                    timeout_seconds=args.timeout_seconds,
+                )
+
+            stage = "builder_output_validate"
+            builder_result = validate_file(temp_builder_output_path, artifact="builder_output")
+            progress.validation("builder_output_validate", builder_result)
+            ensure_pass(builder_result, context.builder_validation_path)
+            builder_output = load_json(temp_builder_output_path)
+
+        stage = "builder_files_validate"
+        builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+        if builder_file_errors:
+            raise FileNotFoundError("; ".join(builder_file_errors))
+
+        stage = "builder_write"
+        write_json(context.builder_path, builder_output, overwrite=args.overwrite)
+        progress.line(f"builder-only PASS total_elapsed={format_duration(time.perf_counter() - started_at)}")
+        return {
+            "status": "PASS",
+            "run_id": context.run_id,
+            "input": str(context.copied_input_path),
+            "planner": str(context.planner_path),
+            "asset_generator": str(context.asset_generator_path) if asset_generator_path else None,
+            "builder": str(context.builder_path),
+            "html": str(context.html_path),
+            "output": str(context.output_dir),
+        }
+    except Exception as exc:
+        progress.line(
+            f"builder-only ERROR stage={stage} total_elapsed={format_duration(time.perf_counter() - started_at)} "
+            f"error={type(exc).__name__}"
+        )
+        failed_path = write_failed(context.run_dir, brief_hash, context.run_id, stage, exc, lineage, config)
+        progress.line(f"builder-only failed artifact={failed_path}")
+        raise RuntimeError(f"builder-only failed at {stage}; wrote {failed_path}") from exc
+
+
+def validate_asset_files(run_dir: Path, asset_output: dict) -> list[str]:
+    errors = []
+    assets = asset_output.get("assets", [])
+    if not isinstance(assets, list):
+        return ["assets must be an array"]
+    for asset in assets:
+        if not isinstance(asset, dict):
+            errors.append("asset entry must be an object")
+            continue
+        path = asset.get("path")
+        if not isinstance(path, str):
+            errors.append("asset.path must be a string")
+            continue
+        resolved = (run_dir / path).resolve()
+        try:
+            resolved.relative_to(run_dir.resolve())
+        except ValueError:
+            errors.append(f"asset path escapes run directory: {path}")
+            continue
+        if not resolved.exists():
+            errors.append(f"asset file missing: {path}")
+    return errors
+
+
+def validate_builder_files(run_dir: Path, builder_output: dict) -> list[str]:
+    errors = []
+    html_path = builder_output.get("html_path")
+    if html_path != "output/index.html":
+        errors.append("html_path must be output/index.html")
+    else:
+        resolved_html = (run_dir / html_path).resolve()
+        try:
+            resolved_html.relative_to(run_dir.resolve())
+        except ValueError:
+            errors.append(f"html path escapes run directory: {html_path}")
+        if not resolved_html.exists():
+            errors.append(f"html file missing: {html_path}")
+
+    asset_paths = builder_output.get("asset_paths", [])
+    if not isinstance(asset_paths, list):
+        return errors + ["asset_paths must be an array"]
+    for path in asset_paths:
+        if not isinstance(path, str):
+            errors.append("asset_paths entries must be strings")
+            continue
+        resolved = (run_dir / path).resolve()
+        try:
+            resolved.relative_to(run_dir.resolve())
+        except ValueError:
+            errors.append(f"asset path escapes run directory: {path}")
+            continue
+        if not resolved.exists():
+            errors.append(f"asset file missing: {path}")
+    return errors
+
+
+def get_content_eval_status(content_eval_output: dict, rubric: dict) -> tuple[str, list[str]]:
+    errors = []
+    rubric_scores = content_eval_output.get("rubric_scores", {})
+    scores = rubric_scores.get("scores", {}) if isinstance(rubric_scores, dict) else {}
+    weighted_total = rubric_scores.get("weighted_total") if isinstance(rubric_scores, dict) else None
+    thresholds = rubric.get("thresholds", {})
+    min_total = thresholds.get("min_total")
+    if isinstance(min_total, (int, float)) and isinstance(weighted_total, (int, float)) and weighted_total < min_total:
+        errors.append(f"min_total: {weighted_total} < {min_total}")
+
+    min_axis = thresholds.get("min_axis", {})
+    if isinstance(min_axis, dict) and isinstance(scores, dict):
+        for axis, minimum in min_axis.items():
+            score = scores.get(axis)
+            if isinstance(minimum, (int, float)) and isinstance(score, (int, float)) and score < minimum:
+                errors.append(f"min_axis.{axis}: {score} < {minimum}")
+
+    return ("REJECT" if errors else "PASS"), errors
+
+
+def format_content_eval_scores(content_eval_output: dict, rubric: dict) -> str:
+    rubric_scores = content_eval_output.get("rubric_scores", {})
+    if not isinstance(rubric_scores, dict):
+        return "total=n/a"
+    total = rubric_scores.get("weighted_total")
+    min_total = rubric.get("thresholds", {}).get("min_total", "n/a")
+    scores = rubric_scores.get("scores", {})
+    axes = ""
+    if isinstance(scores, dict):
+        axes = " axes=" + " ".join(f"{axis}:{format_score(score)}" for axis, score in scores.items())
+    return f"total={format_score(total)}/5 min={format_score(min_total)}{axes}"
+
+
+def resolve_asset_generator_path(context: RunContext, planner_output: dict) -> Path | None:
+    if not planner_output.get("asset_plan"):
+        return None
+    if not context.asset_generator_path.exists():
+        raise FileNotFoundError(f"asset generator output not found: {context.asset_generator_path}")
+    return context.asset_generator_path
+
+
+def has_asset_review_changes(content_critique_output: dict) -> bool:
+    asset_review = content_critique_output.get("asset_review", {})
+    if not isinstance(asset_review, dict):
+        return False
+    change_keys = ("remove_assets", "regenerate_assets", "new_asset_requests")
+    return any(isinstance(asset_review.get(key), list) and bool(asset_review.get(key)) for key in change_keys)
+
+
+def merge_asset_review_outputs(*review_outputs: dict) -> dict:
+    merged_asset_review = {
+        "overall_asset_fit": "Merged asset review from content critique and design review.",
+        "keep_assets": [],
+        "reposition_assets": [],
+        "remove_assets": [],
+        "regenerate_assets": [],
+        "new_asset_requests": [],
+    }
+    seen_asset_decisions: dict[str, set[str]] = {
+        "keep_assets": set(),
+        "reposition_assets": set(),
+        "remove_assets": set(),
+        "regenerate_assets": set(),
+    }
+    seen_new_assets: set[str] = set()
+    summaries = []
+
+    for review_output in review_outputs:
+        asset_review = review_output.get("asset_review", {}) if isinstance(review_output, dict) else {}
+        if not isinstance(asset_review, dict):
+            continue
+        summary = asset_review.get("overall_asset_fit")
+        if isinstance(summary, str) and summary.strip():
+            summaries.append(summary.strip())
+
+        for key in ("keep_assets", "reposition_assets", "remove_assets"):
+            items = asset_review.get(key, [])
+            if not isinstance(items, list):
+                continue
+            for item in items:
+                if not isinstance(item, dict) or not isinstance(item.get("asset_id"), str):
+                    continue
+                asset_id = item["asset_id"]
+                if asset_id in seen_asset_decisions[key]:
+                    continue
+                seen_asset_decisions[key].add(asset_id)
+                merged_asset_review[key].append(item)
+
+        regenerate_items = asset_review.get("regenerate_assets", [])
+        if isinstance(regenerate_items, list):
+            for item in regenerate_items:
+                used_revision_slots = (
+                    len(merged_asset_review["regenerate_assets"])
+                    + len(merged_asset_review["new_asset_requests"])
+                )
+                if used_revision_slots >= MAX_ASSET_REVISION_REQUESTS:
+                    break
+                if not isinstance(item, dict) or not isinstance(item.get("asset_id"), str):
+                    continue
+                asset_id = item["asset_id"]
+                if asset_id in seen_asset_decisions["regenerate_assets"]:
+                    continue
+                seen_asset_decisions["regenerate_assets"].add(asset_id)
+                merged_asset_review["regenerate_assets"].append(item)
+
+        remaining_slots = (
+            MAX_ASSET_REVISION_REQUESTS
+            - len(merged_asset_review["regenerate_assets"])
+            - len(merged_asset_review["new_asset_requests"])
+        )
+        new_asset_items = asset_review.get("new_asset_requests", [])
+        if isinstance(new_asset_items, list):
+            for item in new_asset_items:
+                if len(merged_asset_review["new_asset_requests"]) >= remaining_slots:
+                    break
+                if not isinstance(item, dict) or not isinstance(item.get("suggested_id"), str):
+                    continue
+                suggested_id = item["suggested_id"]
+                if suggested_id in seen_new_assets:
+                    continue
+                seen_new_assets.add(suggested_id)
+                merged_asset_review["new_asset_requests"].append(item)
+
+    if summaries:
+        merged_asset_review["overall_asset_fit"] = " / ".join(summaries)
+    return {"asset_review": merged_asset_review}
+
+
+def ensure_asset_spec_defaults(asset: dict) -> dict:
+    asset.setdefault("visual_role", asset.get("purpose", "Support the section's learning goal"))
+    asset.setdefault("style_constraints", "Follow the shared art_direction exactly.")
+    asset.setdefault("composition_notes", asset.get("prompt_brief", "Use a clear composition for the target section."))
+    asset.setdefault("negative_prompt", "No embedded text, no mismatched visual style, no unrelated decoration.")
+    return asset
+
+
+def make_unique_asset_id(candidate: str, used_ids: set[str]) -> str:
+    if candidate not in used_ids:
+        return candidate
+    index = 2
+    while f"{candidate}_{index}" in used_ids:
+        index += 1
+    return f"{candidate}_{index}"
+
+
+def asset_ids_from_decisions(decisions: object) -> set[str]:
+    if not isinstance(decisions, list):
+        return set()
+    ids = set()
+    for decision in decisions:
+        if isinstance(decision, dict) and isinstance(decision.get("asset_id"), str):
+            ids.add(decision["asset_id"])
+    return ids
+
+
+def apply_asset_review_to_planner(planner_output: dict, content_critique_output: dict, iteration: str) -> tuple[dict, dict]:
+    asset_review = content_critique_output.get("asset_review", {})
+    if not isinstance(asset_review, dict):
+        return planner_output, {"removed": [], "regenerated": [], "added": []}
+
+    remove_ids = asset_ids_from_decisions(asset_review.get("remove_assets"))
+    regenerate_items = asset_review.get("regenerate_assets", [])
+    if not isinstance(regenerate_items, list):
+        regenerate_items = []
+    regenerate_items = regenerate_items[:MAX_ASSET_REVISION_REQUESTS]
+    regenerate_by_id = {
+        item["asset_id"]: item
+        for item in regenerate_items
+        if isinstance(item, dict) and isinstance(item.get("asset_id"), str)
+    }
+    new_asset_requests = asset_review.get("new_asset_requests", [])
+    if not isinstance(new_asset_requests, list):
+        new_asset_requests = []
+    remaining_revision_slots = max(0, MAX_ASSET_REVISION_REQUESTS - len(regenerate_by_id))
+    new_asset_requests = new_asset_requests[:remaining_revision_slots]
+
+    asset_plan = planner_output.get("asset_plan", [])
+    if not isinstance(asset_plan, list):
+        raise ValueError("planner output asset_plan must be an array")
+
+    updated_asset_plan = []
+    used_ids: set[str] = set()
+    regenerated_ids = []
+    for asset in asset_plan:
+        if not isinstance(asset, dict):
+            continue
+        asset_id = asset.get("id")
+        if not isinstance(asset_id, str):
+            continue
+        if asset_id in remove_ids:
+            continue
+        updated_asset = ensure_asset_spec_defaults(asset.copy())
+        regeneration = regenerate_by_id.get(asset_id)
+        if regeneration:
+            updated_asset["prompt_brief"] = regeneration["revised_prompt_brief"]
+            updated_asset["visual_role"] = regeneration["visual_role"]
+            updated_asset["style_constraints"] = regeneration["style_constraints"]
+            updated_asset["composition_notes"] = regeneration["composition_notes"]
+            updated_asset["negative_prompt"] = regeneration["negative_prompt"]
+            updated_asset["usage_section_ids"] = regeneration["usage_section_ids"]
+            regenerated_ids.append(asset_id)
+        updated_asset_plan.append(updated_asset)
+        used_ids.add(asset_id)
+
+    added_ids = []
+    for request in new_asset_requests:
+        if not isinstance(request, dict) or not isinstance(request.get("suggested_id"), str):
+            continue
+        asset_id = make_unique_asset_id(request["suggested_id"], used_ids)
+        intended_path = request.get("intended_path")
+        if asset_id != request["suggested_id"] or not isinstance(intended_path, str):
+            intended_path = f"output/assets/{asset_id}.png"
+        updated_asset_plan.append(
+            {
+                "id": asset_id,
+                "kind": request.get("kind", "image"),
+                "intended_path": intended_path,
+                "purpose": request["purpose"],
+                "prompt_brief": request["prompt_brief"],
+                "visual_role": request["visual_role"],
+                "style_constraints": request["style_constraints"],
+                "composition_notes": request["composition_notes"],
+                "negative_prompt": request["negative_prompt"],
+                "usage_section_ids": request["usage_section_ids"],
+            }
+        )
+        used_ids.add(asset_id)
+        added_ids.append(asset_id)
+
+    planner_output = planner_output.copy()
+    planner_output["asset_plan"] = updated_asset_plan
+
+    asset_ids_by_section: dict[str, list[str]] = {}
+    for asset in updated_asset_plan:
+        asset_id = asset.get("id")
+        if not isinstance(asset_id, str):
+            continue
+        for section_id in asset.get("usage_section_ids", []):
+            if isinstance(section_id, str):
+                asset_ids_by_section.setdefault(section_id, []).append(asset_id)
+
+    sections = planner_output.get("sections", [])
+    if isinstance(sections, list):
+        for section in sections:
+            if not isinstance(section, dict):
+                continue
+            current_ids = section.get("asset_ids", [])
+            if not isinstance(current_ids, list):
+                current_ids = []
+            section_id = section.get("id")
+            planned_ids = asset_ids_by_section.get(section_id, [])
+            kept_ids = [
+                asset_id
+                for asset_id in current_ids
+                if isinstance(asset_id, str) and asset_id in used_ids and asset_id in planned_ids
+            ]
+            for asset_id in planned_ids:
+                if asset_id not in kept_ids:
+                    kept_ids.append(asset_id)
+            section["asset_ids"] = kept_ids
+
+    revision_ids = regenerated_ids + added_ids
+    asset_groups = planner_output.get("asset_groups", [])
+    sanitized_groups = []
+    if isinstance(asset_groups, list):
+        for group in asset_groups:
+            if not isinstance(group, dict):
+                continue
+            group_asset_ids = [
+                asset_id
+                for asset_id in group.get("asset_ids", [])
+                if isinstance(asset_id, str) and asset_id not in remove_ids and asset_id in used_ids
+            ]
+            if group_asset_ids:
+                updated_group = group.copy()
+                updated_group["asset_ids"] = group_asset_ids
+                sanitized_groups.append(updated_group)
+    if revision_ids:
+        group_id = make_unique_asset_id(f"asset_revision_{iteration}", {group.get("id") for group in sanitized_groups if isinstance(group, dict)})
+        sanitized_groups.append(
+            {
+                "id": group_id,
+                "asset_ids": revision_ids,
+                "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction.",
+            }
+        )
+    planner_output["asset_groups"] = sanitized_groups
+
+    return planner_output, {
+        "removed": sorted(remove_ids),
+        "regenerated": regenerated_ids,
+        "added": added_ids,
+    }
+
+
+def run_asset_revision_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+    asset_review_output: dict | None = None,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    if asset_review_output is None:
+        asset_review_output = load_json(context.content_critique_path)
+    updated_planner_output, summary = apply_asset_review_to_planner(
+        planner_output,
+        asset_review_output,
+        context.iteration,
+    )
+    write_json(context.planner_path, updated_planner_output, overwrite=True)
+    progress.line(
+        f"iter {context.iteration} asset_revision planner updated "
+        f"removed={len(summary['removed'])} regenerated={len(summary['regenerated'])} added={len(summary['added'])}"
+    )
+    asset_result = run_asset_generator_for_asset_ids(
+        args=args,
+        progress=progress,
+        context=context,
+        asset_ids=summary["regenerated"] + summary["added"],
+    )
+    builder_result = run_builder_only(args)
+    progress.line(f"iter {context.iteration} asset_revision PASS")
+    return {
+        "asset_revision": summary,
+        "asset_generator": asset_result.get("asset_generator"),
+        "builder": builder_result.get("builder"),
+        "html": builder_result.get("html"),
+        "output": builder_result.get("output"),
+    }
+
+
+def run_design_review_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    with tempfile.TemporaryDirectory(prefix="content-harness-design-review-") as temp_dir:
+        temp_design_review_path = Path(temp_dir) / "design-review-output.json"
+        with progress.step(
+            f"iter {context.iteration} design_review model="
+            f"{display_model(resolve_agent_models(args)[AGENT_DESIGN_REVIEW])}",
+            live=True,
+        ):
+            review_design(
+                input_path=context.copied_input_path,
+                planner_path=context.planner_path,
+                asset_generator_path=asset_generator_path,
+                builder_path=context.builder_path,
+                html_path=context.html_path,
+                run_dir=context.run_dir,
+                iteration=context.iteration,
+                output_path=temp_design_review_path,
+                codex_bin=args.codex_bin,
+                model=resolve_agent_models(args)[AGENT_DESIGN_REVIEW],
+                timeout_seconds=args.timeout_seconds,
+            )
+
+        design_review_result = validate_file(temp_design_review_path, artifact="design_review_output")
+        progress.validation(f"iter {context.iteration} design_review_output_validate", design_review_result)
+        ensure_pass(design_review_result, context.design_review_validation_path)
+        design_review_output = load_json(temp_design_review_path)
+
+    write_json(context.design_review_path, design_review_output, overwrite=args.overwrite)
+    finding_count = len(design_review_output.get("priority_findings", []))
+    progress.line(f"iter {context.iteration} design_review {design_review_output['status']} findings={finding_count}")
+    return {
+        "status": design_review_output["status"],
+        "design_review": str(context.design_review_path),
+        "priority_findings": design_review_output.get("priority_findings", []),
+    }
+
+
+def run_content_critique_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    input_path: Path,
+    context: RunContext,
+    content_rubric: dict,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    with tempfile.TemporaryDirectory(prefix="content-harness-critique-") as temp_dir:
+        temp_content_critique_path = Path(temp_dir) / "content-critique-output.json"
+        progress.line(
+            f"iter {context.iteration} content_critique model="
+            f"{display_model(resolve_agent_models(args)[AGENT_CONTENT_CRITIQUE])} start"
+        )
+        critique_content(
+            input_path=input_path,
+            planner_path=context.planner_path,
+            asset_generator_path=asset_generator_path,
+            builder_path=context.builder_path,
+            html_path=context.html_path,
+            rubric=content_rubric,
+            output_path=temp_content_critique_path,
+            codex_bin=args.codex_bin,
+            model=resolve_agent_models(args)[AGENT_CONTENT_CRITIQUE],
+            timeout_seconds=args.timeout_seconds,
+        )
+
+        content_critique_result = validate_file(temp_content_critique_path, artifact="content_critique_output")
+        progress.validation(f"iter {context.iteration} content_critique_output_validate", content_critique_result)
+        ensure_pass(content_critique_result, context.content_critique_validation_path)
+        content_critique_output = load_json(temp_content_critique_path)
+
+    write_json(context.content_critique_path, content_critique_output, overwrite=args.overwrite)
+    progress.line(f"iter {context.iteration} content_critique PASS")
+    return {
+        "content_critique": str(context.content_critique_path),
+    }
+
+
+def run_content_eval_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    input_path: Path,
+    context: RunContext,
+    content_rubric: dict,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    with tempfile.TemporaryDirectory(prefix="content-harness-eval-") as temp_dir:
+        temp_content_eval_path = Path(temp_dir) / "content-eval-output.json"
+        progress.line(
+            f"iter {context.iteration} content_eval model="
+            f"{display_model(resolve_agent_models(args)[AGENT_CONTENT_EVAL])} start"
+        )
+        evaluate_content(
+            input_path=input_path,
+            planner_path=context.planner_path,
+            asset_generator_path=asset_generator_path,
+            builder_path=context.builder_path,
+            html_path=context.html_path,
+            rubric=content_rubric,
+            output_path=temp_content_eval_path,
+            codex_bin=args.codex_bin,
+            model=resolve_agent_models(args)[AGENT_CONTENT_EVAL],
+            timeout_seconds=args.timeout_seconds,
+        )
+
+        content_eval_result = validate_file(temp_content_eval_path, artifact="content_eval_output")
+        progress.validation(f"iter {context.iteration} content_eval_output_validate", content_eval_result)
+        ensure_pass(content_eval_result, context.content_eval_validation_path)
+        content_eval_output = load_json(temp_content_eval_path)
+
+    write_json(context.content_eval_path, content_eval_output, overwrite=args.overwrite)
+    status, threshold_errors = get_content_eval_status(content_eval_output, content_rubric)
+    score_summary = format_content_eval_scores(content_eval_output, content_rubric)
+    errors = f" errors={summarize_errors(threshold_errors)}" if threshold_errors else ""
+    progress.line(f"iter {context.iteration} content_eval {status} {score_summary}{errors}")
+    return {
+        "status": status,
+        "content_eval": str(context.content_eval_path),
+        "threshold_errors": threshold_errors,
+    }
+
+
+def run_content_review_set(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    input_path: Path,
+    context: RunContext,
+    content_rubric: dict,
+) -> tuple[dict, dict, dict]:
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        design_review_future = executor.submit(
+            run_design_review_stage,
+            args=args,
+            progress=progress,
+            context=context,
+        )
+        critique_future = executor.submit(
+            run_content_critique_stage,
+            args=args,
+            progress=progress,
+            input_path=input_path,
+            context=context,
+            content_rubric=content_rubric,
+        )
+        eval_future = executor.submit(
+            run_content_eval_stage,
+            args=args,
+            progress=progress,
+            input_path=input_path,
+            context=context,
+            content_rubric=content_rubric,
+        )
+        design_review_result = design_review_future.result()
+        critique_result = critique_future.result()
+        eval_result = eval_future.result()
+    return design_review_result, critique_result, eval_result
+
+
+def run_content_refine_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    input_path: Path,
+    context: RunContext,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    with tempfile.TemporaryDirectory(prefix="content-harness-refine-") as temp_dir:
+        temp_builder_output_path = Path(temp_dir) / "builder-output.json"
+        with progress.step(
+            f"iter {context.iteration} content_refine model="
+            f"{display_model(resolve_agent_models(args)[AGENT_CONTENT_REFINE])}",
+            live=True,
+        ):
+            refine_content(
+                input_path=input_path,
+                planner_path=context.planner_path,
+                asset_generator_path=asset_generator_path,
+                builder_path=context.builder_path,
+                html_path=context.html_path,
+                content_critique_path=context.content_critique_path,
+                run_dir=context.run_dir,
+                output_path=temp_builder_output_path,
+                codex_bin=args.codex_bin,
+                model=resolve_agent_models(args)[AGENT_CONTENT_REFINE],
+                timeout_seconds=args.timeout_seconds,
+            )
+
+        builder_result = validate_file(temp_builder_output_path, artifact="builder_output")
+        progress.validation(f"iter {context.iteration} content_refine_builder_output_validate", builder_result)
+        ensure_pass(builder_result, context.builder_validation_path)
+        builder_output = load_json(temp_builder_output_path)
+
+    builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+    if builder_file_errors:
+        raise FileNotFoundError("; ".join(builder_file_errors))
+
+    write_json(context.builder_path, builder_output, overwrite=True)
+    progress.line(f"iter {context.iteration} content_refine PASS")
+    return {
+        "builder": str(context.builder_path),
+        "html": str(context.html_path),
+        "output": str(context.output_dir),
+    }
+
+
+def run_design_refine_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    input_path: Path,
+    context: RunContext,
+) -> dict:
+    planner_output = load_json(context.planner_path)
+    asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    with tempfile.TemporaryDirectory(prefix="content-harness-design-refine-") as temp_dir:
+        temp_builder_output_path = Path(temp_dir) / "builder-output.json"
+        with progress.step(
+            f"iter {context.iteration} design_refine model="
+            f"{display_model(resolve_agent_models(args)[AGENT_DESIGN_REFINE])}",
+            live=True,
+        ):
+            refine_design(
+                input_path=input_path,
+                planner_path=context.planner_path,
+                asset_generator_path=asset_generator_path,
+                builder_path=context.builder_path,
+                html_path=context.html_path,
+                design_review_path=context.design_review_path,
+                run_dir=context.run_dir,
+                output_path=temp_builder_output_path,
+                codex_bin=args.codex_bin,
+                model=resolve_agent_models(args)[AGENT_DESIGN_REFINE],
+                timeout_seconds=args.timeout_seconds,
+            )
+
+        builder_result = validate_file(temp_builder_output_path, artifact="builder_output")
+        progress.validation(f"iter {context.iteration} design_refine_builder_output_validate", builder_result)
+        ensure_pass(builder_result, context.builder_validation_path)
+        builder_output = load_json(temp_builder_output_path)
+
+    builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+    if builder_file_errors:
+        raise FileNotFoundError("; ".join(builder_file_errors))
+
+    write_json(context.builder_path, builder_output, overwrite=True)
+    progress.line(f"iter {context.iteration} design_refine PASS")
+    return {
+        "builder": str(context.builder_path),
+        "html": str(context.html_path),
+        "output": str(context.output_dir),
+    }
+
+
+def run_content_critique_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation("input_validate", input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+    content_rubric = load_rubric(args.content_rubric.resolve())
+    result = run_content_critique_stage(
+        args=args,
+        progress=progress,
+        input_path=input_path,
+        context=context,
+        content_rubric=content_rubric,
+    )
+    progress.line(f"content-critique-only PASS total_elapsed={format_duration(time.perf_counter() - started_at)}")
+    return {
+        "status": "PASS",
+        "run_id": context.run_id,
+        **result,
+    }
+
+
+def run_design_review_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation("input_validate", input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+    if not context.builder_path.exists():
+        raise FileNotFoundError(f"builder output not found: {context.builder_path}")
+    if not context.html_path.exists():
+        raise FileNotFoundError(f"HTML output not found: {context.html_path}")
+    context.iter_dir.mkdir(parents=True, exist_ok=True)
+    result = run_design_review_stage(
+        args=args,
+        progress=progress,
+        context=context,
+    )
+    return {
+        "status": result["status"],
+        "run_id": context.run_id,
+        "design_review": result["design_review"],
+    }
+
+
+def run_content_eval_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation("input_validate", input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    config = {
+        "codex_bin": args.codex_bin,
+        "codex_access": "dangerously-bypass-approvals-and-sandbox",
+        "agent_models": resolve_agent_models(args),
+        "timeout_seconds": args.timeout_seconds,
+        "mode": "content_eval_only",
+        "content_rubric_path": str(args.content_rubric.resolve()),
+    }
+    lineage = {
+        "input": str(context.copied_input_path),
+        "planner": str(context.planner_path),
+        "asset_generator": str(context.asset_generator_path),
+        "builder": str(context.builder_path),
+        "html": str(context.html_path),
+        "content_eval": str(context.content_eval_path),
+    }
+    progress.line(f"content-eval-only start brief={brief_hash} run_id={context.run_id}")
+
+    try:
+        stage = "prepare"
+        copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+        if not context.planner_path.exists():
+            raise FileNotFoundError(f"planner output not found: {context.planner_path}")
+        if not context.builder_path.exists():
+            raise FileNotFoundError(f"builder output not found: {context.builder_path}")
+        if not context.html_path.exists():
+            raise FileNotFoundError(f"html not found: {context.html_path}")
+
+        planner_output = load_json(context.planner_path)
+        asset_generator_path: Path | None = None
+        if planner_output.get("asset_plan"):
+            if not context.asset_generator_path.exists():
+                raise FileNotFoundError(f"asset generator output not found: {context.asset_generator_path}")
+            asset_generator_path = context.asset_generator_path
+
+        content_rubric = load_rubric(args.content_rubric.resolve())
+        with tempfile.TemporaryDirectory(prefix="content-harness-eval-") as temp_dir:
+            temp_content_eval_path = Path(temp_dir) / "content-eval-output.json"
+            stage = "content_eval"
+            with progress.step(
+                f"content_eval model={display_model(config['agent_models'][AGENT_CONTENT_EVAL])}",
+                live=True,
+            ):
+                evaluate_content(
+                    input_path=input_path,
+                    planner_path=context.planner_path,
+                    asset_generator_path=asset_generator_path,
+                    builder_path=context.builder_path,
+                    html_path=context.html_path,
+                    rubric=content_rubric,
+                    output_path=temp_content_eval_path,
+                    codex_bin=args.codex_bin,
+                    model=config["agent_models"][AGENT_CONTENT_EVAL],
+                    timeout_seconds=args.timeout_seconds,
+                )
+
+            stage = "content_eval_output_validate"
+            content_eval_result = validate_file(temp_content_eval_path, artifact="content_eval_output")
+            progress.validation("content_eval_output_validate", content_eval_result)
+            ensure_pass(content_eval_result, context.content_eval_validation_path)
+            content_eval_output = load_json(temp_content_eval_path)
+
+        stage = "content_eval_write"
+        write_json(context.content_eval_path, content_eval_output, overwrite=args.overwrite)
+        status, threshold_errors = get_content_eval_status(content_eval_output, content_rubric)
+        score_summary = format_content_eval_scores(content_eval_output, content_rubric)
+        errors = f" errors={summarize_errors(threshold_errors)}" if threshold_errors else ""
+        progress.line(
+            f"content-eval-only {status} {score_summary}{errors} "
+            f"total_elapsed={format_duration(time.perf_counter() - started_at)}"
+        )
+        return {
+            "status": status,
+            "run_id": context.run_id,
+            "content_eval": str(context.content_eval_path),
+            "html": str(context.html_path),
+            "threshold_errors": threshold_errors,
+        }
+    except Exception as exc:
+        progress.line(
+            f"content-eval-only ERROR stage={stage} total_elapsed={format_duration(time.perf_counter() - started_at)} "
+            f"error={type(exc).__name__}"
+        )
+        failed_path = write_failed(context.run_dir, brief_hash, context.run_id, stage, exc, lineage, config)
+        progress.line(f"content-eval-only failed artifact={failed_path}")
+        raise RuntimeError(f"content-eval-only failed at {stage}; wrote {failed_path}") from exc
+
+
+def run_writing_loop(args: argparse.Namespace) -> dict:
     progress = ProgressReporter()
     pipeline_started_at = time.perf_counter()
     stage = "input_validate"
@@ -888,10 +2378,183 @@ def run(args: argparse.Namespace) -> dict:
     raise RuntimeError("pipeline ended without PASS or FAILED status")
 
 
+def run(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    started_at = time.perf_counter()
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation("input_validate", input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    progress.line(
+        "content run start "
+        f"brief={brief_hash} run_id={context.run_id} "
+        f"asset_batch_size={args.asset_batch_size} asset_parallelism={args.asset_parallelism} "
+        f"timeout_seconds={args.timeout_seconds}"
+    )
+
+    if args.start_at == "planner":
+        planner_result = run_planner_only(args)
+    else:
+        if not context.planner_path.exists():
+            raise FileNotFoundError(f"planner output not found: {context.planner_path}")
+        planner_validation = validate_file(context.planner_path, artifact="planner_output")
+        progress.validation("planner_output_validate", planner_validation)
+        ensure_pass(planner_validation, context.planner_validation_path)
+        planner_result = {
+            "status": "PASS",
+            "run_id": context.run_id,
+            "input": str(context.copied_input_path),
+            "planner": str(context.planner_path),
+        }
+
+    if args.start_at in ("planner", "asset"):
+        asset_result = run_asset_generator_only(args)
+    else:
+        planner_output = load_json(context.planner_path)
+        asset_generator_path = resolve_asset_generator_path(context, planner_output)
+        if asset_generator_path is None:
+            asset_result = {
+                "status": "SKIPPED",
+                "run_id": context.run_id,
+                "reason": "no asset_plan",
+                "planner": str(context.planner_path),
+            }
+        else:
+            asset_validation = validate_file(asset_generator_path, artifact="asset_generator_output")
+            progress.validation("asset_generator_output_validate", asset_validation)
+            ensure_pass(asset_validation, context.asset_generator_validation_path)
+            asset_output = load_json(asset_generator_path)
+            asset_file_errors = validate_asset_files(context.run_dir, asset_output)
+            if asset_file_errors:
+                raise FileNotFoundError("; ".join(asset_file_errors))
+            asset_result = {
+                "status": "PASS",
+                "run_id": context.run_id,
+                "asset_generator": str(asset_generator_path),
+                "output": str(context.output_dir),
+            }
+
+    builder_result = run_builder_only(args)
+    content_rubric = load_rubric(args.content_rubric.resolve())
+    latest_design_review_result: dict = {}
+    latest_critique_result: dict = {}
+    latest_eval_result: dict = {}
+    status = "REJECT"
+
+    for iteration_number in range(1, args.content_max_iterations + 1):
+        iteration = f"{iteration_number:03d}"
+        context = create_run_context(args, brief_hash, iteration)
+        context.iter_dir.mkdir(parents=True, exist_ok=True)
+        progress.line(f"content quality loop iter {iteration}/{args.content_max_iterations:03d} start")
+
+        latest_design_review_result, latest_critique_result, latest_eval_result = run_content_review_set(
+            args=args,
+            progress=progress,
+            input_path=input_path,
+            context=context,
+            content_rubric=content_rubric,
+        )
+        design_status = latest_design_review_result.get("status", "REJECT")
+        eval_status = latest_eval_result.get("status", "REJECT")
+        status = "PASS" if design_status == "PASS" and eval_status == "PASS" else "REJECT"
+        design_review_output = load_json(context.design_review_path)
+        content_critique_output = load_json(context.content_critique_path)
+        asset_review_output = merge_asset_review_outputs(content_critique_output, design_review_output)
+        asset_change_needed = has_asset_review_changes(asset_review_output)
+        if status == "PASS" and not asset_change_needed:
+            progress.line(
+                f"content run PASS iteration={iteration} "
+                f"total_elapsed={format_duration(time.perf_counter() - started_at)}"
+            )
+            break
+
+        if iteration_number >= args.content_max_iterations:
+            if asset_change_needed:
+                status = "REJECT"
+            progress.line(
+                f"content run REJECT terminal_reason=max_content_iterations "
+                f"last_iteration={iteration} total_elapsed={format_duration(time.perf_counter() - started_at)}"
+            )
+            break
+
+        if asset_change_needed:
+            revision_result = run_asset_revision_stage(
+                args=args,
+                progress=progress,
+                context=context,
+                asset_review_output=asset_review_output,
+            )
+            asset_result = {
+                "status": "PASS",
+                "asset_generator": revision_result.get("asset_generator"),
+            }
+            builder_result = {
+                "builder": revision_result.get("builder"),
+                "html": revision_result.get("html"),
+                "output": revision_result.get("output"),
+            }
+            status = "REJECT"
+        elif design_status != "PASS":
+            builder_result = run_design_refine_stage(
+                args=args,
+                progress=progress,
+                input_path=input_path,
+                context=context,
+            )
+        else:
+            builder_result = run_content_refine_stage(
+                args=args,
+                progress=progress,
+                input_path=input_path,
+                context=context,
+            )
+
+    progress.line(f"content run {status} total_elapsed={format_duration(time.perf_counter() - started_at)}")
+    return {
+        "status": status,
+        "run_id": context.run_id,
+        "input": planner_result.get("input"),
+        "planner": planner_result.get("planner"),
+        "asset_generator": asset_result.get("asset_generator"),
+        "asset_status": asset_result.get("status"),
+        "builder": builder_result.get("builder"),
+        "design_review": latest_design_review_result.get("design_review"),
+        "design_review_findings": latest_design_review_result.get("priority_findings", []),
+        "content_critique": latest_critique_result.get("content_critique"),
+        "content_eval": latest_eval_result.get("content_eval"),
+        "threshold_errors": latest_eval_result.get("threshold_errors", []),
+        "html": builder_result.get("html"),
+        "output": builder_result.get("output"),
+    }
+
+
 def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
     models = AGENT_MODELS.copy()
     if args.model:
         models[AGENT_GEN] = args.model
+        models[AGENT_PLANNER] = args.model
+        models[AGENT_ASSET_GENERATOR] = args.model
+        models[AGENT_BUILDER] = args.model
+    if args.planner_model:
+        models[AGENT_PLANNER] = args.planner_model
+    if args.asset_generator_model:
+        models[AGENT_ASSET_GENERATOR] = args.asset_generator_model
+    if args.builder_model:
+        models[AGENT_BUILDER] = args.builder_model
+    if args.design_review_model:
+        models[AGENT_DESIGN_REVIEW] = args.design_review_model
+    if args.design_refine_model:
+        models[AGENT_DESIGN_REFINE] = args.design_refine_model
+    if args.content_critique_model:
+        models[AGENT_CONTENT_CRITIQUE] = args.content_critique_model
+    if args.content_eval_model:
+        models[AGENT_CONTENT_EVAL] = args.content_eval_model
+    if args.content_refine_model:
+        models[AGENT_CONTENT_REFINE] = args.content_refine_model
     if args.gen_model:
         models[AGENT_GEN] = args.gen_model
     if args.critique_model:
@@ -904,19 +2567,52 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run pipeline: input -> gen/refine -> critique -> eval -> final/failed.")
+    parser = argparse.ArgumentParser(description="Run content harness pipeline.")
     parser.add_argument("input", type=Path, help="Path to an input JSON file matching input.schema.json.")
     parser.add_argument("--codex-bin", default="codex")
-    parser.add_argument("--model", help="Alias for --gen-model in the current MVP.")
+    parser.add_argument("--model", help="Alias for planner/gen model in the current MVP.")
+    parser.add_argument("--planner-only", action="store_true", help="Run only input validation and planner.")
+    parser.add_argument("--asset-generator-only", action="store_true", help="Run only asset generation from an existing planner output.")
+    parser.add_argument("--builder-only", action="store_true", help="Run only HTML builder from existing planner and asset outputs.")
+    parser.add_argument("--design-review-only", action="store_true", help="Run only Senior Designer review from existing builder output.")
+    parser.add_argument("--content-critique-only", action="store_true", help="Run only content HTML critique from existing builder output.")
+    parser.add_argument("--content-eval-only", action="store_true", help="Run only content HTML evaluation from existing builder output.")
+    parser.add_argument("--planner-model", help="Model for the Planner agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--asset-generator-model", help="Model for the Asset Generator agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--builder-model", help="Model for the Builder agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--design-review-model", help="Model for the Senior Designer Review agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--design-refine-model", help="Model for the Design Refine agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--content-critique-model", help="Model for the Content Critique agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--content-eval-model", help="Model for the Content Eval agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--content-refine-model", help="Model for the Content Refine agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--gen-model", help="Model for the Gen agent. Defaults to the official Codex recommended model.")
     parser.add_argument("--critique-model", help="Model for the Critique agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--eval-model", help="Model for the Eval agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--refine-model", help="Model for the Refine agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--runs-dir", type=Path, default=RUNS_DIR)
     parser.add_argument("--rubric", type=Path, default=RUBRIC_PATH)
+    parser.add_argument("--content-rubric", type=Path, default=CONTENT_RUBRIC_PATH)
     parser.add_argument("--iteration", default="001")
+    parser.add_argument(
+        "--run-id",
+        help="Reuse a specific run directory id such as 2026-07-06_a1b2c3d4 instead of today's date-based id.",
+    )
+    parser.add_argument(
+        "--start-at",
+        choices=["planner", "asset", "builder"],
+        default="planner",
+        help="Start the full content pipeline at this stage, reusing earlier artifacts from the run directory.",
+    )
     parser.add_argument("--max-iterations", type=int, default=3)
-    parser.add_argument("--timeout-seconds", type=int, default=600)
+    parser.add_argument("--content-max-iterations", type=int, default=DEFAULT_CONTENT_MAX_ITERATIONS)
+    parser.add_argument("--asset-batch-size", type=int, default=DEFAULT_ASSET_BATCH_SIZE)
+    parser.add_argument("--asset-parallelism", type=int, default=DEFAULT_ASSET_PARALLELISM)
+    parser.add_argument(
+        "--asset-generator-missing-only",
+        action="store_true",
+        help="Reuse existing files under output/assets and generate only missing planned assets.",
+    )
+    parser.add_argument("--timeout-seconds", type=int, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")
     args = parser.parse_args()
 
@@ -924,8 +2620,41 @@ def main() -> int:
         raise ValueError("--iteration must use a 3-digit value such as 001")
     if args.max_iterations < 1:
         raise ValueError("--max-iterations must be at least 1")
+    if args.content_max_iterations < 1:
+        raise ValueError("--content-max-iterations must be at least 1")
+    if args.asset_batch_size < 1:
+        raise ValueError("--asset-batch-size must be at least 1")
+    if args.asset_parallelism < 1:
+        raise ValueError("--asset-parallelism must be at least 1")
 
-    result = run(args)
+    single_stage_flags = [
+        args.planner_only,
+        args.asset_generator_only,
+        args.builder_only,
+        args.design_review_only,
+        args.content_critique_only,
+        args.content_eval_only,
+    ]
+    if sum(1 for enabled in single_stage_flags if enabled) > 1:
+        raise ValueError(
+            "--planner-only, --asset-generator-only, --builder-only, --design-review-only, "
+            "--content-critique-only, and --content-eval-only cannot be used together"
+        )
+
+    if args.planner_only:
+        result = run_planner_only(args)
+    elif args.asset_generator_only:
+        result = run_asset_generator_only(args)
+    elif args.builder_only:
+        result = run_builder_only(args)
+    elif args.design_review_only:
+        result = run_design_review_only(args)
+    elif args.content_critique_only:
+        result = run_content_critique_only(args)
+    elif args.content_eval_only:
+        result = run_content_eval_only(args)
+    else:
+        result = run(args)
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["status"] == "PASS" else 1
 

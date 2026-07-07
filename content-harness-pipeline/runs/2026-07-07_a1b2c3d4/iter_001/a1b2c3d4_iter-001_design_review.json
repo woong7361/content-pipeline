@@ -1,0 +1,442 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-07T11:17:15+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_001\\design_review\\desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_step2_tutorial_repair",
+      "path": "iter_001/design_review/desktop__01_step2_tutorial_repair.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_001\\design_review\\desktop__01_step2_tutorial_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_step3_game_repair",
+      "path": "iter_001/design_review/desktop__02_step3_game_repair.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_001\\design_review\\desktop__02_step3_game_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_step4_life_story",
+      "path": "iter_001/design_review/desktop__03_step4_life_story.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_001\\design_review\\desktop__03_step4_life_story.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_step4_completion_reward",
+      "path": "iter_001/design_review/desktop__04_step4_completion_reward.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_001\\design_review\\desktop__04_step4_completion_reward.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "render_evidence": {
+    "status": "REJECT",
+    "checked_at": "2026-07-07T11:16:00+09:00",
+    "html_path": "output/index.html",
+    "viewports": [
+      "desktop"
+    ],
+    "screenshots": [
+      {
+        "viewport": "desktop",
+        "capture_label": "initial",
+        "path": "iter_001/design_review/desktop.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "01_step2_tutorial_repair",
+        "path": "iter_001/design_review/desktop__01_step2_tutorial_repair.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "02_step3_game_repair",
+        "path": "iter_001/design_review/desktop__02_step3_game_repair.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "03_step4_life_story",
+        "path": "iter_001/design_review/desktop__03_step4_life_story.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "04_step4_completion_reward",
+        "path": "iter_001/design_review/desktop__04_step4_completion_reward.png",
+        "width": 1440,
+        "height": 960
+      }
+    ],
+    "render_checks": {
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "broken_images": [],
+      "horizontal_overflow": [
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "selector": "img#lifeImage",
+          "evidence": "Element extends outside viewport: left=313 right=2779 width=2466.",
+          "suggested_fix": "Constrain this element with max-width, wrapping, or responsive grid tracks."
+        }
+      ],
+      "text_clipping": [],
+      "small_touch_targets": [
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "selector": "button.dot-btn",
+          "evidence": "Touch target is 38x38px.",
+          "suggested_fix": "Increase padding or min-size so the target is easy to tap."
+        }
+      ],
+      "overlaps": [],
+      "fixed_overlay_risks": []
+    },
+    "design_review": {
+      "status": "REJECT",
+      "summary": "Visual QA found high-priority design risks.",
+      "card_template_risk": "high",
+      "asset_integration_risk": "high",
+      "interface_affordance_risk": "medium",
+      "composition_risk": "low",
+      "evidence": [
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "type": "card_template",
+          "evidence": "8 card-like white panels and 1 large white panels detected.",
+          "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "type": "card_template",
+          "evidence": "7 card-like white panels and 1 large white panels detected.",
+          "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "interface_affordance",
+          "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "type": "card_template",
+          "evidence": "10 card-like white panels and 2 large white panels detected.",
+          "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "type": "asset_integration",
+          "evidence": "3 images are present, but 2 large white panels still dominate the viewport.",
+          "suggested_fix": "Place text, controls, and feedback inside asset safe zones instead of covering assets with generic panels."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "interface_affordance",
+          "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "high",
+          "type": "card_template",
+          "evidence": "6 card-like white panels and 2 large white panels detected.",
+          "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "card_template",
+          "evidence": "4 card-like white panels detected.",
+          "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+        }
+      ]
+    },
+    "priority_findings": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "horizontal_overflow",
+        "evidence": "img#lifeImage: Element extends outside viewport: left=313 right=2779 width=2466.",
+        "suggested_fix": "Constrain this element with max-width, wrapping, or responsive grid tracks."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "small_touch_target",
+        "evidence": "button.dot-btn: Touch target is 38x38px.",
+        "suggested_fix": "Increase padding or min-size so the target is easy to tap."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "asset_integration",
+        "evidence": "3 images are present, but 2 large white panels still dominate the viewport.",
+        "suggested_fix": "Place text, controls, and feedback inside asset safe zones instead of covering assets with generic panels."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "card_template",
+        "evidence": "8 card-like white panels and 1 large white panels detected.",
+        "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "card_template",
+        "evidence": "7 card-like white panels and 1 large white panels detected.",
+        "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "card_template",
+        "evidence": "10 card-like white panels and 2 large white panels detected.",
+        "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "card_template",
+        "evidence": "6 card-like white panels and 2 large white panels detected.",
+        "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "card_template",
+        "evidence": "4 card-like white panels detected.",
+        "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      }
+    ],
+    "refine_suggestions": [
+      "[desktop] Constrain this element with max-width, wrapping, or responsive grid tracks.",
+      "[desktop] Increase padding or min-size so the target is easy to tap.",
+      "[desktop] Place text, controls, and feedback inside asset safe zones instead of covering assets with generic panels.",
+      "[desktop] Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas.",
+      "[desktop] Reduce repeated card surfaces and give each section a more specific visual structure.",
+      "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    ]
+  },
+  "designer_review": {
+    "overall_assessment": "Desktop design should be rejected. The assets are bright and topic-appropriate, but the implemented UI repeatedly turns them into backdrops behind white panels, generic rounded buttons, and floating quiz boxes. Several assets already contain clear interaction surfaces, yet the learning content often sits in separate HTML cards instead of becoming part of the machine, display board, ticket cards, or station signage.",
+    "visual_hierarchy": [
+      {
+        "severity": "high",
+        "issue": "The eye is pulled first to generic white panels and fixed HUD pills instead of the story device or current task.",
+        "evidence": "STEP 2 opens with a large empty white upper area; STEP 3 starts with a full-width white progress card above the repair machine; STEP 4 and reward screens center large white panels over the station scene.",
+        "suggested_fix": "Make each scene's asset-native surface the primary hierarchy: STEP 2 machine monitor, STEP 3 slot board, STEP 4 overhead station display, and completion ticket counter/display board should carry the title, problem, feedback, and CTA."
+      },
+      {
+        "severity": "medium",
+        "issue": "The persistent top HUD reads like web chrome and competes with the activity.",
+        "evidence": "The two white pill badges remain fixed at the top of every desktop screen and visually detach from the illustrated station world.",
+        "suggested_fix": "Restyle the HUD as a small station sign and ticket-pocket badge using warm gold/blue station materials, with reduced shadow and less visual weight."
+      }
+    ],
+    "composition": [
+      {
+        "severity": "high",
+        "issue": "STEP 2 desktop composition wastes the upper half and compresses the activity near the bottom.",
+        "evidence": "The tutorial screenshot shows a huge blank white area above the machine, while the machine, cards, guide, feedback, and disabled button are crowded into the lower area.",
+        "suggested_fix": "Scale and crop `asset_ticket_machine_closeup` to fill the scene frame from top to bottom, then place the tutorial problem inside the machine monitor and the answer cards directly into the illustrated lower ticket slots."
+      },
+      {
+        "severity": "medium",
+        "issue": "Completion screen hides the strongest station composition under a centered white reward card.",
+        "evidence": "The overhead display boards and counter are visible but unused while the stamp, ticket, title, and CTA float in a large translucent panel.",
+        "suggested_fix": "Use the overhead display board for the completion message and place the golden ticket on the counter as a physical reward object; remove the large central reward panel."
+      }
+    ],
+    "asset_integration": [
+      {
+        "severity": "high",
+        "issue": "The tutorial ignores clear interaction surfaces inside the ticket machine asset.",
+        "evidence": "`asset_ticket_machine_closeup` provides a monitor and lower slot area, but the question is placed in a separate white box and the number-card image is covered by another white rectangle with detached numbers.",
+        "suggested_fix": "Remove the `tutorial-problem` white panel and card backing rectangle. Put the mission label and number line directly inside the machine monitor frame, and align each numeric choice to the three golden ticket card faces from `asset_number_cards`."
+      },
+      {
+        "severity": "high",
+        "issue": "The repair game overlays a web quiz card on top of the slot-machine board instead of using the board's slots.",
+        "evidence": "`asset_slot_problem_board` has four visible empty slots, but `game-question` is a white rectangle laid across the board, and the input/keypad live in a separate bottom web panel.",
+        "suggested_fix": "Map the sequence numbers into the four slot windows of `asset_slot_problem_board`; place the answer input in the missing slot and convert keypad digits into machine keys on the illustrated lower control strip."
+      },
+      {
+        "severity": "high",
+        "issue": "The life-story scene uses the station and life example assets as images inside a card rather than as the learning surface.",
+        "evidence": "The station's large overhead display boards are empty while the explanation and slideshow sit in a white `life-card`; render evidence also flags the life image overflow.",
+        "suggested_fix": "Use the overhead station display for the main explanation and place the life examples as three station poster panels or display windows, with captions integrated as small sign strips under each poster."
+      }
+    ],
+    "interaction_affordance": [
+      {
+        "severity": "medium",
+        "issue": "Primary controls still look like generic web buttons rather than train-station objects.",
+        "evidence": "The intro CTA, story completion CTA, secondary navigation, keypad actions, and next lesson button are rounded rectangular buttons with web-style shadows.",
+        "suggested_fix": "Restyle CTAs as golden ticket stubs, machine lever plates, station-sign buttons, or physical keypad caps depending on the scene; keep text centered inside those object shapes."
+      },
+      {
+        "severity": "medium",
+        "issue": "The STEP 3 keypad affordance is detached from the machine fantasy.",
+        "evidence": "Digits sit in a white rectangular keypad panel below the board, visually separate from the illustrated repair-system controls.",
+        "suggested_fix": "Move digits onto the machine's bottom control rail as individual raised keys, using the asset's teal/gold frame color and smaller mechanical shadows."
+      }
+    ],
+    "originality": [
+      {
+        "severity": "high",
+        "issue": "The experience still reads as a common card-based quiz template despite the illustrated assets.",
+        "evidence": "Across desktop captures, repeated white cards carry dialogue, progress, questions, slideshow, reward, and feedback, making the station assets decorative rather than structural.",
+        "suggested_fix": "Replace repeated white cards with scene-specific structures: warning display, ticket machine monitor, slot board, station display board, poster panels, and counter reward area."
+      }
+    ],
+    "mobile_design": []
+  },
+  "asset_review": {
+    "overall_asset_fit": "The existing assets are mostly usable and provide strong interaction surfaces. The main failure is layout and CSS integration, not asset generation. Prioritize repositioning, cropping, masking, and mapping HTML text into the illustrated surfaces.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_station_chaos",
+        "reason": "Strong first-screen station scene with central broken display and clear story context.",
+        "suggested_action": "Keep as STEP 1 background; reduce overlay card weight and integrate dialogue closer to signage or speech bubbles."
+      },
+      {
+        "asset_id": "asset_ticket_machine_closeup",
+        "reason": "Provides the needed monitor and lower tray surfaces for tutorial interaction.",
+        "suggested_action": "Keep and crop larger so it fills the desktop stage."
+      },
+      {
+        "asset_id": "asset_slot_problem_board",
+        "reason": "Provides explicit slot surfaces for number-sequence problems.",
+        "suggested_action": "Keep and use its slots as the real problem layout."
+      },
+      {
+        "asset_id": "asset_station_calm",
+        "reason": "Works as the shared calm station background for story and reward scenes.",
+        "suggested_action": "Keep, but use overhead boards and counter areas for content instead of covering them."
+      },
+      {
+        "asset_id": "asset_golden_ticket_reward",
+        "reason": "Clear reward object with good visual priority.",
+        "suggested_action": "Keep and place it physically on the counter or ticket-pocket surface."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_ticket_machine_closeup",
+        "reason": "Current placement leaves a large blank desktop area and pushes interaction downward.",
+        "suggested_action": "Scale/crop to fill the scene-inner height; position the monitor in the upper-middle and the ticket tray in the lower third."
+      },
+      {
+        "asset_id": "asset_number_cards",
+        "reason": "The card asset is present, but HTML numbers are not aligned as part of the ticket faces.",
+        "suggested_action": "Remove the white backing box and place each choice over the illustrated ticket card face using transparent hit areas."
+      },
+      {
+        "asset_id": "asset_slot_problem_board",
+        "reason": "The board is covered by a white quiz panel instead of functioning as the interface.",
+        "suggested_action": "Layer HTML numbers into the board's slot windows and reserve the lower board rail for machine-key controls."
+      },
+      {
+        "asset_id": "asset_life_queue_examples",
+        "reason": "The image is oversized and treated as a slideshow card, causing overflow evidence and weak scene integration.",
+        "suggested_action": "Constrain it within station poster/display areas and show each example as a framed station notice, not a 300% wide image strip."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": []
+  },
+  "priority_findings": [
+    {
+      "severity": "high",
+      "axis": "asset_integration",
+      "issue": "STEP 2 fails the asset-native UI requirement.",
+      "evidence": "The machine monitor and ticket-card slots are available, but the problem and options are placed in separate white overlays with a large blank upper scene area.",
+      "suggested_fix": "Fill the desktop frame with `asset_ticket_machine_closeup`; put the problem on the monitor and align choices to the three ticket-card faces, removing the floating tutorial and card panels."
+    },
+    {
+      "severity": "high",
+      "axis": "asset_integration",
+      "issue": "STEP 3 slot board is not used as the actual problem interface.",
+      "evidence": "A white `game-question` card covers the illustrated slot board, while the answer input and keypad sit in generic panels below it.",
+      "suggested_fix": "Place sequence values into the board's four slots, make the missing slot the input surface, and move the number keypad onto the machine's lower control strip."
+    },
+    {
+      "severity": "high",
+      "axis": "originality",
+      "issue": "Repeated white panels make the content feel like a generic web quiz.",
+      "evidence": "Desktop captures show large white panels in the tutorial, game progress, life story, and reward screens.",
+      "suggested_fix": "Remove major floating white panels and convert them into station-world surfaces: display boards, ticket frames, machine panels, poster strips, and counter-mounted reward signage."
+    },
+    {
+      "severity": "high",
+      "axis": "composition",
+      "issue": "STEP 2 desktop layout has a major empty-area problem.",
+      "evidence": "The upper half of the desktop screenshot is mostly blank white, while the actual interactive machine is pushed low.",
+      "suggested_fix": "Crop and scale the machine close-up so it occupies the full desktop stage, with the monitor near the upper-middle and the ticket choices on the lower tray."
+    },
+    {
+      "severity": "medium",
+      "axis": "interaction_affordance",
+      "issue": "Buttons and keypad controls do not look like story objects.",
+      "evidence": "Most controls appear as standard rounded web buttons with generic shadows.",
+      "suggested_fix": "Restyle controls as ticket stubs, station sign plates, machine keys, or stamp controls matched to each asset's palette and material."
+    }
+  ],
+  "refine_suggestions": [
+    "STEP 2에서 `tutorial-problem` 흰 패널을 제거하고, `asset_ticket_machine_closeup`의 모니터 영역 안에 미션 라벨과 숫자열을 배치하라.",
+    "STEP 2의 `asset_number_cards` 위 흰 사각 배경을 제거하고, 세 선택지를 황금 티켓 카드의 빈 얼굴 위에 투명 버튼으로 정확히 맞춰라.",
+    "STEP 2 desktop에서 기계 close-up을 scene 전체 높이에 맞게 확대/crop해서 상단의 큰 빈 흰 영역을 없애라.",
+    "STEP 3에서 `game-question` 흰 카드 대신 `asset_slot_problem_board`의 네 슬롯 안에 5236, 5237, 입력칸, 5239를 직접 배치하라.",
+    "STEP 3 숫자 키패드는 별도 흰 패널에서 빼고 수리 기계 하단 제어 레일의 물리 키캡처럼 배치하라.",
+    "STEP 4의 `life-card` 흰 패널을 제거하고, 역의 overhead display board를 설명 문장 영역으로 사용하라.",
+    "STEP 4 실생활 예시는 큰 슬라이드 카드가 아니라 역 안의 포스터 또는 전광판 3칸으로 배치하고, 캡션은 각 포스터 하단 표지판 안에 넣어라.",
+    "완료 화면의 `reward-panel`을 제거하고, 완료 문구는 overhead display board에, 황금 티켓은 매표소 카운터 위 보상 물건처럼 배치하라.",
+    "상단 HUD pill은 흰 웹 배지가 아니라 작은 역 안내 표지판과 황금 티켓 주머니 배지 형태로 낮은 대비와 작은 면적으로 재구성하라."
+  ]
+}

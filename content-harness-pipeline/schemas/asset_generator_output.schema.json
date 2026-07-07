@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Generator Direct Output",
+  "type": "object",
+  "required": ["assets"],
+  "properties": {
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "description": "planner의 asset_plan을 바탕으로 생성하거나 준비한 asset 목록",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "path", "status", "usage_section_ids", "alt_text"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "planner asset_plan의 id와 같은 값"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["image"]
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^output/assets/[^/\\\\]+\\.(png|jpg|jpeg|webp)$",
+            "description": "run 디렉토리 기준 asset 저장 경로"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["generated", "placeholder"],
+            "description": "실제 이미지가 준비됐는지, placeholder인지 나타낸다"
+          },
+          "usage_section_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            },
+            "description": "이 asset을 사용할 section id 목록"
+          },
+          "alt_text": {
+            "type": "string",
+            "minLength": 1,
+            "description": "builder가 img alt 속성에 사용할 설명"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

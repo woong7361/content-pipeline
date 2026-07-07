@@ -1,0 +1,313 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-07T11:27:48+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_002/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_step2_tutorial_repair",
+      "path": "iter_002/design_review/desktop__01_step2_tutorial_repair.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__01_step2_tutorial_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_step3_game_repair",
+      "path": "iter_002/design_review/desktop__02_step3_game_repair.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__02_step3_game_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_step4_life_story",
+      "path": "iter_002/design_review/desktop__03_step4_life_story.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__03_step4_life_story.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_step4_completion_reward",
+      "path": "iter_002/design_review/desktop__04_step4_completion_reward.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__04_step4_completion_reward.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "render_evidence": {
+    "status": "PASS",
+    "checked_at": "2026-07-07T11:26:04+09:00",
+    "html_path": "output/index.html",
+    "viewports": [
+      "desktop"
+    ],
+    "screenshots": [
+      {
+        "viewport": "desktop",
+        "capture_label": "initial",
+        "path": "iter_002/design_review/desktop.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "01_step2_tutorial_repair",
+        "path": "iter_002/design_review/desktop__01_step2_tutorial_repair.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "02_step3_game_repair",
+        "path": "iter_002/design_review/desktop__02_step3_game_repair.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "03_step4_life_story",
+        "path": "iter_002/design_review/desktop__03_step4_life_story.png",
+        "width": 1440,
+        "height": 960
+      },
+      {
+        "viewport": "desktop",
+        "capture_label": "04_step4_completion_reward",
+        "path": "iter_002/design_review/desktop__04_step4_completion_reward.png",
+        "width": 1440,
+        "height": 960
+      }
+    ],
+    "render_checks": {
+      "console_errors": [],
+      "page_errors": [],
+      "request_failures": [],
+      "broken_images": [],
+      "horizontal_overflow": [],
+      "text_clipping": [],
+      "small_touch_targets": [],
+      "overlaps": [],
+      "fixed_overlay_risks": []
+    },
+    "design_review": {
+      "status": "PASS",
+      "summary": "Visual QA did not find high-priority design risks.",
+      "card_template_risk": "medium",
+      "asset_integration_risk": "low",
+      "interface_affordance_risk": "medium",
+      "composition_risk": "low",
+      "evidence": [
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "card_template",
+          "evidence": "4 card-like white panels detected.",
+          "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "interface_affordance",
+          "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+        },
+        {
+          "viewport": "desktop",
+          "severity": "medium",
+          "type": "interface_affordance",
+          "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+        }
+      ]
+    },
+    "priority_findings": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "card_template",
+        "evidence": "4 card-like white panels detected.",
+        "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      }
+    ],
+    "refine_suggestions": [
+      "[desktop] Reduce repeated card surfaces and give each section a more specific visual structure.",
+      "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    ]
+  },
+  "designer_review": {
+    "overall_assessment": "Desktop 기준으로 장면성과 asset 품질은 좋지만, STEP 4에서 asset 안의 명확한 빈 전광판/대기 화면 interaction surface를 비워 둔 채 별도 대화 패널과 하단 오버레이로 학습 내용을 처리해 asset-native UI 통합이 실패합니다. STEP 2의 중복 역무원 cutout과 일부 generic 버튼/패널도 다음 refine에서 함께 정리해야 합니다.",
+    "visual_hierarchy": [
+      {
+        "severity": "medium",
+        "issue": "STEP 4 생활 이야기 화면에서 목표, 설명, 사례, 조작 순서가 한 덩어리의 오버레이로 몰려 시선 흐름이 흐립니다.",
+        "evidence": "상단 정상 번호 표시, 중앙 어두운 대화 패널, 하단 사례 이미지, 노란 caption bar, 하단 CTA가 모두 큰 가로 막대로 쌓여 있고 asset 내부의 은행/맛집/병원 화면은 비어 있습니다.",
+        "suggested_fix": "상단 대화 패널을 줄이고, 은행/맛집/병원 asset 안의 빈 번호 화면 각각에 사례별 핵심 문장과 번호 흐름을 직접 배치하십시오. 하단 CTA는 역 매표소 바닥이나 티켓형 발판으로 낮춰 본 활동 영역을 압도하지 않게 하십시오."
+      },
+      {
+        "severity": "low",
+        "issue": "고정 HUD가 모든 장면에서 강하게 떠 있어 일부 장면의 상단 장치와 경쟁합니다.",
+        "evidence": "STEP 3에서 HUD, 진행도 패널, skip 버튼이 모두 상단에 모여 수리 시스템 배경의 상단 레일과 겹쳐 보입니다.",
+        "suggested_fix": "HUD는 현재 차시와 보상 상태만 작게 유지하고, STEP 3 진행도는 배경 상단 레일 또는 기계 게이지 안에 흡수하십시오."
+      }
+    ],
+    "composition": [
+      {
+        "severity": "high",
+        "issue": "STEP 2에서 별도 역무원 cutout이 배경 속 큰 안내 캐릭터와 겹쳐 인물 레이어가 중복됩니다.",
+        "evidence": "ticket_machine_closeup asset 오른쪽에는 이미 큰 안내 캐릭터가 손짓하고 있는데, 작은 clerk_anxious cutout이 오른쪽 하단에 추가로 올라와 같은 역할을 반복하고 기계 하단 조작 영역을 좁힙니다.",
+        "suggested_fix": "STEP 2의 작은 clerk_anxious cutout을 제거하고, 힌트 문장은 배경 속 큰 안내 캐릭터 손 옆의 말풍선 또는 기계 우하단 상태 표시창으로 옮기십시오."
+      },
+      {
+        "severity": "medium",
+        "issue": "완료 화면의 보상 패널이 배경 인물과 카운터 장면을 반투명 막으로 크게 덮습니다.",
+        "evidence": "completion 화면에서 노란 counter-reward 패널이 역무원과 주인공의 얼굴/몸 위를 넓게 가리고, 황금 티켓도 실제 카운터 위 물건이 아니라 떠 있는 UI처럼 보입니다.",
+        "suggested_fix": "보상 티켓을 카운터 위 실제 물건 위치에 놓고, 노란 반투명 패널 면적을 제거하십시오. 안내 문장은 카운터 앞 작은 티켓 라벨이나 역무원 말풍선으로 줄이십시오."
+      }
+    ],
+    "asset_integration": [
+      {
+        "severity": "high",
+        "issue": "STEP 4의 asset이 제공하는 빈 화면/전광판 interaction surface를 학습 UI가 사용하지 않습니다.",
+        "evidence": "life_queue_examples asset 안에는 은행 창구 화면, 맛집 대기 화면, 병원 대기 화면처럼 텍스트와 번호를 넣을 수 있는 빈 보드가 명확히 보이지만, 실제 설명은 asset 밖의 어두운 대화 패널과 하단 노란 overlay에 배치되어 있습니다.",
+        "suggested_fix": "하단 life-overlay와 중앙 station-message를 제거하거나 축소하고, 은행/맛집/병원 각 빈 화면 안에 번호 예시와 caption을 HTML 텍스트로 직접 배치하십시오. slide 버튼 1/2/3은 일반 네모 버튼이 아니라 각 사례 화면의 작은 번호표 스탬프 또는 전광판 선택등처럼 붙이십시오."
+      },
+      {
+        "severity": "medium",
+        "issue": "STEP 1의 승객 말풍선과 대화 박스가 배경 장면의 일부라기보다 웹 패널처럼 보입니다.",
+        "evidence": "오른쪽 승객 말풍선 3개가 동일한 흰 둥근 사각형으로 떠 있고, 상단 대화 박스도 역 안내 표지판이나 전광판 재질과 다르게 별도 카드처럼 보입니다.",
+        "suggested_fix": "승객 말풍선은 줄 서 있는 승객 머리 근처의 작은 꼬리 달린 말풍선으로 바꾸고, 역무원 설명은 매표소 상단 안내판 또는 고장 전광판 주변의 안내 스티커처럼 배치하십시오."
+      },
+      {
+        "severity": "medium",
+        "issue": "STEP 3의 하단 입력/키패드 영역은 기능적으로는 맞지만 기계 내부 장치보다 웹 폼에 가깝습니다.",
+        "evidence": "숫자 입력칸, 지우기, 확인, 숫자 키가 별도 청록 패널 위에 정렬되어 있으나 배경의 파이프/부품/레일 형태와 깊이감은 거의 따르지 않습니다.",
+        "suggested_fix": "하단 키패드를 repair_system_bg의 하단 기계 콘솔에 붙은 물리 버튼처럼 만들고, 입력칸은 슬롯 보드 하단의 상태 표시창으로 통합하십시오."
+      }
+    ],
+    "interaction_affordance": [
+      {
+        "severity": "medium",
+        "issue": "일부 CTA와 보조 버튼이 여전히 일반 웹 버튼으로 읽힙니다.",
+        "evidence": "STEP 1 시작 버튼, STEP 4 수리 완료 확인하기, completion 다음 차시 버튼은 노란 gradient 버튼으로 통일되어 있지만 기차표, 발권기 버튼, 역 표지판 같은 물성은 약합니다.",
+        "suggested_fix": "주요 CTA는 황금 기차표 모양의 긴 티켓, 발권기 투입구, 역 플랫폼 표지판 중 하나로 바꾸고 절취선, 작은 원형 홈, 금속 테두리 같은 asset 세계관의 형태를 적용하십시오."
+      },
+      {
+        "severity": "low",
+        "issue": "STEP 3의 skip 버튼은 현재 비활성 상태에서도 학습 장면과 분리된 웹 컨트롤처럼 보입니다.",
+        "evidence": "수리 이야기 보기 버튼이 진행도 패널 오른쪽에 흰색 반투명 사각 버튼으로 떠 있습니다.",
+        "suggested_fix": "완료 전에는 버튼을 숨기고, 5문제 완료 후 배경 우측의 출구 표지판이나 기차역 화살표 표식으로 나타나게 하십시오."
+      }
+    ],
+    "originality": [
+      {
+        "severity": "medium",
+        "issue": "전체 asset 방향은 기차역 수리 게임으로 고유하지만, 일부 화면은 카드형 학습 UI 관성이 남아 있습니다.",
+        "evidence": "STEP 4는 생활 사례 asset을 큰 이미지 카드처럼 두고 그 위에 caption bar와 slide dot을 올려 일반 슬라이드 콘텐츠처럼 보입니다.",
+        "suggested_fix": "생활 사례를 슬라이드 카드가 아니라 역 전광판을 통해 은행/맛집/병원 번호가 차례로 점등되는 장면으로 재구성하십시오."
+      }
+    ],
+    "mobile_design": []
+  },
+  "asset_review": {
+    "overall_asset_fit": "핵심 배경 asset들은 밝은 기차역 게임 세계관과 잘 맞고, 대부분은 HTML/CSS 재배치로 해결 가능합니다. 새 asset 생성보다 기존 asset의 interaction surface를 실제 UI 배치에 쓰는 refine이 우선입니다.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_ticket_machine_closeup",
+        "reason": "STEP 2의 중앙 모니터, 하단 카드 슬롯, 우측 안내 캐릭터가 조작 표면을 충분히 제공합니다.",
+        "suggested_action": "작은 추가 캐릭터를 제거하고 기계 내부 표면에 문제, 카드, 피드백을 계속 통합하십시오."
+      },
+      {
+        "asset_id": "asset_slot_problem_board",
+        "reason": "STEP 3의 네 개 숫자 슬롯 interaction surface가 명확하고 현재 문제 숫자 배치도 대체로 맞습니다.",
+        "suggested_action": "하단 입력/키패드만 기계 콘솔 형태로 더 흡수하십시오."
+      },
+      {
+        "asset_id": "asset_life_queue_examples",
+        "reason": "은행, 맛집, 병원 사례별 빈 화면이 있어 별도 asset 재생성 없이 학습 텍스트와 번호를 넣을 수 있습니다.",
+        "suggested_action": "빈 화면을 실제 caption/번호 표시 영역으로 사용하십시오."
+      },
+      {
+        "asset_id": "asset_golden_ticket_reward",
+        "reason": "보상 아이템 자체는 명확하고 차시 완료 보상으로 적합합니다.",
+        "suggested_action": "완료 화면에서는 큰 반투명 패널 안이 아니라 카운터 위 실제 티켓처럼 배치하십시오."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_clerk_anxious",
+        "reason": "STEP 2에서는 배경 속 큰 안내 캐릭터와 역할이 겹쳐 화면을 복잡하게 만듭니다.",
+        "suggested_action": "STEP 2에서는 제거하거나 80px 이하의 작은 상태 아이콘으로 축소하고, 안내 문장은 배경 캐릭터 근처 말풍선에 통합하십시오. STEP 1에서는 현재 위치를 유지해도 됩니다."
+      },
+      {
+        "asset_id": "asset_golden_ticket_reward",
+        "reason": "완료 화면에서 티켓이 UI 패널 속 floating reward처럼 보여 배경 장면과 분리됩니다.",
+        "suggested_action": "카운터 중앙 위에 놓인 실제 보상 물건처럼 낮게 배치하고, 주변 노란 translucent panel은 제거하십시오."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": []
+  },
+  "priority_findings": [
+    {
+      "severity": "high",
+      "axis": "asset_integration",
+      "issue": "STEP 4의 빈 전광판/대기 화면을 사용하지 않고 별도 오버레이로 학습 내용을 처리합니다.",
+      "evidence": "은행, 맛집, 병원 asset 안의 빈 화면은 비어 있는데 설명과 선택 조작은 하단 노란 overlay와 외부 버튼에 있습니다.",
+      "suggested_fix": "life-overlay를 제거하고 각 빈 화면 안에 번호 예시, 사례 문장, 선택 상태를 직접 배치하십시오. 1/2/3 버튼은 각 사례 화면의 작은 번호표 스탬프나 전광판 선택등으로 바꾸십시오."
+    },
+    {
+      "severity": "high",
+      "axis": "composition",
+      "issue": "STEP 2의 작은 역무원 foreground asset이 배경 속 안내 캐릭터와 중복되어 장면을 방해합니다.",
+      "evidence": "오른쪽에 이미 큰 캐릭터가 손짓하고 있는데 같은 제복 캐릭터가 우하단에 다시 올라와 feedback 박스와 함께 조작 영역을 차지합니다.",
+      "suggested_fix": "STEP 2의 작은 clerk_anxious cutout을 제거하고, feedback은 배경 캐릭터 손 옆 말풍선 또는 기계 우하단 상태 표시창으로 옮기십시오."
+    },
+    {
+      "severity": "medium",
+      "axis": "interaction_affordance",
+      "issue": "주요 CTA와 보조 조작이 여전히 둥근 웹 버튼으로 읽힙니다.",
+      "evidence": "시작, 수리 완료, 다음 차시, 지우기/확인 버튼이 공통 gradient button 스타일에 머물러 story object로 충분히 변환되지 않았습니다.",
+      "suggested_fix": "CTA는 황금 티켓형 버튼으로, 숫자 입력 조작은 발권기 물리 키와 상태창으로, 이동 버튼은 역 표지판/출구 표시로 재스타일링하십시오."
+    },
+    {
+      "severity": "medium",
+      "axis": "composition",
+      "issue": "완료 화면 보상 UI가 배경 인물과 카운터를 큰 반투명 패널로 덮습니다.",
+      "evidence": "황금 티켓과 안내 문구가 넓은 노란 panel 안에 떠 있고 뒤의 역무원과 주인공이 흐릿하게 가려집니다.",
+      "suggested_fix": "반투명 보상 패널을 없애고 황금 티켓을 카운터 위 실제 보상 물건처럼 배치하십시오. 완료 문구는 상단 역 전광판에, 다음 차시 CTA는 카운터 앞 티켓 발급 버튼으로 옮기십시오."
+    }
+  ],
+  "refine_suggestions": [
+    "STEP 4 life-overlay와 station-message 중심 구조를 해체하고, asset_life_queue_examples 안의 은행/맛집/병원 빈 화면에 각각 번호 예시와 사례 caption을 HTML 텍스트로 직접 배치하라.",
+    "STEP 4의 1/2/3 slide 버튼을 하단 둥근 사각 버튼이 아니라 각 사례 화면에 붙은 작은 번호표 스탬프 또는 전광판 선택등처럼 만들고, 선택된 사례만 조명/테두리로 강조하라.",
+    "STEP 2 우하단의 작은 clerk_anxious cutout을 제거하고, feedback 문장은 배경 속 큰 안내 캐릭터 손 옆 말풍선이나 발권기 우하단 상태 표시창으로 옮겨라.",
+    "STEP 3 하단 answer-input-row와 keypad를 별도 웹 폼 패널처럼 두지 말고, repair_system_bg 하단 콘솔에 붙은 물리 버튼과 숫자 표시창처럼 재배치하라.",
+    "completion 화면의 넓은 노란 counter-reward 반투명 패널을 제거하고, golden_ticket_reward를 카운터 위 실제 물건 위치에 올린 뒤 완료 문구는 상단 역 전광판 안으로 옮겨라.",
+    "시작/수리 완료/다음 차시 CTA는 공통 노란 rounded button 대신 황금 티켓형 버튼이나 역 표지판형 버튼으로 바꾸고 절취선, 테두리, 작은 홈 형태를 추가하라."
+  ]
+}

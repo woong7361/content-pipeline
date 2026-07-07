@@ -1,0 +1,77 @@
+{
+  "rubric_name": "content-html:v1",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.2,
+      "learning_flow": 4.0,
+      "interaction_quality": 3.8,
+      "visual_design": 3.4,
+      "responsiveness": 3.7,
+      "technical_completeness": 4.6
+    },
+    "weights": {
+      "storyboard_fidelity": 0.22,
+      "learning_flow": 0.2,
+      "interaction_quality": 0.16,
+      "visual_design": 0.16,
+      "responsiveness": 0.14,
+      "technical_completeness": 0.12
+    },
+    "weighted_total": 3.956
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "5개 섹션, 번호표 기계 고장-튜토리얼-5문제 수리-생활 연결-보상 흐름은 대부분 보존했다. 3500/4100 문제 상황, 3501/4230 튜토리얼, 5문제와 보스 비교, 1/5 보상도 구현되어 있다. 다만 STEP 4의 생활 예시는 이미지 한 장에 라벨만 바뀌는 방식이라 슬라이드 장면성이 약하고, 역무원의 질문형 대사 일부가 축약되어 원본의 생활 연결 맥락이 조금 약해졌다.",
+    "learning_flow": "상황 제시, 튜토리얼 잠금 해제, 수리 게임, 생활 예시, 보상까지 진행은 이해 가능하다. 정답과 오답 피드백도 즉시 제공된다. 다만 튜토리얼 정답 후 자동으로 다음 미션으로 넘어가 학습자가 정답 상태를 충분히 확인하기 어렵고, STEP 3 완료 후 STEP 4로 자동 전환되어 성취 피드백의 여운이 짧다.",
+    "interaction_quality": "카드 선택/드롭, 키패드 입력, 보스 선택, 슬라이드 이동, 보상 버튼이 실제로 구현되어 학습 목표와 직접 연결된다. 오답 흔들림과 정답 진행도도 있다. 그러나 수리 콘셉트가 대부분 일반 퀴즈 UI와 버튼 피드백에 머물며, 전광판 정상화나 기계 수리 상태 변화가 누적 시각화로 충분히 드러나지는 않는다.",
+    "visual_design": "밝은 팔레트와 생성 asset을 배경으로 사용해 기본 완성도는 있다. 하지만 title-block, panel, feedback, button 구조가 섹션마다 반복되어 카드형 템플릿 느낌이 강하고, STEP 2는 같은 기계 이미지를 배경과 내부 이미지로 중복 사용해 장면 통합이 다소 어색하다. STEP 4 생활 예시는 한 이미지 위 텍스트만 바뀌어 슬라이드로서 시각 변화가 약하다.",
+    "responsiveness": "미디어쿼리로 1열 전환, 버튼 세로 배치, 키패드 축소가 준비되어 있어 기본 사용은 가능해 보인다. 다만 고정 topbar와 step-tabs, pouch가 모바일 상단을 많이 차지하고, STEP 3의 큰 panel-frame과 키패드, 피드백이 좁은 화면에서 세로 밀도가 높다. 긴 버튼 문구와 큰 숫자 칩이 320~480px 폭에서 답답하거나 줄바꿈으로 조작 영역을 밀어낼 가능성이 있다.",
+    "technical_completeness": "단일 HTML이며 asset 경로가 모두 로컬 상대 경로이고 외부 CDN, 원격 이미지, 외부 폰트 의존이 없다. 주요 interaction id가 모두 JS로 연결되어 있다. JS 구조도 단순하고 실행 가능성이 높다. 다만 drag/drop은 모바일에서 실제 드래그보다 터치 선택에 의존하며, focus 호출이나 자동 전환 타이밍이 일부 기기에서 어색할 수 있다."
+  },
+  "weak_axes": [
+    "visual_design",
+    "responsiveness",
+    "learning_flow"
+  ],
+  "priority_fixes": [
+    {
+      "axis": "visual_design",
+      "severity": "high",
+      "problem": "섹션 전반이 흰 패널과 둥근 버튼 반복으로 보여 기차역 수리 모험의 고유한 장면성이 약하다.",
+      "evidence": "`.title-block`, `.machine-stage`, `.game-stage`, `.story-stage`, `.completion-stage`, `.feedback`이 거의 같은 흰 카드/패널 스타일을 반복한다. STEP 2는 `ticket_machine_broken.png`를 scene background와 `.machine-img`에 동시에 사용한다.",
+      "expected_improvement": "각 장면이 기차역 전광판, 기계 모니터, 내부 수리 시스템, 정상 매표소처럼 구분되어 visual_design이 min_axis 3.5 이상으로 안정적으로 올라간다."
+    },
+    {
+      "axis": "learning_flow",
+      "severity": "medium",
+      "problem": "정답 피드백 후 다음 상태로 너무 빨리 자동 이동해 학습자가 왜 맞았는지 확인할 시간이 부족하다.",
+      "evidence": "튜토리얼 정답 후 `setTimeout(..., 900)`으로 다음 미션을 렌더링하고, STEP 3 정답 후 `setTimeout(..., 850)`으로 다음 문제 또는 STEP 4로 이동한다.",
+      "expected_improvement": "정답 수열과 자리값 변화가 화면에 남아 학습자가 규칙을 확인한 뒤 다음 행동을 선택할 수 있어 흐름과 학습 이해가 개선된다."
+    },
+    {
+      "axis": "interaction_quality",
+      "severity": "medium",
+      "problem": "수리 게임의 진행감이 숫자 정답과 게이지에만 의존하고, 기계 오류가 줄어드는 장면적 피드백이 약하다.",
+      "evidence": "정답 시 `repairFill`과 텍스트 피드백만 바뀌며, `number_panel_game`이나 배경의 오류 상태가 누적 변화하지 않는다.",
+      "expected_improvement": "정답을 맞힐수록 수리 중이라는 감각이 강화되어 퀴즈 조작이 이야기 목표와 더 직접적으로 연결된다."
+    },
+    {
+      "axis": "responsiveness",
+      "severity": "medium",
+      "problem": "모바일에서 고정 상단 진행 UI와 긴 버튼/큰 숫자 UI가 화면을 압박할 가능성이 있다.",
+      "evidence": "`.topbar`가 fixed이고 820px 이하에서 pouch와 step-tabs가 두 줄로 쌓인다. `scene` padding top은 118px로 고정에 가깝고, 완료 버튼 `2차시: 역전 매점의 묶음 간식을 세러 가기!`는 긴 문구를 가진다.",
+      "expected_improvement": "좁은 화면에서 상단 UI, 문제판, 키패드, 버튼이 겹치거나 과밀해지는 위험이 줄어든다."
+    }
+  ],
+  "refine_instructions": [
+    "STEP 2에서 `ticket_machine_broken.png`를 scene background와 `.machine-img`로 중복 노출하지 말고, 바깥 배경은 station 계열처럼 흐린 매표소 느낌으로 유지하거나 overlay를 줄이고 `.machine-wrap` 내부 기계 모니터가 주 장면이 되도록 CSS를 조정한다.",
+    "튜토리얼 정답 후 900ms 자동 다음 미션 전환을 없애고, 정답 카드가 빈칸에 안착한 상태에서 `다음 수리` 버튼을 보여 준 뒤 학습자가 눌렀을 때 미션 2로 넘어가게 수정한다.",
+    "STEP 3 정답 시 `practiceFeedback`만 바꾸지 말고 문제판 주변에 `수리 불빛 1~5개` 또는 `오류 조각 5개 중 하나 제거` 같은 HTML 요소를 추가해 `solvedCount`에 따라 누적 수리 상태가 보이게 한다.",
+    "STEP 3의 보스 문제 정답 후 바로 STEP 4로 넘어가기 전에 `모든 오류 수리 완료!` 상태를 1개 화면 또는 최소한 명확한 완료 메시지와 `이야기 보러 가기` 버튼으로 보여 준다.",
+    "STEP 4 생활 예시 슬라이드는 같은 이미지 전체를 계속 보여 주는 대신, 기존 `life_waiting_examples.png` 위에 은행/맛집/병원 중 현재 항목을 강조하는 HTML 하이라이트 박스 3개를 배치하고 슬라이드 변경 시 해당 박스만 활성화되게 만든다.",
+    "모바일 CSS에서 `.topbar`의 step label을 더 짧게 유지하고, 480px 이하에서는 `.pouch`를 작게 축소하거나 진행 탭과 같은 줄에 압축해 첫 화면 콘텐츠가 과도하게 아래로 밀리지 않게 한다.",
+    "긴 CTA 버튼은 480px 이하에서 `width: 100%`, `line-height: 1.25`, 더 작은 padding을 적용하고, 완료 화면의 다음 차시 버튼 문구가 버튼 밖으로 밀리지 않도록 줄바꿈을 허용한다.",
+    "섹션별 흰 패널 반복감을 줄이기 위해 STEP 1은 전광판 중심, STEP 2는 기계 모니터 중심, STEP 3은 내부 수리판 중심, STEP 4는 정상 전광판과 생활 예시 중심으로 주요 컨테이너의 테두리 색과 배경 질감을 구분한다."
+  ],
+  "calibration_note": "weighted_total은 4.0 기준에 근접하지만 3.956으로 미달이며, visual_design 3.4와 responsiveness 3.7이 각 min_axis 기준에 미달하므로 REJECT로 판정한다."
+}

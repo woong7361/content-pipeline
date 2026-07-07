@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Visual QA Output",
+  "type": "object",
+  "required": [
+    "status",
+    "checked_at",
+    "html_path",
+    "viewports",
+    "screenshots",
+    "render_checks",
+    "design_review",
+    "priority_findings",
+    "refine_suggestions"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "REJECT"]
+    },
+    "checked_at": {
+      "type": "string",
+      "minLength": 1
+    },
+    "html_path": {
+      "type": "string",
+      "const": "output/index.html"
+    },
+    "viewports": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/viewportName"
+      }
+    },
+    "screenshots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["viewport", "path", "width", "height"],
+        "properties": {
+          "viewport": {
+            "$ref": "#/$defs/viewportName"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^iter_[0-9]{3}/visual_qa/[a-z]+\\.png$"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "render_checks": {
+      "type": "object",
+      "required": [
+        "console_errors",
+        "page_errors",
+        "request_failures",
+        "broken_images",
+        "horizontal_overflow",
+        "text_clipping",
+        "small_touch_targets",
+        "overlaps",
+        "fixed_overlay_risks"
+      ],
+      "properties": {
+        "console_errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/messageFinding"
+          }
+        },
+        "page_errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/messageFinding"
+          }
+        },
+        "request_failures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/messageFinding"
+          }
+        },
+        "broken_images": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        },
+        "horizontal_overflow": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        },
+        "text_clipping": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        },
+        "small_touch_targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        },
+        "overlaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        },
+        "fixed_overlay_risks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/selectorFinding"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "design_review": {
+      "type": "object",
+      "required": [
+        "status",
+        "summary",
+        "card_template_risk",
+        "asset_integration_risk",
+        "interface_affordance_risk",
+        "composition_risk",
+        "evidence"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "REJECT"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "card_template_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "asset_integration_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "interface_affordance_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "composition_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/designEvidence"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "priority_findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/priorityFinding"
+      }
+    },
+    "refine_suggestions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "viewportName": {
+      "type": "string",
+      "enum": ["desktop", "tablet", "mobile"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "messageFinding": {
+      "type": "object",
+      "required": ["viewport", "severity", "message"],
+      "properties": {
+        "viewport": {
+          "$ref": "#/$defs/viewportName"
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "selectorFinding": {
+      "type": "object",
+      "required": ["viewport", "severity", "selector", "evidence", "suggested_fix"],
+      "properties": {
+        "viewport": {
+          "$ref": "#/$defs/viewportName"
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggested_fix": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "designEvidence": {
+      "type": "object",
+      "required": ["viewport", "severity", "type", "evidence", "suggested_fix"],
+      "properties": {
+        "viewport": {
+          "$ref": "#/$defs/viewportName"
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["card_template", "asset_integration", "interface_affordance", "composition"]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggested_fix": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "priorityFinding": {
+      "type": "object",
+      "required": ["viewport", "severity", "type", "evidence", "suggested_fix"],
+      "properties": {
+        "viewport": {
+          "$ref": "#/$defs/viewportName"
+        },
+        "severity": {
+          "$ref": "#/$defs/severity"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "console_error",
+            "page_error",
+            "request_failure",
+            "broken_image",
+            "horizontal_overflow",
+            "text_clipping",
+            "small_touch_target",
+            "overlap",
+            "fixed_overlay",
+            "card_template",
+            "asset_integration",
+            "interface_affordance",
+            "composition"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggested_fix": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

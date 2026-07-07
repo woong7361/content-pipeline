@@ -1,0 +1,114 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-07-07T11:24:25+09:00",
+  "html_path": "output/index.html",
+  "viewports": [
+    "desktop"
+  ],
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_refine_visual_qa/desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_step2_tutorial_repair",
+      "path": "iter_001/design_refine_visual_qa/desktop__01_step2_tutorial_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_step3_game_repair",
+      "path": "iter_001/design_refine_visual_qa/desktop__02_step3_game_repair.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_step4_life_story",
+      "path": "iter_001/design_refine_visual_qa/desktop__03_step4_life_story.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_step4_completion_reward",
+      "path": "iter_001/design_refine_visual_qa/desktop__04_step4_completion_reward.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "render_checks": {
+    "console_errors": [],
+    "page_errors": [],
+    "request_failures": [],
+    "broken_images": [],
+    "horizontal_overflow": [],
+    "text_clipping": [],
+    "small_touch_targets": [],
+    "overlaps": [],
+    "fixed_overlay_risks": []
+  },
+  "design_review": {
+    "status": "PASS",
+    "summary": "Visual QA did not find high-priority design risks.",
+    "card_template_risk": "medium",
+    "asset_integration_risk": "low",
+    "interface_affordance_risk": "medium",
+    "composition_risk": "low",
+    "evidence": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "card_template",
+        "evidence": "4 card-like white panels detected.",
+        "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "card_template",
+      "evidence": "4 card-like white panels detected.",
+      "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "interface_affordance",
+      "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
+      "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "interface_affordance",
+      "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
+      "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    }
+  ],
+  "refine_suggestions": [
+    "[desktop] Reduce repeated card surfaces and give each section a more specific visual structure.",
+    "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+  ]
+}

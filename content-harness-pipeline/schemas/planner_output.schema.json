@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planner Direct Output",
+  "type": "object",
+  "required": ["page", "art_direction", "sections", "interactions", "asset_plan", "asset_groups"],
+  "properties": {
+    "page": {
+      "type": "object",
+      "required": ["goal", "audience", "tone"],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 1,
+          "description": "index.html이 달성해야 하는 핵심 목표"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1,
+          "description": "주요 사용자 또는 학습자"
+        },
+        "tone": {
+          "type": "string",
+          "minLength": 1,
+          "description": "화면의 분위기와 표현 방향"
+        }
+      },
+      "additionalProperties": false
+    },
+    "art_direction": {
+      "type": "object",
+      "required": [
+        "style_name",
+        "palette",
+        "line_style",
+        "lighting",
+        "character_rules",
+        "background_rules",
+        "continuity_rules",
+        "forbidden_styles"
+      ],
+      "description": "모든 asset batch가 공유해야 하는 시각 일관성 계약",
+      "properties": {
+        "style_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "콘텐츠 전체의 대표 화풍 이름"
+        },
+        "palette": {
+          "type": "string",
+          "minLength": 1,
+          "description": "반복해서 사용할 주요 색감과 채도 방향"
+        },
+        "line_style": {
+          "type": "string",
+          "minLength": 1,
+          "description": "선 굵기, 외곽선, 형태 단순화 기준"
+        },
+        "lighting": {
+          "type": "string",
+          "minLength": 1,
+          "description": "조명, 명암, 그림자 처리 기준"
+        },
+        "character_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "캐릭터 비율, 표정, 의상, 반복 등장 시 유지할 특징"
+        },
+        "background_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "배경 밀도, 원근, 소품, 세계관 유지 기준"
+        },
+        "continuity_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "batch가 나뉘어도 같은 콘텐츠 세트처럼 보이게 하는 연결 규칙"
+        },
+        "forbidden_styles": {
+          "type": "array",
+          "minItems": 1,
+          "description": "섞이면 안 되는 화풍, 매체감, 분위기",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "description": "단일 HTML 안에 배치할 주요 섹션 계획",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "purpose", "content_outline", "interaction_ids", "asset_ids"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "섹션 식별자"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 섹션이 필요한 이유"
+          },
+          "content_outline": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "builder가 HTML로 옮길 핵심 내용"
+          },
+          "interaction_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          },
+          "asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "description": "HTML 안에서 구현할 상호작용 계획. 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "상호작용 유형. 예: button, tabs, drag_drop, quiz, animation 등"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "asset_plan": {
+      "type": "array",
+      "description": "AI가 필요하다고 판단한 이미지 asset 계획. 필요 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "intended_path",
+          "purpose",
+          "prompt_brief",
+          "visual_role",
+          "style_constraints",
+          "composition_notes",
+          "negative_prompt",
+          "usage_section_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["image"]
+          },
+          "intended_path": {
+            "type": "string",
+            "pattern": "^output/assets/[^/\\\\]+\\.(png|jpg|jpeg|webp)$",
+            "description": "planner가 의도한 asset 저장 경로. 실제 생성과 검증은 asset_generator와 runner가 담당한다"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompt_brief": {
+            "type": "string",
+            "minLength": 1,
+            "description": "asset_generator가 이미지 또는 placeholder를 만들 때 사용할 짧은 지시"
+          },
+          "visual_role": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset이 화면에서 맡는 시각적 역할. 예: 핵심 장면, 배경, 피드백 상태, 캐릭터 표정 등"
+          },
+          "style_constraints": {
+            "type": "string",
+            "minLength": 1,
+            "description": "art_direction 안에서 이 asset에 특별히 적용해야 할 화풍, 색감, 캐릭터, 조명 제약"
+          },
+          "composition_notes": {
+            "type": "string",
+            "minLength": 1,
+            "description": "화면 배치와 어울리도록 지켜야 할 구도, 여백, 시점, 배경 밀도, 투명 영역 지시"
+          },
+          "negative_prompt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset에서 피해야 할 표현. 예: 텍스트 삽입, 실사풍, 과도한 배경, 다른 화풍 등"
+          },
+          "usage_section_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "asset_groups": {
+      "type": "array",
+      "description": "runner가 병렬 asset batch를 만들 때 우선 함께 묶을 asset id 그룹. 필요 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": ["id", "asset_ids", "grouping_reason"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "asset batch 후보 그룹 식별자"
+          },
+          "asset_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            },
+            "description": "같은 캐릭터, 같은 배경, 같은 섹션 흐름 때문에 함께 생성하면 좋은 asset id 목록"
+          },
+          "grouping_reason": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset들을 같은 batch 후보로 묶는 이유"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

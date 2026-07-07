@@ -10,6 +10,12 @@ PROJECT_DIR = Path(__file__).resolve().parent
 SCHEMA_DIR = PROJECT_DIR / "schemas"
 ARTIFACT_SCHEMAS = {
     "input": SCHEMA_DIR / "input.schema.json",
+    "planner_output": SCHEMA_DIR / "planner_output.schema.json",
+    "asset_generator_output": SCHEMA_DIR / "asset_generator_output.schema.json",
+    "builder_output": SCHEMA_DIR / "builder_output.schema.json",
+    "design_review_output": SCHEMA_DIR / "design_review_output.schema.json",
+    "content_critique_output": SCHEMA_DIR / "content_critique_output.schema.json",
+    "content_eval_output": SCHEMA_DIR / "content_eval_output.schema.json",
     "gen_output": SCHEMA_DIR / "gen_output.schema.json",
     "refine_output": SCHEMA_DIR / "gen_output.schema.json",
     "critique_output": SCHEMA_DIR / "critique_output.schema.json",
@@ -198,7 +204,23 @@ def main() -> int:
     parser.add_argument(
         "--artifact",
         required=True,
-        choices=["input", "gen_output", "refine_output", "critique_output", "eval_output", "draft", "critique", "eval", "final"],
+        choices=[
+            "input",
+            "planner_output",
+            "asset_generator_output",
+            "builder_output",
+            "design_review_output",
+            "content_critique_output",
+            "content_eval_output",
+            "gen_output",
+            "refine_output",
+            "critique_output",
+            "eval_output",
+            "draft",
+            "critique",
+            "eval",
+            "final",
+        ],
     )
     parser.add_argument("--brief-hash")
     parser.add_argument("--iteration")
