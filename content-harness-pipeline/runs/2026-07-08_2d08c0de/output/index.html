@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>시간이 뒤죽박죽! 도서관 수리 미션</title>
+<style>
+  :root{
+    --wood:#8a5a30;
+    --wood-dark:#5f3c1f;
+    --cream:#fff7e6;
+    --paper:#fffdf5;
+    --yellow:#ffd23f;
+    --yellow-deep:#ffb200;
+    --mint:#7fe0c8;
+    --sky:#8fd0ff;
+    --gold:#ffcf4d;
+    --ink:#3d2a15;
+    --good:#39c07a;
+    --bad:#ff6b6b;
+    --shadow:0 8px 24px rgba(70,40,10,.25);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    background:#2b1c0e;
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+  }
+  #app{
+    position:fixed;inset:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stage{
+    position:relative;
+    width:100%;height:100%;
+    max-width:1180px;max-height:720px;
+    aspect-ratio:16/9;
+    margin:auto;
+    background:#000;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+  }
+  @media (max-aspect-ratio:16/9){ .stage{width:100%;height:auto;} }
+  @media (min-aspect-ratio:16/9){ .stage{height:100%;width:auto;} }
+
+  /* ---- Scenes ---- */
+  .scene{
+    position:absolute;inset:0;
+    display:none;
+    flex-direction:column;
+    background-size:cover;background-position:center;
+  }
+  .scene.active{display:flex;}
+  .scene-bg{
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;z-index:0;
+  }
+  .dim::after{
+    content:"";position:absolute;inset:0;
+    background:rgba(20,10,0,.28);z-index:1;
+  }
+  .scene-inner{
+    position:relative;z-index:5;
+    flex:1;display:flex;flex-direction:column;
+    padding:clamp(10px,2.4vw,26px);
+    min-height:0;
+  }
+
+  /* ---- HUD ---- */
+  .hud{
+    position:absolute;top:0;left:0;right:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:clamp(8px,1.6vw,16px);
+    pointer-events:none;
+  }
+  .hud > *{pointer-events:auto;}
+  .ham{
+    width:clamp(38px,5vw,52px);height:clamp(38px,5vw,52px);
+    border-radius:14px;border:none;cursor:pointer;
+    background:rgba(255,255,255,.9);
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:5px;
+    align-items:center;justify-content:center;
+  }
+  .ham span{display:block;width:52%;height:3px;border-radius:3px;background:var(--wood-dark);}
+  .gauge-wrap{
+    display:flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.92);
+    border-radius:999px;padding:6px 14px 6px 10px;
+    box-shadow:var(--shadow);
+  }
+  .gauge-ico{font-size:clamp(16px,2.4vw,22px);}
+  .gauge{
+    width:clamp(90px,16vw,180px);height:clamp(14px,2.2vw,20px);
+    background:#e9ddc4;border-radius:999px;overflow:hidden;position:relative;
+    border:2px solid #d8c49a;
+  }
+  .gauge-fill{
+    height:100%;width:0%;
+    background:linear-gradient(90deg,var(--mint),var(--yellow) 60%,var(--yellow-deep));
+    transition:width .6s cubic-bezier(.2,.8,.2,1);
+    border-radius:999px;
+  }
+  .gauge-fill.full{background:linear-gradient(90deg,var(--gold),#fff3b0,var(--yellow-deep));box-shadow:0 0 12px var(--yellow);}
+  .gauge-num{font-weight:800;font-size:clamp(12px,1.9vw,16px);color:var(--wood-dark);min-width:38px;text-align:right;}
+
+  /* ---- Titles / dialogue ---- */
+  .title-card{
+    align-self:center;text-align:center;margin-top:clamp(16px,6vh,60px);
+    background:rgba(255,247,230,.94);
+    border:4px solid var(--yellow);
+    border-radius:26px;padding:clamp(14px,3vw,30px) clamp(20px,5vw,54px);
+    box-shadow:var(--shadow);max-width:90%;
+  }
+  .title-card h1{
+    margin:0;font-size:clamp(22px,5.2vw,52px);color:var(--wood-dark);
+    letter-spacing:-1px;line-height:1.15;
+  }
+  .title-card p{
+    margin:.5em 0 0;font-size:clamp(14px,3vw,26px);font-weight:700;color:#b06a12;
+  }
+  .dialogue{
+    position:relative;max-width:min(680px,88%);
+    background:var(--paper);border:3px solid var(--wood);
+    border-radius:20px;padding:clamp(12px,2.4vw,20px) clamp(16px,3vw,26px);
+    font-size:clamp(14px,2.5vw,21px);font-weight:600;line-height:1.5;
+    box-shadow:var(--shadow);color:var(--ink);
+  }
+  .dialogue .who{
+    display:inline-block;font-weight:800;color:#fff;
+    background:var(--wood);border-radius:999px;
+    padding:2px 12px;font-size:.8em;margin-bottom:6px;
+  }
+  .who.child{background:#2b9e78;}
+  .who.teacher{background:#c07a1f;}
+
+  /* ---- Characters ---- */
+  .char{
+    position:absolute;bottom:0;z-index:10;
+    height:clamp(150px,42vh,360px);
+    pointer-events:none;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));
+  }
+  .char.left{left:1%;}
+  .char.right{right:1%;}
+  .char.bob{animation:bob 2.6s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .char.cheer{animation:cheer .7s ease-in-out infinite alternate;}
+  @keyframes cheer{0%{transform:translateY(0) rotate(-2deg);}100%{transform:translateY(-14px) rotate(2deg);}}
+
+  /* ---- Buttons ---- */
+  .btn{
+    border:none;cursor:pointer;font-weight:800;font-family:inherit;
+    background:linear-gradient(180deg,var(--yellow),var(--yellow-deep));
+    color:#5a3800;border-radius:16px;
+    padding:clamp(12px,2vw,18px) clamp(20px,4vw,40px);
+    font-size:clamp(15px,2.6vw,24px);
+    box-shadow:0 6px 0 #c98600,var(--shadow);
+    transition:transform .1s, box-shadow .1s;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #c98600;}
+  .btn.blink{animation:blink 1.1s ease-in-out infinite;}
+  @keyframes blink{0%,100%{filter:brightness(1);transform:scale(1);}50%{filter:brightness(1.18);transform:scale(1.05);}}
+  .btn.ghost{background:linear-gradient(180deg,#eafff8,#bff0e2);color:#1c6f52;box-shadow:0 6px 0 #7ec9ae,var(--shadow);}
+  .btn:disabled{filter:grayscale(.5);opacity:.6;cursor:not-allowed;box-shadow:0 3px 0 #b6a37c;}
+  .center-bottom{position:absolute;left:0;right:0;bottom:clamp(16px,5vh,46px);display:flex;justify-content:center;gap:14px;z-index:30;flex-wrap:wrap;padding:0 12px;}
+
+  /* ---- Mission layout ---- */
+  .panel{
+    background:rgba(255,253,245,.95);
+    border:3px solid var(--wood);border-radius:22px;
+    box-shadow:var(--shadow);
+    padding:clamp(12px,2.2vw,22px);
+  }
+  .mission-wrap{
+    flex:1;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:clamp(8px,1.6vh,16px);
+    min-height:0;overflow:auto;padding-top:clamp(54px,8vh,70px);padding-bottom:clamp(8px,2vh,18px);
+  }
+  .q-prompt{
+    max-width:min(760px,94%);text-align:center;
+    font-size:clamp(14px,2.4vw,22px);font-weight:700;
+  }
+  .q-badge{
+    display:inline-block;background:var(--wood);color:#fff;font-weight:800;
+    border-radius:999px;padding:3px 14px;font-size:clamp(12px,2vw,16px);margin-bottom:6px;
+  }
+  .board{
+    font-size:clamp(20px,4.6vw,42px);font-weight:900;color:#c0392b;
+    background:#111;color:#ff5a4d;border-radius:14px;
+    padding:.35em .8em;letter-spacing:2px;
+    border:4px solid #3a2a18;text-shadow:0 0 8px rgba(255,90,77,.6);
+    font-family:"Courier New",monospace;
+  }
+  .choices{
+    display:flex;gap:clamp(10px,2.4vw,26px);flex-wrap:wrap;justify-content:center;
+  }
+  .choice{
+    background:var(--paper);border:4px solid var(--wood);border-radius:20px;
+    padding:clamp(12px,2.2vw,22px);cursor:pointer;font-weight:800;
+    font-size:clamp(15px,2.6vw,24px);color:var(--ink);
+    min-width:clamp(96px,22vw,150px);text-align:center;
+    box-shadow:0 5px 0 rgba(120,80,30,.4);transition:transform .12s;
+  }
+  .choice:hover{transform:translateY(-4px);}
+  .choice .mini-clock{margin:0 auto 8px;}
+  .choice.correct{border-color:var(--good);background:#eafff2;animation:pop .5s;box-shadow:0 0 22px var(--yellow);}
+  .choice.wrong{animation:shake .45s;border-color:var(--bad);background:#fff0f0;}
+  @keyframes pop{0%{transform:scale(1);}40%{transform:scale(1.14) translateY(-8px);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(9px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+
+  /* analog clock (for choices — decorative, drawn with divs; primary object uses bitmap asset) */
+  .mini-clock{position:relative;width:clamp(64px,13vw,104px);height:clamp(64px,13vw,104px);border-radius:50%;
+    background:radial-gradient(circle at 50% 42%,#fff,#f3e7c9);border:5px solid var(--wood-dark);}
+  .mini-clock i{position:absolute;left:50%;top:50%;transform-origin:bottom center;border-radius:4px;}
+  .mini-clock .hh{width:5px;height:26%;background:#333;transform:translate(-50%,-100%) rotate(var(--h,0deg));}
+  .mini-clock .mm{width:3px;height:36%;background:#c0392b;transform:translate(-50%,-100%) rotate(var(--m,0deg));}
+  .mini-clock .dot{width:9px;height:9px;background:var(--wood-dark);border-radius:50%;transform:translate(-50%,-50%);}
+  .mini-clock b{position:absolute;font-size:clamp(9px,1.6vw,13px);font-weight:800;color:#5a3800;transform:translate(-50%,-50%);}
+
+  .feedback{
+    min-height:1.6em;font-weight:800;font-size:clamp(14px,2.4vw,20px);text-align:center;
+  }
+  .feedback.ok{color:var(--good);}
+  .feedback.no{color:var(--bad);}
+
+  .progress-dots{display:flex;gap:8px;justify-content:center;margin-top:4px;}
+  .progress-dots i{width:11px;height:11px;border-radius:50%;background:#d8c49a;display:block;}
+  .progress-dots i.done{background:var(--yellow-deep);}
+  .progress-dots i.cur{outline:3px solid var(--yellow);outline-offset:2px;}
+
+  /* ---- blanks & keypad ---- */
+  .blank{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:clamp(46px,8vw,64px);height:clamp(46px,8vw,64px);
+    border:3px dashed var(--wood);border-radius:12px;background:#fff;
+    font-size:clamp(20px,3.4vw,30px);font-weight:900;color:#c0392b;
+    margin:0 4px;vertical-align:middle;cursor:pointer;
+  }
+  .blank.sel{border-style:solid;border-color:var(--yellow-deep);box-shadow:0 0 0 4px rgba(255,210,63,.4);}
+  .blank.filled{border-style:solid;background:#fffbe6;}
+  .blank.shake{animation:shake .45s;}
+  .eq-line{font-size:clamp(16px,2.8vw,26px);font-weight:800;line-height:2.2;text-align:center;}
+  .keypad{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:280px;margin:6px auto 0;
+  }
+  .keypad button{
+    padding:clamp(10px,1.8vw,16px);font-size:clamp(18px,3vw,26px);font-weight:800;
+    border:none;border-radius:12px;background:#fff;cursor:pointer;color:var(--ink);
+    box-shadow:0 4px 0 #cdbb99;
+  }
+  .keypad button:active{transform:translateY(3px);box-shadow:0 1px 0 #cdbb99;}
+  .keypad button.wide{grid-column:span 1;background:#ffe08a;}
+
+  /* drag cards */
+  .drag-tray{display:flex;gap:clamp(10px,2.4vw,22px);justify-content:center;flex-wrap:wrap;}
+  .card{
+    background:linear-gradient(180deg,#fff,#ffe9a8);
+    border:4px solid var(--wood);border-radius:16px;
+    padding:clamp(10px,2vw,18px) clamp(14px,3vw,26px);
+    font-size:clamp(18px,3.2vw,28px);font-weight:900;color:#a4560f;
+    box-shadow:0 6px 0 rgba(120,80,30,.5);cursor:grab;touch-action:none;
+  }
+  .card.dragging{opacity:.35;}
+  .card.placed{cursor:default;}
+  .drop-zone{
+    min-width:clamp(70px,12vw,110px);min-height:clamp(64px,11vw,96px);
+    border:4px dashed var(--yellow-deep);border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:clamp(20px,3.6vw,34px);font-weight:900;color:#c0392b;
+    background:rgba(255,255,255,.7);
+  }
+  .drop-zone.over{background:#fff6cf;border-style:solid;}
+  .drop-zone.done{border-style:solid;border-color:var(--good);background:#eafff2;}
+  #dragGhost{position:fixed;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);will-change:left,top;}
+
+  .tutorial-clock-obj{
+    height:clamp(120px,26vh,220px);width:auto;
+    filter:drop-shadow(0 6px 12px rgba(0,0,0,.3));
+  }
+  .glow{animation:glowpulse 1.2s ease-in-out infinite;border-radius:50%;}
+  @keyframes glowpulse{0%,100%{filter:drop-shadow(0 0 6px var(--yellow));}50%{filter:drop-shadow(0 0 22px var(--yellow-deep));}}
+
+  /* number blocks */
+  .block{
+    width:clamp(52px,9vw,72px);height:clamp(52px,9vw,72px);
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 40% 30%,#bff0ff,#57c4f0);
+    border:4px solid #1b6f96;border-radius:14px;color:#083b52;
+    font-size:clamp(22px,3.6vw,32px);font-weight:900;cursor:grab;
+    box-shadow:0 6px 0 #0f5474;touch-action:none;
+  }
+  .block.dragging{opacity:.3;}
+  .timeline{
+    display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:96%;
+  }
+  .timeline b{
+    padding:4px clamp(4px,1vw,8px);border-radius:8px;background:#fff;border:2px solid #cdbb99;
+    font-size:clamp(11px,1.8vw,15px);font-weight:800;color:#5a3800;
+  }
+  .timeline b.pm{background:#3a3660;color:#ffe9a8;border-color:#26224a;}
+
+  /* ---- storybook ---- */
+  .storybook{
+    position:relative;width:min(680px,92%);margin:auto;
+    background:var(--paper);border:6px solid var(--wood);border-radius:20px;
+    box-shadow:var(--shadow);padding:clamp(12px,2.4vw,22px);
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .storybook img{width:100%;max-height:40vh;object-fit:contain;border-radius:12px;background:#fff;}
+  .story-txt{font-size:clamp(14px,2.4vw,20px);font-weight:700;text-align:center;line-height:1.5;min-height:3em;}
+  .story-nav{display:flex;align-items:center;justify-content:space-between;width:100%;}
+  .arrow{width:clamp(42px,7vw,58px);height:clamp(42px,7vw,58px);border-radius:50%;border:none;cursor:pointer;
+    background:var(--yellow);font-size:clamp(20px,3.4vw,28px);font-weight:900;color:#5a3800;box-shadow:var(--shadow);}
+  .arrow:disabled{opacity:.4;cursor:default;}
+  .page-dots{display:flex;gap:8px;}
+  .page-dots i{width:12px;height:12px;border-radius:50%;background:#d8c49a;display:block;}
+  .page-dots i.on{background:var(--yellow-deep);}
+
+  /* ---- overlays / menu ---- */
+  .menu-backdrop{
+    position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.4);
+    display:none;
+  }
+  .menu-backdrop.open{display:block;}
+  .menu-panel{
+    position:absolute;top:0;left:0;bottom:0;width:min(300px,78%);
+    background:var(--cream);box-shadow:var(--shadow);
+    transform:translateX(-100%);transition:transform .3s;
+    padding:20px 16px;overflow:auto;
+  }
+  .menu-backdrop.open .menu-panel{transform:translateX(0);}
+  .menu-panel h3{margin:6px 0 14px;color:var(--wood-dark);}
+  .menu-panel ul{list-style:none;margin:0;padding:0;}
+  .menu-panel li{
+    padding:12px 14px;border-radius:12px;background:#fff;margin-bottom:8px;
+    font-weight:700;color:var(--ink);border:2px solid #e6d6b4;
+  }
+  .menu-panel li.active{background:var(--yellow);border-color:var(--yellow-deep);}
+  .menu-close{float:right;border:none;background:transparent;font-size:26px;cursor:pointer;color:var(--wood-dark);}
+
+  /* popup quiz + certificate overlays */
+  .overlay{
+    position:absolute;inset:0;z-index:55;display:none;
+    align-items:center;justify-content:center;
+    background:rgba(20,10,0,.5);padding:16px;
+  }
+  .overlay.open{display:flex;}
+  .quiz-box{
+    background:var(--paper);border:5px solid var(--yellow);border-radius:24px;
+    box-shadow:var(--shadow);padding:clamp(16px,3vw,30px);max-width:560px;width:100%;
+    text-align:center;
+  }
+  .quiz-box h2{margin:0 0 .5em;color:var(--wood-dark);font-size:clamp(18px,3.2vw,26px);}
+
+  .cert{
+    position:relative;width:min(560px,94%);
+    background-size:cover;background-position:center;
+    aspect-ratio:3/4;max-height:82vh;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:12% 10% 8%;text-align:center;
+  }
+  .cert h2{margin:.1em 0;color:#8a5a10;font-size:clamp(16px,3vw,26px);text-shadow:0 1px 0 #fff;}
+  .cert p{margin:.5em 0;color:#4a3410;font-weight:700;font-size:clamp(12px,2.2vw,17px);line-height:1.5;}
+  .cert .record{margin-top:auto;font-weight:800;color:#8a5a10;font-size:clamp(13px,2.4vw,19px);}
+
+  /* particles / confetti */
+  .fx-layer{position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden;}
+  .repair-fx{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s;}
+  .repair-fx.show{opacity:1;animation:fxpulse 2.5s ease-in-out infinite;}
+  @keyframes fxpulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+  .confetti{position:absolute;width:10px;height:16px;top:-20px;opacity:.95;border-radius:2px;animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(120vh) rotate(720deg);}}
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+
+  /* ==========================================================================
+     DESIGN REFINE (iter 003) — desktop full-bleed + asset-native surfaces.
+     Scene-scoped so shared components stay untouched.
+     ========================================================================== */
+
+  /* 1) Full-bleed stage: kill the brown letterbox on desktop */
+  .stage{
+    width:100vw!important;height:100vh!important;
+    max-width:none!important;max-height:none!important;
+    aspect-ratio:auto!important;margin:0!important;
+    background:#1a1109!important;box-shadow:none!important;
+  }
+  .scene-bg{object-position:center;}
+
+  /* 2) Dialogue reads as a physical pinned notice, not a white web card */
+  .dialogue{
+    background:linear-gradient(180deg,#fff8e6,#f0debb)!important;
+    border:none!important;border-radius:10px!important;color:#4a3410!important;
+    box-shadow:0 10px 22px rgba(40,20,0,.35), inset 0 0 0 3px rgba(150,100,50,.35)!important;
+  }
+  .dialogue::before{
+    content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+    width:15px;height:15px;border-radius:50%;z-index:2;
+    background:radial-gradient(circle at 35% 30%,#ffe09a,#c8901f);
+    box-shadow:0 2px 4px rgba(0,0,0,.4);
+  }
+  /* messy-lobby scenes → cracked chalkboard note */
+  .dialogue.chalk{
+    background:linear-gradient(180deg,#33513f,#233a2c)!important;color:#f3ffe9!important;
+    box-shadow:0 12px 26px rgba(0,0,0,.45), inset 0 0 0 6px rgba(120,80,40,.6), inset 0 0 44px rgba(0,0,0,.4)!important;
+    border-radius:8px!important;text-shadow:0 1px 2px rgba(0,0,0,.5);
+  }
+  .dialogue.chalk::before{background:radial-gradient(circle at 35% 30%,#ffe9a8,#e0a52a);}
+  .dialogue.chalk .who{background:#12251a;color:#ffe9a8;}
+  /* restored-lobby scenes → mint completion board */
+  .dialogue.board{
+    background:linear-gradient(180deg,#e2f6ef,#c3e8dc)!important;color:#1c5a48!important;
+    box-shadow:0 12px 26px rgba(30,60,45,.35), inset 0 0 0 5px rgba(212,170,80,.65)!important;
+    border-radius:14px!important;text-shadow:0 1px 0 rgba(255,255,255,.5);
+  }
+  .dialogue.board::before{display:none;}
+  .dialogue.board .who{background:#1c7a5e;color:#fff;}
+  /* mission headers → slim hanging wood notice bar */
+  .dialogue.slim{
+    background:linear-gradient(180deg,rgba(62,42,22,.94),rgba(42,27,13,.94))!important;color:#ffeecb!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.45), inset 0 0 0 3px rgba(200,150,80,.45)!important;
+    border-radius:10px!important;padding:clamp(9px,1.5vw,14px) clamp(16px,3vw,26px)!important;
+    font-size:clamp(13px,2vw,18px)!important;max-width:min(780px,92%)!important;text-shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+  .dialogue.slim::before{display:none;}
+  .dialogue.slim .who{background:#ffdf8a;color:#5a3800;}
+  /* certificate → ribbon congratulation memo */
+  .dialogue.memo{
+    background:linear-gradient(180deg,#fff6ea,#ffe4c9)!important;color:#7a4a1a!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.35), inset 0 0 0 3px rgba(210,150,90,.4)!important;border-radius:8px!important;
+  }
+  .dialogue.memo::before{background:radial-gradient(circle at 35% 30%,#ff9ecb,#d8467f);}
+
+  /* 3) Intro title → hanging slate library sign, kept off the clock/chalkboard */
+  .title-card{
+    background:linear-gradient(180deg,#33513f,#223a2b)!important;border:none!important;border-radius:14px!important;
+    box-shadow:0 18px 34px rgba(0,0,0,.5), inset 0 0 0 9px rgba(120,80,40,.85), inset 0 0 70px rgba(0,0,0,.42)!important;
+    max-width:min(560px,86%)!important;
+  }
+  .title-card h1{color:#fff7d1!important;text-shadow:0 2px 6px rgba(0,0,0,.5),0 0 18px rgba(255,210,63,.45);}
+  .title-card p{color:#ffe6a3!important;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+  #scene-intro .scene-inner{align-items:flex-start!important;justify-content:flex-start!important;padding-left:clamp(20px,5vw,70px)!important;}
+  #scene-intro .title-card{margin-top:clamp(56px,15vh,150px)!important;align-self:flex-start!important;}
+
+  /* 4) CTAs become physical objects (switch / ticket / stamp) */
+  .btn.switch{
+    background:linear-gradient(180deg,#ffe27a,#f0a91e)!important;color:#5a3800!important;border:3px solid #7a4a00!important;border-radius:14px!important;
+    box-shadow:0 8px 0 #a85f00,0 14px 26px rgba(0,0,0,.45), inset 0 0 0 4px rgba(255,255,255,.35), inset 0 -6px 10px rgba(150,80,0,.4)!important;
+  }
+  .btn.switch:active{transform:translateY(4px)!important;box-shadow:0 4px 0 #a85f00,0 8px 16px rgba(0,0,0,.4)!important;}
+  .btn.ticket{
+    background:linear-gradient(180deg,#fff6df,#ffe3a0)!important;color:#8a5210!important;border:3px solid #d8a24a!important;border-radius:10px!important;
+    box-shadow:0 8px 0 #c98a2e,0 12px 22px rgba(0,0,0,.35)!important;position:relative;overflow:hidden;
+  }
+  .btn.ticket::before{content:"";position:absolute;top:6px;bottom:6px;left:15%;border-left:3px dashed rgba(170,115,45,.55);}
+  .btn.ticket::after{content:"";position:absolute;top:6px;bottom:6px;right:15%;border-left:3px dashed rgba(170,115,45,.55);}
+  .btn.stamp{
+    background:radial-gradient(circle at 40% 34%,#ff8776,#d63b2a)!important;color:#fff!important;border:3px solid #a02418!important;border-radius:12px!important;
+    letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,.4);
+    box-shadow:0 8px 0 #8f1f14,0 12px 20px rgba(0,0,0,.4), inset 0 0 0 3px rgba(255,255,255,.25)!important;
+  }
+
+  /* 5) Bigger, more physical choice clocks */
+  .mini-clock{width:clamp(84px,12vw,118px)!important;height:clamp(84px,12vw,118px)!important;border-width:6px!important;
+    box-shadow:0 6px 12px rgba(0,0,0,.3), inset 0 0 10px rgba(120,80,30,.22);}
+  .mini-clock .hh{width:6px;height:26%;}
+  .mini-clock .mm{width:4px;height:37%;}
+
+  /* 6) TUTORIAL — repair workbench (metal slot + paper time tiles) */
+  #scene-tut .drop-zone{
+    background:linear-gradient(180deg,#cfd6dc,#9aa6b0)!important;border:4px solid #5b6b78!important;border-style:solid!important;border-radius:14px!important;
+    color:#2a3a48!important;box-shadow:inset 0 3px 8px rgba(0,0,0,.35),0 6px 12px rgba(0,0,0,.3)!important;
+  }
+  #scene-tut .card{
+    background:linear-gradient(180deg,#fff8e6,#f0dcae)!important;border:3px solid #b98a4a!important;border-radius:10px!important;
+    color:#7a4a12!important;box-shadow:0 6px 0 rgba(120,80,30,.5),0 8px 14px rgba(0,0,0,.3)!important;
+  }
+
+  /* 7) MISSION A — clock control desk: transparent panel, wooden clock slots */
+  #scene-a .mission-wrap{justify-content:flex-start!important;gap:clamp(12px,2.6vh,26px)!important;padding-top:clamp(58px,10vh,96px)!important;}
+  #scene-a .panel{background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important;max-width:min(1060px,96%)!important;gap:clamp(10px,2vh,20px)!important;}
+  #scene-a .q-prompt{color:#3a260f!important;font-weight:800!important;text-shadow:0 1px 0 rgba(255,255,255,.6);}
+  #scene-a .choices{gap:clamp(16px,3.2vw,44px)!important;}
+  #scene-a .choice{
+    background:linear-gradient(180deg,#a9713d,#7c4e24)!important;color:#fff3d6!important;border:4px solid #5f3c1f!important;border-radius:18px!important;
+    box-shadow:0 8px 0 #4a2e15,0 12px 22px rgba(0,0,0,.4), inset 0 0 0 3px rgba(255,220,150,.22)!important;
+    min-width:clamp(120px,20vw,180px)!important;padding:clamp(14px,2vw,22px)!important;
+  }
+  #scene-a .choice .mini-clock{width:clamp(94px,13vw,130px)!important;height:clamp(94px,13vw,130px)!important;background:radial-gradient(circle at 50% 42%,#fff,#f0e2c2)!important;}
+
+  /* 8) MISSION B — torn timetable paper pinned on the cork board + stamp CTA */
+  #scene-b .mission-wrap{justify-content:center!important;padding-top:clamp(66px,12vh,120px)!important;}
+  #scene-b .panel{
+    background:linear-gradient(180deg,#fffaef,#f0e0b6)!important;border:none!important;border-radius:6px!important;
+    box-shadow:0 16px 30px rgba(40,20,0,.4), inset 0 0 0 2px rgba(150,100,50,.28)!important;max-width:min(660px,78%)!important;position:relative;
+  }
+  #scene-b .panel::before{content:"";position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:17px;height:17px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ff8f8f,#c33);box-shadow:0 2px 5px rgba(0,0,0,.4);}
+  #scene-b .blank{background:#fffef7!important;border:3px solid #c98a3a!important;border-style:solid!important;border-radius:6px!important;box-shadow:inset 0 2px 4px rgba(0,0,0,.12)!important;}
+  #scene-b .mission-wrap .btn{
+    background:radial-gradient(circle at 40% 34%,#ff8776,#d63b2a)!important;color:#fff!important;border:3px solid #a02418!important;border-radius:12px!important;letter-spacing:1px;
+    box-shadow:0 8px 0 #8f1f14,0 12px 20px rgba(0,0,0,.4), inset 0 0 0 3px rgba(255,255,255,.25)!important;
+  }
+
+  /* 9) MISSION C — dark reboot console inset in the loan-system monitor + keycap CTA */
+  #scene-c .scene-inner{padding-top:0!important;}
+  #scene-c .mission-wrap{position:absolute!important;inset:0!important;padding:clamp(78px,14vh,150px) 0 0!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;}
+  #scene-c .panel{
+    background:linear-gradient(180deg,rgba(18,28,44,.93),rgba(9,15,26,.95))!important;border:none!important;border-radius:16px!important;
+    box-shadow:0 0 0 2px rgba(120,200,255,.28), inset 0 0 46px rgba(0,70,140,.4), 0 16px 34px rgba(0,0,0,.55)!important;
+    color:#e6f4ff!important;max-width:min(60%,720px)!important;padding:clamp(16px,2.4vw,26px)!important;
+  }
+  #scene-c .panel .q-prompt,#scene-c .panel .eq-line{color:#eaf6ff!important;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+  #scene-c .q-badge{background:#0a3a5c!important;color:#8fe0ff!important;}
+  #scene-c .blank{background:#0a1a2a!important;border:3px solid #3fa9e0!important;border-style:solid!important;color:#8fe0ff!important;box-shadow:inset 0 0 8px rgba(60,180,255,.5)!important;}
+  #scene-c .timeline b{background:#0e2438!important;color:#bfe6ff!important;border-color:#2a5a7a!important;}
+  #scene-c .timeline b.pm{background:#28407a!important;color:#ffe9a8!important;border-color:#1a2a5a!important;}
+  #scene-c .drop-zone{background:rgba(10,26,42,.55)!important;border-color:#3fa9e0!important;color:#8fe0ff!important;}
+  #scene-c .mission-wrap .btn{
+    background:linear-gradient(180deg,#ffe27a,#f4b52a)!important;color:#4a3400!important;border:3px solid #7a4a00!important;border-radius:10px!important;
+    box-shadow:0 8px 0 #9c6a10, inset 0 -5px 8px rgba(140,80,0,.4), inset 0 3px 4px rgba(255,255,255,.5),0 12px 20px rgba(0,0,0,.45)!important;
+  }
+
+  /* 10) REPAIR OUTRO — completion text absorbed into the central mint board */
+  #scene-repair .dialogue.board{
+    position:absolute!important;top:30%!important;left:50%!important;transform:translateX(-50%)!important;
+    width:min(452px,46%)!important;max-width:none!important;z-index:16;font-size:clamp(12px,1.9vw,17px)!important;text-align:center;
+  }
+
+  /* 11) STORY — text overlaid on the blank pop-up-book page inside a thick book frame */
+  .storybook{
+    background:linear-gradient(180deg,#6b4423,#492b14)!important;border:none!important;border-radius:14px!important;
+    box-shadow:0 22px 44px rgba(0,0,0,.55), inset 0 0 0 4px rgba(255,220,160,.18)!important;padding:clamp(12px,2vw,20px)!important;width:min(720px,90%)!important;
+  }
+  .book-stage{position:relative;width:100%;}
+  .book-stage #storyImg{display:block;width:100%;max-height:52vh;object-fit:contain;border-radius:8px;background:transparent!important;}
+  #storyTxt{
+    position:absolute!important;left:9%;right:9%;bottom:5%;margin:0!important;min-height:auto!important;
+    background:rgba(255,250,236,.86);border-radius:8px;padding:8px 14px;color:#5a3a12!important;box-shadow:0 4px 10px rgba(0,0,0,.25);
+  }
+  .arrow{background:linear-gradient(180deg,#ffdf8a,#e0a52a)!important;border:2px solid #a86a1a!important;border-radius:12px!important;}
+  #storyHint{color:#ffe6a3!important;}
+
+  /* 12) POPUP QUIZ — central board panel with wooden signboard choices */
+  #scene-quiz .quiz-box{
+    background:linear-gradient(180deg,#e2f6ef,#c3e8dc)!important;border:none!important;border-radius:20px!important;color:#1c5a48!important;
+    box-shadow:0 16px 32px rgba(30,60,45,.4), inset 0 0 0 6px rgba(212,170,80,.7)!important;max-width:min(560px,62%)!important;
+  }
+  #scene-quiz .quiz-box h2{color:#1c7a5e!important;}
+  #scene-quiz .q-prompt{color:#1c5a48!important;}
+  #popupChoices .choice{
+    background:linear-gradient(180deg,#a9713d,#7c4e24)!important;color:#fff3d6!important;border:4px solid #5f3c1f!important;border-radius:14px!important;
+    box-shadow:0 6px 0 #4a2e15,0 10px 18px rgba(0,0,0,.35)!important;
+  }
+
+  /* 13) CERTIFICATE — scale down so the whole award reads; CTAs off the paper */
+  #scene-cert .scene-inner{justify-content:center!important;padding-top:clamp(28px,6vh,58px)!important;}
+  .cert{
+    width:min(430px,42%)!important;max-height:70vh!important;aspect-ratio:1/1!important;
+    background-position:center!important;padding:15% 13% 12%!important;justify-content:center!important;
+  }
+  .cert h2{font-size:clamp(15px,2.4vw,22px)!important;}
+  .cert p{font-size:clamp(11px,1.8vw,15px)!important;margin:.4em 0!important;}
+  .cert .record{margin-top:1em!important;font-size:clamp(12px,2vw,16px)!important;}
+  #scene-cert .center-bottom{bottom:clamp(10px,3vh,26px)!important;}
+  #scene-cert .dialogue{top:clamp(46px,9vh,82px)!important;}
+
+  /* ==========================================================================
+     DESIGN REFINE (iter 004) — seat the learning UI on the asset surfaces the
+     review flagged: clock sockets, monitor screen, cracked chalkboard,
+     cork/reward boards, and fix the certificate proportions.
+     Coordinates are calibrated to the 1440x960 desktop review viewport.
+     Every rule is scene-scoped so shared components stay intact.
+     ========================================================================== */
+
+  /* --- 00 intro: pin the hanging sign to the wall, keep the switch compact --- */
+  #scene-intro .title-card{position:relative;}
+  #scene-intro .title-card::before,
+  #scene-intro .title-card::after{
+    content:"";position:absolute;top:-13px;width:16px;height:16px;border-radius:50%;z-index:3;
+    background:radial-gradient(circle at 35% 30%,#ffe09a,#c8901f);box-shadow:0 3px 6px rgba(0,0,0,.55);
+  }
+  #scene-intro .title-card::before{left:26px;}
+  #scene-intro .title-card::after{right:26px;}
+  #startBtn.switch{max-width:340px;padding-top:clamp(12px,1.8vw,16px)!important;padding-bottom:clamp(12px,1.8vw,16px)!important;}
+
+  /* --- 01 problem: write the emergency notice INTO the cracked chalkboard --- */
+  #scene-problem .scene-inner{position:absolute!important;inset:0!important;padding:0!important;}
+  #scene-problem .dialogue.chalk{
+    position:absolute!important;left:56%!important;top:42.5%!important;width:28%!important;max-width:none!important;margin:0!important;
+    font-size:clamp(11px,1.35vw,15px)!important;line-height:1.42!important;padding:13px 18px!important;border-radius:6px!important;text-align:left;
+    background:linear-gradient(180deg,rgba(30,48,36,.68),rgba(16,30,22,.72))!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.4), inset 0 0 34px rgba(0,0,0,.5)!important;
+  }
+  #scene-problem .dialogue.chalk::before{display:none!important;}
+  #scene-problem .dialogue.chalk .who{background:#12251a!important;color:#ffe9a8!important;}
+
+  /* --- 02 tutorial: a repair workbench grounds clock + slot + tiles + status --- */
+  #scene-tut .scene-inner{justify-content:flex-start!important;}
+  #scene-tut .mission-wrap{justify-content:flex-start!important;padding-top:0!important;overflow:visible!important;}
+  #scene-tut .repair-workbench{
+    position:relative;margin:clamp(118px,20vh,190px) auto 0;width:min(560px,58%);
+    background:linear-gradient(180deg,#b57f47,#7c4e24 60%,#5f3c1f);
+    border-radius:16px 16px 10px 10px;padding:clamp(14px,2.2vw,24px) clamp(16px,2.4vw,26px) clamp(16px,2.2vw,24px);
+    display:flex;flex-direction:column;align-items:center;gap:clamp(10px,1.8vh,18px);
+    box-shadow:0 20px 34px rgba(0,0,0,.5), inset 0 3px 0 rgba(255,224,160,.35), inset 0 0 0 3px rgba(95,60,31,.55);
+  }
+  #scene-tut .repair-workbench::after{content:"";position:absolute;left:6%;right:6%;bottom:-15px;height:22px;border-radius:50%;
+    background:radial-gradient(ellipse at center,rgba(0,0,0,.42),rgba(0,0,0,0) 70%);z-index:-1;}
+  #scene-tut .wb-row{display:flex;align-items:center;gap:clamp(16px,3vw,36px);}
+  #scene-tut #tutClock{height:clamp(94px,16vh,142px)!important;}
+  #scene-tut #tutFeedback{
+    background:linear-gradient(180deg,#3a2a18,#241a10);color:#ffe9a8;border-radius:8px;padding:6px 16px;
+    font-size:clamp(12px,1.7vw,16px);box-shadow:inset 0 0 0 2px rgba(200,150,80,.45),0 2px 6px rgba(0,0,0,.3);min-height:auto;
+  }
+  #scene-tut #tutFeedback.ok{color:#8dffb0;}
+  #scene-tut #tutFeedback.no{color:#ffb0a8;}
+
+  /* --- 03 tutorial success: completion note on the board, clock as repair stamp --- */
+  #scene-tutsuccess .scene-inner{position:absolute!important;inset:0!important;padding:0!important;}
+  #scene-tutsuccess .dialogue.chalk{
+    position:absolute!important;left:56%!important;top:44%!important;width:29%!important;max-width:none!important;margin:0!important;
+    font-size:clamp(11px,1.35vw,15px)!important;line-height:1.42!important;padding:13px 18px!important;border-radius:6px!important;text-align:left;z-index:15;
+    background:linear-gradient(180deg,rgba(30,48,36,.7),rgba(16,30,22,.74))!important;
+    box-shadow:0 8px 18px rgba(0,0,0,.4), inset 0 0 34px rgba(0,0,0,.5)!important;
+  }
+  #scene-tutsuccess .dialogue.chalk::before{display:none!important;}
+  #scene-tutsuccess .tutorial-clock-obj.glow{
+    position:absolute!important;left:60%!important;top:33%!important;transform:translate(-50%,0)!important;
+    height:clamp(64px,10vh,100px)!important;z-index:16;
+  }
+
+  /* --- 04 mission A: choices dropped into the three wooden clock sockets --- */
+  #scene-a .scene-inner{position:absolute!important;inset:0!important;padding:0!important;}
+  #scene-a .dialogue.slim{position:absolute!important;top:14px!important;left:50%!important;transform:translateX(-50%)!important;margin:0!important;z-index:20;}
+  #scene-a .mission-wrap{position:absolute!important;inset:0!important;display:block!important;padding:0!important;gap:0!important;overflow:visible!important;}
+  #scene-a .panel{
+    position:static!important;margin:clamp(150px,23vh,222px) auto 0!important;
+    width:min(560px,46%)!important;max-width:none!important;background:transparent!important;border:none!important;box-shadow:none!important;
+    padding:0!important;text-align:center;display:block!important;
+  }
+  #scene-a .q-prompt{color:#2e1e0c!important;font-weight:800!important;text-shadow:0 1px 0 rgba(255,255,255,.7)!important;}
+  #scene-a .feedback{position:absolute!important;left:50%!important;top:60.5%!important;transform:translateX(-50%)!important;width:min(560px,64%)!important;margin:0!important;z-index:18;}
+  #scene-a .choices{
+    position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;gap:0!important;
+    display:block!important;pointer-events:none;z-index:16;
+  }
+  #scene-a .choices .choice{
+    position:absolute!important;pointer-events:auto;transform:translate(-50%,-50%)!important;
+    width:clamp(118px,12vw,168px)!important;height:clamp(118px,12vw,168px)!important;min-width:0!important;
+    border-radius:50%!important;padding:0!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    background:radial-gradient(circle at 50% 40%,#c79256,#8a5a30 68%,#5f3c1f)!important;border:5px solid #5f3c1f!important;color:#fff3d6!important;
+    font-size:clamp(13px,1.7vw,19px)!important;font-weight:900;
+    box-shadow:0 8px 15px rgba(0,0,0,.45), inset 0 0 0 4px rgba(255,220,150,.25), inset 0 -7px 13px rgba(0,0,0,.4)!important;
+  }
+  #scene-a .choices .choice:nth-child(1){left:27%!important;top:80%!important;}
+  #scene-a .choices .choice:nth-child(2){left:50%!important;top:80%!important;}
+  #scene-a .choices .choice:nth-child(3){left:70.5%!important;top:80%!important;}
+  #scene-a .choices .choice .mini-clock{width:clamp(72px,8.4vw,102px)!important;height:clamp(72px,8.4vw,102px)!important;border-width:5px!important;margin:0 0 2px!important;background:radial-gradient(circle at 50% 42%,#fff,#f0e2c2)!important;}
+  #scene-a .choices .choice>div{line-height:1.1;}
+  #scene-a .choices .choice:hover{transform:translate(-50%,-56%)!important;}
+  #scene-a .choice.correct{animation:popSocket .5s!important;border-color:var(--good)!important;background:radial-gradient(circle at 50% 40%,#d6ffe6,#8fe0b6 70%,#39a06f)!important;box-shadow:0 0 26px var(--yellow),0 8px 16px rgba(0,0,0,.4)!important;}
+  #scene-a .choice.wrong{animation:shakeSocket .45s!important;border-color:var(--bad)!important;}
+  @keyframes popSocket{0%{transform:translate(-50%,-50%) scale(1);}40%{transform:translate(-50%,-58%) scale(1.12);}100%{transform:translate(-50%,-50%) scale(1);}}
+  @keyframes shakeSocket{0%,100%{transform:translate(-50%,-50%);}25%{transform:translate(-54.5%,-50%);}75%{transform:translate(-45.5%,-50%);}}
+
+  /* --- 05 mission B: single form card → a torn timetable note + rubber stamp --- */
+  #scene-b .mission-wrap{justify-content:center!important;padding-top:0!important;}
+  #scene-b .panel{
+    width:min(380px,36%)!important;max-width:none!important;transform:rotate(-1.3deg)!important;
+    background:linear-gradient(180deg,#fffdf4,#f2e4c1)!important;border-radius:4px!important;
+    box-shadow:0 15px 26px rgba(40,20,0,.42), inset 0 0 0 1px rgba(150,100,50,.25)!important;
+    padding:clamp(16px,2vw,24px) clamp(14px,1.8vw,20px) clamp(14px,1.8vw,20px)!important;
+  }
+  #scene-b .panel .q-prompt{font-size:clamp(13px,1.65vw,17px)!important;}
+  #scene-b .panel .eq-line{font-size:clamp(14px,1.9vw,20px)!important;}
+  #scene-b .mission-wrap .btn{
+    padding:8px 24px!important;font-size:clamp(14px,1.8vw,18px)!important;border-radius:8px!important;
+    transform:rotate(-3deg)!important;letter-spacing:2px!important;
+    background:radial-gradient(circle at 42% 34%,#ff8776,#cf3826)!important;color:#fff!important;border:2px solid #9c2016!important;
+    box-shadow:0 3px 0 #8f1f14,0 6px 12px rgba(0,0,0,.35), inset 0 0 0 2px rgba(255,255,255,.35), inset 0 0 0 5px rgba(207,56,38,.55)!important;
+  }
+
+  /* --- 06 mission C: constrain the console to the loan-system monitor screen --- */
+  #scene-c .scene-inner{position:absolute!important;inset:0!important;padding:0!important;}
+  #scene-c .dialogue.slim{
+    position:absolute!important;top:19%!important;left:25%!important;right:22%!important;width:auto!important;max-width:none!important;margin:0!important;transform:none!important;z-index:18;
+    font-size:clamp(10px,1.25vw,14px)!important;padding:8px 14px!important;
+  }
+  #scene-c .mission-wrap{
+    left:24.5%!important;right:21.5%!important;top:30%!important;bottom:33%!important;
+    width:auto!important;height:auto!important;padding:0!important;
+    display:flex!important;align-items:flex-start!important;justify-content:center!important;overflow:visible!important;
+  }
+  #scene-c .panel{
+    width:100%!important;max-width:100%!important;max-height:100%!important;overflow:auto!important;margin:0!important;
+    padding:clamp(12px,1.8vw,20px)!important;
+  }
+  #scene-c .panel .q-prompt{font-size:clamp(12px,1.5vw,16px)!important;}
+  #scene-c .panel .eq-line{font-size:clamp(13px,1.7vw,19px)!important;line-height:1.8!important;}
+
+  /* --- 08 story: caption reads as a thin printed band on the page --- */
+  #storyTxt{background:rgba(255,250,236,.7)!important;padding:6px 12px!important;font-size:clamp(13px,2vw,17px)!important;}
+
+  /* --- 09 popup quiz: hanging wooden reward board + answer-plaque rack --- */
+  #scene-quiz .quiz-box{
+    position:relative;max-width:min(520px,50%)!important;margin-top:2.5%!important;border-radius:16px!important;
+    background:linear-gradient(180deg,#e6f7f0,#c3e8dc)!important;border:none!important;color:#1c5a48!important;
+    box-shadow:inset 0 0 0 5px rgba(255,255,255,.45),
+      0 0 0 12px #7c4e24, 0 0 0 15px #5f3c1f,
+      0 24px 38px rgba(0,0,0,.45), 0 8px 0 rgba(0,0,0,.15)!important;
+  }
+  #scene-quiz .quiz-box::before{
+    content:"";position:absolute;top:-46px;left:50%;transform:translateX(-50%);width:60px;height:46px;z-index:-1;
+    background:linear-gradient(180deg,#8a5a30,#5f3c1f);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);
+    box-shadow:0 3px 6px rgba(0,0,0,.4);
+  }
+  #scene-quiz #popupChoices{display:flex!important;flex-wrap:nowrap!important;gap:clamp(8px,1.5vw,16px)!important;justify-content:center!important;margin-top:10px;}
+  #popupChoices .choice{
+    flex:1 1 0!important;min-width:0!important;padding:clamp(12px,1.8vw,18px) 6px!important;border-radius:10px!important;
+    background:linear-gradient(180deg,#b47c46,#7c4e24)!important;color:#fff3d6!important;border:4px solid #5f3c1f!important;
+    box-shadow:0 6px 0 #4a2e15,0 10px 16px rgba(0,0,0,.35), inset 0 2px 0 rgba(255,220,150,.35)!important;
+  }
+
+  /* --- 10 certificate: restore 3/4 proportion, fix collapsed text, split CTAs --- */
+  #scene-cert .scene-inner{justify-content:center!important;padding-top:clamp(18px,4vh,46px)!important;}
+  #scene-cert .cert{
+    width:clamp(360px,33vw,468px)!important;max-height:76vh!important;aspect-ratio:3/4!important;
+    padding:13% 12% 9%!important;justify-content:flex-start!important;
+  }
+  #scene-cert .cert h2,#scene-cert .cert p,#scene-cert .cert .record{align-self:stretch!important;width:100%!important;}
+  #scene-cert .cert h2{font-size:clamp(15px,2.2vw,23px)!important;line-height:1.2!important;margin:.12em 0!important;}
+  #scene-cert .cert p{font-size:clamp(11px,1.55vw,15px)!important;line-height:1.42!important;max-width:84%!important;margin:.55em auto!important;}
+  #scene-cert .cert .record{margin-top:auto!important;margin-bottom:2%!important;font-size:clamp(11px,1.65vw,15px)!important;line-height:1.35!important;}
+  #scene-cert .center-bottom{bottom:clamp(12px,3vh,28px)!important;gap:clamp(12px,2.4vw,30px)!important;}
+  #scene-cert .center-bottom .btn{padding:9px 20px!important;font-size:clamp(12px,1.6vw,16px)!important;}
+  #scene-cert .dialogue.memo{max-width:min(280px,32%)!important;font-size:clamp(11px,1.5vw,15px)!important;padding:10px 14px!important;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="stage" id="stage">
+
+    <!-- ================= SCENE 1: INTRO ================= -->
+    <section class="scene active dim" data-qa-scene="intro" data-qa-order="1" data-qa-label="도입 타이틀" id="scene-intro">
+      <img class="scene-bg" src="assets/bg_messy_library_lobby.png" alt="고장 난 마을 도서관 로비 배경. 큰 시계와 깨진 안내 전광판, 흐트러진 책장과 책더미가 보이는 밝은 게임형 일러스트." />
+      <div class="scene-inner" style="align-items:center;">
+        <div class="title-card">
+          <h1>시간이 뒤죽박죽!</h1>
+          <p>수학의 힘으로 도서관 시계를 수리하라!</p>
+        </div>
+      </div>
+      <div class="center-bottom">
+        <button class="btn blink switch" id="startBtn">⚡ 미션 시작 스위치 켜기</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 2: PROBLEM ================= -->
+    <section class="scene dim" data-qa-scene="problem_intro" data-qa-order="2" data-qa-label="문제 발생" id="scene-problem">
+      <img class="scene-bg" src="assets/bg_messy_library_lobby.png" alt="빠르게 도는 큰 시계와 물음표 말풍선으로 혼란스러운 고장 난 도서관 로비." />
+      <div class="scene-inner">
+        <div class="dialogue chalk" style="margin:clamp(52px,9vh,80px) auto 0;">
+          <span class="who teacher">사서 선생님 · 긴급 안내</span>
+          <div>큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
+        </div>
+      </div>
+      <img class="char left bob" src="assets/character_teacher_worried.png" alt="둥근 안경과 카디건을 입은 사서 선생님이 머리를 감싸 쥐고 당황한 표정으로 도움을 요청하는 모습" />
+      <div class="center-bottom">
+        <button class="btn ticket" data-goto="tutorial_clock">🎫 시계 수리 접수표 — 배우러 가기 →</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 3: TUTORIAL CLOCK ================= -->
+    <section class="scene dim" data-qa-scene="tutorial_clock" data-qa-order="3" data-qa-label="튜토리얼 시계 읽기" id="scene-tut">
+      <img class="scene-bg" src="assets/bg_messy_library_lobby.png" alt="도서관 로비 배경." />
+      <div class="scene-inner">
+        <div class="dialogue chalk slim" style="margin:clamp(48px,8vh,68px) auto 6px;">
+          <span class="who child">꼬마 사서</span>
+          <span>걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!</span>
+          &nbsp; <span class="who teacher">사서 선생님</span>
+          <span>이 시계가 몇 시인지 먼저 확인해 줄래? (짧은바늘 3, 긴바늘 12)</span>
+        </div>
+        <div class="mission-wrap">
+          <div class="repair-workbench">
+            <div class="wb-row">
+              <img id="tutClock" class="tutorial-clock-obj" src="assets/object_table_clock_3_oclock.png" alt="도서관 책상 위에서 3시를 가리키는 노란 글로우의 작은 탁상시계" />
+              <div class="drop-zone" id="tutDrop" data-answer="3시">?</div>
+            </div>
+            <div class="drag-tray" id="tutTray">
+              <div class="card" draggable="true" data-val="3시">3시</div>
+              <div class="card" draggable="true" data-val="4시">4시</div>
+              <div class="card" draggable="true" data-val="5시">5시</div>
+            </div>
+            <div class="feedback" id="tutFeedback">알맞은 카드를 빈칸으로 끌어다 놓으세요.</div>
+          </div>
+        </div>
+      </div>
+      <img class="char right bob" src="assets/character_child_librarian_confident.png" alt="한 손을 높이 들고 자신 있게 웃는 꼬마 사서 캐릭터" />
+    </section>
+
+    <!-- ================= SCENE 4: TUTORIAL SUCCESS ================= -->
+    <section class="scene dim" data-qa-scene="tutorial_success" data-qa-order="4" data-qa-label="튜토리얼 성공" id="scene-tutsuccess">
+      <img class="scene-bg" src="assets/bg_messy_library_lobby.png" alt="도서관 로비 배경." />
+      <div class="scene-inner" style="align-items:center;">
+        <div style="margin-top:clamp(50px,8vh,72px);">
+          <img class="tutorial-clock-obj glow" src="assets/object_table_clock_3_oclock.png" alt="노란 글로우로 수리된 3시 탁상시계" style="height:clamp(110px,20vh,170px);" />
+        </div>
+        <div class="dialogue chalk" style="margin:12px auto 0;">
+          <span class="who teacher">✔ 첫 번째 시계 수리 완료</span>
+          <div>와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
+        </div>
+      </div>
+      <img class="char left cheer" src="assets/character_child_librarian_success.png" alt="두 팔을 들고 기쁘게 뛰는 꼬마 사서" />
+      <img class="char right bob" src="assets/character_teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
+      <div class="center-bottom">
+        <button class="btn blink ticket" data-goto="mission_type_a">🎫 본격 수리 출동권 — 수리하러 가기 →</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 5: MISSION A ================= -->
+    <section class="scene dim" data-qa-scene="mission_type_a" data-qa-order="5" data-qa-label="유형 A 몇 분 전 시각" id="scene-a">
+      <img class="scene-bg" src="assets/bg_clock_counter_station.png" alt="도서관 안내 데스크와 빈 전광판, 세 개의 시계 보기 공간이 있는 밝은 로비 배경" />
+      <div class="scene-inner">
+        <div class="dialogue slim" style="margin:clamp(50px,8vh,70px) auto 0;">
+          <span class="who teacher">사서 선생님</span>
+          전광판의 시간이 다 깨져버렸어. 몇 분 전인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?
+        </div>
+        <div class="mission-wrap" id="missionA"></div>
+      </div>
+      <img class="char left bob" src="assets/character_child_librarian_idle.png" alt="편안히 서 있는 꼬마 사서" />
+    </section>
+
+    <!-- ================= SCENE 6: MISSION B ================= -->
+    <section class="scene dim" data-qa-scene="mission_type_b" data-qa-order="6" data-qa-label="유형 B 시간표 복구" id="scene-b">
+      <img class="scene-bg" src="assets/bg_reading_timetable_board.png" alt="독서 교실 입구의 코르크 게시판과 시간표 복구 문제를 위한 책상 공간이 있는 도서관 배경" />
+      <div class="scene-inner">
+        <div class="dialogue slim" style="margin:clamp(50px,8vh,70px) auto 0;">
+          <span class="who teacher">사서 선생님</span>
+          독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?
+        </div>
+        <div class="mission-wrap" id="missionB"></div>
+      </div>
+      <img class="char left bob" src="assets/character_child_librarian_idle.png" alt="편안히 서 있는 꼬마 사서" />
+    </section>
+
+    <!-- ================= SCENE 7: MISSION C ================= -->
+    <section class="scene dim" data-qa-scene="mission_type_c" data-qa-order="7" data-qa-label="유형 C 대출 시스템" id="scene-c">
+      <img class="scene-bg" src="assets/bg_loan_system_monitor.png" alt="도서 대출 시스템 재부팅 문제를 위한 큰 컴퓨터 모니터와 안내 데스크가 있는 도서관 배경" />
+      <div class="scene-inner">
+        <div class="dialogue slim" style="margin:clamp(50px,8vh,70px) auto 0;">
+          <span class="who teacher">대출 시스템 안내</span>
+          도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!
+        </div>
+        <div class="mission-wrap" id="missionC"></div>
+      </div>
+      <img class="char left bob" src="assets/character_child_librarian_idle.png" alt="편안히 서 있는 꼬마 사서" />
+    </section>
+
+    <!-- ================= SCENE 8: REPAIR OUTRO ================= -->
+    <section class="scene dim" data-qa-scene="repair_outro" data-qa-order="8" data-qa-label="도서관 복구" id="scene-repair">
+      <img class="scene-bg" src="assets/bg_restored_library_lobby.png" alt="수리 후 깨끗하게 정돈된 마을 도서관 로비 배경." />
+      <img class="repair-fx" id="repairFx" src="assets/effect_golden_repair_particles.png" alt="" aria-hidden="true" />
+      <div class="scene-inner" style="align-items:center;">
+        <div class="dialogue board">
+          <div style="font-weight:900;margin-bottom:6px;">✦ 수리 완료 ✦</div>
+          <div><span class="who child">꼬마 사서</span> 해냈다! 시간의 규칙을 모두 풀었어요!</div>
+          <div style="margin-top:8px;"><span class="who teacher">사서 선생님</span> 우리 수리 대원 정말 대단해! 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
+        </div>
+      </div>
+      <img class="char left cheer" src="assets/character_child_librarian_success.png" alt="기쁘게 뛰는 꼬마 사서" />
+      <img class="char right bob" src="assets/character_teacher_happy.png" alt="박수치는 사서 선생님" />
+      <div class="center-bottom">
+        <button class="btn blink ticket" data-goto="real_life_story">🔖 수리 이야기 열람권 — 보러 가기 →</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 9: REAL LIFE STORY ================= -->
+    <section class="scene dim" data-qa-scene="real_life_story" data-qa-order="9" data-qa-label="수리 이야기 생활 속 시간" id="scene-story">
+      <img class="scene-bg" src="assets/bg_restored_library_lobby.png" alt="정돈된 도서관 로비 배경." />
+      <div class="scene-inner" style="justify-content:center;padding-top:clamp(54px,8vh,70px);">
+        <div class="storybook">
+          <div class="book-stage">
+            <img id="storyImg" src="assets/story_convenience_24h_sign.png" alt="팝업북 페이지 안에 밤에도 따뜻하게 빛나는 동네 편의점과 크게 보이는 24 간판이 있는 장면" />
+            <div class="story-txt" id="storyTxt"></div>
+          </div>
+          <div class="story-nav">
+            <button class="arrow" id="storyPrev" aria-label="이전 페이지">‹</button>
+            <div class="page-dots" id="storyDots"></div>
+            <button class="arrow" id="storyNext" aria-label="다음 페이지">›</button>
+          </div>
+          <div id="storyHint" style="min-height:1.2em;color:#b06a12;font-size:clamp(12px,2vw,15px);font-weight:800;text-align:center;"></div>
+        </div>
+      </div>
+      <img class="char right bob" src="assets/character_teacher_explaining.png" alt="책과 돋보기를 들고 설명하는 사서 선생님" />
+    </section>
+
+    <!-- ================= SCENE 10: POPUP QUIZ ================= -->
+    <section class="scene dim" data-qa-scene="popup_quiz" data-qa-order="10" data-qa-label="마무리 퀴즈" id="scene-quiz">
+      <img class="scene-bg" src="assets/bg_restored_library_lobby.png" alt="정돈된 도서관 로비 배경." />
+      <div class="scene-inner" style="align-items:center;justify-content:center;padding-top:clamp(54px,8vh,70px);">
+        <div class="quiz-box">
+          <h2>마무리 퀴즈</h2>
+          <div class="q-prompt" style="margin-bottom:14px;">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
+          <div class="choices" id="popupChoices">
+            <button class="choice" data-correct="1">1일</button>
+            <button class="choice">1시간</button>
+            <button class="choice">24일</button>
+          </div>
+          <div class="feedback" id="popupFeedback"></div>
+        </div>
+      </div>
+      <img class="char left cheer" src="assets/character_child_librarian_success.png" alt="기쁘게 뛰는 꼬마 사서" />
+      <div class="center-bottom" id="popupNextWrap" style="display:none;">
+        <button class="btn blink ticket" data-goto="final_certificate">🎫 인증서 받으러 가기 →</button>
+      </div>
+    </section>
+
+    <!-- ================= SCENE 11: CERTIFICATE ================= -->
+    <section class="scene dim" data-qa-scene="final_certificate" data-qa-order="11" data-qa-label="마을 수리대원 인증" id="scene-cert">
+      <img class="scene-bg" src="assets/bg_restored_library_lobby.png" alt="정돈된 도서관 로비 배경." />
+      <div class="fx-layer" id="certConfetti"></div>
+      <div class="scene-inner" style="align-items:center;justify-content:center;padding-top:clamp(54px,8vh,64px);">
+        <div class="cert" id="certCard" style="background-image:url('assets/object_repair_certificate.png');">
+          <h2>마을 수리대원 인증서</h2>
+          <h2 style="font-size:.8em;">(도서관 편)</h2>
+          <p>위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.</p>
+          <div class="record">
+            <div>맞힌 문제 수 : <span id="certScore">0/13</span></div>
+            <div>클리어 소요 시간 : <span id="certTime">00:00</span></div>
+          </div>
+        </div>
+        <img class="sr-only" src="assets/object_repair_certificate.png" alt="따뜻한 도서관 책상 위에 놓인 금색 테두리의 마을 수리대원 인증서" />
+      </div>
+      <img class="char right cheer" src="assets/character_child_librarian_success.png" alt="기쁘게 뛰는 꼬마 사서" />
+      <div class="dialogue memo" style="position:absolute;left:2%;top:clamp(64px,12vh,96px);max-width:min(320px,40%);z-index:30;">
+        <div><span class="who teacher">사서 선생님</span> 정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
+        <div style="margin-top:8px;"><span class="who child">꼬마 사서</span> 언제든 제 수학실력이 필요하면 불러주세요!</div>
+      </div>
+      <div class="center-bottom">
+        <button class="btn stamp" id="saveCertBtn">📷 사진첩 저장 도장</button>
+        <button class="btn blink ticket" id="nextLessonBtn">✉ 초대장 · 딱 맞는 길이를 찾아라! 하러 가기 →</button>
+      </div>
+    </section>
+
+    <!-- ================= HUD (shared) ================= -->
+    <div class="hud" id="hud" style="display:none;">
+      <button class="ham" id="hamBtn" aria-label="차시 메뉴 열기"><span></span><span></span><span></span></button>
+      <div class="gauge-wrap" aria-label="에너지 게이지">
+        <span class="gauge-ico">⚡</span>
+        <div class="gauge"><div class="gauge-fill" id="gaugeFill"></div></div>
+        <span class="gauge-num" id="gaugeNum">0%</span>
+      </div>
+    </div>
+
+    <!-- ================= HAMBURGER MENU ================= -->
+    <div class="menu-backdrop" id="menuBackdrop">
+      <nav class="menu-panel" aria-label="차시 목록">
+        <button class="menu-close" id="menuClose" aria-label="메뉴 닫기">×</button>
+        <h3>차시 목록</h3>
+        <ul>
+          <li>1차시 · 세 자리 수</li>
+          <li>2차시 · 덧셈과 뺄셈</li>
+          <li>3차시 · 길이 재기 (cm)</li>
+          <li>4차시 · 분류하기</li>
+          <li>5차시 · 곱셈 알아보기</li>
+          <li>6차시 · 곱셈구구</li>
+          <li>7차시 · 표와 그래프</li>
+          <li class="active">8차시 · 시간 알아보기</li>
+          <li>9차시 · 길이 재기 (m)</li>
+          <li>10차시 · 규칙 찾기</li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- keypad overlay -->
+    <div class="overlay" id="keypadOverlay">
+      <div class="quiz-box" style="max-width:320px;">
+        <h2 id="keypadTitle">숫자 입력</h2>
+        <div id="keypadDisplay" class="eq-line" style="min-height:1.6em;"></div>
+        <div class="keypad" id="keypadKeys"></div>
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:12px;">
+          <button class="btn ghost" id="keypadCancel">닫기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- numeric-question confirm handled inline; toast -->
+    <div class="fx-layer" id="globalConfetti"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Audio (WebAudio beeps, no external files) ---------------- */
+  var AC=null;
+  function tone(freq,dur,type,vol){
+    try{
+      if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();}
+      var o=AC.createOscillator(),g=AC.createGain();
+      o.type=type||"sine";o.frequency.value=freq;
+      g.gain.value=vol||0.15;o.connect(g);g.connect(AC.destination);
+      var t=AC.currentTime;o.start(t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.stop(t+dur+0.02);
+    }catch(e){}
+  }
+  function sfxStart(){tone(523,0.12,"triangle",0.2);setTimeout(function(){tone(784,0.18,"triangle",0.2);},110);}
+  function sfxGood(){tone(660,0.1,"sine",0.2);setTimeout(function(){tone(880,0.16,"sine",0.2);},90);}
+  function sfxBad(){tone(180,0.22,"sawtooth",0.12);}
+  function sfxFanfare(){[523,659,784,1046].forEach(function(f,i){setTimeout(function(){tone(f,0.22,"triangle",0.2);},i*130);});}
+
+  /* ---------------- Scene manager ---------------- */
+  var scenes=Array.prototype.slice.call(document.querySelectorAll('.scene'));
+  var hud=document.getElementById('hud');
+  var noHudScenes={intro:true};
+  // lazy-start flags so both normal button flow and QA direct entry use one init path
+  var missionAStarted=false, missionBStarted=false, missionCStarted=false;
+  function startMissionA(){ if(missionAStarted) return; missionAStarted=true; runMissionA(0); }
+  function startMissionB(){ if(missionBStarted) return; missionBStarted=true; runMissionB(0); }
+  function startMissionC(){ if(missionCStarted) return; missionCStarted=true; runMissionC(0); }
+  function showScene(id){
+    scenes.forEach(function(s){
+      s.classList.toggle('active', s.getAttribute('data-qa-scene')===id);
+    });
+    hud.style.display = noHudScenes[id] ? 'none' : 'flex';
+    // trigger per-scene entrance behaviour
+    if(id==='mission_type_a'){ startMissionA(); }
+    if(id==='mission_type_b'){ startMissionB(); }
+    if(id==='mission_type_c'){ startMissionC(); }
+    if(id==='repair_outro'){ runRepairFx(); }
+    if(id==='final_certificate'){ runCertificate(); }
+    window.scrollTo(0,0);
+  }
+  // QA hook — shows the requested scene and hides the rest, reusing the same init path
+  window.__contentHarnessShowScene=function(sceneId){ showScene(sceneId); };
+
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click',function(){ sfxStart(); showScene(b.getAttribute('data-goto')); });
+  });
+
+  document.getElementById('startBtn').addEventListener('click',function(){
+    sfxStart(); showScene('problem_intro');
+  });
+
+  /* ---------------- Energy gauge ---------------- */
+  var TOTAL_MISSION=12;
+  var TOTAL_CERT=13;          // 튜토리얼 1 + 본 미션 12
+  var answered=0;
+  var correctCount=0;         // 인증서에 표시할 실제 해결 문제 수
+  var gaugeFill=document.getElementById('gaugeFill');
+  var gaugeNum=document.getElementById('gaugeNum');
+  var energy=0;
+  function setEnergy(pct,full){
+    energy=pct;
+    gaugeFill.style.width=pct+'%';
+    gaugeNum.textContent=Math.round(pct)+'%';
+    if(full){gaugeFill.classList.add('full');}
+  }
+  // tutorial success -> 10%
+  function afterTutorial(){ correctCount=Math.max(correctCount,1); setEnergy(10); }
+  // each mission question -> up to 90 at 12 answered
+  function missionSolved(){
+    answered++;
+    correctCount++;
+    var pct=10 + (answered/TOTAL_MISSION)*80; // 10 -> 90
+    setEnergy(Math.min(90,pct));
+  }
+
+  /* ---------------- Hamburger menu ---------------- */
+  var menuBackdrop=document.getElementById('menuBackdrop');
+  document.getElementById('hamBtn').addEventListener('click',function(){menuBackdrop.classList.add('open');});
+  document.getElementById('menuClose').addEventListener('click',function(){menuBackdrop.classList.remove('open');});
+  menuBackdrop.addEventListener('click',function(e){ if(e.target===menuBackdrop) menuBackdrop.classList.remove('open'); });
+
+  /* ---------------- Generic pointer drag ---------------- */
+  var ghost=null, dragData=null, dragSrc=null;
+  function startDrag(el,val,x,y){
+    dragData=val; dragSrc=el;
+    el.classList.add('dragging');
+    ghost=el.cloneNode(true);
+    ghost.id='dragGhost';
+    ghost.classList.remove('dragging');
+    ghost.style.width=el.offsetWidth+'px';
+    ghost.style.height=el.offsetHeight+'px';
+    document.body.appendChild(ghost);
+    moveGhost(x,y);
+  }
+  function moveGhost(x,y){ if(ghost){ghost.style.left=x+'px';ghost.style.top=y+'px';} }
+  function endDrag(x,y,zoneSel,onDrop){
+    var dropped=false;
+    if(ghost){ghost.style.display='none';}
+    var target=document.elementFromPoint(x,y);
+    var zone=target?target.closest(zoneSel):null;
+    if(zone){ dropped=onDrop(dragSrc,dragData,zone); }
+    if(ghost){ghost.remove();ghost=null;}
+    document.querySelectorAll(zoneSel).forEach(function(z){z.classList.remove('over');});
+    if(dragSrc){dragSrc.classList.remove('dragging');}
+    dragSrc=null;dragData=null;
+    return dropped;
+  }
+  // attach draggable behaviour
+  function makeDraggable(el,val,zoneSel,onDrop){
+    function down(e){
+      e.preventDefault();
+      var p=point(e);
+      startDrag(el,val,p.x,p.y);
+      function mv(ev){var q=point(ev);moveGhost(q.x,q.y);
+        var t=document.elementFromPoint(q.x,q.y);var z=t?t.closest(zoneSel):null;
+        document.querySelectorAll(zoneSel).forEach(function(zz){zz.classList.toggle('over',zz===z);});
+      }
+      function up(ev){var q=point(ev.changedTouches?ev.changedTouches[0]:ev);
+        endDrag(q.x,q.y,zoneSel,onDrop);
+        document.removeEventListener('pointermove',mv);
+        document.removeEventListener('pointerup',up);
+      }
+      document.addEventListener('pointermove',mv);
+      document.addEventListener('pointerup',up);
+    }
+    el.addEventListener('pointerdown',down);
+    el.addEventListener('dragstart',function(e){e.preventDefault();});
+  }
+  function point(e){ if(e.touches&&e.touches[0])e=e.touches[0]; return {x:e.clientX,y:e.clientY}; }
+
+  /* ---------------- Tutorial drag ---------------- */
+  (function(){
+    var tray=document.getElementById('tutTray');
+    var drop=document.getElementById('tutDrop');
+    var fb=document.getElementById('tutFeedback');
+    var done=false;
+    tray.querySelectorAll('.card').forEach(function(card){
+      makeDraggable(card,card.getAttribute('data-val'),'#tutDrop',function(src,val,zone){
+        if(done) return false;
+        if(val===zone.getAttribute('data-answer')){
+          zone.textContent=val;zone.classList.add('done');
+          src.classList.add('placed');src.style.visibility='hidden';
+          fb.textContent='정답이에요! 3시가 맞아요! 🎉';fb.className='feedback ok';
+          done=true;sfxGood();
+          document.getElementById('tutClock').classList.add('glow');
+          afterTutorial();
+          setTimeout(function(){ showScene('tutorial_success'); },1400);
+          return true;
+        }else{
+          fb.textContent='다시 생각해 볼까요? 짧은바늘이 가리키는 숫자를 보세요.';fb.className='feedback no';
+          zone.classList.add('shake');sfxBad();
+          setTimeout(function(){zone.classList.remove('shake');},450);
+          return false;
+        }
+      });
+    });
+  })();
+
+  /* ---------------- Choice quiz helper ---------------- */
+  function clockHTML(h,m){
+    // h in 12h, m minutes
+    var hd=(h%12)*30 + (m/60)*30;
+    var md=(m/60)*360;
+    return '<span class="mini-clock" style="--h:'+hd+'deg;--m:'+md+'deg;">'+
+      '<b style="left:50%;top:12%;">12</b><b style="left:87%;top:50%;">3</b>'+
+      '<b style="left:50%;top:87%;">6</b><b style="left:13%;top:50%;">9</b>'+
+      '<i class="hh"></i><i class="mm"></i><i class="dot"></i></span>';
+  }
+
+  function renderChoiceQuestion(container, cfg, onSolved){
+    // cfg: {badge, promptHTML, choices:[{html, correct}], afterEach}
+    var wrap=document.createElement('div');
+    wrap.className='panel';
+    wrap.style.display='flex';wrap.style.flexDirection='column';
+    wrap.style.alignItems='center';wrap.style.gap='12px';
+    wrap.style.maxWidth='min(820px,96%)';
+    wrap.innerHTML='<div class="q-prompt"><span class="q-badge">'+cfg.badge+'</span><br/>'+cfg.promptHTML+'</div>';
+    var choices=document.createElement('div');choices.className='choices';
+    var fb=document.createElement('div');fb.className='feedback';
+    var locked=false;
+    cfg.choices.forEach(function(c){
+      var btn=document.createElement('button');btn.className='choice';btn.innerHTML=c.html;
+      btn.addEventListener('click',function(){
+        if(locked) return;
+        if(c.correct){
+          locked=true;btn.classList.add('correct');sfxGood();
+          fb.innerHTML='정답이에요! ⭐ '+(cfg.reason?'<br/><span style="color:#8a5a10;font-weight:700;">'+cfg.reason+'</span>':'');
+          fb.className='feedback ok';
+          missionSolved();
+          setTimeout(function(){ onSolved(); }, cfg.reason?2000:1100);
+        }else{
+          btn.classList.add('wrong');sfxBad();
+          fb.textContent=cfg.wrongHint||'다시 한 번 생각해 볼까요?';fb.className='feedback no';
+          setTimeout(function(){btn.classList.remove('wrong');fb.textContent='';fb.className='feedback';},2400);
+        }
+      });
+      choices.appendChild(btn);
+    });
+    wrap.appendChild(choices);wrap.appendChild(fb);
+    container.innerHTML='';container.appendChild(wrap);
+  }
+
+  function dots(container,total,cur){
+    var d=document.createElement('div');d.className='progress-dots';
+    for(var i=0;i<total;i++){var x=document.createElement('i');if(i<cur)x.classList.add('done');if(i===cur)x.classList.add('cur');d.appendChild(x);}
+    container.appendChild(d);
+  }
+
+  /* ---------------- Numeric question helper ---------------- */
+  var keypadOverlay=document.getElementById('keypadOverlay');
+  var keypadKeys=document.getElementById('keypadKeys');
+  var keypadDisplay=document.getElementById('keypadDisplay');
+  var keypadTitle=document.getElementById('keypadTitle');
+  var activeBlank=null;
+  (function buildKeypad(){
+    ['1','2','3','4','5','6','7','8','9','지움','0','확인'].forEach(function(k){
+      var b=document.createElement('button');b.textContent=k;
+      if(k==='확인'||k==='지움')b.classList.add('wide');
+      b.addEventListener('click',function(){
+        if(!activeBlank) return;
+        if(k==='지움'){ activeBlank.textContent=''; }
+        else if(k==='확인'){ keypadOverlay.classList.remove('open'); if(activeBlank._onConfirm)activeBlank._onConfirm(); }
+        else{
+          var cur=activeBlank.textContent.replace(/[^0-9]/g,'');
+          if(cur.length<2){ activeBlank.textContent=cur+k; }
+        }
+        keypadDisplay.textContent=activeBlank.textContent||'_';
+      });
+      keypadKeys.appendChild(b);
+    });
+  })();
+  document.getElementById('keypadCancel').addEventListener('click',function(){keypadOverlay.classList.remove('open');});
+  function openKeypad(blank,title,onConfirm){
+    activeBlank=blank;blank._onConfirm=onConfirm;
+    keypadTitle.textContent=title||'숫자 입력';
+    keypadDisplay.textContent=blank.textContent||'_';
+    keypadOverlay.classList.add('open');
+  }
+
+  function renderInputQuestion(container, cfg, onSolved){
+    // cfg: {badge, promptHTML, blanks:[{answer, label}], sentenceHTML(with %B0 %B1 tokens)}
+    var wrap=document.createElement('div');
+    wrap.className='panel';
+    wrap.style.display='flex';wrap.style.flexDirection='column';
+    wrap.style.alignItems='center';wrap.style.gap='14px';wrap.style.maxWidth='min(820px,96%)';
+    var head=document.createElement('div');head.className='q-prompt';
+    head.innerHTML='<span class="q-badge">'+cfg.badge+'</span><br/>'+cfg.promptHTML;
+    wrap.appendChild(head);
+    var sentence=document.createElement('div');sentence.className='eq-line';
+    var parts=cfg.sentenceHTML.split(/(%B\d)/);
+    var blanks=[];
+    parts.forEach(function(p){
+      var mm=p.match(/^%B(\d)$/);
+      if(mm){
+        var idx=parseInt(mm[1],10);
+        var b=document.createElement('span');b.className='blank';b.textContent='';
+        b.setAttribute('data-answer',cfg.blanks[idx].answer);
+        (function(bl){
+          bl.addEventListener('click',function(){
+            sentence.querySelectorAll('.blank').forEach(function(x){x.classList.remove('sel');});
+            bl.classList.add('sel');
+            openKeypad(bl, cfg.blanks[idx].label||'숫자 입력', check);
+          });
+        })(b);
+        blanks.push(b);sentence.appendChild(b);
+      }else{
+        var span=document.createElement('span');span.innerHTML=p;sentence.appendChild(span);
+      }
+    });
+    wrap.appendChild(sentence);
+    var confirmBtn=document.createElement('button');confirmBtn.className='btn';confirmBtn.textContent='확인하기';
+    var fb=document.createElement('div');fb.className='feedback';
+    var solved=false;
+    function check(){
+      if(solved) return;
+      var allFilled=blanks.every(function(b){return b.textContent.replace(/[^0-9]/g,'').length>0;});
+      if(!allFilled){ fb.textContent='빈칸을 모두 채워 주세요.';fb.className='feedback no';return; }
+      var ok=blanks.every(function(b){return parseInt(b.textContent,10)===parseInt(b.getAttribute('data-answer'),10);});
+      if(ok){
+        solved=true;sfxGood();
+        blanks.forEach(function(b){b.classList.add('filled');b.classList.remove('sel');});
+        fb.innerHTML='정답이에요! ⭐ '+(cfg.reason?'<br/><span style="color:#8a5a10;font-weight:700;">'+cfg.reason+'</span>':'');
+        fb.className='feedback ok';
+        missionSolved();
+        setTimeout(onSolved, cfg.reason?2000:1100);
+      }else{
+        sfxBad();
+        fb.textContent=cfg.wrongHint||'앗, 다시 계산해 볼까요?';fb.className='feedback no';
+        blanks.forEach(function(b){
+          if(parseInt(b.textContent,10)!==parseInt(b.getAttribute('data-answer'),10)){
+            b.classList.add('shake');setTimeout(function(){b.classList.remove('shake');},450);
+          }
+        });
+      }
+    }
+    confirmBtn.addEventListener('click',check);
+    wrap.appendChild(confirmBtn);wrap.appendChild(fb);
+    container.innerHTML='';container.appendChild(wrap);
+  }
+
+  /* ---------------- Station-clear transition ---------------- */
+  function stationClear(container, title, sub, next){
+    var box=document.createElement('div');box.className='panel';
+    box.style.textAlign='center';box.style.maxWidth='min(560px,94%)';
+    box.style.display='flex';box.style.flexDirection='column';box.style.alignItems='center';box.style.gap='10px';
+    box.innerHTML='<div class="board" style="display:inline-block;background:#0a2a12;color:#7CFF9E;">'+title+'</div>'+
+      '<div class="feedback ok" style="margin-top:8px;">'+sub+'</div>';
+    container.innerHTML='';container.appendChild(box);sfxGood();
+    setTimeout(next,1900);
+  }
+
+  /* ---------------- MISSION A: 4 choice questions ---------------- */
+  var qaData=[
+    { board:'3시 5분 전',
+      prompt:'전광판이 <b>3시 5분 전</b>을 가리켜요. 똑같은 시각의 시계는?',
+      reason:'3시가 되기 5분 전이니까, 3시에서 5분을 빼면 2시 55분이에요.',
+      wrongHint:'\'몇 분 전\'은 다음 정각까지 남은 시간이에요. 3시에서 5분을 빼 보세요.',
+      choices:[
+        {h:2,m:55,label:'2시 55분',correct:true},
+        {h:3,m:5,label:'3시 5분',correct:false},
+        {h:3,m:55,label:'3시 55분',correct:false}
+      ]},
+    { board:'11시 50분',
+      prompt:'<b>11시 50분</b>을 다른 말로 바르게 읽은 것은?',
+      reason:'11시 50분은 12시가 되기 10분 전이라서 12시 10분 전이에요.',
+      wrongHint:'다음 정각인 12시까지 몇 분 남았는지 세어 보세요.',
+      choices:[
+        {text:'11시 10분 전',correct:false},
+        {text:'12시 10분 전',correct:true},
+        {text:'12시 50분 전',correct:false}
+      ]},
+    { board:'8시 15분 전',
+      prompt:'<b>8시 15분 전</b>을 가리키는 시계는?',
+      reason:'8시가 되기 15분 전이니까 8시에서 15분을 빼면 7시 45분이에요.',
+      wrongHint:'\'몇 분 전\'이니까 8시보다 조금 이른 시각을 찾아보세요.',
+      choices:[
+        {h:7,m:45,label:'7시 45분',correct:true},
+        {h:8,m:15,label:'8시 15분',correct:false},
+        {h:8,m:45,label:'8시 45분',correct:false}
+      ]},
+    { board:'4시 55분',
+      prompt:'<b>4시 55분</b>을 바르게 읽은 것은?',
+      reason:'4시 55분은 5시가 되기 5분 전이라서 5시 5분 전이에요.',
+      wrongHint:'다음 정각인 5시까지 몇 분 남았는지 생각해 보세요.',
+      choices:[
+        {text:'4시 5분 전',correct:false},
+        {text:'5시 5분 전',correct:true},
+        {text:'5시 55분 전',correct:false}
+      ]}
+  ];
+  function runMissionA(i){
+    var c=document.getElementById('missionA');
+    if(i>=qaData.length){
+      stationClear(c,'첫 번째 수리 지점 완료!','시계 읽기를 모두 해결했어요! 다음은 독서 교실 시간표를 복구하러 가요.',function(){ showScene('mission_type_b'); });
+      return;
+    }
+    var q=qaData[i];
+    renderChoiceQuestion(c,{
+      badge:'문제 '+(i+1)+' / 도서관 시계 맞추기',
+      promptHTML:'<div class="board" style="display:inline-block;margin:8px 0;">'+q.board+'</div><br/>'+q.prompt,
+      reason:q.reason,
+      wrongHint:q.wrongHint,
+      choices:q.choices.map(function(ch){
+        var html = ch.h!==undefined ? clockHTML(ch.h,ch.m)+'<div>'+ch.label+'</div>' : ch.text;
+        return {html:html, correct:ch.correct};
+      })
+    },function(){ runMissionA(i+1); });
+    dots(c.firstChild,4,i);
+  }
+
+  /* ---------------- MISSION B: input + choice ---------------- */
+  function runMissionB(i){
+    var c=document.getElementById('missionB');
+    var steps=[
+      function(){ // Q5 걸린시간 1시간
+        renderInputQuestion(c,{
+          badge:'문제 5 / 걸린 시간 계산',
+          promptHTML:'첫 번째 독서 교실이에요!<br/><span class="eq-line" style="display:block;">시작 <b>8시</b> ➜ 끝 <b>9시</b></span>걸린 시간은 몇 시간일까요?',
+          blanks:[{answer:1,label:'걸린 시간(시간)'}],
+          sentenceHTML:'걸린 시간 = %B0 시간',
+          reason:'8시에서 9시까지는 1칸이니까 걸린 시간은 1시간이에요.',
+          wrongHint:'시작 8시에서 끝 9시까지 세어 보세요. 답은 시간 단위예요.'
+        },function(){runMissionB(1);});
+        dots(c.firstChild,4,0);
+      },
+      function(){ // Q6 끝나는시각 12시 0분
+        renderInputQuestion(c,{
+          badge:'문제 6 / 끝나는 시각 구하기',
+          promptHTML:'다음 독서 교실이에요!<br/><span class="eq-line" style="display:block;">시작 <b>11시 30분</b> ➜ 30분 뒤 ➜ 끝 <b>?</b></span>끝나는 시각을 채워 주세요.',
+          blanks:[{answer:12,label:'끝나는 시(시)'},{answer:0,label:'끝나는 분(분)'}],
+          sentenceHTML:'끝나는 시각 = %B0 시 %B1 분',
+          reason:'11시 30분에서 30분이 지나면 12시 0분이 돼요.',
+          wrongHint:'11시 30분에 30분을 더하면 몇 시 몇 분일까요? 시와 분을 다시 확인해요.'
+        },function(){runMissionB(2);});
+        dots(c.firstChild,4,1);
+      },
+      function(){ // Q7 choice 오후 3시
+        renderChoiceQuestion(c,{
+          badge:'문제 7 / 끝난 시각 고르기',
+          promptHTML:'봉사활동이에요!<br/><span class="eq-line" style="display:block;">시작 <b>오후 2시</b> ➜ 1시간 동안 ➜ 끝 <b>?</b></span>끝난 시각은?',
+          reason:'오후 2시에서 1시간(60분)이 지나면 오후 3시예요.',
+          wrongHint:'오후 2시에 1시간(60분)을 더해 보세요.',
+          choices:[
+            {html:'오후 2시 30분',correct:false},
+            {html:'오후 3시',correct:true},
+            {html:'오후 4시',correct:false}
+          ]
+        },function(){runMissionB(3);});
+        dots(c.firstChild,4,2);
+      },
+      function(){ // Q8 input 30분
+        renderInputQuestion(c,{
+          badge:'문제 8 / 읽은 시간 계산',
+          promptHTML:'조용히 책을 읽었어요!<br/><span class="eq-line" style="display:block;">시작 <b>4시 30분</b> ➜ 끝 <b>5시</b></span>책을 읽은 시간은 몇 분일까요?',
+          blanks:[{answer:30,label:'읽은 시간(분)'}],
+          sentenceHTML:'읽은 시간 = %B0 분',
+          reason:'4시 30분부터 5시까지는 30분이에요.',
+          wrongHint:'4시 30분에서 5시까지 몇 분인지 세어 보세요. 답은 분 단위예요.'
+        },function(){
+          stationClear(c,'두 번째 수리 지점 완료!','시간표를 모두 복구했어요! 이제 도서 대출 시스템을 재부팅하러 가요.',function(){ showScene('mission_type_c'); });
+        });
+        dots(c.firstChild,4,3);
+      }
+    ];
+    steps[i]();
+  }
+
+  /* ---------------- MISSION C: block drag + input + choice ---------------- */
+  function timelineHTML(){
+    var s='<div class="timeline">';
+    for(var h=1;h<=12;h++){ s+='<b>오전 '+h+'시</b>'; }
+    for(var h2=1;h2<=12;h2++){ s+='<b class="pm">오후 '+h2+'시</b>'; }
+    return s+'</div>';
+  }
+  function runMissionC(i){
+    var c=document.getElementById('missionC');
+    var steps=[
+      function(){ // Q9 input 1
+        renderInputQuestion(c,{
+          badge:'문제 9 / 대출 시스템 규칙 1',
+          promptHTML:'시스템 규칙을 하나씩 채우면 대출 시스템이 켜져요!<br/>24시간은 며칠과 같을까요?',
+          blanks:[{answer:1,label:'며칠(일)'}],
+          sentenceHTML:'24시간 = %B0 일',
+          reason:'하루는 24시간이니까, 24시간은 1일과 같아요.',
+          wrongHint:'하루가 며칠인지 생각해 보세요. 답은 일(날) 단위예요.'
+        },function(){runMissionC(1);});
+        dots(c.firstChild,4,0);
+      },
+      function(){ // Q10 block drag 12,12
+        var wrap=document.createElement('div');wrap.className='panel';
+        wrap.style.maxWidth='min(860px,97%)';
+        wrap.style.display='flex';wrap.style.flexDirection='column';
+        wrap.style.alignItems='center';wrap.style.gap='12px';
+        wrap.innerHTML='<div class="q-prompt"><span class="q-badge">문제 10 / 하루의 구성</span><br/>'+
+          '하루는 오전과 오후로 이루어져요. 알맞은 숫자 블록을 빈칸에 넣어 주세요!</div>'+timelineHTML();
+        var eq=document.createElement('div');eq.className='eq-line';
+        eq.innerHTML='하루 = 오전 <span class="drop-zone" id="cDropAm" data-answer="12">?</span> 시간 + 오후 <span class="drop-zone" id="cDropPm" data-answer="12">?</span> 시간';
+        wrap.appendChild(eq);
+        var tray=document.createElement('div');tray.className='drag-tray';
+        var vals=[12,6,12,10];
+        vals.forEach(function(v,idx){
+          var blk=document.createElement('div');blk.className='block';blk.textContent=v;blk.setAttribute('data-val',v);blk.id='cblk'+idx;
+          tray.appendChild(blk);
+        });
+        wrap.appendChild(tray);
+        var fb=document.createElement('div');fb.className='feedback';wrap.appendChild(fb);
+        c.innerHTML='';c.appendChild(wrap);dots(wrap,4,1);
+        var filled={cDropAm:false,cDropPm:false};
+        function onDrop(src,val,zone){
+          if(filled[zone.id]) return false;
+          if(parseInt(val,10)===parseInt(zone.getAttribute('data-answer'),10)){
+            zone.textContent=val;zone.classList.add('done');filled[zone.id]=true;
+            src.style.visibility='hidden';sfxGood();
+            if(filled.cDropAm&&filled.cDropPm){
+              fb.textContent='정답이에요! 하루는 오전 12시간 + 오후 12시간 = 24시간! ⭐';fb.className='feedback ok';
+              missionSolved();setTimeout(function(){runMissionC(2);},2000);
+            }else{
+              var left=filled.cDropAm?'오후':'오전';
+              fb.textContent='좋아요! 한 칸을 채웠어요. 남은 '+left+' 칸도 채워 볼까요?';fb.className='feedback ok';
+            }
+            return true;
+          }else{
+            zone.classList.add('shake');sfxBad();
+            fb.textContent='다른 숫자를 넣어 볼까요? 오전과 오후는 각각 12시간이에요.';fb.className='feedback no';
+            setTimeout(function(){zone.classList.remove('shake');},450);
+            return false;
+          }
+        }
+        tray.querySelectorAll('.block').forEach(function(blk){
+          makeDraggable(blk,blk.getAttribute('data-val'),'.drop-zone',onDrop);
+        });
+      },
+      function(){ // Q11 choice 오후 3시
+        renderChoiceQuestion(c,{
+          badge:'문제 11 / 하루가 지나면',
+          promptHTML:'오늘 <b>오후 3시</b>에 책을 빌리고 하루가 지나면 내일 언제일까요?',
+          reason:'하루(24시간)가 꼭 지나면 시각은 그대로예요. 그래서 내일도 오후 3시!',
+          wrongHint:'하루(24시간)가 지나면 어제와 같은 시각이 돼요.',
+          choices:[
+            {html:'오전 3시',correct:false},
+            {html:'오후 3시',correct:true},
+            {html:'오후 4시',correct:false}
+          ]
+        },function(){runMissionC(3);});
+        dots(c.firstChild,4,2);
+      },
+      function(){ // Q12 input 24
+        renderInputQuestion(c,{
+          badge:'문제 12 / 마지막 규칙',
+          promptHTML:'마지막 규칙이에요! 마법 책을 <b>1일 동안</b> 빌릴 수 있어요. 1일은 모두 몇 시간일까요?',
+          blanks:[{answer:24,label:'1일(시간)'}],
+          sentenceHTML:'1일 = %B0 시간',
+          reason:'1일은 오전 12시간 + 오후 12시간 = 24시간이에요.',
+          wrongHint:'오전 12시간과 오후 12시간을 더하면 몇 시간일까요?'
+        },function(){
+          // system reboot message then repair outro
+          var c2=document.getElementById('missionC');
+          var box=document.createElement('div');box.className='panel';
+          box.style.textAlign='center';box.style.maxWidth='min(560px,94%)';
+          box.innerHTML='<div class="board" style="display:inline-block;background:#0a2a12;color:#7CFF9E;">시스템 재부팅 완료!</div>'+
+            '<div class="feedback ok" style="margin-top:12px;">도서 대출 시스템이 다시 켜졌어요! 💡</div>';
+          c2.innerHTML='';c2.appendChild(box);sfxFanfare();
+          setTimeout(function(){ showScene('repair_outro'); },1700);
+        });
+        dots(c.firstChild,4,3);
+      }
+    ];
+    steps[i]();
+  }
+
+  /* ---------------- Repair FX ---------------- */
+  var repairPlayed=false;
+  function runRepairFx(){
+    if(repairPlayed) return; repairPlayed=true;
+    var fx=document.getElementById('repairFx');
+    fx.classList.add('show');
+    sfxFanfare();
+    setEnergy(90);
+  }
+
+  /* ---------------- Storybook ---------------- */
+  (function(){
+    var pages=[
+      {img:'assets/story_convenience_24h_sign.png',
+       alt:'밤에도 따뜻하게 빛나는 동네 편의점과 크게 보이는 24 간판',
+       txt:'편의점 간판의 <b>24</b>는 1일이 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이에요.'},
+      {img:'assets/story_sundial_shadow.png',
+       alt:'햇빛이 비치는 전통 해시계와 시간을 가리키는 그림자',
+       txt:'옛날 사람들은 시계가 없어도, <b>해의 그림자</b>가 움직이는 모습을 보고 시간을 알았답니다.'},
+      {img:'assets/story_oven_30min_timer.png',
+       alt:'작은 오븐과 30분을 가리키는 둥근 요리 타이머',
+       txt:'맛있는 요리를 만들 때에도 <b>30분</b>처럼 걸리는 시간을 계산하며 기다려요.'}
+    ];
+    var cur=0;
+    var img=document.getElementById('storyImg');
+    var txt=document.getElementById('storyTxt');
+    var prev=document.getElementById('storyPrev');
+    var next=document.getElementById('storyNext');
+    var dotsEl=document.getElementById('storyDots');
+    var hintEl=document.getElementById('storyHint');
+    pages.forEach(function(_,i){var d=document.createElement('i');dotsEl.appendChild(d);});
+    var reachedEnd=false;
+    function render(){
+      img.src=pages[cur].img;img.alt=pages[cur].alt;
+      txt.innerHTML=pages[cur].txt;
+      prev.disabled=cur===0;
+      dotsEl.querySelectorAll('i').forEach(function(d,i){d.classList.toggle('on',i===cur);});
+      // last page -> next arrow leads to the final quiz
+      if(cur===pages.length-1){
+        reachedEnd=true; next.textContent='▶';
+        next.setAttribute('aria-label','마무리 퀴즈로 가기');
+        hintEl.textContent='📘 마지막 페이지예요! 오른쪽 ▶ 버튼을 누르면 마무리 퀴즈로 가요.';
+      }else{
+        next.textContent='›';
+        next.setAttribute('aria-label','다음 페이지');
+        hintEl.textContent='';
+      }
+    }
+    prev.addEventListener('click',function(){ if(cur>0){cur--;render();} });
+    next.addEventListener('click',function(){
+      if(cur<pages.length-1){ cur++;render(); }
+      else if(reachedEnd){ sfxStart(); showScene('popup_quiz'); }
+    });
+    render();
+  })();
+
+  /* ---------------- Popup quiz ---------------- */
+  (function(){
+    var choices=document.getElementById('popupChoices');
+    var fb=document.getElementById('popupFeedback');
+    var nextWrap=document.getElementById('popupNextWrap');
+    var solved=false;
+    choices.querySelectorAll('.choice').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        if(solved) return;
+        if(btn.getAttribute('data-correct')==='1'){
+          solved=true;btn.classList.add('correct');sfxGood();
+          fb.innerHTML='<span class="who child">꼬마 사서</span> 맞았어! 24시간은 1일과 같지!';fb.className='feedback ok';
+          setEnergy(100,true);
+          setTimeout(function(){ nextWrap.style.display='flex'; },700);
+        }else{
+          btn.classList.add('wrong');sfxBad();
+          fb.textContent='다시 골라 볼까요? 하루 종일은 24시간이고, 24시간은 1일이에요.';fb.className='feedback no';
+          setTimeout(function(){btn.classList.remove('wrong');fb.textContent='';fb.className='feedback';},2400);
+        }
+      });
+    });
+  })();
+
+  /* ---------------- Certificate ---------------- */
+  var startTime=Date.now();
+  var certPlayed=false;
+  var certTimeStr='00:00';
+  var certScoreStr='0/'+TOTAL_CERT;
+  function runCertificate(){
+    if(certPlayed) return; certPlayed=true;
+    var secs=Math.round((Date.now()-startTime)/1000);
+    var mm=String(Math.floor(secs/60)).padStart(2,'0');
+    var ss=String(secs%60).padStart(2,'0');
+    certTimeStr=mm+':'+ss;
+    certScoreStr=Math.max(correctCount,0)+'/'+TOTAL_CERT;
+    document.getElementById('certTime').textContent=certTimeStr;
+    document.getElementById('certScore').textContent=certScoreStr;
+    sfxFanfare();
+    confetti(document.getElementById('certConfetti'),80);
+  }
+  function confetti(layer,n){
+    var colors=['#ffd23f','#ff6b6b','#7fe0c8','#8fd0ff','#ffb200','#ff9ecb'];
+    for(var i=0;i<n;i++){
+      var c=document.createElement('div');c.className='confetti';
+      c.style.left=(Math.floor((i/n)*100))+'%';
+      c.style.background=colors[i%colors.length];
+      c.style.animationDuration=(2.5+ (i%10)*0.25)+'s';
+      c.style.animationDelay=((i%12)*0.12)+'s';
+      layer.appendChild(c);
+      (function(el){ setTimeout(function(){el.remove();}, 6000); })(c);
+    }
+  }
+  function certToast(msg){
+    var card=document.getElementById('certCard');
+    var old=card.querySelector('.save-toast');
+    if(old) old.remove();
+    var t=document.createElement('div');t.className='save-toast feedback ok';
+    t.textContent=msg;
+    t.style.position='absolute';t.style.bottom='-2.2em';t.style.left='0';t.style.right='0';
+    card.appendChild(t);
+    setTimeout(function(){t.remove();},2800);
+  }
+  // Try to render the certificate to a downloadable PNG; fall back to a toast if the
+  // browser blocks canvas export (e.g. tainted local image over file://).
+  function downloadCertificate(){
+    try{
+      var W=560,H=747;
+      var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+      var ctx=cv.getContext('2d');
+      var img=new Image();
+      img.onload=function(){
+        try{
+          ctx.drawImage(img,0,0,W,H);
+          ctx.textAlign='center';
+          ctx.fillStyle='#8a5a10';ctx.font='bold 34px "Malgun Gothic",sans-serif';
+          ctx.fillText('마을 수리대원 인증서',W/2,H*0.24);
+          ctx.font='bold 22px "Malgun Gothic",sans-serif';ctx.fillText('(도서관 편)',W/2,H*0.30);
+          ctx.fillStyle='#4a3410';ctx.font='600 17px "Malgun Gothic",sans-serif';
+          ctx.fillText('정확한 시간 계산으로 도서관 안내문을',W/2,H*0.44);
+          ctx.fillText('완벽하게 수리하였기에 이 증서를 수여합니다.',W/2,H*0.49);
+          ctx.fillStyle='#8a5a10';ctx.font='bold 20px "Malgun Gothic",sans-serif';
+          ctx.fillText('맞힌 문제 수 : '+certScoreStr,W/2,H*0.80);
+          ctx.fillText('클리어 소요 시간 : '+certTimeStr,W/2,H*0.85);
+          var url=cv.toDataURL('image/png');
+          var a=document.createElement('a');a.href=url;a.download='마을수리대원_인증서.png';
+          document.body.appendChild(a);a.click();a.remove();
+          certToast('인증서를 이미지로 저장했어요! 📷');
+        }catch(err){
+          certToast('저장이 막혀 있어요. 화면을 캡처해서 보관해 주세요! 📷');
+        }
+      };
+      img.onerror=function(){ certToast('저장이 막혀 있어요. 화면을 캡처해서 보관해 주세요! 📷'); };
+      img.src='assets/object_repair_certificate.png';
+    }catch(e){
+      certToast('저장이 막혀 있어요. 화면을 캡처해서 보관해 주세요! 📷');
+    }
+  }
+  document.getElementById('saveCertBtn').addEventListener('click',function(){
+    sfxGood(); downloadCertificate();
+  });
+  document.getElementById('nextLessonBtn').addEventListener('click',function(){
+    sfxStart();
+    certToast('다음 차시 「길이 재기 – 딱 맞는 길이를 찾아라!」는 준비 중이에요. 조금만 기다려 주세요!');
+  });
+
+})();
+</script>
+</body>
+</html>

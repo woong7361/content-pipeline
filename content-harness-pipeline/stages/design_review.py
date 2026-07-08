@@ -29,18 +29,18 @@ def review_design(
     model: str | None = None,
     timeout_seconds: int = 600,
 ) -> dict | None:
-    with tempfile.TemporaryDirectory(prefix="content-harness-render-evidence-") as temp_dir:
-        render_evidence_path = Path(temp_dir) / "render-evidence.json"
+    with tempfile.TemporaryDirectory(prefix="content-harness-design-review-") as temp_dir:
+        visual_qa_output_path = Path(temp_dir) / "visual-qa-output.json"
         run_visual_qa(
             html_path=html_path,
             run_dir=run_dir,
             iteration=iteration,
-            output_path=render_evidence_path,
+            output_path=visual_qa_output_path,
             timeout_seconds=timeout_seconds,
             artifact_dir_name="design_review",
             viewport_names=("desktop",),
         )
-        render_evidence = load_json(render_evidence_path)
+        visual_qa_output = load_json(visual_qa_output_path)
 
         model_output_path = Path(temp_dir) / "design-review-model-output.json"
         prompt = build_prompt(
@@ -50,7 +50,7 @@ def review_design(
             builder_path=builder_path,
             html_path=html_path,
             run_dir=run_dir,
-            render_evidence=render_evidence,
+            visual_qa_output=visual_qa_output,
         )
         client = CodexClient(
             codex_bin=codex_bin,
@@ -69,9 +69,9 @@ def review_design(
         "status": model_output["status"],
         "checked_at": datetime.now(KST).isoformat(timespec="seconds"),
         "html_path": "output/index.html",
-        "reviewed_screenshots": build_reviewed_screenshots(render_evidence, run_dir),
-        "render_evidence": render_evidence,
-        "designer_review": model_output["designer_review"],
+        "reviewed_screenshots": build_reviewed_screenshots(visual_qa_output, run_dir),
+        "overall_assessment": model_output["overall_assessment"],
+        "scene_reviews": model_output["scene_reviews"],
         "asset_review": model_output["asset_review"],
         "priority_findings": model_output["priority_findings"],
         "refine_suggestions": model_output["refine_suggestions"],
@@ -81,8 +81,8 @@ def review_design(
     return token_usage
 
 
-def build_reviewed_screenshots(render_evidence: dict, run_dir: Path) -> list[dict]:
-    screenshots = render_evidence.get("screenshots", [])
+def build_reviewed_screenshots(visual_qa_output: dict, run_dir: Path) -> list[dict]:
+    screenshots = visual_qa_output.get("screenshots", [])
     if not isinstance(screenshots, list):
         return []
     reviewed = []
@@ -113,7 +113,7 @@ def build_prompt(
     builder_path: Path,
     html_path: Path,
     run_dir: Path,
-    render_evidence: dict,
+    visual_qa_output: dict,
 ) -> str:
     system_prompt = DESIGN_REVIEW_SYSTEM_PROMPT.read_text(encoding="utf-8")
     input_data = load_json(input_path)
@@ -123,7 +123,7 @@ def build_prompt(
     html = html_path.read_text(encoding="utf-8")
     screenshot_paths = [
         str((run_dir / screenshot["path"]).resolve())
-        for screenshot in render_evidence.get("screenshots", [])
+        for screenshot in visual_qa_output.get("screenshots", [])
         if isinstance(screenshot, dict) and isinstance(screenshot.get("path"), str)
     ]
 
@@ -147,8 +147,8 @@ ASSET_SUMMARY_JSON:
 BUILDER_OUTPUT_JSON:
 {json.dumps(builder_output, ensure_ascii=False, indent=2)}
 
-DESKTOP_RENDER_EVIDENCE_JSON:
-{json.dumps(compact_render_evidence(render_evidence), ensure_ascii=False, indent=2)}
+DESKTOP_SCREENSHOT_SUMMARY_JSON:
+{json.dumps(compact_desktop_screenshot_summary(visual_qa_output), ensure_ascii=False, indent=2)}
 
 HTML:
 {html}
@@ -213,23 +213,16 @@ def compact_asset_output(asset_output: dict) -> dict:
     }
 
 
-def compact_render_evidence(render_evidence: dict) -> dict:
-    screenshots = render_evidence.get("screenshots", [])
+def compact_desktop_screenshot_summary(visual_qa_output: dict) -> dict:
+    screenshots = visual_qa_output.get("screenshots", [])
     if not isinstance(screenshots, list):
         screenshots = []
     return {
-        "status": render_evidence.get("status"),
         "screenshots": [
             screenshot
             for screenshot in screenshots
             if isinstance(screenshot, dict) and screenshot.get("viewport") == "desktop"
         ],
-        "priority_findings": [
-            finding
-            for finding in render_evidence.get("priority_findings", [])
-            if isinstance(finding, dict) and finding.get("viewport") == "desktop"
-        ],
-        "refine_suggestions": render_evidence.get("refine_suggestions", []),
     }
 
 

@@ -1,0 +1,40 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 3.2,
+      "learning_goal_alignment": 3.4,
+      "interaction_flow_clarity": 2.0,
+      "feedback_scaffolding": 3.1,
+      "content_completeness": 2.6,
+      "functional_integrity": 1.4
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 2.719
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "HTML 원문에는 도입, 문제 발생, 튜토리얼, 유형 A/B/C 12문항, 생활 속 이야기, 마무리 퀴즈, 인증서가 대부분 포함되어 있다. 그러나 튜토리얼 성공 후 본 미션으로 이동하는 실제 장면 전환이 잘못되어 원본 storyboard의 핵심 학습 흐름이 정상적으로 이어지지 않는다.",
+    "learning_goal_alignment": "구현된 문항 자체는 1시간=60분, 몇 분 전 시각, 걸린 시간, 1일=24시간 목표와 대체로 직접 연결된다. 다만 정상 사용자 흐름에서는 튜토리얼 이후 본 학습 문항에 도달하지 못해 실제 학습 목표 달성이 제한된다.",
+    "interaction_flow_clarity": "초기 도입부터 튜토리얼까지는 다음 행동이 비교적 명확하지만, 튜토리얼 성공 화면의 본격 수리 버튼이 data-goto=\"mission_a\"를 호출하고 실제 scene id는 mission_type_a라서 아무 장면도 active가 되지 않는다. 사용자는 이후 무엇을 해야 하는지 알 수 없는 빈 흐름에 놓인다.",
+    "feedback_scaffolding": "정답/오답 피드백은 대부분 존재하고 일부 오답에는 짧은 힌트가 있다. 그러나 많은 피드백이 '정답이에요', '다시 생각해 볼까요' 수준에 머물러 왜 그런지 설명하는 발판은 약하며, 본 미션에 도달하지 못하는 흐름 때문에 전체 피드백 경험도 완성되지 않는다.",
+    "content_completeness": "소스에는 12문항, 생활 속 3페이지, 최종 퀴즈, 인증서 보상이 들어 있다. 하지만 실제 필수 진행 경로가 튜토리얼 성공 후 끊기므로 필수 섹션과 완료 조건, 보상 흐름이 학습자에게 완결된 경험으로 제공되지 않는다.",
+    "functional_integrity": "필수 진행 버튼 중 튜토리얼 성공 후 미션 A 진입 버튼이 잘못된 scene key로 전환되어 active scene이 사라지는 blocking 기능 오류가 있다. 이 때문에 사용자는 본 미션, 복구, 이야기, 퀴즈, 인증서 완료 흐름으로 정상 진행할 수 없다."
+  },
+  "weak_axes": [
+    "storyboard_fidelity",
+    "learning_goal_alignment",
+    "interaction_flow_clarity",
+    "feedback_scaffolding",
+    "content_completeness",
+    "functional_integrity"
+  ],
+  "calibration_note": "하드 게이트의 required_interactions_reachable 조건을 충족하지 못한다. HTML 안에 많은 필수 콘텐츠가 구현되어 있어도 desktop 기준 실제 학습 흐름이 튜토리얼 이후 차단되므로 PASS 기준에 미달한다."
+}

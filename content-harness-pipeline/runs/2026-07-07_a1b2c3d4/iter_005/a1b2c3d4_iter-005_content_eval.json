@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "PASS",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.3,
+      "learning_goal_alignment": 4.4,
+      "interaction_flow_clarity": 4.3,
+      "feedback_scaffolding": 4.4,
+      "content_completeness": 4.5,
+      "functional_integrity": 4.5
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.39
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본의 기차역 혼란, 번호표 기계 수리, 튜토리얼, 5문제 수리 게임, 보스 비교, 생활 사례 연결, 황금 기차표 보상 순서가 모두 보존되어 있다. 일부 도입 내레이션은 원문보다 압축되었지만 핵심 사건과 맥락은 유지된다.",
+    "learning_goal_alignment": "1씩 커지는 수, 10씩 뛰어 세기, 1000씩 뛰어 세기, 세 네 자리 수 비교가 실제 조작과 문항으로 구현되어 네 자리 수 순서와 크기 비교 목표에 직접 연결된다. 생활 사례도 번호가 순서를 알려 준다는 개념을 다시 확인하게 한다.",
+    "interaction_flow_clarity": "시작 버튼, 튜토리얼 진행도, 게임 진행도, 입력창과 키패드, 보스 선택, 생활 사례 확인 후 보상 이동 흐름이 명확하다. 정답 후 일부 게임 문항이 자동 전환되지만 피드백 문장이 먼저 표시되어 전체 진행을 크게 방해하지 않는다.",
+    "feedback_scaffolding": "오답 피드백이 단순한 정오답 표시를 넘어서 일의 자리, 십의 자리, 천의 자리, 백의 자리와 십의 자리 비교를 짚어 준다. 정답 피드백도 왜 해당 수가 답인지 설명해 개념 이해를 돕는다.",
+    "content_completeness": "필수 섹션과 상호작용이 모두 포함되어 있고, 튜토리얼 2문항, 본 게임 4문항, 보스 1문항으로 5문제 구조가 닫힌다. 생활 사례 3종 확인 조건과 1호 황금 기차표 1/5 보상 화면도 구현되어 완료 흐름이 완결된다.",
+    "functional_integrity": "필수 버튼, 숫자 카드 선택/드롭, 숫자 입력, 키패드, 제출, 진행도 갱신, 보스 선택, 생활 슬라이드 방문 체크, 완료 화면 전환이 코드상 연결되어 있다. blocking runtime error로 보이는 흐름 단절은 확인되지 않는다."
+  },
+  "weak_axes": [],
+  "calibration_note": "thresholds min_total 4.0 및 모든 min_axis 기준을 충족한다. 점수는 구현된 학습 흐름과 피드백의 구체성을 반영했으며, 시각 디자인이나 asset 통합 품질은 판정에서 제외했다."
+}

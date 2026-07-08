@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "PASS",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.4,
+      "learning_goal_alignment": 4.5,
+      "interaction_flow_clarity": 4.3,
+      "feedback_scaffolding": 4.2,
+      "content_completeness": 4.4,
+      "functional_integrity": 4.1
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.328
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본의 도서관 고장 도입, 튜토리얼, 유형 A/B/C 12문항, 복구, 생활 속 시간 이야기, 마무리 퀴즈, 인증서 흐름이 순서대로 보존되어 있다. 일부 연출은 압축되었지만 핵심 사건과 학습 맥락은 HTML interaction 안에서 유지된다.",
+    "learning_goal_alignment": "1시간=60분, 몇 분 전 시각, 걸린 시간, 1일=24시간을 각각 객관식, 숫자 입력, 블록 배치, 생활 예시로 직접 다룬다. 조작이 단순 진행 버튼에만 머물지 않고 시간 개념 확인과 연결된다.",
+    "interaction_flow_clarity": "시작 버튼, 튜토리얼 드래그, 문제별 진행 표시, 정답 후 자동 전환, 스토리북 화살표, 퀴즈 후 인증서 버튼까지 학습자가 따라갈 흐름이 대체로 명확하다. 다만 일부 장면 전환이 자동으로 빠르게 일어나 사용자가 완료 상태를 충분히 확인하기 전 넘어갈 수 있다.",
+    "feedback_scaffolding": "오답에는 재시도 힌트가 있고 정답에는 왜 맞는지 설명하는 문장이 다수 제공된다. 특히 몇 분 전, 30분 뒤, 오전/오후 12시간 관계를 설명해 이해를 돕는다. 일부 완료 피드백은 성공 선언 중심이라 개념 정리는 상대적으로 짧다.",
+    "content_completeness": "planner의 필수 섹션과 상호작용이 모두 포함되어 있고 유형 A 4문항, 유형 B 4문항, 유형 C 4문항, 생활 이야기 3페이지, 마무리 퀴즈, 인증서 보상이 구현되어 있다. 인증서의 13/13 기록은 진행 흐름상 표시되지만 마무리 퀴즈 자체는 점수 카운트에 반영되지 않아 완결성에서 약간의 불일치가 있다.",
+    "functional_integrity": "필수 버튼, 드래그, 객관식, 숫자 입력, 진행 게이지, 메뉴, 스토리북, 인증서 저장 시도가 연결되어 있으며 일반 학습 흐름을 막는 런타임 오류는 보이지 않는다. 다음 차시 이동은 실제 이동 대신 준비 중 토스트로 처리되어 planner의 이동 동작과는 기능적으로 약간 축약되어 있다."
+  },
+  "weak_axes": [],
+  "calibration_note": "기준 축의 최소값을 모두 넘고 weighted_total도 4.0 이상이다. 기능 구현만으로 후하게 본 것이 아니라, 12개 핵심 문항과 피드백 설명이 학습 목표에 직접 연결되는 점을 주요 근거로 PASS 판정한다."
+}

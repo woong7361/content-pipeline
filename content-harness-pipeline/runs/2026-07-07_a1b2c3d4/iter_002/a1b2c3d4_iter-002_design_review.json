@@ -1,6 +1,6 @@
 {
   "status": "REJECT",
-  "checked_at": "2026-07-07T11:27:48+09:00",
+  "checked_at": "2026-07-07T16:52:49+09:00",
   "html_path": "output/index.html",
   "reviewed_screenshots": [
     {
@@ -21,251 +21,622 @@
     },
     {
       "viewport": "desktop",
-      "capture_label": "02_step3_game_repair",
-      "path": "iter_002/design_review/desktop__02_step3_game_repair.png",
-      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__02_step3_game_repair.png",
+      "capture_label": "02_step3_game_challenges",
+      "path": "iter_002/design_review/desktop__02_step3_game_challenges.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__02_step3_game_challenges.png",
       "width": 1440,
       "height": 960
     },
     {
       "viewport": "desktop",
-      "capture_label": "03_step4_life_story",
-      "path": "iter_002/design_review/desktop__03_step4_life_story.png",
-      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__03_step4_life_story.png",
+      "capture_label": "03_step3_boss_compare",
+      "path": "iter_002/design_review/desktop__03_step3_boss_compare.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__03_step3_boss_compare.png",
       "width": 1440,
       "height": 960
     },
     {
       "viewport": "desktop",
-      "capture_label": "04_step4_completion_reward",
-      "path": "iter_002/design_review/desktop__04_step4_completion_reward.png",
-      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__04_step4_completion_reward.png",
+      "capture_label": "04_step4_story_life",
+      "path": "iter_002/design_review/desktop__04_step4_story_life.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__04_step4_story_life.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_step4_clear_reward",
+      "path": "iter_002/design_review/desktop__05_step4_clear_reward.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__05_step4_clear_reward.png",
       "width": 1440,
       "height": 960
     }
   ],
-  "render_evidence": {
-    "status": "PASS",
-    "checked_at": "2026-07-07T11:26:04+09:00",
-    "html_path": "output/index.html",
-    "viewports": [
-      "desktop"
-    ],
-    "screenshots": [
-      {
-        "viewport": "desktop",
-        "capture_label": "initial",
-        "path": "iter_002/design_review/desktop.png",
-        "width": 1440,
-        "height": 960
+  "overall_assessment": "raster asset 품질과 전체 분위기는 좋지만, 일부 핵심 장면에서 배경에 이미 있는 전광판/번호표 surface를 비워 둔 채 별도 웹 패널과 버튼을 띄워 장면형 학습 경험이 깨진다. 특히 보스 문제의 빈 번호표 surface 미사용은 다음 refine에서 반드시 고쳐야 한다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop.png",
+      "scene_purpose": "고장 난 역 전광판과 혼란 상황을 보여 주고 네 자리 수 수리 미션으로 진입시킨다.",
+      "overall_assessment": "전광판 숫자 overlay는 asset surface를 잘 사용한다. 다만 좌측 미션 패널과 상단 topbar가 아직 웹 카드처럼 보여 장면 속 안내판 물성이 더 필요하다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "역 전광판 긴급 안내",
+        "rationale": "핵심 전광판은 성공적이므로 큰 컨셉 변경보다 안내 패널의 물성 보정이 적합하다.",
+        "core_metaphor": "명절 기차역의 고장 전광판 아래 붙은 긴급 수리 안내판",
+        "visual_language": "따뜻한 역 일러스트, 유리 안내판, 금속 브래킷, 황금 수리 티켓 CTA",
+        "layout_strategy": "전광판은 유지하고 왼쪽 설명 패널을 역 안내 유리판처럼 처리한다.",
+        "interaction_surfaces": [
+          "asset_station_chaos_scene overhead digital board",
+          "left emergency glass notice panel",
+          "ticket-shaped start CTA"
+        ],
+        "implementation_notes": [
+          ".narration.panel에 glass highlight와 metal bracket을 추가한다.",
+          "warning-board 슬롯 glow는 asset 전광판의 조명과 맞춘다."
+        ]
       },
-      {
-        "viewport": "desktop",
-        "capture_label": "01_step2_tutorial_repair",
-        "path": "iter_002/design_review/desktop__01_step2_tutorial_repair.png",
-        "width": 1440,
-        "height": 960
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step1_intro_problem\"] .narration.panel approx x=154..614 y=254..517",
+            "issue": "미션 텍스트가 장면 속 안내판보다 반투명 웹 카드처럼 떠 보인다.",
+            "evidence": "배경의 풍부한 역 공간 위에 둥근 사각 패널이 별도 UI 레이어로 놓여 있다.",
+            "suggested_fix": "패널을 유리 안내판으로 재스타일링하고 상단 고정 나사, 얇은 cyan rim, 내부 반사 streak를 추가한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step1_intro_problem\"] [data-action=\"start\"]",
+            "issue": "CTA는 티켓형이지만 안내 패널 내부 일반 버튼 위치에 머문다.",
+            "evidence": "좌우 펀칭 장식은 있으나 실제 발권 티켓이나 수리 레버처럼 장면과 연결되지는 않는다.",
+            "suggested_fix": "버튼을 안내판 하단에 꽂힌 황금 수리 티켓처럼 만들고 좌우 홈을 10px 더 밖으로 빼며 절취선과 얕은 종이 그림자를 추가한다."
+          }
+        ]
       },
-      {
-        "viewport": "desktop",
-        "capture_label": "02_step3_game_repair",
-        "path": "iter_002/design_review/desktop__02_step3_game_repair.png",
-        "width": 1440,
-        "height": 960
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step1_intro_problem\"] .warning-board .blink",
+            "issue": "가운데 고장 슬롯이 좌우 숫자 슬롯보다 CSS 박스 느낌이 강하다.",
+            "evidence": "3500과 4100은 전광판 조명과 잘 맞지만 ???? 박스는 붉은 사각 overlay로 분리되어 보인다.",
+            "suggested_fix": ".blink 배경 투명도를 낮추고 좌우 슬롯과 같은 inner glow, font scale, inset을 적용한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step1_intro_problem\"] header.topbar",
+            "issue": "상단 흰색 topbar가 역 장면보다 웹 앱 헤더로 읽힌다.",
+            "evidence": "긴 흰색 rounded bar가 천장과 전광판 일부를 덮는다.",
+            "suggested_fix": "topbar를 enamel station sign 형태로 바꾸고 크림색 표지판, 금속 테두리, 좌우 고정 브래킷을 적용한다."
+          }
+        ]
       },
-      {
-        "viewport": "desktop",
-        "capture_label": "03_step4_life_story",
-        "path": "iter_002/design_review/desktop__03_step4_life_story.png",
-        "width": 1440,
-        "height": 960
-      },
-      {
-        "viewport": "desktop",
-        "capture_label": "04_step4_completion_reward",
-        "path": "iter_002/design_review/desktop__04_step4_completion_reward.png",
-        "width": 1440,
-        "height": 960
-      }
-    ],
-    "render_checks": {
-      "console_errors": [],
-      "page_errors": [],
-      "request_failures": [],
-      "broken_images": [],
-      "horizontal_overflow": [],
-      "text_clipping": [],
-      "small_touch_targets": [],
-      "overlaps": [],
-      "fixed_overlay_risks": []
-    },
-    "design_review": {
-      "status": "PASS",
-      "summary": "Visual QA did not find high-priority design risks.",
-      "card_template_risk": "medium",
-      "asset_integration_risk": "low",
-      "interface_affordance_risk": "medium",
-      "composition_risk": "low",
-      "evidence": [
+      "priority_findings": [
         {
-          "viewport": "desktop",
+          "scene_id": "initial",
           "severity": "medium",
-          "type": "card_template",
-          "evidence": "4 card-like white panels detected.",
-          "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
-        },
-        {
-          "viewport": "desktop",
-          "severity": "medium",
-          "type": "interface_affordance",
-          "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
-          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-        },
-        {
-          "viewport": "desktop",
-          "severity": "medium",
-          "type": "interface_affordance",
-          "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
-          "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+          "axis": "card_button_panel_style",
+          "target": "[data-qa-scene=\"step1_intro_problem\"] .narration.panel, header.topbar",
+          "issue": "미션과 상태 UI가 장면 속 표면보다 웹 카드에 가깝다.",
+          "evidence": "전광판 asset은 잘 활용되지만 좌측 패널과 상단 바가 평평한 라운드 사각형이다.",
+          "suggested_fix": "좌측 패널은 유리 안내판, topbar는 역 표지판 물성으로 통일한다."
         }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step1_intro_problem\"] .narration.panel을 역 유리 안내판처럼 보이게 metal bracket, inner highlight, subtle glass reflection을 추가한다.",
+        "[data-qa-scene=\"step1_intro_problem\"] header.topbar의 흰 카드 배경을 enamel station sign 스타일로 바꾼다."
       ]
     },
-    "priority_findings": [
-      {
-        "viewport": "desktop",
-        "severity": "medium",
-        "type": "card_template",
-        "evidence": "4 card-like white panels detected.",
-        "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
+    {
+      "scene_id": "01_step2_tutorial_repair",
+      "capture_label": "01_step2_tutorial_repair",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__01_step2_tutorial_repair.png",
+      "scene_purpose": "번호표 기계 close-up 위에서 규칙 찾기 튜토리얼을 수행한다.",
+      "overall_assessment": "중앙 문제 영역은 기계 화면 위에 비교적 잘 얹혔다. 오른쪽 보조 패널은 기계 부품보다 빈 웹 패널처럼 보여 성공 반응/다음 CTA surface를 더 명확히 해야 한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "번호표 기계 정비 콘솔",
+        "rationale": "기존 close-up asset에 큰 화면과 버튼 영역이 있어 CSS 재배치로 개선 가능하다.",
+        "core_metaphor": "고장 난 번호표 기계의 앞판을 열고 내부 콘솔을 조정하는 장면",
+        "visual_language": "dark glass monitor, yellow ticket cards, small status lamps, side receipt tray",
+        "layout_strategy": "중앙 문제는 모니터에 유지하고 오른쪽 aside는 기계 측면 상태창/영수증 트레이로 축소한다.",
+        "interaction_surfaces": [
+          "central machine monitor",
+          "side status lamp area",
+          "ticket card tray"
+        ],
+        "implementation_notes": [
+          "aside.panel의 큰 빈 면적을 줄이고 성공 이미지가 뜰 때만 photo frame을 강조한다.",
+          "tutorial-next는 side tray 하단의 물리 버튼처럼 붙인다."
+        ]
       },
-      {
-        "viewport": "desktop",
-        "severity": "medium",
-        "type": "interface_affordance",
-        "evidence": "4 buttons are present and 100% look like generic rounded web buttons.",
-        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step2_tutorial_repair\"] #tutorial-sequence .num-pill, #tutorial-sequence .dropzone",
+            "issue": "숫자 슬롯은 읽기 좋지만 실제 기계 슬롯보다 독립 CSS pill 느낌이 남아 있다.",
+            "evidence": "3500과 빈칸이 같은 dark monitor 안에 있으나 각 슬롯의 테두리 광이 기계 원근과 분리된다.",
+            "suggested_fix": "slot border를 2px로 낮추고 inset shadow를 강화해 모니터 안쪽 홈처럼 보이게 한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step2_tutorial_repair\"] aside.panel, #tutorial-next",
+            "issue": "다음 CTA와 보조 설명이 오른쪽 빈 패널 안에 떠 있어 기계 부품처럼 보이지 않는다.",
+            "evidence": "오른쪽 세로 패널의 큰 빈 녹색 영역이 asset의 표면을 활용하기보다 새 웹 패널로 보인다.",
+            "suggested_fix": "aside.panel을 좁은 side status module로 바꾸고 #tutorial-next는 하단 receipt slot에 꽂힌 티켓형 버튼으로 배치한다."
+          }
+        ]
       },
-      {
-        "viewport": "desktop",
-        "severity": "medium",
-        "type": "interface_affordance",
-        "evidence": "16 buttons are present and 94% look like generic rounded web buttons.",
-        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-      }
-    ],
-    "refine_suggestions": [
-      "[desktop] Reduce repeated card surfaces and give each section a more specific visual structure.",
-      "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-    ]
-  },
-  "designer_review": {
-    "overall_assessment": "Desktop 기준으로 장면성과 asset 품질은 좋지만, STEP 4에서 asset 안의 명확한 빈 전광판/대기 화면 interaction surface를 비워 둔 채 별도 대화 패널과 하단 오버레이로 학습 내용을 처리해 asset-native UI 통합이 실패합니다. STEP 2의 중복 역무원 cutout과 일부 generic 버튼/패널도 다음 refine에서 함께 정리해야 합니다.",
-    "visual_hierarchy": [
-      {
-        "severity": "medium",
-        "issue": "STEP 4 생활 이야기 화면에서 목표, 설명, 사례, 조작 순서가 한 덩어리의 오버레이로 몰려 시선 흐름이 흐립니다.",
-        "evidence": "상단 정상 번호 표시, 중앙 어두운 대화 패널, 하단 사례 이미지, 노란 caption bar, 하단 CTA가 모두 큰 가로 막대로 쌓여 있고 asset 내부의 은행/맛집/병원 화면은 비어 있습니다.",
-        "suggested_fix": "상단 대화 패널을 줄이고, 은행/맛집/병원 asset 안의 빈 번호 화면 각각에 사례별 핵심 문장과 번호 흐름을 직접 배치하십시오. 하단 CTA는 역 매표소 바닥이나 티켓형 발판으로 낮춰 본 활동 영역을 압도하지 않게 하십시오."
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step2_tutorial_repair\"] aside.panel approx x=970..1262 y=220..720",
+            "issue": "오른쪽 보조 패널이 machine asset의 실제 화면/슬롯과 통합되지 않는다.",
+            "evidence": "중앙 monitor와 달리 오른쪽 패널은 큰 반투명 직사각형으로 기계 외곽 위에 덧붙은 느낌이다.",
+            "suggested_fix": "width를 21% 이하로 줄이고 top의 작은 램프 2개, ticket tray, status text만 남겨 기계 측면 부품처럼 만든다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step2_tutorial_repair\"] .cards, .number-card",
+            "issue": "숫자 선택지는 티켓 질감이 있으나 tray 전체가 단순 박스다.",
+            "evidence": "세 카드가 균등한 웹 grid 안에 놓여 실제 기계에서 나온 표 묶음처럼 보이지 않는다.",
+            "suggested_fix": ".cards를 shallow ticket tray로 만들고 내부 바닥 그림자, 좌우 guide rail, 티켓 간 4px overlap을 추가한다."
+          }
+        ]
       },
-      {
-        "severity": "low",
-        "issue": "고정 HUD가 모든 장면에서 강하게 떠 있어 일부 장면의 상단 장치와 경쟁합니다.",
-        "evidence": "STEP 3에서 HUD, 진행도 패널, skip 버튼이 모두 상단에 모여 수리 시스템 배경의 상단 레일과 겹쳐 보입니다.",
-        "suggested_fix": "HUD는 현재 차시와 보상 상태만 작게 유지하고, STEP 3 진행도는 배경 상단 레일 또는 기계 게이지 안에 흡수하십시오."
-      }
-    ],
-    "composition": [
-      {
-        "severity": "high",
-        "issue": "STEP 2에서 별도 역무원 cutout이 배경 속 큰 안내 캐릭터와 겹쳐 인물 레이어가 중복됩니다.",
-        "evidence": "ticket_machine_closeup asset 오른쪽에는 이미 큰 안내 캐릭터가 손짓하고 있는데, 작은 clerk_anxious cutout이 오른쪽 하단에 추가로 올라와 같은 역할을 반복하고 기계 하단 조작 영역을 좁힙니다.",
-        "suggested_fix": "STEP 2의 작은 clerk_anxious cutout을 제거하고, 힌트 문장은 배경 속 큰 안내 캐릭터 손 옆의 말풍선 또는 기계 우하단 상태 표시창으로 옮기십시오."
+      "priority_findings": [
+        {
+          "scene_id": "01_step2_tutorial_repair",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": "[data-qa-scene=\"step2_tutorial_repair\"] aside.panel",
+          "issue": "오른쪽 보조 UI가 기계 surface와 분리되어 있다.",
+          "evidence": "중앙 화면은 기계 monitor로 읽히지만 오른쪽은 큰 빈 웹 패널처럼 보인다.",
+          "suggested_fix": "aside를 기계 측면 상태 모듈로 축소하고 성공 photo/CTA가 표시될 때만 물리 tray처럼 활성화한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step2_tutorial_repair\"] aside.panel의 큰 빈 영역을 줄이고 side status lamp, receipt tray, compact crew message 구조로 재배치한다.",
+        "[data-qa-scene=\"step2_tutorial_repair\"] .cards를 ticket tray 형태로 바꾸고 number-card들이 약간 겹쳐 쌓인 종이표처럼 보이게 한다."
+      ]
+    },
+    {
+      "scene_id": "02_step3_game_challenges",
+      "capture_label": "02_step3_game_challenges",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__02_step3_game_challenges.png",
+      "scene_purpose": "기계 내부 시스템에서 네 자리 수 수열 문제를 풀게 한다.",
+      "overall_assessment": "배경이 desktop을 잘 채우고 중앙 수리 보드는 기계 내부 stage와 어울린다. 다만 오른쪽 keypad 패널과 상단 topbar는 아직 독립 웹 UI 성격이 강하다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "기계 내부 숫자 레일 관제실",
+        "rationale": "현재 장면 metaphor는 잘 잡혀 있어 물리 keypad와 상태창 통합만 보정하면 된다.",
+        "core_metaphor": "번호표 기계 내부의 숫자 레일을 직접 수리하는 관제실",
+        "visual_language": "cyan-lit mechanical screen, inset slots, physical keypad, glowing answer bay",
+        "layout_strategy": "중앙 slot-board는 유지하고 오른쪽 입력부를 기계 기둥에 박힌 control pad처럼 만든다.",
+        "interaction_surfaces": [
+          "central repair screen",
+          "right control keypad module",
+          "bottom feedback status strip"
+        ],
+        "implementation_notes": [
+          "aside.panel의 배경 투명도를 줄이고 나사/패널 seam을 추가한다.",
+          "answer-input은 검은 입력창이 아니라 glowing digit window로 보이게 한다."
+        ]
       },
-      {
-        "severity": "medium",
-        "issue": "완료 화면의 보상 패널이 배경 인물과 카운터 장면을 반투명 막으로 크게 덮습니다.",
-        "evidence": "completion 화면에서 노란 counter-reward 패널이 역무원과 주인공의 얼굴/몸 위를 넓게 가리고, 황금 티켓도 실제 카운터 위 물건이 아니라 떠 있는 UI처럼 보입니다.",
-        "suggested_fix": "보상 티켓을 카운터 위 실제 물건 위치에 놓고, 노란 반투명 패널 면적을 제거하십시오. 안내 문장은 카운터 앞 작은 티켓 라벨이나 역무원 말풍선으로 줄이십시오."
-      }
-    ],
-    "asset_integration": [
-      {
-        "severity": "high",
-        "issue": "STEP 4의 asset이 제공하는 빈 화면/전광판 interaction surface를 학습 UI가 사용하지 않습니다.",
-        "evidence": "life_queue_examples asset 안에는 은행 창구 화면, 맛집 대기 화면, 병원 대기 화면처럼 텍스트와 번호를 넣을 수 있는 빈 보드가 명확히 보이지만, 실제 설명은 asset 밖의 어두운 대화 패널과 하단 노란 overlay에 배치되어 있습니다.",
-        "suggested_fix": "하단 life-overlay와 중앙 station-message를 제거하거나 축소하고, 은행/맛집/병원 각 빈 화면 안에 번호 예시와 caption을 HTML 텍스트로 직접 배치하십시오. slide 버튼 1/2/3은 일반 네모 버튼이 아니라 각 사례 화면의 작은 번호표 스탬프 또는 전광판 선택등처럼 붙이십시오."
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step3_game_challenges\"] #game-sequence .num-pill, #game-sequence .dropzone",
+            "issue": "숫자 슬롯은 중심 정렬과 가독성이 좋지만 모니터 홈 깊이가 약하다.",
+            "evidence": "네 자리 숫자가 슬롯 안에 들어가 있으나 pill 경계가 CSS 카드처럼 깨끗하다.",
+            "suggested_fix": "각 slot에 inset shadow를 더하고 background를 rgba(5,25,34,0.94)로 어둡게 하며 border glow를 줄인다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step3_game_challenges\"] #game-feedback, #submit-answer",
+            "issue": "피드백과 정답 확인 CTA가 장치 상태창/물리 버튼보다 웹 form 요소에 가깝다.",
+            "evidence": "피드백은 긴 가로 알림바, CTA는 노란 웹 버튼으로 오른쪽 패널 하단에 놓였다.",
+            "suggested_fix": "#game-feedback는 중앙 보드 하단 LED status strip으로 유지하되 높이를 36px로 줄이고 #submit-answer는 keypad 아래 큰 amber machine button으로 나사와 bevel을 추가한다."
+          }
+        ]
       },
-      {
-        "severity": "medium",
-        "issue": "STEP 1의 승객 말풍선과 대화 박스가 배경 장면의 일부라기보다 웹 패널처럼 보입니다.",
-        "evidence": "오른쪽 승객 말풍선 3개가 동일한 흰 둥근 사각형으로 떠 있고, 상단 대화 박스도 역 안내 표지판이나 전광판 재질과 다르게 별도 카드처럼 보입니다.",
-        "suggested_fix": "승객 말풍선은 줄 서 있는 승객 머리 근처의 작은 꼬리 달린 말풍선으로 바꾸고, 역무원 설명은 매표소 상단 안내판 또는 고장 전광판 주변의 안내 스티커처럼 배치하십시오."
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step3_game_challenges\"] aside.panel approx x=969..1286 y=187..706",
+            "issue": "keypad 패널이 오른쪽 기계 구조물에 고정된 부품처럼 보이지 않는다.",
+            "evidence": "패널 외곽이 배경 장치의 원형/금속 구조와 맞지 않는 평면 직사각형이다.",
+            "suggested_fix": "aside.panel에 metal seam, four screw caps, darker inset surface를 추가하고 right mechanical column에 붙은 control box처럼 box-shadow 방향을 맞춘다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step3_game_challenges\"] .key-btn, .answer-input",
+            "issue": "숫자 키패드는 조작감은 있으나 교육용 웹 keypad 느낌이 남아 있다.",
+            "evidence": "키들이 균일한 하늘색 rounded rectangle로 배치되어 기계식 버튼 물성이 약하다.",
+            "suggested_fix": "키를 원형에 가까운 bevel button 또는 chunky square cap으로 바꾸고 pressed shadow, label emboss를 적용한다."
+          }
+        ]
       },
-      {
-        "severity": "medium",
-        "issue": "STEP 3의 하단 입력/키패드 영역은 기능적으로는 맞지만 기계 내부 장치보다 웹 폼에 가깝습니다.",
-        "evidence": "숫자 입력칸, 지우기, 확인, 숫자 키가 별도 청록 패널 위에 정렬되어 있으나 배경의 파이프/부품/레일 형태와 깊이감은 거의 따르지 않습니다.",
-        "suggested_fix": "하단 키패드를 repair_system_bg의 하단 기계 콘솔에 붙은 물리 버튼처럼 만들고, 입력칸은 슬롯 보드 하단의 상태 표시창으로 통합하십시오."
-      }
-    ],
-    "interaction_affordance": [
-      {
-        "severity": "medium",
-        "issue": "일부 CTA와 보조 버튼이 여전히 일반 웹 버튼으로 읽힙니다.",
-        "evidence": "STEP 1 시작 버튼, STEP 4 수리 완료 확인하기, completion 다음 차시 버튼은 노란 gradient 버튼으로 통일되어 있지만 기차표, 발권기 버튼, 역 표지판 같은 물성은 약합니다.",
-        "suggested_fix": "주요 CTA는 황금 기차표 모양의 긴 티켓, 발권기 투입구, 역 플랫폼 표지판 중 하나로 바꾸고 절취선, 작은 원형 홈, 금속 테두리 같은 asset 세계관의 형태를 적용하십시오."
+      "priority_findings": [
+        {
+          "scene_id": "02_step3_game_challenges",
+          "severity": "medium",
+          "axis": "card_button_panel_style",
+          "target": "[data-qa-scene=\"step3_game_challenges\"] aside.panel, .key-btn, #submit-answer",
+          "issue": "입력부가 기계 내부 control module보다 웹 keypad로 보인다.",
+          "evidence": "중앙 보드 통합은 괜찮지만 오른쪽 입력 패널은 독립 카드 구조다.",
+          "suggested_fix": "오른쪽 aside를 나사와 bevel이 있는 물리 control pad로 재스타일링한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step3_game_challenges\"] aside.panel에 screw caps, inset metal surface, right-side attachment shadow를 추가한다.",
+        "[data-qa-scene=\"step3_game_challenges\"] .key-btn은 bevel cap 버튼으로 바꾸고 #submit-answer는 amber machine button으로 처리한다."
+      ]
+    },
+    {
+      "scene_id": "03_step3_boss_compare",
+      "capture_label": "03_step3_boss_compare",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__03_step3_boss_compare.png",
+      "scene_purpose": "세 손님의 네 자리 번호표를 비교해 가장 큰 수를 선택한다.",
+      "overall_assessment": "REJECT 핵심 장면이다. 배경 asset에는 세 승객이 들고 있는 큰 빈 번호표 surface가 명확히 있는데, 실제 선택 숫자는 그 위가 아니라 얼굴과 몸 앞에 별도 티켓 버튼으로 떠 있다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "세 손님의 실제 번호표 판정대",
+        "rationale": "현재 문제는 asset과 UI가 구조적으로 분리된 데서 발생하므로 장면 은유를 재정렬해야 한다.",
+        "core_metaphor": "역무원이 세 손님의 실제 번호표를 스캔해 가장 큰 번호를 찾는 판정대",
+        "visual_language": "승객이 들고 있는 종이 번호표, 중앙 기계 전광판, 하단 판정 도장",
+        "layout_strategy": "choice-ticket 버튼을 배경의 세 빈 번호표 안으로 옮기고 feedback/next는 중앙 아이가 든 빈 표지판 안에 넣는다.",
+        "interaction_surfaces": [
+          "left passenger blank placard",
+          "center child blank placard",
+          "right passenger blank placard",
+          "center lower placard for feedback",
+          "top machine display for mission"
+        ],
+        "implementation_notes": [
+          "#boss-choices를 세 placard 좌표에 absolute 배치한다.",
+          "각 .choice-ticket은 배경 번호표 내부 여백에 맞춰 border를 줄이고 rotation을 asset placard 각도에 맞춘다.",
+          "#boss-feedback와 #boss-next는 하단 빈 placard를 공유하는 status/CTA surface로 합친다."
+        ]
       },
-      {
-        "severity": "low",
-        "issue": "STEP 3의 skip 버튼은 현재 비활성 상태에서도 학습 장면과 분리된 웹 컨트롤처럼 보입니다.",
-        "evidence": "수리 이야기 보기 버튼이 진행도 패널 오른쪽에 흰색 반투명 사각 버튼으로 떠 있습니다.",
-        "suggested_fix": "완료 전에는 버튼을 숨기고, 5문제 완료 후 배경 우측의 출구 표지판이나 기차역 화살표 표식으로 나타나게 하십시오."
-      }
-    ],
-    "originality": [
-      {
-        "severity": "medium",
-        "issue": "전체 asset 방향은 기차역 수리 게임으로 고유하지만, 일부 화면은 카드형 학습 UI 관성이 남아 있습니다.",
-        "evidence": "STEP 4는 생활 사례 asset을 큰 이미지 카드처럼 두고 그 위에 caption bar와 slide dot을 올려 일반 슬라이드 콘텐츠처럼 보입니다.",
-        "suggested_fix": "생활 사례를 슬라이드 카드가 아니라 역 전광판을 통해 은행/맛집/병원 번호가 차례로 점등되는 장면으로 재구성하십시오."
-      }
-    ],
-    "mobile_design": []
-  },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step3_boss_compare\"] .boss-display approx x=379..1062 y=130..276",
+            "issue": "미션 문구는 상단 기계 화면에 가깝지만 여전히 독립 어두운 패널로 보인다.",
+            "evidence": "뒤쪽에 실제 기계 display가 있으나 CSS 패널 테두리가 별도 카드처럼 떠 있다.",
+            "suggested_fix": ".boss-display를 뒤쪽 중앙 기계 전광판 내부로 더 낮게 inset하고 border를 asset의 금색 frame에 맞춘다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-choices .choice-ticket; asset_boss_number_passengers blank placards approx left x=0..505 y=540..758, center x=545..898 y=620..828, right x=930..1440 y=540..758",
+            "issue": "숫자 선택지가 승객이 들고 있는 빈 번호표 surface 안에 들어가지 않는다.",
+            "evidence": "6420, 6240, 6402 버튼이 인물 얼굴/가슴 앞에 떠 있고, 배경의 큰 빈 번호표 세 장은 비어 있다.",
+            "suggested_fix": "#boss-choices를 세 빈 번호표 좌표에 맞춰 재배치하고 각 .choice-ticket의 배경/테두리를 투명화해 HTML 숫자만 placard 내부 중앙에 표시되게 한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-feedback, #boss-next; center lower blank placard approx x=545..898 y=620..828",
+            "issue": "피드백과 다음 CTA가 장면 속 빈 표지판을 쓰지 않고 떠 있다.",
+            "evidence": "중앙 아이가 든 큰 빈 표지판은 비어 있는데 feedback은 그 위쪽에 어두운 막대로, CTA는 오른쪽 아래 버튼으로 분리되어 있다.",
+            "suggested_fix": "#boss-feedback를 중앙 표지판 상단 상태문으로 넣고 #boss-next는 같은 표지판 하단의 황금 승차권 CTA로 통합 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "asset_boss_number_passengers blank placards in desktop__03_step3_boss_compare",
+            "issue": "배경의 핵심 interaction surface가 비어 있다.",
+            "evidence": "세 승객이 들고 있는 큰 빈 번호표가 선택 문제의 자연스러운 target인데 현재 숫자 UI는 별도 floating tickets로 배치되었다.",
+            "suggested_fix": "빈 번호표를 실제 선택 surface로 사용하고 floating ticket layer를 제거하거나 숫자 text-only overlay로 바꾼다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step3_boss_compare\"] .choice-row",
+            "issue": "선택 컴포넌트가 asset의 원근, 손 위치, 표지판 경계와 맞지 않는다.",
+            "evidence": "각 선택 버튼이 배경 번호표보다 위에 떠서 손과 표지판 관계를 깨고 중앙 인물 얼굴을 일부 가린다.",
+            "suggested_fix": ".choice-row를 grid 대신 세 개 absolute slot으로 분해하고 placard 내부 inset 24px에 맞춘다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step3_boss_compare\"] .choice-ticket",
+            "issue": "티켓 버튼 자체는 종이 느낌이 있지만 이미 asset에 종이 surface가 있어 중복된다.",
+            "evidence": "종이 번호표 위에 다시 종이 버튼을 올린 구조가 되어 깊이 관계가 어색하다.",
+            "suggested_fix": ".choice-ticket의 배경과 box-shadow를 제거하고 placard 내부 숫자/hover glow만 남긴다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_step3_boss_compare",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-choices .choice-ticket -> asset blank placards",
+          "issue": "보스 문제의 숫자 선택지가 배경의 빈 번호표 surface 안에 들어가지 않는다.",
+          "evidence": "세 빈 번호표가 비어 있고 6420/6240/6402 버튼은 인물 앞에 떠 있다.",
+          "suggested_fix": "#boss-choices를 세 placard 좌표로 absolute 분해하고 숫자를 각 번호표 중앙에 배치한다."
+        },
+        {
+          "scene_id": "03_step3_boss_compare",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-feedback, #boss-next -> center lower placard",
+          "issue": "피드백과 다음 CTA가 빈 표지판 surface를 쓰지 않는다.",
+          "evidence": "중앙 아이가 든 표지판은 비어 있는데 feedback/CTA가 별도 웹 UI로 떠 있다.",
+          "suggested_fix": "중앙 표지판 안에 feedback text와 황금 티켓형 next CTA를 함께 넣는다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step3_boss_compare\"] .choice-row를 grid에서 absolute slots로 바꾸고 left/center/right placard 내부 좌표에 각각 배치한다.",
+        "[data-qa-scene=\"step3_boss_compare\"] .choice-ticket의 yellow card background를 제거하고 번호표 surface 위의 큰 navy 숫자와 선택 glow만 남긴다.",
+        "[data-qa-scene=\"step3_boss_compare\"] #boss-feedback와 #boss-next를 중앙 하단 blank placard 내부로 이동해 status line과 golden-ticket CTA로 나눈다."
+      ]
+    },
+    {
+      "scene_id": "04_step4_story_life",
+      "capture_label": "04_step4_story_life",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__04_step4_story_life.png",
+      "scene_purpose": "수리 경험을 생활 속 번호표 사례로 확장한다.",
+      "overall_assessment": "상단 전광판 활용은 좋은 방향이지만, 좌측 설명 패널과 우측 슬라이드 카드가 큰 웹 카드 두 개로 장면을 양분한다. 생활 사례는 역 안 안내 키오스크나 전광판 투어처럼 통합해야 한다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "생활 번호표 안내 키오스크",
+        "rationale": "장면형 결말 배경 위에 독립 카드가 많아 주제와 무대의 연결이 약해졌다.",
+        "core_metaphor": "수리된 역 전광판이 생활 속 번호표 사례를 안내하는 작은 전시 키오스크가 된다.",
+        "visual_language": "역 전광판, 발권기 옆 안내 키오스크, 유리 화면, 황금 티켓 받기 tray",
+        "layout_strategy": "왼쪽 narration은 발권기 옆 안내판으로 축소하고 우측 slide-card는 역 안내 키오스크 화면처럼 재질을 명확히 한다.",
+        "interaction_surfaces": [
+          "top station display board",
+          "left ticket machine side notice",
+          "right kiosk screen",
+          "ticket tray CTA"
+        ],
+        "implementation_notes": [
+          ".life-display-board span들은 어두운 capsule이 아니라 실제 전광판 segment로 붙인다.",
+          ".narration.panel과 .slide-card의 border/material을 통일해 역 안내 설비처럼 만든다.",
+          "#life-next는 왼쪽 패널 하단 일반 버튼이 아니라 발권기 tray에서 나오는 황금 티켓으로 배치한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step4_story_life\"] .life-display-board approx x=165..862 y=94..166",
+            "issue": "상단 문구가 전광판 위에 올라가지만 네 개의 어두운 capsule로 보여 원래 전광판 면과 분리된다.",
+            "evidence": "배경 전광판은 하나의 긴 illuminated board인데 텍스트는 별도 dark rounded blocks 네 개로 놓였다.",
+            "suggested_fix": ".life-display-board span의 background를 제거하고 전광판 내부 네 칸 segment처럼 border만 얇게 남기며 board perspective에 맞춘다."
+          },
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step4_story_life\"] .narration.panel approx x=177..656 y=306..698",
+            "issue": "생활 연결 핵심 설명이 장면 속 표면이 아니라 큰 웹 카드로 떠 있다.",
+            "evidence": "패널이 인물과 발권기 위를 덮고 있으며 배경의 안내판/기계 surface와 연결되지 않는다.",
+            "suggested_fix": "narration을 왼쪽 발권기 옆 안내판 surface로 축소하고 배경 안쪽에 붙은 frosted glass notice처럼 배치한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step4_story_life\"] #life-next",
+            "issue": "황금 기차표 받기 CTA가 장면 속 보상물보다 일반 노란 버튼이다.",
+            "evidence": "버튼이 좌측 웹 패널 하단에 있으며 발권기나 표 tray와 연결되지 않는다.",
+            "suggested_fix": "#life-next를 발권기 tray에서 나온 작은 황금 티켓 형태로 바꾸고 왼쪽 하단 x=198..392 y=624..677 영역에 tray shadow와 함께 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step4_story_life\"] background station_resolved_scene",
+            "issue": "배경은 충분히 크고 주제와 연결되지만 foreground 카드가 장면의 시선 흐름을 많이 덮는다.",
+            "evidence": "좌측 패널과 우측 slide-card가 화면 중앙을 거의 같은 비중으로 점유해 역 공간보다 UI 카드가 먼저 보인다.",
+            "suggested_fix": "좌측 설명은 36% 폭 이하로 줄이고 우측 slide-card는 kiosk frame으로 명확히 만들어 배경 인물 시선을 살린다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step4_story_life\"] .slide-card approx x=826..1274 y=254..731",
+            "issue": "생활 사례 슬라이드가 역 안 설비라기보다 웹 carousel 카드처럼 보인다.",
+            "evidence": "두꺼운 rectangular panel 안에 이미지, 제목, 설명, 탭 버튼이 일반 카드 구조로 쌓여 있다.",
+            "suggested_fix": ".slide-card를 station kiosk screen으로 재스타일링하고 화면 상단 slot에는 이미지, 하단 LED caption strip에는 #life-title/#life-copy, 하단 물리 버튼 rail에는 slide controls를 배치한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"step4_story_life\"] .narration.panel, .slide-card, .slide-btn",
+            "issue": "화면의 주요 학습 UI가 두 개의 큰 웹 패널과 세 개의 일반 탭 버튼 중심으로 구성된다.",
+            "evidence": "왼쪽 설명 카드, 오른쪽 슬라이드 카드, 하단 버튼들이 장면 속 물건보다 dashboard layout처럼 읽힌다.",
+            "suggested_fix": "두 패널을 각각 역 안내판과 키오스크로 물성화하고 slide-btn은 키오스크 하단 물리 선택 버튼으로 바꾼다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_step4_story_life",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "[data-qa-scene=\"step4_story_life\"] .narration.panel, .slide-card, #life-next",
+          "issue": "생활 연결 장면이 큰 웹 카드 중심으로 구성되어 장면형 경험이 약하다.",
+          "evidence": "배경은 질서 회복된 역인데 핵심 설명/슬라이드/CTA가 모두 독립 패널로 떠 있다.",
+          "suggested_fix": "narration은 역 안내판, slide-card는 키오스크 화면, CTA는 황금 티켓 tray로 각각 장면 속 물건화한다."
+        },
+        {
+          "scene_id": "04_step4_story_life",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "[data-qa-scene=\"step4_story_life\"] #life-next",
+          "issue": "보상 CTA가 발권기나 티켓 surface를 사용하지 않는다.",
+          "evidence": "황금 기차표 받기 버튼이 일반 패널 안 노란 버튼으로 배치되어 보상 행동의 물리성이 약하다.",
+          "suggested_fix": "발권기 tray 위치에 황금 티켓 CTA를 놓고 절취선, 홈, 그림자를 추가한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step4_story_life\"] .narration.panel을 좌측 발권기 옆 frosted glass notice로 줄이고 위치를 x=178..610 y=320..610 범위로 재조정한다.",
+        "[data-qa-scene=\"step4_story_life\"] .slide-card를 station kiosk screen으로 바꾸고 이미지/제목/설명/버튼을 kiosk 내부 슬롯별로 분리한다.",
+        "[data-qa-scene=\"step4_story_life\"] #life-next를 발권기 tray에서 나온 황금 티켓형 CTA로 재배치한다."
+      ]
+    },
+    {
+      "scene_id": "05_step4_clear_reward",
+      "capture_label": "05_step4_clear_reward",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-07_a1b2c3d4\\iter_002\\design_review\\desktop__05_step4_clear_reward.png",
+      "scene_purpose": "1차시 완료와 황금 기차표 보상을 명확히 보여 준다.",
+      "overall_assessment": "보상 asset은 강하고 stamp/title도 실제 황금 티켓 위에 잘 얹혀 있다. 하단 다음 차시 CTA와 상단 topbar만 웹 요소 느낌을 줄이면 완성도가 높다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "황금 티켓 발권 완료",
+        "rationale": "핵심 reward scene은 잘 작동하므로 CTA 물성 보정만 필요하다.",
+        "core_metaphor": "기계가 황금 티켓을 발권하고 역무원이 다음 임무 티켓을 건네는 순간",
+        "visual_language": "금빛 ticket, red completion stamp, warm counter, small station sign CTA",
+        "layout_strategy": "stamp와 title은 유지하고 next CTA를 카운터 위 안내 표지판 또는 다음 티켓 조각으로 바꾼다.",
+        "interaction_surfaces": [
+          "golden ticket face",
+          "counter surface",
+          "small next mission ticket"
+        ],
+        "implementation_notes": [
+          "#next-lesson은 카운터 위에 놓인 긴 종이표처럼 그림자를 맞춘다.",
+          "speech bubble은 역무원 옆 말풍선으로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step4_clear_reward\"] .stamp, .reward-panel h2 on golden ticket face",
+            "issue": "완료 stamp와 제목은 티켓 face에 잘 맞지만 제목 기준선이 티켓 기울기보다 약간 덜 맞는다.",
+            "evidence": "stamp는 표면 위 도장처럼 보이고 제목은 티켓 하단에 있으나 회전/원근이 완전히 일치하지 않는다.",
+            "suggested_fix": ".reward-panel h2의 rotate/skew 값을 stamp와 동일하게 맞추고 text-shadow를 조금 줄인다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step4_clear_reward\"] #next-lesson approx x=497..990 y=814..875",
+            "issue": "다음 차시 CTA가 카운터 위 일반 긴 버튼처럼 떠 있다.",
+            "evidence": "버튼은 티켓형 장식이 있지만 배경 카운터의 원근과 접촉 그림자가 약하다.",
+            "suggested_fix": "#next-lesson을 카운터 위에 놓인 다음 임무 티켓으로 만들고 bottom contact shadow, slight rotate(-1deg), paper edge highlight를 추가한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"step4_clear_reward\"] .speech.crew",
+            "issue": "역무원 말풍선은 위치가 자연스럽지만 작은 카드처럼 보인다.",
+            "evidence": "오른쪽 역무원 옆에 있지만 말꼬리나 장면 방향성이 없다.",
+            "suggested_fix": ".speech.crew에 역무원 쪽을 향한 작은 말꼬리를 추가하고 border를 따뜻한 노랑으로 유지한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"step4_clear_reward\"] header.topbar, #next-lesson",
+            "issue": "상단 상태 바와 하단 CTA가 reward asset의 물성보다 웹 UI에 가깝다.",
+            "evidence": "상단 흰색 바와 하단 긴 노란 버튼이 강한 보상 장면 위에 별도 레이어처럼 보인다.",
+            "suggested_fix": "topbar는 작은 역 표지판으로, #next-lesson은 카운터 위 다음 임무 티켓으로 바꾼다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_step4_clear_reward",
+          "severity": "medium",
+          "axis": "card_button_panel_style",
+          "target": "[data-qa-scene=\"step4_clear_reward\"] #next-lesson",
+          "issue": "다음 차시 CTA가 보상 장면 속 물건으로 충분히 흡수되지 않았다.",
+          "evidence": "황금 티켓 본체는 훌륭하지만 하단 CTA는 일반 button layer로 읽힌다.",
+          "suggested_fix": "카운터 위 다음 임무 티켓 형태로 바꾸고 접촉 그림자와 종이 질감을 추가한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"step4_clear_reward\"] #next-lesson을 카운터 위에 놓인 긴 다음 임무 티켓으로 만들고 bottom contact shadow와 slight rotate를 적용한다.",
+        "[data-qa-scene=\"step4_clear_reward\"] .speech.crew에 역무원 방향 말꼬리를 추가한다."
+      ]
+    }
+  ],
   "asset_review": {
-    "overall_asset_fit": "핵심 배경 asset들은 밝은 기차역 게임 세계관과 잘 맞고, 대부분은 HTML/CSS 재배치로 해결 가능합니다. 새 asset 생성보다 기존 asset의 interaction surface를 실제 UI 배치에 쓰는 refine이 우선입니다.",
+    "overall_asset_fit": "핵심 raster asset들은 밝은 교육용 애니메이션풍으로 일관되고 desktop 해상도도 충분하다. REJECT 원인은 asset 재생성보다 기존 asset의 빈 전광판, 번호표, 키오스크 표면을 UI가 제대로 쓰지 않은 배치 문제다.",
     "keep_assets": [
       {
-        "asset_id": "asset_ticket_machine_closeup",
-        "reason": "STEP 2의 중앙 모니터, 하단 카드 슬롯, 우측 안내 캐릭터가 조작 표면을 충분히 제공합니다.",
-        "suggested_action": "작은 추가 캐릭터를 제거하고 기계 내부 표면에 문제, 카드, 피드백을 계속 통합하십시오."
+        "asset_id": "station_chaos_scene",
+        "reason": "첫 장면 전광판과 역 혼란이 명확하며 숫자 overlay surface가 충분하다.",
+        "suggested_action": "유지하고 안내 패널 스타일만 보정한다."
       },
       {
-        "asset_id": "asset_slot_problem_board",
-        "reason": "STEP 3의 네 개 숫자 슬롯 interaction surface가 명확하고 현재 문제 숫자 배치도 대체로 맞습니다.",
-        "suggested_action": "하단 입력/키패드만 기계 콘솔 형태로 더 흡수하십시오."
+        "asset_id": "ticket_machine_closeup",
+        "reason": "튜토리얼 중앙 monitor와 기계 close-up이 학습 조작 surface로 적합하다.",
+        "suggested_action": "유지하고 aside를 측면 기계 모듈처럼 재배치한다."
       },
       {
-        "asset_id": "asset_life_queue_examples",
-        "reason": "은행, 맛집, 병원 사례별 빈 화면이 있어 별도 asset 재생성 없이 학습 텍스트와 번호를 넣을 수 있습니다.",
-        "suggested_action": "빈 화면을 실제 caption/번호 표시 영역으로 사용하십시오."
+        "asset_id": "machine_interior_system",
+        "reason": "본 게임 배경이 desktop을 잘 채우고 중앙 수리 보드 metaphor가 강하다.",
+        "suggested_action": "유지하고 right keypad panel만 물리 control pad로 스타일링한다."
       },
       {
-        "asset_id": "asset_golden_ticket_reward",
-        "reason": "보상 아이템 자체는 명확하고 차시 완료 보상으로 적합합니다.",
-        "suggested_action": "완료 화면에서는 큰 반투명 패널 안이 아니라 카운터 위 실제 티켓처럼 배치하십시오."
+        "asset_id": "golden_ticket_reward",
+        "reason": "보상 티켓, 도장, 역무원 구성이 강하고 scene completion이 명확하다.",
+        "suggested_action": "유지하고 하단 CTA만 티켓 prop으로 보정한다."
       }
     ],
     "reposition_assets": [
       {
-        "asset_id": "asset_clerk_anxious",
-        "reason": "STEP 2에서는 배경 속 큰 안내 캐릭터와 역할이 겹쳐 화면을 복잡하게 만듭니다.",
-        "suggested_action": "STEP 2에서는 제거하거나 80px 이하의 작은 상태 아이콘으로 축소하고, 안내 문장은 배경 캐릭터 근처 말풍선에 통합하십시오. STEP 1에서는 현재 위치를 유지해도 됩니다."
+        "asset_id": "boss_number_passengers",
+        "reason": "asset 자체는 세 blank placard라는 좋은 interaction surface를 제공하지만 현재 UI가 그 surface를 쓰지 않는다.",
+        "suggested_action": "이미지는 유지하고 #boss-choices, #boss-feedback, #boss-next를 blank placard 좌표에 맞춰 재배치한다."
       },
       {
-        "asset_id": "asset_golden_ticket_reward",
-        "reason": "완료 화면에서 티켓이 UI 패널 속 floating reward처럼 보여 배경 장면과 분리됩니다.",
-        "suggested_action": "카운터 중앙 위에 놓인 실제 보상 물건처럼 낮게 배치하고, 주변 노란 translucent panel은 제거하십시오."
+        "asset_id": "station_resolved_scene",
+        "reason": "생활 연결 배경은 적합하지만 큰 웹 패널이 역 공간을 덮는다.",
+        "suggested_action": "이미지는 유지하고 narration과 slide-card를 안내판/키오스크 surface로 작게 재배치한다."
       }
     ],
     "remove_assets": [],
@@ -274,40 +645,57 @@
   },
   "priority_findings": [
     {
+      "scene_id": "03_step3_boss_compare",
       "severity": "high",
-      "axis": "asset_integration",
-      "issue": "STEP 4의 빈 전광판/대기 화면을 사용하지 않고 별도 오버레이로 학습 내용을 처리합니다.",
-      "evidence": "은행, 맛집, 병원 asset 안의 빈 화면은 비어 있는데 설명과 선택 조작은 하단 노란 overlay와 외부 버튼에 있습니다.",
-      "suggested_fix": "life-overlay를 제거하고 각 빈 화면 안에 번호 예시, 사례 문장, 선택 상태를 직접 배치하십시오. 1/2/3 버튼은 각 사례 화면의 작은 번호표 스탬프나 전광판 선택등으로 바꾸십시오."
+      "axis": "text_surface_fit",
+      "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-choices .choice-ticket -> asset_boss_number_passengers blank placards",
+      "issue": "세 숫자 선택지가 승객이 들고 있는 빈 번호표 surface 안에 들어가지 않는다.",
+      "evidence": "6420, 6240, 6402가 별도 티켓 버튼으로 얼굴/몸 앞에 떠 있고 배경의 큰 빈 번호표들은 비어 있다.",
+      "suggested_fix": "#boss-choices를 left/center/right placard 좌표에 absolute 배치하고 .choice-ticket은 배경 없는 숫자 overlay와 선택 glow만 남긴다."
     },
     {
+      "scene_id": "03_step3_boss_compare",
       "severity": "high",
-      "axis": "composition",
-      "issue": "STEP 2의 작은 역무원 foreground asset이 배경 속 안내 캐릭터와 중복되어 장면을 방해합니다.",
-      "evidence": "오른쪽에 이미 큰 캐릭터가 손짓하고 있는데 같은 제복 캐릭터가 우하단에 다시 올라와 feedback 박스와 함께 조작 영역을 차지합니다.",
-      "suggested_fix": "STEP 2의 작은 clerk_anxious cutout을 제거하고, feedback은 배경 캐릭터 손 옆 말풍선 또는 기계 우하단 상태 표시창으로 옮기십시오."
+      "axis": "asset_component_fit",
+      "target": "[data-qa-scene=\"step3_boss_compare\"] #boss-feedback, #boss-next -> center lower blank placard",
+      "issue": "피드백과 다음 CTA가 중앙 빈 표지판을 사용하지 않는다.",
+      "evidence": "중앙 아이가 든 큰 표지판은 비어 있는데 feedback은 어두운 막대, CTA는 오른쪽 아래 버튼으로 분리되어 있다.",
+      "suggested_fix": "중앙 표지판 내부에 feedback status와 golden-ticket CTA를 함께 배치한다."
     },
     {
-      "severity": "medium",
-      "axis": "interaction_affordance",
-      "issue": "주요 CTA와 보조 조작이 여전히 둥근 웹 버튼으로 읽힙니다.",
-      "evidence": "시작, 수리 완료, 다음 차시, 지우기/확인 버튼이 공통 gradient button 스타일에 머물러 story object로 충분히 변환되지 않았습니다.",
-      "suggested_fix": "CTA는 황금 티켓형 버튼으로, 숫자 입력 조작은 발권기 물리 키와 상태창으로, 이동 버튼은 역 표지판/출구 표시로 재스타일링하십시오."
+      "scene_id": "04_step4_story_life",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "[data-qa-scene=\"step4_story_life\"] .narration.panel, .slide-card, #life-next",
+      "issue": "생활 연결 장면의 핵심 UI가 큰 웹 카드 두 개와 일반 버튼 중심이다.",
+      "evidence": "배경은 역 장면이지만 설명, 슬라이드, CTA가 모두 독립 패널로 떠 있어 장면 속 조작 경험이 약하다.",
+      "suggested_fix": "narration은 역 안내판, slide-card는 안내 키오스크, #life-next는 발권기 tray의 황금 티켓으로 재구성한다."
     },
     {
+      "scene_id": "04_step4_story_life",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "[data-qa-scene=\"step4_story_life\"] .narration.panel approx x=177..656 y=306..698",
+      "issue": "생활 연결 설명 텍스트가 장면 속 표면에 붙지 않는다.",
+      "evidence": "큰 반투명 웹 패널이 인물과 발권기 앞을 덮고 있다.",
+      "suggested_fix": "좌측 발권기 옆 frosted glass notice surface로 축소 배치하고 안내판 테두리/고정 장식을 추가한다."
+    },
+    {
+      "scene_id": "01_step2_tutorial_repair",
       "severity": "medium",
-      "axis": "composition",
-      "issue": "완료 화면 보상 UI가 배경 인물과 카운터를 큰 반투명 패널로 덮습니다.",
-      "evidence": "황금 티켓과 안내 문구가 넓은 노란 panel 안에 떠 있고 뒤의 역무원과 주인공이 흐릿하게 가려집니다.",
-      "suggested_fix": "반투명 보상 패널을 없애고 황금 티켓을 카운터 위 실제 보상 물건처럼 배치하십시오. 완료 문구는 상단 역 전광판에, 다음 차시 CTA는 카운터 앞 티켓 발급 버튼으로 옮기십시오."
+      "axis": "asset_component_fit",
+      "target": "[data-qa-scene=\"step2_tutorial_repair\"] aside.panel",
+      "issue": "오른쪽 보조 UI가 기계 surface와 분리되어 있다.",
+      "evidence": "중앙 화면은 monitor처럼 읽히지만 오른쪽은 큰 빈 반투명 웹 패널로 보인다.",
+      "suggested_fix": "aside를 기계 측면 상태 모듈로 축소하고 성공 photo/CTA가 표시될 때만 receipt tray처럼 활성화한다."
     }
   ],
   "refine_suggestions": [
-    "STEP 4 life-overlay와 station-message 중심 구조를 해체하고, asset_life_queue_examples 안의 은행/맛집/병원 빈 화면에 각각 번호 예시와 사례 caption을 HTML 텍스트로 직접 배치하라.",
-    "STEP 4의 1/2/3 slide 버튼을 하단 둥근 사각 버튼이 아니라 각 사례 화면에 붙은 작은 번호표 스탬프 또는 전광판 선택등처럼 만들고, 선택된 사례만 조명/테두리로 강조하라.",
-    "STEP 2 우하단의 작은 clerk_anxious cutout을 제거하고, feedback 문장은 배경 속 큰 안내 캐릭터 손 옆 말풍선이나 발권기 우하단 상태 표시창으로 옮겨라.",
-    "STEP 3 하단 answer-input-row와 keypad를 별도 웹 폼 패널처럼 두지 말고, repair_system_bg 하단 콘솔에 붙은 물리 버튼과 숫자 표시창처럼 재배치하라.",
-    "completion 화면의 넓은 노란 counter-reward 반투명 패널을 제거하고, golden_ticket_reward를 카운터 위 실제 물건 위치에 올린 뒤 완료 문구는 상단 역 전광판 안으로 옮겨라.",
-    "시작/수리 완료/다음 차시 CTA는 공통 노란 rounded button 대신 황금 티켓형 버튼이나 역 표지판형 버튼으로 바꾸고 절취선, 테두리, 작은 홈 형태를 추가하라."
+    "[data-qa-scene=\"step3_boss_compare\"] .choice-row를 grid에서 absolute slots로 바꾸고 left x=0..505 y=540..758, center x=545..898 y=620..828, right x=930..1440 y=540..758 placard 내부에 맞춰 배치한다.",
+    "[data-qa-scene=\"step3_boss_compare\"] .choice-ticket의 yellow card background와 heavy shadow를 제거하고 각 번호표 위 큰 navy 숫자, 선택 glow, focus outline만 남긴다.",
+    "[data-qa-scene=\"step3_boss_compare\"] #boss-feedback와 #boss-next를 중앙 하단 blank placard 내부로 이동해 status line과 golden-ticket CTA로 나눈다.",
+    "[data-qa-scene=\"step4_story_life\"] .narration.panel을 좌측 발권기 옆 frosted glass notice로 줄이고 #life-next는 발권기 tray에서 나온 황금 티켓형 CTA로 재배치한다.",
+    "[data-qa-scene=\"step4_story_life\"] .slide-card를 station kiosk screen으로 바꾸고 이미지, title/copy, slide controls를 각각 kiosk screen slot, LED caption strip, physical button rail에 배치한다.",
+    "공통 header.topbar는 흰 웹 바 대신 cream enamel station sign 스타일로 바꾸고 금속 테두리와 좌우 bracket을 적용한다."
   ]
 }

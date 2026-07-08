@@ -1,0 +1,355 @@
+{
+  "page": {
+    "goal": "초등 저학년 학습자가 기차역 번호표 기계를 수리하는 흐름 속에서 네 자리 수의 순서, 뛰어 세기, 크기 비교를 직접 조작하며 이해하게 한다.",
+    "audience": "네 자리 수의 계열과 크기 비교를 처음 배우는 초등 저학년 학습자",
+    "tone": "밝고 활기찬 명절 기차역 모험 분위기이며, 문제 해결은 게임처럼 경쾌하지만 설명은 짧고 직관적으로 유지한다."
+  },
+  "art_direction": {
+    "style_name": "밝은 키즈 어드벤처 기차역 일러스트",
+    "palette": "맑은 하늘색, 따뜻한 노란색, 민트색, 산호색을 중심으로 높은 명도와 중간 채도를 사용하고, 오류 장면에는 빨간 경고등과 보라색 노이즈를 소량만 섞는다.",
+    "line_style": "둥글고 부드러운 외곽선, 초등 저학년이 읽기 쉬운 단순화된 형태, 주요 물체는 두꺼운 실루엣으로 즉시 알아보이게 표현한다.",
+    "lighting": "실내 기차역의 밝은 확산광을 기본으로 하고, 정답이나 보상 순간에는 금빛 반짝임과 부드러운 림라이트를 더한다. 그림자는 짧고 부드럽게 처리한다.",
+    "character_rules": "역무원은 친절한 중년 남성으로 파란 제복과 모자, 둥근 얼굴, 큰 표정 변화를 유지한다. 학습자 대리 주인공은 화면을 방해하지 않는 어린이 캐릭터로 밝은 옷과 호기심 있는 표정을 유지한다. 반복 등장 캐릭터는 같은 비율과 의상을 유지한다.",
+    "background_rules": "기차역은 매표소, 대합실, 번호표 발행기, 승강장 안내 요소가 있는 세계관으로 유지한다. 배경은 활기차지만 문제 숫자와 조작 영역이 놓일 중앙 safe zone은 단순한 색면과 여백을 남긴다.",
+    "continuity_rules": "모든 장면은 같은 기차역 안에서 카메라가 이동하는 느낌으로 연결한다. STEP 1의 매표소, STEP 2의 번호표 기계 확대, STEP 3의 기계 내부, STEP 4의 정상화된 매표소가 같은 색감과 소품을 공유해야 한다.",
+    "forbidden_styles": [
+      "실사풍 공포 분위기",
+      "어두운 SF 디스토피아",
+      "flat vector UI",
+      "SVG icon kit",
+      "plain geometric panel",
+      "과도하게 복잡한 만화 컷 분할",
+      "성인용 카지노 슬롯머신 분위기"
+    ]
+  },
+  "sections": [
+    {
+      "id": "step1_intro_station_problem",
+      "title": "STEP 1 - 들어가기: 뒤죽박죽 번호표 기계",
+      "purpose": "명절 전날 기차역의 혼란과 고장 난 전광판을 보여주어 네 자리 수 순서를 바로잡아야 하는 동기를 만든다.",
+      "content_outline": [
+        "첫 화면은 북적이는 명절 기차역 매표소를 배경으로 시작한다.",
+        "매표소 위 전광판에는 3500, ????, 4100처럼 일부 숫자가 깨지고 깜빡이는 상태를 크게 보여준다.",
+        "우측 상단에는 나의 황금 기차표 주머니 (0/5)를 상시 표시한다.",
+        "내레이션 텍스트는 칙칙폭폭! 즐거운 명절 전날이에요. 어라? 무슨 일이 생긴 걸까요?로 제시한다.",
+        "역무원 말풍선에는 아이고, 큰일 났네! 번호표 기계가 고장 나서 순서가 엉망이야!를 표시한다.",
+        "승객 말풍선은 제 번호는요?, 누가 먼저 온 거지?, 기차 놓치겠어요!를 겹치지 않게 짧게 순환 노출한다.",
+        "하단 중앙에는 네 자리 수의 힘으로 기계 수리하러 가기! 버튼을 두고, 클릭하면 매표소 번호표 발행기 화면으로 확대 전환한다."
+      ],
+      "interaction_ids": [
+        "intro_start_repair",
+        "ambient_crowd_bubbles"
+      ],
+      "asset_ids": [
+        "asset_station_chaos_bg",
+        "asset_station_staff",
+        "asset_learner_helper"
+      ]
+    },
+    {
+      "id": "step2_tutorial_repair_needed",
+      "title": "STEP 2 - 수리가 필요해요: 숫자 카드로 첫 수리",
+      "purpose": "문제은행에 들어가기 전 1씩 커지는 수와 10씩 뛰어 세는 수의 변화를 드래그 조작으로 발견하게 한다.",
+      "content_outline": [
+        "STEP 1에서 화면이 번호표 발행기 모니터로 줌인되며 미션 화면이 열린다.",
+        "미션 1은 3500 -> [?]를 중앙 고장 전광판에 표시하고, 역무원 힌트는 3500이 깜빡이고 있어! 3500보다 1만큼 더 큰 수는 무엇일까?로 제시한다.",
+        "하단에는 3장의 숫자 카드를 가로로 놓고, 정답 3501과 오답 카드 2장을 함께 제시한다.",
+        "학습자는 숫자 카드를 [?] 빈칸으로 드래그하거나 터치 선택할 수 있다.",
+        "오답은 경고음과 함께 카드가 원래 자리로 튕겨 돌아가고, 정답은 빈칸에 자석처럼 붙으며 전광판 왜곡이 줄어든다.",
+        "미션 2는 4200 -> 4210 -> 4220 -> [?]를 제시하고, 힌트는 단체 관광객 번호판이야! 4200부터 10씩 뛰어 세는 번호란다. 4200보다 10씩 커지는 수는?으로 제시한다.",
+        "두 미션을 모두 맞히면 기다리던 손님이 표를 받아 가고, 역무원 말풍선 자, 이제 준비는 끝났다!와 다음 단계 버튼을 표시한다."
+      ],
+      "interaction_ids": [
+        "tutorial_card_drag",
+        "tutorial_feedback_snap_bounce",
+        "step2_next_button"
+      ],
+      "asset_ids": [
+        "asset_ticket_machine_closeup",
+        "asset_station_staff"
+      ]
+    },
+    {
+      "id": "step3_game_repair_system",
+      "title": "STEP 3 - 수리로 해결해요: 5문제 연속 수리",
+      "purpose": "무작위 문제 풀이를 통해 네 자리 수의 계열, 뛰어 세기, 크기 비교를 반복 연습하게 한다.",
+      "content_outline": [
+        "배경은 번호표 발행기 내부 시스템으로 전환하고, 톱니바퀴와 숫자 레일이 움직이는 수리 공간처럼 표현한다.",
+        "상단 중앙에는 문제 진행도 게이지 바 0/5를 표시하고, 우측 상단에는 나의 황금 기차표 주머니 (0/5)를 유지한다.",
+        "중앙 문제판은 슬롯머신처럼 숫자가 빠르게 흐르다가 멈추며 문제를 출제한다.",
+        "1~2번 문항은 일의 자리 또는 십의 자리가 변하는 낮은 난이도 문제로 구성하며, 예시는 5236 -> 5237 -> [] -> 5239 형태를 사용한다.",
+        "3~4번 문항은 백의 자리 또는 천의 자리가 변하는 중간 난이도 문제로 구성하며, 예시는 2800 -> 3800 -> 4800 -> [] 형태를 사용한다.",
+        "각 계열 문제는 하단 숫자 키패드 또는 텍스트 입력 빈칸으로 답을 입력하고 확인 버튼을 누르게 한다.",
+        "5번 문항은 보스 문제로 오류! 다음 중 가장 큰 번호표를 가진 손님을 고르세요! 문구와 함께 6420, 6240, 6402 보기 3개를 제시한다.",
+        "정답을 맞힐 때마다 게이지가 1칸 차오르고 기계 내부 조명이 밝아지며, 5문제 완료 시 수리 완료 전환을 시작한다."
+      ],
+      "interaction_ids": [
+        "game_problem_generator",
+        "number_input_submit",
+        "boss_choice_compare",
+        "progress_gauge_update"
+      ],
+      "asset_ids": [
+        "asset_machine_interior"
+      ]
+    },
+    {
+      "id": "step4_story_real_life_value",
+      "title": "STEP 4 - 수리 이야기: 숫자로 순서를 알 수 있어요",
+      "purpose": "번호표 수리 경험을 일상생활의 순서 숫자 사용으로 연결해 학습 가치를 정리한다.",
+      "content_outline": [
+        "정상 작동하는 매표소 배경으로 돌아오고 전광판에는 3501 -> 3502 -> 3503 흐름이 안정적으로 표시된다.",
+        "승객들은 줄을 서서 질서 있게 표를 사고, 주인공과 역무원은 화면 중앙 가까이에 나란히 선다.",
+        "역무원 대사는 휴, 친구 덕분에 기차역이 다시 평화를 찾았어! 고마워. 만약 우리 생활에 순서를 알려주는 숫자가 없다면 어떻게 될까?로 제시한다.",
+        "핵심 내레이션은 오늘 우리가 고친 기차역 번호표처럼, 일상생활에서 순서를 숫자로 나타내어 편리한 경우는 또 어디에 있을까요?로 제시한다.",
+        "중앙에는 실생활 사례 슬라이드가 차례로 나타나며 은행 대기 번호표, 유명 맛집 태블릿 대기 화면, 병원 대기 전광판 사례를 보여준다.",
+        "슬라이드 설명 대사는 은행이나 맛집에서도 번호표를 받으면 내 순서를 알 수 있어 정말 편리하단다. 숫자가 커지는 규칙을 알면 내 차례를 정확히 예상할 수 있지!로 제시한다."
+      ],
+      "interaction_ids": [
+        "real_life_slide_show"
+      ],
+      "asset_ids": [
+        "asset_station_fixed_bg",
+        "asset_station_staff",
+        "asset_learner_helper",
+        "asset_daily_number_examples"
+      ]
+    },
+    {
+      "id": "step4_completion_reward",
+      "title": "STEP 4 - 완료: 황금 기차표 1호 획득",
+      "purpose": "1차시 완료감을 주고 황금 기차표 보상과 다음 차시 이동 목표를 명확히 제시한다.",
+      "content_outline": [
+        "이야기가 끝나면 화면 중앙에 1차시 수리 완료! 도장이 경쾌하게 찍히는 흔들림 애니메이션을 보여준다.",
+        "우측 상단의 황금 기차표 주머니가 (1/5)로 바뀌고 1호 황금 기차표가 반짝인다.",
+        "역무원 마지막 안내 대사는 자, 이제 매점 사장님을 도우러 가볼까?로 표시한다.",
+        "하단에는 2차시: 역전 매점의 묶음 간식을 세러 가기! 버튼을 활성화한다.",
+        "완료 화면은 학습 결과를 요약하지 않고, 성공한 기차역 장면과 보상으로 마무리한다."
+      ],
+      "interaction_ids": [
+        "completion_stamp_reward",
+        "next_lesson_button"
+      ],
+      "asset_ids": [
+        "asset_golden_ticket",
+        "asset_station_fixed_bg",
+        "asset_station_staff"
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "intro_start_repair",
+      "type": "button",
+      "description": "하단 시작 버튼을 누르면 반짝임 효과 후 매표소 번호표 발행기 모니터로 줌인 전환한다."
+    },
+    {
+      "id": "ambient_crowd_bubbles",
+      "type": "animation",
+      "description": "승객 말풍선을 짧게 순환 노출해 혼란 상황을 만들되, 문제 숫자와 주요 버튼을 가리지 않는다."
+    },
+    {
+      "id": "tutorial_card_drag",
+      "type": "drag_drop",
+      "description": "숫자 카드 3장 중 하나를 [?] 빈칸으로 끌어 놓거나 터치 선택해 정답을 시도한다."
+    },
+    {
+      "id": "tutorial_feedback_snap_bounce",
+      "type": "feedback_animation",
+      "description": "오답은 Bounce back과 경고음, 정답은 Snap 안착과 전광판 정상화 효과로 즉시 구분한다."
+    },
+    {
+      "id": "step2_next_button",
+      "type": "button",
+      "description": "튜토리얼 두 미션 완료 후 다음 단계 버튼이 활성화되어 기계 내부 게임 화면으로 이동한다."
+    },
+    {
+      "id": "game_problem_generator",
+      "type": "animation",
+      "description": "중앙 문제판 숫자가 레일처럼 흐르다가 멈추며 5문제를 순서대로 출제한다."
+    },
+    {
+      "id": "number_input_submit",
+      "type": "input",
+      "description": "계열 문제에서 숫자 키패드 또는 텍스트 입력칸으로 네 자리 수 답을 입력하고 확인한다."
+    },
+    {
+      "id": "boss_choice_compare",
+      "type": "choice_quiz",
+      "description": "보스 문제에서 3개의 번호표 중 가장 큰 수를 터치 선택한다."
+    },
+    {
+      "id": "progress_gauge_update",
+      "type": "state_animation",
+      "description": "정답마다 게이지 바가 0/5에서 5/5까지 차오르고 기계 내부 조명이 밝아진다."
+    },
+    {
+      "id": "real_life_slide_show",
+      "type": "slideshow",
+      "description": "은행, 맛집, 병원 대기 번호 사례 이미지를 역무원 대사 타이밍에 맞춰 페이드 인/아웃한다."
+    },
+    {
+      "id": "completion_stamp_reward",
+      "type": "reward_animation",
+      "description": "1차시 수리 완료 도장과 황금 기차표 획득 반짝임을 동시에 보여주고 주머니 상태를 (1/5)로 고정한다."
+    },
+    {
+      "id": "next_lesson_button",
+      "type": "button",
+      "description": "다음 차시 버튼을 눌러 2차시 콘텐츠로 이동할 수 있게 한다."
+    }
+  ],
+  "asset_plan": [
+    {
+      "id": "asset_station_chaos_bg",
+      "kind": "image",
+      "intended_path": "output/assets/station_chaos_bg.png",
+      "purpose": "STEP 1의 문제 상황과 명절 전날 기차역의 활기를 한눈에 전달한다.",
+      "prompt_brief": "명절 전날의 밝고 붐비는 마을 기차역 매표소, 창구 위에는 일부 숫자가 깨져 깜빡이는 번호표 전광판이 있고 승객들이 당황해 줄이 흐트러진 장면을 그린다.",
+      "visual_role": "고장 난 번호표 시스템과 혼란스러운 대합실을 보여주는 첫 장면 배경",
+      "style_constraints": "밝은 키즈 어드벤처 기차역 일러스트 스타일, 따뜻한 조명, 산호색과 민트색 소품, 전광판 오류는 빨간 경고등과 보라색 노이즈를 소량 사용한다.",
+      "composition_notes": "16:9 가로 화면 기준, 상단에는 전광판이 잘 보이게 하고 중앙 하단에는 내레이션과 시작 버튼을 얹을 safe zone을 남긴다. 승객은 좌우 가장자리와 창구 앞에 배치하고 중앙 주요 숫자를 가리지 않는다.",
+      "negative_prompt": "flat vector UI, SVG style, icon kit, plain geometric panel, 어두운 공포 분위기, 지나치게 많은 텍스트, 실제 한글 간판 세부 글자",
+      "usage_section_ids": [
+        "step1_intro_station_problem"
+      ]
+    },
+    {
+      "id": "asset_station_staff",
+      "kind": "image",
+      "intended_path": "output/assets/station_staff.png",
+      "purpose": "문제 제시, 힌트, 격려, 완료 안내를 담당하는 반복 등장 안내 캐릭터로 사용한다.",
+      "prompt_brief": "파란 제복과 모자를 쓴 친절한 마을 기차역 역무원 아저씨, 둥근 얼굴, 큰 눈, 당황한 표정과 흐뭇한 표정을 모두 연상할 수 있는 기본 포즈로 그린다.",
+      "visual_role": "말풍선과 음성 안내를 연결하는 재사용 역무원 캐릭터",
+      "style_constraints": "전체 캐릭터 규칙과 동일한 둥근 비율, 밝은 색감, 과장되지만 무섭지 않은 표정, 같은 제복 색을 유지한다.",
+      "composition_notes": "투명 배경에 가까운 단독 캐릭터 구도, 허리 위 또는 전신이 모두 활용 가능하도록 충분한 여백을 두고, 말풍선이 붙을 좌상단 공간을 비워 둔다.",
+      "negative_prompt": "실사 인물, 과도한 주름, 복잡한 제복 장식, 권위적이거나 무서운 표정, flat icon character",
+      "usage_section_ids": [
+        "step1_intro_station_problem",
+        "step2_tutorial_repair_needed",
+        "step4_story_real_life_value",
+        "step4_completion_reward"
+      ]
+    },
+    {
+      "id": "asset_learner_helper",
+      "kind": "image",
+      "intended_path": "output/assets/learner_helper.png",
+      "purpose": "학습자가 이야기 속 주인공처럼 수리 모험에 참여하고 있다는 느낌을 제공한다.",
+      "prompt_brief": "밝은 옷을 입은 초등 저학년 어린이 주인공, 작은 가방을 메고 기차표를 받을 준비를 하는 호기심 있는 표정의 캐릭터를 그린다.",
+      "visual_role": "역무원과 함께 서서 수리 성공과 보상 장면을 받는 학습자 대리 캐릭터",
+      "style_constraints": "역무원과 같은 키즈 어드벤처 일러스트 비율, 선명한 색감, 성별이 강하게 고정되지 않는 친근한 외형으로 표현한다.",
+      "composition_notes": "투명 배경 단독 캐릭터, 전신 기준으로 중앙이나 우측에 배치하기 쉬운 정면 3/4 포즈, 손 주변에 황금 기차표를 받을 여백을 둔다.",
+      "negative_prompt": "유명 캐릭터 유사성, 성인 체형, 과도한 장신구, 실사풍, flat vector avatar",
+      "usage_section_ids": [
+        "step1_intro_station_problem",
+        "step4_story_real_life_value"
+      ]
+    },
+    {
+      "id": "asset_ticket_machine_closeup",
+      "kind": "image",
+      "intended_path": "output/assets/ticket_machine_closeup.png",
+      "purpose": "STEP 2 튜토리얼에서 숫자 카드가 들어갈 고장 난 번호표 발행기 모니터 장면을 제공한다.",
+      "prompt_brief": "기차역 번호표 발행기 모니터를 가까이 본 장면, 두꺼운 금속 테두리와 작은 티켓 배출구, 화면에는 깨진 숫자 레일과 빈칸이 들어갈 빛나는 수리 공간이 있는 기계를 그린다.",
+      "visual_role": "3500 -> [?]와 4200 -> 4210 -> 4220 -> [?] 문제를 얹을 물리적인 수리 대상 장면",
+      "style_constraints": "같은 기차역 세계관의 밝은 기계 소품, 금속은 부드러운 회색과 민트색으로 표현하고 오류 부분만 빨간 점멸 느낌을 준다.",
+      "composition_notes": "중앙 모니터 영역은 HTML 숫자와 카드 드롭 영역을 얹을 수 있도록 비워 둔다. 하단에는 숫자 카드 3장을 놓을 넓은 선반 또는 작업대를 포함한다.",
+      "negative_prompt": "CSS component mockup, plain geometric panel, flat vector UI, 실제 브랜드 키오스크, 세밀한 작은 글자",
+      "usage_section_ids": [
+        "step2_tutorial_repair_needed"
+      ]
+    },
+    {
+      "id": "asset_machine_interior",
+      "kind": "image",
+      "intended_path": "output/assets/machine_interior.png",
+      "purpose": "STEP 3의 본격 문제 풀이가 기계 내부 수리 게임으로 느껴지게 한다.",
+      "prompt_brief": "번호표 발행기 내부로 들어간 듯한 밝은 기계 수리 공간, 둥근 톱니바퀴와 숫자 레일, 작은 전구, 기차 선로 모양의 회로가 움직일 것 같은 장면을 그린다.",
+      "visual_role": "5문제 연속 출제 시스템과 게이지 바, 숫자 입력 UI가 올라갈 게임 배경",
+      "style_constraints": "키즈 어드벤처 스타일을 유지하며 사이버 느낌은 과하지 않게, 민트색 기계 빛과 노란 전구 빛을 중심으로 표현한다.",
+      "composition_notes": "상단 중앙 게이지, 우측 상단 보상 주머니, 중앙 문제판, 하단 키패드가 올라갈 수 있도록 각 영역을 명확히 비워 둔다. 가장자리에는 톱니바퀴와 레일을 배치해 중앙 가독성을 확보한다.",
+      "negative_prompt": "어두운 해킹 화면, 복잡한 회로 텍스트, 성인용 슬롯머신, 카지노 분위기, flat vector UI, plain geometric panel",
+      "usage_section_ids": [
+        "step3_game_repair_system"
+      ]
+    },
+    {
+      "id": "asset_station_fixed_bg",
+      "kind": "image",
+      "intended_path": "output/assets/station_fixed_bg.png",
+      "purpose": "수리 후 기차역이 질서를 되찾은 장면을 보여주고 학습 성취감을 만든다.",
+      "prompt_brief": "정상 작동하는 마을 기차역 매표소, 전광판에는 순서대로 진행되는 번호표 흐름이 보이고 승객들이 차분히 줄 서서 표를 사는 평화로운 장면을 그린다.",
+      "visual_role": "STEP 4 이야기와 완료 보상 장면의 안정된 기차역 배경",
+      "style_constraints": "STEP 1과 같은 공간이지만 오류 조명 없이 밝고 따뜻한 금빛 분위기로 바꾸며, 색감과 소품은 동일 세계관을 유지한다.",
+      "composition_notes": "중앙에는 역무원과 주인공 캐릭터를 배치할 여백을 남기고, 상단 전광판은 보이되 HTML 텍스트와 충돌하지 않게 단순화한다. 하단 버튼 safe zone을 확보한다.",
+      "negative_prompt": "새로운 장소처럼 보이는 배경, 과밀한 군중, 실제 광고 문구, 어두운 역 플랫폼, flat vector UI",
+      "usage_section_ids": [
+        "step4_story_real_life_value",
+        "step4_completion_reward"
+      ]
+    },
+    {
+      "id": "asset_daily_number_examples",
+      "kind": "image",
+      "intended_path": "output/assets/daily_number_examples.png",
+      "purpose": "번호표 숫자가 일상생활에서도 순서를 알려준다는 연결을 시각적으로 보여준다.",
+      "prompt_brief": "은행 대기 번호표, 유명 맛집 태블릿 대기 화면, 병원 대기 전광판을 하나의 밝은 슬라이드용 장면 묶음처럼 그린다. 각 사례에는 사람들이 차례를 기다리는 모습과 커지는 번호가 보인다.",
+      "visual_role": "실생활 사례 슬라이드에 들어가는 번호표 활용 예시 이미지",
+      "style_constraints": "전체 일러스트 스타일과 같은 색감과 선을 유지하되, 사진 슬라이드처럼 화면 안에 들어가는 사례 이미지 느낌을 준다.",
+      "composition_notes": "세 사례를 좌중우 또는 3장 카드처럼 분리해도 되지만 각 사례 중앙에는 번호표 물건이 크게 보이게 한다. HTML 설명 텍스트가 올라갈 하단 여백을 남긴다.",
+      "negative_prompt": "실제 병원명이나 브랜드명, 읽기 어려운 작은 글자, stock photo look, flat icon set, plain infographic panel",
+      "usage_section_ids": [
+        "step4_story_real_life_value"
+      ]
+    },
+    {
+      "id": "asset_golden_ticket",
+      "kind": "image",
+      "intended_path": "output/assets/golden_ticket.png",
+      "purpose": "1차시 완료 보상인 1호 황금 기차표 획득을 명확히 보여준다.",
+      "prompt_brief": "반짝이는 금빛 기차표 한 장, 작은 별빛과 1호 느낌을 주는 장식이 있고 기차역 모험 보상처럼 따뜻하게 빛나는 아이템을 그린다.",
+      "visual_role": "황금 기차표 주머니와 완료 보상 연출에 쓰이는 획득 아이템",
+      "style_constraints": "같은 키즈 어드벤처 스타일, 과도하게 사실적인 금속 질감보다 부드러운 금빛과 둥근 모서리를 사용한다.",
+      "composition_notes": "투명 배경에 가까운 단독 아이템, 우측 상단 주머니 UI나 중앙 보상 연출에 모두 쓸 수 있도록 정면 약간 기울어진 구도와 충분한 여백을 둔다.",
+      "negative_prompt": "현금 쿠폰처럼 보이는 디자인, 실제 교통 티켓 브랜드, 복잡한 작은 글자, flat SVG icon",
+      "usage_section_ids": [
+        "step4_completion_reward"
+      ]
+    }
+  ],
+  "asset_groups": [
+    {
+      "id": "group_station_characters",
+      "asset_ids": [
+        "asset_station_staff",
+        "asset_learner_helper"
+      ],
+      "grouping_reason": "반복 등장 인물의 비율, 선 두께, 표정 톤을 맞춰야 하므로 같은 batch 후보로 묶는다."
+    },
+    {
+      "id": "group_station_before_after",
+      "asset_ids": [
+        "asset_station_chaos_bg",
+        "asset_station_fixed_bg"
+      ],
+      "grouping_reason": "같은 매표소 공간의 고장 전후 변화가 자연스럽게 이어져야 하므로 배경 구조와 색감을 함께 맞춘다."
+    },
+    {
+      "id": "group_machine_repair_flow",
+      "asset_ids": [
+        "asset_ticket_machine_closeup",
+        "asset_machine_interior"
+      ],
+      "grouping_reason": "번호표 발행기 외부 확대와 내부 시스템 장면이 하나의 기계처럼 연결되어야 하므로 함께 묶는다."
+    },
+    {
+      "id": "group_reward_and_examples",
+      "asset_ids": [
+        "asset_daily_number_examples",
+        "asset_golden_ticket"
+      ],
+      "grouping_reason": "마무리 단계에서 쓰이는 실생활 연결 이미지와 보상 아이템의 밝기, 금빛 강조, 축하 분위기를 맞춘다."
+    }
+  ]
+}

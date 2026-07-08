@@ -1,0 +1,37 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.1,
+      "learning_goal_alignment": 4.0,
+      "interaction_flow_clarity": 4.0,
+      "feedback_scaffolding": 3.6,
+      "content_completeness": 3.8,
+      "functional_integrity": 4.2
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 3.94
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본의 기차역 혼란, 튜토리얼 2문항, 4개 일반 수리 문제와 보스 비교, 생활 연결, 황금 기차표 보상 순서는 대체로 보존되어 있다. 다만 STEP 1의 원 내레이션 일부와 STEP 4의 정상 전광판 숫자 흐름 3501 -> 3502 -> 3503이 약해졌고, 본 게임의 중간 난이도가 백의 자리 변화 없이 천의 자리 변화 중심으로 축약되었다.",
+    "learning_goal_alignment": "튜토리얼과 게임 문항은 1씩 커지는 수, 10씩 뛰어 세기, 1000씩 뛰어 세기, 네 자리 수 비교를 직접 다루어 학습 목표와 연결된다. 그러나 일반 문제 3~4가 모두 천 단위 증가로 구성되어 백의 자리 변화 탐색이 빠지고, 생활 연결 단계는 슬라이드 확인이 학습 조작으로 강하게 묶이지 않는다.",
+    "interaction_flow_clarity": "시작, 튜토리얼 완료, 게임 입력, 보스 선택, 생활 연결, 보상으로 이어지는 진행 버튼과 상태 표시는 명확하다. 오답 후 재시도도 가능하다. 다만 튜토리얼 정답 후 자동으로 다음 미션이 전환되어 일부 학습자가 성공 반응을 충분히 읽기 전에 장면이 바뀔 수 있고, 생활 사례 슬라이드는 완료 버튼과의 관계가 느슨하다.",
+    "feedback_scaffolding": "정답과 오답 피드백, 힌트, 진행도 변화는 제공된다. 보스 오답은 자릿값 비교 방향을 알려 주어 유용하다. 하지만 일반 게임 오답은 대부분 '앞 수와 뒤 수의 차이' 수준의 반복 힌트에 머물고, 정답 피드백도 왜 해당 수가 맞는지 자릿값 변화와 연결해 설명하는 정도가 약하다.",
+    "content_completeness": "필수 섹션과 완료 보상 흐름은 모두 존재하고 5번째 보스 문제까지 도달 가능하다. 하지만 일반 게임에서 백의 자리 변화 문항이 빠졌고, 생활 사례 3종은 구현되어 있으나 모두 확인하지 않아도 보상으로 넘어갈 수 있어 생활 확장 경험이 완전히 닫히지 않는다. STEP 4 정상 전광판의 순차 숫자 맥락도 축약되어 있다.",
+    "functional_integrity": "주요 버튼, 숫자 카드 선택과 드래그, 키패드와 키보드 입력, 진행도, 보스 선택, 완료 화면 전환은 코드상 정상 흐름으로 구현되어 있다. 치명적인 blocking runtime error는 보이지 않는다. 다만 튜토리얼의 자동 전환과 생활 슬라이드 비필수 흐름은 기능 오류는 아니지만 학습 진행 상태 해석을 약간 흐리게 한다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "content_completeness",
+    "learning_goal_alignment"
+  ],
+  "calibration_note": "weighted_total 3.94로 min_total 4.0에 미달하고, feedback_scaffolding 3.6은 min_axis 3.8 미만, content_completeness 3.8은 min_axis 4.0 미만이다. 필수 흐름은 대체로 동작하지만 피드백 설명성과 일부 필수 학습 범위의 완결성이 통과 기준에 부족하다."
+}

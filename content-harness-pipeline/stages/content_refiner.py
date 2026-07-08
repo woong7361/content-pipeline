@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from stages.scripts.codex_client import CodexClient
+from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +21,8 @@ def refine_content(
     run_dir: Path,
     output_path: Path,
     codex_bin: str = "codex",
+    claude_bin: str = "claude",
+    llm_provider: str = PROVIDER_CODEX,
     model: str | None = None,
     timeout_seconds: int = 600,
 ) -> dict | None:
@@ -40,8 +42,10 @@ def refine_content(
         refine_packet=refine_packet,
         run_dir=run_dir,
     )
-    client = CodexClient(
+    client = create_prompt_client(
+        provider=llm_provider,
         codex_bin=codex_bin,
+        claude_bin=claude_bin,
         project_dir=PROJECT_DIR,
         timeout_seconds=timeout_seconds,
     )

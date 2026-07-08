@@ -27,13 +27,14 @@ from stages.design_refiner import refine_design
 from stages.generator import generate
 from stages.planner import plan
 from stages.refine import refine
-from validate import validate_file, write_result
+from validate import validate_file, validate_schema, write_result
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
 RUNS_DIR = PROJECT_DIR / "runs"
 RUBRIC_PATH = PROJECT_DIR / "rubric.yaml"
 CONTENT_RUBRIC_PATH = PROJECT_DIR / "content_rubric.yaml"
+BUILDER_OUTPUT_SCHEMA_PATH = PROJECT_DIR / "schemas" / "builder_output.schema.json"
 KST = timezone(timedelta(hours=9))
 
 MODEL_CODEX_DEFAULT = None
@@ -41,6 +42,34 @@ MODEL_GPT_5_5 = "gpt-5.5"
 MODEL_GPT_5_4 = "gpt-5.4"
 MODEL_GPT_5_4_MINI = "gpt-5.4-mini"
 MODEL_O3 = "o3"
+MODEL_CLAUDE_OPUS = "opus"
+MODEL_CLAUDE_SONNET = "sonnet"
+
+PROVIDER_CODEX = "codex"
+PROVIDER_CLAUDE = "claude"
+
+
+def default_claude_bin() -> str:
+    if sys.platform != "win32":
+        return "claude"
+
+    claude_cmd = shutil.which("claude.cmd")
+    if claude_cmd:
+        claude_exe = (
+            Path(claude_cmd).parent
+            / "node_modules"
+            / "@anthropic-ai"
+            / "claude-code"
+            / "bin"
+            / "claude.exe"
+        )
+        if claude_exe.exists():
+            return str(claude_exe)
+
+    return "claude.cmd"
+
+
+DEFAULT_CLAUDE_BIN = default_claude_bin()
 
 AGENT_GEN = "gen"
 AGENT_PLANNER = "planner"
@@ -69,13 +98,17 @@ AGENT_MODELS = {
     AGENT_EVAL: MODEL_GPT_5_5,
     AGENT_REFINE: MODEL_GPT_5_5,
 }
+CLAUDE_HTML_AGENTS = (AGENT_BUILDER, AGENT_DESIGN_REFINE, AGENT_CONTENT_REFINE)
+CLAUDE_MODEL_ALIASES = {MODEL_CLAUDE_OPUS, MODEL_CLAUDE_SONNET}
 
 FINAL_CHECKED_RULES = ["schema", "brief_hash", "min_total", "min_axis"]
 DEFAULT_ASSET_BATCH_SIZE = 3
-DEFAULT_ASSET_PARALLELISM = 5
+DEFAULT_ASSET_PARALLELISM = 15
 DEFAULT_CONTENT_MAX_ITERATIONS = 5
-MAX_ASSET_REVISION_REQUESTS = 3
+MAX_ASSET_REVISION_REQUESTS = 6
 DEFAULT_TIMEOUT_SECONDS = 1200
+DEFAULT_BUILDER_HTML_PATH = "output/index.html"
+DEBUG_DESIGN_REFINE_HTML_PATH = "output/refine.html"
 
 
 def format_duration(seconds: float) -> str:
@@ -94,6 +127,10 @@ def format_score(value: object) -> str:
 
 def display_model(model: str | None) -> str:
     return model or "codex-cli-default"
+
+
+def display_agent_runtime(provider: str, model: str | None) -> str:
+    return f"provider={provider} model={display_model(model)}"
 
 
 def summarize_errors(errors: list[object], limit: int = 3) -> str:
@@ -278,6 +315,14 @@ class RunContext:
         return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_design_review.validation.json"
 
     @property
+    def design_refine_builder_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_design_refine_builder.json"
+
+    @property
+    def design_refine_builder_validation_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_design_refine_builder.validation.json"
+
+    @property
     def content_critique_path(self) -> Path:
         return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_critique.json"
 
@@ -358,6 +403,38 @@ def write_json(path: Path, data: dict, overwrite: bool = False) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def build_builder_output_schema(expected_html_path: str) -> dict:
+    schema = load_json(BUILDER_OUTPUT_SCHEMA_PATH)
+    html_schema = schema["properties"]["html_path"]
+    html_schema["const"] = expected_html_path
+    html_schema["description"] = f"run 디렉토리 기준 단일 HTML 저장 경로: {expected_html_path}"
+    return schema
+
+
+def write_builder_output_schema(path: Path, expected_html_path: str) -> None:
+    write_json(path, build_builder_output_schema(expected_html_path), overwrite=True)
+
+
+def validate_builder_output_file(file_path: Path, expected_html_path: str) -> dict:
+    try:
+        data = load_json(file_path)
+    except ValueError as exc:
+        return {
+            "artifact": "builder_output",
+            "checked_file": str(file_path),
+            "status": "ERROR",
+            "errors": [str(exc)],
+        }
+
+    errors = validate_schema(data, build_builder_output_schema(expected_html_path))
+    return {
+        "artifact": "builder_output",
+        "checked_file": str(file_path),
+        "status": "REJECT" if errors else "PASS",
+        "errors": errors,
+    }
+
+
 def load_rubric(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")
     try:
@@ -372,6 +449,8 @@ def load_rubric(path: Path) -> dict:
 
 
 def copy_input(source: Path, destination: Path, overwrite: bool = False) -> None:
+    if source.resolve() == destination.resolve():
+        return
     if destination.exists() and not overwrite:
         current = destination.read_text(encoding="utf-8")
         incoming = source.read_text(encoding="utf-8")
@@ -1170,8 +1249,10 @@ def run_builder_only(args: argparse.Namespace) -> dict:
     }
     config = {
         "codex_bin": args.codex_bin,
+        "claude_bin": args.claude_bin,
         "codex_access": "dangerously-bypass-approvals-and-sandbox",
         "agent_models": resolve_agent_models(args),
+        "agent_providers": resolve_agent_providers(args),
         "timeout_seconds": args.timeout_seconds,
         "mode": "builder_only",
     }
@@ -1200,7 +1281,8 @@ def run_builder_only(args: argparse.Namespace) -> dict:
 
             stage = "builder"
             with progress.step(
-                f"builder model={display_model(config['agent_models'][AGENT_BUILDER])}",
+                "builder runtime="
+                f"{display_agent_runtime(config['agent_providers'][AGENT_BUILDER], config['agent_models'][AGENT_BUILDER])}",
                 live=True,
             ):
                 build_html(
@@ -1210,6 +1292,8 @@ def run_builder_only(args: argparse.Namespace) -> dict:
                     run_dir=context.run_dir,
                     output_path=temp_builder_output_path,
                     codex_bin=args.codex_bin,
+                    claude_bin=args.claude_bin,
+                    llm_provider=config["agent_providers"][AGENT_BUILDER],
                     model=config["agent_models"][AGENT_BUILDER],
                     timeout_seconds=args.timeout_seconds,
                 )
@@ -1272,11 +1356,15 @@ def validate_asset_files(run_dir: Path, asset_output: dict) -> list[str]:
     return errors
 
 
-def validate_builder_files(run_dir: Path, builder_output: dict) -> list[str]:
+def validate_builder_files(
+    run_dir: Path,
+    builder_output: dict,
+    expected_html_path: str = DEFAULT_BUILDER_HTML_PATH,
+) -> list[str]:
     errors = []
     html_path = builder_output.get("html_path")
-    if html_path != "output/index.html":
-        errors.append("html_path must be output/index.html")
+    if html_path != expected_html_path:
+        errors.append(f"html_path must be {expected_html_path}")
     else:
         resolved_html = (run_dir / html_path).resolve()
         try:
@@ -1811,13 +1899,15 @@ def run_content_refine_stage(
     input_path: Path,
     context: RunContext,
 ) -> dict:
+    agent_models = resolve_agent_models(args)
+    agent_providers = resolve_agent_providers(args)
     planner_output = load_json(context.planner_path)
     asset_generator_path = resolve_asset_generator_path(context, planner_output)
     with tempfile.TemporaryDirectory(prefix="content-harness-refine-") as temp_dir:
         temp_builder_output_path = Path(temp_dir) / "builder-output.json"
         with progress.step(
-            f"iter {context.iteration} content_refine model="
-            f"{display_model(resolve_agent_models(args)[AGENT_CONTENT_REFINE])}",
+            f"iter {context.iteration} content_refine runtime="
+            f"{display_agent_runtime(agent_providers[AGENT_CONTENT_REFINE], agent_models[AGENT_CONTENT_REFINE])}",
             live=True,
         ):
             refine_content(
@@ -1830,7 +1920,9 @@ def run_content_refine_stage(
                 run_dir=context.run_dir,
                 output_path=temp_builder_output_path,
                 codex_bin=args.codex_bin,
-                model=resolve_agent_models(args)[AGENT_CONTENT_REFINE],
+                claude_bin=args.claude_bin,
+                llm_provider=agent_providers[AGENT_CONTENT_REFINE],
+                model=agent_models[AGENT_CONTENT_REFINE],
                 timeout_seconds=args.timeout_seconds,
             )
 
@@ -1858,14 +1950,23 @@ def run_design_refine_stage(
     progress: ProgressReporter,
     input_path: Path,
     context: RunContext,
+    target_html_path: str = DEFAULT_BUILDER_HTML_PATH,
+    builder_output_path: Path | None = None,
+    builder_validation_path: Path | None = None,
 ) -> dict:
+    agent_models = resolve_agent_models(args)
+    agent_providers = resolve_agent_providers(args)
     planner_output = load_json(context.planner_path)
     asset_generator_path = resolve_asset_generator_path(context, planner_output)
+    builder_output_path = builder_output_path or context.builder_path
+    builder_validation_path = builder_validation_path or context.builder_validation_path
     with tempfile.TemporaryDirectory(prefix="content-harness-design-refine-") as temp_dir:
         temp_builder_output_path = Path(temp_dir) / "builder-output.json"
+        temp_builder_schema_path = Path(temp_dir) / "builder-output.schema.json"
+        write_builder_output_schema(temp_builder_schema_path, target_html_path)
         with progress.step(
-            f"iter {context.iteration} design_refine model="
-            f"{display_model(resolve_agent_models(args)[AGENT_DESIGN_REFINE])}",
+            f"iter {context.iteration} design_refine runtime="
+            f"{display_agent_runtime(agent_providers[AGENT_DESIGN_REFINE], agent_models[AGENT_DESIGN_REFINE])}",
             live=True,
         ):
             refine_design(
@@ -1878,24 +1979,32 @@ def run_design_refine_stage(
                 run_dir=context.run_dir,
                 output_path=temp_builder_output_path,
                 codex_bin=args.codex_bin,
-                model=resolve_agent_models(args)[AGENT_DESIGN_REFINE],
+                claude_bin=args.claude_bin,
+                llm_provider=agent_providers[AGENT_DESIGN_REFINE],
+                model=agent_models[AGENT_DESIGN_REFINE],
                 timeout_seconds=args.timeout_seconds,
+                output_schema_path=temp_builder_schema_path,
+                target_html_path=target_html_path,
             )
 
-        builder_result = validate_file(temp_builder_output_path, artifact="builder_output")
+        builder_result = validate_builder_output_file(temp_builder_output_path, target_html_path)
         progress.validation(f"iter {context.iteration} design_refine_builder_output_validate", builder_result)
-        ensure_pass(builder_result, context.builder_validation_path)
+        ensure_pass(builder_result, builder_validation_path)
         builder_output = load_json(temp_builder_output_path)
 
-    builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+    builder_file_errors = validate_builder_files(
+        context.run_dir,
+        builder_output,
+        expected_html_path=target_html_path,
+    )
     if builder_file_errors:
         raise FileNotFoundError("; ".join(builder_file_errors))
 
-    write_json(context.builder_path, builder_output, overwrite=True)
-    progress.line(f"iter {context.iteration} design_refine PASS")
+    write_json(builder_output_path, builder_output, overwrite=True)
+    progress.line(f"iter {context.iteration} design_refine PASS html={target_html_path}")
     return {
-        "builder": str(context.builder_path),
-        "html": str(context.html_path),
+        "builder": str(builder_output_path),
+        "html": str(context.run_dir / target_html_path),
         "output": str(context.output_dir),
     }
 
@@ -1953,6 +2062,43 @@ def run_design_review_only(args: argparse.Namespace) -> dict:
         "status": result["status"],
         "run_id": context.run_id,
         "design_review": result["design_review"],
+    }
+
+
+def run_design_refine_only(args: argparse.Namespace) -> dict:
+    progress = ProgressReporter()
+    input_path = args.input.resolve()
+    input_result = validate_file(input_path, artifact="input")
+    progress.validation("input_validate", input_result)
+    ensure_pass(input_result)
+
+    input_data = load_json(input_path)
+    brief_hash = input_data["brief_hash"]
+    context = create_run_context(args, brief_hash, args.iteration)
+    copy_input(input_path, context.copied_input_path, overwrite=args.overwrite)
+    if not context.builder_path.exists():
+        raise FileNotFoundError(f"builder output not found: {context.builder_path}")
+    if not context.html_path.exists():
+        raise FileNotFoundError(f"HTML output not found: {context.html_path}")
+    if not context.design_review_path.exists():
+        raise FileNotFoundError(f"design review output not found: {context.design_review_path}")
+    context.iter_dir.mkdir(parents=True, exist_ok=True)
+    result = run_design_refine_stage(
+        args=args,
+        progress=progress,
+        input_path=input_path,
+        context=context,
+        target_html_path=DEBUG_DESIGN_REFINE_HTML_PATH,
+        builder_output_path=context.design_refine_builder_path,
+        builder_validation_path=context.design_refine_builder_validation_path,
+    )
+    return {
+        "status": "PASS",
+        "run_id": context.run_id,
+        "design_review": str(context.design_review_path),
+        "builder": result["builder"],
+        "html": result["html"],
+        "output": result["output"],
     }
 
 
@@ -2539,6 +2685,9 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
         models[AGENT_PLANNER] = args.model
         models[AGENT_ASSET_GENERATOR] = args.model
         models[AGENT_BUILDER] = args.model
+    if args.claude_html_stages:
+        for agent in CLAUDE_HTML_AGENTS:
+            models[agent] = args.claude_model
     if args.planner_model:
         models[AGENT_PLANNER] = args.planner_model
     if args.asset_generator_model:
@@ -2566,15 +2715,58 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
     return models
 
 
+def resolve_agent_providers(args: argparse.Namespace) -> dict[str, str]:
+    providers = {agent: PROVIDER_CODEX for agent in AGENT_MODELS}
+    if args.claude_html_stages:
+        for agent in CLAUDE_HTML_AGENTS:
+            providers[agent] = PROVIDER_CLAUDE
+    return providers
+
+
+def normalize_claude_options(args: argparse.Namespace) -> None:
+    if not args.claude_html_stages:
+        return
+
+    args.claude_model = normalize_claude_model("--claude-model", args.claude_model)
+    for option_name, attr in (
+        ("--builder-model", "builder_model"),
+        ("--design-refine-model", "design_refine_model"),
+        ("--content-refine-model", "content_refine_model"),
+    ):
+        value = getattr(args, attr)
+        if value:
+            setattr(args, attr, normalize_claude_model(option_name, value))
+
+
+def normalize_claude_model(option_name: str, value: str) -> str:
+    normalized = value.lower()
+    if normalized not in CLAUDE_MODEL_ALIASES:
+        allowed = ", ".join(sorted(CLAUDE_MODEL_ALIASES))
+        raise ValueError(f"{option_name} must be one of: {allowed}")
+    return normalized
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run content harness pipeline.")
     parser.add_argument("input", type=Path, help="Path to an input JSON file matching input.schema.json.")
     parser.add_argument("--codex-bin", default="codex")
+    parser.add_argument("--claude-bin", default=DEFAULT_CLAUDE_BIN)
+    parser.add_argument(
+        "--claude-html-stages",
+        action="store_true",
+        help="Run only Builder, Design Refine, and Content Refine with Claude Code instead of Codex.",
+    )
+    parser.add_argument(
+        "--claude-model",
+        default=MODEL_CLAUDE_SONNET,
+        help="Claude model alias for --claude-html-stages: opus or sonnet. Defaults to sonnet.",
+    )
     parser.add_argument("--model", help="Alias for planner/gen model in the current MVP.")
     parser.add_argument("--planner-only", action="store_true", help="Run only input validation and planner.")
     parser.add_argument("--asset-generator-only", action="store_true", help="Run only asset generation from an existing planner output.")
     parser.add_argument("--builder-only", action="store_true", help="Run only HTML builder from existing planner and asset outputs.")
     parser.add_argument("--design-review-only", action="store_true", help="Run only Senior Designer review from existing builder output.")
+    parser.add_argument("--design-refine-only", action="store_true", help="Run only Design Refine from an existing design review and write output/refine.html for debugging.")
     parser.add_argument("--content-critique-only", action="store_true", help="Run only content HTML critique from existing builder output.")
     parser.add_argument("--content-eval-only", action="store_true", help="Run only content HTML evaluation from existing builder output.")
     parser.add_argument("--planner-model", help="Model for the Planner agent. Defaults to the Codex CLI default model.")
@@ -2615,6 +2807,7 @@ def main() -> int:
     parser.add_argument("--timeout-seconds", type=int, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")
     args = parser.parse_args()
+    normalize_claude_options(args)
 
     if len(args.iteration) != 3 or not args.iteration.isdigit():
         raise ValueError("--iteration must use a 3-digit value such as 001")
@@ -2632,13 +2825,14 @@ def main() -> int:
         args.asset_generator_only,
         args.builder_only,
         args.design_review_only,
+        args.design_refine_only,
         args.content_critique_only,
         args.content_eval_only,
     ]
     if sum(1 for enabled in single_stage_flags if enabled) > 1:
         raise ValueError(
             "--planner-only, --asset-generator-only, --builder-only, --design-review-only, "
-            "--content-critique-only, and --content-eval-only cannot be used together"
+            "--design-refine-only, --content-critique-only, and --content-eval-only cannot be used together"
         )
 
     if args.planner_only:
@@ -2649,6 +2843,8 @@ def main() -> int:
         result = run_builder_only(args)
     elif args.design_review_only:
         result = run_design_review_only(args)
+    elif args.design_refine_only:
+        result = run_design_refine_only(args)
     elif args.content_critique_only:
         result = run_content_critique_only(args)
     elif args.content_eval_only:

@@ -15,7 +15,7 @@
 
 계획 기준:
 - story board의 단계, 학습 흐름, 핵심 사건 순서는 유지합니다.
-- 모든 세부 내용을 기계적으로 옮기지는 않되, 단일 HTML에서 사용자가 원본 흐름을 이해하고 체험할 수 있도록 압축하고 배치합니다.
+- 구체적인 지시가 있다면 세부 내용을 지킬 수 있도록 원문을 맥락을 가져옵니다.
 - 원본 흐름을 바꾸거나 생략해야 할 때는 section의 `purpose`나 `content_outline`에 그 의도가 드러나게 씁니다.
 - 각 section은 하나의 명확한 목적을 가져야 합니다.
 - `content_outline`은 builder가 바로 화면 텍스트와 UI 블록으로 옮길 수 있을 정도로 구체적으로 씁니다.
@@ -25,6 +25,10 @@
 - 각 `asset_plan` 항목은 `purpose`, `prompt_brief`, `visual_role`, `style_constraints`, `composition_notes`, `negative_prompt`, `usage_section_ids`를 모두 채웁니다.
 - `prompt_brief`는 무엇을 그릴지, `visual_role`은 화면에서 어떤 역할인지, `style_constraints`는 전체 art_direction 안에서 이 asset에 꼭 필요한 화풍/색감/캐릭터 제약, `composition_notes`는 배치와 구도, `negative_prompt`는 피해야 할 표현을 씁니다.
 - asset은 입력에서 required로 주어지지 않습니다. 필요한 경우에만 계획합니다.
+- 반복 등장 캐릭터는 `art_direction.character_rules`에 역할, 외형 핵심 단서, 유지 요소를 간결히 고정하고, 배경에 포함하지 않은 별도 재사용 캐릭터 asset으로 계획합니다. 단, 익명 군중, 1회성 인물, 분위기용 실루엣은 배경 일부로 둘 수 있습니다.
+- 반복 캐릭터 asset은 실제 화면에 필요한 2~4개 pose/expression만 계획합니다. 예: idle, success, confused, explaining.
+- 캐릭터 asset의 `prompt_brief`/`composition_notes`에는 전신/반신, 투명 또는 단순 배경, 시선 방향, 화면 배치 기준을 명시합니다.
+- 배경 asset의 `negative_prompt`에는 별도 분리한 주요 캐릭터를 다시 넣지 말라고 쓰고, 같은 캐릭터의 pose asset은 `asset_groups`로 묶습니다.
 - `art_direction`은 모든 이미지 asset batch가 공유할 시각 계약입니다. story board 전체의 대상 학습자, 분위기, 캐릭터, 배경, 조명, 금지 화풍을 한 번에 고정합니다.
 - `asset_groups`는 runner가 병렬 batch를 만들 때 우선 함께 묶을 asset 목록입니다. 같은 캐릭터, 같은 배경, 같은 섹션 흐름, 같은 장면 전환에 속한 asset을 함께 묶습니다.
 - asset이 없으면 `asset_plan`과 `asset_groups`는 빈 배열을 사용하되, `art_direction`은 그래도 콘텐츠 전체의 시각 방향으로 작성합니다.

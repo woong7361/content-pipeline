@@ -4,7 +4,8 @@
   "type": "object",
   "required": [
     "status",
-    "designer_review",
+    "overall_assessment",
+    "scene_reviews",
     "asset_review",
     "priority_findings",
     "refine_suggestions"
@@ -14,48 +15,14 @@
       "type": "string",
       "enum": ["PASS", "REJECT"]
     },
-    "designer_review": {
-      "type": "object",
-      "required": [
-        "overall_assessment",
-        "visual_hierarchy",
-        "composition",
-        "asset_integration",
-        "interaction_affordance",
-        "originality",
-        "mobile_design"
-      ],
-      "properties": {
-        "overall_assessment": {
-          "type": "string",
-          "minLength": 1
-        },
-        "visual_hierarchy": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        },
-        "composition": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        },
-        "asset_integration": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        },
-        "interaction_affordance": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        },
-        "originality": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        },
-        "mobile_design": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/designFinding" }
-        }
-      },
-      "additionalProperties": false
+    "overall_assessment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_reviews": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sceneReview" }
     },
     "priority_findings": {
       "type": "array",
@@ -114,12 +81,145 @@
       "type": "string",
       "enum": ["low", "medium", "high"]
     },
+    "axis": {
+      "type": "string",
+      "enum": [
+        "asset_quality",
+        "background_stage",
+        "asset_component_fit",
+        "card_button_panel_style",
+        "creative_direction",
+        "text_surface_fit"
+      ]
+    },
+    "creativeDirection": {
+      "type": "object",
+      "required": [
+        "recommendation_level",
+        "concept_name",
+        "rationale",
+        "core_metaphor",
+        "visual_language",
+        "layout_strategy",
+        "interaction_surfaces",
+        "implementation_notes"
+      ],
+      "properties": {
+        "recommendation_level": {
+          "type": "string",
+          "enum": ["none", "light", "strong"]
+        },
+        "concept_name": { "type": "string", "minLength": 1 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "core_metaphor": { "type": "string", "minLength": 1 },
+        "visual_language": { "type": "string", "minLength": 1 },
+        "layout_strategy": { "type": "string", "minLength": 1 },
+        "interaction_surfaces": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "implementation_notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sceneReview": {
+      "type": "object",
+      "required": [
+        "scene_id",
+        "capture_label",
+        "screenshot_path",
+        "scene_purpose",
+        "overall_assessment",
+        "creative_direction",
+        "text_review",
+        "checks",
+        "priority_findings",
+        "refine_suggestions"
+      ],
+      "properties": {
+        "scene_id": { "type": "string", "minLength": 1 },
+        "capture_label": { "type": "string" },
+        "screenshot_path": { "type": "string", "minLength": 1 },
+        "scene_purpose": { "type": "string", "minLength": 1 },
+        "overall_assessment": { "type": "string", "minLength": 1 },
+        "creative_direction": { "$ref": "#/$defs/creativeDirection" },
+        "text_review": { "$ref": "#/$defs/textReview" },
+        "checks": {
+          "type": "object",
+          "required": [
+            "asset_quality",
+            "background_stage",
+            "asset_component_fit",
+            "card_button_panel_style"
+          ],
+          "properties": {
+            "asset_quality": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/designFinding" }
+            },
+            "background_stage": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/designFinding" }
+            },
+            "asset_component_fit": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/designFinding" }
+            },
+            "card_button_panel_style": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/designFinding" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "priority_findings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/priorityFinding" }
+        },
+        "refine_suggestions": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "textReview": {
+      "type": "object",
+      "required": [
+        "hero_mission_text",
+        "asset_internal_text",
+        "action_feedback_text"
+      ],
+      "properties": {
+        "hero_mission_text": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "asset_internal_text": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        },
+        "action_feedback_text": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/designFinding" }
+        }
+      },
+      "additionalProperties": false
+    },
     "designFinding": {
       "type": "object",
-      "required": ["severity", "issue", "evidence", "suggested_fix"],
+      "required": ["severity", "target", "issue", "evidence", "suggested_fix"],
       "properties": {
         "severity": {
           "$ref": "#/$defs/severity"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "수정 대상. CSS selector, HTML id/class/tag, asset_id, screenshot 좌표/영역, crop/object-position 지시, 또는 이들을 조합한 문자열"
         },
         "issue": {
           "type": "string",
@@ -138,21 +238,22 @@
     },
     "priorityFinding": {
       "type": "object",
-      "required": ["severity", "axis", "issue", "evidence", "suggested_fix"],
+      "required": ["scene_id", "severity", "axis", "target", "issue", "evidence", "suggested_fix"],
       "properties": {
+        "scene_id": {
+          "type": "string",
+          "minLength": 1
+        },
         "severity": {
           "$ref": "#/$defs/severity"
         },
         "axis": {
+          "$ref": "#/$defs/axis"
+        },
+        "target": {
           "type": "string",
-          "enum": [
-            "visual_hierarchy",
-            "composition",
-            "asset_integration",
-            "interaction_affordance",
-            "originality",
-            "mobile_design"
-          ]
+          "minLength": 1,
+          "description": "수정 대상. CSS selector, HTML id/class/tag, asset_id, screenshot 좌표/영역, crop/object-position 지시, 또는 이들을 조합한 문자열"
         },
         "issue": {
           "type": "string",

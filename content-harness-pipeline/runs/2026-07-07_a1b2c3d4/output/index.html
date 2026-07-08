@@ -3,121 +3,74 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>기차역 번호표 수리 모험</title>
+  <title>번호표 기계 수리 모험</title>
   <style>
     :root {
-      --ink: #123047;
-      --muted: #4e6b7a;
-      --sky: #8ed8f7;
-      --green: #22b66f;
-      --coral: #ff7066;
-      --gold: #ffd85a;
-      --paper: #fff9df;
-      --panel: rgba(255, 255, 255, 0.92);
-      --line: rgba(18, 48, 71, 0.18);
-      --shadow: 0 18px 36px rgba(10, 54, 88, 0.2);
+      --ink: #17324d;
+      --soft-ink: #476176;
+      --cream: #fff8df;
+      --panel: rgba(255, 252, 238, 0.94);
+      --panel-strong: #fff4be;
+      --yellow: #ffd84a;
+      --orange: #ff9c32;
+      --mint: #50cfa9;
+      --sky: #55b9e9;
+      --red: #e84c48;
+      --green: #3eb75f;
+      --shadow: 0 18px 48px rgba(33, 59, 83, 0.22);
       --radius: 8px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
-    html,
-    body {
-      margin: 0;
+    html, body {
+      width: 100%;
       min-height: 100%;
-      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+      margin: 0;
       color: var(--ink);
-      background: #dff6ff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #eaf7fb;
     }
 
     body {
       overflow-x: hidden;
     }
 
-    button,
-    input {
+    button, input {
       font: inherit;
     }
 
     button {
+      border: 0;
       cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
     }
 
     .app {
       min-height: 100vh;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.58), rgba(210,245,255,0.86)),
-        #c4effb;
-    }
-
-    .hud {
-      position: fixed;
-      z-index: 20;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      pointer-events: none;
-    }
-
-    .hud-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 44px;
-      padding: 8px 14px;
-      border: 2px solid rgba(255, 216, 90, 0.72);
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(33, 98, 126, 0.92), rgba(21, 76, 102, 0.92));
-      box-shadow: 0 7px 0 rgba(10, 53, 78, 0.32), 0 10px 18px rgba(10, 54, 88, 0.14);
-      color: #f8fff0;
-      font-weight: 800;
-      pointer-events: auto;
-    }
-
-    .hud-pill.ticket-pocket {
-      background: linear-gradient(180deg, rgba(255, 241, 167, 0.96), rgba(246, 190, 57, 0.96));
-      border-color: rgba(139, 91, 10, 0.28);
-      color: #153047;
-    }
-
-    .ticket-icon {
-      width: 38px;
-      height: 24px;
-      object-fit: contain;
-      filter: drop-shadow(0 3px 4px rgba(153, 104, 0, 0.24));
+      position: relative;
+      background: #dff6f7;
     }
 
     .scene {
-      position: relative;
-      display: none;
       min-height: 100vh;
-      padding: 76px 18px 28px;
-      overflow: hidden;
-    }
-
-    .scene.is-active {
-      display: block;
-    }
-
-    .scene-inner {
+      display: grid;
+      grid-template-rows: auto 1fr;
       position: relative;
-      width: min(1160px, 100%);
-      min-height: calc(100vh - 104px);
-      margin: 0 auto;
-      border-radius: 8px;
       overflow: hidden;
-      box-shadow: var(--shadow);
-      background: #fff;
       isolation: isolate;
     }
 
-    .bg-img {
+    .scene[hidden] {
+      display: none;
+    }
+
+    .scene__image {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -126,83 +79,590 @@
       z-index: -2;
     }
 
-    .scene-shade {
+    .scene::after {
+      content: "";
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.62));
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.2) 44%, rgba(255, 255, 255, 0.56)),
+        linear-gradient(0deg, rgba(9, 44, 66, 0.18), rgba(255, 255, 255, 0.05) 45%);
     }
 
-    .top-row,
-    .bottom-row,
-    .center-stage {
-      position: relative;
-      z-index: 1;
-    }
-
-    .top-row {
+    .topbar {
+      width: min(1120px, calc(100% - 28px));
+      margin: 14px auto 0;
+      min-height: 64px;
       display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 20px;
-    }
-
-    .step-badge {
-      display: inline-flex;
       align-items: center;
-      min-height: 40px;
-      padding: 8px 12px;
-      border: 2px solid rgba(255, 216, 90, 0.65);
-      border-radius: 8px;
-      background: rgba(23, 96, 121, 0.88);
-      font-weight: 900;
-      color: #f8fff0;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      position: relative;
+      border-radius: 7px;
+      background:
+        linear-gradient(180deg, rgba(255, 253, 239, 0.96), rgba(255, 244, 211, 0.9)),
+        #fff4ce;
+      border: 2px solid rgba(192, 137, 34, 0.72);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.92),
+        inset 0 -4px 0 rgba(177, 119, 24, 0.13),
+        0 10px 26px rgba(71, 51, 20, 0.18);
+      backdrop-filter: blur(8px);
     }
 
-    .dialogue {
-      max-width: 520px;
-      padding: 14px 16px;
-      border: 2px solid rgba(255, 216, 90, 0.55);
-      border-radius: 8px;
-      background: rgba(255, 249, 223, 0.9);
-      box-shadow: 0 8px 0 rgba(139, 91, 10, 0.16), 0 10px 22px rgba(10, 54, 88, 0.12);
-      font-size: clamp(1rem, 1.8vw, 1.35rem);
-      line-height: 1.45;
-      font-weight: 800;
+    .topbar::before,
+    .topbar::after {
+      content: "";
+      position: absolute;
+      top: 13px;
+      bottom: 13px;
+      width: 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #b7d7d8, #668d94);
+      border: 1px solid rgba(56, 94, 102, 0.54);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+      pointer-events: none;
     }
 
-    .dialogue small {
-      display: block;
-      margin-top: 4px;
-      color: var(--muted);
-      font-size: 0.78em;
+    .topbar::before { left: -6px; }
+    .topbar::after { right: -6px; }
+
+    .step-label {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+
+    .step-label strong {
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .step-label span {
+      font-size: clamp(0.78rem, 1.7vw, 0.95rem);
+      color: var(--soft-ink);
       font-weight: 700;
     }
 
-    .primary-btn,
-    .secondary-btn,
-    .key-btn,
-    .choice-btn,
-    .card-btn {
-      border: 0;
-      border-radius: 8px;
+    .ticket-bag {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: auto auto;
+      align-items: center;
+      gap: 8px;
+      min-width: 126px;
+      padding: 8px 10px;
+      border: 2px solid #e8b938;
+      border-radius: var(--radius);
+      background: #fff6c7;
       font-weight: 900;
-      color: var(--ink);
+      box-shadow: inset 0 -4px 0 rgba(221, 153, 25, 0.18);
+    }
+
+    .ticket-bag__mark {
+      width: 32px;
+      height: 24px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #fff7a8, #ffbf29);
+      border: 2px solid #c98213;
+    }
+
+    .ticket-bag small {
+      display: block;
+      font-size: 0.72rem;
+      color: #805414;
+      line-height: 1;
+    }
+
+    .scene-body {
+      width: min(1120px, calc(100% - 28px));
+      margin: 16px auto 26px;
+      display: grid;
+      align-items: end;
+      gap: 16px;
+      min-height: calc(100vh - 120px);
+    }
+
+    .layout-two {
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      align-items: center;
+    }
+
+    .panel {
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      border: 2px solid rgba(255, 210, 74, 0.72);
+      padding: clamp(14px, 2.4vw, 24px);
+    }
+
+    .panel.compact {
+      padding: 14px;
+    }
+
+    .narration {
+      display: grid;
+      gap: 12px;
+      max-width: 650px;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 5vw, 4rem);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: clamp(1.45rem, 3.6vw, 2.65rem);
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      font-size: clamp(1.05rem, 2.3vw, 1.35rem);
+      line-height: 1.25;
+    }
+
+    .lead {
+      font-size: clamp(1rem, 2.35vw, 1.45rem);
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .speech-row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .speech {
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      color: #254058;
+      background: #fff;
+      border: 2px solid #8bd6ec;
+      box-shadow: 0 6px 18px rgba(41, 83, 102, 0.12);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .speech.crew {
+      border-color: #ffbf35;
+      background: #fff6cf;
+    }
+
+    .primary-btn, .secondary-btn, .number-card, .key-btn, .choice-ticket, .slide-btn {
+      border-radius: var(--radius);
       transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
     }
 
     .primary-btn {
-      position: relative;
+      justify-self: start;
       min-height: 56px;
-      padding: 14px 30px;
-      border: 3px solid rgba(122, 70, 5, 0.3);
-      background: linear-gradient(180deg, #ffe887, #ffc33d 72%, #eea820);
-      box-shadow: inset 0 0 0 3px rgba(255, 250, 211, 0.45), 0 8px 0 #c97a12, 0 14px 22px rgba(152, 89, 13, 0.2);
-      font-size: clamp(1rem, 2vw, 1.28rem);
+      padding: 0 22px;
+      color: #4a2e05;
+      background: linear-gradient(180deg, #ffe266, #ffb633);
+      border: 2px solid #b97407;
+      box-shadow: 0 9px 0 #b97407, 0 18px 34px rgba(111, 78, 10, 0.22);
+      font-weight: 1000;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+
+    .primary-btn:not(:disabled):hover,
+    .secondary-btn:not(:disabled):hover,
+    .number-card:not(:disabled):hover,
+    .key-btn:not(:disabled):hover,
+    .choice-ticket:not(:disabled):hover,
+    .slide-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+    }
+
+    .primary-btn:not(:disabled):active {
+      transform: translateY(5px);
+      box-shadow: 0 4px 0 #b97407, 0 9px 18px rgba(111, 78, 10, 0.2);
+    }
+
+    .secondary-btn {
+      min-height: 46px;
+      padding: 0 16px;
+      color: #17324d;
+      background: #e7fbff;
+      border: 2px solid #58b8db;
+      font-weight: 900;
+      box-shadow: 0 5px 0 #3694b4;
+    }
+
+    .warning-board {
+      display: grid;
+      gap: 8px;
+      place-items: center;
+      min-height: 130px;
+      border-radius: var(--radius);
+      border: 3px solid #ffb13a;
+      background: rgba(27, 54, 79, 0.88);
+      color: #fff2b6;
+      box-shadow: inset 0 0 24px rgba(255, 55, 55, 0.22);
+      text-align: center;
+      font-weight: 1000;
+      font-size: clamp(1.2rem, 3vw, 2.25rem);
+    }
+
+    .blink {
+      color: #fff;
+      background: #e84c48;
+      padding: 4px 12px;
+      border-radius: 6px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0.42; }
+    }
+
+    .zooming .scene__image {
+      animation: machineZoom 620ms ease both;
+    }
+
+    @keyframes machineZoom {
+      to { transform: scale(1.08); filter: saturate(1.08); }
+    }
+
+    .mission-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 380px);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .machine-panel {
+      display: grid;
+      gap: 14px;
+      align-content: center;
+      min-height: 390px;
+    }
+
+    .sequence {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      font-size: clamp(1.25rem, 4vw, 2.5rem);
+      font-weight: 1000;
+    }
+
+    .num-pill, .dropzone {
+      min-width: clamp(80px, 16vw, 150px);
+      min-height: 62px;
+      display: grid;
+      place-items: center;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      color: #152b44;
+      background: #fffef4;
+      border: 3px solid #58b8db;
+      box-shadow: inset 0 -5px 0 rgba(62, 143, 174, 0.14);
+    }
+
+    .dropzone {
+      border-style: dashed;
+      background: #eefaff;
+      color: #52728a;
+    }
+
+    .dropzone.filled {
+      border-style: solid;
+      border-color: var(--green);
+      background: #e6ffef;
+      color: #1e7d3a;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .number-card {
+      min-height: 66px;
+      background: #fff;
+      border: 3px solid #ffba33;
+      box-shadow: 0 5px 0 #c97f12;
+      color: #2d3f4f;
+      font-size: clamp(1.15rem, 3.8vw, 2rem);
+      font-weight: 1000;
+    }
+
+    .number-card.correct {
+      background: #dfffe8;
+      border-color: var(--green);
+      box-shadow: 0 5px 0 #298b49;
+    }
+
+    .shake {
+      animation: shake 360ms ease;
+    }
+
+    @keyframes shake {
+      20%, 60% { transform: translateX(-7px); }
+      40%, 80% { transform: translateX(7px); }
+    }
+
+    .success-photo {
+      display: none;
       overflow: hidden;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.58);
-      white-space: normal;
-      line-height: 1.18;
+      min-height: 220px;
+      padding: 0;
+    }
+
+    .success-photo.is-visible {
+      display: block;
+    }
+
+    .success-photo img {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .progress-strip {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-cell {
+      width: 42px;
+      height: 14px;
+      border-radius: 5px;
+      border: 2px solid rgba(22, 68, 84, 0.28);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .progress-cell.filled {
+      background: linear-gradient(90deg, #42c979, #ffe05a);
+      border-color: #32a55f;
+    }
+
+    .game-area {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(250px, 330px);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .slot-board {
+      display: grid;
+      gap: 14px;
+      min-height: 360px;
+      align-content: center;
+      text-align: center;
+    }
+
+    .slot-board.rolling .num-pill {
+      animation: slotRoll 480ms ease;
+    }
+
+    @keyframes slotRoll {
+      0%, 100% { transform: translateY(0); }
+      35% { transform: translateY(-14px); }
+      70% { transform: translateY(10px); }
+    }
+
+    .answer-input {
+      width: 100%;
+      height: 66px;
+      border: 3px solid #58b8db;
+      border-radius: var(--radius);
+      background: #fff;
+      text-align: center;
+      color: var(--ink);
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
+      font-weight: 1000;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .key-btn {
+      min-height: 50px;
+      color: #17324d;
+      background: #ffffff;
+      border: 2px solid #8bd6ec;
+      box-shadow: 0 4px 0 #58b8db;
+      font-weight: 1000;
+      font-size: 1.15rem;
+    }
+
+    .key-btn.action {
+      background: #fff1b5;
+      border-color: #ffba33;
+      box-shadow: 0 4px 0 #c97f12;
+    }
+
+    .feedback {
+      min-height: 48px;
+      display: grid;
+      place-items: center;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.88);
+      border: 2px solid rgba(83, 184, 219, 0.6);
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .feedback.good {
+      background: #e6ffef;
+      border-color: var(--green);
+      color: #176c32;
+    }
+
+    .feedback.bad {
+      background: #fff0ed;
+      border-color: var(--red);
+      color: #a62c28;
+    }
+
+    .boss-stage {
+      display: grid;
+      gap: 14px;
+      align-content: end;
+    }
+
+    .choice-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .choice-ticket {
+      min-height: 118px;
+      background: #fff8cf;
+      border: 4px solid #d89b2b;
+      box-shadow: 0 8px 0 #a86a12, 0 18px 26px rgba(69, 45, 10, 0.2);
+      color: #193650;
+      font-size: clamp(1.5rem, 4.5vw, 2.9rem);
+      font-weight: 1000;
+    }
+
+    .choice-ticket.selected-good {
+      background: #ffe56b;
+      border-color: #39a85c;
+      box-shadow: 0 8px 0 #2d8848, 0 0 26px rgba(255, 225, 70, 0.8);
+    }
+
+    .life-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .slide-card {
+      display: grid;
+      gap: 10px;
+      background: var(--panel);
+      border: 2px solid #8bd6ec;
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .slide-frame {
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #fff;
+      border: 2px solid #fff;
+    }
+
+    .slide-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .slide-frame img.is-active {
+      display: block;
+      animation: fadeIn 220ms ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+
+    .slide-controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .slide-btn {
+      min-height: 42px;
+      padding: 0 8px;
+      background: #e7fbff;
+      border: 2px solid #58b8db;
+      color: #17324d;
+      font-weight: 900;
+    }
+
+    .slide-btn.is-active {
+      background: #fff1b5;
+      border-color: #ffba33;
+    }
+
+    .reward-panel {
+      justify-self: center;
+      align-self: end;
+      width: min(660px, 100%);
+      display: grid;
+      gap: 14px;
+      text-align: center;
+      justify-items: center;
+    }
+
+    .stamp {
+      display: grid;
+      place-items: center;
+      min-width: min(100%, 360px);
+      min-height: 104px;
+      padding: 14px;
+      border: 5px solid #d4332f;
+      border-radius: var(--radius);
+      color: #d4332f;
+      background: rgba(255, 255, 255, 0.88);
+      font-weight: 1000;
+      font-size: clamp(1.55rem, 5vw, 3rem);
+      transform: rotate(-4deg);
+      animation: stampIn 540ms ease both;
+    }
+
+    .primary-btn {
+      position: relative;
+      border-radius: 6px;
+      overflow: visible;
+      background:
+        linear-gradient(90deg, transparent 0 10px, rgba(255, 255, 255, 0.25) 10px 12px, transparent 12px calc(100% - 12px), rgba(255, 255, 255, 0.25) calc(100% - 12px) calc(100% - 10px), transparent calc(100% - 10px)),
+        linear-gradient(180deg, #ffe979, #ffbb38);
+      border-color: #a96b0c;
+      box-shadow: 0 8px 0 #9a620c, 0 17px 28px rgba(83, 54, 8, 0.26);
     }
 
     .primary-btn::before,
@@ -210,1593 +670,1744 @@
       content: "";
       position: absolute;
       top: 50%;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: rgba(196, 239, 251, 0.96);
-      border: 2px solid rgba(122, 70, 5, 0.18);
-      transform: translateY(-50%);
-    }
-
-    .primary-btn::before {
-      left: 8px;
-    }
-
-    .primary-btn::after {
-      right: 8px;
-    }
-
-    .primary-btn.ticket-sign {
-      border-color: rgba(20, 87, 117, 0.72);
-      background: linear-gradient(180deg, #fff1a3, #ffd04a 72%, #f0a91d);
-      box-shadow: inset 0 0 0 3px rgba(255,255,255,0.38), 0 7px 0 #b96f10, 0 13px 20px rgba(117,70,7,0.2);
-    }
-
-    .secondary-btn {
-      min-height: 48px;
-      padding: 12px 16px;
-      background: linear-gradient(180deg, #eafcff, #bfe8ee);
-      border: 2px solid rgba(23, 96, 121, 0.34);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.42), 0 5px 0 rgba(23,96,121,0.28);
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover,
-    .key-btn:hover,
-    .choice-btn:hover,
-    .card-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .primary-btn:active,
-    .secondary-btn:active,
-    .key-btn:active,
-    .choice-btn:active,
-    .card-btn:active {
-      transform: translateY(1px);
-    }
-
-    .primary-btn:disabled,
-    .secondary-btn:disabled {
-      cursor: not-allowed;
-      filter: grayscale(0.5);
-      opacity: 0.62;
-      transform: none;
-    }
-
-    .intro-display {
-      position: absolute;
-      top: 92px;
-      left: 50%;
-      width: min(520px, 78%);
-      transform: translateX(-50%);
-      animation: warningBlink 1s ease-in-out infinite;
-    }
-
-    .intro-display img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .display-numbers {
-      position: absolute;
-      inset: 28% 9% 26%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      align-items: center;
-      justify-items: center;
-      gap: 8px;
-      color: #f8fff0;
-      font-size: clamp(1.35rem, 4vw, 2.8rem);
-      font-weight: 900;
-      text-shadow: 0 4px 0 rgba(0,0,0,0.25);
-    }
-
-    .clerk-cutout {
-      position: absolute;
-      left: max(16px, 5%);
-      bottom: 90px;
-      width: min(250px, 30vw);
-      filter: drop-shadow(0 12px 16px rgba(9, 60, 84, 0.24));
-    }
-
-    .passenger-bubbles {
-      position: absolute;
-      right: 24px;
-      top: 185px;
-      display: grid;
-      gap: 8px;
-      width: min(270px, 32%);
-    }
-
-    .bubble {
-      position: relative;
-      padding: 10px 12px;
-      border: 2px solid rgba(18,48,71,0.12);
-      border-radius: 8px;
-      background: rgba(255,255,255,0.9);
-      font-weight: 800;
-      box-shadow: 0 8px 14px rgba(10,54,88,0.12);
-    }
-
-    .bubble::after {
-      content: "";
-      position: absolute;
-      left: -10px;
-      bottom: 12px;
-      width: 16px;
-      height: 16px;
-      background: rgba(255,255,255,0.9);
-      border-left: 2px solid rgba(18,48,71,0.12);
-      border-bottom: 2px solid rgba(18,48,71,0.12);
-      transform: rotate(45deg);
-    }
-
-    .intro-cta {
-      position: absolute;
-      left: 50%;
-      bottom: 26px;
-      width: min(520px, calc(100% - 36px));
-      transform: translateX(-50%);
-      text-align: center;
-    }
-
-    .machine-scene .scene-inner.zooming {
-      animation: zoomIn 680ms ease both;
-    }
-
-    .tutorial-layout {
-      position: relative;
-      display: block;
-      padding: 0;
-      min-height: calc(100vh - 104px);
-    }
-
-    .machine-panel {
-      position: relative;
-      min-height: calc(100vh - 104px);
-      height: 100%;
-      border-radius: 0;
-      overflow: hidden;
-      background: #e8fbff;
-    }
-
-    .machine-panel > .machine-bg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      min-height: 100%;
-      object-fit: cover;
-      object-position: center center;
-      display: block;
-    }
-
-    .tutorial-problem {
-      position: absolute;
-      top: 27%;
-      left: 44%;
-      width: min(610px, 58%);
-      transform: translateX(-50%);
-      padding: 16px 18px;
-      border-radius: 8px;
-      background: rgba(237, 255, 251, 0.56);
-      border: 3px solid rgba(45, 154, 181, 0.45);
-      text-align: center;
-      box-shadow: inset 0 0 0 3px rgba(255,255,255,0.28), 0 8px 14px rgba(10,54,88,0.08);
-    }
-
-    .mission-label {
-      margin: 0 0 8px;
-      color: #0c6d85;
-      font-size: 0.95rem;
-      font-weight: 900;
-    }
-
-    .number-line {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      font-size: clamp(1.45rem, 3.2vw, 2.55rem);
-      font-weight: 900;
-      line-height: 1.2;
-    }
-
-    .blank-slot {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 116px;
-      min-height: 64px;
-      border: 4px dashed #22aeda;
-      border-radius: 8px;
-      background: rgba(241,253,255,0.72);
-      color: #0a6b8e;
-    }
-
-    .blank-slot.filled {
-      border-style: solid;
-      border-color: var(--green);
-      background: #ecfff4;
-      animation: snap 280ms ease both;
-    }
-
-    .cards-area {
-      position: absolute;
-      left: 43.5%;
-      bottom: 6%;
-      width: min(520px, 48%);
-      transform: translateX(-50%);
-      min-height: 190px;
-      overflow: hidden;
-    }
-
-    .cards-area img {
-      position: absolute;
-      inset: -10% -8%;
-      width: 116%;
-      height: 120%;
-      min-height: auto;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    .card-buttons {
-      position: absolute;
-      inset: 10% 3% 10%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4%;
-      align-items: stretch;
-    }
-
-    .card-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.02);
-      color: #743d05;
-      font-size: clamp(1.35rem, 3vw, 2.4rem);
-      text-shadow: 0 2px 0 rgba(255,255,255,0.7);
-      touch-action: none;
-    }
-
-    .card-btn.is-wrong {
-      animation: shake 340ms ease;
-    }
-
-    .card-btn.is-correct {
-      color: #0d7d40;
-    }
-
-    .side-guide {
-      position: absolute;
-      right: 3.2%;
-      bottom: 5.2%;
-      width: min(280px, 25%);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      justify-content: end;
-    }
-
-    .side-guide img {
-      display: none;
-    }
-
-    .feedback {
-      position: relative;
-      min-height: 72px;
-      padding: 13px 14px;
-      border: 3px solid rgba(27, 115, 139, 0.42);
-      border-radius: 8px;
-      background: rgba(255, 248, 198, 0.95);
-      font-weight: 900;
-      line-height: 1.35;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.42), 0 5px 0 rgba(139, 91, 10, 0.18);
-    }
-
-    .feedback::after {
-      content: "";
-      position: absolute;
-      right: 18px;
-      top: -12px;
       width: 18px;
       height: 18px;
-      background: rgba(255, 248, 198, 0.95);
-      border-top: 3px solid rgba(27, 115, 139, 0.42);
-      border-left: 3px solid rgba(27, 115, 139, 0.42);
-      transform: rotate(45deg);
-    }
-
-    .side-guide .secondary-btn {
-      border-color: rgba(20, 87, 117, 0.46);
-      background: linear-gradient(180deg, #e8fff7, #aee9d0);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.42), 0 5px 0 rgba(35, 128, 105, 0.34);
-    }
-
-    .success-card {
-      display: none;
-      position: absolute;
-      right: 22px;
-      top: 44%;
-      width: min(280px, 34%);
-      border: 4px solid rgba(255,216,90,0.75);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 16px 24px rgba(10,54,88,0.2);
-      animation: pop 360ms ease both;
-    }
-
-    .success-card.is-visible {
-      display: block;
-    }
-
-    .success-card img {
-      width: 100%;
-      min-height: auto;
-      height: auto;
-      display: block;
-    }
-
-    .game-layout {
-      min-height: calc(100vh - 104px);
-      padding: 68px 20px 16px;
-      display: grid;
-      grid-template-rows: 46px minmax(310px, 1fr) 224px;
-      gap: 2px;
-    }
-
-    .game-status {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .progress-wrap {
-      width: min(520px, 70%);
-      padding: 5px 12px 7px;
-      border: 2px solid rgba(255,216,90,0.56);
-      border-radius: 8px;
-      background: rgba(17, 93, 104, 0.62);
-      color: #f8fff0;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12), 0 4px 0 rgba(10, 53, 78, 0.2);
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
-      font-weight: 900;
-    }
-
-    .progress-track {
-      height: 10px;
-      border-radius: 999px;
-      background: repeating-linear-gradient(90deg, rgba(214, 240, 247, 0.54) 0 18%, rgba(11, 84, 96, 0.54) 18% 20%);
-      overflow: hidden;
-      border: 2px solid rgba(255,255,255,0.36);
-    }
-
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #2ac27b, #ffe25e);
-      transition: width 260ms ease;
-    }
-
-    #gameSkipToStory:disabled {
-      visibility: hidden;
+      border-radius: 50%;
+      background: rgba(255, 248, 223, 0.96);
+      border: 2px solid #a96b0c;
+      transform: translateY(-50%);
       pointer-events: none;
     }
 
-    #gameSkipToStory:not(:disabled) {
-      min-width: 170px;
-      position: absolute;
-      right: 24px;
-      top: 76px;
-      color: #f8fff0;
-      border-color: rgba(255,216,90,0.72);
-      background: linear-gradient(180deg, rgba(37,115,102,0.96), rgba(17,84,89,0.96));
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.2), 0 6px 0 rgba(7,59,64,0.32);
+    .primary-btn::before { left: -11px; }
+    .primary-btn::after { right: -11px; }
+
+    .scene[data-scene-id="step1_intro_problem"]::after,
+    .scene[data-scene-id="step2_tutorial_repair"]::after,
+    .scene[data-scene-id="step3_game_challenges"]::after,
+    .scene[data-scene-id="step3_boss_compare"]::after,
+    .scene[data-scene-id="step4_story_life"]::after,
+    .scene[data-scene-id="step4_clear_reward"]::after {
+      background:
+        linear-gradient(0deg, rgba(12, 39, 52, 0.14), rgba(255, 255, 255, 0.02) 48%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04) 52%, rgba(255, 255, 255, 0.18));
     }
 
-    .board-area {
+    .scene[data-scene-id="step1_intro_problem"] .scene-body {
       position: relative;
-      display: grid;
-      align-items: center;
-      justify-items: center;
-      min-height: 340px;
-    }
-
-    .slot-board {
-      width: min(880px, 96%);
-      height: auto;
       display: block;
-      filter: drop-shadow(0 16px 18px rgba(10,54,88,0.18));
+      width: min(1180px, calc(100% - 28px));
     }
 
-    .game-question {
+    .scene[data-scene-id="step1_intro_problem"] .narration.panel {
       position: absolute;
-      width: min(880px, 96%);
-      aspect-ratio: 1600 / 720;
-      text-align: center;
-      padding: 0;
-      border-radius: 0;
-      background: transparent;
-      border: 0;
+      left: 2%;
+      top: 18%;
+      width: min(460px, 42vw);
+      max-width: 460px;
+      padding: 16px 18px;
+      gap: 9px;
+      overflow: visible;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,0.44) 0 16%, transparent 16% 24%, rgba(255,255,255,0.24) 24% 28%, transparent 28%),
+        rgba(215, 248, 251, 0.72);
+      border: 2px solid rgba(100, 209, 222, 0.86);
+      box-shadow:
+        inset 0 1px 20px rgba(255, 255, 255, 0.62),
+        inset 0 -8px 18px rgba(42, 126, 145, 0.14),
+        0 14px 30px rgba(19, 58, 80, 0.2);
+      backdrop-filter: blur(7px);
     }
 
-    .question-title {
+    .scene[data-scene-id="step1_intro_problem"] .narration.panel::before,
+    .scene[data-scene-id="step1_intro_problem"] .narration.panel::after {
+      content: "";
       position: absolute;
-      top: 28%;
-      left: 10%;
-      right: 10%;
-      margin: 0;
-      color: #075d76;
-      font-weight: 900;
+      top: -13px;
+      width: 54px;
+      height: 18px;
+      border-radius: 5px 5px 2px 2px;
+      background: linear-gradient(180deg, #a8c0bf, #5d7f84);
+      border: 1px solid rgba(38, 83, 91, 0.56);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.62), 0 4px 8px rgba(23, 61, 70, 0.18);
     }
 
-    .slot-sequence {
+    .scene[data-scene-id="step1_intro_problem"] .narration.panel::before { left: 28px; }
+    .scene[data-scene-id="step1_intro_problem"] .narration.panel::after { right: 28px; }
+
+    .scene[data-scene-id="step1_intro_problem"] .narration h1 {
+      font-size: clamp(1.75rem, 3.2vw, 2.7rem);
+      line-height: 1.08;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .narration .lead {
+      font-size: clamp(0.98rem, 1.7vw, 1.18rem);
+      line-height: 1.3;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .warning-board {
       position: absolute;
-      left: 7%;
-      right: 7%;
-      top: 34%;
-      height: 17%;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 3.2%;
-      align-items: stretch;
-    }
-
-    .slot-value {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 0;
+      left: 37.8%;
+      top: 9.7%;
+      width: 43.3%;
+      height: 10.8%;
       min-height: 0;
-      border-radius: 8px;
-      color: #102d42;
-      font-size: clamp(1.45rem, 3.3vw, 2.75rem);
-      font-weight: 900;
-      line-height: 1;
-      text-shadow: 0 2px 0 rgba(255,255,255,0.65);
-    }
-
-    .slot-value.missing {
-      border: 4px dashed #22aeda;
-      color: #0a6b8e;
-      background: rgba(229, 252, 255, 0.5);
-    }
-
-    .answer-input-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 96px 112px;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      width: min(720px, 100%);
-      margin: 0 auto;
-      padding: 0;
+      padding: 9px 13px;
+      border-radius: 14px;
       border: 0;
-      border-radius: 8px;
       background: transparent;
       box-shadow: none;
+      z-index: 2;
+      pointer-events: none;
     }
 
-    .answer-input {
+    .scene[data-scene-id="step1_intro_problem"] .warning-board span {
+      display: grid;
+      place-items: center;
       min-width: 0;
-      min-height: 58px;
-      padding: 8px 14px;
-      border: 5px solid #217a82;
+      height: 100%;
+      color: #ffd66b;
+      background: rgba(20, 35, 42, 0.66);
+      border: 2px solid rgba(255, 178, 64, 0.32);
       border-radius: 8px;
-      background: linear-gradient(180deg, rgba(228, 255, 252, 0.98), rgba(171, 235, 227, 0.98));
-      font-size: 1.55rem;
-      font-weight: 900;
-      text-align: center;
-      color: var(--ink);
-      box-shadow: inset 0 3px 0 rgba(255,255,255,0.78), inset 0 -5px 0 rgba(11, 91, 117, 0.16), 0 5px 0 rgba(7, 70, 76, 0.26);
+      box-shadow: inset 0 0 18px rgba(255, 207, 89, 0.28), 0 0 16px rgba(255, 108, 62, 0.16);
+      font-size: clamp(1.8rem, 4.2vw, 3.6rem);
+      line-height: 1;
+      letter-spacing: 0;
+      text-shadow: 0 0 12px rgba(255, 199, 79, 0.72);
     }
 
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(10, minmax(52px, 1fr));
-      gap: 10px;
-      width: min(760px, 100%);
-      margin: 12px auto 0;
+    .scene[data-scene-id="step1_intro_problem"] .warning-board .blink {
       padding: 0;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      box-shadow: none;
+      color: #ffe5df;
+      background: rgba(86, 24, 30, 0.48);
+      border-color: rgba(255, 178, 64, 0.34);
+      box-shadow: inset 0 0 18px rgba(255, 207, 89, 0.24), 0 0 16px rgba(255, 72, 62, 0.24);
+      text-shadow: 0 0 12px rgba(255, 68, 78, 0.82);
     }
 
-    .key-btn {
-      min-height: 50px;
-      border: 4px solid rgba(12, 94, 96, 0.62);
-      border-radius: 8px;
-      background: linear-gradient(180deg, #effff8, #9de0d1 72%, #78c8ba);
-      box-shadow: inset 0 4px 0 rgba(255,255,255,0.72), inset 0 -4px 0 rgba(18, 101, 100, 0.18), 0 5px 0 #4f9b90;
-      color: #09374a;
-      font-size: 1.08rem;
+    .scene[data-scene-id="step1_intro_problem"] .speech-row {
+      position: absolute;
+      inset: 0;
+      display: block;
+      pointer-events: none;
     }
 
-    .key-btn.action {
-      background: linear-gradient(180deg, #fff3c5, #ffd36b);
-      border-color: rgba(139, 91, 10, 0.28);
-      box-shadow: inset 0 3px 0 rgba(255,255,255,0.56), 0 5px 0 #c9851d;
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech {
+      position: absolute;
+      width: 138px;
+      min-height: 56px;
+      padding: 9px 11px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #76c8df;
+      font-size: 0.93rem;
+      box-shadow: 0 7px 18px rgba(26, 67, 86, 0.16);
     }
 
-    #clearAnswer {
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech::after {
+      content: "";
+      position: absolute;
+      width: 17px;
+      height: 17px;
+      background: rgba(255, 255, 255, 0.9);
+      border-right: 2px solid #76c8df;
+      border-bottom: 2px solid #76c8df;
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(1) {
+      right: 35%;
+      top: 55%;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(1)::after {
+      right: 24px;
+      bottom: -10px;
+      transform: rotate(45deg);
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(2) {
+      right: 16%;
+      top: 58%;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(2)::after {
+      left: 22px;
+      bottom: -10px;
+      transform: rotate(45deg);
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(3) {
+      right: 0.5%;
+      top: 43%;
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech-row .speech:nth-child(3)::after {
+      right: 20px;
+      bottom: -10px;
+      transform: rotate(45deg);
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] .speech.crew {
+      border-radius: 16px;
+      background: rgba(255, 246, 207, 0.9);
+    }
+
+    .scene[data-scene-id="step1_intro_problem"] [data-action="start"] {
+      margin-top: 4px;
       min-height: 58px;
-      padding: 10px 12px;
-      color: #fff9ee;
-      border: 4px solid rgba(112, 34, 27, 0.42);
-      background: linear-gradient(180deg, #ff9b83, #f15c4e 72%, #c94236);
-      box-shadow: inset 0 4px 0 rgba(255,255,255,0.36), 0 5px 0 #9f3028;
-      text-shadow: 0 1px 0 rgba(80, 19, 12, 0.34);
+      padding-inline: 26px;
+      max-width: 100%;
+      box-shadow: 0 8px 0 #9a620c, 0 18px 24px rgba(83, 54, 8, 0.22), 0 0 0 6px rgba(255, 238, 160, 0.18);
     }
 
-    #submitAnswer {
+    .scene[data-scene-id="step2_tutorial_repair"] .scene-body,
+    .scene[data-scene-id="step3_game_challenges"] .scene-body,
+    .scene[data-scene-id="step3_boss_compare"] .scene-body,
+    .scene[data-scene-id="step4_story_life"] .scene-body,
+    .scene[data-scene-id="step4_clear_reward"] .scene-body {
+      position: relative;
+      display: block;
+      width: min(1180px, calc(100% - 28px));
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .machine-panel {
+      position: absolute;
+      left: 5%;
+      top: 8%;
+      width: 66%;
+      min-height: 560px;
+      padding: 24px 34px 26px;
+      align-content: start;
+      gap: 15px;
+      background: rgba(22, 50, 69, 0.82);
+      border: 7px solid rgba(170, 201, 204, 0.78);
+      box-shadow: inset 0 0 32px rgba(83, 203, 222, 0.26), 0 18px 34px rgba(11, 35, 49, 0.24);
+      color: #f6fbff;
+      backdrop-filter: blur(2px);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-title {
+      font-size: clamp(1.55rem, 2.7vw, 2.15rem);
+      color: #fff5bc;
+      text-shadow: 0 0 12px rgba(255, 209, 79, 0.42);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-hint {
+      color: #c9f2ff;
+      font-size: clamp(1rem, 1.7vw, 1.2rem);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-sequence {
+      margin-top: 14px;
+      padding: 18px;
+      border-radius: 10px;
+      background: rgba(8, 29, 42, 0.52);
+      box-shadow: inset 0 0 18px rgba(82, 205, 230, 0.3);
+      flex-wrap: nowrap;
+      gap: 10px;
+      font-size: clamp(1.35rem, 3.2vw, 2.2rem);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .num-pill,
+    .scene[data-scene-id="step2_tutorial_repair"] .dropzone {
+      min-width: 118px;
+      min-height: 68px;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #7dd9f2;
+      background: rgba(7, 35, 50, 0.82);
+      color: #fff6c3;
+      box-shadow: inset 0 9px 18px rgba(0, 0, 0, 0.42), inset 0 -2px 0 rgba(124, 224, 241, 0.16), 0 0 8px rgba(87, 201, 229, 0.18);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .dropzone {
+      color: #9edcf0;
+      border-color: #ffce62;
+      background: rgba(41, 50, 54, 0.9);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .cards {
+      margin-top: auto;
+      display: flex;
+      gap: 0;
+      padding: 12px 16px 14px;
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(255, 243, 176, 0.2), rgba(92, 63, 22, 0.12)),
+        rgba(255, 225, 118, 0.2);
+      border: 2px solid rgba(255, 207, 92, 0.46);
+      box-shadow: inset 0 8px 10px rgba(69, 43, 9, 0.16), inset 0 -3px 0 rgba(255,255,255,0.18);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .cards .number-card {
+      flex: 1 1 0;
+      position: relative;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .cards .number-card + .number-card {
+      margin-left: -6px;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .cards .number-card + .number-card::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 10px;
+      bottom: 10px;
+      border-left: 2px dashed rgba(137, 86, 11, 0.52);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .cards .number-card::after {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(54, 43, 23, 0.2);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] .number-card,
+    .scene[data-scene-id="step2_tutorial_repair"] .choice-ticket,
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket,
+    .scene[data-scene-id="step4_story_life"] .slide-btn {
+      border-radius: 6px;
+      background:
+        linear-gradient(90deg, transparent 0 8px, rgba(174, 112, 23, 0.18) 8px 10px, transparent 10px calc(100% - 10px), rgba(174, 112, 23, 0.18) calc(100% - 10px) calc(100% - 8px), transparent calc(100% - 8px)),
+        linear-gradient(180deg, #fff5b8, #ffd65b);
+      color: #213a4f;
+      border-color: #bc7c14;
+      box-shadow: 0 6px 0 #925d0e, 0 12px 20px rgba(58, 38, 9, 0.2);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-feedback,
+    .scene[data-scene-id="step3_game_challenges"] #game-feedback,
+    .scene[data-scene-id="step3_boss_compare"] #boss-feedback {
+      min-height: 44px;
+      border-radius: 7px;
+      color: #d8fbff;
+      background: rgba(7, 33, 45, 0.84);
+      border-color: rgba(95, 218, 232, 0.74);
+      box-shadow: inset 0 0 16px rgba(78, 221, 232, 0.25);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-feedback {
+      min-height: 36px;
+      padding-block: 6px;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] aside.panel {
+      position: absolute;
+      right: 4.2%;
+      top: 15%;
+      width: 21%;
+      min-height: 318px;
+      display: grid;
+      gap: 11px;
+      align-content: start;
+      position: absolute;
+      background:
+        linear-gradient(180deg, rgba(238, 255, 247, 0.84), rgba(184, 216, 207, 0.76)),
+        rgba(218, 238, 228, 0.82);
+      border: 5px solid rgba(87, 129, 129, 0.72);
+      box-shadow:
+        inset 0 2px 15px rgba(255,255,255,0.62),
+        inset 0 -10px 16px rgba(48, 92, 92, 0.12),
+        -10px 14px 24px rgba(23, 58, 66, 0.18);
+      backdrop-filter: blur(3px);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] aside.panel::after {
+      content: "";
+      position: absolute;
+      left: -44px;
+      top: 36%;
+      width: 44px;
+      height: 72px;
+      background:
+        linear-gradient(90deg, rgba(82, 106, 105, 0.86), rgba(166, 196, 190, 0.9) 42%, rgba(62, 94, 94, 0.84)),
+        #8da9a7;
+      border: 2px solid rgba(47, 84, 84, 0.62);
+      border-right: 0;
+      border-radius: 10px 0 0 10px;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.52),
+        -8px 10px 14px rgba(18, 53, 62, 0.15);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] aside.panel::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 16px;
+      height: 12px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 18px 50%, #57d383 0 5px, transparent 6px),
+        radial-gradient(circle at 46px 50%, #ffd15c 0 5px, transparent 6px),
+        linear-gradient(90deg, transparent 0 62px, rgba(34, 73, 75, 0.34) 62px);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] aside.panel .progress-strip {
+      margin-top: 4px;
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-next {
+      justify-self: stretch;
+      margin-top: auto;
+      min-height: 54px;
+      border-radius: 5px;
+      box-shadow:
+        0 7px 0 #9a620c,
+        0 12px 18px rgba(82, 50, 8, 0.22),
+        0 0 0 6px rgba(12, 43, 46, 0.2);
+    }
+
+    .scene[data-scene-id="step2_tutorial_repair"] #tutorial-next:disabled {
+      opacity: 0.72;
+      background:
+        radial-gradient(circle at 18px 50%, #9aa7a6 0 5px, transparent 6px),
+        linear-gradient(180deg, #d7c890, #a98e49);
+      color: rgba(33, 58, 79, 0.72);
+      box-shadow:
+        inset 0 7px 14px rgba(46, 37, 18, 0.22),
+        0 0 0 6px rgba(8, 31, 35, 0.34);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] .game-area {
+      min-height: calc(100vh - 120px);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] .topbar {
       min-height: 58px;
-      padding: 10px 14px;
-      border-color: rgba(122, 70, 5, 0.34);
+      padding-block: 8px;
+      color: #eefcff;
+      background:
+        linear-gradient(180deg, rgba(55, 96, 96, 0.9), rgba(24, 68, 76, 0.86)),
+        rgba(31, 65, 70, 0.82);
+      border-color: rgba(142, 189, 185, 0.82);
+      box-shadow:
+        inset 0 1px 0 rgba(226, 255, 247, 0.3),
+        inset 0 -5px 0 rgba(5, 28, 34, 0.2),
+        0 10px 24px rgba(17, 52, 60, 0.22);
     }
 
-    .hint-line {
-      min-height: 38px;
-      margin: 10px auto 0;
-      max-width: 760px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: rgba(255, 246, 190, 0.74);
-      text-align: center;
-      font-weight: 900;
-      color: #823614;
+    .scene[data-scene-id="step3_game_challenges"] .topbar .step-label span,
+    .scene[data-scene-id="step3_game_challenges"] .topbar .step-label strong {
+      color: #f2feff;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.22);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] .slot-board {
+      position: absolute;
+      left: 2%;
+      top: 8%;
+      width: 67%;
+      min-height: 470px;
+      padding: 24px 28px;
+      background: rgba(28, 61, 70, 0.78);
+      border: 6px solid rgba(158, 204, 198, 0.68);
+      color: #f4fbff;
+      box-shadow: inset 0 0 30px rgba(91, 224, 229, 0.22), 0 20px 34px rgba(20, 58, 68, 0.22);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-title {
+      color: #fff4b5;
+      font-size: clamp(1.55rem, 3vw, 2.25rem);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-hint {
+      color: #c7f4ff;
+      font-size: clamp(1rem, 1.8vw, 1.25rem);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-sequence {
+      display: grid;
+      grid-template-columns: minmax(98px, 1fr) 30px minmax(98px, 1fr) 30px minmax(98px, 1fr) 30px minmax(98px, 1fr);
+      align-items: center;
+      width: 100%;
+      gap: 8px;
+      padding: 18px;
+      border-radius: 10px;
+      background: rgba(9, 35, 43, 0.58);
+      box-shadow: inset 0 0 18px rgba(91, 221, 227, 0.3);
+      font-size: clamp(1.2rem, 2.6vw, 2.35rem);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-sequence .num-pill,
+    .scene[data-scene-id="step3_game_challenges"] #game-sequence .dropzone {
+      min-width: 0;
+      width: 100%;
+      min-height: 74px;
+      padding: 6px;
+      font-size: clamp(1.45rem, 2.7vw, 2.45rem);
+      border-style: solid;
+      border-width: 2px;
+      color: #fff7c6;
+      background: rgba(5, 25, 34, 0.94);
+      border-color: rgba(118, 215, 235, 0.72);
+      box-shadow: inset 0 10px 18px rgba(0, 0, 0, 0.44), inset 0 -2px 0 rgba(102, 220, 230, 0.12), 0 0 8px rgba(84, 214, 225, 0.16);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-sequence .dropzone {
+      border-color: #ffd161;
+      color: #bceefd;
+      background: rgba(46, 57, 58, 0.9);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] #game-sequence span[aria-hidden="true"] {
+      color: #fbd46d;
+      text-shadow: 0 0 8px rgba(255, 208, 83, 0.5);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] aside.panel {
+      position: absolute;
+      right: 2%;
+      top: 10%;
+      width: 27%;
+      min-height: 520px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      background:
+        linear-gradient(180deg, rgba(44, 84, 88, 0.92), rgba(18, 55, 65, 0.9)),
+        rgba(36, 76, 83, 0.84);
+      border: 6px solid rgba(132, 175, 174, 0.82);
+      box-shadow:
+        inset 0 0 24px rgba(89, 206, 220, 0.2),
+        inset 0 0 0 2px rgba(10, 34, 43, 0.38),
+        -12px 18px 30px rgba(20, 58, 68, 0.26);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] aside.panel::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 5px;
+      border: 1px solid rgba(190, 225, 219, 0.28);
+      background:
+        radial-gradient(circle at 9px 9px, #d9efe8 0 4px, #547a7b 5px 7px, transparent 8px),
+        radial-gradient(circle at calc(100% - 9px) 9px, #d9efe8 0 4px, #547a7b 5px 7px, transparent 8px),
+        radial-gradient(circle at 9px calc(100% - 9px), #d9efe8 0 4px, #547a7b 5px 7px, transparent 8px),
+        radial-gradient(circle at calc(100% - 9px) calc(100% - 9px), #d9efe8 0 4px, #547a7b 5px 7px, transparent 8px);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] .answer-input {
+      color: #ffe681;
+      background: rgba(4, 22, 29, 0.96);
+      border-color: rgba(98, 216, 232, 0.82);
+      box-shadow: inset 0 8px 18px rgba(0,0,0,0.48), inset 0 0 18px rgba(65, 214, 226, 0.26), 0 0 10px rgba(72, 213, 225, 0.16);
+    }
+
+    .scene[data-scene-id="step3_game_challenges"] .key-btn {
+      min-height: 54px;
+      color: #17324d;
+      border-radius: 7px;
+      background: linear-gradient(180deg, #f8fdff, #c5e9ef 64%, #9bcbd4);
+      border-color: #4a9fb4;
+      box-shadow: 0 5px 0 #286f82, inset 0 3px 0 rgba(255,255,255,0.78), inset 0 -4px 0 rgba(45, 121, 139, 0.16);
       text-shadow: 0 1px 0 rgba(255,255,255,0.65);
     }
 
-    .control-deck {
-      width: min(980px, 100%);
-      margin: 0 auto;
-      padding: 12px 28px 16px;
-      border: 0;
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(55, 164, 157, 0.18), rgba(10, 100, 105, 0.18));
-      box-shadow: none;
+    .scene[data-scene-id="step3_game_challenges"] .key-btn.action,
+    .scene[data-scene-id="step3_game_challenges"] #submit-answer {
+      background: linear-gradient(180deg, #ffe784, #ffad3a 68%, #dc8120);
+      border-color: #b56c08;
+      box-shadow: 0 6px 0 #83500c, inset 0 3px 0 rgba(255,255,255,0.58), 0 0 16px rgba(255, 187, 58, 0.18);
     }
 
-    .place-hint {
-      color: #e55345;
-      text-decoration: underline;
-      text-decoration-thickness: 5px;
-      text-underline-offset: 6px;
+    .scene[data-scene-id="step3_game_challenges"] #submit-answer {
+      justify-self: stretch;
+      border-radius: 7px;
+      min-height: 58px;
     }
 
-    .boss-panel {
-      position: relative;
-      width: min(900px, 98%);
-      margin: 0 auto;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 16px 24px rgba(10,54,88,0.18);
-      background: transparent;
+    .scene[data-scene-id="step3_boss_compare"] .boss-stage {
+      min-height: calc(100vh - 120px);
     }
 
-    .boss-panel img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .boss-options {
+    .boss-display {
       position: absolute;
-      inset: 43% 7% 18%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5%;
-    }
-
-    .choice-btn {
-      background: rgba(255,255,255,0.1);
-      border: 4px solid transparent;
-      font-size: clamp(1.25rem, 3.1vw, 2.5rem);
-      color: #7a4305;
-      text-shadow: 0 2px 0 rgba(255,255,255,0.7);
-    }
-
-    .choice-btn.is-selected {
-      border-color: var(--green);
-      background: rgba(232,255,241,0.48);
-    }
-
-    .life-layout {
-      min-height: calc(100vh - 104px);
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 10px;
-      padding: 70px 20px 20px;
-    }
-
-    .calm-display {
-      display: inline-flex;
-      justify-content: center;
-      gap: 10px;
-      width: min(520px, 100%);
-      margin: 0 auto;
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(20,82,82,0.86);
-      color: #f8fff0;
-      font-size: clamp(1.25rem, 2.8vw, 2rem);
-      font-weight: 900;
-      box-shadow: 0 10px 18px rgba(10,54,88,0.16);
-    }
-
-    .life-card {
-      align-self: center;
-      justify-self: center;
-      width: min(950px, 100%);
-      padding: 0;
-      border: 0;
-      border-radius: 8px;
-      background: transparent;
-      box-shadow: none;
-    }
-
-    .station-message {
-      max-width: min(850px, 100%) !important;
-      margin: 0 auto 8px !important;
-      padding: 10px 14px;
-      color: #f8fff0;
-      background: rgba(23, 73, 89, 0.78);
-      border-color: rgba(255,216,90,0.68);
-      box-shadow: 0 5px 0 rgba(10,53,78,0.24);
-      font-size: clamp(0.95rem, 1.45vw, 1.18rem);
-    }
-
-    .station-message small {
-      color: #dff8ff;
-    }
-
-    .life-image-wrap {
-      position: relative;
-      overflow: hidden;
-      border-radius: 8px;
-      background: rgba(23, 96, 121, 0.86);
-      border: 6px solid rgba(42, 88, 126, 0.82);
-      box-shadow: inset 0 0 0 4px rgba(255,216,90,0.48), 0 12px 22px rgba(10,54,88,0.16);
-      aspect-ratio: 16 / 7.2;
-    }
-
-    .life-image-wrap img {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center center;
-      transform: none;
-    }
-
-    .life-screen-note {
-      position: absolute;
-      display: grid;
-      align-content: center;
-      justify-items: center;
-      gap: 4px;
-      padding: 8px;
-      border: 3px solid rgba(26, 105, 130, 0.55);
-      border-radius: 8px;
-      background: rgba(255, 252, 231, 0.84);
-      color: #123047;
+      left: 22%;
+      top: 7%;
+      width: 56%;
+      padding: 14px 22px 15px;
       text-align: center;
-      font-weight: 900;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.44);
-      opacity: 0.82;
-      transform: scale(0.98);
-      transition: opacity 160ms ease, transform 160ms ease, border-color 160ms ease;
+      color: #fff6be;
+      background: rgba(18, 43, 54, 0.74);
+      border: 3px solid rgba(224, 170, 70, 0.64);
+      border-radius: 10px;
+      box-shadow: inset 0 0 22px rgba(255, 98, 83, 0.18), inset 0 0 0 2px rgba(255, 229, 151, 0.08), 0 10px 20px rgba(14, 42, 56, 0.14);
     }
 
-    .life-screen-note.is-active {
-      opacity: 1;
-      transform: scale(1);
-      border-color: rgba(255, 216, 90, 0.95);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55), 0 0 0 4px rgba(34,182,111,0.24), 0 10px 16px rgba(10,54,88,0.16);
+    .boss-display h2 {
+      font-size: clamp(1.45rem, 2.8vw, 2.3rem);
     }
 
-    .life-screen-note.bank {
-      left: 7%;
-      top: 15.5%;
-      width: 24%;
-      height: 18%;
+    .boss-display .lead {
+      color: #d8f8ff;
+      font-size: clamp(0.96rem, 1.6vw, 1.15rem);
     }
 
-    .life-screen-note.food {
-      left: 42.4%;
-      top: 30%;
-      width: 18%;
-      height: 20%;
-    }
-
-    .life-screen-note.hospital {
-      right: 5.5%;
-      top: 24%;
-      width: 23%;
-      height: 18%;
-    }
-
-    .life-note-number {
-      font-size: clamp(0.9rem, 1.55vw, 1.32rem);
-      color: #0a5f78;
-      line-height: 1.12;
-      max-width: 100%;
-      overflow-wrap: anywhere;
-    }
-
-    .life-note-caption {
-      font-size: clamp(0.7rem, 1.15vw, 0.95rem);
-      line-height: 1.22;
-    }
-
-    .life-case-caption {
+    .scene[data-scene-id="step3_boss_compare"] .choice-row {
       position: absolute;
-      left: 7%;
-      right: 7%;
-      bottom: 5%;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background: rgba(255, 241, 167, 0.88);
-      border: 2px solid rgba(139, 91, 10, 0.28);
-      font-weight: 900;
-      box-shadow: 0 5px 0 rgba(139, 91, 10, 0.14);
-    }
-
-    .slide-controls {
-      display: flex;
-      gap: 10px;
-    }
-
-    .dot-btn {
-      position: relative;
-      min-width: 58px;
-      min-height: 48px;
-      padding: 6px 14px;
-      border: 3px solid rgba(122, 70, 5, 0.26);
-      border-radius: 8px;
-      background: linear-gradient(180deg, #fff3b8, #ffd15a);
-      color: var(--ink);
-      font-weight: 900;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.38), 0 4px 0 #c9851d;
-    }
-
-    .dot-btn::before,
-    .dot-btn::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255, 241, 167, 0.9);
-      border: 2px solid rgba(122, 70, 5, 0.18);
-      transform: translateY(-50%);
-    }
-
-    .dot-btn::before {
-      left: 5px;
-    }
-
-    .dot-btn::after {
-      right: 5px;
-    }
-
-    .dot-btn[aria-current="true"] {
-      background: linear-gradient(180deg, #eafff6, #9fe7d4);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.48), 0 0 0 3px rgba(34,182,111,0.34), 0 4px 0 #5cae9e;
-    }
-
-    .completion-layout {
-      position: relative;
-      min-height: calc(100vh - 104px);
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      justify-items: center;
-      gap: 8px;
-      padding: 84px 20px 26px;
-      text-align: center;
-    }
-
-    .completion-board {
-      width: min(560px, 64%);
-      padding: 8px 16px;
-      border: 3px solid rgba(255,216,90,0.72);
-      border-radius: 8px;
-      background: rgba(23, 73, 89, 0.78);
-      color: #f8fff0;
-      box-shadow: 0 5px 0 rgba(10,53,78,0.22), 0 10px 18px rgba(10,54,88,0.1);
-    }
-
-    .counter-reward {
-      position: absolute;
-      left: 50%;
-      bottom: 126px;
-      transform: translateX(-50%);
-      width: min(560px, 78%);
-      margin: 0;
-      padding: 0;
-      border-radius: 0;
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-    }
-
-    .reward-ticket {
-      width: min(285px, 36vw);
-      height: auto;
-      animation: rewardFloat 1.6s ease-in-out infinite;
-      filter: drop-shadow(0 16px 18px rgba(149,92,8,0.22));
-    }
-
-    .reward-ticket-label {
-      position: absolute;
-      left: 50%;
-      top: 43%;
-      transform: translate(-50%, -50%) rotate(-3deg);
-      min-width: 150px;
-      color: #8a4a05;
-      font-size: clamp(1.05rem, 2vw, 1.38rem);
-      font-weight: 900;
-      line-height: 1.08;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.72);
+      inset: 0;
+      display: block;
+      z-index: 2;
       pointer-events: none;
     }
 
-    .stamp {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 52px;
-      padding: 7px 16px;
-      margin: 0 auto 4px;
-      border: 5px solid #ff6c5d;
-      border-radius: 8px;
-      color: #e94d40;
-      background: rgba(255,249,236,0.9);
-      font-size: clamp(1.15rem, 2.5vw, 1.8rem);
-      font-weight: 900;
-      transform: rotate(-4deg);
-      animation: stampIn 520ms cubic-bezier(.2,1.3,.3,1) both;
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      height: 156px;
+      padding: 0;
+      color: #17324d;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      font-size: clamp(2.75rem, 5.2vw, 4.35rem);
+      font-weight: 1000;
+      text-shadow: 0 2px 0 rgba(255, 255, 255, 0.56), 0 0 10px rgba(255, 233, 143, 0.38);
+      pointer-events: auto;
+      transform: rotate(-1deg);
     }
 
-    .finish-title {
-      margin: 0;
-      font-size: clamp(1rem, 2vw, 1.35rem);
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket:nth-child(1) {
+      left: -8%;
+      top: 52%;
+      width: 39%;
     }
 
-    .finish-copy {
-      display: inline-block;
-      max-width: 420px;
-      margin: 8px auto 0;
-      padding: 8px 14px;
-      border: 2px solid rgba(139, 91, 10, 0.22);
-      border-radius: 8px;
-      background: rgba(255, 248, 198, 0.9);
-      color: #24465c;
-      font-size: clamp(0.95rem, 1.55vw, 1.1rem);
-      line-height: 1.45;
-      font-weight: 800;
-      box-shadow: 0 5px 0 rgba(139, 91, 10, 0.14);
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket:nth-child(2) {
+      left: 35%;
+      top: 62%;
+      width: 30%;
+      height: 116px;
+      transform: rotate(0deg);
     }
 
-    #nextLesson {
-      grid-row: 3;
-      align-self: end;
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket:nth-child(3) {
+      left: 69%;
+      top: 52%;
+      width: 39%;
+      transform: rotate(1deg);
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket:not(:disabled):hover,
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket:focus-visible {
+      outline: 4px solid rgba(255, 206, 73, 0.72);
+      outline-offset: -10px;
+      box-shadow: inset 0 0 24px rgba(255, 218, 79, 0.38);
+      transform: translateY(-2px) rotate(-1deg);
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] .choice-ticket.selected-good {
+      background: rgba(255, 232, 81, 0.12);
+      border: 0;
+      box-shadow: inset 0 0 30px rgba(255, 220, 55, 0.55), 0 0 34px rgba(255, 226, 66, 0.66);
+      color: #0f6031;
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] .boss-verdict-panel {
+      position: absolute;
+      left: 33%;
+      top: 83.4%;
+      width: 34%;
+      display: grid;
+      gap: 8px;
+      padding: 10px 14px 12px;
+      z-index: 4;
+      border-radius: 9px;
+      background:
+        linear-gradient(180deg, rgba(251, 245, 203, 0.9), rgba(233, 202, 126, 0.88)),
+        rgba(246, 222, 151, 0.9);
+      border: 3px solid rgba(151, 99, 24, 0.72);
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.58),
+        0 10px 0 rgba(119, 78, 17, 0.34),
+        0 18px 24px rgba(52, 31, 8, 0.18);
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] .boss-verdict-panel::before {
+      content: "";
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: -8px;
+      height: 10px;
+      border-radius: 6px 6px 0 0;
+      background: rgba(82, 108, 105, 0.86);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.54);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] #boss-feedback {
+      min-height: 34px;
+      padding: 5px 10px;
+      font-size: clamp(0.84rem, 1.18vw, 1rem);
+      line-height: 1.25;
+      border-color: rgba(37, 137, 148, 0.5);
+      background: rgba(9, 42, 48, 0.82);
+      color: #e8fbff;
+      box-shadow: inset 0 0 12px rgba(86, 220, 224, 0.24);
+    }
+
+    .scene[data-scene-id="step3_boss_compare"] #boss-next {
+      min-width: 0;
+      width: 78%;
+      min-height: 46px;
       justify-self: center;
-      width: min(320px, 86%);
+      padding-inline: 10px;
+      font-size: clamp(0.83rem, 1.15vw, 1rem);
+      box-shadow: 0 5px 0 #9a620c, 0 10px 14px rgba(83, 54, 8, 0.2);
     }
 
-    .hidden {
-      display: none !important;
+    .life-display-board {
+      position: absolute;
+      left: 3%;
+      top: 0%;
+      width: 59%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      z-index: 2;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(34, 54, 52, 0.18);
+      box-shadow: inset 0 0 18px rgba(255, 226, 122, 0.18);
     }
 
-    @keyframes warningBlink {
-      0%, 100% { filter: drop-shadow(0 0 0 rgba(255,80,80,0)); }
-      50% { filter: drop-shadow(0 0 16px rgba(255,80,80,0.7)); }
+    .life-display-board span {
+      display: grid;
+      place-items: center;
+      min-height: 64px;
+      padding: 8px;
+      color: #ffeaa1;
+      background: rgba(20, 43, 45, 0.38);
+      border: 1px solid rgba(102, 216, 190, 0.36);
+      border-right-width: 0;
+      border-radius: 0;
+      box-shadow: inset 0 0 13px rgba(78, 214, 185, 0.18);
+      font-weight: 1000;
+      text-align: center;
+      line-height: 1.12;
     }
 
-    @keyframes zoomIn {
-      from { transform: scale(0.96); opacity: 0.7; }
-      to { transform: scale(1); opacity: 1; }
+    .life-display-board span:first-child {
+      border-radius: 5px 0 0 5px;
     }
 
-    @keyframes snap {
-      0% { transform: scale(1.12); }
-      100% { transform: scale(1); }
+    .life-display-board span:last-child {
+      border-right-width: 1px;
+      border-radius: 0 5px 5px 0;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
+    .scene[data-scene-id="step4_story_life"] .narration.panel {
+      position: absolute;
+      left: 4%;
+      top: 26%;
+      width: 36%;
+      max-width: 430px;
+      padding: 15px 16px;
+      gap: 8px;
+      overflow: visible;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,0.42) 0 18%, transparent 18% 29%, rgba(255,255,255,0.2) 29% 34%, transparent 34%),
+        rgba(220, 248, 247, 0.72);
+      border: 2px solid rgba(93, 188, 184, 0.82);
+      box-shadow: inset 0 1px 18px rgba(255, 255, 255, 0.58), inset 0 -8px 16px rgba(58, 132, 131, 0.12), 0 14px 28px rgba(21, 61, 70, 0.19);
+      backdrop-filter: blur(6px);
     }
 
-    @keyframes pop {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .scene[data-scene-id="step4_story_life"] .narration.panel::before,
+    .scene[data-scene-id="step4_story_life"] .narration.panel::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      width: 46px;
+      height: 17px;
+      border-radius: 5px 5px 2px 2px;
+      background: linear-gradient(180deg, #b4d2cd, #638d8a);
+      border: 1px solid rgba(54, 98, 94, 0.52);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.62);
     }
 
-    @keyframes rewardFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+    .scene[data-scene-id="step4_story_life"] .narration.panel::before { left: 28px; }
+    .scene[data-scene-id="step4_story_life"] .narration.panel::after { right: 28px; }
+
+    .scene[data-scene-id="step4_story_life"] .narration h2 {
+      font-size: clamp(1.22rem, 2.05vw, 1.72rem);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .narration .lead {
+      font-size: clamp(0.9rem, 1.35vw, 1.02rem);
+      line-height: 1.35;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .narration .feedback.good {
+      display: block;
+      position: relative;
+      color: #dcfff0;
+      background:
+        linear-gradient(180deg, rgba(10, 61, 54, 0.9), rgba(5, 38, 43, 0.88));
+      border-color: rgba(77, 213, 142, 0.86);
+      box-shadow:
+        inset 0 0 16px rgba(75, 220, 155, 0.25),
+        0 0 0 3px rgba(28, 96, 82, 0.18);
+      padding: 12px 14px 12px 36px;
+      text-align: center;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .narration .feedback.good::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #5dff8f;
+      box-shadow: 0 0 0 5px rgba(93,255,143,0.2), 0 0 14px rgba(93,255,143,0.62);
+      transform: translateY(-50%);
+    }
+
+    .scene[data-scene-id="step4_story_life"] #life-next {
+      justify-self: start;
+      min-height: 52px;
+      width: min(270px, 100%);
+      margin-top: 2px;
+      box-shadow: 0 7px 0 #9a620c, 0 15px 18px rgba(83, 54, 8, 0.22);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card {
+      position: absolute;
+      right: 3%;
+      top: 18.5%;
+      width: 38%;
+      padding: 14px;
+      background:
+        linear-gradient(180deg, rgba(47, 94, 99, 0.94), rgba(25, 69, 78, 0.94)),
+        rgba(33, 68, 76, 0.84);
+      border: 8px solid rgba(111, 153, 151, 0.84);
+      border-radius: 8px;
+      color: #f5fcff;
+      box-shadow: inset 0 0 28px rgba(102, 221, 218, 0.18), inset 0 0 0 2px rgba(11, 42, 50, 0.38), 0 20px 38px rgba(16, 50, 60, 0.24);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 5px;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 8px 8px, #dcefe9 0 4px, #557c7e 5px 7px, transparent 8px),
+        radial-gradient(circle at calc(100% - 8px) 8px, #dcefe9 0 4px, #557c7e 5px 7px, transparent 8px),
+        radial-gradient(circle at 8px calc(100% - 8px), #dcefe9 0 4px, #557c7e 5px 7px, transparent 8px),
+        radial-gradient(circle at calc(100% - 8px) calc(100% - 8px), #dcefe9 0 4px, #557c7e 5px 7px, transparent 8px);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-frame {
+      position: relative;
+      border: 4px solid rgba(197, 239, 235, 0.78);
+      background: rgba(8, 31, 38, 0.78);
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.24);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .life-surface-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step4_story_life"] #life-title {
+      position: absolute;
+      left: var(--life-title-left, 28%);
+      top: var(--life-title-top, 5%);
+      width: var(--life-title-width, 50%);
+      min-height: var(--life-title-height, 14%);
+      display: grid;
+      place-items: center;
+      padding: 4px 8px;
+      color: #ffe883;
+      font-size: clamp(1rem, 1.7vw, 1.28rem);
+      line-height: 1.12;
+      text-align: center;
+      text-shadow: 0 0 9px rgba(255, 221, 90, 0.58);
+    }
+
+    .scene[data-scene-id="step4_story_life"] #life-copy {
+      position: absolute;
+      left: var(--life-copy-left, 2.5%);
+      top: var(--life-copy-top, 78%);
+      width: var(--life-copy-width, 95%);
+      min-height: var(--life-copy-height, 18%);
+      display: grid;
+      place-items: center;
+      margin: 0;
+      padding: 7px 16px;
+      border-radius: 7px;
+      color: #17324d;
+      background: rgba(255, 249, 224, 0.9);
+      border: 2px solid rgba(223, 150, 25, 0.52);
+      box-shadow: inset 0 1px 10px rgba(255, 255, 255, 0.65);
+      font-size: clamp(0.78rem, 1.18vw, 0.94rem);
+      font-weight: 900;
+      line-height: 1.25;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card[data-life-index="1"] .slide-frame {
+      --life-title-left: 64%;
+      --life-title-top: 35%;
+      --life-title-width: 29%;
+      --life-title-height: 16%;
+      --life-copy-left: 63%;
+      --life-copy-top: 53%;
+      --life-copy-width: 30%;
+      --life-copy-height: 26%;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card[data-life-index="1"] #life-title,
+    .scene[data-scene-id="step4_story_life"] .slide-card[data-life-index="1"] #life-copy {
+      transform: rotate(3deg);
+      border-radius: 12px;
+      background: rgba(234, 255, 248, 0.8);
+      border-color: rgba(84, 154, 153, 0.46);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card[data-life-index="2"] .slide-frame {
+      --life-title-left: 32%;
+      --life-title-top: 5%;
+      --life-title-width: 36%;
+      --life-title-height: 25%;
+      --life-copy-left: 72%;
+      --life-copy-top: 20%;
+      --life-copy-width: 20%;
+      --life-copy-height: 30%;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-card[data-life-index="2"] #life-copy {
+      background: rgba(232, 255, 245, 0.86);
+      border-color: rgba(79, 164, 148, 0.48);
+      font-size: clamp(0.68rem, 1.02vw, 0.82rem);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-btn {
+      min-height: 46px;
+      font-weight: 1000;
+      border-radius: 6px;
+      position: relative;
+      padding-top: 8px;
+      box-shadow: 0 5px 0 #315f67, inset 0 2px 0 rgba(255,255,255,0.58);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-btn::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #5bb4bb;
+      box-shadow: 0 0 8px rgba(91, 180, 187, 0.55);
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-btn.is-active {
+      color: #17324d;
+      background: linear-gradient(180deg, #fff58d, #ffc247);
+      box-shadow: 0 6px 0 #8f5c11, 0 0 18px rgba(255, 215, 77, 0.62);
+    }
+
+    .scene[data-scene-id="step4_story_life"] .slide-btn.is-active::before {
+      background: #4cff88;
+      box-shadow: 0 0 10px rgba(76, 255, 136, 0.72);
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .scene-body {
+      min-height: calc(100vh - 120px);
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .reward-panel {
+      display: block;
+      width: auto;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .stamp {
+      position: absolute;
+      left: 34.5%;
+      top: 32%;
+      width: 33%;
+      min-width: 0;
+      min-height: 74px;
+      padding: 10px;
+      background: rgba(255, 248, 219, 0.34);
+      border-width: 6px;
+      border-radius: 8px;
+      font-size: clamp(1.55rem, 2.65vw, 2.25rem);
+      white-space: nowrap;
+      transform: rotate(-5deg) skewX(-2deg);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.26);
+      z-index: 2;
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .reward-panel h2 {
+      position: absolute;
+      left: 35%;
+      top: 52%;
+      width: 32%;
+      color: #735018;
+      font-size: clamp(1.18rem, 2vw, 1.7rem);
+      line-height: 1.1;
+      text-align: center;
+      text-shadow: 0 1px 0 rgba(255, 244, 168, 0.48);
+      transform: rotate(-5deg) skewX(-2deg);
+      z-index: 2;
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .speech.crew {
+      position: absolute;
+      right: 12%;
+      bottom: 25%;
+      max-width: 320px;
+      background: rgba(255, 246, 207, 0.9);
+      border-color: #ffbf35;
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] .speech.crew::after {
+      content: "";
+      position: absolute;
+      right: 32px;
+      bottom: -12px;
+      width: 22px;
+      height: 22px;
+      background: rgba(255, 246, 207, 0.9);
+      border-right: 2px solid #ffbf35;
+      border-bottom: 2px solid #ffbf35;
+      transform: rotate(45deg);
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] #next-lesson {
+      position: absolute;
+      left: 33%;
+      bottom: 8%;
+      width: min(470px, 38%);
+      min-height: 58px;
+      transform: perspective(420px) rotateX(4deg) rotate(-1deg);
+      background:
+        radial-gradient(circle at 14px 50%, rgba(123, 82, 15, 0.26) 0 7px, transparent 8px),
+        radial-gradient(circle at calc(100% - 14px) 50%, rgba(123, 82, 15, 0.26) 0 7px, transparent 8px),
+        linear-gradient(90deg, transparent 0 18px, rgba(156, 96, 13, 0.24) 18px 20px, transparent 20px calc(100% - 20px), rgba(156, 96, 13, 0.24) calc(100% - 20px) calc(100% - 18px), transparent calc(100% - 18px)),
+        linear-gradient(180deg, #fff29a 0%, #ffc349 66%, #f0a72e 100%);
+      box-shadow:
+        0 5px 0 #93600e,
+        0 18px 14px -9px rgba(55, 31, 8, 0.48),
+        0 20px 24px -12px rgba(83, 54, 8, 0.24),
+        inset 0 2px 0 rgba(255,255,255,0.72),
+        inset 0 -4px 0 rgba(151, 91, 9, 0.18);
+    }
+
+    .scene[data-scene-id="step4_clear_reward"] #next-lesson:hover {
+      transform: perspective(420px) translateY(-2px) rotateX(4deg) rotate(-1deg);
     }
 
     @keyframes stampIn {
-      0% { transform: rotate(-12deg) scale(1.6); opacity: 0; }
-      100% { transform: rotate(-4deg) scale(1); opacity: 1; }
+      from { transform: scale(1.4) rotate(-4deg); opacity: 0; }
+      to { transform: scale(1) rotate(-4deg); opacity: 1; }
     }
 
-    @media (max-width: 820px) {
-      .scene {
-        padding: 70px 10px 16px;
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 840px) {
+      .topbar {
+        align-items: stretch;
       }
 
-      .scene-inner {
-        min-height: calc(100vh - 86px);
+      .ticket-bag {
+        min-width: 104px;
       }
 
-      .hud {
-        top: 8px;
-        left: 8px;
-        right: 8px;
+      .scene-body,
+      .layout-two,
+      .mission-shell,
+      .game-area,
+      .life-stage {
+        grid-template-columns: 1fr;
       }
 
-      .hud-pill {
-        min-height: 38px;
-        padding: 6px 9px;
-        font-size: 0.86rem;
+      .scene-body {
+        min-height: auto;
+        margin-bottom: 18px;
       }
 
-      .ticket-icon {
-        width: 30px;
-      }
-
-      .top-row {
-        flex-direction: column;
-        padding: 14px;
-      }
-
-      .dialogue {
-        max-width: 100%;
-        font-size: 1rem;
-      }
-
-      .intro-display {
-        top: 190px;
-        width: 92%;
-      }
-
-      .clerk-cutout {
-        left: 8px;
-        bottom: 104px;
-        width: 116px;
-      }
-
-      .passenger-bubbles {
-        position: relative;
-        right: auto;
-        top: auto;
-        width: auto;
-        margin: 150px 12px 0 auto;
-        max-width: 230px;
-      }
-
-      .bubble {
-        font-size: 0.86rem;
-        padding: 8px 10px;
-      }
-
-      .tutorial-layout {
-        padding: 0;
+      .speech-row,
+      .choice-row {
+        grid-template-columns: 1fr;
       }
 
       .machine-panel,
-      .machine-panel > .machine-bg {
-        min-height: 560px;
+      .slot-board {
+        min-height: 300px;
       }
 
-      .tutorial-problem {
-        top: 13%;
-        left: 50%;
-        width: 88%;
-        padding: 12px;
-      }
-
-      .blank-slot {
-        min-width: 88px;
-        min-height: 52px;
-      }
-
-      .cards-area {
-        left: 50%;
-        width: 88%;
-        bottom: 20px;
-        min-height: 158px;
-      }
-
-      .side-guide {
-        position: absolute;
-        right: 12px;
-        bottom: 170px;
-        width: min(420px, calc(100% - 24px));
-        display: grid;
-        grid-template-columns: 1fr;
-        align-items: center;
-      }
-
-      .success-card {
-        right: 12px;
-        top: 265px;
-        width: 180px;
-      }
-
-      .game-layout,
-      .life-layout,
-      .completion-layout {
-        padding: 68px 12px 16px;
-        min-height: calc(100vh - 86px);
-      }
-
-      .game-status,
-      .answer-input-row,
-      .life-case-caption {
-        grid-template-columns: 1fr;
-      }
-
-      .game-status {
-        display: flex;
-      }
-
-      .progress-wrap {
-        width: min(420px, 86%);
-      }
-
-      .control-deck {
-        padding: 10px 10px 12px;
-      }
-
-      .answer-input-row {
-        grid-template-columns: 1fr 76px 86px;
-        gap: 7px;
-      }
-
-      .keypad {
-        grid-template-columns: repeat(5, 1fr);
-      }
-
-      .key-btn.action {
-        grid-column: span 1;
-      }
-
-      .boss-options {
-        inset: 42% 5% 13%;
-        gap: 3%;
-      }
-
-      .life-card {
-        padding: 0;
-      }
-
-      .life-image-wrap {
-        aspect-ratio: 4 / 3;
-      }
-
-      .life-screen-note.bank {
-        left: 7%;
-        top: 16%;
-        width: 24%;
-        height: 16%;
-      }
-
-      .life-screen-note.food {
-        left: 41.5%;
-        top: 32%;
-        width: 19%;
-        height: 18%;
-      }
-
-      .life-screen-note.hospital {
-        right: 5%;
-        top: 25%;
-        width: 24%;
-        height: 16%;
-      }
-
-      .life-note-caption {
-        font-size: 0.68rem;
-      }
-
-      .counter-reward {
-        margin-bottom: clamp(34px, 8vh, 70px);
-        width: min(430px, 88%);
-      }
-
-      .reward-ticket {
-        width: min(240px, 58vw);
-      }
-
-      .slide-controls {
-        justify-content: center;
+      .choice-ticket {
+        min-height: 78px;
       }
     }
 
-    @media (max-width: 480px) {
-      .display-numbers {
-        font-size: 1.1rem;
+    @media (max-width: 520px) {
+      .topbar {
+        width: calc(100% - 18px);
+        margin-top: 9px;
+        padding: 8px;
       }
 
-      .intro-display {
-        top: 215px;
+      .scene-body {
+        width: calc(100% - 18px);
+        gap: 10px;
       }
 
-      .passenger-bubbles {
-        margin-top: 135px;
+      .panel {
+        padding: 12px;
       }
 
-      .number-line,
-      .slot-value {
-        font-size: 1.25rem;
+      .cards,
+      .slide-controls {
+        grid-template-columns: 1fr;
       }
 
-      .card-btn,
-      .choice-btn {
-        font-size: 1.1rem;
+      .primary-btn,
+      .secondary-btn {
+        width: 100%;
+      }
+
+      .progress-cell {
+        width: 30px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header class="hud" aria-label="학습 진행 상태">
-      <div class="hud-pill" id="sceneTitle">STEP 1 번호표 기계</div>
-      <div class="hud-pill ticket-pocket">
-        <img class="ticket-icon" src="assets/golden_ticket_reward.png" alt="황금 기차표 아이콘">
-        <span id="ticketPocket">나의 황금 기차표 주머니 (0/5)</span>
+  <main class="app" id="app">
+    <section class="scene" data-scene-id="step1_intro_problem" data-qa-scene="step1_intro_problem" data-qa-order="1" data-qa-label="STEP 1 들어가기">
+      <img class="scene__image" src="assets/station_chaos_scene.png" alt="명절 전날 마을 기차역 매표소에서 고장 난 번호표 전광판 때문에 승객들이 혼란스러워하고 파란 제복 역무원이 당황한 장면">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 1 들어가기</span><strong>번호표 기계가 고장 났어요</strong></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 0개 중 0개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>0/5</b></span></div>
+      </header>
+      <div class="warning-board" aria-label="고장 난 전광판 숫자">
+        <span>3500</span>
+        <span class="blink">????</span>
+        <span>4100</span>
       </div>
-    </header>
-
-    <main>
-      <section class="scene is-active" data-qa-scene="step1_intro_problem" data-qa-order="1" data-qa-label="STEP 1 뒤죽박죽 번호표 기계">
-        <div class="scene-inner">
-          <img class="bg-img" src="assets/station_chaos.png" alt="명절 전날 밝은 기차역 매표소에서 승객들이 좌우로 줄을 서 있고 상단의 고장 난 전광판이 비어 있는 혼잡한 배경 장면">
-          <div class="scene-shade"></div>
-          <div class="top-row">
-            <div class="step-badge">STEP 1 들어가기</div>
-            <div class="dialogue">
-              칙칙폭폭! 즐거운 명절 전날이에요. 어라? 무슨 일이 생긴 걸까요?
-              <small>역무원이 번호표 기계 수리를 부탁하고 있어요.</small>
-            </div>
-          </div>
-          <div class="intro-display" aria-label="고장 난 전광판 숫자">
-            <img src="assets/broken_display.png" alt="네 자리 수를 HTML로 올릴 수 있도록 중앙 표시 영역이 비어 있는 붉은 경고등의 고장 난 기차역 번호표 전광판">
-            <div class="display-numbers"><span>3500</span><span>????</span><span>4100</span></div>
-          </div>
-          <img class="clerk-cutout" src="assets/clerk_anxious.png" alt="모자와 제복을 입은 친절한 중년 역무원이 땀을 흘리며 도움을 요청하는 표정의 상반신 캐릭터">
-          <div class="passenger-bubbles" aria-label="승객들의 말">
-            <div class="bubble">제 번호는요?</div>
-            <div class="bubble">누가 먼저 온 거지?</div>
-            <div class="bubble">기차 놓치겠어요!</div>
-          </div>
-          <div class="intro-cta">
-            <button class="primary-btn ticket-sign" id="introStart">수리 시작</button>
-          </div>
+      <div class="scene-body layout-two">
+        <div class="narration panel">
+          <h1>고장 전광판을 고쳐요</h1>
+          <p class="lead">명절 기차역의 번호표 순서가 뒤죽박죽이에요.</p>
+          <p class="speech crew">아이고, 큰일 났네! 번호표 기계가 고장 나서 순서가 엉망이야!</p>
+          <button class="primary-btn" type="button" data-action="start">네 자리 수의 힘으로 기계 수리하러 가기</button>
         </div>
-      </section>
-
-      <section class="scene machine-scene" data-qa-scene="step2_tutorial_repair" data-qa-order="2" data-qa-label="STEP 2 숫자 카드 튜토리얼">
-        <div class="scene-inner" id="tutorialInner">
-          <div class="tutorial-layout">
-            <div class="machine-panel">
-              <img class="machine-bg" src="assets/ticket_machine_closeup.png" alt="고장 표시가 살짝 남은 밝은 기차역 번호표 발행기 모니터와 빈 문제판 배경">
-              <div class="tutorial-problem">
-                <p class="mission-label" id="tutorialMission">미션 1: 1만큼 더 큰 수</p>
-                <div class="number-line" id="tutorialLine"></div>
-              </div>
-              <div class="cards-area" aria-label="숫자 카드 선택 영역">
-                <img src="assets/number_cards.png" alt="HTML 숫자를 얹을 수 있도록 중앙이 비어 있는 황금 티켓 모양 숫자 카드 3장">
-                <div class="card-buttons" id="tutorialCards"></div>
-              </div>
-              <div class="success-card" id="successCard">
-                <img src="assets/customer_ticket_success.png" alt="정답 후 승객이 황금 기차표를 받고 웃는 밝은 기차역 보상 장면">
-              </div>
-            </div>
-            <aside class="side-guide">
-              <div class="feedback" id="tutorialFeedback">3500보다 1만큼 더 큰 수는 무엇일까?</div>
-              <button class="secondary-btn" id="tutorialNext" disabled>본 게임으로 가기</button>
-            </aside>
-          </div>
+        <div class="speech-row">
+          <p class="speech">제 번호는요?</p>
+          <p class="speech">누가 먼저 온 거지?</p>
+          <p class="speech">기차 놓치겠어요!</p>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="scene" data-qa-scene="step3_game_repair" data-qa-order="3" data-qa-label="STEP 3 번호표 수리 게임">
-        <div class="scene-inner">
-          <img class="bg-img" src="assets/repair_system_bg.png" alt="밝은 청록색 번호표 발행기 내부에 톱니바퀴와 파이프가 둘러 있고 중앙 문제판과 하단 키패드 공간이 비어 있는 수리 게임 배경입니다.">
-          <div class="scene-shade"></div>
-          <div class="game-layout">
-            <div class="game-status">
-              <div class="progress-wrap" aria-label="문제 진행도">
-                <div class="progress-label"><span id="gameProgressLabel">문제 진행도 0/5</span><span id="repairState">수리 부품 준비 중</span></div>
-                <div class="progress-track"><div class="progress-fill" id="gameProgressFill"></div></div>
-              </div>
-              <button class="secondary-btn" id="gameSkipToStory" disabled>수리 이야기 보기</button>
-            </div>
-            <div class="board-area">
-              <img class="slot-board" src="assets/slot_problem_board.png" alt="청록색과 황금색 장식의 가로형 문제판 프레임 안에 HTML 숫자를 얹을 수 있는 네 개의 빈 슬롯이 있는 이미지입니다.">
-              <div class="game-question" id="gameQuestion"></div>
-            </div>
-            <div class="control-deck">
-              <div class="answer-input-row" id="numberInputArea">
-                <input class="answer-input" id="answerInput" inputmode="numeric" maxlength="4" aria-label="정답 숫자 입력">
-                <button class="secondary-btn" id="clearAnswer">지움</button>
-                <button class="primary-btn" id="submitAnswer">발권</button>
-              </div>
-              <div class="keypad" id="keypad" aria-label="화면 숫자 키패드"></div>
-              <div class="hint-line" id="gameHint" aria-live="polite"></div>
+    <section class="scene" data-scene-id="step2_tutorial_repair" data-qa-scene="step2_tutorial_repair" data-qa-order="2" data-qa-label="STEP 2 튜토리얼" hidden>
+      <img class="scene__image" src="assets/ticket_machine_closeup.png" alt="고장 난 번호표 발행기를 가까이 보여 주며 중앙 모니터에 숫자 문제와 빈칸 UI를 올릴 수 있는 수리 장면">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 2 수리가 필요해요</span><strong>수의 규칙 찾기</strong></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 0개 중 0개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>0/5</b></span></div>
+      </header>
+      <div class="scene-body mission-shell">
+        <div class="panel machine-panel">
+          <h2 id="tutorial-title">미션 1. 3500보다 1만큼 더 큰 수는?</h2>
+          <p class="lead" id="tutorial-hint">3500이 깜빡이고 있어요. 바로 다음 번호를 찾아 넣어 주세요.</p>
+          <div class="sequence" id="tutorial-sequence" aria-live="polite"></div>
+          <div class="cards" id="tutorial-cards" aria-label="선택할 숫자 카드"></div>
+          <p class="feedback" id="tutorial-feedback" aria-live="polite">빈칸을 누르거나 숫자 카드를 끌어 놓을 수 있어요.</p>
+        </div>
+        <aside class="panel compact">
+          <div class="progress-strip" aria-label="튜토리얼 진행도">
+            <span class="progress-cell" data-tutorial-cell="0"></span>
+            <span class="progress-cell" data-tutorial-cell="1"></span>
+          </div>
+          <p class="speech crew" id="tutorial-crew">차근차근 고치면 손님들이 다시 표를 받을 수 있어.</p>
+          <figure class="success-photo" id="tutorial-success">
+            <img src="assets/ticket_customer_reaction.png" alt="수리가 성공한 뒤 손님이 반짝이는 번호표를 받고 역무원이 안도하며 웃는 밝은 기차역 매표소 장면">
+          </figure>
+          <button class="primary-btn" id="tutorial-next" type="button" disabled>5문제 수리 게임 시작</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="scene" data-scene-id="step3_game_challenges" data-qa-scene="step3_game_challenges" data-qa-order="3" data-qa-label="STEP 3 수리 게임" hidden>
+      <img class="scene__image" src="assets/machine_interior_system.png" alt="번호표 발행기 내부의 둥근 톱니바퀴와 숫자 레일이 가장자리를 둘러싼 밝은 기계식 수리 공간 배경">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 3 수리로 해결해요</span><strong>5문제 수리 게임</strong></div>
+        <div class="progress-strip" aria-label="문제 진행도" id="game-progress"></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 0개 중 0개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>0/5</b></span></div>
+      </header>
+      <div class="scene-body game-area">
+        <div class="panel slot-board" id="slot-board">
+          <h2 id="game-title">문제 1. 빈 번호표를 고쳐요</h2>
+          <p class="lead" id="game-hint">숫자가 1씩 커지고 있어요.</p>
+          <div class="sequence" id="game-sequence" aria-live="polite"></div>
+          <p class="feedback" id="game-feedback" aria-live="polite">정답을 입력하면 톱니바퀴가 밝아져요.</p>
+        </div>
+        <aside class="panel">
+          <label class="sr-only" for="answer-input">정답 입력</label>
+          <input class="answer-input" id="answer-input" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="정답 네 자리 수 입력">
+          <div class="keypad" id="keypad" aria-label="숫자 키패드"></div>
+          <button class="primary-btn" id="submit-answer" type="button">정답 확인</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="scene" data-scene-id="step3_boss_compare" data-qa-scene="step3_boss_compare" data-qa-order="4" data-qa-label="STEP 3 보스 문제" hidden>
+      <img class="scene__image" src="assets/boss_number_passengers.png" alt="기차역 기계 배경 앞에서 세 승객이 HTML 숫자를 올릴 수 있는 빈 번호표를 들고 서 있는 보스 문제 선택 장면">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 3 보스 문제</span><strong>가장 큰 번호표 고르기</strong></div>
+        <div class="progress-strip" aria-label="문제 진행도" id="boss-progress"></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 0개 중 0개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>0/5</b></span></div>
+      </header>
+      <div class="scene-body boss-stage">
+        <div class="boss-display">
+          <h2>오류! 다음 중 가장 큰 번호표를 가진 손님을 고르세요</h2>
+          <p class="lead">천의 자리부터 차례로 비교해 보세요.</p>
+        </div>
+        <div class="choice-row" id="boss-choices"></div>
+        <div class="boss-verdict-panel">
+          <p class="feedback" id="boss-feedback" aria-live="polite">세 번호표 중 하나를 눌러 주세요.</p>
+          <button class="primary-btn" id="boss-next" type="button" disabled>기차역 이야기 보기</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scene" data-scene-id="step4_story_life" data-qa-scene="step4_story_life" data-qa-order="5" data-qa-label="STEP 4 생활 연결" hidden>
+      <img class="scene__image" src="assets/station_resolved_scene.png" alt="수리 후 질서가 회복된 따뜻한 마을 기차역 매표소에서 주인공과 파란 제복 역무원이 웃고 승객들이 차례대로 줄 서 있는 장면">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 4 수리 이야기</span><strong>숫자는 순서를 알려줘요</strong></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 0개 중 0개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>0/5</b></span></div>
+      </header>
+      <div class="scene-body life-stage">
+        <div class="life-display-board" aria-label="정상 작동하는 역 전광판">
+          <span>3501</span>
+          <span>3502</span>
+          <span>3503</span>
+          <span>차례대로 커져요</span>
+        </div>
+        <div class="panel narration">
+          <h2>기차역이 다시 평화를 찾았어요</h2>
+          <p class="speech crew">휴, 친구 덕분에 기차역이 다시 평화를 찾았어! 고마워. 숫자가 없다면 순서를 어떻게 알 수 있을까?</p>
+          <p class="lead">전광판처럼 3501, 3502, 3503으로 숫자가 차례대로 커지면 내 순서를 알 수 있어요. 일상생활에서는 어디에서 볼 수 있을까요?</p>
+          <p class="feedback good" id="life-feedback" aria-live="polite">은행, 맛집, 병원 사례를 모두 살펴보면 황금 기차표를 받을 수 있어요.</p>
+          <button class="primary-btn" id="life-next" type="button" disabled>세 사례를 모두 보면 받을 수 있어요</button>
+        </div>
+        <aside class="slide-card">
+          <div class="slide-frame">
+            <img class="is-active" data-life-img="0" src="assets/bank_waiting_snapshot.png" alt="밝은 은행 창구에서 번호표를 든 사람들이 순서를 기다리는 생활 사례 일러스트">
+            <img data-life-img="1" src="assets/restaurant_waiting_snapshot.png" alt="맛집 입구에서 가족이 태블릿 대기 화면을 확인하며 기다리는 생활 사례 일러스트">
+            <img data-life-img="2" src="assets/hospital_waiting_snapshot.png" alt="밝은 병원 대기실에서 보호자와 아이가 대기 번호 안내판을 바라보는 생활 사례 일러스트">
+            <div class="life-surface-overlay">
+              <h3 id="life-title">은행 대기 번호표</h3>
+              <p id="life-copy">번호표를 받으면 내 순서를 바로 알 수 있어요.</p>
             </div>
           </div>
-        </div>
-      </section>
+          <div class="slide-controls" id="life-controls"></div>
+        </aside>
+      </div>
+    </section>
 
-      <section class="scene" data-qa-scene="step4_life_story" data-qa-order="4" data-qa-label="STEP 4 숫자 순서 생활 이야기">
-        <div class="scene-inner">
-          <img class="bg-img" src="assets/station_calm.png" alt="수리 후 밝고 평화로운 기차역 매표소에서 주인공과 역무원이 웃고 승객들이 질서 있게 표를 사는 장면">
-          <div class="scene-shade"></div>
-          <div class="life-layout">
-            <div class="calm-display" aria-label="정상 작동하는 번호 흐름"><span>3501</span><span>→</span><span>3502</span><span>→</span><span>3503...</span></div>
-            <div class="life-card">
-              <div class="dialogue station-message">
-                휴, 친구 덕분에 기차역이 다시 평화를 찾았어! 숫자가 없다면 차례를 어떻게 알 수 있을까?
-                <small>숫자가 커지는 규칙을 알면 내 차례를 정확히 예상할 수 있지!</small>
-              </div>
-              <div class="life-image-wrap">
-                <img id="lifeImage" src="assets/life_queue_examples.png" alt="은행, 맛집, 병원에서 숫자로 대기 순서를 확인하는 세 가지 실생활 사례를 보여주는 밝은 카드형 일러스트">
-                <div class="life-screen-note bank is-active" data-life-note="0">
-                  <div class="life-note-number">120 → 121</div>
-                  <div class="life-note-caption">은행 번호표</div>
-                </div>
-                <div class="life-screen-note food" data-life-note="1">
-                  <div class="life-note-number">18팀 → 19팀</div>
-                  <div class="life-note-caption">맛집 대기 화면</div>
-                </div>
-                <div class="life-screen-note hospital" data-life-note="2">
-                  <div class="life-note-number">3501 → 3502</div>
-                  <div class="life-note-caption">병원 대기 전광판</div>
-                </div>
-                <div class="life-case-caption">
-                  <div id="lifeCaption">은행 번호표: 내 번호보다 앞 번호가 줄어들면 내 차례가 가까워져요.</div>
-                  <div class="slide-controls" aria-label="실생활 사례 선택">
-                    <button class="dot-btn" data-slide="0" aria-current="true">1</button>
-                    <button class="dot-btn" data-slide="1" aria-current="false">2</button>
-                    <button class="dot-btn" data-slide="2" aria-current="false">3</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <button class="primary-btn ticket-sign" id="storyComplete">완료 확인</button>
-          </div>
+    <section class="scene" data-scene-id="step4_clear_reward" data-qa-scene="step4_clear_reward" data-qa-order="6" data-qa-label="STEP 4 완료 보상" hidden>
+      <img class="scene__image" src="assets/golden_ticket_reward.png" alt="정상화된 번호표 발행기에서 두꺼운 황금 기차표가 금빛으로 반짝이며 나오고 뒤쪽에 미소 짓는 역무원이 보이는 보상 장면">
+      <header class="topbar">
+        <div class="step-label"><span>STEP 4 완료</span><strong>1호 황금 기차표 획득</strong></div>
+        <div class="ticket-bag" aria-label="황금 기차표 주머니 5개 중 1개"><span class="ticket-bag__mark" aria-hidden="true"></span><span><small>황금 기차표</small><b data-ticket-count>1/5</b></span></div>
+      </header>
+      <div class="scene-body">
+        <div class="panel reward-panel">
+          <div class="stamp">1차시 수리 완료!</div>
+          <h2>1호 황금 기차표를 얻었어요</h2>
+          <p class="speech crew">오늘은 순서대로 세기, 뛰어 세기, 가장 큰 수 찾기를 해냈어. 자, 이제 매점 사장님을 도우러 가볼까?</p>
+          <button class="primary-btn" id="next-lesson" type="button">2차시: 역전 매점의 묶음 간식을 세러 가기</button>
         </div>
-      </section>
-
-      <section class="scene" data-qa-scene="step4_completion_reward" data-qa-order="5" data-qa-label="1차시 수리 완료 보상">
-        <div class="scene-inner">
-          <img class="bg-img" src="assets/station_calm.png" alt="수리 후 밝고 평화로운 기차역 매표소 배경">
-          <div class="scene-shade"></div>
-          <div class="completion-layout">
-            <div class="completion-board">
-              <div class="stamp">1차시 수리 완료!</div>
-              <h1 class="finish-title">1호 황금 기차표를 얻었어요</h1>
-            </div>
-            <div class="counter-reward">
-              <img class="reward-ticket" src="assets/golden_ticket_reward.png" alt="1차시 완료 보상으로 받는 반짝이는 황금 기차표 아이템">
-              <div class="reward-ticket-label">1호<br>획득</div>
-              <p class="finish-copy">자, 이제 매점 사장님을 도우러 가볼까?</p>
-            </div>
-            <button class="primary-btn ticket-sign" id="nextLesson">2차시로 가기</button>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    const scenes = Array.from(document.querySelectorAll("[data-qa-scene]"));
-    const titleEl = document.getElementById("sceneTitle");
-    const ticketPocketEl = document.getElementById("ticketPocket");
-    const titles = {
-      step1_intro_problem: "STEP 1 번호표 기계",
-      step2_tutorial_repair: "STEP 2 숫자 카드",
-      step3_game_repair: "STEP 3 수리 게임",
-      step4_life_story: "STEP 4 생활 속 순서",
-      step4_completion_reward: "1차시 수리 완료"
-    };
-
-    let activeSceneId = "step1_intro_problem";
-    let ticketCount = 0;
-
-    function showScene(sceneId) {
-      activeSceneId = sceneId;
-      scenes.forEach((scene) => {
-        scene.classList.toggle("is-active", scene.dataset.qaScene === sceneId);
-      });
-      titleEl.textContent = titles[sceneId] || sceneId;
-      ticketPocketEl.textContent = `나의 황금 기차표 주머니 (${ticketCount}/5)`;
-      if (sceneId === "step2_tutorial_repair") {
-        document.getElementById("tutorialInner").classList.remove("zooming");
-        requestAnimationFrame(() => document.getElementById("tutorialInner").classList.add("zooming"));
-      }
-      if (sceneId === "step3_game_repair") {
-        renderGame();
-      }
-      if (sceneId === "step4_completion_reward") {
-        ticketCount = 1;
-        ticketPocketEl.textContent = "나의 황금 기차표 주머니 (1/5)";
-      }
-    }
-
-    window.__contentHarnessShowScene = function(sceneId) {
-      if (!scenes.some((scene) => scene.dataset.qaScene === sceneId)) return false;
-      showScene(sceneId);
-      return true;
-    };
-
-    document.getElementById("introStart").addEventListener("click", () => showScene("step2_tutorial_repair"));
+    const scenes = Array.from(document.querySelectorAll("[data-scene-id]"));
+    const ticketCounters = Array.from(document.querySelectorAll("[data-ticket-count]"));
+    const progressCount = 5;
+    let activeScene = "step1_intro_problem";
+    let solvedCount = 0;
+    let tutorialIndex = 0;
+    const tutorialSolved = [false, false];
+    let selectedDropzone = null;
+    let gameIndex = 0;
+    let lifeIndex = 0;
+    const lifeVisited = new Set();
 
     const tutorialMissions = [
       {
-        label: "미션 1: 1만큼 더 큰 수",
-        line: ["3500", "→", "?"],
+        title: "미션 1. 3500보다 1만큼 더 큰 수는?",
+        hint: "3500이 깜빡이고 있어요. 바로 다음 번호를 찾아 넣어 주세요.",
+        parts: ["3500", "?"],
+        choices: ["3501", "3510", "3499"],
         answer: "3501",
-        cards: ["3501", "3510", "3600"],
-        hint: "3500보다 1만큼 더 큰 수는 무엇일까?"
+        crew: "좋아! 1만큼 더 크면 일의 자리만 바뀌는구나.",
+        wrongHint: "3500에서 바로 다음 수는 1을 더해요. 일의 자리 0이 1로 바뀌는지 보세요.",
+        explanation: "정답! 3500에 1을 더하면 일의 자리만 0에서 1로 바뀌어 3501이 돼요."
       },
       {
-        label: "미션 2: 10씩 뛰어 세기",
-        line: ["4200", "→", "4210", "→", "4220", "→", "?"],
+        title: "미션 2. 4200부터 10씩 뛰어 세요",
+        hint: "4200, 4210, 4220 다음 번호를 찾아 넣어 주세요.",
+        parts: ["4200", "4210", "4220", "?"],
+        choices: ["4230", "4221", "4320"],
         answer: "4230",
-        cards: ["4320", "4230", "4221"],
-        hint: "4200부터 10씩 뛰어 세는 번호를 찾아요."
+        crew: "자, 이제 준비는 끝났다!",
+        wrongHint: "10씩 뛰어 세면 일의 자리는 그대로 0이고 십의 자리가 하나씩 커져요.",
+        explanation: "정답! 4200, 4210, 4220은 10씩 커져서 다음은 4230이에요."
       }
     ];
 
-    let tutorialIndex = 0;
-    let tutorialCompleted = 0;
-    const tutorialLine = document.getElementById("tutorialLine");
-    const tutorialCards = document.getElementById("tutorialCards");
-    const tutorialFeedback = document.getElementById("tutorialFeedback");
-    const tutorialMission = document.getElementById("tutorialMission");
-    const tutorialNext = document.getElementById("tutorialNext");
-    const successCard = document.getElementById("successCard");
+    const gameQuestions = [
+      {
+        title: "문제 1. 빈 번호표를 고쳐요",
+        hint: "숫자가 1씩 커지고 있어요.",
+        parts: ["5236", "5237", "?", "5239"],
+        answer: "5238",
+        wrongHint: "5237과 5239 사이의 바로 다음 수를 찾아요. 일의 자리만 7에서 8로 바뀌어요.",
+        explanation: "정답! 1씩 커지는 흐름이라 5237 다음은 5238이에요."
+      },
+      {
+        title: "문제 2. 10씩 뛰어 세요",
+        hint: "십의 자리가 바뀌는지 살펴보세요.",
+        parts: ["7180", "7190", "?", "7210"],
+        answer: "7200",
+        wrongHint: "10씩 커지면 7190 다음은 십의 자리가 넘어가 7200이 돼요.",
+        explanation: "정답! 7180, 7190, 7200, 7210처럼 10씩 뛰어 세고 있어요."
+      },
+      {
+        title: "문제 3. 1000씩 뛰어 세요",
+        hint: "천의 자리가 하나씩 커지고 있어요.",
+        parts: ["2800", "3800", "4800", "?"],
+        answer: "5800",
+        wrongHint: "뒤의 800은 그대로 두고 천의 자리만 2, 3, 4 다음 5로 커져요.",
+        explanation: "정답! 1000씩 커지므로 천의 자리가 4에서 5로 바뀌어 5800이에요."
+      },
+      {
+        title: "문제 4. 큰 수의 흐름을 이어요",
+        hint: "앞자리부터 같은 간격으로 커지는지 보세요.",
+        parts: ["1980", "2980", "3980", "?"],
+        answer: "4980",
+        wrongHint: "1980에서 2980, 3980으로 1000씩 커졌어요. 다음도 천의 자리만 하나 커져요.",
+        explanation: "정답! 1000씩 뛰어 세서 3980 다음은 4980이에요. 마지막 5번째 수리는 가장 큰 번호표를 고르는 보스 문제예요."
+      }
+    ];
+
+    const lifeSlides = [
+      { label: "은행", title: "은행 대기 번호표", copy: "번호표를 받으면 내 순서를 바로 알 수 있어요." },
+      { label: "맛집", title: "맛집 대기 화면", copy: "화면의 번호가 커지는 규칙을 보면 내 차례를 예상할 수 있어요." },
+      { label: "병원", title: "병원 대기 전광판", copy: "공공장소에서도 숫자가 순서를 알려 주어 모두가 편하게 기다려요." }
+    ];
+
+    function showScene(sceneId) {
+      activeScene = sceneId;
+      scenes.forEach((scene) => {
+        scene.hidden = scene.dataset.sceneId !== sceneId && scene.dataset.qaScene !== sceneId;
+      });
+      window.scrollTo({ top: 0, behavior: "instant" });
+      if (sceneId === "step2_tutorial_repair") renderTutorial();
+      if (sceneId === "step3_game_challenges") renderGame();
+      if (sceneId === "step3_boss_compare") renderBoss();
+      if (sceneId === "step4_story_life") renderLife();
+      updateTicketCounters();
+    }
+
+    window.__contentHarnessShowScene = function(sceneId) {
+      showScene(sceneId);
+    };
+
+    function updateTicketCounters() {
+      ticketCounters.forEach((counter) => {
+        counter.textContent = activeScene === "step4_clear_reward" ? "1/5" : "0/5";
+      });
+    }
+
+    function renderProgress(containerId, current) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = "";
+      for (let i = 0; i < progressCount; i += 1) {
+        const cell = document.createElement("span");
+        cell.className = "progress-cell" + (i < current ? " filled" : "");
+        container.appendChild(cell);
+      }
+    }
+
+    function makeSequence(container, parts, dropAnswer) {
+      container.innerHTML = "";
+      parts.forEach((part, index) => {
+        const item = document.createElement(part === "?" ? "button" : "span");
+        item.className = part === "?" ? "dropzone" : "num-pill";
+        item.textContent = part === "?" ? "빈칸" : part;
+        if (part === "?") {
+          item.type = "button";
+          item.dataset.answer = dropAnswer;
+          item.setAttribute("aria-label", "정답을 넣을 빈칸");
+          item.addEventListener("click", () => {
+            selectedDropzone = item;
+            item.textContent = "카드를 골라요";
+          });
+          item.addEventListener("dragover", (event) => event.preventDefault());
+          item.addEventListener("drop", (event) => {
+            event.preventDefault();
+            checkTutorialAnswer(event.dataTransfer.getData("text/plain"), item);
+          });
+        }
+        container.appendChild(item);
+        if (index < parts.length - 1) {
+          const arrow = document.createElement("span");
+          arrow.textContent = "→";
+          arrow.setAttribute("aria-hidden", "true");
+          container.appendChild(arrow);
+        }
+      });
+    }
 
     function renderTutorial() {
       const mission = tutorialMissions[tutorialIndex];
-      tutorialMission.textContent = mission.label;
-      tutorialFeedback.textContent = mission.hint;
-      successCard.classList.remove("is-visible");
-      tutorialLine.innerHTML = "";
-      mission.line.forEach((part) => {
-        const span = document.createElement("span");
-        if (part === "?") {
-          span.className = "blank-slot";
-          span.id = "tutorialBlank";
-          span.textContent = "?";
-        } else {
-          span.textContent = part;
-        }
-        tutorialLine.appendChild(span);
+      const nextButton = document.getElementById("tutorial-next");
+      const currentSolved = tutorialSolved[tutorialIndex];
+      document.getElementById("tutorial-title").textContent = mission.title;
+      document.getElementById("tutorial-hint").textContent = mission.hint;
+      document.getElementById("tutorial-crew").textContent = currentSolved ? mission.crew : (tutorialIndex === 0 ? "차근차근 고치면 손님들이 다시 표를 받을 수 있어." : "첫 번째 수리가 끝났어. 이번에는 10씩 뛰어 세 보자.");
+      document.getElementById("tutorial-feedback").className = "feedback";
+      document.getElementById("tutorial-feedback").textContent = currentSolved ? mission.explanation : "빈칸을 누르거나 숫자 카드를 끌어 놓을 수 있어요.";
+      document.getElementById("tutorial-success").classList.toggle("is-visible", tutorialSolved.some(Boolean));
+      document.querySelectorAll("[data-tutorial-cell]").forEach((cell, index) => {
+        cell.classList.toggle("filled", tutorialSolved[index]);
       });
-      tutorialCards.innerHTML = "";
-      mission.cards.forEach((cardValue) => {
-        const button = document.createElement("button");
-        button.className = "card-btn";
-        button.type = "button";
-        button.draggable = true;
-        button.textContent = cardValue;
-        button.dataset.value = cardValue;
-        button.addEventListener("click", () => tryTutorialAnswer(button));
-        button.addEventListener("dragstart", (event) => {
-          event.dataTransfer.setData("text/plain", cardValue);
+      makeSequence(document.getElementById("tutorial-sequence"), mission.parts, mission.answer);
+      renderCards(mission);
+      if (currentSolved) {
+        const zone = document.querySelector("#tutorial-sequence .dropzone");
+        if (zone) {
+          zone.textContent = mission.answer;
+          zone.classList.add("filled");
+        }
+        document.querySelectorAll(".number-card").forEach((card) => {
+          card.disabled = true;
+          if (card.textContent === mission.answer) card.classList.add("correct");
         });
-        tutorialCards.appendChild(button);
-      });
-      const blank = document.getElementById("tutorialBlank");
-      blank.addEventListener("dragover", (event) => event.preventDefault());
-      blank.addEventListener("drop", (event) => {
-        event.preventDefault();
-        const value = event.dataTransfer.getData("text/plain");
-        const button = Array.from(tutorialCards.children).find((item) => item.dataset.value === value);
-        if (button) tryTutorialAnswer(button);
-      });
-    }
-
-    function tryTutorialAnswer(button) {
-      const mission = tutorialMissions[tutorialIndex];
-      const blank = document.getElementById("tutorialBlank");
-      button.classList.remove("is-wrong", "is-correct");
-      if (button.dataset.value === mission.answer) {
-        button.classList.add("is-correct");
-        blank.textContent = mission.answer;
-        blank.classList.add("filled");
-        tutorialCompleted += 1;
-        tutorialFeedback.textContent = tutorialIndex === 0
-          ? "맞아요! 3500 다음 번호는 3501이에요."
-          : "좋아요! 10씩 커지면 4230이 와요. 자, 이제 준비는 끝났다!";
-        successCard.classList.add("is-visible");
-        if (tutorialCompleted >= tutorialMissions.length) {
-          tutorialNext.disabled = false;
-        } else {
-          window.setTimeout(() => {
-            tutorialIndex += 1;
-            renderTutorial();
-          }, 900);
-        }
-      } else {
-        button.classList.add("is-wrong");
-        tutorialFeedback.textContent = tutorialIndex === 0
-          ? "조금 달라요. 1만큼 커지면 일의 자리만 살짝 바뀌어요."
-          : "다시 볼까요? 4200, 4210, 4220은 십의 자리가 1씩 커져요.";
       }
+      nextButton.disabled = !currentSolved;
+      nextButton.textContent = currentSolved
+        ? (tutorialIndex < tutorialMissions.length - 1 ? "다음 수리 미션" : "5문제 수리 게임 시작")
+        : (tutorialIndex < tutorialMissions.length - 1 ? "미션 1을 고치면 다음으로 가요" : "미션 2를 고치면 게임 시작");
     }
 
-    tutorialNext.addEventListener("click", () => showScene("step3_game_repair"));
-    renderTutorial();
-
-    const gameProblems = [
-      { kind: "input", title: "1번: 하나씩 커지는 번호", parts: ["5236", "→", "5237", "→", "?", "→", "5239"], answer: "5238", hint: "일의 자리 숫자가 6, 7, 8, 9로 움직여요." },
-      { kind: "input", title: "2번: 10씩 뛰어 세는 번호", parts: ["6710", "→", "6720", "→", "?", "→", "6740"], answer: "6730", hint: "십의 자리 숫자가 1, 2, 3, 4로 커져요." },
-      { kind: "input", title: "3번: 100씩 뛰어 세는 번호", parts: ["2800", "→", "2900", "→", "?", "→", "3100"], answer: "3000", hint: "백의 자리에서 8, 9 다음에는 천의 자리까지 함께 바뀌어요." },
-      { kind: "input", title: "4번: 1000씩 뛰어 세는 번호", parts: ["2800", "→", "3800", "→", "4800", "→", "?"], answer: "5800", hint: "천의 자리 숫자가 2, 3, 4, 5로 커져요." },
-      { kind: "boss", title: "보스 문제: 가장 큰 번호표를 가진 손님", options: ["6420", "6240", "6402"], answer: "6420", hint: "천의 자리가 같으면 백의 자리, 그다음 십의 자리를 차례로 비교해요." }
-    ];
-
-    let gameIndex = 0;
-    let gameSolved = 0;
-    const gameQuestion = document.getElementById("gameQuestion");
-    const answerInput = document.getElementById("answerInput");
-    const keypad = document.getElementById("keypad");
-    const gameHint = document.getElementById("gameHint");
-    const progressLabel = document.getElementById("gameProgressLabel");
-    const progressFill = document.getElementById("gameProgressFill");
-    const repairState = document.getElementById("repairState");
-    const inputArea = document.getElementById("numberInputArea");
-    const gameSkipToStory = document.getElementById("gameSkipToStory");
-
-    function renderKeypad() {
-      keypad.innerHTML = "";
-      "1234567890".split("").forEach((digit) => {
+    function renderCards(mission) {
+      const container = document.getElementById("tutorial-cards");
+      container.innerHTML = "";
+      mission.choices.forEach((choice) => {
         const button = document.createElement("button");
-        button.className = "key-btn";
         button.type = "button";
-        button.textContent = digit;
-        button.addEventListener("click", () => {
-          if (answerInput.value.length < 4) answerInput.value += digit;
+        button.className = "number-card";
+        button.textContent = choice;
+        button.draggable = true;
+        button.addEventListener("dragstart", (event) => {
+          event.dataTransfer.setData("text/plain", choice);
         });
-        keypad.appendChild(button);
+        button.addEventListener("click", () => {
+          const zone = selectedDropzone || document.querySelector("#tutorial-sequence .dropzone");
+          checkTutorialAnswer(choice, zone);
+        });
+        container.appendChild(button);
       });
+    }
+
+    function checkTutorialAnswer(value, zone) {
+      const mission = tutorialMissions[tutorialIndex];
+      const feedback = document.getElementById("tutorial-feedback");
+      if (!zone || tutorialSolved[tutorialIndex]) return;
+      if (value === mission.answer) {
+        tutorialSolved[tutorialIndex] = true;
+        zone.textContent = value;
+        zone.classList.add("filled");
+        feedback.className = "feedback good";
+        feedback.textContent = mission.explanation;
+        document.getElementById("tutorial-crew").textContent = mission.crew;
+        document.getElementById("tutorial-success").classList.add("is-visible");
+        document.querySelectorAll(".number-card").forEach((card) => {
+          card.disabled = true;
+          if (card.textContent === value) card.classList.add("correct");
+        });
+        document.querySelectorAll("[data-tutorial-cell]").forEach((cell, index) => {
+          cell.classList.toggle("filled", tutorialSolved[index]);
+        });
+        const nextButton = document.getElementById("tutorial-next");
+        nextButton.disabled = false;
+        nextButton.textContent = tutorialIndex < tutorialMissions.length - 1 ? "다음 수리 미션" : "5문제 수리 게임 시작";
+      } else {
+        feedback.className = "feedback bad shake";
+        feedback.textContent = mission.wrongHint;
+        setTimeout(() => feedback.classList.remove("shake"), 380);
+      }
     }
 
     function renderGame() {
-      const problem = gameProblems[gameIndex];
-      progressLabel.textContent = `문제 진행도 ${gameSolved}/5`;
-      progressFill.style.width = `${(gameSolved / 5) * 100}%`;
-      repairState.textContent = gameSolved === 0 ? "수리 부품 준비 중" : `정상화 부품 ${gameSolved}개`;
-      gameHint.textContent = "";
-      answerInput.value = "";
-      if (!problem) return;
-      if (problem.kind === "boss") {
-        gameQuestion.className = "game-question boss-question";
-        inputArea.classList.add("hidden");
-        keypad.classList.add("hidden");
-        gameQuestion.innerHTML = `
-          <p class="question-title">오류! 다음 중 가장 큰 번호표를 고르세요!</p>
-          <div class="boss-panel">
-            <img src="assets/boss_choice_passengers.png" alt="세 명의 승객 캐릭터가 좌중우로 서서 HTML 숫자를 얹을 수 있는 큰 빈 황금 번호표 카드를 들고 있는 선택 문제 이미지입니다.">
-            <div class="boss-options">
-              ${problem.options.map((option) => `<button class="choice-btn" type="button" data-choice="${option}">${option}</button>`).join("")}
-            </div>
-          </div>`;
-        gameQuestion.querySelectorAll(".choice-btn").forEach((button) => {
-          button.addEventListener("click", () => checkBossAnswer(button));
-        });
-      } else {
-        gameQuestion.className = "game-question";
-        inputArea.classList.remove("hidden");
-        keypad.classList.remove("hidden");
-        const slotParts = problem.parts.filter((part) => part !== "→");
-        gameQuestion.innerHTML = `
-          <p class="question-title">${problem.title}</p>
-          <div class="slot-sequence" aria-label="문제 숫자 슬롯">
-            ${slotParts.map((part) => part === "?" ? '<span class="slot-value missing">?</span>' : `<span class="slot-value">${part}</span>`).join("")}
-          </div>`;
-      }
+      renderProgress("game-progress", solvedCount);
+      const q = gameQuestions[gameIndex];
+      const board = document.getElementById("slot-board");
+      const input = document.getElementById("answer-input");
+      const submitButton = document.getElementById("submit-answer");
+      document.getElementById("game-title").textContent = q.title;
+      document.getElementById("game-hint").textContent = q.hint;
+      document.getElementById("game-feedback").className = "feedback";
+      document.getElementById("game-feedback").textContent = "정답을 입력하면 톱니바퀴가 밝아져요.";
+      input.value = "";
+      input.disabled = false;
+      submitButton.disabled = false;
+      makeGameSequence(q.parts);
+      board.classList.add("rolling");
+      setTimeout(() => board.classList.remove("rolling"), 520);
     }
 
-    function advanceGame() {
-      gameSolved += 1;
-      progressLabel.textContent = `문제 진행도 ${gameSolved}/5`;
-      progressFill.style.width = `${(gameSolved / 5) * 100}%`;
-      repairState.textContent = `정상화 부품 ${gameSolved}개`;
-      if (gameSolved >= 5) {
-        gameHint.textContent = "기계 수리가 끝났어요! 이제 숫자가 생활에서 어떻게 쓰이는지 보러 가요.";
-        gameSkipToStory.disabled = false;
-      } else {
-        gameIndex += 1;
-        window.setTimeout(renderGame, 650);
-      }
-    }
-
-    function checkGameAnswer() {
-      const problem = gameProblems[gameIndex];
-      if (!problem || problem.kind !== "input") return;
-      if (answerInput.value === problem.answer) {
-        gameHint.textContent = "정답! 부품 하나가 정상으로 돌아왔어요.";
-        advanceGame();
-      } else {
-        gameHint.innerHTML = problem.hint.replace(/[0-9]+/g, (match) => `<span class="place-hint">${match}</span>`);
-      }
-    }
-
-    function checkBossAnswer(button) {
-      const problem = gameProblems[gameIndex];
-      button.classList.add("is-selected");
-      if (button.dataset.choice === problem.answer) {
-        gameHint.textContent = "맞아요! 6420이 가장 큰 번호표예요.";
-        advanceGame();
-      } else {
-        gameHint.textContent = problem.hint;
-        window.setTimeout(() => button.classList.remove("is-selected"), 450);
-      }
-    }
-
-    document.getElementById("submitAnswer").addEventListener("click", checkGameAnswer);
-    document.getElementById("clearAnswer").addEventListener("click", () => answerInput.value = "");
-    answerInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") checkGameAnswer();
-    });
-    gameSkipToStory.addEventListener("click", () => showScene("step4_life_story"));
-    renderKeypad();
-
-    const lifeCaptions = [
-      "은행 번호표: 내 번호보다 앞 번호가 줄어들면 내 차례가 가까워져요.",
-      "맛집 대기 화면: 숫자가 커지는 순서를 보면 몇 팀 뒤인지 알 수 있어요.",
-      "병원 대기 전광판: 번호 순서를 알면 조용히 기다릴 수 있어요."
-    ];
-    const lifeImage = document.getElementById("lifeImage");
-    const lifeCaption = document.getElementById("lifeCaption");
-
-    document.querySelectorAll("[data-slide]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const index = Number(button.dataset.slide);
-        const offsets = ["0%", "-33.33%", "-66.66%"];
-        lifeImage.style.setProperty("--slide-offset", offsets[index]);
-        lifeCaption.textContent = lifeCaptions[index];
-        document.querySelectorAll("[data-slide]").forEach((item) => item.setAttribute("aria-current", String(item === button)));
-        document.querySelectorAll("[data-life-note]").forEach((item) => {
-          item.classList.toggle("is-active", Number(item.dataset.lifeNote) === index);
-        });
+    function makeGameSequence(parts) {
+      const container = document.getElementById("game-sequence");
+      container.innerHTML = "";
+      parts.forEach((part, index) => {
+        const item = document.createElement("span");
+        item.className = part === "?" ? "dropzone" : "num-pill";
+        item.textContent = part === "?" ? "____" : part;
+        container.appendChild(item);
+        if (index < parts.length - 1) {
+          const arrow = document.createElement("span");
+          arrow.textContent = "→";
+          arrow.setAttribute("aria-hidden", "true");
+          container.appendChild(arrow);
+        }
       });
+    }
+
+    function renderKeypad() {
+      const container = document.getElementById("keypad");
+      const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "지움", "0", "삭제"];
+      container.innerHTML = "";
+      keys.forEach((key) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "key-btn" + (isNaN(Number(key)) ? " action" : "");
+        button.textContent = key;
+        button.addEventListener("click", () => handleKey(key));
+        container.appendChild(button);
+      });
+    }
+
+    function handleKey(key) {
+      const input = document.getElementById("answer-input");
+      if (key === "지움") {
+        input.value = "";
+      } else if (key === "삭제") {
+        input.value = input.value.slice(0, -1);
+      } else if (input.value.length < 4) {
+        input.value += key;
+      }
+      input.focus();
+    }
+
+    function submitGameAnswer() {
+      const input = document.getElementById("answer-input");
+      const feedback = document.getElementById("game-feedback");
+      const q = gameQuestions[gameIndex];
+      if (input.value === q.answer) {
+        solvedCount = Math.max(solvedCount, gameIndex + 1);
+        feedback.className = "feedback good";
+        feedback.textContent = q.explanation;
+        input.disabled = true;
+        document.getElementById("submit-answer").disabled = true;
+        renderProgress("game-progress", solvedCount);
+        if (gameIndex < gameQuestions.length - 1) {
+          setTimeout(() => {
+            gameIndex += 1;
+            renderGame();
+          }, 850);
+        } else {
+          setTimeout(() => showScene("step3_boss_compare"), 1600);
+        }
+      } else {
+        feedback.className = "feedback bad shake";
+        feedback.textContent = q.wrongHint;
+        input.classList.add("shake");
+        setTimeout(() => {
+          feedback.classList.remove("shake");
+          input.classList.remove("shake");
+        }, 380);
+      }
+    }
+
+    function renderBoss() {
+      renderProgress("boss-progress", 4);
+      const container = document.getElementById("boss-choices");
+      container.innerHTML = "";
+      ["6420", "6240", "6402"].forEach((value) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "choice-ticket";
+        button.textContent = value;
+        button.addEventListener("click", () => chooseBoss(value, button));
+        container.appendChild(button);
+      });
+      document.getElementById("boss-feedback").className = "feedback";
+      document.getElementById("boss-feedback").textContent = "세 번호표 중 하나를 눌러 주세요.";
+      document.getElementById("boss-next").disabled = true;
+    }
+
+    function chooseBoss(value, button) {
+      const feedback = document.getElementById("boss-feedback");
+      if (value === "6420") {
+        solvedCount = 5;
+        document.querySelectorAll(".choice-ticket").forEach((item) => item.disabled = true);
+        button.classList.add("selected-good");
+        feedback.className = "feedback good";
+        feedback.textContent = "정답! 모두 천의 자리는 6이에요. 6420과 6402는 백의 자리가 4로 같고, 십의 자리 2가 0보다 커서 6420이 가장 커요.";
+        renderProgress("boss-progress", 5);
+        document.getElementById("boss-next").disabled = false;
+      } else {
+        feedback.className = "feedback bad shake";
+        feedback.textContent = "천의 자리가 같다면 백의 자리, 그다음 십의 자리를 비교해 보세요.";
+        setTimeout(() => feedback.classList.remove("shake"), 380);
+      }
+    }
+
+    function renderLife() {
+      const controls = document.getElementById("life-controls");
+      controls.innerHTML = "";
+      lifeVisited.add(lifeIndex);
+      lifeSlides.forEach((slide, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "slide-btn" + (index === lifeIndex ? " is-active" : "");
+        button.textContent = lifeVisited.has(index) ? slide.label + " 확인" : slide.label;
+        button.setAttribute("aria-pressed", index === lifeIndex ? "true" : "false");
+        button.addEventListener("click", () => {
+          lifeIndex = index;
+          updateLifeSlide();
+        });
+        controls.appendChild(button);
+      });
+      updateLifeSlide();
+    }
+
+    function updateLifeSlide() {
+      const slideCard = document.querySelector("[data-scene-id='step4_story_life'] .slide-card");
+      if (slideCard) slideCard.dataset.lifeIndex = String(lifeIndex);
+      lifeVisited.add(lifeIndex);
+      document.querySelectorAll("[data-life-img]").forEach((img) => {
+        img.classList.toggle("is-active", Number(img.dataset.lifeImg) === lifeIndex);
+      });
+      document.querySelectorAll(".slide-btn").forEach((button, index) => {
+        button.classList.toggle("is-active", index === lifeIndex);
+        button.textContent = lifeVisited.has(index) ? lifeSlides[index].label + " 확인" : lifeSlides[index].label;
+        button.setAttribute("aria-pressed", index === lifeIndex ? "true" : "false");
+      });
+      document.getElementById("life-title").textContent = lifeSlides[lifeIndex].title;
+      document.getElementById("life-copy").textContent = lifeSlides[lifeIndex].copy;
+      updateLifeCompletion();
+    }
+
+    function updateLifeCompletion() {
+      const nextButton = document.getElementById("life-next");
+      const feedback = document.getElementById("life-feedback");
+      const remaining = lifeSlides
+        .filter((slide, index) => !lifeVisited.has(index))
+        .map((slide) => slide.label);
+      const completed = remaining.length === 0;
+      nextButton.disabled = !completed;
+      nextButton.textContent = completed ? "황금 기차표 받기" : "세 사례를 모두 보면 받을 수 있어요";
+      feedback.className = "feedback good";
+      feedback.textContent = completed
+        ? "은행, 맛집, 병원 모두 숫자로 순서를 알려 주는 곳이에요. 이제 황금 기차표를 받을 수 있어요."
+        : "아직 " + remaining.join(", ") + " 사례를 더 살펴보세요. 세 곳을 모두 보면 보상으로 넘어가요.";
+    }
+
+    document.querySelector("[data-action='start']").addEventListener("click", () => {
+      const intro = document.querySelector("[data-scene-id='step1_intro_problem']");
+      intro.classList.add("zooming");
+      setTimeout(() => showScene("step2_tutorial_repair"), 620);
+    });
+    document.getElementById("tutorial-next").addEventListener("click", () => {
+      if (!tutorialSolved[tutorialIndex]) return;
+      if (tutorialIndex < tutorialMissions.length - 1) {
+        tutorialIndex += 1;
+        selectedDropzone = null;
+        renderTutorial();
+      } else {
+        showScene("step3_game_challenges");
+      }
+    });
+    document.getElementById("submit-answer").addEventListener("click", submitGameAnswer);
+    document.getElementById("answer-input").addEventListener("input", (event) => {
+      event.target.value = event.target.value.replace(/\D/g, "").slice(0, 4);
+    });
+    document.getElementById("answer-input").addEventListener("keydown", (event) => {
+      if (event.key === "Enter") submitGameAnswer();
+    });
+    document.getElementById("boss-next").addEventListener("click", () => showScene("step4_story_life"));
+    document.getElementById("life-next").addEventListener("click", () => {
+      if (lifeVisited.size < lifeSlides.length) {
+        updateLifeCompletion();
+        return;
+      }
+      showScene("step4_clear_reward");
+    });
+    document.getElementById("next-lesson").addEventListener("click", () => {
+      document.getElementById("next-lesson").textContent = "다음 차시에서 계속됩니다";
     });
 
-    document.getElementById("storyComplete").addEventListener("click", () => showScene("step4_completion_reward"));
-    document.getElementById("nextLesson").addEventListener("click", () => {
-      document.getElementById("nextLesson").textContent = "준비 완료";
-    });
+    renderKeypad();
+    renderProgress("game-progress", 0);
+    updateTicketCounters();
   </script>
 </body>
 </html>
