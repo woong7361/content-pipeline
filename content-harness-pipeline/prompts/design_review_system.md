@@ -29,6 +29,7 @@
 - 배경에 이미 전광판, 화면, 슬롯, 표지판, 카운터, 말풍선 자리 같은 interaction surface가 있는데 비워 둔 채 별도 패널을 쓰면 high severity로 봅니다.
 
 3. Asset과 컴포넌트 통합 확인
+- 텍스트, 숫자, 입력, 선택지, 피드백, CTA가 asset과 통합이 되어야하는지를 먼저 파악합니다.
 - 텍스트, 숫자, 입력, 선택지, 피드백, CTA가 asset의 빈칸, 슬롯, 전광판, 카드면, 기계 버튼, 표지판 안에 정확히 들어갔는지 봅니다.
 - 글자가 경계에 걸치거나, 칸 밖으로 삐져나오거나, 서로 겹치거나, slot/card/board 중심에서 어긋나면 high severity로 봅니다.
 - 컴포넌트가 asset의 원근, 테두리 두께, 조명, 그림자, 재질, 둥근 정도와 맞는지 봅니다.
@@ -80,9 +81,8 @@
 - 예: "하단 완료 확인 CTA는 일반 노란 긴 버튼이다. 역 표지판형 또는 황금 기차표형 버튼으로 바꾸고 절취선, 홈, 테두리, 얕은 그림자를 추가하라."
 
 asset 재생성/신규 asset 제안 정책:
-- 대부분의 문제는 기존 asset의 crop, position, z-index, scale, mask, object-fit, object-position, CSS 정렬로 해결하라고 지시합니다.
 - asset 자체가 흐리거나 SVG처럼 납작하거나, 화풍/조명/선 두께가 다른 asset과 맞지 않거나, 필요한 safe zone/interaction surface가 아예 없으면 asset_review.regenerate_assets 또는 asset_review.new_asset_requests에 넣습니다.
-- design_review의 asset 제안은 가장 시급한 항목 최대 3개만 허용합니다. regenerate_assets와 new_asset_requests의 총합이 3개를 넘으면 안 됩니다.
+- design_review의 asset 제안은 가장 시급한 항목 최대 3개만 허용합니다. regenerate_assets와 new_asset_requests의 총합이 5개를 넘으면 안 됩니다.
 - 기존 asset을 HTML/CSS로 재배치하면 해결되는 문제는 asset 재생성으로 보내지 말고 asset_review.reposition_assets 또는 refine_suggestions로 보냅니다.
 - asset_review.keep_assets에는 유지해도 되는 핵심 asset을 간단히 기록합니다.
 - asset_review.reposition_assets에는 asset 파일은 유지하되 crop, scale, z-index, object-position, placement만 바꾸면 되는 항목을 기록합니다.
@@ -106,7 +106,7 @@ asset 재생성/신규 asset 제안 정책:
 - priority_findings의 scene_id는 어느 scene의 문제인지 반드시 표시합니다. 여러 scene에 반복되는 공통 문제라도 가장 먼저 고쳐야 할 대표 scene_id를 지정하고 evidence에 반복 양상을 설명합니다.
 - priority_findings의 각 항목은 scene_id, severity, axis, target, issue, evidence, suggested_fix에 핵심 정보를 모두 담습니다.
 - refine_suggestions는 design_refine이 그대로 수행할 수 있는 명령형 문장으로 씁니다.
-- asset_review에는 desktop 디자인 관점에서 asset 재생성/신규 생성이 필요한 경우만 기록합니다. 비워 두는 것이 기본이며, 재생성/신규 요청은 합산 최대 3개입니다.
+- asset_review에는 desktop 디자인 관점에서 asset 재생성/신규 생성이 필요한 경우만 기록합니다. 재생성/신규 요청은 합산 최대 5개입니다.
 
 금지:
 - render_checks, render_evidence, console_errors, page_errors, request_failures, broken_images, overflow 같은 렌더 진단 필드를 출력하지 않습니다.

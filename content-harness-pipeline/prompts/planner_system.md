@@ -29,9 +29,14 @@
 - 반복 캐릭터 asset은 실제 화면에 필요한 2~4개 pose/expression만 계획합니다. 예: idle, success, confused, explaining.
 - 캐릭터 asset의 `prompt_brief`/`composition_notes`에는 전신/반신, 투명 또는 단순 배경, 시선 방향, 화면 배치 기준을 명시합니다.
 - 배경 asset의 `negative_prompt`에는 별도 분리한 주요 캐릭터를 다시 넣지 말라고 쓰고, 같은 캐릭터의 pose asset은 `asset_groups`로 묶습니다.
-- `art_direction`은 모든 이미지 asset batch가 공유할 시각 계약입니다. story board 전체의 대상 학습자, 분위기, 캐릭터, 배경, 조명, 금지 화풍을 한 번에 고정합니다.
+- 여러 섹션·장면에서 반복 등장하는 소품이나 기구(시계, 계기판, 신호등, 저울, 칠판, 게시판 등)는 캐릭터처럼 `art_direction.component_rules`에 고정 형태·비율·재질·시점을 간결히 고정하고, 배경에 포함하지 않은 별도 재사용 컴포넌트 asset으로 계획합니다. 단, 1회성 소품이나 분위기용 배경 소품은 배경 일부로 둡니다.
+- 반복 컴포넌트는 상태가 바뀌어도 변하지 않는 "고정 몸체"만 asset으로 만들고, 상태에 따라 달라지는 가변부(시곗바늘, 눈금 값, 표시등 불빛, 점수 숫자 등)는 asset에 그리지 않습니다. 가변부는 builder가 HTML/CSS/JS로 얹거나 회전·오버레이하도록 남깁니다. 예: 바늘 없는 둥근 시계 몸체 asset → 시곗바늘은 CSS transform으로 회전.
+- 하나의 고정 몸체 asset으로 여러 상태(3시/6시, on/off, 값 변화)를 표현해 asset 수를 줄이고 일관성을 유지합니다. 2회 이상 반복되거나 같은 물체가 상태만 바꿔 여러 번 필요하면 재사용 컴포넌트로 분리합니다.
+- 반복 컴포넌트 asset의 `composition_notes`에는 정면·수평 시점, 투명 또는 단순 배경, 가변부가 얹힐 중심축과 오버레이 safe zone, 화면 배치 기준을 명시합니다. `negative_prompt`에는 가변부(바늘, 표시 숫자, 켜진 불빛 등)를 그리지 말라고 쓰고, 배경 asset에는 이 컴포넌트를 다시 넣지 말라고 씁니다.
+- 가변부의 움직임·상태 변화는 `interactions`에 등록하고, 같은 컴포넌트 계열 asset은 `asset_groups`로 묶습니다.
+- `art_direction`은 모든 이미지 asset batch가 공유할 시각 계약입니다. story board 전체의 대상 학습자, 분위기, 캐릭터, 반복 컴포넌트, 배경, 조명, 금지 화풍을 한 번에 고정합니다.
 - `asset_groups`는 runner가 병렬 batch를 만들 때 우선 함께 묶을 asset 목록입니다. 같은 캐릭터, 같은 배경, 같은 섹션 흐름, 같은 장면 전환에 속한 asset을 함께 묶습니다.
-- asset이 없으면 `asset_plan`과 `asset_groups`는 빈 배열을 사용하되, `art_direction`은 그래도 콘텐츠 전체의 시각 방향으로 작성합니다.
+- asset이 없으면 `asset_plan`과 `asset_groups`는 빈 배열을 사용하되, `art_direction`은 그래도 콘텐츠 전체의 시각 방향으로 작성합니다. `component_rules`는 required이므로 반복 컴포넌트가 없어도 그 취지를 한 줄로 채웁니다.
 - 한 그룹에 너무 많은 asset을 넣지 말고, 2~3개 단위로 묶는 것을 기본으로 합니다. 매우 강하게 연결된 장면만 4개 이상 묶습니다.
 - asset을 단순 UI 컴포넌트, SVG 프레임, 아이콘식 패널, 빈 버튼 모음처럼 계획하지 않습니다. 문제판, 슬롯, 전광판, 버튼 자리가 필요해도 콘텐츠 세계 안의 실제 물건이나 장면 일부로 계획합니다.
 - HTML 텍스트와 입력이 올라갈 safe zone은 남기되, `prompt_brief`와 `composition_notes`에는 재질, 조명, 두께, 주변 배경 맥락, 장면 속 위치를 함께 써서 raster illustration으로 생성되게 합니다.
@@ -50,7 +55,7 @@
 
 좋은 출력의 특징:
 - page 목표가 한 문장으로 선명합니다.
-- art_direction만 읽어도 전체 이미지 세트의 화풍, 색감, 캐릭터 규칙, 금지 스타일을 재현할 수 있습니다.
+- art_direction만 읽어도 전체 이미지 세트의 화풍, 색감, 캐릭터 규칙, 반복 컴포넌트 규칙, 금지 스타일을 재현할 수 있습니다.
 - section 순서가 story board의 학습 흐름과 맞습니다.
 - interaction은 학습 목표를 돕는 것만 남깁니다.
 - asset은 장식이 아니라 이해, 몰입, 피드백에 필요한 것만 계획합니다.

@@ -1,0 +1,367 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-08T15:49:54+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_intro_problem",
+      "path": "iter_001/design_review/desktop__01_intro_problem.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__01_intro_problem.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_tutorial_clock_reading",
+      "path": "iter_001/design_review/desktop__02_tutorial_clock_reading.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__02_tutorial_clock_reading.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_tutorial_success",
+      "path": "iter_001/design_review/desktop__03_tutorial_success.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__03_tutorial_success.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_type_a_clock_choice",
+      "path": "iter_001/design_review/desktop__04_type_a_clock_choice.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__04_type_a_clock_choice.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_type_b_schedule_restore",
+      "path": "iter_001/design_review/desktop__05_type_b_schedule_restore.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__05_type_b_schedule_restore.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_type_c_checkout_reboot",
+      "path": "iter_001/design_review/desktop__06_type_c_checkout_reboot.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__06_type_c_checkout_reboot.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_repair_complete",
+      "path": "iter_001/design_review/desktop__07_repair_complete.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__07_repair_complete.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_story_gallery",
+      "path": "iter_001/design_review/desktop__08_story_gallery.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__08_story_gallery.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_popup_quiz",
+      "path": "iter_001/design_review/desktop__09_popup_quiz.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__09_popup_quiz.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_final_certificate",
+      "path": "iter_001/design_review/desktop__10_final_certificate.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__10_final_certificate.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "overall_assessment": "Desktop scene design cannot be approved because the learning UI is mostly laid over illustrated backgrounds as generic web cards, bubbles, pills, and rounded buttons rather than being absorbed into library objects. The strongest assets are usable, but several scenes ignore available boards, monitors, books, signs, and certificate surfaces, so the result feels like a web quiz on top of a library illustration instead of a polished game-like repair adventure.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop.png",
+      "scene_purpose": "Start the library clock repair adventure and state the mission.",
+      "overall_assessment": "The first scene has a serviceable library background, but the title and CTA float over a blurred image as generic web text/button. The scene needs a physical library entrance sign or repair notice metaphor.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "도서관 입구 긴급 수리 공고판",
+        "rationale": "The current start screen reads as a landing hero, not an in-world game scene.",
+        "core_metaphor": "A glowing emergency repair notice mounted over the library entrance, with the start CTA as a stamped repair ticket tab.",
+        "visual_language": "Wood-framed signboard, brass clips, paper notice texture, warm clockwork glow, yellow repair energy around the ticket.",
+        "layout_strategy": "Keep the same background but reduce blur, crop it to make the central entrance wall/sign zone legible, and place H1/subtitle inside one large wooden notice board occupying the upper-middle stage.",
+        "interaction_surfaces": [
+          "wooden entrance notice board for title and mission",
+          "gold repair ticket tab for #btn-start",
+          "HUD hidden as-is"
+        ],
+        "implementation_notes": [
+          "Wrap .title-h1 in a board surface container instead of free text over blur.",
+          "Restyle #btn-start as a ticket-shaped object with notched sides, border stitching, and a small repair stamp.",
+          "Keep background full bleed but remove heavy blur so the library setting remains inspectable."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#s-title .title-h1 / center safe zone approx x=250..1190 y=230..430 in 1440x960 screenshot",
+            "issue": "Hero text is not anchored to an in-scene surface.",
+            "evidence": "The title sits directly over a blurred background with only text shadow, so it reads as a web hero overlay rather than a library sign or notice board.",
+            "suggested_fix": "Create a wooden-framed emergency notice board in the upper-middle stage and place the H1/subtitle inside it with inset padding, brass corner plates, and warm backlight."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#btn-start approx x=596..844 y=520..590 in initial screenshot",
+            "issue": "CTA is a generic rounded yellow web button.",
+            "evidence": "The pill button shape and play glyph do not look like a physical library repair object.",
+            "suggested_fix": "Restyle #btn-start as a golden repair ticket or pull-tab with notched sides, paper grain, stamped arrow icon, and a small pressed shadow instead of border-radius:999px."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "#s-title .bg",
+            "issue": "Background is blurred enough that the library scene loses narrative specificity.",
+            "evidence": "Bookshelves and clock-disorder context are obscured, making the first impression mostly typography over color.",
+            "suggested_fix": "Use brightness/contrast only or blur <=0.5px; crop/object-position to keep the central library wall visible behind the board."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#s-title .content .center-col",
+            "issue": "Mission content is visually separate from the asset world.",
+            "evidence": "No existing asset surface is used for the title or start action.",
+            "suggested_fix": "Add a .start-notice wrapper styled as an in-world board and move .title-h1 plus #btn-start onto it."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#btn-start, .btn global style used in start scene",
+            "issue": "The primary button uses a generic web pill style.",
+            "evidence": "Large rounded gradient button with box-shadow repeats across scenes and breaks the physical object metaphor.",
+            "suggested_fix": "Introduce scene-specific physical CTA variants such as .ticket-btn, .sign-btn, and .console-btn; use .ticket-btn for start."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#s-title .title-h1 and #btn-start",
+          "issue": "Hero mission and CTA float on the background instead of being integrated into a scene object.",
+          "evidence": "Text shadow and pill button are the only visual integration.",
+          "suggested_fix": "Build a wooden emergency repair notice board and ticket-shaped start control inside the scene."
+        }
+      ],
+      "refine_suggestions": [
+        "In #s-title, create a .start-notice board centered at x=50%, y=36% with max-width 820px, wood frame, paper inner panel, and place .title-h1 inside it.",
+        "Replace #btn-start pill styling with a ticket-shaped .ticket-btn using clip-path/notched pseudo-elements, paper texture, stitched border, and a small repair stamp icon."
+      ]
+    },
+    {
+      "scene_id": "01_intro_problem",
+      "capture_label": "01_intro_problem",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_001\\design_review\\desktop__01_intro_problem.png",
+      "scene_purpose": "Show the broken library clock problem and invite the learner to help.",
+      "overall_assessment": "The clock and worried teacher fit the story, but the speech bubble and CTA are generic overlays. The large empty center would work better as a repair request counter or library help-desk sign.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "고장 신고 접수대",
+        "rationale": "The scene already has the right assets and mood; it mainly needs surface integration.",
+        "core_metaphor": "The teacher is filing an urgent clock repair request at the library help desk.",
+        "visual_language": "Pinned repair form, red malfunction stamp, wooden counter plaque, small clock sparks.",
+        "layout_strategy": "Keep teacher left and clock center, but place the long message on a pinned help-desk form or hanging sign behind the clock; convert CTA into a desk bell or repair ticket.",
+        "interaction_surfaces": [
+          "pinned repair request sheet for teacher message",
+          "desk bell or ticket tab for CTA",
+          "central clock body remains focal object"
+        ],
+        "implementation_notes": [
+          "Reduce bubble width and turn it into an in-world paper form with clip/pin details.",
+          "Move CTA lower-right as a physical ticket/direction sign, not a pill button.",
+          "Keep the teacher face clear; do not cover it with the message surface."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#s-intro .bubble approx x=400..1040 y=350..500",
+            "issue": "Mission message is too much like a web speech bubble panel.",
+            "evidence": "The bubble has clean white fill and generic rounded border that sits in front of the scene without matching the illustrated materials.",
+            "suggested_fix": "Restyle the message as a pinned repair request form or wooden library notice with paper grain, tape/clip detail, and smaller line length."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#btn-intro-next approx x=590..850 y=535..605",
+            "issue": "CTA is a generic pill button floating below the dialogue.",
+            "evidence": "It is not attached to the help-desk, clock, or any library object.",
+            "suggested_fix": "Convert #btn-intro-next to a repair-ticket sign or desk-bell button placed on the lower central counter, with notched ticket edges and physical shadow."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "#s-intro .content top-middle stage",
+            "issue": "Central stage is underused as an interaction surface.",
+            "evidence": "Clock, speech bubble, and CTA are vertically stacked over the background rather than using a desk/sign surface.",
+            "suggested_fix": "Create a repair counter strip in the lower third and anchor CTA on it; move the message onto a pinned notice behind or beside the clock."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#intro-clock and #s-intro .bubble",
+            "issue": "Clock and message are separate UI elements rather than one malfunction display.",
+            "evidence": "The broken clock floats above the bubble without sparks, warning label, or physical link to the repair request.",
+            "suggested_fix": "Add small CSS sparks/warning tags around #intro-clock and visually connect the message form with a red '고장' stamp."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#btn-intro-next",
+            "issue": "Rounded CTA button breaks scene material style.",
+            "evidence": "Same generic button style appears as the start CTA.",
+            "suggested_fix": "Use a ticket/plaque/button object with wood or brass material instead of .btn pill styling."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_intro_problem",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#btn-intro-next",
+          "issue": "CTA is a generic web button in a scene that should use an in-world repair object.",
+          "evidence": "The yellow pill floats under the speech bubble and does not belong to the library set.",
+          "suggested_fix": "Replace with a repair-ticket or desk-bell styled CTA on a lower counter surface."
+        }
+      ],
+      "refine_suggestions": [
+        "In #s-intro, convert the teacher message surface from .bubble to .repair-request-paper with paper texture, clip/tape details, and a red malfunction stamp.",
+        "Move #btn-intro-next onto a lower desk/counter safe zone and restyle it as a ticket-shaped help request control."
+      ]
+    }
+  ],
+  "asset_review": {
+    "overall_asset_fit": "The generated raster assets are broadly consistent in a bright 2.5D children's library style and can support the experience. The main design failures come from HTML/CSS composition and generic component styling rather than asset generation. Existing backgrounds and components should be retained and repositioned/cropped into stronger interaction surfaces before requesting new assets.",
+    "keep_assets": [
+      {
+        "asset_id": "bg_messy_library_lobby",
+        "reason": "Useful full-bleed library setting for intro and success scenes; style matches the children and clock assets.",
+        "suggested_action": "Keep and crop/clarify rather than regenerate."
+      },
+      {
+        "asset_id": "bg_reading_class_board",
+        "reason": "Provides the exact board metaphor needed for Type B schedule restoration.",
+        "suggested_action": "Keep and align an HTML board overlay to its central board safe zone."
+      },
+      {
+        "asset_id": "component_checkout_monitor_body",
+        "reason": "Appropriate monitor surface for Type C reboot interaction.",
+        "suggested_action": "Keep and enlarge/cluster with a console dock."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "component_electronic_sign_body",
+        "reason": "The sign is useful but underused in Type A and repair-complete scenes.",
+        "suggested_action": "Scale to 560-680px desktop width in Type A, place both prompt and instruction/status inside .sign-screen, and attach CTA ticket to its base."
+      },
+      {
+        "asset_id": "bg_repair_desk_area",
+        "reason": "The desk setting can support clock-module sockets if the UI is aligned to it.",
+        "suggested_action": "Keep full-bleed; position Type A modules along the lower desk safe zone and reduce floating white cards."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [
+      {
+        "suggested_id": "component_final_quiz_slip",
+        "kind": "image",
+        "intended_path": "output/assets/component_final_quiz_slip.png",
+        "usage_section_ids": [
+          "popup_quiz"
+        ],
+        "purpose": "Replace the generic final quiz card with an in-world paper/pop-up quiz surface.",
+        "prompt_brief": "Bright children's 2.5D library checkout quiz slip or pop-up book page, front-facing, warm paper texture, playful clock motifs, blank safe zones for one question line, three answer ticket slots, feedback stamp area, and bottom certificate ticket tab. No baked-in readable text.",
+        "visual_role": "Central physical surface for the final 24시간=1일 quiz.",
+        "style_constraints": "Match existing warm library illustration style, medium soft outlines, high readability, not flat vector UI, no text baked into image.",
+        "composition_notes": "Transparent or easily compositable background; central paper object about 760x430 desktop proportion; answer slots evenly spaced; leave inner margins for HTML text.",
+        "negative_prompt": "generic white web card, plain rounded rectangle, real photo, dark mood, tiny text, baked Korean text",
+        "why_needed": "Existing assets do not include a dedicated final quiz surface, and the current .card-panel scene is a high-severity web-card failure."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "scene_id": "09_popup_quiz",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "#s-quiz .card-panel, #quiz-opts .opt.text, #btn-to-cert",
+      "issue": "The final quiz is built from generic web card/button components.",
+      "evidence": "A plain central rounded card with white answer cards dominates the desktop view and does not use any library object surface.",
+      "suggested_fix": "Replace the panel with a physical quiz slip or pop-up book page; convert choices and certificate CTA to ticket/stamp objects."
+    },
+    {
+      "scene_id": "05_type_b_schedule_restore",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "#s-typeB .bg central board safe zone + #areaB",
+      "issue": "The reading-class board asset's interaction surface is ignored.",
+      "evidence": "Text, clocks, blanks, and keypad float as generic web UI over a board meant for schedule restoration.",
+      "suggested_fix": "Align a .schedule-board-overlay to the board and place all Type B elements inside pinned timetable surfaces, cells, magnet tiles, and chalk feedback strip."
+    },
+    {
+      "scene_id": "04_type_a_clock_choice",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#areaA .device .sign-screen and #areaA .q-title",
+      "issue": "The electronic sign surface is not used for the full mission text.",
+      "evidence": "Only the short expression appears on the sign while the actual instruction is a separate line below it.",
+      "suggested_fix": "Move q-title into the sign as an LED subline and remove the detached instruction line."
+    }
+  ],
+  "refine_suggestions": [
+    "Replace generic .btn pill usage in scene CTAs with scene-specific physical controls: .ticket-btn for start/mission/gallery/certificate, .stamp-btn for certificate save, and .console-btn only when attached to a device.",
+    "For Type A, move q-title into component_electronic_sign_body as a smaller LED subline and convert clock choices into desk-mounted clock modules rather than white .opt cards.",
+    "For Type B, create a board-aligned overlay and convert problem text, clocks, blanks, keypad, and feedback into pinned timetable strips, timetable cells, magnet tiles, and chalk/status strips.",
+    "For Type C, wrap monitor and block tray into one checkout console; attach .block-tray to monitor base as a physical dock with sockets.",
+    "For popup_quiz, replace .card-panel with a final quiz slip or pop-up book surface and restyle answer choices/feedback/CTA as tickets and stamps."
+  ]
+}

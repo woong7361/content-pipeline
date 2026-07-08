@@ -34,6 +34,7 @@
         "line_style",
         "lighting",
         "character_rules",
+        "component_rules",
         "background_rules",
         "continuity_rules",
         "forbidden_styles"
@@ -64,6 +65,11 @@
           "type": "string",
           "minLength": 1,
           "description": "캐릭터 비율, 표정, 의상, 반복 등장 시 유지할 특징"
+        },
+        "component_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "반복 등장 소품·기구(시계, 계기판, 신호등 등)의 고정 형태·비율·재질·시점, 그리고 상태에 따라 바뀌는 가변부는 asset에 그리지 않고 builder가 HTML/CSS/JS로 얹도록 남긴다는 재사용 규칙. 반복 컴포넌트가 없으면 그 취지를 간단히 적는다"
         },
         "background_rules": {
           "type": "string",

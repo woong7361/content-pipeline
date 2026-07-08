@@ -1,0 +1,218 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-08T15:54:57+09:00",
+  "html_path": "output/index.html",
+  "viewports": [
+    "desktop"
+  ],
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_005/design_refine_preview/desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_problem_intro",
+      "path": "iter_005/design_refine_preview/desktop__01_problem_intro.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_tutorial_clock",
+      "path": "iter_005/design_refine_preview/desktop__02_tutorial_clock.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_tutorial_success",
+      "path": "iter_005/design_refine_preview/desktop__03_tutorial_success.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_mission_type_a",
+      "path": "iter_005/design_refine_preview/desktop__04_mission_type_a.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_mission_type_b",
+      "path": "iter_005/design_refine_preview/desktop__05_mission_type_b.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_mission_type_c",
+      "path": "iter_005/design_refine_preview/desktop__06_mission_type_c.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_repair_outro",
+      "path": "iter_005/design_refine_preview/desktop__07_repair_outro.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_real_life_story",
+      "path": "iter_005/design_refine_preview/desktop__08_real_life_story.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_popup_quiz",
+      "path": "iter_005/design_refine_preview/desktop__09_popup_quiz.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_final_certificate",
+      "path": "iter_005/design_refine_preview/desktop__10_final_certificate.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "render_checks": {
+    "console_errors": [],
+    "page_errors": [],
+    "request_failures": [],
+    "broken_images": [],
+    "horizontal_overflow": [],
+    "text_clipping": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "button#saveCertBtn",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      }
+    ],
+    "small_touch_targets": [],
+    "overlaps": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "span.who.child overlaps span:nth-child(4)",
+        "evidence": "Elements overlap by 2192px2.",
+        "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "span:nth-child(2) overlaps span:nth-child(4)",
+        "evidence": "Elements overlap by 10717px2.",
+        "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "span.who.teacher overlaps span:nth-child(4)",
+        "evidence": "Elements overlap by 2561px2.",
+        "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+      }
+    ],
+    "fixed_overlay_risks": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "div#app",
+        "evidence": "Fixed or sticky element covers about 100% of the viewport.",
+        "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+      }
+    ]
+  },
+  "design_review": {
+    "status": "REJECT",
+    "summary": "Visual QA found high-priority design risks.",
+    "card_template_risk": "low",
+    "asset_integration_risk": "low",
+    "interface_affordance_risk": "medium",
+    "composition_risk": "high",
+    "evidence": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "composition",
+        "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+        "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "fixed_overlay",
+      "evidence": "div#app: Fixed or sticky element covers about 100% of the viewport.",
+      "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "overlap",
+      "evidence": "span.who.child overlaps span:nth-child(4): Elements overlap by 2192px2.",
+      "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "overlap",
+      "evidence": "span:nth-child(2) overlaps span:nth-child(4): Elements overlap by 10717px2.",
+      "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "overlap",
+      "evidence": "span.who.teacher overlaps span:nth-child(4): Elements overlap by 2561px2.",
+      "suggested_fix": "Move these elements into separate grid rows or a declared safe zone."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "button#saveCertBtn: Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "composition",
+      "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+      "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "interface_affordance",
+      "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
+      "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    }
+  ],
+  "refine_suggestions": [
+    "[desktop] Reduce this persistent UI or make it part of the scrollable scene.",
+    "[desktop] Move these elements into separate grid rows or a declared safe zone.",
+    "[desktop] Allow wrapping, reduce fixed height, or move long copy to a larger responsive area.",
+    "[desktop] Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity.",
+    "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+  ]
+}

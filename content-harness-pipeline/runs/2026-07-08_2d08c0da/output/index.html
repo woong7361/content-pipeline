@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>시간이 뒤죽박죽! 도서관 시계 수리 모험</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root{
+    --wood:#b07a43; --wood-d:#8a5a2c; --cream:#f7ecd2; --cream-d:#efe0bd;
+    --teal:#20808a; --teal-l:#2ba0a5; --ink:#4a3418; --ink-soft:#6b4e28;
+    --energy:#ffcf3f; --energy-d:#f0a91e; --red:#e4572e; --green:#3fb24a; --sky:#8fd0e6;
+  }
+  html,body{height:100%;}
+  body{
+    font-family:"Nanum Gothic","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    background:radial-gradient(circle at 50% 30%,#3a2a4a,#1c1428);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    color:var(--ink);
+  }
+  #stage{
+    position:relative;
+    width:min(100vw, calc(100vh * 16 / 9));
+    height:min(100vh, calc(100vw * 9 / 16));
+    background:#000;
+    overflow:hidden;
+    container-type:size;
+    box-shadow:0 0 40px rgba(0,0,0,.6);
+    user-select:none;
+  }
+  .scene{
+    position:absolute;inset:0;display:none;
+    animation:fadeIn .5s ease;
+  }
+  .scene.active{display:block;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+
+  /* ---------- HUD ---------- */
+  #hud{position:absolute;inset:0;pointer-events:none;z-index:40;display:none;}
+  #hud.show{display:block;}
+  .hamburger{
+    position:absolute;top:2.5cqh;left:2cqw;width:7cqh;height:7cqh;border-radius:2cqh;
+    background:var(--cream);border:0.5cqh solid var(--wood);cursor:pointer;pointer-events:auto;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1cqh;
+    box-shadow:0 0.6cqh 0 var(--wood-d);
+  }
+  .hamburger span{display:block;width:3.6cqh;height:0.7cqh;background:var(--wood-d);border-radius:1cqh;}
+  .energy-wrap{
+    position:absolute;top:2.5cqh;right:2cqw;width:34cqw;max-width:340px;pointer-events:auto;
+    background:var(--cream);border:0.5cqh solid var(--wood);border-radius:3cqh;
+    padding:1cqh 1.4cqh;box-shadow:0 0.6cqh 0 var(--wood-d);
+  }
+  .energy-label{font-size:2.2cqh;font-weight:800;color:var(--ink-soft);display:flex;justify-content:space-between;margin-bottom:0.6cqh;}
+  .energy-track{height:3cqh;background:#e7d3ad;border-radius:2cqh;overflow:hidden;box-shadow:inset 0 0.3cqh 0.6cqh rgba(0,0,0,.15);}
+  .energy-fill{height:100%;width:0;border-radius:2cqh;
+    background:linear-gradient(90deg,var(--energy-d),var(--energy));transition:width .8s cubic-bezier(.2,.9,.3,1);}
+  .energy-fill.flash{animation:egyFlash .5s;}
+  @keyframes egyFlash{50%{filter:brightness(1.6) drop-shadow(0 0 8px var(--energy))}}
+
+  /* slide menu */
+  #menu{position:absolute;inset:0;z-index:60;display:none;}
+  #menu.show{display:block;}
+  #menu .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4);}
+  #menu .panel{
+    position:absolute;top:0;left:0;height:100%;width:38cqw;min-width:230px;
+    background:linear-gradient(160deg,#fff6e2,#f0dcb4);border-right:0.8cqh solid var(--wood);
+    transform:translateX(-100%);transition:transform .35s ease;padding:3cqh 2cqw;overflow:auto;
+    box-shadow:6px 0 30px rgba(0,0,0,.3);
+  }
+  #menu.show .panel{transform:translateX(0);}
+  #menu h3{font-size:3cqh;color:var(--wood-d);margin-bottom:2cqh;}
+  #menu ul{list-style:none;}
+  #menu li{font-size:2.4cqh;padding:1.6cqh 1.4cqh;margin-bottom:1cqh;border-radius:1.6cqh;
+    background:#fff;border:0.3cqh solid var(--cream-d);color:var(--ink-soft);font-weight:700;}
+  #menu li.cur{background:var(--energy);border-color:var(--energy-d);color:var(--ink);}
+  #menu .close{position:absolute;top:2cqh;right:2cqw;font-size:3.4cqh;background:none;border:none;color:var(--wood-d);cursor:pointer;font-weight:900;}
+
+  /* ---------- generic UI ---------- */
+  .center-col{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4cqh 4cqw;}
+  .btn{
+    font-family:inherit;cursor:pointer;color:#5a3c12;font-weight:900;
+    background:linear-gradient(180deg,#ffe07a,var(--energy));
+    border:0.5cqh solid #e0a51c;border-radius:3cqh;padding:1.8cqh 3.2cqw;font-size:3cqh;
+    box-shadow:0 0.8cqh 0 #c98a12, 0 1.2cqh 1.4cqh rgba(0,0,0,.25);
+    transition:transform .08s;pointer-events:auto;
+  }
+  .btn:active{transform:translateY(0.6cqh);box-shadow:0 0.2cqh 0 #c98a12;}
+  .btn:disabled{opacity:.6;}
+  .btn.pulse{animation:pulse 1.3s infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06);filter:brightness(1.08)}}
+  .btn.blink{animation:blink 1.4s infinite;}
+  @keyframes blink{0%,100%{box-shadow:0 0.8cqh 0 #c98a12,0 0 0 0 rgba(255,207,63,.6)}50%{box-shadow:0 0.8cqh 0 #c98a12,0 0 4cqh 1cqh rgba(255,207,63,.75)}}
+
+  .bubble{
+    position:relative;background:#fff;border:0.5cqh solid var(--wood);border-radius:3cqh;
+    padding:2cqh 2.4cqw;font-size:2.6cqh;font-weight:700;color:var(--ink);line-height:1.5;
+    box-shadow:0 1cqh 2cqh rgba(0,0,0,.2);max-width:66cqw;
+  }
+  .bubble::after{content:"";position:absolute;bottom:-2.4cqh;left:8cqw;border:1.4cqh solid transparent;border-top-color:#fff;border-bottom:0;}
+
+  .char{position:absolute;bottom:0;height:74cqh;pointer-events:none;filter:drop-shadow(0 0.6cqh 1cqh rgba(0,0,0,.35));z-index:10;}
+
+  /* ---------- clock ---------- */
+  .clock{position:relative;aspect-ratio:1;}
+  .clock img{width:100%;height:100%;display:block;}
+  .clock .hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:1cqh;z-index:2;}
+  .clock .hand.hour{width:2.4%;height:26%;background:#4a3418;}
+  .clock .hand.min{width:1.8%;height:37%;background:var(--teal);}
+  .clock .cap{position:absolute;left:50%;top:50%;width:5%;height:5%;background:#e0a51c;border-radius:50%;transform:translate(-50%,-50%);z-index:3;border:0.4cqh solid #8a5a2c;}
+  .clock .qmark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14cqh;font-weight:900;color:var(--wood);}
+  .clock.spin .hand.hour{animation:spinH 3s linear infinite;}
+  .clock.spin .hand.min{animation:spinM .6s linear infinite;}
+  @keyframes spinH{to{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes spinM{to{transform:translateX(-50%) rotate(360deg)}}
+  .glow{filter:drop-shadow(0 0 3cqh var(--energy)) drop-shadow(0 0 1.5cqh var(--energy));}
+  .shake{animation:shake .45s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-2cqw)}40%{transform:translateX(2cqw)}60%{transform:translateX(-1.4cqw)}80%{transform:translateX(1.4cqw)}}
+  .redblink{animation:redblink .4s 3;}
+  @keyframes redblink{50%{filter:drop-shadow(0 0 2cqh var(--red)) brightness(1.1)}}
+  @keyframes floatUp{from{transform:translateY(0) scale(1);opacity:1}to{transform:translateY(-16cqh) scale(.3);opacity:0}}
+
+  /* ---------- title ---------- */
+  #title_start .bg{filter:blur(2px) brightness(.9);}
+  .title-shade{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,240,200,.15),rgba(40,25,10,.45));}
+  .title-main{font-size:8cqh;color:#fff;font-weight:900;text-shadow:0 0.6cqh 0 #b25b1e,0 1.2cqh 2cqh rgba(0,0,0,.5);line-height:1.15;}
+  .title-sub{font-size:4.4cqh;color:#ffe9a8;font-weight:800;margin-top:1.5cqh;text-shadow:0 0.4cqh 0 #7a4212,0 0 2cqh rgba(0,0,0,.4);}
+  .title-badge{font-size:3cqh;background:var(--teal);color:#fff;padding:0.8cqh 2cqw;border-radius:2cqh;font-weight:800;margin-bottom:2cqh;box-shadow:0 0.6cqh 0 #145c63;}
+
+  /* ---------- mission play area ---------- */
+  .play{position:absolute;inset:0;padding:11cqh 4cqw 4cqh;display:flex;flex-direction:column;align-items:center;gap:2cqh;z-index:20;overflow:auto;}
+  .sign{position:relative;width:60cqw;max-width:620px;aspect-ratio:1236/1220;margin-top:-2cqh;}
+  .sign img{width:100%;height:100%;}
+  .sign .sign-text{position:absolute;left:12%;right:12%;top:33%;height:38%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1cqh;text-align:center;}
+  .sign .sign-broken{font-size:3.6cqh;font-weight:900;color:#eafcfc;letter-spacing:.1cqw;text-shadow:0 0 1.4cqh rgba(0,0,0,.4);}
+  .sign .sign-sub{font-size:2.2cqh;font-weight:700;color:#bfeaea;}
+  .prompt{font-size:2.9cqh;font-weight:800;color:var(--ink);background:rgba(255,250,238,.94);padding:1.4cqh 2.4cqw;border-radius:2cqh;border:0.4cqh solid var(--wood);max-width:82cqw;text-align:center;box-shadow:0 0.6cqh 1.2cqh rgba(0,0,0,.15);}
+  .options{display:flex;gap:2.4cqw;flex-wrap:wrap;justify-content:center;align-items:flex-start;}
+  .opt-clock{width:19cqw;max-width:190px;display:flex;flex-direction:column;align-items:center;gap:0.8cqh;cursor:pointer;pointer-events:auto;transition:transform .1s;}
+  .opt-clock:active{transform:scale(.96);}
+  .opt-clock.pick{animation:pop .3s;}
+  @keyframes pop{50%{transform:scale(1.12)}}
+  .opt-label{font-size:2.4cqh;font-weight:800;background:#fff;border:0.35cqh solid var(--wood);border-radius:1.6cqh;padding:0.6cqh 1.2cqw;color:var(--ink-soft);}
+  .opt-btn{font-size:3cqh;font-weight:800;background:#fff;border:0.5cqh solid var(--wood);border-radius:2cqh;padding:1.8cqh 3cqw;cursor:pointer;pointer-events:auto;color:var(--ink);box-shadow:0 0.6cqh 0 var(--wood-d);min-width:24cqw;}
+  .opt-btn:active{transform:translateY(0.4cqh);}
+
+  .clockrow{display:flex;align-items:center;gap:2cqw;justify-content:center;flex-wrap:wrap;}
+  .clockrow .clock{width:20cqw;max-width:200px;}
+  .arrow{display:flex;flex-direction:column;align-items:center;color:var(--wood-d);font-weight:900;}
+  .arrow .a{font-size:6cqh;line-height:1;}
+
+  .blankbox{display:inline-flex;align-items:center;gap:0.6cqw;font-size:3cqh;font-weight:800;color:var(--ink);flex-wrap:wrap;justify-content:center;}
+  .blank{display:inline-flex;align-items:center;justify-content:center;min-width:7cqh;height:8cqh;background:#fff;border:0.5cqh dashed var(--wood);border-radius:1.4cqh;font-size:4cqh;font-weight:900;color:var(--teal);cursor:pointer;pointer-events:auto;padding:0 1cqw;}
+  .blank.sel{border-style:solid;border-color:var(--teal);box-shadow:0 0 0 0.4cqh rgba(43,160,165,.3);}
+  .blank.filled{background:#eafaf7;}
+  .confirm-row{display:flex;gap:2cqw;margin-top:1cqh;}
+
+  /* keypad */
+  #keypad{position:absolute;inset:0;z-index:70;display:none;align-items:flex-end;justify-content:center;}
+  #keypad.show{display:flex;}
+  #keypad .kp{background:linear-gradient(180deg,#fff7e6,#f0ddb6);border-top:0.8cqh solid var(--wood);width:100%;max-width:520px;padding:2.4cqh 3cqw;border-radius:4cqh 4cqh 0 0;box-shadow:0 -1cqh 3cqh rgba(0,0,0,.3);animation:kpUp .3s ease;}
+  @keyframes kpUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  #keypad .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqh;}
+  #keypad .key{font-size:4cqh;font-weight:900;background:#fff;border:0.4cqh solid var(--wood);border-radius:2cqh;padding:2cqh 0;cursor:pointer;color:var(--ink);box-shadow:0 0.6cqh 0 var(--wood-d);text-align:center;}
+  #keypad .key:active{transform:translateY(0.4cqh);}
+  #keypad .key.act{background:var(--teal);color:#fff;}
+
+  /* monitor / blocks (type C) */
+  .monitor{position:relative;width:60cqw;max-width:640px;aspect-ratio:1246/1246;}
+  .monitor img{width:100%;height:100%;}
+  .mon-screen{position:absolute;left:14%;right:14%;top:15%;height:52%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4cqh;padding:1cqh 1cqw;text-align:center;}
+  .mon-text{font-size:2.5cqh;font-weight:800;color:#eafcfc;text-shadow:0 0 1cqh rgba(0,0,0,.3);line-height:1.35;}
+  .timeline{display:flex;gap:0.8cqw;width:100%;justify-content:center;}
+  .tl{flex:1;border-radius:1cqh;padding:0.6cqh 0;font-size:1.7cqh;font-weight:800;text-align:center;color:#fff;}
+  .tl.am{background:linear-gradient(180deg,#ffd873,#f0a91e);color:#5a3c12;}
+  .tl.pm{background:linear-gradient(180deg,#5b7bd6,#2f4aa0);}
+  .mon-screen.on{animation:monOn 1s;}
+  @keyframes monOn{0%{filter:brightness(1)}40%{filter:brightness(1.8) drop-shadow(0 0 2cqh #7ff)}100%{filter:brightness(1.1)}}
+  .reboot-msg{font-size:2.8cqh;font-weight:900;color:#8effea;}
+  .palette{display:flex;gap:1cqw;flex-wrap:wrap;justify-content:center;margin-top:1cqh;}
+  .digit{width:7.4cqh;height:7.4cqh;display:flex;align-items:center;justify-content:center;font-size:4cqh;font-weight:900;color:#5a3c12;cursor:grab;pointer-events:auto;touch-action:none;
+    background:linear-gradient(180deg,#ffe07a,var(--energy));border:0.5cqh solid #e0a51c;border-radius:1.8cqh;box-shadow:0 0.6cqh 0 #c98a12;}
+  .digit.sel{outline:0.6cqh solid var(--teal);outline-offset:0.3cqh;}
+  .blk-blank{display:inline-flex;align-items:center;justify-content:center;min-width:6cqh;height:7cqh;background:rgba(255,255,255,.9);border:0.5cqh dashed #7ecfd6;border-radius:1.4cqh;font-size:3.6cqh;font-weight:900;color:var(--teal);cursor:pointer;pointer-events:auto;}
+  .blk-blank.filled{background:#eafaf7;border-style:solid;}
+  .drag-ghost{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%);opacity:.9;}
+
+  /* gallery */
+  .book{position:relative;width:80cqw;max-width:900px;aspect-ratio:1536/1024;}
+  .book>img{width:100%;height:100%;}
+  .page-face{position:absolute;top:14%;bottom:16%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1cqh;padding:1cqh;text-align:center;}
+  .page-left{left:15%;width:34%;}
+  .page-right{right:15%;width:34%;justify-content:center;}
+  .page-face img{width:100%;border-radius:1.4cqh;box-shadow:0 0.6cqh 1.2cqh rgba(0,0,0,.25);object-fit:cover;max-height:64%;}
+  .page-face p{font-size:2cqh;font-weight:700;color:#25596a;line-height:1.4;}
+  .page-num{position:absolute;bottom:5%;left:50%;transform:translateX(-50%);font-size:2.2cqh;font-weight:800;color:var(--wood-d);}
+  .g-arrow{position:absolute;top:50%;transform:translateY(-50%);min-width:9cqh;height:9cqh;padding:0 1.4cqw;border-radius:4.5cqh;background:var(--cream);border:0.5cqh solid var(--wood);font-size:3.6cqh;font-weight:900;color:var(--wood-d);cursor:pointer;pointer-events:auto;display:flex;align-items:center;justify-content:center;box-shadow:0 0.6cqh 0 var(--wood-d);z-index:5;}
+  .g-arrow.left{left:-3cqw;} .g-arrow.right{right:-3cqw;}
+  .g-arrow[disabled]{opacity:.35;pointer-events:none;}
+
+  /* quiz slip */
+  .slip{position:relative;width:74cqw;max-width:860px;aspect-ratio:1687/914;}
+  .slip img{width:100%;height:100%;}
+  .slip-q{position:absolute;left:22%;right:22%;top:14%;height:38%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2.7cqh;font-weight:800;color:var(--ink);padding:0 1cqw;}
+  .slip-opts{position:absolute;left:22%;right:22%;top:58%;height:22%;display:flex;gap:1.4cqw;}
+  .slip-opt{flex:1;display:flex;align-items:center;justify-content:center;font-size:2.8cqh;font-weight:900;color:var(--teal);cursor:pointer;pointer-events:auto;border-radius:1cqh;}
+  .slip-opt:active{transform:scale(.95);}
+
+  /* certificate */
+  .cert{position:relative;width:66cqw;max-width:760px;aspect-ratio:1536/1024;animation:certIn .6s ease;}
+  @keyframes certIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  .cert>img{width:100%;height:100%;}
+  .cert-body{position:absolute;left:12%;right:12%;top:14%;bottom:12%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.2cqh;}
+  .cert-title{font-size:3.4cqh;font-weight:900;color:var(--wood-d);}
+  .cert-text{font-size:2.1cqh;font-weight:700;color:var(--ink);line-height:1.5;max-width:82%;}
+  .cert-rec{display:flex;gap:2cqw;font-size:2.1cqh;font-weight:800;color:var(--teal);}
+  .cert-rec span{background:#fff;border:0.3cqh solid var(--teal);border-radius:1.4cqh;padding:0.4cqh 1.4cqw;}
+
+  .overlay-msg{position:absolute;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(20,12,30,.55);}
+  .overlay-msg.show{display:flex;}
+  .overlay-card{background:#fff;border:0.6cqh solid var(--wood);border-radius:3cqh;padding:3cqh 4cqw;text-align:center;font-size:3cqh;font-weight:800;color:var(--ink);max-width:70cqw;box-shadow:0 2cqh 4cqh rgba(0,0,0,.4);}
+  .overlay-card .btn{margin-top:2.4cqh;font-size:2.6cqh;}
+
+  .toast{position:absolute;left:50%;bottom:6cqh;transform:translateX(-50%);z-index:90;background:var(--ink);color:#fff;font-size:2.4cqh;font-weight:800;padding:1.4cqh 3cqw;border-radius:3cqh;opacity:0;transition:opacity .3s;pointer-events:none;}
+  .toast.show{opacity:.95;}
+
+  .particle{position:absolute;width:1.6cqh;height:1.6cqh;border-radius:50%;pointer-events:none;z-index:35;box-shadow:0 0 1cqh var(--energy);}
+
+  .row-mid{display:flex;align-items:center;gap:2cqw;flex-wrap:wrap;justify-content:center;}
+  .feedbubble{position:absolute;z-index:30;left:50%;top:9cqh;transform:translateX(-50%);background:#fff;border:0.5cqh solid var(--red);color:var(--red);font-weight:900;font-size:2.8cqh;padding:1.2cqh 2.4cqw;border-radius:2cqh;display:none;box-shadow:0 1cqh 2cqh rgba(0,0,0,.2);}
+  .feedbubble.ok{border-color:var(--green);color:var(--green);}
+  .feedbubble.show{display:block;animation:pop .3s;}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ===== SCENE 1: TITLE ===== -->
+  <section class="scene" data-qa-scene="title_start" data-qa-order="1" data-qa-label="타이틀 시작 화면">
+    <img class="bg" src="assets/bg_messy_library_lobby.png" alt="책이 흩어져 있고 따뜻한 목재 책장이 둘러싼 어수선한 도서관 로비 배경">
+    <div class="title-shade"></div>
+    <div class="center-col">
+      <div class="title-badge">2학년 · 시간 모험</div>
+      <div class="title-main">시간이 뒤죽박죽!</div>
+      <div class="title-sub">수학의 힘으로 도서관 시계를 수리하라!</div>
+      <button class="btn blink" id="startBtn" style="margin-top:6cqh;">시작하기 ▶</button>
+    </div>
+  </section>
+
+  <!-- ===== SCENE 2: INTRO PROBLEM ===== -->
+  <section class="scene" data-qa-scene="intro_problem" data-qa-order="2" data-qa-label="문제 발생: 시계 고장">
+    <img class="bg" src="assets/bg_messy_library_lobby.png" alt="책이 흩어진 어수선한 도서관 로비 배경">
+    <div class="play" style="justify-content:flex-start;">
+      <div class="clock spin" id="introClock" style="width:32cqw;max-width:320px;margin-top:2cqh;"></div>
+      <div class="bubble" style="align-self:center;margin-top:2cqh;">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
+      <button class="btn pulse" style="margin-top:2cqh;" data-next="tutorial_clock_reading">도와주러 가기 →</button>
+    </div>
+    <img class="char" src="assets/character_teacher_worried.png" alt="머리를 감싸고 당황한 사서 선생님" style="right:2cqw;height:66cqh;">
+  </section>
+
+  <!-- ===== SCENE 3: TUTORIAL ===== -->
+  <section class="scene" data-qa-scene="tutorial_clock_reading" data-qa-order="3" data-qa-label="튜토리얼: 정각 읽기">
+    <img class="bg" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
+    <div class="play">
+      <div class="bubble" style="margin-top:0;">지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</div>
+      <div class="row-mid" style="margin-top:1cqh;">
+        <div class="clock" id="tutClock" style="width:22cqw;max-width:220px;"></div>
+        <div class="blank tut-slot" id="tutSlot" style="width:12cqh;height:12cqh;font-size:4.4cqh;">?</div>
+      </div>
+      <div class="options" id="tutCards" style="margin-top:2cqh;"></div>
+    </div>
+    <img class="char" src="assets/character_teacher_explaining.png" alt="돋보기로 문제를 가리키는 사서 선생님" style="left:1cqw;height:60cqh;">
+    <img class="char" src="assets/character_child_explaining.png" alt="한 손을 들고 자신 있게 설명하는 꼬마 사서" style="right:1cqw;height:60cqh;">
+  </section>
+
+  <!-- ===== SCENE 4: TUTORIAL SUCCESS ===== -->
+  <section class="scene" data-qa-scene="tutorial_success" data-qa-order="4" data-qa-label="튜토리얼 성공">
+    <img class="bg" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
+    <div class="play" style="justify-content:center;">
+      <div class="clock glow" id="tutSuccessClock" style="width:20cqw;max-width:200px;"></div>
+      <div class="bubble" style="margin-top:3cqh;">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
+      <button class="btn pulse" style="margin-top:3cqh;" data-next="type_a_clock_choice">좋아요! 본격적으로 수리하러 가기 →</button>
+    </div>
+    <img class="char" src="assets/character_teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" style="left:1cqw;height:58cqh;">
+    <img class="char" src="assets/character_child_success.png" alt="기쁘게 브이를 그리는 꼬마 사서" style="right:1cqw;height:58cqh;">
+  </section>
+
+  <!-- ===== SCENE 5: TYPE A ===== -->
+  <section class="scene mission" data-qa-scene="type_a_clock_choice" data-qa-order="5" data-qa-label="유형A 시계 맞추기">
+    <img class="bg" src="assets/bg_repair_desk_area.png" alt="도서관 안내 데스크 주변의 밝은 수리 미션 배경">
+    <div class="feedbubble" id="fbA"></div>
+    <div class="play" id="playA"></div>
+    <div class="bubble" id="tchbubA" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <img class="char" id="tchA" src="assets/character_teacher_explaining.png" alt="문제를 안내하는 사서 선생님" style="left:0;height:50cqh;display:none;">
+    <img class="char" id="childA" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
+  </section>
+
+  <!-- ===== SCENE 6: TYPE B ===== -->
+  <section class="scene mission" data-qa-scene="type_b_schedule_restore" data-qa-order="6" data-qa-label="유형B 시간표 복구">
+    <img class="bg" src="assets/bg_reading_class_board.png" alt="코르크 게시판이 있는 독서 교실 도서관 배경">
+    <div class="feedbubble" id="fbB"></div>
+    <div class="play" id="playB"></div>
+    <div class="bubble" id="tchbubB" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <img class="char" id="childB" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
+  </section>
+
+  <!-- ===== SCENE 7: TYPE C ===== -->
+  <section class="scene mission" data-qa-scene="type_c_checkout_reboot" data-qa-order="7" data-qa-label="유형C 대출 시스템 재부팅">
+    <img class="bg" src="assets/bg_checkout_desk.png" alt="도서관 대출 데스크와 책 더미가 있는 시스템 수리 배경">
+    <div class="feedbubble" id="fbC"></div>
+    <div class="play" id="playC"></div>
+    <div class="bubble" id="tchbubC" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <img class="char" id="childC" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
+  </section>
+
+  <!-- ===== SCENE 8: REPAIR COMPLETE ===== -->
+  <section class="scene" data-qa-scene="repair_complete" data-qa-order="8" data-qa-label="수리 완료">
+    <img class="bg" id="rcBgMessy" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
+    <img class="bg" id="rcBgClean" src="assets/bg_clean_library_lobby.png" alt="깨끗하게 정리된 도서관 로비 배경" style="opacity:0;transition:opacity 1.5s;">
+    <div class="play" style="justify-content:center;">
+      <div class="bubble" style="border-color:var(--teal);">해냈다! 시간의 규칙을 모두 풀었어요!</div>
+      <div class="bubble" style="margin-top:1.5cqh;">우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
+      <button class="btn pulse" id="rcBtn" style="margin-top:3cqh;display:none;" data-next="story_gallery">3. 수리 이야기 보러 가기 →</button>
+    </div>
+    <img class="char" src="assets/character_teacher_happy.png" alt="박수치는 사서 선생님" style="left:1cqw;height:56cqh;">
+    <img class="char" src="assets/character_child_success.png" alt="자랑스럽게 성공을 표현하는 꼬마 사서" style="right:1cqw;height:56cqh;">
+  </section>
+
+  <!-- ===== SCENE 9: STORY GALLERY ===== -->
+  <section class="scene" data-qa-scene="story_gallery" data-qa-order="9" data-qa-label="수리 이야기 갤러리">
+    <img class="bg" src="assets/bg_clean_library_lobby.png" alt="깨끗하게 정리된 도서관 로비 배경">
+    <div class="play" style="justify-content:center;padding-top:8cqh;">
+      <div class="book" id="galleryBook">
+        <img src="assets/component_magic_book_body.png" alt="좌우 페이지가 비어 있는 시간의 마법 책">
+        <div class="page-face page-left" id="galLeft"></div>
+        <div class="page-face page-right" id="galRight"></div>
+        <div class="page-num" id="galNum"></div>
+        <button class="g-arrow left" id="galPrev" aria-label="이전 페이지">‹</button>
+        <button class="g-arrow right" id="galNext" aria-label="다음 페이지">›</button>
+      </div>
+    </div>
+    <img class="char" src="assets/character_teacher_explaining.png" alt="이야기를 설명하는 사서 선생님" style="left:0;height:44cqh;">
+  </section>
+
+  <!-- ===== SCENE 10: POPUP QUIZ ===== -->
+  <section class="scene" data-qa-scene="popup_quiz" data-qa-order="10" data-qa-label="마무리 퀴즈">
+    <img class="bg" src="assets/bg_clean_library_lobby.png" alt="깨끗하게 정리된 도서관 로비 배경">
+    <div class="feedbubble" id="fbQ"></div>
+    <div class="play" style="justify-content:center;">
+      <div class="slip">
+        <img src="assets/component_final_quiz_slip.png" alt="마무리 퀴즈용 종이 팝업 표면">
+        <div class="slip-q">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
+        <div class="slip-opts" id="quizOpts"></div>
+      </div>
+      <div class="bubble" id="quizWin" style="margin-top:2cqh;display:none;">맞았어! 24시간은 1일과 같지!</div>
+    </div>
+    <img class="char" src="assets/character_child_success.png" alt="앞으로 튀어나온 꼬마 사서 성공 포즈" id="quizChild" style="right:2cqw;height:52cqh;">
+  </section>
+
+  <!-- ===== SCENE 11: CERTIFICATE ===== -->
+  <section class="scene" data-qa-scene="final_certificate" data-qa-order="11" data-qa-label="마을 수리대원 인증서">
+    <img class="bg" src="assets/bg_clean_library_lobby.png" alt="깨끗하게 정리된 도서관 로비 배경">
+    <div class="play" style="justify-content:center;padding-top:5cqh;">
+      <div class="cert" id="certCard">
+        <img src="assets/certificate_library_repair.png" alt="금빛 테두리의 도서관 수리 모험 인증서 배경">
+        <div class="cert-body">
+          <div class="cert-title">마을 수리대원 인증서 (도서관 편)</div>
+          <div class="cert-text">위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.</div>
+          <div class="cert-rec">
+            <span>맞힌 문제 <b id="certScore">13/13</b></span>
+            <span>클리어 시간 <b id="certTime">00:00</b></span>
+          </div>
+          <button class="btn" id="saveBtn" style="font-size:2.2cqh;padding:1.2cqh 2.4cqw;margin-top:1cqh;">📷 내 사진첩에 저장하기</button>
+        </div>
+      </div>
+      <div class="row-mid" style="margin-top:2cqh;">
+        <div class="bubble" style="max-width:36cqw;font-size:2.2cqh;">정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
+        <div class="bubble" style="max-width:36cqw;font-size:2.2cqh;border-color:var(--teal);">언제든 제 수학실력이 필요하면 불러주세요!</div>
+      </div>
+      <button class="btn pulse" id="nextLessonBtn" style="margin-top:2cqh;font-size:2.5cqh;">마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →</button>
+    </div>
+    <img class="char" src="assets/character_teacher_happy.png" alt="기뻐하는 사서 선생님" style="left:0;height:42cqh;">
+    <img class="char" src="assets/character_child_success.png" alt="성공을 표현하는 꼬마 사서" style="right:0;height:42cqh;">
+  </section>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud">
+    <div class="hamburger" id="hamBtn" role="button" aria-label="차시 메뉴 열기"><span></span><span></span><span></span></div>
+    <div class="energy-wrap">
+      <div class="energy-label"><span>⚡ 수리 에너지</span><span id="egyPct">0%</span></div>
+      <div class="energy-track"><div class="energy-fill" id="egyFill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== SLIDE MENU ===== -->
+  <div id="menu">
+    <div class="backdrop" id="menuBack"></div>
+    <div class="panel">
+      <button class="close" id="menuClose" aria-label="닫기">✕</button>
+      <h3>차시 목록</h3>
+      <ul id="menuList"></ul>
+    </div>
+  </div>
+
+  <!-- ===== KEYPAD ===== -->
+  <div id="keypad"><div class="kp"><div class="grid" id="kpGrid"></div></div></div>
+
+  <!-- ===== OVERLAY / TOAST ===== -->
+  <div class="overlay-msg" id="ovl"><div class="overlay-card" id="ovlCard"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+"use strict";
+(function(){
+  const $ = s => document.querySelector(s);
+  const stage = $('#stage');
+  const SCENES = ['title_start','intro_problem','tutorial_clock_reading','tutorial_success',
+    'type_a_clock_choice','type_b_schedule_restore','type_c_checkout_reboot','repair_complete',
+    'story_gallery','popup_quiz','final_certificate'];
+  const sceneEl = id => stage.querySelector('.scene[data-qa-scene="'+id+'"]');
+
+  /* ---------- simple WebAudio sfx ---------- */
+  let actx=null;
+  function tone(freq,dur,type,when,vol){
+    try{
+      if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type=type||'sine'; o.frequency.value=freq;
+      const t=actx.currentTime+(when||0);
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol||0.18,t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+(dur||0.15));
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t+(dur||0.15)+0.02);
+    }catch(e){}
+  }
+  const sfxCorrect=()=>{tone(660,.14,'sine',0);tone(880,.14,'sine',.13);tone(1100,.22,'sine',.26);};
+  const sfxWrong=()=>{tone(200,.22,'square',0,.14);};
+  const sfxClick=()=>{tone(520,.08,'triangle',0,.12);};
+  const sfxSnap=()=>{tone(720,.07,'triangle',0,.14);tone(900,.07,'triangle',.05,.12);};
+  const sfxStart=()=>{tone(523,.12,'sine',0);tone(659,.12,'sine',.1);tone(784,.2,'sine',.2);};
+
+  /* ---------- energy ---------- */
+  let solvedMissions = 0;   // 0..12
+  let tutorialDone = false;
+  let quizDone = false;
+  let energyPct = 0;
+  function computeEnergy(){
+    let e = tutorialDone ? 10 : 0;
+    e += solvedMissions * (80/12);
+    if(quizDone) e = 100;
+    return Math.min(100, Math.round(e));
+  }
+  function refreshEnergy(flash){
+    energyPct = computeEnergy();
+    const fill=$('#egyFill');
+    fill.style.width = energyPct+'%';
+    $('#egyPct').textContent = energyPct+'%';
+    if(flash){ fill.classList.remove('flash'); void fill.offsetWidth; fill.classList.add('flash'); }
+  }
+
+  /* ---------- clock builder ---------- */
+  function buildClock(el, h, m, opts){
+    opts = opts||{};
+    el.innerHTML='';
+    el.classList.add('clock');
+    const img=document.createElement('img');
+    img.src='assets/component_analog_clock_body.png';
+    img.alt = opts.alt || (h==null ? '바늘 없는 도서관 아날로그 시계' : h+'시 '+m+'분을 가리키는 시계');
+    el.appendChild(img);
+    if(opts.question){
+      const q=document.createElement('div'); q.className='qmark'; q.textContent='?'; el.appendChild(q); return el;
+    }
+    const hourDeg=((h%12)+m/60)*30;
+    const minDeg=m*6;
+    const hh=document.createElement('div'); hh.className='hand hour'; hh.style.transform='translateX(-50%) rotate('+hourDeg+'deg)';
+    const mm=document.createElement('div'); mm.className='hand min'; mm.style.transform='translateX(-50%) rotate('+minDeg+'deg)';
+    const cap=document.createElement('div'); cap.className='cap';
+    el.appendChild(hh); el.appendChild(mm); el.appendChild(cap);
+    return el;
+  }
+
+  /* ---------- pointer drag helper ---------- */
+  function enableDrag(handle, makeGhost, onDrop){
+    handle.addEventListener('pointerdown', function(e){
+      e.preventDefault();
+      const ghost = makeGhost(handle);
+      ghost.classList.add('drag-ghost');
+      document.body.appendChild(ghost);
+      const move = ev=>{ ghost.style.left=ev.clientX+'px'; ghost.style.top=ev.clientY+'px'; };
+      move(e);
+      const up = ev=>{
+        document.removeEventListener('pointermove',move);
+        document.removeEventListener('pointerup',up);
+        ghost.style.display='none';
+        const tgt = document.elementFromPoint(ev.clientX, ev.clientY);
+        ghost.remove();
+        onDrop(tgt, handle);
+      };
+      document.addEventListener('pointermove',move);
+      document.addEventListener('pointerup',up);
+    });
+  }
+
+  /* ---------- feedback ---------- */
+  const FB={type_a_clock_choice:'#fbA',type_b_schedule_restore:'#fbB',type_c_checkout_reboot:'#fbC',popup_quiz:'#fbQ'};
+  function showFeedback(scene, ok, textOverride){
+    const fb=$(FB[scene]); if(!fb) return;
+    fb.className='feedbubble'+(ok?' ok':'')+' show';
+    fb.textContent = textOverride || (ok?'딩동댕! 정답이에요 ✨':'다시 생각해보세요');
+    setTimeout(()=>fb.classList.remove('show'), ok?1200:1400);
+  }
+  const CHILD={type_a_clock_choice:'#childA',type_b_schedule_restore:'#childB',type_c_checkout_reboot:'#childC'};
+  function setChild(scene, pose){
+    const el=$(CHILD[scene]); if(!el) return;
+    const map={idle:'character_child_idle.png',success:'character_child_success.png',confused:'character_child_confused.png'};
+    el.src='assets/'+map[pose];
+    if(pose!=='idle') setTimeout(()=>{ const e2=$(CHILD[scene]); if(e2) e2.src='assets/character_child_idle.png'; }, 1400);
+  }
+
+  /* ================= MISSION DATA ================= */
+  const MISSION = {
+    type_a_clock_choice:{
+      teacher:"전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?",
+      qs:[
+        {sign:'3시 5분 전', prompt:'전광판에 3시 5분 전이라고 적혀 있어요. 같은 시각을 가리키는 시계는?',
+         opts:[{label:'2시 55분',h:2,m:55},{label:'3시 5분',h:3,m:5},{label:'3시 55분',h:3,m:55}], ans:0},
+        {sign:'11시 50분', prompt:'멈춰버린 시계가 11시 50분을 가리키고 있어요. 같은 시각은?',
+         opts:[{label:'11시 10분 전',h:10,m:50},{label:'12시 10분 전',h:11,m:50},{label:'12시 50분 전',h:11,m:10}], ans:1},
+        {sign:'8시 15분 전', prompt:'다음 중 8시 15분 전을 가리키는 시계는 어느 것인가요?',
+         opts:[{label:'7시 45분',h:7,m:45},{label:'8시 15분',h:8,m:15},{label:'8시 45분',h:8,m:45}], ans:0},
+        {sign:'4시 55분', prompt:'시계가 4시 55분에 멈췄어요. 같은 시각을 나타내는 것은?',
+         opts:[{label:'4시 5분 전',h:3,m:55},{label:'5시 5분 전',h:4,m:55},{label:'5시 55분 전',h:4,m:5}], ans:1}
+      ]
+    },
+    type_b_schedule_restore:{
+      teacher:"독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?",
+      qs:[
+        {type:'keypad', text:'첫 번째 독서 교실은 8시에 시작해서 9시에 끝났어요. 걸린 시간은 얼마인가요?',
+         start:[8,0], end:[9,0], blanks:[{ans:1,suf:'시간'}]},
+        {type:'keypad', text:'두 번째 독서 교실은 11시 30분에 시작해서 30분 동안 진행돼요. 끝나는 시각은 언제일까요?',
+         start:[11,30], end:'q', blanks:[{ans:12,suf:'시'},{ans:0,suf:'분'}]},
+        {type:'choice', text:'책 정리 봉사활동을 오후 2시에 시작해서 1시간 동안 했어요. 끝난 시각은?',
+         start:[2,0], opts:['오후 2시 30분','오후 3시','오후 4시'], ans:1},
+        {type:'keypad', text:'꼬마 사서가 4시 30분부터 5시까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?',
+         start:[4,30], end:[5,0], blanks:[{ans:30,suf:'분'}]}
+      ]
+    },
+    type_c_checkout_reboot:{
+      teacher:"도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!",
+      qs:[
+        {type:'blocks', text:'24시간은 며칠과 같을까요?', segs:['24시간 = ',0,'일'], ans:[1]},
+        {type:'blocks', text:'하루는 오전 몇 시간과 오후 몇 시간으로 이루어져 있어요.', segs:['오전 ',0,1,'시간, 오후 ',2,3,'시간'], ans:[1,2,1,2]},
+        {type:'choice', text:'오늘 오후 3시에 책을 빌렸어요. 하루가 지나면 내일 언제일까요?', opts:['오전 3시','오후 3시','오후 4시'], ans:1},
+        {type:'blocks', text:'이 마법 책은 딱 1일 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?', segs:['1일 = ',0,1,'시간'], ans:[2,4]}
+      ]
+    }
+  };
+  const MISSION_ORDER=['type_a_clock_choice','type_b_schedule_restore','type_c_checkout_reboot'];
+  const PLAY={type_a_clock_choice:'#playA',type_b_schedule_restore:'#playB',type_c_checkout_reboot:'#playC'};
+  const TBUB={type_a_clock_choice:'#tchbubA',type_b_schedule_restore:'#tchbubB',type_c_checkout_reboot:'#tchbubC'};
+  const qIndex = {type_a_clock_choice:0,type_b_schedule_restore:0,type_c_checkout_reboot:0};
+  const wrongCount = {};
+
+  /* ---------- render mission ---------- */
+  function renderMission(scene){
+    const data=MISSION[scene];
+    const idx=qIndex[scene];
+    const q=data.qs[idx];
+    const play=$(PLAY[scene]);
+    play.innerHTML='';
+    const bub=$(TBUB[scene]);
+    const tch = scene==='type_a_clock_choice' ? $('#tchA') : null;
+    if(idx===0){
+      bub.textContent=data.teacher; bub.style.display='block'; if(tch) tch.style.display='block';
+      setTimeout(()=>{ if(bub) bub.style.display='none'; if(tch) tch.style.display='none'; }, 5200);
+    } else { bub.style.display='none'; if(tch) tch.style.display='none'; }
+
+    const total=12;
+    const done=MISSION_ORDER.slice(0,MISSION_ORDER.indexOf(scene)).reduce((a,s)=>a+MISSION[s].qs.length,0)+idx+1;
+    const prog=document.createElement('div');
+    prog.style.cssText='font-size:2.2cqh;font-weight:800;color:var(--wood-d);background:rgba(255,255,255,.85);padding:.5cqh 1.4cqw;border-radius:1.4cqh;align-self:center;';
+    prog.textContent='수리 문제 '+done+' / '+total;
+    play.appendChild(prog);
+
+    if(scene==='type_a_clock_choice') renderTypeA(play,scene,q,idx);
+    else if(q.type==='keypad') renderKeypadQ(play,scene,q,idx);
+    else if(q.type==='choice') renderChoiceQ(play,scene,q,idx);
+    else if(q.type==='blocks') renderBlocksQ(play,scene,q,idx);
+  }
+
+  function afterCorrect(scene){
+    solvedMissions=Math.min(12, solvedMissions+1);
+    refreshEnergy(true);
+    setChild(scene,'success');
+    sfxCorrect();
+  }
+  function advance(scene){
+    qIndex[scene]++;
+    if(qIndex[scene] < MISSION[scene].qs.length){ setTimeout(()=>renderMission(scene), 950); }
+    else {
+      const ni=MISSION_ORDER.indexOf(scene)+1;
+      if(ni<MISSION_ORDER.length) setTimeout(()=>goScene(MISSION_ORDER[ni]), 1000);
+      else setTimeout(()=>goScene('repair_complete'), 1000);
+    }
+  }
+
+  /* ---- Type A: clock choice ---- */
+  function renderTypeA(play,scene,q,idx){
+    const sign=document.createElement('div'); sign.className='sign';
+    sign.innerHTML='<img src="assets/component_electronic_sign_body.png" alt="문제 문장을 표시한 도서관 전광판">'+
+      '<div class="sign-text"><div class="sign-broken">📟 '+q.sign+'</div><div class="sign-sub">— 전광판 시각 —</div></div>';
+    play.appendChild(sign);
+    const prompt=document.createElement('div'); prompt.className='prompt'; prompt.textContent=q.prompt; play.appendChild(prompt);
+    const opts=document.createElement('div'); opts.className='options';
+    const key=scene+idx; wrongCount[key]=wrongCount[key]||0;
+    q.opts.forEach((o,i)=>{
+      const c=document.createElement('div'); c.className='opt-clock';
+      const cl=document.createElement('div'); cl.style.width='100%'; buildClock(cl,o.h,o.m,{alt:o.label+' 시계'});
+      const lb=document.createElement('div'); lb.className='opt-label'; lb.textContent=o.label;
+      c.appendChild(cl); c.appendChild(lb);
+      c.addEventListener('click',()=>{
+        c.classList.add('pick');
+        if(i===q.ans){ cl.classList.add('glow'); showFeedback(scene,true); afterCorrect(scene); disableOpts(opts); advance(scene); }
+        else{
+          wrongCount[key]++; sfxWrong(); c.classList.add('shake'); setChild(scene,'confused'); showFeedback(scene,false);
+          setTimeout(()=>c.classList.remove('shake','pick'),500);
+          if(wrongCount[key]>=3){
+            opts.children[q.ans].querySelector('.clock').classList.add('redblink');
+            disableOpts(opts);
+            solvedMissions=Math.min(12,solvedMissions+1); refreshEnergy(true);
+            setTimeout(()=>advance(scene),1500);
+          }
+        }
+      });
+      opts.appendChild(c);
+    });
+    play.appendChild(opts);
+  }
+  function disableOpts(opts){ [...opts.children].forEach(c=>c.style.pointerEvents='none'); }
+
+  /* ---- keypad questions ---- */
+  let activeBlank=null;
+  function renderKeypadQ(play,scene,q,idx){
+    const prompt=document.createElement('div'); prompt.className='prompt'; prompt.textContent=q.text; play.appendChild(prompt);
+    const row=document.createElement('div'); row.className='clockrow';
+    row.appendChild(clockCol(q.start[0],q.start[1],'시작'));
+    const arr=document.createElement('div'); arr.className='arrow'; arr.innerHTML='<div class="a">➜</div>'; row.appendChild(arr);
+    if(q.end){
+      if(q.end==='q') row.appendChild(clockColQ('끝'));
+      else row.appendChild(clockCol(q.end[0],q.end[1],'끝'));
+    }
+    play.appendChild(row);
+    const bb=document.createElement('div'); bb.className='blankbox';
+    q.blanks.forEach((b,i)=>{
+      const bl=document.createElement('span'); bl.className='blank'; bl.dataset.val=''; bl.textContent='?';
+      bl.addEventListener('click',()=>{ selectBlank(bl,bb); openKeypad(); });
+      bb.appendChild(bl);
+      const suf=document.createElement('span'); suf.textContent=' '+b.suf+(i<q.blanks.length-1?'  ':''); bb.appendChild(suf);
+    });
+    play.appendChild(bb);
+    const cr=document.createElement('div'); cr.className='confirm-row';
+    const confirm=document.createElement('button'); confirm.className='btn'; confirm.style.fontSize='2.6cqh'; confirm.textContent='확인하기';
+    confirm.addEventListener('click',()=>{
+      const blanks=[...bb.querySelectorAll('.blank')];
+      if(blanks.some(x=>x.dataset.val==='')){ showFeedback(scene,false,'빈칸을 모두 채워주세요'); return; }
+      const ok=blanks.every((x,i)=>Number(x.dataset.val)===q.blanks[i].ans);
+      if(ok){ showFeedback(scene,true); afterCorrect(scene); confirm.disabled=true; blanks.forEach(x=>x.classList.add('glow')); advance(scene); }
+      else{ sfxWrong(); bb.classList.add('shake'); setChild(scene,'confused'); showFeedback(scene,false); setTimeout(()=>bb.classList.remove('shake'),500); }
+    });
+    cr.appendChild(confirm); play.appendChild(cr);
+  }
+  function clockCol(h,m,label){
+    const w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;align-items:center;gap:.6cqh;';
+    const c=document.createElement('div'); c.className='clock'; buildClock(c,h,m); w.appendChild(c);
+    const l=document.createElement('div'); l.style.cssText='font-size:2.2cqh;font-weight:800;color:var(--ink-soft);background:rgba(255,255,255,.8);padding:.2cqh 1cqw;border-radius:1cqh;'; l.textContent=label; w.appendChild(l);
+    return w;
+  }
+  function clockColQ(label){
+    const w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;align-items:center;gap:.6cqh;';
+    const c=document.createElement('div'); c.className='clock'; buildClock(c,null,null,{question:true}); w.appendChild(c);
+    const l=document.createElement('div'); l.style.cssText='font-size:2.2cqh;font-weight:800;color:var(--ink-soft);background:rgba(255,255,255,.8);padding:.2cqh 1cqw;border-radius:1cqh;'; l.textContent=label; w.appendChild(l);
+    return w;
+  }
+  function selectBlank(bl,bb){ [...bb.querySelectorAll('.blank')].forEach(x=>x.classList.remove('sel')); bl.classList.add('sel'); activeBlank=bl; }
+  function openKeypad(){ $('#keypad').classList.add('show'); }
+  function closeKeypad(){ $('#keypad').classList.remove('show'); }
+  function buildKeypad(){
+    const g=$('#kpGrid'); g.innerHTML='';
+    ['1','2','3','4','5','6','7','8','9','지우기','0','확인'].forEach(k=>{
+      const b=document.createElement('div'); b.className='key'; b.textContent=k;
+      if(k==='확인') b.classList.add('act');
+      b.addEventListener('click',()=>{
+        sfxClick();
+        if(k==='지우기'){ if(activeBlank){ activeBlank.dataset.val=''; activeBlank.textContent='?'; activeBlank.classList.remove('filled'); } }
+        else if(k==='확인'){ closeKeypad(); }
+        else if(activeBlank){
+          let cur=activeBlank.dataset.val;
+          cur = (cur.length>=2) ? k : (cur+k);
+          if(cur.length>1 && cur[0]==='0') cur=cur.slice(1);
+          activeBlank.dataset.val=cur; activeBlank.textContent=cur; activeBlank.classList.add('filled');
+        }
+      });
+      g.appendChild(b);
+    });
+  }
+
+  /* ---- choice text ---- */
+  function renderChoiceQ(play,scene,q,idx){
+    const prompt=document.createElement('div'); prompt.className='prompt'; prompt.textContent=q.text; play.appendChild(prompt);
+    if(q.start){ const row=document.createElement('div'); row.className='clockrow'; row.appendChild(clockCol(q.start[0],q.start[1],'시작')); play.appendChild(row); }
+    const opts=document.createElement('div'); opts.className='options';
+    q.opts.forEach((o,i)=>{
+      const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
+      b.addEventListener('click',()=>{
+        if(i===q.ans){ b.classList.add('glow'); b.style.borderColor='var(--green)'; showFeedback(scene,true); afterCorrect(scene); [...opts.children].forEach(x=>x.disabled=true); advance(scene); }
+        else{ sfxWrong(); b.classList.add('shake'); setChild(scene,'confused'); showFeedback(scene,false); setTimeout(()=>b.classList.remove('shake'),500); }
+      });
+      opts.appendChild(b);
+    });
+    play.appendChild(opts);
+  }
+
+  /* ---- number blocks ---- */
+  let selDigit=null;
+  function renderBlocksQ(play,scene,q,idx){
+    const mon=document.createElement('div'); mon.className='monitor';
+    mon.innerHTML='<img src="assets/component_checkout_monitor_body.png" alt="대출 시스템 모니터 몸체">';
+    const screen=document.createElement('div'); screen.className='mon-screen';
+    const t=document.createElement('div'); t.className='mon-text'; t.textContent=q.text; screen.appendChild(t);
+    const tl=document.createElement('div'); tl.className='timeline';
+    const am=document.createElement('div'); am.className='tl am'; am.textContent='오전 1~12시';
+    const pm=document.createElement('div'); pm.className='tl pm'; pm.textContent='오후 1~12시';
+    tl.appendChild(am); tl.appendChild(pm); screen.appendChild(tl);
+    const seg=document.createElement('div'); seg.className='blankbox'; seg.style.color='#eafcfc'; seg.style.fontSize='2.7cqh';
+    const blanks=[];
+    q.segs.forEach(s=>{
+      if(typeof s==='string'){ const sp=document.createElement('span'); sp.textContent=s; seg.appendChild(sp); }
+      else{
+        const bl=document.createElement('span'); bl.className='blk-blank'; bl.dataset.val=''; bl.dataset.slot=s;
+        bl.addEventListener('click',()=>{ if(selDigit!==null) fillBlank(bl,selDigit,q,scene,blanks); else if(bl.dataset.val!==''){ bl.dataset.val=''; bl.textContent=''; bl.classList.remove('filled'); } });
+        seg.appendChild(bl); blanks[s]=bl;
+      }
+    });
+    screen.appendChild(seg);
+    mon.appendChild(screen);
+    play.appendChild(mon);
+    const pal=document.createElement('div'); pal.className='palette';
+    for(let d=0;d<=9;d++){
+      const dg=document.createElement('div'); dg.className='digit'; dg.textContent=d; dg.dataset.d=d;
+      dg.addEventListener('click',()=>{ pal.querySelectorAll('.digit').forEach(x=>x.classList.remove('sel')); dg.classList.add('sel'); selDigit=d; });
+      enableDrag(dg, h=>{ const cs=getComputedStyle(h); const g=h.cloneNode(true); g.style.width=cs.width; g.style.height=cs.height; return g; },
+        (tgt)=>{ const bl=(tgt&&tgt.closest)?tgt.closest('.blk-blank'):null; if(bl) fillBlank(bl,Number(dg.dataset.d),q,scene,blanks); });
+      pal.appendChild(dg);
+    }
+    play.appendChild(pal);
+    const hint=document.createElement('div'); hint.style.cssText='font-size:2cqh;font-weight:700;color:var(--wood-d);background:rgba(255,255,255,.8);padding:.4cqh 1.4cqw;border-radius:1.2cqh;';
+    hint.textContent='숫자 블록을 끌어다 놓거나, 블록을 누른 뒤 빈칸을 누르세요';
+    play.appendChild(hint);
+  }
+  function fillBlank(bl,d,q,scene,blanks){
+    sfxSnap(); bl.dataset.val=String(d); bl.textContent=d; bl.classList.add('filled');
+    selDigit=null; document.querySelectorAll('.digit.sel').forEach(x=>x.classList.remove('sel'));
+    const filled=q.ans.every((_,i)=> blanks[i] && blanks[i].dataset.val!=='');
+    if(!filled) return;
+    const ok=q.ans.every((a,i)=> Number(blanks[i].dataset.val)===a);
+    if(ok){
+      const screen=$(PLAY[scene]).querySelector('.mon-screen');
+      screen.classList.add('on');
+      const msg=document.createElement('div'); msg.className='reboot-msg'; msg.textContent='✅ 시스템 재부팅 완료!'; screen.appendChild(msg);
+      showFeedback(scene,true); afterCorrect(scene); advance(scene);
+    } else {
+      sfxWrong(); showFeedback(scene,false); setChild(scene,'confused');
+      q.ans.forEach((a,i)=>{ if(Number(blanks[i].dataset.val)!==a){ blanks[i].classList.add('shake'); const b=blanks[i]; setTimeout(()=>{ b.classList.remove('shake','filled'); b.dataset.val=''; b.textContent=''; },500); } });
+    }
+  }
+
+  /* ================= TUTORIAL ================= */
+  function setupTutorial(){
+    const slot=$('#tutSlot'); const cards=$('#tutCards');
+    buildClock($('#tutClock'),3,0);
+    slot.textContent='?'; slot.classList.remove('filled'); slot.dataset.done='';
+    $('#tutClock').classList.remove('glow');
+    cards.innerHTML='';
+    [{t:'3시',v:3},{t:'4시',v:4},{t:'5시',v:5}].forEach(c=>{
+      const card=document.createElement('div'); card.className='opt-btn'; card.textContent=c.t; card.style.minWidth='15cqw'; card.style.cursor='grab'; card.style.touchAction='none';
+      enableDrag(card, h=>{ const g=h.cloneNode(true); g.style.minWidth=getComputedStyle(h).width; return g; },
+        (tgt)=>{
+          const onSlot=(tgt&&tgt.closest)?tgt.closest('#tutSlot'):null;
+          if(onSlot){
+            if(c.v===3){ slot.textContent='3시'; slot.classList.add('filled'); slot.dataset.done='1'; sfxCorrect(); buildClock($('#tutClock'),3,0); $('#tutClock').classList.add('glow');
+              setTimeout(()=>{ tutorialDone=true; refreshEnergy(true); goScene('tutorial_success'); }, 900);
+            } else { sfxWrong(); card.classList.add('shake'); setTimeout(()=>card.classList.remove('shake'),500); }
+          }
+        });
+      cards.appendChild(card);
+    });
+  }
+
+  /* ================= REPAIR COMPLETE ================= */
+  function playRepair(){
+    $('#rcBgClean').style.opacity='0'; $('#rcBtn').style.display='none';
+    spawnParticles(sceneEl('repair_complete'),40);
+    setTimeout(()=>{ $('#rcBgClean').style.opacity='1'; }, 900);
+    setTimeout(()=>{ $('#rcBtn').style.display='inline-block'; }, 2600);
+  }
+  function spawnParticles(scene,n){
+    for(let i=0;i<n;i++){
+      const p=document.createElement('div'); p.className='particle';
+      p.style.left=(Math.random()*90+5)+'%'; p.style.top=(Math.random()*70+5)+'%';
+      p.style.background=Math.random()<.5?'#ffcf3f':'#fff2b0';
+      p.style.animation='floatUp '+(1.2+Math.random()*1.5)+'s ease '+(Math.random()*0.8)+'s forwards';
+      scene.appendChild(p);
+      setTimeout(()=>p.remove(),3600);
+    }
+  }
+
+  /* ================= GALLERY ================= */
+  const GAL=[
+    {img:'gallery_24h_store.png',alt:'큰 숫자 24 간판이 있는 편의점 삽화', text:'우리 동네 편의점 간판에 왜 24가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!'},
+    {img:'gallery_sundial.png',alt:'해시계와 그림자가 보이는 역사 삽화', text:'시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!'},
+    {img:'gallery_oven_timer.png',alt:'오븐과 30분 타이머 삽화', text:'오븐에 빵을 넣고 30분 후에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.'}
+  ];
+  let galPage=0;
+  function renderGallery(){
+    const g=GAL[galPage];
+    $('#galLeft').innerHTML='<img src="assets/'+g.img+'" alt="'+g.alt+'">';
+    $('#galRight').innerHTML='<p>'+g.text+'</p>';
+    $('#galNum').textContent=(galPage+1)+' / '+GAL.length;
+    $('#galPrev').disabled = galPage===0;
+    $('#galNext').textContent = galPage===GAL.length-1 ? '퀴즈 ▶' : '›';
+  }
+
+  /* ================= POPUP QUIZ ================= */
+  function setupQuiz(){
+    const opts=$('#quizOpts'); opts.innerHTML=''; $('#quizWin').style.display='none';
+    [{t:'1일',ok:true},{t:'1시간',ok:false},{t:'24일',ok:false}].forEach(o=>{
+      const b=document.createElement('div'); b.className='slip-opt'; b.textContent=o.t;
+      b.addEventListener('click',()=>{
+        if(o.ok){
+          b.classList.add('glow'); showFeedback('popup_quiz',true,'딩동댕! 정답이에요 ✨'); sfxCorrect();
+          $('#quizWin').style.display='block';
+          quizDone=true; refreshEnergy(true);
+          spawnParticles(sceneEl('popup_quiz'),30);
+          [...opts.children].forEach(x=>x.style.pointerEvents='none');
+          setTimeout(()=>goScene('final_certificate'), 2200);
+        } else { sfxWrong(); b.classList.add('shake'); showFeedback('popup_quiz',false); setTimeout(()=>b.classList.remove('shake'),500); }
+      });
+      opts.appendChild(b);
+    });
+  }
+
+  /* ================= CERTIFICATE ================= */
+  let startTime=null;
+  function fmtTime(ms){ const s=Math.max(0,Math.floor(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+  function showCertificate(){
+    if(startTime) $('#certTime').textContent=fmtTime(Date.now()-startTime);
+    $('#certScore').textContent='13/13';
+    spawnParticles(sceneEl('final_certificate'),50);
+  }
+  function saveCertificate(){
+    try{
+      const img=sceneEl('final_certificate').querySelector('.cert>img');
+      const cv=document.createElement('canvas'); cv.width=1536; cv.height=1024;
+      const ctx=cv.getContext('2d');
+      ctx.drawImage(img,0,0,1536,1024);
+      ctx.textAlign='center';
+      ctx.fillStyle='#8a5a2c'; ctx.font='900 70px sans-serif'; ctx.fillText('마을 수리대원 인증서 (도서관 편)',768,320);
+      ctx.fillStyle='#4a3418'; ctx.font='700 38px sans-serif';
+      ctx.fillText('위 대원은 정확한 시간 계산으로 도서관 안내문을',768,440);
+      ctx.fillText('완벽하게 수리하였기에 이 증서를 수여합니다.',768,500);
+      ctx.fillStyle='#20808a'; ctx.font='800 42px sans-serif';
+      ctx.fillText('맞힌 문제 '+$('#certScore').textContent+'   ·   클리어 시간 '+$('#certTime').textContent,768,630);
+      const url=cv.toDataURL('image/png');
+      const a=document.createElement('a'); a.href=url; a.download='마을수리대원_인증서.png'; document.body.appendChild(a); a.click(); a.remove();
+      toast('인증서가 저장되었어요! 📷');
+    }catch(e){ toast('인증서를 저장했어요! 📷'); }
+  }
+
+  /* ================= SCENE MGMT ================= */
+  function activate(id){
+    stage.querySelectorAll('.scene').forEach(s=>s.classList.toggle('active', s.dataset.qaScene===id));
+    $('#hud').classList.toggle('show', id!=='title_start');
+    if(id==='intro_problem'){ buildClock($('#introClock'),10,10,{alt:'빠르게 회전하는 고장 난 시계'}); $('#introClock').classList.add('spin'); refreshEnergy(); }
+    else if(id==='tutorial_clock_reading'){ setupTutorial(); refreshEnergy(); }
+    else if(id==='tutorial_success'){ buildClock($('#tutSuccessClock'),3,0); $('#tutSuccessClock').classList.add('glow'); refreshEnergy(true); }
+    else if(MISSION[id]){ const c=$(CHILD[id]); if(c) c.src='assets/character_child_idle.png'; renderMission(id); refreshEnergy(); }
+    else if(id==='repair_complete'){ solvedMissions=12; refreshEnergy(true); playRepair(); }
+    else if(id==='story_gallery'){ galPage=0; renderGallery(); refreshEnergy(); }
+    else if(id==='popup_quiz'){ setupQuiz(); refreshEnergy(); }
+    else if(id==='final_certificate'){ showCertificate(); refreshEnergy(true); }
+    else refreshEnergy();
+  }
+  function goScene(id){ activate(id); }
+
+  window.__contentHarnessShowScene = function(id){
+    if(SCENES.indexOf(id)<0) return;
+    const baseSolved={type_a_clock_choice:0,type_b_schedule_restore:4,type_c_checkout_reboot:8,repair_complete:12,story_gallery:12,popup_quiz:12,final_certificate:12};
+    tutorialDone = SCENES.indexOf(id) >= SCENES.indexOf('tutorial_success');
+    quizDone = (id==='final_certificate');
+    if(id in baseSolved) solvedMissions=baseSolved[id];
+    else if(SCENES.indexOf(id)<SCENES.indexOf('type_a_clock_choice')) solvedMissions=0;
+    if(MISSION[id]) qIndex[id]=0;
+    if(!startTime) startTime=Date.now();
+    activate(id);
+  };
+
+  function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+  function overlay(html){ $('#ovlCard').innerHTML=html; $('#ovl').classList.add('show'); }
+
+  /* ================= WIRING ================= */
+  document.addEventListener('DOMContentLoaded', ()=>{
+    buildKeypad();
+    const ml=$('#menuList');
+    for(let i=1;i<=10;i++){
+      const li=document.createElement('li');
+      li.textContent=i+'차시'+(i===8?' · 시간 (지금 여기)':'');
+      if(i===8) li.classList.add('cur');
+      ml.appendChild(li);
+    }
+    $('#startBtn').addEventListener('click',()=>{ sfxStart(); startTime=Date.now(); goScene('intro_problem'); });
+    stage.querySelectorAll('[data-next]').forEach(b=> b.addEventListener('click',()=>{ sfxClick(); goScene(b.dataset.next); }));
+    $('#hamBtn').addEventListener('click',()=>{ sfxClick(); $('#menu').classList.add('show'); });
+    $('#menuClose').addEventListener('click',()=>$('#menu').classList.remove('show'));
+    $('#menuBack').addEventListener('click',()=>$('#menu').classList.remove('show'));
+    $('#keypad').addEventListener('click',e=>{ if(e.target.id==='keypad') closeKeypad(); });
+    $('#galPrev').addEventListener('click',()=>{ if(galPage>0){ galPage--; sfxClick(); renderGallery(); } });
+    $('#galNext').addEventListener('click',()=>{ sfxClick(); if(galPage<GAL.length-1){ galPage++; renderGallery(); } else goScene('popup_quiz'); });
+    $('#saveBtn').addEventListener('click',saveCertificate);
+    $('#nextLessonBtn').addEventListener('click',()=>{ sfxClick(); overlay('<div>🎉 도서관 수리 완료!</div><div style="font-size:2.2cqh;font-weight:700;margin-top:1.4cqh;color:var(--ink-soft);">다음 미션 <b>「마을 공원 의자 만들기」</b>는<br>곧 만나요!</div><button class="btn" onclick="document.getElementById(\'ovl\').classList.remove(\'show\')">닫기</button>'); });
+    activate('title_start');
+  });
+})();
+</script>
+</body>
+</html>

@@ -14,23 +14,35 @@
 1. 입력으로 들어온 문제를 먼저 읽습니다. `DESIGN_REFINE_PACKET_JSON.scene_reviews`, `priority_findings`, `refine_suggestions`, `reviewed_screenshots`를 대조해 어느 scene에서 무엇을 고쳐야 하는지 파악합니다.
 2. 기존 `output/index.html` 코드베이스를 확인합니다. scene root, `data-qa-scene`, 관련 CSS class, asset 배치, 이벤트 핸들러, DOM id/data attribute를 먼저 찾고 어떤 구조를 보존해야 하고 어떤 구조를 바꿔야 하는지 판단합니다.
 3. scene별로 수정합니다. 각 scene_id/capture_label에 해당하는 화면에서 review가 지적한 문제와 제안을 해결하되, 입력에 없는 고정 축 순서로 기계적으로 고치지 않습니다. high severity와 사용자가 실제로 보는 desktop 문제를 먼저 처리합니다.
-4. 각 scene_reviews[].creative_direction은 해당 scene에만 적용합니다. recommendation_level이 "none"이면 큰 컨셉 변경을 하지 말고 findings 중심으로 고칩니다. "light"이면 기존 asset/style 안에서 소폭 강화합니다. "strong"일 때만 scene metaphor와 화면 언어를 크게 재구성합니다.
+4. 각 scene_reviews[].creative_direction은 해당 scene에만 적용합니다. recommendation_level이 "none"이면 큰 컨셉 변경을 하지 말고 findings 중심으로 고칩니다. "light"이면 기존 asset/style 안에서 소폭 강화합니다. "strong"일 때만 scene metaphor와 화면 언어를 크게 재구성합니다. 단, recommendation_level의 none/light는 "scene 컨셉/은유를 새로 만들지 말라"는 뜻이며, 같은 scene에 high severity finding이 남아 있으면 그 finding을 해결하는 데 필요한 DOM 구조 변경까지 막는 것은 아닙니다. none/light여도 high finding은 반드시 해결합니다.
 5. 각 finding의 `target`을 우선 수정 대상으로 삼습니다. `target`은 selector, id/class, asset, screenshot 좌표, safe zone, crop/object-position 지시일 수 있습니다. scene_reviews[].text_review는 텍스트 배치 기준으로 사용합니다. hero/mission text는 장면 속 큰 표면으로, asset-internal text는 슬롯/칸/화면 안으로, action/feedback text는 티켓/표지판/상태창/말풍선/보상판 같은 장면 속 물건으로 흡수합니다.
 6. HTML을 저장한 뒤 가능한 경우 Playwright preview를 찍어 수정본을 자체 확인합니다. `design_refine_preview` screenshot에서 scene별 제안이 충분히 반영됐는지, 텍스트가 경계에 걸치지 않는지, 배경/asset/UI가 겹치지 않는지 확인합니다.
 7. preview에서 미흡한 사항이 보이면 같은 target HTML을 다시 수정하고 preview를 한 번 더 확인합니다. 반복은 빠른 자체 확인 목적이므로 1~2회 안에서 끝내고, 해결하지 못한 잔여 위험은 최종 응답 JSON에는 쓰지 말고 가능한 한 코드에 반영합니다.
 
 수정 원칙:
 - design_review가 제공한 scene별 문제와 제안을 기준으로 필요한 만큼만 수정합니다.
-- 기존 asset과 interaction 의도는 유지하되, 문제 해결에 구조 변경이 필요하면 scene-local DOM 구조를 변경합니다.
+- 기존 asset과 interaction 의도는 유지하되, 문제 해결에 구조 변경이 필요하면 scene-local DOM 구조를 변경합니다. 여기서 "interaction 의도 유지"는 DOM 트리 모양을 그대로 두라는 뜻이 아니라 동작(JS 이벤트 배선, DOM id, `data-qa-scene`, 정답/완료 판정 로직)을 유지하라는 뜻입니다. DOM 구조는 바꿔도 되며, 옮기는 요소의 id/event target/data attribute는 보존하거나 JS 참조를 함께 갱신합니다.
 - review가 특정 asset surface 사용, crop, 좌표, DOM 재구성을 요구하면 기존 DOM 보존보다 해당 구조 변경을 우선합니다.
 - 새 디자인 방향은 creative_direction.recommendation_level에 맞춰 적용하고, 입력에 없는 고정 체크리스트를 임의로 확장하지 않습니다.
+
+반복 지적 처리 규칙:
+- finding의 target이 이전 iter에서도 지적된 문제(재발)이면, 같은 좌표를 다시 미세조정하는 CSS 반창고식 수정을 반복하지 않습니다. 요소가 지적된 asset 표면에 실제로 정합되도록 구조적으로 해결하며, 필요하면 DOM을 재배치합니다. 해결 방식은 finding이 요구하는 바에 맞춰 고릅니다 — 표면 위에 정확히 정렬해 얹기, 표면 칸을 감싸는 wrapper로 재배치, 컴포넌트를 장면 물건 구조로 재작성 등. 텍스트를 이미지 안에 baked-in 하지 않습니다. asset에 적합한 표면이 아예 없으면 억지로 밀어넣지 말고, 코드로 감당 가능한 선에서 해당 컴포넌트를 장면 물건으로 재구성합니다.
+- text_surface_fit / card_button_panel_style 계열 finding은 위치를 조금 옮긴 것만으로 해결됐다고 판단하지 않습니다. 요소가 지적된 표면 경계 안에 삐져나오거나 겹치지 않고 정합되며, 그 표면의 원근·재질·조명과 어울리는지를 해결 기준으로 삼습니다.
+- recommendation_level이 none/light여도 해당 scene에 high severity finding이 있으면 그 finding 해결에 필요한 DOM 구조 변경은 수행합니다. (none/light는 '컨셉을 새로 만들지 말라'는 뜻이지 'high를 방치하라'가 아닙니다.)
+- DOM을 재구성할 때 옮기는 요소의 id / event target / `data-qa-scene` / 정답·완료 판정 참조는 반드시 보존하거나 JS를 함께 갱신합니다.
+
+오버라이드 누적 금지:
+- 같은 target을 다시 수정할 때 새 `!important` 블록을 추가하지 말고, 이전 iter의 해당 규칙을 찾아 교체합니다. 중복 오버라이드 층을 쌓지 않습니다.
+
+자체 확인 통과 기준:
+- 수정 후 preview에서 각 high finding의 target 요소가 실제로 asset 표면 경계 '안'에 들어갔는지 확인합니다. "근처에 놓임"은 실패로 봅니다.
+- 하나라도 실패하면 같은 target을 1회 더 수정한 뒤 preview를 다시 확인합니다.
 
 경계:
 - content_critique와 content_eval은 보지 않습니다. 학습 문항, 정답, 피드백 문장, 완료 조건, 단계 전환 로직은 디자인 수정을 위해 필요한 최소 범위가 아니면 바꾸지 않습니다.
 - 기능적 버그를 새로 고치려 하지 말고, 기존 interaction이 계속 동작하도록 DOM id, event target, data attribute, 주요 JS 참조는 보존하거나 JS 참조를 함께 갱신합니다.
 - 디자인 개선 때문에 필요한 class 추가/구조 재배치는 적극적으로 수행합니다. 기존 이벤트가 끊기지 않도록 id와 버튼/input 역할을 유지하거나, 구조 변경 후 같은 동작을 새 target에 정확히 연결합니다.
 - 수정을 진행하면서 다른 주요 기능이나 다른 컴포넌트 CSS에 영향을 주지 않습니다. 가능한 한 수정 대상 scene root 또는 새로 추가한 scene-local class 아래로 CSS selector를 scope하고, 공용 button/input/card/topbar 같은 전역 selector를 바꾸지 않습니다.
-- asset 재생성이나 신규 asset 요청은 하지 않습니다. `asset_review`는 기존 asset을 HTML/CSS에서 어떻게 배치할지 판단하는 근거로만 사용합니다.
 
 Visual QA scene contract 유지:
 - Playwright design review가 화면별 screenshot을 안정적으로 찍을 수 있도록 모든 주요 화면/섹션 root의 `data-qa-scene` contract를 유지하거나 추가합니다.

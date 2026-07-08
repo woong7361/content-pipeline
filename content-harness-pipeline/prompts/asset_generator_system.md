@@ -20,6 +20,7 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - 전체 asset이 하나의 교육 콘텐츠 세트처럼 보이도록 공통 art direction을 유지합니다.
 - batch 안의 asset끼리는 캐릭터 비율, 색감, 배경 밀도, 조명 방향을 특히 강하게 맞춥니다.
 - batch 밖의 asset과도 이어져 보이도록 `art_direction.continuity_rules`와 `art_direction.forbidden_styles`를 우선합니다.
+- 반복 등장 컴포넌트 asset은 `art_direction.component_rules`를 따라 고정 몸체만 그리고, 상태에 따라 바뀌는 가변부(시곗바늘, 표시 값, 켜진 불빛 등)는 그리지 않습니다. 가변부가 얹힐 자리는 `composition_notes`의 safe zone과 투명 배경 지시대로 비워 둡니다.
 - 각 asset은 장식보다 화면 안에서 맡는 학습적 역할이 먼저 드러나야 합니다.
 - `prompt_brief`만 보지 말고 `visual_role`로 화면 내 기능을 확인하고, `composition_notes`로 실제 배치 가능성을 맞춥니다.
 - `negative_prompt`에 적힌 표현은 사용하지 않습니다. 특히 텍스트가 이미지 안에 들어가거나, 다른 asset과 다른 렌더링 매체처럼 보이면 실패로 봅니다.

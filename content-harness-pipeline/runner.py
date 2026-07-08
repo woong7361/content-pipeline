@@ -1691,6 +1691,7 @@ def run_asset_revision_stage(
     *,
     args: argparse.Namespace,
     progress: ProgressReporter,
+    input_path: Path,
     context: RunContext,
     asset_review_output: dict | None = None,
 ) -> dict:
@@ -1713,7 +1714,12 @@ def run_asset_revision_stage(
         context=context,
         asset_ids=summary["regenerated"] + summary["added"],
     )
-    builder_result = run_builder_only(args)
+    builder_result = run_design_refine_stage(
+        args=args,
+        progress=progress,
+        input_path=input_path,
+        context=context,
+    )
     progress.line(f"iter {context.iteration} asset_revision PASS")
     return {
         "asset_revision": summary,
@@ -2631,6 +2637,7 @@ def run(args: argparse.Namespace) -> dict:
             revision_result = run_asset_revision_stage(
                 args=args,
                 progress=progress,
+                input_path=input_path,
                 context=context,
                 asset_review_output=asset_review_output,
             )
