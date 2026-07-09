@@ -125,7 +125,9 @@
   .title-shade{position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,240,200,.15),rgba(40,25,10,.45));}
   .title-main{font-size:8cqh;color:#fff;font-weight:900;text-shadow:0 0.6cqh 0 #b25b1e,0 1.2cqh 2cqh rgba(0,0,0,.5);line-height:1.15;}
   .title-sub{font-size:4.4cqh;color:#ffe9a8;font-weight:800;margin-top:1.5cqh;text-shadow:0 0.4cqh 0 #7a4212,0 0 2cqh rgba(0,0,0,.4);}
-  .title-badge{font-size:3cqh;background:var(--teal);color:#fff;padding:0.8cqh 2cqw;border-radius:2cqh;font-weight:800;margin-bottom:2cqh;box-shadow:0 0.6cqh 0 #145c63;}
+  .title-badge{position:relative;font-size:2.7cqh;background:linear-gradient(180deg,#2ea3ab,#177078);color:#eafeff;padding:0.7cqh 3.4cqw;border-radius:0.7cqh;font-weight:900;margin-bottom:2cqh;letter-spacing:.05cqw;border:0.35cqh solid #0e4e54;box-shadow:inset 0 0.35cqh 0 rgba(255,255,255,.35),inset 0 -0.35cqh 0 rgba(0,0,0,.25),0 0.6cqh 0 #0d474c;}
+  .title-badge::before,.title-badge::after{content:"";position:absolute;top:50%;width:1cqh;height:1cqh;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f4f7f7,#8a9a9c);box-shadow:inset 0 0 0.2cqh rgba(0,0,0,.4);transform:translateY(-50%);}
+  .title-badge::before{left:0.9cqw;} .title-badge::after{right:0.9cqw;}
 
   /* ---------- mission play area ---------- */
   .play{position:absolute;inset:0;padding:11cqh 4cqw 4cqh;display:flex;flex-direction:column;align-items:center;gap:2cqh;z-index:20;overflow:auto;}
@@ -201,7 +203,7 @@
   /* quiz slip */
   .slip{position:relative;width:74cqw;max-width:860px;aspect-ratio:1687/914;}
   .slip img{width:100%;height:100%;}
-  .slip-q{position:absolute;left:22%;right:22%;top:14%;height:38%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2.7cqh;font-weight:800;color:var(--ink);padding:0 1cqw;}
+  .slip-q{position:absolute;left:22%;right:22%;top:12%;height:36%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2.7cqh;font-weight:800;color:var(--ink);padding:0 1cqw;}
   .slip-opts{position:absolute;left:22%;right:22%;top:58%;height:22%;display:flex;gap:1.4cqw;}
   .slip-opt{flex:1;display:flex;align-items:center;justify-content:center;font-size:2.8cqh;font-weight:900;color:var(--teal);cursor:pointer;pointer-events:auto;border-radius:1cqh;}
   .slip-opt:active{transform:scale(.95);}
@@ -211,8 +213,8 @@
   @keyframes certIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
   .cert>img{width:100%;height:100%;}
   .cert-body{position:absolute;left:12%;right:12%;top:14%;bottom:12%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.2cqh;}
-  .cert-title{font-size:3.4cqh;font-weight:900;color:var(--wood-d);}
-  .cert-text{font-size:2.1cqh;font-weight:700;color:var(--ink);line-height:1.5;max-width:82%;}
+  .cert-title{font-size:3.7cqh;font-weight:900;color:var(--wood-d);}
+  .cert-text{font-size:2.15cqh;font-weight:700;color:var(--ink);line-height:1.5;max-width:76%;}
   .cert-rec{display:flex;gap:2cqw;font-size:2.1cqh;font-weight:800;color:var(--teal);}
   .cert-rec span{background:#fff;border:0.3cqh solid var(--teal);border-radius:1.4cqh;padding:0.4cqh 1.4cqw;}
 
@@ -230,6 +232,148 @@
   .feedbubble{position:absolute;z-index:30;left:50%;top:9cqh;transform:translateX(-50%);background:#fff;border:0.5cqh solid var(--red);color:var(--red);font-weight:900;font-size:2.8cqh;padding:1.2cqh 2.4cqw;border-radius:2cqh;display:none;box-shadow:0 1cqh 2cqh rgba(0,0,0,.2);}
   .feedbubble.ok{border-color:var(--green);color:var(--green);}
   .feedbubble.show{display:block;animation:pop .3s;}
+
+  /* ============ design refine: in-world surfaces ============ */
+  /* -- title: hanging repair banner + start ticket -- */
+  #title_start .title-banner{position:relative;background:linear-gradient(180deg,#fbf0d4,#ecd6a8);border:0.6cqh solid var(--wood);border-radius:2.4cqh;padding:3cqh 5cqw 3.4cqh;max-width:80cqw;box-shadow:0 1.4cqh 3cqh rgba(0,0,0,.4),inset 0 0 0 0.5cqh rgba(255,255,255,.4);}
+  #title_start .title-rail{position:absolute;left:5%;right:5%;top:-3.4cqh;height:1.4cqh;background:linear-gradient(180deg,#a9702f,#7a4d1e);border-radius:1cqh;box-shadow:0 0.6cqh 0 rgba(0,0,0,.25);}
+  #title_start .title-banner::before,#title_start .title-banner::after{content:"";position:absolute;top:-3cqh;width:1cqh;height:4.6cqh;background:var(--wood-d);border-radius:1cqh;}
+  #title_start .title-banner::before{left:15%;transform:rotate(-9deg);}
+  #title_start .title-banner::after{right:15%;transform:rotate(9deg);}
+  .ticket-start{position:relative;font-family:inherit;cursor:pointer;pointer-events:auto;color:#5a3c12;font-weight:900;background:linear-gradient(180deg,#ffe07a,var(--energy));border:0.5cqh dashed #b9820f;border-radius:1.6cqh;padding:2cqh 5.4cqw;font-size:3.2cqh;box-shadow:0 1cqh 0 #c98a12,0 1.4cqh 1.6cqh rgba(0,0,0,.3);transition:transform .08s;}
+  .ticket-start::before,.ticket-start::after{content:"";position:absolute;top:50%;width:3cqh;height:3cqh;background:radial-gradient(circle,rgba(0,0,0,.55) 60%,transparent 62%);transform:translateY(-50%);}
+  .ticket-start::before{left:-1.5cqh;} .ticket-start::after{right:-1.5cqh;}
+  .ticket-start .tk-badge{display:inline-block;width:2.6cqh;height:1.9cqh;margin-right:1.2cqw;vertical-align:middle;background:linear-gradient(180deg,#fff3cf,#ffd873);border:0.3cqh solid #b9820f;border-radius:0.4cqh;position:relative;box-shadow:inset 0 0 0 0.2cqh rgba(255,255,255,.55);}
+  .ticket-start .tk-badge::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:0.55cqh;height:0.55cqh;border-radius:50%;background:#b9820f;}
+  .ticket-start .tk-badge::after{content:"";position:absolute;left:0.55cqh;top:0.25cqh;bottom:0.25cqh;border-left:0.25cqh dashed #b9820f;}
+  .ticket-start:active{transform:translateY(0.6cqh);box-shadow:0 0.3cqh 0 #c98a12;}
+
+  /* -- intro: repair request sheet + dispatch stamp -- */
+  .repair-request-sheet{position:relative;text-align:left;background:repeating-linear-gradient(0deg,#fffdf6,#fffdf6 3.2cqh,#f3ead4 3.2cqh,#f3ead4 3.45cqh);border:0.5cqh solid var(--wood);border-radius:1cqh 1cqh 1.6cqh 1.6cqh;padding:3.4cqh 3cqw 2.8cqh;font-size:2.5cqh;font-weight:700;color:var(--ink);line-height:1.5;max-width:56cqw;box-shadow:0 1.4cqh 2.8cqh rgba(0,0,0,.32);transform:rotate(-1.2deg);}
+  .repair-request-sheet::before{content:"긴급 수리 요청서";position:absolute;top:-1.8cqh;left:50%;transform:translateX(-50%);background:var(--wood-d);color:#fff2cf;font-size:1.9cqh;font-weight:900;padding:0.5cqh 2cqw;border-radius:1.2cqh;box-shadow:0 0.5cqh 0 rgba(0,0,0,.2);}
+  .repair-request-sheet .req-stamp{position:absolute;right:2.4cqw;bottom:1.4cqh;color:var(--red);border:0.4cqh solid var(--red);border-radius:1cqh;font-size:2cqh;font-weight:900;padding:0.2cqh 1.2cqw;transform:rotate(-12deg);opacity:.85;}
+  .dispatch-stamp-button{position:relative;font-family:inherit;cursor:pointer;pointer-events:auto;color:#5a3c12;font-weight:900;background:radial-gradient(circle at 50% 38%,#ffe89a,var(--energy));border:0.6cqh solid #b9820f;border-radius:2.2cqh;padding:1.8cqh 3.6cqw;font-size:2.9cqh;box-shadow:0 0.9cqh 0 #c98a12,0 1.2cqh 1.4cqh rgba(0,0,0,.28);transition:transform .08s;}
+  .dispatch-stamp-button::before{content:"수리 출동";position:absolute;top:-1.5cqh;left:50%;transform:translateX(-50%) rotate(-5deg);font-size:1.6cqh;color:var(--red);border:0.35cqh solid var(--red);border-radius:0.8cqh;padding:0.2cqh 1cqw;background:#fff6ea;}
+  .dispatch-stamp-button:active{transform:translateY(0.5cqh);box-shadow:0 0.2cqh 0 #c98a12;}
+
+  /* -- tutorial: repair workbench -- */
+  .tutorial-workbench{position:relative;background:
+      repeating-linear-gradient(92deg,rgba(90,55,22,.0) 0,rgba(90,55,22,.18) 1.2cqw,rgba(255,225,180,.06) 2.4cqw,rgba(90,55,22,.0) 3.8cqw),
+      linear-gradient(180deg,#c08a54,#8a5a2c);
+    border:0.6cqh solid #6f4620;border-radius:2.6cqh;padding:3cqh 3cqw 3.4cqh;display:flex;flex-direction:column;align-items:center;gap:1.8cqh;max-width:76cqw;
+    box-shadow:0 1.4cqh 2.8cqh rgba(0,0,0,.4),inset 0 0.9cqh 0 rgba(255,240,215,.28),inset 0 -1cqh 1.4cqh rgba(0,0,0,.32);}
+  .tutorial-workbench::before,.tutorial-workbench::after{content:"";position:absolute;bottom:1.4cqh;width:2.2cqh;height:2.2cqh;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f2d38a,#9a6a24);box-shadow:inset 0 0 0.4cqh rgba(0,0,0,.4);}
+  .tutorial-workbench::before{left:2.4cqw;} .tutorial-workbench::after{right:2.4cqw;}
+  .wb-plate{background:linear-gradient(180deg,#fdf3d8,#efd9a8);border:0.5cqh solid #6f4620;border-radius:1.4cqh;padding:1.2cqh 2.4cqw;font-size:2.5cqh;font-weight:800;color:var(--ink);text-align:center;box-shadow:0 0.6cqh 0 #6f4620;max-width:66cqw;}
+  .wb-mech{display:flex;align-items:center;gap:3cqw;}
+  #tutSlot.tut-slot{background:linear-gradient(180deg,#2a2f34,#48535a);border:0.6cqh solid #12363a;border-radius:1.6cqh;color:#8effea;box-shadow:inset 0 0.6cqh 1.4cqh rgba(0,0,0,.6),0 0.4cqh 0 rgba(255,255,255,.12);overflow:hidden;}
+  #tutSlot.tut-slot.filled{color:#eafcfc;background:linear-gradient(180deg,#1e6a72,#2ba0a5);}
+  .card-tray{background:linear-gradient(180deg,#7a4d1e,#5f3c17);border:0.5cqh solid #4a2e10;border-radius:1.8cqh;padding:1.6cqh 2cqw;box-shadow:inset 0 0.6cqh 1cqh rgba(0,0,0,.4);}
+  .card-tray .options{margin-top:0;}
+  #tutCards .opt-btn{background:linear-gradient(180deg,#fffaf0,#f3e6c8);border:0.5cqh solid #6f4620;border-radius:1cqh;box-shadow:0 0.6cqh 0 #6f4620,0 0.9cqh 1cqh rgba(0,0,0,.25);position:relative;margin-top:1cqh;}
+  #tutCards .opt-btn::before{content:"";position:absolute;top:-0.9cqh;left:50%;transform:translateX(-50%);width:42%;height:1.4cqh;background:#e7d3ad;border:0.3cqh solid #6f4620;border-bottom:0;border-radius:0.6cqh 0.6cqh 0 0;}
+
+  /* -- tutorial success: repair receipt + mission ticket -- */
+  .success-receipt{position:relative;background:#fffdf6;border:0.5cqh solid var(--wood);border-radius:1.2cqh;padding:2.8cqh 3cqw 2.6cqh;font-size:2.5cqh;font-weight:700;color:var(--ink);line-height:1.5;max-width:60cqw;box-shadow:0 1.2cqh 2.4cqh rgba(0,0,0,.28);background-image:radial-gradient(circle at 50% 0,rgba(255,207,63,.22),transparent 60%);}
+  .success-receipt::before{content:"수리 완료 ✔";position:absolute;top:-1.8cqh;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:2cqh;font-weight:900;padding:0.5cqh 2cqw;border-radius:1cqh;box-shadow:0 0.5cqh 0 rgba(0,0,0,.2);}
+  .success-receipt{padding-bottom:4.4cqh;}
+  .success-receipt::after{content:"No. 0001 · 도서관 시계 수리";position:absolute;left:1.6cqw;right:1.6cqw;bottom:1cqh;padding-top:1cqh;border-top:0.3cqh dashed #cdb587;text-align:center;font-size:1.6cqh;font-weight:800;letter-spacing:.06cqw;color:var(--ink-soft);}
+  .mission-ticket-button{position:relative;font-family:inherit;cursor:pointer;pointer-events:auto;color:#5a3c12;font-weight:900;background:linear-gradient(180deg,#ffe07a,var(--energy));border:0.5cqh dashed #b9820f;border-radius:1.4cqh;padding:1.7cqh 4cqw;font-size:2.9cqh;box-shadow:0 0.9cqh 0 #c98a12,0 1.2cqh 1.4cqh rgba(0,0,0,.28);transition:transform .08s;}
+  .mission-ticket-button::before,.mission-ticket-button::after{content:"";position:absolute;top:50%;width:2.6cqh;height:2.6cqh;background:radial-gradient(circle,rgba(0,0,0,.5) 60%,transparent 62%);transform:translateY(-50%);}
+  .mission-ticket-button::before{left:-1.3cqh;} .mission-ticket-button::after{right:-1.3cqh;}
+  .mission-ticket-button:active{transform:translateY(0.5cqh);box-shadow:0 0.2cqh 0 #c98a12;}
+
+  /* -- type A: prompt on the sign, module rack fitted in view -- */
+  .sign .sign-text{top:28%;height:48%;gap:0.8cqh;}
+  .sign .sign-broken{font-size:3cqh;}
+  .sign .sign-q{font-size:2.15cqh;font-weight:800;color:#dffbff;line-height:1.35;text-shadow:0 0 1cqh rgba(0,0,0,.4);padding:0 0.6cqw;}
+  #playA{padding:6cqh 3cqw 3cqh;gap:1.2cqh;justify-content:flex-start;}
+  #playA .sign{width:38cqw;max-width:400px;margin-top:0;}
+  #playA .clock-module-rack{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.4cqw;width:72cqw;max-width:800px;align-items:start;justify-items:center;
+    background:linear-gradient(180deg,#3a444c,#232b31);border:0.6cqh solid #12363a;border-radius:1.8cqh;padding:2.4cqh 1.8cqw 1.8cqh;margin-top:0.4cqh;
+    box-shadow:inset 0 0.6cqh 1.2cqh rgba(0,0,0,.55),0 0.8cqh 1.6cqh rgba(0,0,0,.35);}
+  #playA .clock-module-rack::before{content:"시계 모듈 슬롯";position:absolute;top:-1.7cqh;left:50%;transform:translateX(-50%);background:#12363a;color:#8effea;font-size:1.6cqh;font-weight:800;padding:0.3cqh 1.6cqw;border-radius:1cqh;}
+  #playA .options{display:contents;}
+  #playA .options .opt-clock{width:15cqw;max-width:150px;padding:1cqh 0.5cqw 1.1cqh;gap:0.6cqh;
+    background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.03));border:0.4cqh solid rgba(140,220,220,.4);border-radius:1.4cqh;box-shadow:inset 0 0.3cqh 0.6cqh rgba(0,0,0,.35);}
+  #playA .opt-label{font-size:2cqh;padding:0.4cqh 1cqw;}
+
+  /* -- side note tags for teacher guidance -- */
+  .note-tag{background:#fff8e8;border:0.4cqh solid var(--wood);color:var(--ink-soft);font-weight:700;line-height:1.4;box-shadow:0 0.6cqh 1cqh rgba(0,0,0,.2);}
+  .note-tag::after{border-top-color:#fff8e8;}
+  .note-tag::before{content:"📋 안내";position:absolute;top:-1.5cqh;left:1cqw;background:var(--wood-d);color:#fff2cf;font-size:1.5cqh;font-weight:900;padding:0.2cqh 1cqw;border-radius:0.8cqh;}
+  #tchbubC.note-tag::before{content:"📖 수리 설명서";}
+
+  /* -- type B: pinned paper pieces directly on the cork board -- */
+  #playB{padding-top:6cqh;gap:1.6cqh;justify-content:flex-start;}
+  .timetable-card{position:relative;width:70cqw;max-width:820px;background:transparent;border:0;border-radius:0;padding:3.4cqh 2cqw 1.6cqh;display:flex;flex-direction:column;align-items:center;gap:2cqh;box-shadow:none;}
+  .timetable-card::before{content:"📌 독서 교실 시간표 복구";position:absolute;top:-0.4cqh;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;font-size:2cqh;font-weight:900;padding:0.5cqh 2.2cqw;border-radius:1.2cqh;box-shadow:0 0.6cqh 1cqh rgba(0,0,0,.3);z-index:2;}
+  .timetable-card .pin{display:none;}
+  .timetable-card .prompt{position:relative;background:#fffdf5;border:0.4cqh solid #d8c39a;border-radius:0.6cqh;box-shadow:0 1cqh 1.8cqh rgba(0,0,0,.32);color:var(--ink);font-size:2.4cqh;padding:2cqh 3cqw 1.8cqh;max-width:86%;width:auto;transform:rotate(-1.2deg);}
+  .timetable-card .prompt::before{content:"";position:absolute;top:-1.1cqh;left:50%;transform:translateX(-50%);width:2.4cqh;height:2.4cqh;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9d8a,#c0392b);box-shadow:0 0.5cqh 0.9cqh rgba(0,0,0,.4);}
+  .timetable-card .clockrow{position:relative;background:#fff7e6;border:0.4cqh solid #d8c39a;border-radius:0.8cqh;padding:1.4cqh 1.8cqw;box-shadow:0 0.9cqh 1.6cqh rgba(0,0,0,.28);transform:rotate(0.8deg);}
+  .timetable-card .clockrow::before{content:"";position:absolute;top:-1.1cqh;left:50%;transform:translateX(-50%);width:2.2cqh;height:2.2cqh;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8fd0e6,#2f6f8a);box-shadow:0 0.5cqh 0.9cqh rgba(0,0,0,.4);}
+  .timetable-card .blankbox{position:relative;background:#fff4c9;border:0.4cqh solid #c79a3a;border-radius:0.8cqh;padding:1.4cqh 2.4cqw;box-shadow:0 0.8cqh 1.4cqh rgba(0,0,0,.24);transform:rotate(-0.6deg);}
+  .timetable-card .blankbox::before{content:"걸린 시간";position:absolute;top:-1.5cqh;left:1.6cqw;background:var(--wood-d);color:#fff2cf;font-size:1.5cqh;font-weight:900;padding:0.2cqh 1cqw;border-radius:0.8cqh;}
+  .timetable-card .blank{background:#fff;border:0.4cqh dashed #c79a3a;border-radius:0.6cqh;color:var(--teal);box-shadow:inset 0 0 0 0.3cqh rgba(255,255,255,.7),0 0.5cqh 0.9cqh rgba(0,0,0,.15);}
+  .timetable-card .blank.sel{border-style:solid;border-color:var(--teal);box-shadow:0 0 0 0.4cqh rgba(43,160,165,.35);}
+  .timetable-card .blank.filled{background:#eafaf7;border-style:solid;}
+  .timetable-card .confirm-row{margin-top:0;}
+  .timetable-card .confirm-row .btn{background:radial-gradient(circle at 50% 40%,#ff8a6a,var(--red));border:0.5cqh solid #a5341c;border-radius:50%/42%;color:#fff;box-shadow:0 0.9cqh 0 #8f2c17,0 1.2cqh 1.4cqh rgba(0,0,0,.3);transform:rotate(-4deg);padding:1.6cqh 3.4cqw;}
+  .timetable-card .confirm-row .btn::before{content:"복구 확인";position:absolute;top:-1.4cqh;left:50%;transform:translateX(-50%) rotate(4deg);font-size:1.4cqh;color:#fff;background:#8f2c17;padding:0.2cqh 1cqw;border-radius:0.7cqh;white-space:nowrap;}
+  .timetable-card .confirm-row .btn{position:relative;}
+  .timetable-card .confirm-row .btn:active{transform:rotate(-4deg) translateY(0.5cqh);box-shadow:0 0.2cqh 0 #8f2c17;}
+
+  /* -- type C: number keys built into the checkout console base -- */
+  #playC{padding-top:6cqh;gap:1cqh;justify-content:flex-start;}
+  #playC .checkout-console{position:relative;display:flex;flex-direction:column;align-items:center;gap:0;}
+  #playC .monitor{width:44cqw;max-width:450px;}
+  #playC .mon-screen{gap:0.9cqh;}
+  #playC .mon-text{font-size:2.3cqh;}
+  #playC .mon-status{font-size:1.7cqh;font-weight:700;color:#9fe9df;opacity:.9;line-height:1.3;}
+  #playC .mon-screen .blk-blank{height:5.6cqh;min-width:5cqh;font-size:3.2cqh;}
+  #playC .number-key-tray{position:relative;width:40cqw;max-width:410px;margin-top:-2.6cqh;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0.8cqw;padding:3cqh 1.6cqw 1.8cqh;
+    background:linear-gradient(180deg,#3a444c,#20272d);border:0.6cqh solid #12363a;border-top:0;border-radius:0 0 2.4cqh 2.4cqh;
+    box-shadow:inset 0 0.6cqh 1.2cqh rgba(0,0,0,.6),0 1cqh 1.8cqh rgba(0,0,0,.42);}
+  #playC .number-key-tray::before{content:"재부팅 키패드";position:absolute;top:0.5cqh;left:50%;transform:translateX(-50%);background:#12363a;color:#8effea;font-size:1.5cqh;font-weight:800;padding:0.2cqh 1.4cqw;border-radius:0.9cqh;white-space:nowrap;}
+  #playC .number-key-tray .digit{width:5.8cqh;height:5.8cqh;font-size:3.2cqh;border-radius:1.2cqh;}
+
+  /* -- repair complete: completion sign board + ticket CTA -- */
+  .completion-sign-board{width:64cqw;max-width:680px;margin-top:1cqh;}
+  .completion-sign-board .completion-sign-text{position:absolute;left:12%;right:12%;top:27%;height:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4cqh;text-align:center;}
+  .completion-sign-board .cs-line1{font-size:3cqh;font-weight:900;color:#eafcfc;text-shadow:0 0 1.4cqh rgba(0,0,0,.4);}
+  .completion-sign-board .cs-line2{font-size:2cqh;font-weight:700;color:#c6eeee;line-height:1.35;max-width:78%;margin:0 auto;}
+  .ticket-cta{position:relative;border-style:dashed;}
+  .ticket-cta::before,.ticket-cta::after{content:"";position:absolute;top:50%;width:2.6cqh;height:2.6cqh;background:radial-gradient(circle,rgba(0,0,0,.5) 60%,transparent 62%);transform:translateY(-50%);}
+  .ticket-cta::before{left:-1.3cqh;} .ticket-cta::after{right:-1.3cqh;}
+
+  /* -- gallery: bookmark page tabs + readable right page -- */
+  #galleryBook .g-arrow{background:linear-gradient(180deg,#ffe9a8,#f0c96b);border:0.5cqh solid var(--wood);border-radius:0;width:6cqw;min-width:64px;height:15cqh;box-shadow:0 0.6cqh 1cqh rgba(0,0,0,.3);color:var(--wood-d);}
+  #galleryBook .g-arrow.left{left:0.5cqw;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,20% 50%);}
+  #galleryBook .g-arrow.right{right:0.5cqw;clip-path:polygon(0 0,100% 0,80% 50%,100% 100%,0 100%);}
+  #galRight p{width:92%;color:#123c48;line-height:1.5;font-size:2.05cqh;}
+
+  /* -- popup quiz: feedback stamp + option states -- */
+  .slip .feedback-stamp{position:absolute;left:50%;bottom:4%;transform:translate(-50%,0) rotate(-3deg);width:54%;background:rgba(255,255,255,.92);border:0.5cqh solid var(--green);border-radius:1.4cqh;color:var(--green);font-size:2.1cqh;font-weight:900;text-align:center;padding:1cqh 2cqw;box-shadow:0 0.8cqh 1.4cqh rgba(0,0,0,.2);}
+  .slip .feedback-stamp::before{content:"승인";position:absolute;left:-1.6cqw;top:-1.6cqh;background:var(--green);color:#fff;font-size:1.5cqh;padding:0.2cqh 1cqw;border-radius:0.8cqh;transform:rotate(-10deg);}
+  .slip-opt.sel{box-shadow:inset 0 0 0 0.5cqh var(--teal);border-radius:1cqh;}
+  .slip-opt.correct{box-shadow:inset 0 0 0 0.6cqh var(--green);border-radius:1cqh;color:var(--green);}
+
+  /* -- certificate: stamp save, nameplates, invitation ticket -- */
+  #saveBtn.stamp-button{position:absolute;right:1%;top:2%;width:16%;aspect-ratio:1;border-radius:50%;padding:0;font-size:1.7cqh;line-height:1.15;font-family:inherit;font-weight:900;color:#5a3c12;cursor:pointer;pointer-events:auto;background:radial-gradient(circle at 50% 40%,#ffe89a,var(--energy));border:0.5cqh solid #b9820f;box-shadow:0 0.7cqh 0 #c98a12,0 0.9cqh 1.1cqh rgba(0,0,0,.25);transform:rotate(-8deg);display:flex;align-items:center;justify-content:center;text-align:center;}
+  #saveBtn.stamp-button:active{transform:rotate(-8deg) translateY(0.4cqh);box-shadow:0 0.2cqh 0 #c98a12;}
+  [data-qa-scene="final_certificate"] .row-mid{gap:3cqw;}
+  [data-qa-scene="final_certificate"] .row-mid .bubble{position:relative;background:#fff8e8;border:0.4cqh solid var(--wood);border-radius:1.4cqh;font-size:1.9cqh;font-weight:700;color:var(--ink-soft);padding:1.8cqh 1.8cqw 1.2cqh;max-width:27cqw;box-shadow:0 0.7cqh 1.2cqh rgba(0,0,0,.22);}
+  [data-qa-scene="final_certificate"] .row-mid .name-teacher{transform:rotate(-1deg);}
+  [data-qa-scene="final_certificate"] .row-mid .name-child{transform:rotate(1deg);}
+  [data-qa-scene="final_certificate"] .row-mid .bubble::after{display:none;}
+  [data-qa-scene="final_certificate"] .row-mid .bubble::before{position:absolute;top:-1.6cqh;left:1.4cqw;font-size:1.6cqh;font-weight:900;color:#fff;padding:0.3cqh 1.2cqw;border-radius:0.9cqh;white-space:nowrap;}
+  [data-qa-scene="final_certificate"] .row-mid .name-teacher::before{content:"👩‍🏫 사서 선생님";background:var(--green);}
+  [data-qa-scene="final_certificate"] .row-mid .name-child::before{content:"🧒 꼬마 사서";background:var(--teal);}
+  #nextLessonBtn.invitation-ticket{position:relative;font-family:inherit;cursor:pointer;pointer-events:auto;background:linear-gradient(180deg,#fffaf0,#f3e6c8);border:0.5cqh dashed #b9820f;border-radius:1.4cqh;color:#5a3c12;font-size:2cqh;line-height:1.35;font-weight:900;text-align:center;padding:1.5cqh 3cqw 1.5cqh 4.6cqw;box-shadow:0 0.8cqh 0 #c98a12,0 1cqh 1.2cqh rgba(0,0,0,.25);max-width:48cqw;transition:transform .08s;}
+  #nextLessonBtn.invitation-ticket::before{content:"다음 미션 초대권";position:absolute;top:-1.7cqh;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;font-size:1.6cqh;padding:0.3cqh 1.4cqw;border-radius:1cqh;}
+  #nextLessonBtn.invitation-ticket::after{content:"";position:absolute;left:3.4cqw;top:1.2cqh;bottom:1.2cqh;border-left:0.4cqh dashed #b9820f;}
+  #nextLessonBtn.invitation-ticket:active{transform:translateY(0.5cqh);box-shadow:0 0.2cqh 0 #c98a12;}
 </style>
 </head>
 <body>
@@ -240,10 +384,13 @@
     <img class="bg" src="assets/bg_messy_library_lobby.png" alt="책이 흩어져 있고 따뜻한 목재 책장이 둘러싼 어수선한 도서관 로비 배경">
     <div class="title-shade"></div>
     <div class="center-col">
-      <div class="title-badge">2학년 · 시간 모험</div>
-      <div class="title-main">시간이 뒤죽박죽!</div>
-      <div class="title-sub">수학의 힘으로 도서관 시계를 수리하라!</div>
-      <button class="btn blink" id="startBtn" style="margin-top:6cqh;">시작하기 ▶</button>
+      <div class="title-banner">
+        <div class="title-rail"></div>
+        <div class="title-badge">2학년 · 시간 모험</div>
+        <div class="title-main">시간이 뒤죽박죽!</div>
+        <div class="title-sub">수학의 힘으로 도서관 시계를 수리하라!</div>
+      </div>
+      <button class="ticket-start blink" id="startBtn" style="margin-top:5cqh;"><span class="tk-badge"></span>시작하기</button>
     </div>
   </section>
 
@@ -252,8 +399,8 @@
     <img class="bg" src="assets/bg_messy_library_lobby.png" alt="책이 흩어진 어수선한 도서관 로비 배경">
     <div class="play" style="justify-content:flex-start;">
       <div class="clock spin" id="introClock" style="width:32cqw;max-width:320px;margin-top:2cqh;"></div>
-      <div class="bubble" style="align-self:center;margin-top:2cqh;">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
-      <button class="btn pulse" style="margin-top:2cqh;" data-next="tutorial_clock_reading">도와주러 가기 →</button>
+      <div class="repair-request-sheet" style="align-self:center;margin-top:3cqh;">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야!<br>당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!<span class="req-stamp">긴급</span></div>
+      <button class="dispatch-stamp-button pulse" style="margin-top:2.8cqh;" data-next="tutorial_clock_reading">도와주러 가기 →</button>
     </div>
     <img class="char" src="assets/character_teacher_worried.png" alt="머리를 감싸고 당황한 사서 선생님" style="right:2cqw;height:66cqh;">
   </section>
@@ -261,13 +408,15 @@
   <!-- ===== SCENE 3: TUTORIAL ===== -->
   <section class="scene" data-qa-scene="tutorial_clock_reading" data-qa-order="3" data-qa-label="튜토리얼: 정각 읽기">
     <img class="bg" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
-    <div class="play">
-      <div class="bubble" style="margin-top:0;">지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</div>
-      <div class="row-mid" style="margin-top:1cqh;">
-        <div class="clock" id="tutClock" style="width:22cqw;max-width:220px;"></div>
-        <div class="blank tut-slot" id="tutSlot" style="width:12cqh;height:12cqh;font-size:4.4cqh;">?</div>
+    <div class="play" style="justify-content:center;">
+      <div class="tutorial-workbench">
+        <div class="wb-plate">지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</div>
+        <div class="wb-mech">
+          <div class="clock" id="tutClock" style="width:20cqw;max-width:200px;"></div>
+          <div class="blank tut-slot" id="tutSlot" style="width:12cqh;height:12cqh;font-size:4cqh;">?</div>
+        </div>
+        <div class="card-tray"><div class="options" id="tutCards"></div></div>
       </div>
-      <div class="options" id="tutCards" style="margin-top:2cqh;"></div>
     </div>
     <img class="char" src="assets/character_teacher_explaining.png" alt="돋보기로 문제를 가리키는 사서 선생님" style="left:1cqw;height:60cqh;">
     <img class="char" src="assets/character_child_explaining.png" alt="한 손을 들고 자신 있게 설명하는 꼬마 사서" style="right:1cqw;height:60cqh;">
@@ -278,8 +427,8 @@
     <img class="bg" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
     <div class="play" style="justify-content:center;">
       <div class="clock glow" id="tutSuccessClock" style="width:20cqw;max-width:200px;"></div>
-      <div class="bubble" style="margin-top:3cqh;">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
-      <button class="btn pulse" style="margin-top:3cqh;" data-next="type_a_clock_choice">좋아요! 본격적으로 수리하러 가기 →</button>
+      <div class="success-receipt" style="margin-top:3.4cqh;">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
+      <button class="mission-ticket-button pulse" style="margin-top:3.4cqh;" data-next="type_a_clock_choice">좋아요! 본격적으로 수리하러 가기 →</button>
     </div>
     <img class="char" src="assets/character_teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" style="left:1cqw;height:58cqh;">
     <img class="char" src="assets/character_child_success.png" alt="기쁘게 브이를 그리는 꼬마 사서" style="right:1cqw;height:58cqh;">
@@ -290,7 +439,7 @@
     <img class="bg" src="assets/bg_repair_desk_area.png" alt="도서관 안내 데스크 주변의 밝은 수리 미션 배경">
     <div class="feedbubble" id="fbA"></div>
     <div class="play" id="playA"></div>
-    <div class="bubble" id="tchbubA" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <div class="bubble note-tag" id="tchbubA" style="position:absolute;left:1.5cqw;top:13cqh;bottom:auto;z-index:25;display:none;max-width:22cqw;font-size:1.8cqh;padding:1.2cqh 1.4cqw;"></div>
     <img class="char" id="tchA" src="assets/character_teacher_explaining.png" alt="문제를 안내하는 사서 선생님" style="left:0;height:50cqh;display:none;">
     <img class="char" id="childA" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
   </section>
@@ -300,7 +449,7 @@
     <img class="bg" src="assets/bg_reading_class_board.png" alt="코르크 게시판이 있는 독서 교실 도서관 배경">
     <div class="feedbubble" id="fbB"></div>
     <div class="play" id="playB"></div>
-    <div class="bubble" id="tchbubB" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <div class="bubble note-tag" id="tchbubB" style="position:absolute;left:1.5cqw;top:13cqh;bottom:auto;z-index:25;display:none;max-width:22cqw;font-size:1.8cqh;padding:1.2cqh 1.4cqw;"></div>
     <img class="char" id="childB" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
   </section>
 
@@ -309,7 +458,7 @@
     <img class="bg" src="assets/bg_checkout_desk.png" alt="도서관 대출 데스크와 책 더미가 있는 시스템 수리 배경">
     <div class="feedbubble" id="fbC"></div>
     <div class="play" id="playC"></div>
-    <div class="bubble" id="tchbubC" style="position:absolute;left:15cqw;bottom:6cqh;z-index:25;display:none;max-width:56cqw;"></div>
+    <div class="bubble note-tag" id="tchbubC" style="position:absolute;left:1.5cqw;top:13cqh;bottom:auto;z-index:25;display:none;max-width:23cqw;font-size:1.8cqh;padding:1.2cqh 1.4cqw;"></div>
     <img class="char" id="childC" src="assets/character_child_idle.png" alt="꼬마 사서 대기 포즈" style="left:1cqw;height:46cqh;">
   </section>
 
@@ -318,9 +467,14 @@
     <img class="bg" id="rcBgMessy" src="assets/bg_messy_library_lobby.png" alt="어수선한 도서관 로비 배경">
     <img class="bg" id="rcBgClean" src="assets/bg_clean_library_lobby.png" alt="깨끗하게 정리된 도서관 로비 배경" style="opacity:0;transition:opacity 1.5s;">
     <div class="play" style="justify-content:center;">
-      <div class="bubble" style="border-color:var(--teal);">해냈다! 시간의 규칙을 모두 풀었어요!</div>
-      <div class="bubble" style="margin-top:1.5cqh;">우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
-      <button class="btn pulse" id="rcBtn" style="margin-top:3cqh;display:none;" data-next="story_gallery">3. 수리 이야기 보러 가기 →</button>
+      <div class="sign completion-sign-board">
+        <img src="assets/component_electronic_sign_body.png" alt="수리 완료 안내를 표시한 도서관 전광판">
+        <div class="completion-sign-text">
+          <div class="cs-line1">✨ 해냈다! 시간의 규칙을 모두 풀었어요!</div>
+          <div class="cs-line2">우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
+        </div>
+      </div>
+      <button class="btn pulse ticket-cta" id="rcBtn" style="margin-top:2.6cqh;display:none;" data-next="story_gallery">3. 수리 이야기 보러 가기 →</button>
     </div>
     <img class="char" src="assets/character_teacher_happy.png" alt="박수치는 사서 선생님" style="left:1cqw;height:56cqh;">
     <img class="char" src="assets/character_child_success.png" alt="자랑스럽게 성공을 표현하는 꼬마 사서" style="right:1cqw;height:56cqh;">
@@ -351,8 +505,8 @@
         <img src="assets/component_final_quiz_slip.png" alt="마무리 퀴즈용 종이 팝업 표면">
         <div class="slip-q">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
         <div class="slip-opts" id="quizOpts"></div>
+        <div class="feedback-stamp" id="quizWin" style="display:none;">맞았어! 24시간은 1일과 같지!</div>
       </div>
-      <div class="bubble" id="quizWin" style="margin-top:2cqh;display:none;">맞았어! 24시간은 1일과 같지!</div>
     </div>
     <img class="char" src="assets/character_child_success.png" alt="앞으로 튀어나온 꼬마 사서 성공 포즈" id="quizChild" style="right:2cqw;height:52cqh;">
   </section>
@@ -370,14 +524,14 @@
             <span>맞힌 문제 <b id="certScore">13/13</b></span>
             <span>클리어 시간 <b id="certTime">00:00</b></span>
           </div>
-          <button class="btn" id="saveBtn" style="font-size:2.2cqh;padding:1.2cqh 2.4cqw;margin-top:1cqh;">📷 내 사진첩에 저장하기</button>
+          <button class="stamp-button" id="saveBtn">📷<br>사진첩 저장</button>
         </div>
       </div>
-      <div class="row-mid" style="margin-top:2cqh;">
-        <div class="bubble" style="max-width:36cqw;font-size:2.2cqh;">정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
-        <div class="bubble" style="max-width:36cqw;font-size:2.2cqh;border-color:var(--teal);">언제든 제 수학실력이 필요하면 불러주세요!</div>
+      <div class="row-mid" style="margin-top:2.4cqh;">
+        <div class="bubble name-teacher">정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
+        <div class="bubble name-child">언제든 제 수학실력이 필요하면 불러주세요!</div>
       </div>
-      <button class="btn pulse" id="nextLessonBtn" style="margin-top:2cqh;font-size:2.5cqh;">마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →</button>
+      <button class="invitation-ticket pulse" id="nextLessonBtn" style="margin-top:2.4cqh;">마을 공원 의자 만들기<br>딱 맞는 길이를 찾아라! 하러 가기 →</button>
     </div>
     <img class="char" src="assets/character_teacher_happy.png" alt="기뻐하는 사서 선생님" style="left:0;height:42cqh;">
     <img class="char" src="assets/character_child_success.png" alt="성공을 표현하는 꼬마 사서" style="right:0;height:42cqh;">
@@ -483,19 +637,21 @@
   /* ---------- pointer drag helper ---------- */
   function enableDrag(handle, makeGhost, onDrop){
     handle.addEventListener('pointerdown', function(e){
-      e.preventDefault();
+      if(e.button && e.button!==0) return;
+      let moved=false; const sx=e.clientX, sy=e.clientY;
       const ghost = makeGhost(handle);
-      ghost.classList.add('drag-ghost');
+      ghost.classList.add('drag-ghost'); ghost.style.display='none';
       document.body.appendChild(ghost);
-      const move = ev=>{ ghost.style.left=ev.clientX+'px'; ghost.style.top=ev.clientY+'px'; };
-      move(e);
+      const move = ev=>{
+        if(!moved && (Math.abs(ev.clientX-sx)>6 || Math.abs(ev.clientY-sy)>6)){ moved=true; ghost.style.display=''; }
+        if(moved){ ghost.style.left=ev.clientX+'px'; ghost.style.top=ev.clientY+'px'; }
+      };
       const up = ev=>{
         document.removeEventListener('pointermove',move);
         document.removeEventListener('pointerup',up);
         ghost.style.display='none';
-        const tgt = document.elementFromPoint(ev.clientX, ev.clientY);
         ghost.remove();
-        onDrop(tgt, handle);
+        if(moved){ const tgt = document.elementFromPoint(ev.clientX, ev.clientY); onDrop(tgt, handle); }
       };
       document.addEventListener('pointermove',move);
       document.addEventListener('pointerup',up);
@@ -584,6 +740,13 @@
     play.appendChild(prog);
 
     if(scene==='type_a_clock_choice') renderTypeA(play,scene,q,idx);
+    else if(scene==='type_b_schedule_restore'){
+      const card=document.createElement('div'); card.className='timetable-card';
+      card.innerHTML='<span class="pin pin-l"></span><span class="pin pin-r"></span>';
+      play.appendChild(card);
+      if(q.type==='keypad') renderKeypadQ(card,scene,q,idx);
+      else renderChoiceQ(card,scene,q,idx);
+    }
     else if(q.type==='keypad') renderKeypadQ(play,scene,q,idx);
     else if(q.type==='choice') renderChoiceQ(play,scene,q,idx);
     else if(q.type==='blocks') renderBlocksQ(play,scene,q,idx);
@@ -609,9 +772,9 @@
   function renderTypeA(play,scene,q,idx){
     const sign=document.createElement('div'); sign.className='sign';
     sign.innerHTML='<img src="assets/component_electronic_sign_body.png" alt="문제 문장을 표시한 도서관 전광판">'+
-      '<div class="sign-text"><div class="sign-broken">📟 '+q.sign+'</div><div class="sign-sub">— 전광판 시각 —</div></div>';
+      '<div class="sign-text"><div class="sign-broken">📟 '+q.sign+'</div><div class="sign-q"></div></div>';
+    sign.querySelector('.sign-q').textContent=q.prompt;
     play.appendChild(sign);
-    const prompt=document.createElement('div'); prompt.className='prompt'; prompt.textContent=q.prompt; play.appendChild(prompt);
     const opts=document.createElement('div'); opts.className='options';
     const key=scene+idx; wrongCount[key]=wrongCount[key]||0;
     q.opts.forEach((o,i)=>{
@@ -635,7 +798,9 @@
       });
       opts.appendChild(c);
     });
-    play.appendChild(opts);
+    const rack=document.createElement('div'); rack.className='clock-module-rack';
+    rack.appendChild(opts);
+    play.appendChild(rack);
   }
   function disableOpts(opts){ [...opts.children].forEach(c=>c.style.pointerEvents='none'); }
 
@@ -743,9 +908,13 @@
       }
     });
     screen.appendChild(seg);
+    const status=document.createElement('div'); status.className='mon-status';
+    status.textContent='▸ 숫자 키캡을 빈칸에 끌어넣으세요';
+    screen.appendChild(status);
     mon.appendChild(screen);
-    play.appendChild(mon);
-    const pal=document.createElement('div'); pal.className='palette';
+    const consoleBox=document.createElement('div'); consoleBox.className='checkout-console';
+    consoleBox.appendChild(mon);
+    const pal=document.createElement('div'); pal.className='palette number-key-tray';
     for(let d=0;d<=9;d++){
       const dg=document.createElement('div'); dg.className='digit'; dg.textContent=d; dg.dataset.d=d;
       dg.addEventListener('click',()=>{ pal.querySelectorAll('.digit').forEach(x=>x.classList.remove('sel')); dg.classList.add('sel'); selDigit=d; });
@@ -753,10 +922,8 @@
         (tgt)=>{ const bl=(tgt&&tgt.closest)?tgt.closest('.blk-blank'):null; if(bl) fillBlank(bl,Number(dg.dataset.d),q,scene,blanks); });
       pal.appendChild(dg);
     }
-    play.appendChild(pal);
-    const hint=document.createElement('div'); hint.style.cssText='font-size:2cqh;font-weight:700;color:var(--wood-d);background:rgba(255,255,255,.8);padding:.4cqh 1.4cqw;border-radius:1.2cqh;';
-    hint.textContent='숫자 블록을 끌어다 놓거나, 블록을 누른 뒤 빈칸을 누르세요';
-    play.appendChild(hint);
+    consoleBox.appendChild(pal);
+    play.appendChild(consoleBox);
   }
   function fillBlank(bl,d,q,scene,blanks){
     sfxSnap(); bl.dataset.val=String(d); bl.textContent=d; bl.classList.add('filled');
@@ -838,7 +1005,7 @@
       const b=document.createElement('div'); b.className='slip-opt'; b.textContent=o.t;
       b.addEventListener('click',()=>{
         if(o.ok){
-          b.classList.add('glow'); showFeedback('popup_quiz',true,'딩동댕! 정답이에요 ✨'); sfxCorrect();
+          b.classList.add('glow','correct'); showFeedback('popup_quiz',true,'딩동댕! 정답이에요 ✨'); sfxCorrect();
           $('#quizWin').style.display='block';
           quizDone=true; refreshEnergy(true);
           spawnParticles(sceneEl('popup_quiz'),30);

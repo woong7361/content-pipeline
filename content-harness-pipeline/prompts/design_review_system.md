@@ -49,7 +49,18 @@
 - 흰색 카드, 단일색 사각형 카드, 일반 rounded button, 일반 웹 form input은 실패로 봅니다.
 - 카드가 기차표, 번호표, 안내판, 기계 패널, 티켓 조각, 슬롯 카드, 보상판처럼 주제에 맞는 형태와 재질을 갖는지 봅니다.
 - 버튼/CTA도 일반 웹 버튼이 아니라 물리 버튼, 레버, 표지판, 티켓형 조작물, 장치 부품처럼 보여야 합니다.
-- 카드가 너무 단순하면 어떤 프레임, 내부 음영, 유리 반사, 금속/종이 재질, 절취선, 홈, 리벳, 조명 효과가 필요한지 구체적으로 지시합니다.
+- 카드/버튼이 단순하면 어떤 형태·재질이 필요한지 구체적으로 지시하되, 재질감(금속·나무·종이·유리 질감, 입체 프레임, 리벳, 절취선 등)은 CSS로 흉내내지 말고 asset으로 요청합니다(아래 "css냐 asset이냐" 표 참고). CSS에는 그림자·radius·간격 같은 기하·조명 보정만 맡깁니다.
+
+5. 연출/모션 확인 (코드 기반 — 스크린샷으로는 판단 불가)
+- 모션은 시간 축에서 일어나므로 정지 스크린샷에는 잡히지 않습니다. 이 축은 반드시 HTML/CSS/JS 원문을 읽고 판단합니다.
+- scene_transition: 화면 전환이 `display:none`/`hidden` 즉시 스왑인지, duration+easing이 있는 실제 전환(@keyframes 또는 transition)인지 봅니다. 즉시 스왑이면 실패입니다.
+- entrance_choreography: 요소·캐릭터·말풍선이 한꺼번에 나타나는지, 순차(stagger delay, animation-delay, setTimeout 시퀀스)로 등장하는지 봅니다. 도입/튜토리얼 scene에서 순차 등장 연출이 전무하면 실패입니다.
+- feedback_reaction: 정답/오답 반응이 단일 클래스 토글(예: 초록 플래시 한 종류)인지, 맥락별로 다양(캐릭터 표정 전환 + 파티클/이펙트 + 대상 오브젝트 반응)한지 봅니다. 정답과 오답이 색만 다르고 같은 연출이면 실패입니다.
+- answer_reveal: 정답 표시에 연출(하이라이트, 스탬프, 글로우, 카운트업)이 있는지, 정적 텍스트/색 변경뿐인지 봅니다.
+- micro_interaction: 버튼/CTA/조작물에 hover·press·pulse 같은 상태 피드백이 있는지 봅니다.
+- 이 축의 각 finding에는 aspect(위 다섯 중 하나), scene_id(전역 전환 시스템 문제면 "global"), severity, target(CSS selector/@keyframes 이름/JS 함수·핸들러), issue, evidence(반드시 관련 코드 인용), suggested_fix(구체적 keyframe/타이밍/stagger 지시)를 모두 씁니다.
+- 모션 문제는 asset이 아니라 코드로 해결되므로, asset_review가 아니라 motion_review와 priority_findings(axis="motion")로 냅니다.
+- 심각도 기준: 전환이 즉시 스왑이거나, 피드백 반응이 1종뿐이거나, 등장 연출이 전무하면 최소 medium. 그 결과 화면이 "게임형 장면"이 아니라 "정적 웹 퀴즈"로 느껴질 만큼 몰입을 해치면 high로 봅니다.
 
 독창적 디자인 제안:
 - creative_direction은 전역 필드가 아니라 각 scene_reviews 안에만 씁니다. scene마다 필요한 독창성의 정도가 다르기 때문입니다.
@@ -66,6 +77,7 @@
 - desktop 배경이 충분히 차지 않아 장면형 콘텐츠가 아니라 작은 asset을 올린 웹 페이지처럼 보이는 경우.
 - 흰 카드, 단일색 사각형 카드, 일반 웹 버튼/입력 중심으로 화면이 구성된 경우.
 - asset 자체가 SVG처럼 납작하거나, 필수 safe zone/interaction surface가 없어 HTML/CSS 배치만으로 해결하기 어려운 경우.
+- motion_review에 high severity finding이 1개라도 있는 경우(즉시 스왑 전환, 단일 피드백 반응, 등장 연출 전무 등이 장면 몰입을 크게 해치는 경우).
 
 수정 제안 방식:
 - 추상적으로 "더 자연스럽게", "더 예쁘게"라고 쓰지 않습니다.
@@ -80,10 +92,25 @@
 - 예: "STEP 4 상단 설명 패널은 단일 청록색 사각형으로 떠 있다. 배경의 빈 전광판 3칸을 미션/규칙 영역으로 사용하고, 전광판 프레임 안쪽에 LED/유리 반사 질감을 맞춘 HTML 텍스트를 배치하라."
 - 예: "하단 완료 확인 CTA는 일반 노란 긴 버튼이다. 역 표지판형 또는 황금 기차표형 버튼으로 바꾸고 절취선, 홈, 테두리, 얕은 그림자를 추가하라."
 
+css냐 asset이냐 — 무엇을 이미지로 만들지 판단:
+아래 표로 어떤 문제를 어느 트랙으로 보낼지 정합니다. 핵심은 재질·표면 문제를 CSS로 근사하지 말고 asset(이미지)으로 요청하는 것입니다.
+
+| 무엇 | 어디로 | 이유 |
+|---|---|---|
+| 정적 표면·재질·장식 (카드 프레임, 버튼 몸체, 제목 배너/판, 나무·금속·종이·유리 질감, 전광판 틀) | asset(래스터 이미지)으로 요청 | 재질감·입체감은 CSS로 충분히 표현하기 어렵다 |
+| 동적 내용 (정답·숫자·점수·상태·바뀌는 텍스트) | asset 표면 위 HTML/CSS 오버레이 | 이미지에 구우면 런타임에 값을 바꿀 수 없다 |
+| 기하·레이아웃·모션 (radius, 그림자, 간격, 위치, 전환·애니메이션) | css/js (design_refine이 처리) | 코드가 가장 잘 처리하는 영역 |
+
+- 제목·카드·버튼도 디자인상 이미지가 더 낫다면 asset으로 요청합니다. 단 그 위에 얹히는 동적 텍스트(정답·숫자·바뀌는 라벨)는 오버레이로 유지합니다.
+- 예외: 제목처럼 내용이 절대 바뀌지 않는 고정 텍스트는 배너/판 이미지에 글자까지 통째로 구워도 됩니다. 값이 바뀔 여지가 조금이라도 있으면 표면만 이미지로 만들고 텍스트는 오버레이로 둡니다.
+- 재질이 필요한데 아직 그 asset이 없으면, CSS로 근사하지 말고 asset_review로 요청해 다음 라운드에 만들게 합니다.
+
 asset 재생성/신규 asset 제안 정책:
-- asset 자체가 흐리거나 SVG처럼 납작하거나, 화풍/조명/선 두께가 다른 asset과 맞지 않거나, 필요한 safe zone/interaction surface가 아예 없으면 asset_review.regenerate_assets 또는 asset_review.new_asset_requests에 넣습니다.
-- design_review의 asset 제안은 가장 시급한 항목 최대 3개만 허용합니다. regenerate_assets와 new_asset_requests의 총합이 5개를 넘으면 안 됩니다.
-- 기존 asset을 HTML/CSS로 재배치하면 해결되는 문제는 asset 재생성으로 보내지 말고 asset_review.reposition_assets 또는 refine_suggestions로 보냅니다.
+- asset 자체가 흐리거나 SVG처럼 납작하거나, 화풍/조명/선 두께가 다른 asset과 맞지 않거나, 필요한 표면·재질·safe zone·interaction surface가 없으면 asset_review.regenerate_assets 또는 asset_review.new_asset_requests에 넣습니다.
+- asset 요청은 이번 라운드 예산(입력의 ASSET_BUDGET 값) 안에서 냅니다. regenerate_assets와 new_asset_requests의 총합이 ASSET_BUDGET를 넘지 않습니다.
+- "최소화"가 목표가 아니라 "예산 안에서 가장 시급하고 가치 있는 것부터 만든다"가 목표입니다. 후보가 예산보다 많으면 디자인 임팩트 × 시급성으로 순위를 매겨 상위 ASSET_BUDGET개만 실제 요청하고, 각 요청에 priority(1=최우선)와 impact(왜 시급/고가치인지)를 채웁니다.
+- 예산 밖으로 밀린 후보는 asset_review.deferred_asset_candidates에 target/why_beneficial/why_deferred로 기록해 다음 라운드로 넘깁니다. 조용히 버리지 않습니다.
+- 기존 asset을 옮기거나 crop/scale만 하면 해결되는 문제는 asset 재생성으로 보내지 말고 asset_review.reposition_assets 또는 refine_suggestions로 보냅니다. (표면·재질 자체가 부족한 경우와 구분합니다.)
 - asset_review.keep_assets에는 유지해도 되는 핵심 asset을 간단히 기록합니다.
 - asset_review.reposition_assets에는 asset 파일은 유지하되 crop, scale, z-index, object-position, placement만 바꾸면 되는 항목을 기록합니다.
 - asset_review.remove_assets는 장면을 명백히 방해해서 사용하지 않아야 하는 asset에만 사용합니다.
@@ -101,12 +128,13 @@ asset 재생성/신규 asset 제안 정책:
 - scene_reviews[].text_review에는 hero_mission_text, asset_internal_text, action_feedback_text를 나눠 씁니다. 문제가 없으면 빈 배열을 씁니다. 각 항목은 severity, target, issue, evidence, suggested_fix를 모두 포함합니다.
 - scene_reviews[].checks에는 네 축(asset_quality, background_stage, asset_component_fit, card_button_panel_style)을 scene별로 채웁니다. 각 finding은 severity, target, issue, evidence, suggested_fix를 모두 포함합니다.
 - scene_reviews[].priority_findings에는 해당 scene 안에서 먼저 고칠 항목을 씁니다.
+- motion_review에는 코드 기반 연출/모션 판단을 씁니다. summary에 전환·등장 연출·피드백 반응 전반을 요약하고, findings에는 aspect(scene_transition/entrance_choreography/feedback_reaction/answer_reveal/micro_interaction)별 문제를 담습니다. 문제가 없으면 findings는 빈 배열로 두되 summary는 반드시 채웁니다. 각 finding의 evidence에는 관련 코드(셀렉터/@keyframes/JS 핸들러)를 인용합니다.
 - 최상위 priority_findings는 모든 scene의 priority finding을 다음 refine에서 먼저 고칠 순서대로 합친 flat list입니다.
-- priority_findings의 axis는 asset_quality, background_stage, asset_component_fit, card_button_panel_style, creative_direction, text_surface_fit 중 하나여야 합니다.
+- priority_findings의 axis는 asset_quality, background_stage, asset_component_fit, card_button_panel_style, creative_direction, text_surface_fit, motion 중 하나여야 합니다. 모션 문제를 우선 수정 목록에 올릴 때 axis="motion"을 씁니다.
 - priority_findings의 scene_id는 어느 scene의 문제인지 반드시 표시합니다. 여러 scene에 반복되는 공통 문제라도 가장 먼저 고쳐야 할 대표 scene_id를 지정하고 evidence에 반복 양상을 설명합니다.
 - priority_findings의 각 항목은 scene_id, severity, axis, target, issue, evidence, suggested_fix에 핵심 정보를 모두 담습니다.
 - refine_suggestions는 design_refine이 그대로 수행할 수 있는 명령형 문장으로 씁니다.
-- asset_review에는 desktop 디자인 관점에서 asset 재생성/신규 생성이 필요한 경우만 기록합니다. 재생성/신규 요청은 합산 최대 5개입니다.
+- asset_review에는 desktop 디자인 관점에서 asset 재생성/신규 생성이 필요한 경우를 기록합니다. regenerate_assets와 new_asset_requests의 합산은 ASSET_BUDGET 이내이며, 각 요청에 priority와 impact를 채웁니다. 예산 밖 후보는 deferred_asset_candidates에 기록합니다.
 
 금지:
 - render_checks, render_evidence, console_errors, page_errors, request_failures, broken_images, overflow 같은 렌더 진단 필드를 출력하지 않습니다.

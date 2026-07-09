@@ -19,6 +19,7 @@
 - 원본 흐름을 바꾸거나 생략해야 할 때는 section의 `purpose`나 `content_outline`에 그 의도가 드러나게 씁니다.
 - 각 section은 하나의 명확한 목적을 가져야 합니다.
 - `content_outline`은 builder가 바로 화면 텍스트와 UI 블록으로 옮길 수 있을 정도로 구체적으로 씁니다.
+- 모든 section에 `staging_notes` 키를 항상 포함합니다. story board가 움직임/연출을 암시하면 그 섹션에서 의도하는 연출을 평어로 적고, 딱히 없으면 빈 배열로 둡니다. 예: "캐릭터→작업대→카드 순으로 순차 등장", "이전 화면은 페이드아웃, 새 화면은 부드럽게 슬라이드인", "정답 시 도장 쾅 + 캐릭터 환호, 오답 시 짧은 흔들림". 필수 내용은 `content_outline`, 연출 힌트는 `staging_notes`로 분리해 섞지 않습니다.
 - `interaction_ids`는 이 section에서 사용할 interaction의 id만 참조합니다.
 - `asset_ids`는 이 section에서 사용할 asset의 id만 참조합니다.
 - `asset_plan[].intended_path`는 `output/assets/{filename}.png` 같은 형태로 계획합니다.

@@ -1,0 +1,36 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.1,
+      "learning_goal_alignment": 3.8,
+      "interaction_flow_clarity": 4.1,
+      "feedback_scaffolding": 3.2,
+      "content_completeness": 4.2,
+      "functional_integrity": 4.0
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 3.999
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "11개 섹션, 튜토리얼, 유형 A/B/C 각 4문항, 수리 완료, 생활 속 시간 갤러리, 마무리 퀴즈, 인증서 흐름이 원 storyboard 순서대로 구현되어 있다. 다만 유형 A의 일부 문항은 '몇 분 전' 표현을 직접 고르는 활동보다 같은 시각의 아날로그 시계를 고르는 방식으로 축약되어 표현 변환 맥락이 약해졌다.",
+    "learning_goal_alignment": "1시간=60분 계열의 시각 읽기, 몇 분 전, 걸린 시간, 1일=24시간 관계가 대부분 문항으로 연결된다. 그러나 유형 A 2번과 4번은 피드백 note에서는 다른 표현을 보여 주지만 실제 선택 조작은 동일 시각 시계 선택에 머물러 '12시 10분 전', '5시 5분 전'이라는 읽기 변환 목표를 충분히 조작하게 하지 않는다.",
+    "interaction_flow_clarity": "시작, 도와주기, 튜토리얼 드래그, 미션 전환, 갤러리, 퀴즈, 인증서까지 다음 행동 버튼과 진행 점 표시가 명확하다. 유형 B 입력도 빈칸 터치 후 키패드와 확인하기로 이어진다. 다만 유형 C는 정답 숫자만 빈칸에 들어가고 별도 제출 없이 즉시 진행되어 사용자가 완료 판정 방식을 약간 추측할 수 있다.",
+    "feedback_scaffolding": "정답/오답 토스트, 흔들림, 캐릭터 반응, 에너지 상승은 존재한다. 하지만 오답 피드백이 대부분 '다시 생각해보세요', '다시 계산해볼까요' 수준이고 왜 틀렸는지나 어떤 개념을 다시 보아야 하는지 설명하지 않는다. 유형 A 정답 note는 도움 되지만 유형 B/C의 개념 설명 피드백은 제한적이다.",
+    "content_completeness": "필수 섹션과 상호작용이 모두 포함되어 있고, 13/13 인증, 에너지 10/90/100 흐름, 생활 속 시간 3페이지, 최종 보상까지 닫힌 구조다. 튜토리얼과 12문항 및 마무리 퀴즈의 수량도 유지된다. 일부 대사와 유형 도입 설명은 압축되었지만 핵심 완료 조건은 빠지지 않았다.",
+    "functional_integrity": "필수 버튼, 메뉴, 드래그, 시계 선택, 숫자 키패드, 숫자 블록 드롭, 캐러셀, 퀴즈, 인증서 저장 토스트가 HTML 원문상 도달 가능하게 연결되어 있다. Type C는 정답 블록만 수용하고 완료 시 자동 진행된다. blocking runtime error는 보이지 않지만, 숫자 블록 재사용 처리와 자동 판정 방식은 약간 단순하다."
+  },
+  "weak_axes": [
+    "learning_goal_alignment",
+    "feedback_scaffolding"
+  ],
+  "calibration_note": "weighted_total은 3.999로 min_total 4.0에 근소하게 미달하며, learning_goal_alignment 3.8은 min_axis 4.0 미만, feedback_scaffolding 3.2는 min_axis 3.8 미만이다. 필수 콘텐츠와 진행 기능은 대체로 갖췄지만, 일부 핵심 개념 조작과 학습적 피드백이 기준에 부족해 content 품질 게이트는 REJECT이다."
+}

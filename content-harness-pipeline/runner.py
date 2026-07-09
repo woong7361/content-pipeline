@@ -104,6 +104,7 @@ CLAUDE_MODEL_ALIASES = {MODEL_CLAUDE_OPUS, MODEL_CLAUDE_SONNET}
 FINAL_CHECKED_RULES = ["schema", "brief_hash", "min_total", "min_axis"]
 DEFAULT_ASSET_BATCH_SIZE = 3
 DEFAULT_ASSET_PARALLELISM = 15
+DEFAULT_ASSET_BUDGET = 9
 DEFAULT_CONTENT_MAX_ITERATIONS = 5
 MAX_ASSET_REVISION_REQUESTS = 6
 DEFAULT_TIMEOUT_SECONDS = 1200
@@ -1757,6 +1758,7 @@ def run_design_review_stage(
                 codex_bin=args.codex_bin,
                 model=resolve_agent_models(args)[AGENT_DESIGN_REVIEW],
                 timeout_seconds=args.timeout_seconds,
+                asset_budget=getattr(args, "asset_budget", DEFAULT_ASSET_BUDGET),
             )
 
         design_review_result = validate_file(temp_design_review_path, artifact="design_review_output")
@@ -2807,6 +2809,12 @@ def main() -> int:
     parser.add_argument("--asset-batch-size", type=int, default=DEFAULT_ASSET_BATCH_SIZE)
     parser.add_argument("--asset-parallelism", type=int, default=DEFAULT_ASSET_PARALLELISM)
     parser.add_argument(
+        "--asset-budget",
+        type=int,
+        default=DEFAULT_ASSET_BUDGET,
+        help="Max asset requests (regenerate + new combined) a single design review round may make.",
+    )
+    parser.add_argument(
         "--asset-generator-missing-only",
         action="store_true",
         help="Reuse existing files under output/assets and generate only missing planned assets.",
@@ -2826,6 +2834,8 @@ def main() -> int:
         raise ValueError("--asset-batch-size must be at least 1")
     if args.asset_parallelism < 1:
         raise ValueError("--asset-parallelism must be at least 1")
+    if args.asset_budget < 1:
+        raise ValueError("--asset-budget must be at least 1")
 
     single_stage_flags = [
         args.planner_only,

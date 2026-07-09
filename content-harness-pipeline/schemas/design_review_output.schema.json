@@ -9,6 +9,7 @@
     "reviewed_screenshots",
     "overall_assessment",
     "scene_reviews",
+    "motion_review",
     "asset_review",
     "priority_findings",
     "refine_suggestions"
@@ -40,6 +41,7 @@
       "minItems": 1,
       "items": { "$ref": "#/$defs/sceneReview" }
     },
+    "motion_review": { "$ref": "#/$defs/motionReview" },
     "priority_findings": {
       "type": "array",
       "items": { "$ref": "#/$defs/priorityFinding" }
@@ -52,7 +54,8 @@
         "reposition_assets",
         "remove_assets",
         "regenerate_assets",
-        "new_asset_requests"
+        "new_asset_requests",
+        "deferred_asset_candidates"
       ],
       "properties": {
         "overall_asset_fit": {
@@ -73,13 +76,16 @@
         },
         "regenerate_assets": {
           "type": "array",
-          "maxItems": 3,
           "items": { "$ref": "#/$defs/assetRegenerationRequest" }
         },
         "new_asset_requests": {
           "type": "array",
-          "maxItems": 3,
           "items": { "$ref": "#/$defs/newAssetRequest" }
+        },
+        "deferred_asset_candidates": {
+          "type": "array",
+          "description": "예산 밖으로 밀린 asset 후보. 다음 라운드로 이어가기 위한 기록",
+          "items": { "$ref": "#/$defs/deferredAssetCandidate" }
         }
       },
       "additionalProperties": false
@@ -102,8 +108,62 @@
         "asset_component_fit",
         "card_button_panel_style",
         "creative_direction",
-        "text_surface_fit"
+        "text_surface_fit",
+        "motion"
       ]
+    },
+    "motionFinding": {
+      "type": "object",
+      "required": ["aspect", "scene_id", "severity", "target", "issue", "evidence", "suggested_fix"],
+      "properties": {
+        "aspect": {
+          "type": "string",
+          "enum": [
+            "scene_transition",
+            "entrance_choreography",
+            "feedback_reaction",
+            "answer_reveal",
+            "micro_interaction"
+          ],
+          "description": "연출/모션 유형. scene_transition=화면 전환, entrance_choreography=요소·캐릭터 순차 등장, feedback_reaction=정답/오답 반응 연출, answer_reveal=정답 표시 연출, micro_interaction=버튼/CTA hover·press·pulse"
+        },
+        "scene_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "해당 scene_id. 전환 시스템처럼 전역 문제면 \"global\""
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "수정 대상. CSS selector, @keyframes 이름, JS 함수/이벤트 핸들러, DOM id/class 등 design_refine이 코드에서 바로 찾을 수 있는 위치"
+        },
+        "issue": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "description": "코드 근거. 관련 CSS 셀렉터/@keyframes/JS 핸들러를 인용한다. 예: showScene()는 hidden 클래스 토글만 하고 전환 애니메이션이 없음"
+        },
+        "suggested_fix": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "motionReview": {
+      "type": "object",
+      "required": ["summary", "findings"],
+      "description": "코드(HTML/CSS/JS)를 읽고 판단하는 연출/모션 리뷰. 정적 스크린샷으로는 판단할 수 없는 시간 축 완성도를 다룬다",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "description": "전환·등장 연출·피드백 반응 전반에 대한 코드 기반 판단"
+        },
+        "findings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/motionFinding" }
+        }
+      },
+      "additionalProperties": false
     },
     "reviewedScreenshot": {
       "type": "object",
@@ -115,6 +175,20 @@
         "absolute_path": { "type": "string", "minLength": 1 },
         "width": { "type": "integer", "minimum": 1 },
         "height": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "deferredAssetCandidate": {
+      "type": "object",
+      "required": ["target", "why_beneficial", "why_deferred"],
+      "properties": {
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "asset으로 만들면 좋은 표면/요소. selector, asset_id, 화면 영역 등"
+        },
+        "why_beneficial": { "type": "string", "minLength": 1, "description": "이미지로 만들면 무엇이 좋아지는지" },
+        "why_deferred": { "type": "string", "minLength": 1, "description": "이번 예산에서 밀린 이유. 우선순위가 낮음 등" }
       },
       "additionalProperties": false
     },
@@ -286,6 +360,8 @@
       "type": "object",
       "required": [
         "asset_id",
+        "priority",
+        "impact",
         "reason",
         "suggested_action",
         "revised_prompt_brief",
@@ -300,6 +376,8 @@
           "type": "string",
           "pattern": "^[a-z][a-z0-9_-]*$"
         },
+        "priority": { "type": "integer", "minimum": 1, "description": "요청 우선순위. 1=최우선. 예산 안에서 무엇부터 만들지 정렬용" },
+        "impact": { "type": "string", "minLength": 1, "description": "이 재생성이 해결하는 디자인 임팩트와 시급성" },
         "reason": { "type": "string", "minLength": 1 },
         "suggested_action": { "type": "string", "minLength": 1 },
         "revised_prompt_brief": { "type": "string", "minLength": 1 },
@@ -322,6 +400,8 @@
       "type": "object",
       "required": [
         "suggested_id",
+        "priority",
+        "impact",
         "kind",
         "intended_path",
         "usage_section_ids",
@@ -338,6 +418,8 @@
           "type": "string",
           "pattern": "^[a-z][a-z0-9_-]*$"
         },
+        "priority": { "type": "integer", "minimum": 1, "description": "요청 우선순위. 1=최우선. 예산 안에서 무엇부터 만들지 정렬용" },
+        "impact": { "type": "string", "minLength": 1, "description": "이 신규 asset이 해결하는 디자인 임팩트와 시급성" },
         "kind": {
           "type": "string",
           "enum": ["image"]

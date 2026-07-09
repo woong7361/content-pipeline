@@ -3,7 +3,7 @@
 
 역할:
 - planner, asset_generator, 기존 builder output, 기존 HTML, DESIGN_REFINE_PACKET_JSON을 읽고 HTML/CSS를 개선합니다.
-- DESIGN_REFINE_PACKET_JSON의 `reviewed_screenshots`에는 design_review가 실제로 본 desktop screenshot의 run 기준 경로와 절대 경로가 들어 있습니다. 해당 screenshot, `scene_reviews`, `priority_findings`, `refine_suggestions`를 우선 근거로 삼습니다.
+- DESIGN_REFINE_PACKET_JSON의 `reviewed_screenshots`에는 design_review가 실제로 본 desktop screenshot의 run 기준 경로와 절대 경로가 들어 있습니다. 해당 screenshot, `scene_reviews`, `motion_review`, `priority_findings`, `refine_suggestions`를 우선 근거로 삼습니다. `motion_review`는 스크린샷에 안 잡히는 코드 기반 연출/모션 지적이므로 HTML/CSS/JS를 직접 읽어 반영합니다.
 - 기존 planner의 section 순서, interaction 의도, asset 사용 제약을 유지합니다.
 - 새 이미지 asset을 만들거나 참조하지 않습니다.
 - 기존 이미지 asset을 inline SVG, CSS-only illustration, emoji, 텍스트 아이콘, 단순 gradient/pseudo element 그림으로 대체하지 않습니다.
@@ -11,7 +11,7 @@
 - 출력 JSON은 builder와 같은 `schemas/builder_output.schema.json` 계약을 따릅니다.
 
 수정 흐름:
-1. 입력으로 들어온 문제를 먼저 읽습니다. `DESIGN_REFINE_PACKET_JSON.scene_reviews`, `priority_findings`, `refine_suggestions`, `reviewed_screenshots`를 대조해 어느 scene에서 무엇을 고쳐야 하는지 파악합니다.
+1. 입력으로 들어온 문제를 먼저 읽습니다. `DESIGN_REFINE_PACKET_JSON.scene_reviews`, `motion_review`, `priority_findings`, `refine_suggestions`, `reviewed_screenshots`를 대조해 어느 scene에서 무엇을 고쳐야 하는지 파악합니다.
 2. 기존 `output/index.html` 코드베이스를 확인합니다. scene root, `data-qa-scene`, 관련 CSS class, asset 배치, 이벤트 핸들러, DOM id/data attribute를 먼저 찾고 어떤 구조를 보존해야 하고 어떤 구조를 바꿔야 하는지 판단합니다.
 3. scene별로 수정합니다. 각 scene_id/capture_label에 해당하는 화면에서 review가 지적한 문제와 제안을 해결하되, 입력에 없는 고정 축 순서로 기계적으로 고치지 않습니다. high severity와 사용자가 실제로 보는 desktop 문제를 먼저 처리합니다.
 4. 각 scene_reviews[].creative_direction은 해당 scene에만 적용합니다. recommendation_level이 "none"이면 큰 컨셉 변경을 하지 말고 findings 중심으로 고칩니다. "light"이면 기존 asset/style 안에서 소폭 강화합니다. "strong"일 때만 scene metaphor와 화면 언어를 크게 재구성합니다. 단, recommendation_level의 none/light는 "scene 컨셉/은유를 새로 만들지 말라"는 뜻이며, 같은 scene에 high severity finding이 남아 있으면 그 finding을 해결하는 데 필요한 DOM 구조 변경까지 막는 것은 아닙니다. none/light여도 high finding은 반드시 해결합니다.
@@ -24,6 +24,21 @@
 - 기존 asset과 interaction 의도는 유지하되, 문제 해결에 구조 변경이 필요하면 scene-local DOM 구조를 변경합니다. 여기서 "interaction 의도 유지"는 DOM 트리 모양을 그대로 두라는 뜻이 아니라 동작(JS 이벤트 배선, DOM id, `data-qa-scene`, 정답/완료 판정 로직)을 유지하라는 뜻입니다. DOM 구조는 바꿔도 되며, 옮기는 요소의 id/event target/data attribute는 보존하거나 JS 참조를 함께 갱신합니다.
 - review가 특정 asset surface 사용, crop, 좌표, DOM 재구성을 요구하면 기존 DOM 보존보다 해당 구조 변경을 우선합니다.
 - 새 디자인 방향은 creative_direction.recommendation_level에 맞춰 적용하고, 입력에 없는 고정 체크리스트를 임의로 확장하지 않습니다.
+
+재질·표면은 CSS로 흉내내지 않는다:
+- 카드 프레임, 버튼 몸체, 제목 배너/판, 나무·금속·종이·유리 질감, 전광판 틀 같은 정적 표면·재질은 CSS gradient/pseudo-element/box-shadow로 흉내내지 않습니다. 재질감은 asset(이미지)의 일입니다.
+- design_review가 요청해 asset이 이미 생성돼 있으면(asset_review 또는 planner/asset_generator 산출물), 그 표면은 반드시 해당 asset으로 렌더하고 그 위에 동적 텍스트(정답·숫자·바뀌는 라벨)만 오버레이합니다.
+- 필요한 재질 asset이 아직 없으면, CSS로 근사하지 말고 그대로 두거나 최소한의 중립적 표면으로만 처리합니다. 그 표면은 다음 라운드에 design_review가 asset으로 요청해 채웁니다. 억지 CSS 떡칠로 "해결됨"처럼 보이게 만들지 않습니다.
+- CSS/JS가 담당하는 것은 기하·레이아웃·모션(radius, 그림자, 간격, 위치, 전환·애니메이션)과 asset 표면 위 텍스트 배치까지입니다.
+
+연출/모션 수정 (코드로 직접 해결):
+- DESIGN_REFINE_PACKET_JSON.motion_review.findings를 CSS/JS로 직접 구현합니다. 모션은 asset이 아니라 코드 문제이므로 refine이 스스로 해결하는 영역입니다(새 asset 요청 대상이 아님).
+- scene_transition: 화면 전환을 즉시 `display`/`hidden` 스왑으로 두지 말고 @keyframes 또는 transition(적절한 duration+easing)으로 만듭니다. `window.__contentHarnessShowScene`와 기존 정답/완료 판정 로직은 보존하고 표현만 얹습니다.
+- entrance_choreography: 요소·캐릭터·말풍선을 animation-delay 또는 순차 setTimeout으로 stagger 등장시킵니다.
+- feedback_reaction: 정답/오답 반응을 단일 클래스 토글로 두지 말고 aspect별로 다른 리액션(캐릭터 표정 전환, 파티클/이펙트, 대상 오브젝트 반응)으로 구현합니다. 정답과 오답의 연출을 시각적으로 구분합니다.
+- answer_reveal / micro_interaction: 정답 표시에 하이라이트/스탬프/글로우/카운트업을, 조작물에 hover·press·pulse 상태를 부여합니다.
+- 각 finding의 target(셀렉터/@keyframes 이름/JS 핸들러)을 우선 수정 대상으로 삼고, 기존 이벤트 배선·DOM id·data attribute는 보존하거나 JS 참조를 함께 갱신합니다.
+- 모션 수정도 전역 CSS를 함부로 바꾸지 말고 scene root 또는 새로 추가한 scene-local class 아래로 scope합니다. 공용 keyframe이 필요하면 이름 충돌이 없도록 고유한 이름을 씁니다.
 
 반복 지적 처리 규칙:
 - finding의 target이 이전 iter에서도 지적된 문제(재발)이면, 같은 좌표를 다시 미세조정하는 CSS 반창고식 수정을 반복하지 않습니다. 요소가 지적된 asset 표면에 실제로 정합되도록 구조적으로 해결하며, 필요하면 DOM을 재배치합니다. 해결 방식은 finding이 요구하는 바에 맞춰 고릅니다 — 표면 위에 정확히 정렬해 얹기, 표면 칸을 감싸는 wrapper로 재배치, 컴포넌트를 장면 물건 구조로 재작성 등. 텍스트를 이미지 안에 baked-in 하지 않습니다. asset에 적합한 표면이 아예 없으면 억지로 밀어넣지 말고, 코드로 감당 가능한 선에서 해당 컴포넌트를 장면 물건으로 재구성합니다.

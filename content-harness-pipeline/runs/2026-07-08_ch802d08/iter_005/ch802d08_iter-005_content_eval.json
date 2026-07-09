@@ -1,0 +1,36 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "PASS",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.3,
+      "learning_goal_alignment": 4.1,
+      "interaction_flow_clarity": 4.1,
+      "feedback_scaffolding": 3.8,
+      "content_completeness": 4.2,
+      "functional_integrity": 4
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.096
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본 planner의 장면 순서가 title, 문제 발생, 튜토리얼, A/B/C 미션, 복구, 생활 속 이야기, 마무리 퀴즈, 인증서까지 보존되어 있다. 1시간=60분, 몇 분 전, 걸린 시간, 1일=24시간 관계도 모두 포함된다. 다만 Type A의 일부 문항은 '바른 읽기' 표현 확인보다 같은 시각의 아날로그 시계 선택으로 축약되어 원래 문항 의도가 약간 좁아졌다.",
+    "learning_goal_alignment": "튜토리얼 정각 읽기, Type A의 몇 분 전 시각 선택, Type B의 걸린 시간과 끝나는 시각 입력, Type C의 1일/24시간 숫자 블록 배치가 학습 목표와 직접 연결된다. 생활 속 사례도 24시간, 해시계, 30분 타이머로 개념 확장을 담당한다. 일부 객관식 시계 선택은 계산 과정보다 결과 선택에 가까워 개념 설명의 깊이는 제한적이다.",
+    "interaction_flow_clarity": "시작 버튼부터 다음 단계 버튼, 드래그, 선택, 키패드 입력, 숫자 블록 배치, 캐러셀, 최종 퀴즈까지 진행 순서가 대체로 명확하다. 각 미션에는 문제 문구와 현재 문제 진행 점이 있다. 다만 튜토리얼 성공 화면에서는 planner가 요구한 에너지 게이지가 보이지 않고, Type C는 오답 숫자 드롭 시 별도 설명 피드백이 약해 사용자가 일부 시행착오를 겪을 수 있다.",
+    "feedback_scaffolding": "정답 피드백은 개념 문장과 함께 제공되는 경우가 많다. Type A는 '3시 5분 전 = 2시 55분'처럼 이유가 드러나는 피드백을 제공하고, 마무리 퀴즈도 '24시간은 1일'을 확인한다. 그러나 Type B와 Type C의 오답 피드백은 다시 계산하라는 수준이어서 어떤 계산 단계를 점검해야 하는지는 충분히 안내하지 않는다.",
+    "content_completeness": "필수 섹션과 13개 문항 흐름이 모두 존재하며 튜토리얼 1문항, Type A/B/C 각 4문항, 마무리 퀴즈, 인증서 보상까지 닫힌 구조를 갖는다. 복구 장면, 이야기 갤러리 3페이지, 저장 버튼과 다음 차시 버튼도 포함된다. 단, 오답으로 강제 전환된 Type A 문항도 최종 13/13로 표시되는 점은 완료 기록의 의미를 약화시킨다.",
+    "functional_integrity": "필수 버튼, 메뉴, 에너지 게이지, 드래그 앤 드롭, 키패드, 캐러셀, 퀴즈 선택, 인증서 저장/다음 차시 버튼이 스크립트상 연결되어 있고 blocking runtime error는 보이지 않는다. 직접 scene hook 진입 시 주요 미션 렌더링도 보완되어 있다. 다만 Type A의 3회 오답 강제 전환도 에너지를 올리고 최종 정답 수가 고정 표시되어 진행 상태의 정확성은 완전하지 않다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "PASS 기준은 충족한다. weighted_total은 4.096으로 min_total 4.0 이상이며, 모든 축이 min_axis 이상이다. 주요 감점은 오답 피드백의 설명 부족, 일부 Type A 문항의 표현 학습 축약, 오답 후에도 완전 성공처럼 기록되는 진행 상태에서 발생했다."
+}

@@ -1,0 +1,866 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-08T16:34:35+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_003/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_intro_problem",
+      "path": "iter_003/design_review/desktop__01_intro_problem.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__01_intro_problem.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_tutorial_clock_reading",
+      "path": "iter_003/design_review/desktop__02_tutorial_clock_reading.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__02_tutorial_clock_reading.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_tutorial_success",
+      "path": "iter_003/design_review/desktop__03_tutorial_success.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__03_tutorial_success.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_type_a_clock_choice",
+      "path": "iter_003/design_review/desktop__04_type_a_clock_choice.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__04_type_a_clock_choice.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_type_b_schedule_restore",
+      "path": "iter_003/design_review/desktop__05_type_b_schedule_restore.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__05_type_b_schedule_restore.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_type_c_checkout_reboot",
+      "path": "iter_003/design_review/desktop__06_type_c_checkout_reboot.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__06_type_c_checkout_reboot.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_repair_complete",
+      "path": "iter_003/design_review/desktop__07_repair_complete.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__07_repair_complete.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_story_gallery",
+      "path": "iter_003/design_review/desktop__08_story_gallery.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__08_story_gallery.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_popup_quiz",
+      "path": "iter_003/design_review/desktop__09_popup_quiz.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__09_popup_quiz.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_final_certificate",
+      "path": "iter_003/design_review/desktop__10_final_certificate.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-08_2d08c0da\\iter_003\\design_review\\desktop__10_final_certificate.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "overall_assessment": "전체 asset 화풍과 도서관 세계관은 일관적이고 밝은 2.5D 학습 모험 톤도 잘 잡혀 있다. 다만 desktop 기준으로 Type A의 보기 시계가 하단에서 잘리고, Type B의 핵심 시간표가 큰 흰 웹 카드처럼 떠 있으며, Type C의 숫자 트레이와 설명 말풍선이 장면 속 대출 시스템 표면과 충분히 결합되지 않아 다음 refine에서 고쳐야 할 high severity 문제가 남아 있다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "iter_003/design_review/desktop.png",
+      "scene_purpose": "학습 미션을 첫 화면에서 명확히 알리고 시작 버튼으로 도서관 수리 모험에 진입시킨다.",
+      "overall_assessment": "배경은 desktop 화면을 충분히 채우고 첫 인상도 선명하다. 제목과 CTA가 배너/티켓 형태로 처리되어 장면성은 있으나, 상단 청록 배지는 아직 일반 UI 라벨처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 로비 현수막 접수대",
+        "rationale": "현재 구도는 충분히 작동하므로 큰 변경보다 제목 표면의 물성을 더 장면 속 물건처럼 강화하면 된다.",
+        "core_metaphor": "무너진 도서관 로비 중앙에 걸린 수리 모집 현수막과 입장 티켓",
+        "visual_language": "목재 레일, 천/종이 배너, 노란 티켓, 얕은 그림자와 절취선",
+        "layout_strategy": "중앙 배너와 시작 티켓은 유지하되 배지까지 배너에 붙은 작은 금속 명패로 통합한다.",
+        "interaction_surfaces": [
+          ".title-banner",
+          "button#startBtn.ticket-start",
+          ".title-badge"
+        ],
+        "implementation_notes": [
+          ".title-badge를 단색 pill에서 나사와 금속 테두리가 있는 작은 도서관 명패로 변경한다.",
+          "시작 버튼은 현재 티켓형을 유지하고 좌우 절취 홈 대비만 조금 낮춘다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"title_start\"] .title-badge",
+            "issue": "상단 보조 라벨이 현수막 안의 물리적 명패보다 일반 웹 pill처럼 보인다.",
+            "evidence": "청록색 단일 사각 라벨이 배너 중앙 상단에 떠 있어 주변 목재/종이 재질과 분리된다.",
+            "suggested_fix": ".title-badge에 얇은 금속 테두리, 작은 나사 2개, inset highlight를 추가하고 border-radius를 1cqh 이하로 줄여 도서관 표찰처럼 만든다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "low",
+            "target": "button#startBtn.ticket-start",
+            "issue": "티켓형 CTA는 적합하지만 아이콘이 emoji라 주변 2.5D raster asset과 질감이 다르다.",
+            "evidence": "시작하기 앞의 티켓 emoji가 고해상도 일러스트 배경과 다른 플랫폼 아이콘처럼 보인다.",
+            "suggested_fix": "emoji를 제거하고 CSS로 작은 punched ticket mark 또는 도서관 책 배지 형태를 만든다."
+          }
+        ]
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"title_start\"] .title-badge를 나사 달린 금속 명패 스타일로 바꾸고, emoji 기반 .tk-badge는 CSS ticket mark로 대체하라."
+      ]
+    },
+    {
+      "scene_id": "01_intro_problem",
+      "capture_label": "01_intro_problem",
+      "screenshot_path": "iter_003/design_review/desktop__01_intro_problem.png",
+      "scene_purpose": "고장 난 시계 때문에 시간이 뒤죽박죽이 된 상황을 보여 주고 학습자가 도와야 할 이유를 만든다.",
+      "overall_assessment": "고장 난 시계, 걱정한 사서, 긴급 수리 요청서가 명확하게 읽혀 장면 목적은 좋다. 요청서와 버튼은 종이/도장 은유가 있어 웹 카드 느낌을 상당히 줄였다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "긴급 수리 접수 데스크",
+        "rationale": "현재 장면은 충분히 이해되며, 요청서를 바닥 위 서류보다 시계 수리 접수대 표면처럼 조금 더 붙이면 완성도가 올라간다.",
+        "core_metaphor": "고장 난 시계 아래 놓인 긴급 수리 접수서와 출동 도장",
+        "visual_language": "줄노트 종이, 빨간 긴급 스탬프, 노란 도장 버튼, 따뜻한 도서관 조명",
+        "layout_strategy": "시계-요청서-CTA의 수직 흐름은 유지하되 요청서를 살짝 원근감 있는 서류로 만든다.",
+        "interaction_surfaces": [
+          "#introClock",
+          ".repair-request-sheet",
+          ".dispatch-stamp-button"
+        ],
+        "implementation_notes": [
+          ".repair-request-sheet에 rotate(-1deg)와 paper shadow를 주고 하단 CTA는 도장 받침대처럼 배치한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"intro_problem\"] .repair-request-sheet",
+            "issue": "긴 문장이 한 줄 폭에 길게 이어져 종이 문서보다는 웹 알림문처럼 읽힌다.",
+            "evidence": "요청서 안 문장이 넓은 직사각형 영역 전체를 가로질러 배치된다.",
+            "suggested_fix": "max-width를 58cqw로 줄이고 line-height 1.45, text-align:left를 유지하되 첫 문장 뒤 줄바꿈을 넣어 실제 접수서 문단처럼 보이게 한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"intro_problem\"] .repair-request-sheet는 약간 좁히고 종이 회전/그림자를 추가해 시계 아래 접수 서류처럼 배치하라."
+      ]
+    },
+    {
+      "scene_id": "02_tutorial_clock_reading",
+      "capture_label": "02_tutorial_clock_reading",
+      "screenshot_path": "iter_003/design_review/desktop__02_tutorial_clock_reading.png",
+      "scene_purpose": "쉬운 정각 읽기 문제로 조작 방식을 익히고 학습자가 수리 능력을 증명하게 한다.",
+      "overall_assessment": "작업대 은유가 명확하고 시계, 답 슬롯, 카드 트레이가 한 장치 안에 모여 있어 학습 UI 통합이 좋다. 다만 중앙 작업대가 너무 평평한 갈색 판으로 커서 asset 대비 UI 도형감이 조금 남는다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "시계 수리 작업대",
+        "rationale": "기존 interaction 의도와 배치는 잘 맞으므로 작업대 표면의 재질과 깊이만 보강하면 된다.",
+        "core_metaphor": "고장난 시계를 작업대에 올리고 답 카드를 슬롯에 끼워 넣는 첫 수리 훈련",
+        "visual_language": "목재 작업대, 금속 슬롯, 카드 트레이, 작은 리벳과 홈",
+        "layout_strategy": "현재 중앙 workbench 구조를 유지하되 상단 판과 하단 트레이를 더 분리된 장치로 보이게 한다.",
+        "interaction_surfaces": [
+          ".tutorial-workbench",
+          "#tutSlot",
+          "#tutCards .opt-btn"
+        ],
+        "implementation_notes": [
+          ".tutorial-workbench에 wood grain linear overlay를 추가한다.",
+          "하단 card-tray 내부에 슬롯 홈 3개를 만들어 카드가 얹힌 것이 아니라 꽂혀 보이게 한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"tutorial_clock_reading\"] #tutSlot",
+            "issue": "답 슬롯은 명확하지만 주변 금속 프레임 대비 내부 글자가 약간 크게 떠 보인다.",
+            "evidence": "? 글자가 슬롯 중심에는 있으나 내부 여백을 거의 채운다.",
+            "suggested_fix": "#tutSlot font-size를 4.4cqh에서 4cqh로 낮추고 inset shadow를 강화해 디스플레이 창 안의 표시처럼 보이게 한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"tutorial_clock_reading\"] .tutorial-workbench",
+            "issue": "대형 갈색 workbench가 raster asset이 아니라 단일 CSS 판처럼 보인다.",
+            "evidence": "중앙 작업대의 넓은 갈색 면에 질감 변화가 적어 배경 일러스트와 디테일 밀도가 다르다.",
+            "suggested_fix": "wood grain, 상단 bevel, 하단 shadow, 리벳, 슬롯 홈을 추가해 물리적 수리대 재질을 강화한다."
+          }
+        ]
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"tutorial_clock_reading\"] .tutorial-workbench에 wood grain overlay와 bevel을 추가하고, #tutCards .opt-btn이 트레이 홈에 꽂힌 카드처럼 보이도록 각 카드 뒤에 slot shadow를 추가하라."
+      ]
+    },
+    {
+      "scene_id": "03_tutorial_success",
+      "capture_label": "03_tutorial_success",
+      "screenshot_path": "iter_003/design_review/desktop__03_tutorial_success.png",
+      "scene_purpose": "정답 피드백과 에너지 상승을 통해 본격 미션으로 넘어갈 동기를 준다.",
+      "overall_assessment": "성공한 시계, 양쪽 캐릭터, 티켓 CTA가 성취감을 잘 만든다. 중앙 성공 메시지는 영수증 은유를 쓰지만 흰 직사각 면이 넓어 장면 속 물건이라는 느낌이 약간 부족하다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "첫 수리 완료 영수증",
+        "rationale": "성공 피드백 구조는 좋으며, 영수증을 더 물리적 보상물로 보이게 하면 충분하다.",
+        "core_metaphor": "첫 시계 수리를 마치고 출력된 수리 영수증과 다음 미션 티켓",
+        "visual_language": "찢어진 영수증 가장자리, 초록 완료 도장, 노란 미션 티켓",
+        "layout_strategy": "성공 메시지와 CTA는 현재 위치를 유지하되 영수증 하단에 perforation을 넣는다.",
+        "interaction_surfaces": [
+          ".success-receipt",
+          ".mission-ticket-button"
+        ],
+        "implementation_notes": [
+          ".success-receipt에 repeating perforation과 작은 receipt number를 추가한다.",
+          "문장은 2줄 중심으로 재배치해 영수증 면 안에서 여백을 안정화한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"tutorial_success\"] .success-receipt",
+            "issue": "성공 메시지 표면이 넓은 흰 웹 카드처럼 읽힌다.",
+            "evidence": "완료 도장은 있지만 본문 영역이 큰 흰 사각형으로 남아 배경 및 시계 asset과 물성이 약하다.",
+            "suggested_fix": "receipt paper 질감을 강화하고 하단 절취선, 작은 수리 번호, 좌우 미세한 곡면 그림자를 추가한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"tutorial_success\"] .success-receipt",
+            "issue": "카드 표면이 단순하다.",
+            "evidence": "흰 사각형, 얇은 테두리, 중앙 텍스트 중심이라 장면 속 영수증보다 일반 알림 패널에 가깝다.",
+            "suggested_fix": "영수증 하단 perforation, 종이 grain, 작은 스탬프 잉크 번짐을 추가해 수리 완료 출력물처럼 만든다."
+          }
+        ]
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"tutorial_success\"] .success-receipt를 수리 영수증으로 더 명확히 만들기 위해 하단 절취선과 종이 질감, receipt number를 추가하라."
+      ]
+    },
+    {
+      "scene_id": "04_type_a_clock_choice",
+      "capture_label": "04_type_a_clock_choice",
+      "screenshot_path": "iter_003/design_review/desktop__04_type_a_clock_choice.png",
+      "scene_purpose": "몇 분 전 표현을 실제 아날로그 시각으로 바꾸어 읽는 연습을 제공한다.",
+      "overall_assessment": "전광판 surface는 매우 적합하고 문제 텍스트도 화면 안에 잘 들어간다. 그러나 세 개의 보기 시계가 desktop 화면 하단에서 크게 잘려 정답 선택 asset이 온전히 보이지 않아 학습 장면 완성도를 해친다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "전광판 관제실의 시계 모듈 슬롯",
+        "rationale": "학습 UI가 전광판과 시계 보기로 구성되는 의도는 좋지만 보기 모듈이 stage 밖으로 내려가 현재 장면의 핵심 조작 표면이 깨진다.",
+        "core_metaphor": "고장난 전광판 아래에 세 개의 시계 모듈을 끼워 맞추는 도서관 관제실",
+        "visual_language": "청록 전광판, 금속 시계 슬롯, 모듈 프레임, 안내 말풍선은 작은 작업 메모",
+        "layout_strategy": "전광판 크기를 약간 줄이고, 보기 시계 3개를 전광판 하단의 금속 슬롯 내부에 완전히 배치한다.",
+        "interaction_surfaces": [
+          "#playA .sign .sign-text",
+          "#playA .options .opt-clock",
+          "#playA .opt-label"
+        ],
+        "implementation_notes": [
+          "#playA .sign width를 54cqw 안팎으로 줄인다.",
+          "#playA .options는 position:absolute 또는 grid로 y=690..875 영역 안에 고정하고 각 .opt-clock width를 15cqw 이하로 낮춘다.",
+          "교사 note-tag는 하단 보기 영역과 겹치지 않도록 left=13cqw bottom=6cqh에서 bottom=12cqh 또는 side rail로 이동한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_a_clock_choice\"] #playA .options .opt-clock, approx x=400..1040 y=825..960 in 1440x960 screenshot",
+            "issue": "정답 선택지인 보기 시계가 하단 stage 경계 밖으로 내려가 시계 얼굴과 라벨을 온전히 볼 수 없다.",
+            "evidence": "세 개의 시계 카드 상단 일부만 보이고 실제 시각을 읽어 선택해야 하는 핵심 asset이 잘려 있다.",
+            "suggested_fix": "#playA .sign을 54cqw 이하로 줄이고 .options를 전광판 아래 y=690..875 safe zone에 grid-template-columns:repeat(3, minmax(0, 1fr))로 고정한다. .opt-clock width를 15cqw, .opt-label font-size를 2cqh로 낮춰 시계와 라벨이 모두 화면 안에 들어가게 한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_a_clock_choice\"] #playA .options",
+            "issue": "보기 시계 모듈이 전광판의 하단 조작 표면과 통합되지 못하고 화면 아래로 밀려난다.",
+            "evidence": "전광판 하단에는 금속 슬롯처럼 쓸 수 있는 빈 영역이 있지만 보기 시계들이 그 표면 안에 들어가지 못한다.",
+            "suggested_fix": "전광판 body 바로 아래에 .clock-module-rack wrapper를 만들고 세 보기 시계를 작은 금속 슬롯 카드로 넣어 전광판 장치 일부처럼 보이게 한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"type_a_clock_choice\"] #tchbubA.note-tag",
+            "issue": "안내 말풍선이 보기 영역과 경쟁하고 좌하단 캐릭터 위에 떠 있는 웹 알림처럼 보인다.",
+            "evidence": "말풍선이 큰 흰 패널로 하단 좌측을 차지하며 보기 시계 영역을 압박한다.",
+            "suggested_fix": "첫 문제 안내는 작은 clip note로 줄이고 max-width를 24cqw, font-size를 1.8cqh로 낮추며 전광판 좌측 금속 테두리에 붙은 메모지처럼 배치한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_type_a_clock_choice",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "[data-qa-scene=\"type_a_clock_choice\"] #playA .options .opt-clock",
+          "issue": "정답 보기 시계와 라벨이 하단 화면 밖으로 잘려 학습 선택 표면이 실패한다.",
+          "evidence": "desktop screenshot에서 세 보기 시계가 y=825 이후에 시작해 대부분이 보이지 않는다.",
+          "suggested_fix": "#playA .sign 크기를 줄이고 .options를 전광판 아래 safe zone 안으로 올려 모든 시계 얼굴과 .opt-label이 1440x960 화면 안에 완전히 보이게 한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"type_a_clock_choice\"] #playA .sign width를 54cqw 이하로 줄이고, #playA .options를 전광판 하단의 module rack으로 재배치해 세 보기 시계와 라벨이 y=875 안쪽에 완전히 들어가게 하라."
+      ]
+    },
+    {
+      "scene_id": "05_type_b_schedule_restore",
+      "capture_label": "05_type_b_schedule_restore",
+      "screenshot_path": "iter_003/design_review/desktop__05_type_b_schedule_restore.png",
+      "scene_purpose": "시작 시각과 끝 시각, 걸린 시간을 연결해 빈칸에 숫자로 답하게 한다.",
+      "overall_assessment": "배경의 코르크 게시판 자체가 좋은 interaction surface인데, 실제 문제는 그 위에 큰 흰 카드로 다시 덮여 있다. 이 장면은 장면 속 시간표 복구가 아니라 일반 웹 워크시트를 띄운 느낌이 강해 high severity로 본다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "코르크 게시판 시간표 복구판",
+        "rationale": "기존 bg_reading_class_board가 넓은 코르크 게시판 safe zone을 제공하는데 이를 쓰지 않고 흰 카드가 독립 패널로 떠 있어 장면 은유가 깨진다.",
+        "core_metaphor": "지워진 독서 교실 게시판에 시계 카드와 빈칸 스티커를 다시 꽂아 시간표를 복구한다.",
+        "visual_language": "코르크 보드, 압정, 종이 시간표 조각, dashed 빈칸 스티커, 빨간 확인 도장",
+        "layout_strategy": "흰 .timetable-card를 제거하거나 투명화하고, 배경 코르크 게시판의 중앙 영역 x=360..1080 y=140..760에 직접 문제 요소를 핀으로 붙인다.",
+        "interaction_surfaces": [
+          "asset bg_reading_class_board cork board: approx x=250..1220 y=90..790",
+          ".timetable-card",
+          ".blank",
+          ".confirm-row .btn"
+        ],
+        "implementation_notes": [
+          ".timetable-card background를 transparent로 바꾸고 border를 제거하거나, 코르크 보드와 같은 색의 pinned paper strips로 분해한다.",
+          "문제 문장은 상단 긴 종이 strip, 시계 2개는 가운데 pinned cards, 빈칸은 하단 스티커, 확인은 빨간 도장 버튼으로 배치한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_b_schedule_restore\"] .timetable-card .prompt",
+            "issue": "학습 문장이 배경 게시판 표면이 아니라 큰 흰 카드 안에 들어가 일반 워크시트처럼 보인다.",
+            "evidence": "코르크 보드 전체가 배경으로 존재하지만 중앙의 흰 직사각형 카드가 그 표면을 가리고 있다.",
+            "suggested_fix": ".prompt를 코르크 보드 상단에 핀으로 고정된 종이 strip 형태로 분해하고, .timetable-card의 흰 배경을 제거해 bg_reading_class_board 표면을 실제 interaction surface로 사용한다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"type_b_schedule_restore\"] .blank",
+            "issue": "빈칸 스티커 자체는 읽히지만 카드 내부 중앙에 떠 있어 게시판 복구 조작감이 약하다.",
+            "evidence": "? 입력칸이 카드 중앙 아래에 독립적으로 있고 주변에 표/시간표 칸이 없다.",
+            "suggested_fix": ".blank를 '걸린 시간' 라벨이 인쇄된 작은 종이 시간표 칸 안에 넣고, dashed border를 압정 달린 빈 스티커 느낌으로 유지한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_b_schedule_restore\"] .confirm-row .btn",
+            "issue": "확인 CTA가 장면 속 물건이라기보다 카드 위에 놓인 일반 버튼에 가깝다.",
+            "evidence": "빨간 타원 버튼이 흰 카드 하단 중앙에 떠 있고 게시판의 도장/스탬프 표면과 연결되지 않는다.",
+            "suggested_fix": "확인하기를 코르크 게시판 하단의 빨간 원형 도장 또는 '복구 확인' 스탬프로 바꾸고 .timetable-card 하단 종이 가장자리에 반쯤 찍힌 형태로 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "asset bg_reading_class_board cork board safe zone approx x=250..1220 y=90..790",
+            "issue": "배경에 넓은 코르크 게시판 interaction surface가 있는데 핵심 UI가 이를 직접 쓰지 않는다.",
+            "evidence": "중앙 흰 카드가 코르크 게시판을 덮어 배경의 주제적 표면을 비워둔 것처럼 만든다.",
+            "suggested_fix": "문제 문장, 시계, 빈칸, 확인 CTA를 코르크 게시판 위 pinned paper 요소로 재배치하고 .timetable-card의 독립 카드 프레임을 없앤다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_b_schedule_restore\"] .timetable-card",
+            "issue": "HTML 컴포넌트가 배경 asset 위에 떠 있는 웹 패널처럼 보인다.",
+            "evidence": "흰 카드의 색, 테두리, 큰 평면이 코르크 보드의 원근과 재질을 따르지 않는다.",
+            "suggested_fix": ".timetable-card를 여러 개의 pinned-note wrapper로 쪼개고, 보드 원근에 맞춰 약간의 rotate와 paper shadow를 적용한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_b_schedule_restore\"] .timetable-card",
+            "issue": "화면 중심이 흰색 단일 카드 중심으로 구성되어 필수 reject 조건에 해당한다.",
+            "evidence": "문제 대부분이 흰 직사각형 카드 안에 있어 장면형 콘텐츠보다 웹 워크시트로 보인다.",
+            "suggested_fix": "단일 흰 카드 대신 코르크 게시판에 붙은 시간표 조각 3~4개로 분해한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_type_b_schedule_restore",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "asset bg_reading_class_board cork board safe zone approx x=250..1220 y=90..790; [data-qa-scene=\"type_b_schedule_restore\"] .timetable-card",
+          "issue": "배경 게시판 surface를 두고 큰 흰 웹 카드가 핵심 UI를 대신한다.",
+          "evidence": "desktop screenshot에서 코르크 게시판이 장면의 핵심 표면인데 .timetable-card가 이를 덮어 일반 카드형 문제 화면이 된다.",
+          "suggested_fix": ".timetable-card를 제거하거나 투명화하고, 문제 strip, 시계 카드, 빈칸 스티커, 확인 도장을 코르크 게시판 위에 핀으로 고정된 종이 조각으로 재배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"type_b_schedule_restore\"] .timetable-card를 단일 흰 카드로 쓰지 말고 bg_reading_class_board의 코르크 보드 위 pinned paper 요소들로 분해하라.",
+        "문제 문장은 상단 종이 strip, 두 시계는 중앙 pinned cards, .blank는 하단 시간표 스티커, .confirm-row .btn은 빨간 복구 도장으로 바꾸라."
+      ]
+    },
+    {
+      "scene_id": "06_type_c_checkout_reboot",
+      "capture_label": "06_type_c_checkout_reboot",
+      "screenshot_path": "iter_003/design_review/desktop__06_type_c_checkout_reboot.png",
+      "scene_purpose": "오전 12시간과 오후 12시간, 하루 24시간, 1일의 관계를 숫자 블록 조작으로 확인한다.",
+      "overall_assessment": "대출 시스템 모니터 asset은 좋은 interaction surface이고 화면 안의 문제/빈칸 배치도 비교적 자연스럽다. 그러나 숫자 키패드와 안내 말풍선이 모니터/키보드 장치와 분리되어 하단에 떠 있어 장면형 조작감이 약하고 일부 보조 문구가 하단에 눌린다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "대출 시스템 재부팅 콘솔",
+        "rationale": "모니터와 키보드가 이미 존재하므로 숫자 블록을 별도 floating tray가 아니라 대출 콘솔의 키캡/카트리지로 통합해야 한다.",
+        "core_metaphor": "도서 대출 시스템의 숫자 키캡을 눌러 모니터 빈칸에 재부팅 코드를 채운다.",
+        "visual_language": "청록 모니터, 어두운 키패드 베젤, 노란 키캡, glowing empty socket, 상태 표시등",
+        "layout_strategy": "숫자 팔레트를 오른쪽 키보드 또는 모니터 하단 베이스에 붙이고, 안내 말풍선은 작은 수리 설명서 태그로 축소한다.",
+        "interaction_surfaces": [
+          "component_checkout_monitor_body screen approx x=550..890 y=250..500",
+          ".number-key-tray",
+          "asset bg_checkout_desk keyboard area approx x=1010..1310 y=630..760",
+          "#tchbubC.note-tag"
+        ],
+        "implementation_notes": [
+          ".number-key-tray를 bottom overlay가 아니라 monitor base 또는 keyboard asset 위에 맞춘다.",
+          "hint 문구는 제거하거나 모니터 하단 status strip에 1줄로 넣는다.",
+          "#tchbubC는 첫 진입 시에만 작게 표시하고 문제 조작 중에는 숨긴다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"type_c_checkout_reboot\"] .mon-screen .blankbox",
+            "issue": "모니터 내부 문제와 빈칸은 대체로 잘 들어가지만 숫자 빈칸이 약간 크고 screen 중심보다 아래로 무겁다.",
+            "evidence": "24시간 = [빈칸] 일 행이 모니터 하단 쪽에 위치해 화면 여백이 균등하지 않다.",
+            "suggested_fix": ".mon-screen gap을 줄이고 .blk-blank 크기를 6cqh에서 5.4cqh로 낮춰 문제 문장과 빈칸 행을 screen 중앙 45~60% 안에 정렬한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray and following hint text, approx x=335..1105 y=675..805 in 1440x960 screenshot",
+            "issue": "숫자 키패드와 힌트가 대출 시스템 장치가 아니라 화면 하단에 떠 있는 웹 조작 패널처럼 보인다.",
+            "evidence": "어두운 키패드가 모니터와 물리적으로 연결되지 않고, 흰 힌트 문구가 하단 책상 경계에 눌려 있다.",
+            "suggested_fix": ".number-key-tray를 모니터 받침대 바로 아래 x=520..920 y=615..735 또는 오른쪽 키보드 asset 위에 붙여 실제 콘솔 키캡처럼 보이게 하고, hint 문구는 모니터 status strip 한 줄로 축소한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray",
+            "issue": "핵심 조작물인 숫자 블록이 기존 모니터/키보드 asset의 surface를 쓰지 않고 별도 웹 패널로 떠 있다.",
+            "evidence": "배경 오른쪽에 키보드와 대출 장치가 이미 있지만 숫자 블록은 중앙 하단에 독립 tray로 배치된다.",
+            "suggested_fix": "기존 키보드 asset 위치나 component_checkout_monitor_body 하단 베이스를 interaction surface로 삼아 숫자 키를 물리 키캡처럼 정렬한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"type_c_checkout_reboot\"] #tchbubC.note-tag",
+            "issue": "안내 말풍선이 크고 조작 tray와 겹치는 하단 정보층을 만든다.",
+            "evidence": "좌하단 캐릭터 옆 말풍선과 중앙 숫자 tray가 동시에 하단을 차지해 시선이 분산된다.",
+            "suggested_fix": "안내 말풍선을 첫 3초 후 숨기거나 왼쪽 장비에 붙은 작은 수리 설명서 탭으로 줄인다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_type_c_checkout_reboot",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray; asset bg_checkout_desk keyboard area approx x=1010..1310 y=630..760",
+          "issue": "숫자 블록 조작 패널이 대출 시스템 장치와 통합되지 않은 floating UI다.",
+          "evidence": "대출 키보드/모니터가 이미 존재하지만 숫자 키는 중앙 하단의 별도 패널로 떠 있어 장면 조작물처럼 보이지 않는다.",
+          "suggested_fix": ".number-key-tray를 모니터 받침대 또는 오른쪽 키보드 영역에 결합하고, 노란 숫자 블록을 시스템 키캡/카트리지 슬롯처럼 스타일링한다."
+        }
+      ],
+      "refine_suggestions": [
+        "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray를 모니터 받침대 또는 오른쪽 키보드 asset 위에 붙여 대출 시스템 키캡처럼 통합하라.",
+        "#tchbubC.note-tag는 조작 중 하단 공간을 차지하지 않도록 작은 수리 설명서 탭으로 축소하거나 첫 안내 후 숨겨라."
+      ]
+    },
+    {
+      "scene_id": "07_repair_complete",
+      "capture_label": "07_repair_complete",
+      "screenshot_path": "iter_003/design_review/desktop__07_repair_complete.png",
+      "scene_purpose": "12문제 완료 후 에너지 90%와 도서관 복구 연출로 활동 3으로 넘어갈 기대감을 만든다.",
+      "overall_assessment": "전광판 표면과 성공 파티클, 양쪽 캐릭터가 잘 결합되어 성취 장면이 명확하다. CTA가 아직 캡처에 보이지 않지만 전광판 메시지 자체는 장면 속 surface로 적절하다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "복구 완료 전광판",
+        "rationale": "현재 장면은 전광판이라는 interaction surface를 잘 활용하고 있으며 큰 구조 변경이 필요 없다.",
+        "core_metaphor": "도서관 시스템 전광판에 복구 완료 결과가 점등된다.",
+        "visual_language": "청록 유리 화면, 금속 프레임, 금빛 수리 파티클",
+        "layout_strategy": "현재 중앙 전광판과 양쪽 캐릭터 구도를 유지한다.",
+        "interaction_surfaces": [
+          ".completion-sign-board",
+          ".completion-sign-text",
+          "#rcBtn"
+        ],
+        "implementation_notes": [
+          "#rcBtn이 표시될 때 전광판 하단의 작은 티켓 배출구에서 나온 CTA처럼 위치를 맞춘다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"repair_complete\"] .completion-sign-text .cs-line2",
+            "issue": "보조 문장이 전광판 화면 폭에 비해 조금 길어 LED 안내문보다는 일반 문단처럼 보인다.",
+            "evidence": "두 줄 문장이 화면 중앙에 넓게 펼쳐져 있고 전광판 status hierarchy가 약하다.",
+            "suggested_fix": ".cs-line2 max-width를 78%로 제한하고 font-size를 2cqh로 낮춘 뒤 줄 간격을 1.35로 조정한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"repair_complete\"] #rcBtn은 표시될 때 전광판 하단 배출구에서 나온 티켓 CTA처럼 .completion-sign-board 아래 중앙에 붙여라."
+      ]
+    },
+    {
+      "scene_id": "08_story_gallery",
+      "capture_label": "08_story_gallery",
+      "screenshot_path": "iter_003/design_review/desktop__08_story_gallery.png",
+      "scene_purpose": "평화로운 도서관에서 실생활과 역사 속 시간 활용 사례를 짧은 갤러리로 연결한다.",
+      "overall_assessment": "마법 책 asset은 훌륭한 장면 surface이고 좌측 사례 이미지, 우측 설명 텍스트도 책 페이지 안에 잘 들어간다. 오른쪽 다음 버튼이 책갈피처럼 보이긴 하지만 책 바깥에 조금 떠 있어 가볍게만 보정하면 된다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "시간의 마법 책 갤러리",
+        "rationale": "현재 asset과 HTML 텍스트가 가장 자연스럽게 결합된 장면 중 하나다.",
+        "core_metaphor": "도서관 중앙에 펼쳐진 마법 책이 생활 속 시간 이야기를 보여준다.",
+        "visual_language": "두꺼운 양장본, 청록 페이지, 금빛 장식, 책갈피 탭",
+        "layout_strategy": "책 중심 구도를 유지하고 페이지 탭만 책 가장자리에 더 붙인다.",
+        "interaction_surfaces": [
+          "#galleryBook",
+          ".page-left",
+          ".page-right",
+          ".g-arrow.right"
+        ],
+        "implementation_notes": [
+          ".g-arrow.right를 책 오른쪽 페이지 가장자리에 더 밀착하고 색을 책 장식 금속 톤과 맞춘다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"story_gallery\"] #galRight p",
+            "issue": "오른쪽 페이지 텍스트가 페이지 중앙에는 맞지만 줄폭이 좁아 약간 빽빽하다.",
+            "evidence": "문단이 좁은 중앙 블록에 여러 줄로 모여 책 여백이 다소 크다.",
+            "suggested_fix": "#galRight p width를 90%로 늘리고 font-size를 2.05cqh로 소폭 낮춰 페이지 안에서 더 안정적으로 흐르게 한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"story_gallery\"] #galNext.g-arrow.right",
+            "issue": "다음 버튼이 책에 꽂힌 탭보다는 오른쪽에 붙은 독립 버튼처럼 보인다.",
+            "evidence": "베이지색 화살표가 책 바깥쪽에 떠 있고 장식 프레임과 연결이 약하다.",
+            "suggested_fix": "right 값을 0.5cqw로 조정하고 책갈피 리본 질감, 금색 테두리, page shadow를 추가한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"story_gallery\"] #galNext.g-arrow.right를 책 오른쪽 페이지 가장자리에 붙은 책갈피 탭처럼 더 밀착시키고, #galRight p 줄폭을 넓혀 페이지 여백을 안정화하라."
+      ]
+    },
+    {
+      "scene_id": "09_popup_quiz",
+      "capture_label": "09_popup_quiz",
+      "screenshot_path": "iter_003/design_review/desktop__09_popup_quiz.png",
+      "scene_purpose": "24시간과 1일의 관계를 한 번 더 확인하고 에너지 100% 달성을 완성한다.",
+      "overall_assessment": "팝업 퀴즈용 종이 surface가 매우 잘 작동한다. 질문, 선택지, 장식 요소가 모두 같은 물리 장치 안에 들어가 웹 퀴즈 느낌이 적다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "마법 책 팝업 퀴즈 장치",
+        "rationale": "기존 asset이 충분한 safe zone과 선택지 슬롯을 제공하고 있어 유지가 적절하다.",
+        "core_metaphor": "마법 책에서 올라온 팝업 퀴즈판에 정답 티켓을 누른다.",
+        "visual_language": "양피지 팝업, 시계 장식, 티켓 슬롯, 금빛 수리 에너지",
+        "layout_strategy": "현재 중앙 퀴즈 장치와 오른쪽 캐릭터 구도를 유지한다.",
+        "interaction_surfaces": [
+          ".slip",
+          ".slip-q",
+          ".slip-opts",
+          ".slip-opt"
+        ],
+        "implementation_notes": [
+          "선택지 hover/selected 상태만 종이 슬롯 내부의 잉크/스탬프 변화로 통일한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"popup_quiz\"] .slip-q",
+            "issue": "질문 텍스트가 안전 영역에 잘 들어가지만 상단 문장 면에 비해 약간 낮게 배치되어 있다.",
+            "evidence": "질문 블록 하단 여백보다 상단 여백이 조금 넓다.",
+            "suggested_fix": ".slip-q top을 12%로 올리고 height를 36%로 조정해 질문이 종이 패널 중앙에 더 정확히 앉게 한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"popup_quiz\"] .slip-q를 top 12%, height 36%로 미세 조정해 질문이 팝업 종이 패널 중심에 더 안정적으로 놓이게 하라."
+      ]
+    },
+    {
+      "scene_id": "10_final_certificate",
+      "capture_label": "10_final_certificate",
+      "screenshot_path": "iter_003/design_review/desktop__10_final_certificate.png",
+      "scene_purpose": "학습 완료 보상을 제공하고 다음 차시로 자연스럽게 연결한다.",
+      "overall_assessment": "인증서 asset은 크고 보상감이 충분하다. 다만 하단 캐릭터 대사 두 개가 흰 라벨형 박스로 분리되어 있고 최종 CTA가 다시 긴 티켓형 웹 버튼처럼 보이므로 보상 장면의 고급스러움을 약간 낮춘다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 수리대원 시상식",
+        "rationale": "인증서 중심 장면은 좋지만 하단 대사와 다음 미션 CTA를 시상식 소품으로 흡수하면 완성도가 올라간다.",
+        "core_metaphor": "복구된 도서관에서 인증서를 수여하고 다음 미션 초대권을 건넨다.",
+        "visual_language": "반투명 유리 인증서, 이름표, 리본 초대권, 금빛 파티클",
+        "layout_strategy": "인증서 중앙은 유지하고 하단 대사는 캐릭터 발밑 nameplate/말풍선 리본으로 축소한다.",
+        "interaction_surfaces": [
+          "#certCard",
+          ".row-mid .bubble",
+          "#nextLessonBtn.invitation-ticket",
+          "#saveBtn.stamp-button"
+        ],
+        "implementation_notes": [
+          "하단 대사 박스는 폭을 줄이고 캐릭터 쪽으로 붙여 대사 nameplate처럼 보이게 한다.",
+          "다음 미션 버튼은 인증서 하단 리본 또는 초대권 조각으로 더 얇게 만든다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "[data-qa-scene=\"final_certificate\"] .cert-body",
+            "issue": "인증서 본문은 asset 안에 잘 들어가지만 중앙 텍스트가 조금 작아 보상 화면의 위계가 약하다.",
+            "evidence": "큰 인증서 면적 대비 제목과 본문이 중앙에 작게 모여 있다.",
+            "suggested_fix": ".cert-title font-size를 3.7cqh로 올리고 .cert-text max-width를 76%로 줄여 인증서 중심 위계를 강화한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"final_certificate\"] .row-mid .bubble",
+            "issue": "캐릭터 대사가 장면 속 말풍선/명패가 아니라 흰 웹 라벨처럼 분리되어 보인다.",
+            "evidence": "두 대사 박스가 바닥 위에 나란히 놓여 있고 캐릭터와 연결되는 꼬리나 리본 구조가 없다.",
+            "suggested_fix": "각 bubble을 해당 캐릭터 가까이 붙이고 작은 꼬리 또는 nameplate 리본을 추가한다. width는 28cqw 이하, font-size는 1.9cqh로 낮춘다."
+          },
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"final_certificate\"] #nextLessonBtn.invitation-ticket",
+            "issue": "다음 미션 CTA가 너무 긴 웹 버튼처럼 읽힌다.",
+            "evidence": "하단 중앙의 긴 베이지 티켓이 화면 폭을 넓게 차지하며 인증서 보상물과 분리된다.",
+            "suggested_fix": "#nextLessonBtn을 인증서 하단 리본 초대권처럼 폭 48cqw 이하로 줄이고 텍스트를 두 줄로 나눠 ticket notch와 리본 그림자를 추가한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"final_certificate\"] .row-mid .bubble, #nextLessonBtn.invitation-ticket",
+            "issue": "하단 대사와 CTA가 보상 장면의 물리 소품보다 웹 UI 박스에 가깝다.",
+            "evidence": "인증서는 asset 안에 통합되어 있지만 하단 요소들은 별도 박스/버튼으로 줄지어 있다.",
+            "suggested_fix": "대사는 캐릭터 명패형 말풍선으로, CTA는 인증서 하단 리본 초대권으로 흡수한다."
+          }
+        ]
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "[data-qa-scene=\"final_certificate\"] .row-mid .bubble을 캐릭터 쪽 nameplate 말풍선으로 줄이고, #nextLessonBtn.invitation-ticket은 인증서 하단 리본 초대권처럼 폭을 줄여 두 줄 CTA로 정리하라."
+      ]
+    }
+  ],
+  "asset_review": {
+    "overall_asset_fit": "핵심 raster asset의 화풍, 조명, 채도, 캐릭터 비율은 전반적으로 일관적이다. 현재 reject 사유는 asset 자체 결함보다 HTML/CSS 배치와 surface 통합 문제이므로 재생성보다 reposition과 컴포넌트 재구성이 우선이다.",
+    "keep_assets": [
+      {
+        "asset_id": "bg_messy_library_lobby",
+        "reason": "도입, 튜토리얼, 성공 장면의 배경으로 충분히 풍부하고 desktop을 잘 채운다.",
+        "suggested_action": "유지하고 텍스트 surface만 더 물리적으로 결합한다."
+      },
+      {
+        "asset_id": "component_electronic_sign_body",
+        "reason": "Type A와 수리 완료 장면에서 문제/성공 메시지를 담는 전광판 surface로 적합하다.",
+        "suggested_action": "유지하되 Type A의 하단 보기 rack 배치를 전광판 주변으로 조정한다."
+      },
+      {
+        "asset_id": "component_final_quiz_slip",
+        "reason": "마무리 퀴즈의 질문과 선택지를 담는 safe zone이 충분하고 장면성이 좋다.",
+        "suggested_action": "유지하고 텍스트 중심 정렬만 미세 조정한다."
+      },
+      {
+        "asset_id": "certificate_library_repair",
+        "reason": "최종 보상 장면의 인증서 surface로 충분히 완성도가 높다.",
+        "suggested_action": "유지하고 하단 대사/CTA만 인증서 리본 계열로 통합한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "component_analog_clock_body",
+        "reason": "Type A 보기 시계가 화면 하단에서 잘려 핵심 선택 asset이 온전히 보이지 않는다.",
+        "suggested_action": "#playA .options 내부 시계 크기를 줄이고 y=690..875 safe zone으로 올려 세 시계와 라벨이 모두 보이게 한다."
+      },
+      {
+        "asset_id": "bg_reading_class_board",
+        "reason": "넓은 코르크 게시판 surface가 있지만 흰 .timetable-card가 덮고 있다.",
+        "suggested_action": "코르크 보드 중앙 safe zone을 직접 interaction surface로 사용하도록 .timetable-card를 pinned paper 요소로 분해한다."
+      },
+      {
+        "asset_id": "component_checkout_monitor_body",
+        "reason": "모니터 screen은 잘 쓰고 있으나 숫자 키패드가 모니터/키보드 장치와 분리되어 있다.",
+        "suggested_action": ".number-key-tray를 monitor base 또는 배경 오른쪽 keyboard area와 물리적으로 연결되게 배치한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "04_type_a_clock_choice",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "[data-qa-scene=\"type_a_clock_choice\"] #playA .options .opt-clock",
+      "issue": "정답 보기 시계와 라벨이 하단 화면 밖으로 잘려 학습 선택 표면이 실패한다.",
+      "evidence": "desktop screenshot에서 세 보기 시계가 y=825 이후에 시작해 대부분이 보이지 않는다.",
+      "suggested_fix": "#playA .sign 크기를 줄이고 .options를 전광판 아래 safe zone 안으로 올려 모든 시계 얼굴과 .opt-label이 1440x960 화면 안에 완전히 보이게 한다."
+    },
+    {
+      "scene_id": "05_type_b_schedule_restore",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "asset bg_reading_class_board cork board safe zone approx x=250..1220 y=90..790; [data-qa-scene=\"type_b_schedule_restore\"] .timetable-card",
+      "issue": "배경 게시판 surface를 두고 큰 흰 웹 카드가 핵심 UI를 대신한다.",
+      "evidence": "desktop screenshot에서 코르크 게시판이 장면의 핵심 표면인데 .timetable-card가 이를 덮어 일반 카드형 문제 화면이 된다.",
+      "suggested_fix": ".timetable-card를 제거하거나 투명화하고, 문제 strip, 시계 카드, 빈칸 스티커, 확인 도장을 코르크 게시판 위에 핀으로 고정된 종이 조각으로 재배치한다."
+    },
+    {
+      "scene_id": "06_type_c_checkout_reboot",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray; asset bg_checkout_desk keyboard area approx x=1010..1310 y=630..760",
+      "issue": "숫자 블록 조작 패널이 대출 시스템 장치와 통합되지 않은 floating UI다.",
+      "evidence": "대출 키보드/모니터가 이미 존재하지만 숫자 키는 중앙 하단의 별도 패널로 떠 있어 장면 조작물처럼 보이지 않는다.",
+      "suggested_fix": ".number-key-tray를 모니터 받침대 또는 오른쪽 키보드 영역에 결합하고, 노란 숫자 블록을 시스템 키캡/카트리지 슬롯처럼 스타일링한다."
+    }
+  ],
+  "refine_suggestions": [
+    "[data-qa-scene=\"type_a_clock_choice\"] #playA .sign width를 54cqw 이하로 줄이고, #playA .options를 전광판 하단 module rack으로 올려 세 보기 시계와 .opt-label이 y=875 안쪽에 완전히 들어가게 하라.",
+    "[data-qa-scene=\"type_b_schedule_restore\"] .timetable-card를 단일 흰 카드로 쓰지 말고 bg_reading_class_board의 코르크 보드 위 pinned paper 요소들로 분해하라.",
+    "[data-qa-scene=\"type_b_schedule_restore\"] 문제 문장은 상단 종이 strip, 두 시계는 중앙 pinned cards, .blank는 하단 시간표 스티커, .confirm-row .btn은 빨간 복구 도장으로 바꾸라.",
+    "[data-qa-scene=\"type_c_checkout_reboot\"] .number-key-tray를 모니터 받침대 또는 오른쪽 키보드 asset 위에 붙여 대출 시스템 키캡처럼 통합하라.",
+    "[data-qa-scene=\"type_c_checkout_reboot\"] #tchbubC.note-tag는 조작 중 하단 공간을 차지하지 않도록 작은 수리 설명서 탭으로 축소하거나 첫 안내 후 숨겨라.",
+    "[data-qa-scene=\"final_certificate\"] .row-mid .bubble을 캐릭터 쪽 nameplate 말풍선으로 줄이고, #nextLessonBtn.invitation-ticket은 인증서 하단 리본 초대권처럼 폭을 줄여 두 줄 CTA로 정리하라."
+  ]
+}

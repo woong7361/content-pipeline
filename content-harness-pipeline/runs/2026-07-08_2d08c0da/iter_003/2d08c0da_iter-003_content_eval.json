@@ -1,0 +1,36 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.4,
+      "learning_goal_alignment": 4.2,
+      "interaction_flow_clarity": 4.1,
+      "feedback_scaffolding": 3.2,
+      "content_completeness": 4.3,
+      "functional_integrity": 3.7
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.0
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "도서관 시계 고장 도입, 정각 튜토리얼, 12문제 수리 미션, 90% 복구, 실생활 갤러리, 마무리 퀴즈, 인증서 흐름이 원래 순서대로 보존되어 있다. mission_global_shell은 독립 장면이 아니라 HUD와 공통 미션 구조로 압축되었지만 핵심 맥락은 유지된다.",
+    "learning_goal_alignment": "정각 읽기, 몇 분 전 시각 읽기, 걸린 시간 계산, 1일=24시간 관계가 각각 튜토리얼과 유형 A/B/C 및 최종 퀴즈에 직접 연결된다. 다만 일부 조작은 정답 선택 중심이라 개념을 단계적으로 풀어 보게 하는 과정은 제한적이다.",
+    "interaction_flow_clarity": "시작, 도입, 튜토리얼, 유형별 문제, 갤러리, 퀴즈, 인증서로 이어지는 순서는 명확하다. 진행 번호와 에너지 게이지도 현재 위치를 알려 준다. 다만 튜토리얼 카드 드래그는 클릭 대안이 없고, 유형 C는 드래그와 클릭 선택 방식이 함께 있어 어린 학습자가 처음에 조작 방식을 약간 탐색해야 한다.",
+    "feedback_scaffolding": "정답, 오답, 완료 피드백은 존재하지만 대부분 '딩동댕', '다시 생각해보세요', 캐릭터 pose, 글로우 수준에 머문다. 왜 3시 5분 전이 2시 55분인지, 30분이 어떻게 계산되는지, 24시간이 왜 1일인지 같은 개념 설명이나 재시도 힌트가 부족해 학습 이해를 충분히 받쳐 주지 못한다.",
+    "content_completeness": "필수 12문제, 튜토리얼, 복구 완료, 3페이지 갤러리, 최종 퀴즈, 인증서와 다음 미션 버튼까지 포함되어 학습 경험은 대체로 닫힌다. 3회 오답 후 다음 문제로 넘기는 흐름도 반영되어 있다. 다만 인증서의 13/13 기록은 실제 정오답과 무관하게 고정되어 완료 기록의 의미가 약하다.",
+    "functional_integrity": "주요 버튼, 메뉴, 키패드 입력, 보기 선택, 숫자 블록 입력, 갤러리, 최종 퀴즈, 저장 버튼은 코드상 연결되어 있다. 그러나 튜토리얼의 필수 드래그가 실패하면 진행 대안이 없고, 유형 A 3회 오답도 solvedMissions를 증가시키며 최종 인증서가 항상 13/13으로 표시되어 진행 상태와 성취 기록의 기능적 신뢰성이 낮다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total은 4.000으로 min_total 4.0에 도달하지만 feedback_scaffolding 3.2가 min_axis 3.8 미만이고 functional_integrity 3.7이 min_axis 3.8 미만이므로 게이트 기준에 따라 REJECT이다."
+}

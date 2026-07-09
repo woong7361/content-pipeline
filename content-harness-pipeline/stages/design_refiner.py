@@ -75,6 +75,7 @@ def build_design_refine_packet(design_review_output: dict) -> dict:
         "reviewed_screenshots": design_review_output.get("reviewed_screenshots", []),
         "overall_assessment": design_review_output.get("overall_assessment"),
         "scene_reviews": design_review_output.get("scene_reviews", []),
+        "motion_review": design_review_output.get("motion_review", {"summary": "", "findings": []}),
         "asset_review": design_review_output.get("asset_review"),
         "priority_findings": design_review_output.get("priority_findings", []),
         "refine_suggestions": design_review_output.get("refine_suggestions", []),

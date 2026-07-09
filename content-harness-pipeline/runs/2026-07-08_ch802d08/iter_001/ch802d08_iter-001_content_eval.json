@@ -1,0 +1,37 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.2,
+      "learning_goal_alignment": 4.1,
+      "interaction_flow_clarity": 4.0,
+      "feedback_scaffolding": 3.4,
+      "content_completeness": 3.9,
+      "functional_integrity": 4.1
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 3.96
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본의 도서관 수리 모험 흐름, 튜토리얼, 유형 A/B/C 12문항, 생활 속 시간 이야기, 마무리 퀴즈, 인증서 순서는 대체로 보존되어 있다. 다만 일부 문항은 planner의 '다른 표현/바른 읽기' 의도를 시계 고르기 중심으로 단순화했고, 튜토리얼 성공 장면의 에너지 게이지처럼 특정 장면 맥락이 약해졌다.",
+    "learning_goal_alignment": "1시간=60분에 직접 대응하는 문항은 약하지만, 정각 읽기, 몇 분 전 시각, 걸린 시간, 1일=24시간 관계를 대부분 실제 조작으로 다룬다. Type A와 Type C의 피드백 문구가 개념 연결을 일부 보완한다.",
+    "interaction_flow_clarity": "시작, 튜토리얼, 문제 유형 전환, 갤러리, 퀴즈, 인증서까지 사용자가 따라갈 수 있는 버튼과 상태가 있다. 숫자 입력은 빈칸 선택 후 키패드를 쓰는 구조가 있고, 갤러리 마지막 페이지에서 퀴즈 버튼이 나타난다. 다만 일부 단계는 자동 전환과 숨겨진 버튼 출현에 의존해 전환 이유가 약간 약하다.",
+    "feedback_scaffolding": "정답/오답 토스트, 흔들림, 글로우, 캐릭터 반응은 꾸준히 제공된다. 그러나 오답 피드백은 대부분 '다시 생각' 수준이고 왜 틀렸는지 또는 어떤 시간 관계를 다시 보아야 하는지 설명하지 않는다. Type B와 Type C의 오답은 특히 개념 힌트 없이 결과 반응에 가깝다.",
+    "content_completeness": "필수 섹션과 13문항, 완료 인증 흐름은 구현되어 있다. 12문제 후 90%, 마무리 퀴즈 후 100%, 인증서 기록도 있다. 다만 튜토리얼 성공 화면에서는 계획된 10% 에너지 게이지가 HUD 숨김 때문에 보이지 않고, Type C의 시스템 재부팅 완료 메시지는 짧은 자동 경유로 처리되어 완료 맥락이 약하다.",
+    "functional_integrity": "필수 버튼, 드래그, 시계 선택, 숫자 키패드, 숫자 블록, 캐러셀, 퀴즈, 인증서 버튼은 HTML/JS 상 정상 흐름을 갖는다. 강제 진행 조건도 구현되어 있어 완료 불가 상태는 보이지 않는다. 일부 기능은 실제 저장이나 다음 차시 이동 대신 토스트만 제공하지만 학습 완료 흐름을 막지는 않는다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "content_completeness",
+    "interaction_flow_clarity"
+  ],
+  "calibration_note": "기능과 섹션 수는 충분하지만, 통과 기준은 weighted_total 4.0 및 축별 최소점 충족이다. weighted_total 3.96이고 feedback_scaffolding 3.4가 min_axis 3.8 미만, content_completeness 3.9가 min_axis 4.0 미만이므로 REJECT로 판정한다."
+}

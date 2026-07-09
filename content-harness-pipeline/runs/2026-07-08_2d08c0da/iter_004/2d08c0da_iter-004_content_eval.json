@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.6,
+      "learning_goal_alignment": 4.4,
+      "interaction_flow_clarity": 4.1,
+      "feedback_scaffolding": 3.1,
+      "content_completeness": 4.7,
+      "functional_integrity": 4.2
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.2
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본 storyboard의 도서관 시계 고장, 튜토리얼 3시 읽기, 12문제 수리 미션, 수리 완료, 실생활 갤러리, 마무리 퀴즈, 인증서 흐름이 대부분 같은 순서로 보존되어 있다. 일부 연출은 단일 HTML에 맞게 압축되었지만 핵심 학습 사건은 유지된다.",
+    "learning_goal_alignment": "1시간=60분을 직접 묻는 문항은 없지만, 몇 분 전 시각 읽기, 걸린 시간, 1일=24시간, 오전/오후 12시간 관계가 각 문항과 직접 연결되어 있다. 조작은 대체로 개념 적용을 요구하며 단순 게임 진행에 머물지 않는다.",
+    "interaction_flow_clarity": "시작, 도와주기, 미션 전환, 문제 번호, 에너지 게이지, 확인 버튼, 갤러리 넘김, 최종 퀴즈 흐름이 명확하다. 다만 튜토리얼 드래그, 숫자 블록 선택/드롭, 빈칸 입력의 조작 안내는 화면 내에서 일부 사용자가 시행착오로 파악할 여지가 있다.",
+    "feedback_scaffolding": "정답과 오답 상태, 에너지 증가, 캐릭터 반응, 오답 재시도, 최종 성공 피드백은 존재한다. 그러나 대부분의 오답 피드백이 '다시 생각해보세요' 수준이고, 왜 3시 5분 전이 2시 55분인지, 30분 뒤 계산이나 1일=24시간 관계를 어떻게 고쳐 생각해야 하는지에 대한 개념적 힌트가 약하다.",
+    "content_completeness": "필수 12문항, 튜토리얼, 90% 수리 완료, 3페이지 갤러리, 마무리 퀴즈, 100% 에너지, 인증서와 다음 미션 버튼이 모두 포함되어 학습 경험이 닫힌다. planner의 필수 섹션과 보상 흐름은 거의 누락 없이 구현되어 있다.",
+    "functional_integrity": "주요 버튼, 드래그/선택, 숫자 키패드, 숫자 블록, 진행률, 장면 전환, 최종 저장 및 다음 미션 처리가 연결되어 있다. 제공된 코드상 blocking runtime error는 보이지 않으며 완료 흐름에 도달 가능하다. 다만 일부 조작은 드래그 중심이라 사용자가 조작 방식을 바로 알아채지 못할 가능성이 있다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding"
+  ],
+  "calibration_note": "weighted_total은 4.0 이상이지만 feedback_scaffolding 점수 3.1이 min_axis 3.8 미만이므로 REJECT이다. 콘텐츠 구조와 필수 흐름은 강하지만, 학습자가 오답 후 개념을 재구성하도록 돕는 설명형 피드백이 부족해 통과 기준을 충족하지 못한다."
+}

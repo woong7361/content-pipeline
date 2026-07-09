@@ -28,6 +28,7 @@ def review_design(
     codex_bin: str = "codex",
     model: str | None = None,
     timeout_seconds: int = 600,
+    asset_budget: int = 9,
 ) -> dict | None:
     with tempfile.TemporaryDirectory(prefix="content-harness-design-review-") as temp_dir:
         visual_qa_output_path = Path(temp_dir) / "visual-qa-output.json"
@@ -51,7 +52,9 @@ def review_design(
             html_path=html_path,
             run_dir=run_dir,
             visual_qa_output=visual_qa_output,
+            asset_budget=asset_budget,
         )
+        schema_path = write_budgeted_schema(Path(temp_dir), asset_budget)
         client = CodexClient(
             codex_bin=codex_bin,
             project_dir=PROJECT_DIR,
@@ -59,7 +62,7 @@ def review_design(
         )
         token_usage = client.run_prompt(
             prompt=prompt,
-            output_schema=DESIGN_REVIEW_MODEL_OUTPUT_SCHEMA,
+            output_schema=schema_path,
             output_path=model_output_path,
             model=model,
         )
@@ -72,6 +75,7 @@ def review_design(
         "reviewed_screenshots": build_reviewed_screenshots(visual_qa_output, run_dir),
         "overall_assessment": model_output["overall_assessment"],
         "scene_reviews": model_output["scene_reviews"],
+        "motion_review": model_output["motion_review"],
         "asset_review": model_output["asset_review"],
         "priority_findings": model_output["priority_findings"],
         "refine_suggestions": model_output["refine_suggestions"],
@@ -105,6 +109,18 @@ def build_reviewed_screenshots(visual_qa_output: dict, run_dir: Path) -> list[di
     return reviewed
 
 
+def write_budgeted_schema(temp_dir: Path, asset_budget: int) -> Path:
+    """Write a per-run copy of the model output schema with the asset request
+    cap set to asset_budget, so the budget is hard-enforced at generation time."""
+    schema = json.loads(DESIGN_REVIEW_MODEL_OUTPUT_SCHEMA.read_text(encoding="utf-8"))
+    asset_review_props = schema["properties"]["asset_review"]["properties"]
+    asset_review_props["regenerate_assets"]["maxItems"] = asset_budget
+    asset_review_props["new_asset_requests"]["maxItems"] = asset_budget
+    schema_path = temp_dir / "design-review-model-output.budgeted.schema.json"
+    schema_path.write_text(json.dumps(schema, ensure_ascii=False), encoding="utf-8")
+    return schema_path
+
+
 def build_prompt(
     *,
     input_path: Path,
@@ -114,6 +130,7 @@ def build_prompt(
     html_path: Path,
     run_dir: Path,
     visual_qa_output: dict,
+    asset_budget: int = 9,
 ) -> str:
     system_prompt = DESIGN_REVIEW_SYSTEM_PROMPT.read_text(encoding="utf-8")
     input_data = load_json(input_path)
@@ -128,6 +145,9 @@ def build_prompt(
     ]
 
     return f"""{system_prompt}
+
+ASSET_BUDGET:
+{asset_budget}
 
 RUN_DIR:
 {run_dir.resolve()}

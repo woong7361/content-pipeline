@@ -1,0 +1,37 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.1,
+      "learning_goal_alignment": 4.0,
+      "interaction_flow_clarity": 3.7,
+      "feedback_scaffolding": 2.7,
+      "content_completeness": 4.1,
+      "functional_integrity": 3.8
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 3.727
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "도서관 시계 수리 모험의 장면 순서, 튜토리얼, 12문제 미션, 복구, 갤러리, 최종 퀴즈와 인증서 흐름이 대부분 보존되어 있다. 다만 mission_global_shell은 별도 학습 규칙 장면이라기보다 HUD와 공통 렌더링으로 축약되었고, 일부 수리 연출은 대사와 파티클 중심으로 단순화되어 원본의 순차 복구 사건성이 약하다.",
+    "learning_goal_alignment": "문항은 1시간=60분, 몇 분 전 시각 읽기, 걸린 시간, 1일=24시간을 직접 다루며 조작도 대체로 개념 적용과 연결된다. 다만 정답 선택 이후 개념 확인 설명이 거의 없어 몇 분 전이나 걸린 시간 계산을 이해로 묶는 힘은 제한적이다.",
+    "interaction_flow_clarity": "시작, 튜토리얼, 문제 번호, 에너지 게이지, 갤러리 넘김, 최종 퀴즈 전환은 따라갈 수 있다. 그러나 튜토리얼은 드래그만 요구하면서 명시 안내가 약하고, 숫자 키패드는 빈칸 선택 후 확인하기와 키패드 확인의 역할이 분리되어 초등 2학년 학습자에게 혼동될 여지가 있다. 유형 C의 블록 입력은 클릭 선택과 드래그를 모두 허용하지만 현재 선택 상태와 채점 시점이 충분히 선명하지 않다.",
+    "feedback_scaffolding": "정답은 주로 '딩동댕! 정답이에요'와 에너지 증가, 오답은 '다시 생각해보세요'와 흔들림으로 처리된다. 왜 3시 5분 전이 2시 55분인지, 11시 50분이 12시 10분 전인지, 1일과 24시간이 어떻게 연결되는지에 대한 힌트나 설명 피드백이 거의 없다. 3회 오답 후 자동 진행도 학습 이해보다는 흐름 유지에 가깝다.",
+    "content_completeness": "필수 섹션과 12개 미션 문항, 갤러리 3페이지, 마무리 퀴즈, 에너지 100%, 인증서와 저장/다음 미션 버튼이 포함되어 학습 경험은 닫힌다. 일부 복구 애니메이션과 시스템 재부팅 맥락은 원안보다 축약되어 있지만 필수 내용 누락 수준은 아니다.",
+    "functional_integrity": "필수 버튼, 선택지, 키패드, 숫자 블록, 갤러리, 퀴즈, 인증서 저장 흐름은 코드상 도달 가능하다. 다만 tutorial drag_drop은 클릭 대체가 없고, 오답 3회 후에도 solvedMissions가 증가해 맞힌 문제 수 13/13과 학습 성취 기록이 실제 수행과 어긋날 수 있다. 블록 문제도 정답 직후 입력 비활성화가 없어 전환 전 중복 조작 가능성이 남는다."
+  },
+  "weak_axes": [
+    "interaction_flow_clarity",
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total 3.727이 min_total 4.0 미만이고, interaction_flow_clarity 3.7은 min_axis 4.0 미만, feedback_scaffolding 2.7은 min_axis 3.8 미만이다. 기능과 필수 문항은 대체로 갖췄지만, 학습 피드백이 결과 통보 수준에 머물러 content 품질 게이트는 REJECT로 판정한다."
+}

@@ -99,7 +99,7 @@
       "description": "단일 HTML 안에 배치할 주요 섹션 계획",
       "items": {
         "type": "object",
-        "required": ["id", "title", "purpose", "content_outline", "interaction_ids", "asset_ids"],
+        "required": ["id", "title", "purpose", "content_outline", "staging_notes", "interaction_ids", "asset_ids"],
         "properties": {
           "id": {
             "type": "string",
@@ -123,6 +123,14 @@
               "minLength": 1
             },
             "description": "builder가 HTML로 옮길 핵심 내용"
+          },
+          "staging_notes": {
+            "type": "array",
+            "description": "이 섹션에서 의도하는 연출 힌트. 순차 등장, 화면 전환 느낌, 정답/오답 반응 등을 평어로 적는다. 항상 이 키를 포함하되 연출이 없으면 빈 배열로 둔다. content_outline(필수 내용)과 섞지 말고 여기에 따로 쓴다",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "interaction_ids": {
             "type": "array",

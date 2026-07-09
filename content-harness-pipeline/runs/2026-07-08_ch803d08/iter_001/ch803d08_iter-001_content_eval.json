@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v3",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "storyboard_fidelity": 4.3,
+      "learning_goal_alignment": 4.2,
+      "interaction_flow_clarity": 4.0,
+      "feedback_scaffolding": 3.2,
+      "content_completeness": 4.4,
+      "functional_integrity": 4.0
+    },
+    "weights": {
+      "storyboard_fidelity": 0.2,
+      "learning_goal_alignment": 0.18,
+      "interaction_flow_clarity": 0.17,
+      "feedback_scaffolding": 0.17,
+      "content_completeness": 0.18,
+      "functional_integrity": 0.1
+    },
+    "weighted_total": 4.035
+  },
+  "axis_rationales": {
+    "storyboard_fidelity": "원본 storyboard의 12개 섹션 순서, 도서관 시계 고장-튜토리얼-유형 A/B/C 12문항-복구-갤러리-최종 퀴즈-인증서 흐름이 HTML에 거의 모두 보존되어 있다. 주요 대사와 핵심 사건도 대부분 반영되어 있으며, 임의의 학습 내용 충돌은 보이지 않는다.",
+    "learning_goal_alignment": "문항은 1시간=60분의 기초 시계 읽기, 몇 분 전 표현, 걸린 시간 계산, 1일=24시간 관계를 직접 다룬다. 조작도 시계 선택, 숫자 입력, 숫자 블록 배치로 목표 개념과 연결된다. 다만 일부 활동은 정답 선택 중심이라 개념 형성 설명은 제한적이다.",
+    "interaction_flow_clarity": "시작 버튼, 튜토리얼, 미션 진입, 유형별 문제 전환, 갤러리 넘김, 최종 퀴즈와 인증 흐름이 명확하다. 숫자 입력은 필드 선택 후 키패드와 확인하기로 진행되고, 드래그 블록에는 간단한 안내가 있다. 일부 자동 전환은 빠르게 일어나 사용자가 정답 의미를 충분히 확인하기 전에 다음 문제로 넘어갈 수 있다.",
+    "feedback_scaffolding": "정답 시 글로우, 에너지 상승, 성공 캐릭터 반응이 있고 오답 시 흔들림과 '다시 생각해보세요' 피드백이 제공된다. 그러나 오답 피드백은 왜 틀렸는지 또는 어떻게 다시 생각해야 하는지 거의 설명하지 않는다. 몇 분 전, 30분 후, 1일=24시간 같은 핵심 오개념을 교정하는 힌트가 부족해 학습 이해를 돕는 scaffolding 기준에는 미달한다.",
+    "content_completeness": "필수 12문항, 튜토리얼, 공통 미션 흐름, 복구 전환, 실생활/역사/걸린 시간 갤러리 3페이지, 최종 퀴즈, 인증서와 기록 표시가 모두 포함되어 학습 경험은 닫힌다. 3회 오답 후 강제 전환도 구현되어 진행이 막히지 않는다.",
+    "functional_integrity": "필수 버튼, 메뉴, 에너지 게이지, 드래그, 시계 선택, 숫자 키패드, 갤러리, 최종 퀴즈, 인증서 저장 동작이 코드상 연결되어 있다. 다음 차시 버튼은 실제 라우팅 대신 토스트만 표시해 planner의 route interaction보다는 약하지만, 현재 학습 완료 흐름 자체를 막지는 않는다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding"
+  ],
+  "calibration_note": "weighted_total은 4.035로 min_total 4.0 이상이지만 feedback_scaffolding 점수 3.2가 min_axis 3.8 미만이므로 REJECT이다. 필수 콘텐츠와 완료 흐름은 대체로 갖췄으나, 오답과 정답 피드백이 결과 반응 중심이라 시간 개념을 다시 이해하도록 돕는 근거 설명이 부족하다."
+}
