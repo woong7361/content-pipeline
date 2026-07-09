@@ -16,6 +16,9 @@
     --panel:rgba(255,248,232,.94);
     --shadow:0 10px 26px rgba(90,55,20,.28);
     --ease:cubic-bezier(.22,1,.36,1);
+    /* shared character height (matches across all scenes); kid = 0.8x */
+    --char-h:clamp(140px, 66.56vh, 565.76px);
+    --kid-h:clamp(112px, 53.248vh, 452.608px);
     font-size:16px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -53,14 +56,14 @@
   .scene.qa-still .enter{opacity:1!important;animation:none!important;}
 
   /* ---------------- Top HUD ---------------- */
-  .hud{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:14px clamp(12px,2.4vw,28px);pointer-events:none;}
+  .hud{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:14px clamp(12px, 3.072vw, 35.84px);pointer-events:none;}
   .hud>*{pointer-events:auto;}
   .hamburger{width:52px;height:52px;border:none;border-radius:14px;background:var(--panel);box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;transition:transform .14s var(--ease);}
   .hamburger:hover{transform:translateY(-2px);}
   .hamburger span{width:24px;height:3px;border-radius:3px;background:var(--wood-deep);}
   .energy-wrap{display:flex;align-items:center;gap:10px;background:var(--panel);padding:8px 14px;border-radius:16px;box-shadow:var(--shadow);}
   .energy-ico{font-size:22px;}
-  .energy-bar{width:clamp(110px,20vw,190px);height:16px;border-radius:10px;background:#e7d3a8;overflow:hidden;box-shadow:inset 0 2px 4px rgba(120,80,30,.35);}
+  .energy-bar{width:clamp(110px, 25.6vw, 243.2px);height:16px;border-radius:10px;background:#e7d3a8;overflow:hidden;box-shadow:inset 0 2px 4px rgba(120,80,30,.35);}
   .energy-fill{height:100%;width:0%;border-radius:10px;background:linear-gradient(90deg,var(--mint),var(--yellow),var(--gold));transition:width .9s var(--ease);box-shadow:0 0 10px var(--gold-glow);}
   .energy-num{font-weight:800;color:var(--wood-deep);min-width:44px;text-align:right;font-variant-numeric:tabular-nums;}
   .energy-fill.max{animation:gaugePulse 1s ease-in-out infinite;}
@@ -78,9 +81,11 @@
   .menu-scrim.open{opacity:1;pointer-events:auto;}
 
   /* ---------------- Characters ---------------- */
-  .char{position:absolute;bottom:0;z-index:12;height:clamp(140px,40vh,340px);pointer-events:none;filter:drop-shadow(0 8px 12px rgba(40,25,10,.35));}
+  .char{position:absolute;bottom:0;z-index:12;height:var(--char-h);pointer-events:none;filter:drop-shadow(0 8px 12px rgba(40,25,10,.35));}
   .char.left{left:0.5%;}
   .char.right{right:0.5%;}
+  /* the kid librarian is a child — render her at 0.8x wherever she appears */
+  .char[src*="kid_librarian"]{height:var(--kid-h);}
   .char.bob{animation:bob 2.8s ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
   .char.cheer{animation:cheer .55s ease-in-out infinite alternate;}
@@ -93,7 +98,7 @@
   @keyframes shiver{0%,100%{transform:translate(0,0) rotate(-1.5deg);}25%{transform:translate(-2px,0) rotate(1deg);}75%{transform:translate(2px,0) rotate(-1deg);}}
 
   /* ---------------- Speech bubble (short character lines only) ---------------- */
-  .bubble{position:relative;max-width:min(560px,86vw);background:var(--panel);border:3px solid #fff;border-radius:22px;padding:14px 18px;box-shadow:var(--shadow);color:var(--ink);font-weight:600;line-height:1.5;font-size:clamp(.92rem,2.3vw,1.1rem);}
+  .bubble{position:relative;max-width:min(560px,86vw);background:var(--panel);border:3px solid #fff;border-radius:22px;padding:14px 18px;box-shadow:var(--shadow);color:var(--ink);font-weight:600;line-height:1.5;font-size:clamp(.92rem, 2.944vw, 1.408rem);}
   .bubble .who{display:block;font-weight:800;color:var(--wood-deep);margin-bottom:4px;font-size:.9em;}
   .bubble.tail-b::after{content:"";position:absolute;bottom:-16px;left:44px;border:11px solid transparent;border-top-color:var(--panel);}
   .bubble.tail-r::after{content:"";position:absolute;bottom:26px;right:-16px;border:11px solid transparent;border-left-color:var(--panel);}
@@ -105,33 +110,33 @@
     position:relative;
     background-image:url('assets/library_dialogue_plaque_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(340px,62vw,700px);aspect-ratio:1790/900;
+    width:clamp(340px, 79.36vw, 896px);aspect-ratio:1790/900;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:19% 14% 15%;text-align:center;color:var(--ink);
   }
-  .plaque .who{display:block;font-weight:800;font-size:clamp(.72rem,1.8vw,.9rem);margin-bottom:4px;letter-spacing:.5px;}
+  .plaque .who{display:block;font-weight:800;font-size:clamp(.72rem, 2.304vw, 1.152rem);margin-bottom:4px;letter-spacing:.5px;}
   .plaque .who.teacher-who{color:#2f6f9a;}
   .plaque .who.kid-who{color:#c76a3a;}
-  .plaque .msg{font-weight:700;line-height:1.42;font-size:clamp(.82rem,2.15vw,1.08rem);max-width:100%;}
-  .plaque .notice{font-weight:900;color:#a3391f;font-size:clamp(1rem,2.9vw,1.5rem);margin-top:8px;letter-spacing:.4px;line-height:1.2;}
+  .plaque .msg{font-weight:700;line-height:1.42;font-size:clamp(.82rem, 2.752vw, 1.382rem);max-width:100%;}
+  .plaque .notice{font-weight:900;color:#a3391f;font-size:clamp(1rem, 3.712vw, 1.92rem);margin-top:8px;letter-spacing:.4px;line-height:1.2;}
   .plaque .notice b{color:#7a1f10;}
-  .plaque.banner .msg{font-size:clamp(.86rem,2.3vw,1.12rem);}
-  .plaque.banner .title{font-weight:900;color:#b5791b;font-size:clamp(1.05rem,3vw,1.55rem);margin-bottom:6px;}
+  .plaque.banner .msg{font-size:clamp(.86rem, 2.944vw, 1.434rem);}
+  .plaque.banner .title{font-weight:900;color:#b5791b;font-size:clamp(1.05rem, 3.84vw, 1.984rem);margin-bottom:6px;}
 
   /* ---------------- Asset surface: ticket / invitation CTA button ---------------- */
   .ticket-btn{
     position:relative;border:none;cursor:pointer;background:transparent;font-family:inherit;
     background-image:url('assets/golden_repair_ticket_button_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(230px,40vw,340px);aspect-ratio:1790/900;
+    width:clamp(230px, 51.2vw, 435.2px);aspect-ratio:1790/900;
     display:flex;align-items:center;justify-content:center;text-align:center;
     padding:14% 15%;
-    font-weight:900;color:#7a5320;font-size:clamp(1rem,2.3vw,1.26rem);line-height:1.22;
+    font-weight:900;color:#7a5320;font-size:clamp(1rem, 2.944vw, 1.613rem);line-height:1.22;
     transition:transform .14s var(--ease),filter .14s var(--ease);
     filter:drop-shadow(0 6px 12px rgba(120,80,30,.22));
   }
-  .ticket-btn.wide{width:clamp(320px,58vw,560px);padding:11% 15%;font-size:clamp(.9rem,2.2vw,1.16rem);}
-  .ticket-btn.save{width:clamp(300px,46vw,392px);padding:12% 12%;}
+  .ticket-btn.wide{width:clamp(320px, 74.24vw, 716.8px);padding:11% 15%;font-size:clamp(.9rem, 2.816vw, 1.485rem);}
+  .ticket-btn.save{width:clamp(300px, 58.88vw, 501.76px);padding:12% 12%;}
   .ticket-btn.invite{background-image:url('assets/next_lesson_invitation_ticket_blank.png');}
   .ticket-btn:hover{transform:translateY(-4px) scale(1.03);filter:drop-shadow(0 12px 18px rgba(120,80,30,.32)) brightness(1.04);}
   .ticket-btn:active{transform:translateY(2px) scale(.99);filter:drop-shadow(0 4px 8px rgba(120,80,30,.28));}
@@ -144,15 +149,58 @@
   .ticket-btn.pulse{animation:theartbeat 1.15s ease-in-out infinite;}
   @keyframes theartbeat{0%,100%{transform:scale(1);}30%{transform:scale(1.06);}45%{transform:scale(1);}}
 
+  /* ---------------- Sequential story-beat speech bubble (asset surface) ---------------- */
+  .dlg-area{position:absolute;inset:0;z-index:22;pointer-events:none;}
+  .speech{
+    position:absolute;
+    /* anchor the tail to the character's head height (chars share this height clamp)
+       so the bubble stays tucked against the speaker on every viewport */
+    bottom:calc(var(--char-h) - 3rem);
+    background-image:url('assets/speech_bubble_blank.png');
+    background-size:100% 100%;background-repeat:no-repeat;
+    width:clamp(260px, 23.4vw, 325px);aspect-ratio:479/421;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;color:var(--ink);
+    filter:drop-shadow(0 12px 20px rgba(90,55,20,.30));
+    opacity:0;pointer-events:none;transform:translateY(16px) scale(.9);
+  }
+  /* teacher speaks from the left, kid from the right — bubble sits beside the
+     character, tucked into the gap next to the wall clock (clear of both on
+     landscape; on portrait the ring/clock is large so it reads as foreground) */
+  .speech.teacher-say{left:23%;}
+  /* kid librarian is smaller (child), so her bubble anchors to her shorter height */
+  .speech.kid-say{right:19%;background-image:url('assets/speech_bubble_blank_r.png');
+    bottom:calc(var(--kid-h) - 3rem);}
+  .speech .say-in{padding:4% 13% 22%;max-width:100%;}
+  .speech .who{display:block;font-weight:900;font-size:clamp(.88rem, 2.47vw, 1.3rem);margin-bottom:5px;letter-spacing:.3px;}
+  .speech .msg{font-weight:800;line-height:1.36;font-size:clamp(1.04rem, 2.67vw, 1.56rem);word-break:keep-all;}
+  .speech.teacher-say .who{color:#2f6f9a;}
+  .speech.kid-say .who{color:#c76a3a;}
+  .speech.on{pointer-events:auto;animation:sayPop .42s cubic-bezier(.2,1.4,.4,1) both;}
+  @keyframes sayPop{from{opacity:0;transform:translateY(16px) scale(.88);}to{opacity:1;transform:translateY(0) scale(1);}}
+  /* CTA revealed only on the final beat */
+  #btnToTutorial.dlg-cta{opacity:0;pointer-events:none;}
+  #btnToTutorial.dlg-cta.on{opacity:1;pointer-events:auto;animation:enterUp .5s var(--ease) both;}
+  /* the helper librarian pops in mid-sequence */
+  #s-problem .dlg-actor{opacity:0;}
+  /* tiny "tap to continue" affordance */
+  .tap-hint{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);z-index:18;color:#fff;font-weight:800;font-size:clamp(.8rem,2.3vw,1.1rem);text-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.85;animation:tapPulse 1.4s ease-in-out infinite;pointer-events:none;}
+  @keyframes tapPulse{0%,100%{opacity:.35;}50%{opacity:.9;}}
+  /* QA still: snap to the final beat (kid celebrating + CTA visible, bubbles cleared) */
+  .scene.qa-still .speech{opacity:0!important;animation:none!important;}
+  .scene.qa-still .dlg-actor{opacity:1!important;}
+  .scene.qa-still #btnToTutorial.dlg-cta{opacity:1!important;}
+  .scene.qa-still .tap-hint{display:none!important;}
+
   /* ---------------- Asset surface: answer choice ticket ---------------- */
   .choice-ticket{
     position:relative;border:none;cursor:pointer;background:transparent;font-family:inherit;
     background-image:url('assets/ticket_time_choice_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(120px,18vw,168px);aspect-ratio:1417/1140;
+    width:clamp(120px, 23.04vw, 215.04px);aspect-ratio:1417/1140;
     display:flex;align-items:center;justify-content:center;text-align:center;
     padding:20% 20% 22%;
-    font-weight:900;color:#7a5320;font-size:clamp(1rem,2.8vw,1.42rem);
+    font-weight:900;color:#7a5320;font-size:clamp(1rem, 3.584vw, 1.818rem);
     transition:transform .16s var(--ease),filter .2s var(--ease);
     filter:drop-shadow(0 6px 12px rgba(120,80,30,.2));
   }
@@ -164,7 +212,7 @@
   @keyframes stampPop{from{transform:scale(0) rotate(-30deg);opacity:0;}to{transform:scale(1) rotate(-12deg);opacity:1;}}
 
   /* ---------------- Buttons (utility: keypad ok / small submit) ---------------- */
-  .btn{border:none;cursor:pointer;font-weight:800;font-family:inherit;background:linear-gradient(180deg,var(--yellow),var(--yellow-deep));color:#5a3800;border-radius:16px;padding:clamp(12px,2vw,17px) clamp(20px,4vw,38px);font-size:clamp(1rem,2.6vw,1.25rem);box-shadow:0 6px 0 #d18f16,0 12px 20px rgba(120,80,30,.3);transition:transform .12s,box-shadow .12s,filter .12s;}
+  .btn{border:none;cursor:pointer;font-weight:800;font-family:inherit;background:linear-gradient(180deg,var(--yellow),var(--yellow-deep));color:#5a3800;border-radius:16px;padding:clamp(12px, 2.56vw, 21.76px) clamp(20px, 5.12vw, 48.64px);font-size:clamp(1rem, 3.328vw, 1.6rem);box-shadow:0 6px 0 #d18f16,0 12px 20px rgba(120,80,30,.3);transition:transform .12s,box-shadow .12s,filter .12s;}
   .btn:hover{transform:translateY(-2px);filter:brightness(1.04);}
   .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d18f16,0 6px 12px rgba(120,80,30,.3);}
   .btn.ghost{background:linear-gradient(180deg,#fff,#ffe9c4);color:var(--wood-deep);box-shadow:0 5px 0 #e0c489,0 10px 16px rgba(120,80,30,.25);}
@@ -175,16 +223,25 @@
   .pin-btn:active{transform:translateY(1px);}
 
   /* ---------------- Generic centered content ---------------- */
-  .center-col{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;width:min(900px,94vw);display:flex;flex-direction:column;align-items:center;gap:clamp(10px,2.2vh,20px);text-align:center;}
+  .center-col{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;width:min(900px,94vw);display:flex;flex-direction:column;align-items:center;gap:clamp(10px, 2.816vh, 25.6px);text-align:center;}
   .title-wrap{z-index:10;}
   .game-title{margin:0;font-weight:900;line-height:1.12;color:#fff;text-shadow:0 4px 0 var(--wood-deep),0 8px 18px rgba(0,0,0,.4);max-width:560px;}
-  .game-title .l1{display:block;font-size:clamp(2rem,7vw,4.2rem);color:var(--yellow);}
-  .game-title .l2{display:block;font-size:clamp(1.1rem,3.8vw,2rem);color:#fff;margin-top:6px;}
+  .game-title .l1{display:block;font-size:clamp(2rem, 8.96vw, 5.376rem);color:var(--yellow);}
+  .game-title .l2{display:block;font-size:clamp(1.1rem, 4.864vw, 2.56rem);color:#fff;margin-top:6px;}
   /* title bound to a physical library plaque surface */
-  .title-plaque{width:clamp(360px,64vw,720px);padding:15% 12% 13%;}
+  .title-plaque{width:clamp(360px, 81.92vw, 921.6px);padding:15% 12% 13%;}
   .title-plaque .game-title{text-shadow:none;max-width:100%;margin:0;}
-  .title-plaque .game-title .l1{color:#c0561f;font-size:clamp(1.7rem,5.4vw,3.2rem);}
-  .title-plaque .game-title .l2{color:#5a3b1b;font-size:clamp(1rem,3vw,1.55rem);}
+  .title-plaque .game-title .l1{color:#c0561f;font-size:clamp(1.7rem, 6.912vw, 4.096rem);}
+  .title-plaque .game-title .l2{color:#5a3b1b;font-size:clamp(1rem, 3.84vw, 1.984rem);}
+  /* intro title rendered as a single image asset */
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .intro-title-img{display:block;width:clamp(340px, 84.48vw, 972.8px);max-width:94vw;height:auto;filter:drop-shadow(0 16px 22px rgba(0,0,0,.5));margin-bottom:clamp(6px, 2.048vh, 20.48px);}
+  /* darken + soften the title background so the title art and start button pop */
+  #s-title::after{
+    background:
+      radial-gradient(circle at 50% 46%,rgba(0,0,0,.10) 0 26%,rgba(0,0,0,.52) 66%,rgba(0,0,0,.72) 100%),
+      rgba(14,8,2,.42);
+  }
   .qhint{font-size:.95rem;color:var(--ink-soft);font-weight:700;}
   .progress-dots{display:flex;gap:8px;justify-content:center;}
   .progress-dots i{width:12px;height:12px;border-radius:50%;background:#e0c489;display:block;}
@@ -204,7 +261,7 @@
   .clock.glow{filter:drop-shadow(0 0 16px var(--gold));}
 
   /* choice clocks (physical clock tokens on the rug) */
-  .choice-row{display:flex;gap:clamp(10px,2.4vw,26px);justify-content:center;flex-wrap:wrap;}
+  .choice-row{display:flex;gap:clamp(10px, 3.072vw, 33.28px);justify-content:center;flex-wrap:wrap;}
   .choice{position:relative;background:transparent;border:4px solid transparent;border-radius:22px;padding:6px;cursor:pointer;transition:transform .16s var(--ease),filter .2s;filter:drop-shadow(0 8px 12px rgba(120,80,30,.28));}
   .choice::before{content:"";position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:74%;height:14px;border-radius:50%;background:rgba(90,55,20,.22);filter:blur(4px);z-index:-1;}
   .choice:hover{transform:translateY(-7px) scale(1.02);}
@@ -217,24 +274,24 @@
   @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(9px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
 
   /* ---------------- Tutorial workbench (asset surface) ---------------- */
-  .workbench{position:relative;width:clamp(360px,72vw,760px);aspect-ratio:1900/840;margin:0 auto;}
+  .workbench{position:relative;width:clamp(360px, 92.16vw, 972.8px);aspect-ratio:1900/840;margin:0 auto;}
   .workbench .wb-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
   .wb-clock{position:absolute;left:7%;top:27%;width:28%;}
   .wb-slot{position:absolute;right:8%;top:31%;width:36%;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
-  .wb-slot .qhint{color:#2b5a4c;font-weight:800;font-size:clamp(.72rem,1.9vw,.98rem);text-shadow:0 1px 0 rgba(255,255,255,.4);}
+  .wb-slot .qhint{color:#2b5a4c;font-weight:800;font-size:clamp(.72rem, 2.432vw, 1.254rem);text-shadow:0 1px 0 rgba(255,255,255,.4);}
 
   /* ---------------- Drag cards / blocks ---------------- */
-  .card{position:relative;background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(88px,15vw,120px);aspect-ratio:1417/1140;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1rem,3vw,1.45rem);color:#7a5320;cursor:grab;touch-action:none;user-select:none;padding:20% 18% 22%;filter:drop-shadow(0 5px 10px rgba(120,80,30,.24));transition:transform .14s var(--ease),filter .16s;}
+  .card{position:relative;background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(88px, 19.2vw, 153.6px);aspect-ratio:1417/1140;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1rem, 3.84vw, 1.856rem);color:#7a5320;cursor:grab;touch-action:none;user-select:none;padding:20% 18% 22%;white-space:nowrap;filter:drop-shadow(0 5px 10px rgba(120,80,30,.24));transition:transform .14s var(--ease),filter .16s;}
   .card:hover{transform:translateY(-4px) scale(1.03);filter:drop-shadow(0 10px 15px rgba(120,80,30,.3));}
   .card.dragging{cursor:grabbing;z-index:999;filter:drop-shadow(0 14px 24px rgba(0,0,0,.32));}
   .card.locked{cursor:default;opacity:.4;}
-  .blank{min-width:82px;min-height:66px;border:3px solid var(--wood-deep);border-radius:12px;background:rgba(255,250,236,.92);box-shadow:inset 0 2px 6px rgba(120,80,30,.25);display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.1rem,3.4vw,1.6rem);color:var(--wood-deep);padding:6px 12px;transition:background .2s,border-color .2s,box-shadow .2s;vertical-align:middle;}
+  .blank{min-width:82px;min-height:66px;border:3px solid var(--wood-deep);border-radius:12px;background:rgba(255,250,236,.92);box-shadow:inset 0 2px 6px rgba(120,80,30,.25);display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.1rem, 4.352vw, 2.048rem);color:var(--wood-deep);padding:6px 12px;transition:background .2s,border-color .2s,box-shadow .2s;vertical-align:middle;}
   .blank.over{background:var(--gold-glow);border-color:var(--gold);box-shadow:0 0 14px var(--gold);}
   .blank.filled{border-color:var(--ok);background:#eafff1;box-shadow:inset 0 2px 6px rgba(63,174,107,.25);}
   .blank.bad{border-color:var(--bad);animation:shake .4s;}
 
-  .card-tray{display:flex;gap:clamp(8px,1.8vw,16px);flex-wrap:wrap;justify-content:center;}
-  .num-block{position:relative;width:clamp(46px,9vw,60px);aspect-ratio:1/1;background-image:url('assets/number_block_blank_physical_tile.png');background-size:100% 100%;background-repeat:no-repeat;color:#5a3b1b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.2rem,3vw,1.55rem);cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 4px 7px rgba(120,80,30,.28));transition:transform .12s var(--ease),filter .12s;}
+  .card-tray{display:flex;gap:clamp(8px, 2.304vw, 20.48px);flex-wrap:wrap;justify-content:center;}
+  .num-block{position:relative;width:clamp(46px, 11.52vw, 76.8px);aspect-ratio:1/1;background-image:url('assets/number_block_blank_physical_tile.png');background-size:100% 100%;background-repeat:no-repeat;color:#5a3b1b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.2rem, 3.84vw, 1.984rem);cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 4px 7px rgba(120,80,30,.28));transition:transform .12s var(--ease),filter .12s;}
   .num-block:hover{transform:translateY(-3px) scale(1.05);filter:drop-shadow(0 8px 12px rgba(120,80,30,.34)) brightness(1.03);}
   .num-block:active{transform:translateY(0) scale(.98);}
   .num-block.dragging{z-index:999;cursor:grabbing;filter:drop-shadow(0 12px 20px rgba(0,0,0,.3));}
@@ -253,16 +310,16 @@
   .kb-blank.active{filter:drop-shadow(0 0 12px var(--gold));transform:translateY(-2px);}
   .kb-blank.filled{color:#2f6f5a;}
   .kb-blank.bad{animation:shake .4s;}
-  .eq-line{font-size:clamp(1.05rem,3.4vw,1.6rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
+  .eq-line{font-size:clamp(1.05rem, 4.352vw, 2.048rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
 
   /* ---------------- Feedback toast ---------------- */
-  .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) translateY(-14px);z-index:50;background:var(--panel);border:3px solid #fff;border-radius:16px;padding:12px 22px;font-weight:800;color:var(--wood-deep);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:clamp(1rem,3vw,1.3rem);}
+  .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) translateY(-14px);z-index:50;background:var(--panel);border:3px solid #fff;border-radius:16px;padding:12px 22px;font-weight:800;color:var(--wood-deep);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:clamp(1rem, 3.84vw, 1.664rem);}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.ok{color:#1f7a45;border-color:#bff0d1;}
   .toast.bad{color:#b23b2c;border-color:#ffd2ca;}
 
   /* ---------------- Big wall clock overlay ---------------- */
-  .wall-clock{position:absolute;z-index:8;width:clamp(150px,22vw,270px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
+  .wall-clock{position:absolute;z-index:8;width:clamp(150px, 28.16vw, 345.6px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
 
   /* ---------------- reward stamp on tutorial success ---------------- */
   .reward-stamp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);z-index:5;background:radial-gradient(circle at 40% 35%,#ffe89a,#f4b73c);color:#7a3d10;font-weight:900;border-radius:50%;width:96px;height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:0 6px 16px rgba(160,100,20,.45),inset 0 0 0 4px rgba(255,255,255,.55);animation:stampSlam .55s cubic-bezier(.2,1.5,.4,1) both;font-size:1.05rem;text-align:center;}
@@ -274,8 +331,8 @@
   .book-page{position:absolute;left:11%;top:11%;width:78%;height:74%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:6px;animation:pageIn .45s ease both;}
   @keyframes pageIn{from{opacity:0;transform:rotateY(24deg);}to{opacity:1;transform:rotateY(0);}}
   .book-page img.ill{max-width:min(70%,380px);max-height:58%;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);object-fit:cover;}
-  .book-page .cap{font-weight:700;color:var(--ink);font-size:clamp(.9rem,2.4vw,1.12rem);line-height:1.5;max-width:92%;}
-  .book-page .pt{font-weight:900;color:#c76a3a;font-size:clamp(1rem,3vw,1.3rem);}
+  .book-page .cap{font-weight:700;color:var(--ink);font-size:clamp(.9rem, 3.072vw, 1.434rem);line-height:1.5;max-width:92%;}
+  .book-page .pt{font-weight:900;color:#c76a3a;font-size:clamp(1rem, 3.84vw, 1.664rem);}
   .book-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:64px;border:none;background:linear-gradient(180deg,#e7a24d,#c67e2e);box-shadow:0 5px 12px rgba(90,55,20,.4);font-size:1.5rem;cursor:pointer;color:#fff6e2;font-weight:900;border-radius:8px;transition:transform .14s var(--ease),filter .14s;}
   .book-arrow:hover:not(:disabled){transform:translateY(-50%) scale(1.08);filter:brightness(1.06);}
   .book-arrow{width:38px;height:52px;}
@@ -284,13 +341,13 @@
   .book-dots{display:flex;gap:8px;justify-content:center;margin-top:12px;}
   .book-dots i{width:11px;height:11px;border-radius:50%;background:#e0c489;}
   .book-dots i.on{background:var(--coral);}
-  .sign-24{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);font-weight:900;color:#e0562f;font-size:clamp(1.4rem,4vw,2.4rem);text-shadow:0 1px 0 #fff;}
-  .timer-30{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-weight:900;color:#c0392b;font-size:clamp(1rem,3vw,1.6rem);}
+  .sign-24{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);font-weight:900;color:#e0562f;font-size:clamp(1.4rem, 5.12vw, 3.072rem);text-shadow:0 1px 0 #fff;}
+  .timer-30{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-weight:900;color:#c0392b;font-size:clamp(1rem, 3.84vw, 2.048rem);}
 
   /* ---------------- Cork board (type B) ---------------- */
   .board-stage{position:relative;width:min(880px,96vw);margin:0 auto;}
   .board-stage>img.board-bg{width:100%;display:block;}
-  .board-note-title{font-weight:900;color:#6a3b16;font-size:clamp(.86rem,2.3vw,1.12rem);line-height:1.4;}
+  .board-note-title{font-weight:900;color:#6a3b16;font-size:clamp(.86rem, 2.944vw, 1.434rem);line-height:1.4;}
   .board-note-title b{color:#a3391f;}
 
   /* ---------------- Monitor (type C) ---------------- */
@@ -299,66 +356,69 @@
   .mon-screen{position:absolute;left:22%;top:14%;width:48%;height:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px;text-align:center;overflow:hidden;}
   .mon-screen.rebooted{animation:screenGlow 1.2s ease;}
   @keyframes screenGlow{0%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 18px #fff);}100%{filter:brightness(1);}}
-  .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem,1.6vw,.82rem);letter-spacing:.3px;}
+  .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048vw, 1.05rem);letter-spacing:.3px;}
   .timeline{display:flex;flex-direction:column;gap:5px;font-size:.62rem;font-weight:800;color:#2c5a7a;max-width:100%;}
   .tl-row{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;align-items:center;}
   .tl-tag{background:#2f6f5a;color:#fff;border-radius:6px;padding:2px 8px;font-size:.64rem;letter-spacing:.4px;}
   .tl-tag.pm{background:#7a4a86;}
   .timeline .slot{background:#dff1ff;border-radius:5px;padding:2px 6px;border:1px solid #a9d6f2;min-width:16px;text-align:center;}
   .timeline .slot.pm{background:#e9defb;border-color:#c9b1ee;color:#5b3a86;}
-  .mon-q{font-weight:800;color:#123;font-size:clamp(.8rem,2.1vw,1.02rem);line-height:1.4;}
-  .reboot-msg{font-weight:900;color:#1f7a45;font-size:clamp(1rem,3vw,1.4rem);}
-  .tray-label{font-weight:800;color:#4a3016;font-size:clamp(.78rem,2vw,.98rem);margin-bottom:2px;}
+  .mon-q{font-weight:800;color:#123;font-size:clamp(.8rem, 2.688vw, 1.306rem);line-height:1.4;}
+  .reboot-msg{font-weight:900;color:#1f7a45;font-size:clamp(1rem, 3.84vw, 1.792rem);}
+  .tray-label{font-weight:800;color:#4a3016;font-size:clamp(.78rem, 2.56vw, 1.254rem);margin-bottom:2px;}
 
   /* ---------------- Certificate ---------------- */
   .cert-stage{position:relative;width:min(760px,94vw);aspect-ratio:1.5/1;margin:0 auto;animation:certIn .8s cubic-bezier(.2,1.3,.4,1) both;}
   @keyframes certIn{from{opacity:0;transform:scale(.7) rotate(-3deg);}to{opacity:1;transform:scale(1) rotate(-.6deg);}}
   .cert-stage>img.cert{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(90,55,20,.4));}
   .cert-inner{position:absolute;inset:15% 13% 13%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;}
-  .cert-inner h2{margin:0;color:#a06a1f;font-size:clamp(1.1rem,3.4vw,1.9rem);}
-  .cert-inner p{margin:0;color:var(--ink);font-weight:600;font-size:clamp(.82rem,2.3vw,1.05rem);line-height:1.5;max-width:88%;}
-  .cert-record{display:flex;gap:18px;font-weight:800;color:var(--wood-deep);font-size:clamp(.85rem,2.4vw,1.05rem);margin-top:6px;}
-  .cert-caption{font-weight:700;color:var(--ink-soft);font-size:clamp(.78rem,2vw,.98rem);line-height:1.4;max-width:min(680px,92vw);}
+  .cert-inner h2{margin:0;color:#a06a1f;font-size:clamp(1.1rem, 4.352vw, 2.432rem);}
+  .cert-inner p{margin:0;color:var(--ink);font-weight:600;font-size:clamp(.82rem, 2.944vw, 1.344rem);line-height:1.5;max-width:88%;}
+  .cert-record{display:flex;gap:18px;font-weight:800;color:var(--wood-deep);font-size:clamp(.85rem, 3.072vw, 1.344rem);margin-top:6px;}
+  .cert-caption{font-weight:700;color:var(--ink-soft);font-size:clamp(.78rem, 2.56vw, 1.254rem);line-height:1.4;max-width:min(680px,92vw);}
   /* scene-scoped refinements (design refine iter 004) */
-  #s-cert .center-col{top:52%;gap:clamp(8px,1.6vh,14px);}
+  #s-cert .center-col{top:52%;gap:clamp(8px, 2.048vh, 17.92px);}
   #s-cert .cert-stage{width:min(620px,88vw);}
-  #s-cert .cert-inner{inset:13% 13% 12%;gap:clamp(4px,.9vh,8px);}
-  #s-cert .cert-inner h2{font-size:clamp(1.02rem,3vw,1.6rem);}
-  #s-cert .cert-inner p{font-size:clamp(.74rem,1.9vw,.94rem);line-height:1.38;max-width:90%;}
-  #s-cert .cert-record{font-size:clamp(.78rem,2vw,.96rem);margin-top:2px;}
+  #s-cert .cert-inner{inset:13% 13% 12%;gap:clamp(4px, 1.152vh, 10.24px);}
+  #s-cert .cert-inner h2{font-size:clamp(1.02rem, 3.84vw, 2.048rem);}
+  #s-cert .cert-inner p{font-size:clamp(.74rem, 2.432vw, 1.203rem);line-height:1.38;max-width:90%;}
+  #s-cert .cert-record{font-size:clamp(.78rem, 2.56vw, 1.229rem);margin-top:2px;}
   /* final celebration caption now sits ON the certificate paper, not the dark table */
-  #s-cert .cert-caption{margin:0;max-width:90%;color:#6a4a24;font-weight:700;font-size:clamp(.66rem,1.65vw,.84rem);line-height:1.3;}
+  #s-cert .cert-caption{margin:0;max-width:90%;color:#6a4a24;font-weight:700;font-size:clamp(.66rem, 2.112vw, 1.075rem);line-height:1.3;}
   #s-cert .cert-caption b{color:#b0561f;}
-  #s-cert .row{gap:clamp(10px,2vw,22px);flex-wrap:nowrap;}
-  #s-cert #btnSaveCert.save{width:clamp(240px,26vw,322px);padding:12% 11%;}
-  #s-cert #btnNextLesson.wide{width:clamp(300px,40vw,470px);}
-  #quizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px,2.2vw,22px);}
-  #aPrompt{font-size:clamp(.86rem,2.35vw,1.24rem);line-height:1.18;max-width:100%;word-break:keep-all;}
-  #s-problem .char.left.worried{left:3%;height:clamp(130px,37vh,312px);}
+  #s-cert .row{gap:clamp(10px, 2.56vw, 28.16px);flex-wrap:nowrap;}
+  #s-cert #btnSaveCert.save{width:clamp(240px, 33.28vw, 412.16px);padding:12% 11%;}
+  #s-cert #btnNextLesson.wide{width:clamp(300px, 51.2vw, 601.6px);}
+  #quizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px, 2.816vw, 28.16px);}
+  #aPrompt{font-size:clamp(.86rem, 3.008vw, 1.587rem);line-height:1.18;max-width:100%;word-break:keep-all;}
+  /* intro teacher matches the shared character size used on other scenes */
+  #s-problem .char.left{left:3%;}
   /* raise the broken wall clock into the upper safe zone so its face reads as the crisis cause */
-  #s-problem #bigClock{left:52%;top:6%;width:clamp(150px,20vw,240px);}
+  #s-problem #bigClock{left:50%;top:3%;width:clamp(130px, 19vw, 240px);}
   #s-tut .center-col{top:50%;}
-  .wb-note{position:absolute;left:16%;right:16%;top:13%;z-index:3;text-align:center;color:#3f2a14;font-weight:800;line-height:1.25;font-size:clamp(.6rem,1.4vw,.82rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
+  /* keep the 3 time tickets on one row so the enlarged workbench + tray fit the viewport */
+  #s-tut .card-tray{flex-wrap:nowrap;}
+  .wb-note{position:absolute;left:16%;right:16%;top:13%;z-index:3;text-align:center;color:#3f2a14;font-weight:800;line-height:1.25;font-size:clamp(.6rem, 1.792vw, 1.05rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
   .wb-note b{color:#c76a3a;}
-  .wb-slot .wb-drag-hint{color:#7a4a1e;font-weight:800;font-size:clamp(.62rem,1.55vw,.8rem);line-height:1.24;margin-top:2px;}
+  .wb-slot .wb-drag-hint{color:#7a4a1e;font-weight:800;font-size:clamp(.62rem, 1.984vw, 1.024rem);line-height:1.24;margin-top:2px;}
 
   /* --- Type C: shrink monitor so keyboard + number tray stay on-screen --- */
   #s-c .center-col{top:51%;width:min(820px,94vw);}
   #s-c .monitor-stage{width:min(760px,88vw);}
   #s-c .c-tray-wrap{position:absolute;left:50%;bottom:3.5%;transform:translateX(-50%);width:84%;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:4;}
-  #s-c .c-tray-wrap .tray-label{margin:0;color:#4a3016;font-weight:800;font-size:clamp(.64rem,1.65vw,.84rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
-  #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px,.7vw,8px);max-width:100%;}
-  #s-c .num-block{width:clamp(40px,4.6vw,50px);}
+  #s-c .c-tray-wrap .tray-label{margin:0;color:#4a3016;font-weight:800;font-size:clamp(.64rem, 2.112vw, 1.075rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
+  #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px, 0.896vw, 10.24px);max-width:100%;}
+  #s-c .num-block{width:clamp(40px, 5.888vw, 64px);}
 
   /* --- Story gallery: split the open book into an illustration page + a caption/number page --- */
   #s-story .book-page{flex-direction:row;align-items:stretch;top:14%;height:64%;gap:2%;padding:0 8.5%;}
   #s-story .bp-left{flex:0 0 47%;display:flex;align-items:center;justify-content:center;}
   #s-story .bp-left .ill-wrap{position:relative;display:inline-flex;}
   #s-story .book-page img.ill{max-width:100%;max-height:min(45vh,320px);width:auto;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);}
-  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px,1.4vh,12px);text-align:center;padding:0 3%;}
-  #s-story .book-page .pt{font-size:clamp(.96rem,2.4vw,1.22rem);}
-  #s-story .key-badge{font-weight:900;color:#e0562f;font-size:clamp(1.5rem,3.6vw,2.2rem);text-shadow:0 2px 0 #fff;line-height:1.05;}
-  #s-story .book-page .cap{max-width:96%;font-size:clamp(.88rem,2vw,1.06rem);line-height:1.44;}
+  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px, 1.792vh, 15.36px);text-align:center;padding:0 3%;}
+  #s-story .book-page .pt{font-size:clamp(.96rem, 3.072vw, 1.562rem);}
+  #s-story .key-badge{font-weight:900;color:#e0562f;font-size:clamp(1.5rem, 4.608vw, 2.816rem);text-shadow:0 2px 0 #fff;line-height:1.05;}
+  #s-story .book-page .cap{max-width:96%;font-size:clamp(.88rem, 2.56vw, 1.357rem);line-height:1.44;}
 
   /* --- HUD: read as library loan-card / bookmark tab, not floating web pills --- */
   .hud .energy-wrap{border-radius:8px;padding:7px 12px;box-shadow:0 3px 8px rgba(90,55,20,.22),inset 0 2px 4px rgba(120,80,30,.14);border:1px solid rgba(180,130,70,.35);}
@@ -370,13 +430,13 @@
   #s-a #aChoices::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);width:90%;height:26px;background:radial-gradient(ellipse at center,rgba(90,55,20,.30),rgba(90,55,20,0) 72%);filter:blur(3px);z-index:-1;pointer-events:none;}
 
   /* Type B: the 확인 CTA becomes a physical library status label pinned to the board */
-  #s-b #bSubmit{background:transparent;border:none;border-radius:0;padding:0;box-shadow:none;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(150px,22vw,196px);aspect-ratio:3/1;color:#7a1f10;font-weight:900;font-size:clamp(.92rem,2.1vw,1.14rem);filter:drop-shadow(0 4px 9px rgba(90,55,20,.28));transition:transform .14s var(--ease),filter .14s;}
+  #s-b #bSubmit{background:transparent;border:none;border-radius:0;padding:0;box-shadow:none;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(150px, 28.16vw, 250.88px);aspect-ratio:3/1;color:#7a1f10;font-weight:900;font-size:clamp(.92rem, 2.688vw, 1.459rem);filter:drop-shadow(0 4px 9px rgba(90,55,20,.28));transition:transform .14s var(--ease),filter .14s;}
   #s-b #bSubmit::before{content:none;}
   #s-b #bSubmit:hover{transform:translateY(-2px);filter:drop-shadow(0 8px 13px rgba(90,55,20,.34)) brightness(1.03);}
   #s-b #bSubmit:active{transform:translateY(1px);}
 
   /* In-world feedback status tag replaces the floating web toast for learning feedback */
-  .status-tag{position:absolute;left:50%;bottom:10.5%;z-index:24;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(230px,40vw,380px);aspect-ratio:3/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5% 13% 7%;font-weight:900;color:#7a5320;font-size:clamp(.82rem,2vw,1.06rem);line-height:1.24;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.95);transition:opacity .28s ease-out,transform .28s ease-out;filter:drop-shadow(0 5px 11px rgba(90,55,20,.26));}
+  .status-tag{position:absolute;left:50%;bottom:10.5%;z-index:24;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(230px, 51.2vw, 486.4px);aspect-ratio:3/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5% 13% 7%;font-weight:900;color:#7a5320;font-size:clamp(.82rem, 2.56vw, 1.357rem);line-height:1.24;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.95);transition:opacity .28s ease-out,transform .28s ease-out;filter:drop-shadow(0 5px 11px rgba(90,55,20,.26));}
   .status-tag.show{opacity:1;transform:translate(-50%,0) scale(1);}
   .status-tag.ok{color:#1f7a45;}
   .status-tag.bad{color:#b23b2c;}
@@ -384,11 +444,11 @@
   /* Type C: enlarge the live question + drop equation, demote am/pm reference to a thin bar */
   .timeline-bar{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;opacity:.9;}
   .timeline-bar .tl-sep{color:#8a5a30;font-weight:900;}
-  #s-c .mon-screen{gap:clamp(6px,1.5vh,13px);}
-  #s-c .mon-screen .mon-status{font-size:clamp(.64rem,1.7vw,.86rem);}
-  #s-c .mon-screen .timeline-bar{font-size:clamp(.6rem,1.5vw,.78rem);}
-  #s-c .mon-screen .mon-q{font-size:clamp(.98rem,2.6vw,1.28rem);line-height:1.3;}
-  #s-c .mon-screen .eq-line{font-size:clamp(1.02rem,3vw,1.5rem);gap:8px;}
+  #s-c .mon-screen{gap:clamp(6px, 1.92vh, 16.64px);}
+  #s-c .mon-screen .mon-status{font-size:clamp(.64rem, 2.176vw, 1.101rem);}
+  #s-c .mon-screen .timeline-bar{font-size:clamp(.6rem, 1.92vw, 0.998rem);}
+  #s-c .mon-screen .mon-q{font-size:clamp(.98rem, 3.328vw, 1.638rem);line-height:1.3;}
+  #s-c .mon-screen .eq-line{font-size:clamp(1.02rem, 3.84vw, 1.92rem);gap:8px;}
   #s-c .mon-screen .cblank{min-width:50px;min-height:46px;font-size:1.35rem;}
   .mon-status.ok-flash{color:#1f7a45;animation:statusFlash .3s ease-out;}
   @keyframes statusFlash{from{opacity:.2;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
@@ -410,12 +470,12 @@
   .bottom-bar{position:absolute;left:50%;bottom:3.5%;transform:translateX(-50%);z-index:16;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
   @media (max-width:640px){
-    .char{height:clamp(120px,30vh,220px);}
+    :root{--char-h:clamp(120px, 49.92vh, 366.08px);--kid-h:clamp(96px, 39.936vh, 292.864px);}
     .energy-bar{width:96px;}
     .center-col{width:96vw;}
   }
   @media (max-height:520px){
-    .char{height:44vh;}
+    :root{--char-h:44vh;--kid-h:35.2vh;}
   }
 </style>
 </head>
@@ -446,12 +506,9 @@
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
       <div class="center-col title-wrap">
-        <div class="plaque title-plaque enter d1">
-          <h1 class="game-title">
-            <span class="l1">시간이 뒤죽박죽!</span>
-            <span class="l2">수학의 힘으로 도서관 시계를 수리하라!</span>
-          </h1>
-        </div>
+        <h1 class="game-title sr-only">시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!</h1>
+        <img class="intro-title-img enter d1" src="assets/intro_title_time_repair_v1.png"
+             alt="시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!" />
         <button class="ticket-btn blink enter d2" id="btnStart"><span>시작하기 ▶</span></button>
       </div>
     </div>
@@ -465,13 +522,26 @@
         <img src="assets/wall_clock_body.png" alt="바늘 없이 숫자판과 중심축만 있는 따뜻한 나무색 원형 도서관 벽시계 몸체" />
         <div class="hand hour"></div><div class="hand minute"></div><div class="hub"></div>
       </div>
-      <img class="char left worried" src="assets/teacher_worried.png" alt="친근한 사서 선생님이 고장 난 도서관 시계 앞에서 당황한 표정으로 머리를 감싸는 모습" />
-      <div class="center-col" style="top:60%;">
-        <div class="plaque enter d1" style="width:clamp(340px,58vw,660px);">
-          <span class="who teacher-who">📢 도서관 고장 알림</span>
-          <div class="msg">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
+      <img class="char left worried" id="probTeacher" src="assets/teacher_worried.png" alt="친근한 사서 선생님이 고장 난 도서관 시계 앞에서 당황한 표정으로 머리를 감싸는 모습" />
+      <img class="char right dlg-actor" id="probKid" src="assets/kid_librarian_explaining.png" alt="꼬마 사서가 한 손을 들고 자신 있게 등장하는 모습" />
+
+      <!-- sequential dialogue beats (revealed one at a time over time) -->
+      <div class="dlg-area">
+        <div class="speech teacher-say" data-beat="1">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야!</span></div>
         </div>
-        <button class="ticket-btn pulse wide enter d2" id="btnToTutorial"><span>도와주러 가기 ▶</span></button>
+        <div class="speech teacher-say" data-beat="2">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</span></div>
+        </div>
+        <div class="speech kid-say" data-beat="3">
+          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg">걱정 마세요! 시계 보는 법을 잘 아는 제가 완벽하게 고쳐 놓을게요!</span></div>
+        </div>
+      </div>
+
+      <div class="tap-hint" id="probTapHint">터치하면 계속 ▶</div>
+
+      <div class="bottom-bar">
+        <button class="ticket-btn pulse wide dlg-cta" id="btnToTutorial"><span>시계의 힘으로 수리하러 가기! ▶</span></button>
       </div>
     </div>
   </section>
@@ -515,14 +585,14 @@
       <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
       <img class="char right bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
       <div class="center-col" style="top:48%;">
-        <div class="clock glow enter d1" style="position:relative;width:clamp(130px,22vw,190px);height:clamp(130px,22vw,190px);--cx:50%;--cy:45%;">
+        <div class="clock glow enter d1" style="position:relative;width:clamp(130px, 28.16vw, 243.2px);height:clamp(130px, 28.16vw, 243.2px);--cx:50%;--cy:45%;">
           <img src="assets/table_clock_body.png" alt="노란 글로우가 감도는 정답 탁상시계, 3시를 가리킴" />
           <div class="hand hour" style="transform:translate(-50%,-100%) rotate(90deg);"></div>
           <div class="hand minute" style="transform:translate(-50%,-100%) rotate(0deg);"></div>
           <div class="hub"></div>
           <div class="reward-stamp">정답!<br>3시 ⭐</div>
         </div>
-        <div class="plaque banner enter d2" style="width:clamp(340px,58vw,640px);">
+        <div class="plaque banner enter d2" style="width:clamp(340px, 74.24vw, 819.2px);">
           <span class="who teacher-who">✅ 첫 수리 완료</span>
           <div class="msg">와, 정답이야! 시계를 아주 잘 보는구나. 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄 거라 믿어!</div>
         </div>
@@ -539,7 +609,7 @@
       <img class="char right bob" id="aKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <div class="status-tag" id="aStatus" aria-live="polite"></div>
       <div class="center-col" style="top:47%;">
-        <div class="plaque enter d1" style="width:clamp(340px,58vw,660px);">
+        <div class="plaque enter d1" style="width:clamp(340px, 74.24vw, 844.8px);">
           <span class="who teacher-who">🕑 깨진 전광판 안내</span>
           <div class="msg">전광판의 시간이 다 깨져버렸어. 몇 분 전인지 잘 읽고, 똑같은 시각을 가리키는 시계를 찾아줘!</div>
           <div class="notice" id="aPrompt">문제</div>
@@ -601,7 +671,7 @@
         <div class="hub"></div>
       </div>
       <div class="center-col" style="top:54%;">
-        <div class="plaque banner enter d1" style="width:clamp(340px,60vw,680px);">
+        <div class="plaque banner enter d1" style="width:clamp(340px, 76.8vw, 870.4px);">
           <div class="title">🎉 도서관 수리 완료!</div>
           <div class="msg">해냈다! 시간의 규칙을 모두 풀었어요! 우리 수리 대원 정말 대단해. 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
         </div>
@@ -635,7 +705,7 @@
       <img class="char left pop" id="quizKid" src="assets/kid_librarian_explaining.png" alt="화면 앞으로 나온 꼬마 사서" />
       <div class="status-tag" id="quizStatus" aria-live="polite"></div>
       <div class="center-col" style="top:46%;">
-        <div class="plaque enter d1" style="width:clamp(340px,58vw,660px);">
+        <div class="plaque enter d1" style="width:clamp(340px, 74.24vw, 844.8px);">
           <span class="who kid-who">❓ 마무리 퀴즈</span>
           <div class="msg">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
         </div>
@@ -832,24 +902,25 @@
 
   /* ---------- generic pointer drag ---------- */
   function enableDrag(el, blanks, onDrop){
-    var startX,startY,origRect;
+    // Move the element with a transform delta rather than switching to
+    // position:fixed + viewport left/top. The card sits inside `.center-col`,
+    // which has a `transform`, so a fixed element is positioned relative to that
+    // ancestor — not the viewport — and jumps by the ancestor's offset on grab.
+    // A transform delta moves the element by the exact pointer delta regardless
+    // of the containing block, and keeps it in flow so siblings don't reflow.
+    var startX,startY;
     el.addEventListener('pointerdown',function(e){
       if(el.classList.contains('locked')||el.classList.contains('used')) return;
       e.preventDefault();
       el.setPointerCapture(e.pointerId);
-      origRect=el.getBoundingClientRect();
       startX=e.clientX;startY=e.clientY;
       el.classList.add('dragging');
-      el.style.position='fixed';
-      el.style.left=origRect.left+'px';
-      el.style.top=origRect.top+'px';
-      el.style.width=origRect.width+'px';
-      el.style.margin='0';
+      el.style.transition='none';
+      el.style.transform='translate(0px,0px)';
     });
     el.addEventListener('pointermove',function(e){
       if(!el.classList.contains('dragging'))return;
-      el.style.left=(origRect.left+(e.clientX-startX))+'px';
-      el.style.top=(origRect.top+(e.clientY-startY))+'px';
+      el.style.transform='translate('+(e.clientX-startX)+'px,'+(e.clientY-startY)+'px)';
       var hit=hitBlank(e.clientX,e.clientY,blanks);
       blanks.forEach(function(b){b.classList.toggle('over',b===hit);});
     });
@@ -858,7 +929,7 @@
       el.classList.remove('dragging');
       var hit=hitBlank(e.clientX,e.clientY,blanks);
       blanks.forEach(function(b){b.classList.remove('over');});
-      el.style.position='';el.style.left='';el.style.top='';el.style.width='';el.style.margin='';
+      el.style.transition='';el.style.transform='';
       if(hit){ onDrop(el,hit); }
     });
   }
@@ -922,7 +993,87 @@
   document.getElementById('btnStart').addEventListener('click',function(){
     beep(720,.14,'triangle');
     showSceneById('s-problem');
+    if(window.__playProblemIntro) window.__playProblemIntro();
   });
+
+  /* =====================================================
+     SECTION 2: PROBLEM INTRO — sequential dialogue beats
+       clock spins -> teacher line 1 -> (2s) line 2 -> kid appears + line -> CTA
+     auto-timed; tap anywhere to skip to the next beat.
+  ===================================================== */
+  (function(){
+    var scene=document.getElementById('s-problem');
+    var kid=document.getElementById('probKid');
+    var teacher=document.getElementById('probTeacher');
+    var cta=document.getElementById('btnToTutorial');
+    var hint=document.getElementById('probTapHint');
+    var bubbles=Array.prototype.slice.call(scene.querySelectorAll('.speech'));
+    var timer=null, idx=-1, running=false;
+
+    function hideAll(){ bubbles.forEach(function(b){ b.classList.remove('on'); }); }
+    var beats=[
+      function(){ bubbles[0].classList.add('on'); beep(300,.13,'sawtooth'); },
+      function(){ hideAll(); bubbles[1].classList.add('on'); beep(280,.13,'sawtooth'); },
+      function(){ hideAll(); kid.classList.add('pop');
+                 teacher.src='assets/teacher_happy.png'; teacher.classList.remove('worried');
+                 bubbles[2].classList.add('on'); beep(660,.12,'triangle'); },
+      function(){ hideAll(); cta.classList.add('on'); if(hint) hint.style.display='none'; beep(880,.16,'triangle'); }
+    ];
+    var delays=[600,2200,2600,2200];
+
+    function schedule(){
+      if(idx>=beats.length-1){ running=false; return; }
+      var n=idx+1;
+      timer=setTimeout(function(){ runBeat(n); }, delays[n]);
+    }
+    function runBeat(n){
+      if(n<=idx || n>=beats.length) return;
+      idx=n; beats[n](); schedule();
+    }
+    function advance(){
+      if(!running || idx>=beats.length-1) return;
+      clearTimeout(timer); runBeat(idx+1);
+    }
+    scene.addEventListener('click',function(e){
+      if(e.target.closest('#btnToTutorial')) return;   // CTA handles its own click
+      advance();
+    });
+
+    window.__playProblemIntro=function(){
+      clearTimeout(timer); idx=-1; running=true;
+      hideAll(); kid.classList.remove('pop'); cta.classList.remove('on');
+      teacher.src='assets/teacher_worried.png'; teacher.classList.add('worried');
+      if(hint) hint.style.display='';
+      schedule();
+    };
+  })();
+
+  /* Seat the broken wall clock onto the painted ring mount in the background art.
+     background-size:cover scales+crops the image, so the ring's on-screen spot
+     depends on the viewport; compute it from the natural image geometry and
+     re-apply on resize so the clock always lands inside the ring. */
+  (function(){
+    var clock=document.getElementById('bigClock');
+    if(!clock) return;
+    var IMG_W=1672, IMG_H=941;                 // bg_library_messy_lobby.png natural size
+    var RING_CX=862, RING_CY=292, RING_R=155;  // ring centerline (measured from art)
+    var CLOCK_FILL=0.859;                       // clock outer rim / clock png side
+    function place(){
+      var W=window.innerWidth, H=window.innerHeight;
+      var s=Math.max(W/IMG_W, H/IMG_H);         // cover scale
+      var ox=(W-IMG_W*s)/2, oy=(H-IMG_H*s)/2;   // background-position:center offsets
+      var cx=ox+RING_CX*s, cy=oy+RING_CY*s;
+      var box=(RING_R*2*s)/CLOCK_FILL;          // box sized so the visible rim == ring
+      clock.style.width=box+'px';
+      clock.style.height=box+'px';
+      clock.style.left=cx+'px';
+      clock.style.top=cy+'px';
+      clock.style.transform='translate(-50%,-50%)';
+    }
+    window.__placeBigClock=place;
+    window.addEventListener('resize',place);
+    place();
+  })();
 
   /* SECTION 2 -> 3 */
   document.getElementById('btnToTutorial').addEventListener('click',function(){
@@ -1078,9 +1229,9 @@
     clockHtml+='</div>';
     bContent.innerHTML=
       '<div class="board-note-title">📌 '+B_INTRO+'</div>'+
-      '<div class="qhint" style="font-size:clamp(.82rem,2.2vw,1rem);font-weight:800;color:#5a3b1b">'+q.title+'</div>'+
+      '<div class="qhint" style="font-size:clamp(.82rem, 2.816vw, 1.28rem);font-weight:800;color:#5a3b1b">'+q.title+'</div>'+
       clockHtml+
-      '<div class="eq-line" style="font-size:clamp(.95rem,2.8vw,1.35rem)">'+q.line+'</div>'+
+      '<div class="eq-line" style="font-size:clamp(.95rem, 3.584vw, 1.728rem)">'+q.line+'</div>'+
       '<button class="pin-btn" id="bSubmit">확인하기</button>';
     Array.prototype.forEach.call(bContent.querySelectorAll('.miniclock'),function(mc){
       if(mc.classList.contains('empty'))return;
