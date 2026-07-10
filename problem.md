@@ -33,6 +33,19 @@
 
 <!-- 새 항목은 이 아래에 추가한다. 아직 기록된 문제가 없다. -->
 
+### [asset-generation-method-mismatch] 이미지 생성 요청을 로컬 렌더링으로 처리함
+
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/asset-revisions/keypad/time_number_keypad.png
+- 분류 태그: asset-generation-method-mismatch
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-10
+- 최근 발생일: 2026-07-10
+- 사례:
+  - 2026-07-10: 사용자가 수 입력 자판 이미지를 만들어달라고 했고, `index.html`에는 붙이지 말고 이미지만 만들라고 요청했는데, 이미지 생성이 아니라 로컬 PIL 렌더링으로 제작함. 사용자가 "이미지 gen으로 해야지"라고 지적.
+- 조치: 로컬 렌더링 시안은 참고용으로만 두고, 이미지 생성 경로로 단일 자판 이미지를 다시 생성한다.
+- 규칙화 메모: 아직 1회. 반복되면 "사용자가 이미지 gen/image generation을 요구하면 로컬 코드 렌더링으로 대체하지 않고 생성 모델 산출물을 우선 만든다" 규칙을 asset generation workflow에 제안 후보.
+
 ### [ornate-asset-wrong-function] 장식성 강한 에셋(인증서/상장 등)을 기능 UI 표면으로 재사용해 주제와 안 어울림
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-c` 숫자 트레이, `assets/certificate_library_repair.png`)

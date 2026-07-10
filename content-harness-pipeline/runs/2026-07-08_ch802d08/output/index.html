@@ -435,8 +435,8 @@
      box exactly (no letterbox) — this lets .mon-screen be positioned as % of the art. */
   .monitor-stage{position:relative;width:min(880px,95vw);aspect-ratio:1182/1330;margin:0 auto;}
   .monitor-stage>img.mon{width:100%;height:100%;object-fit:contain;}
-  /* seated on the monitor's cream screen glass (measured from art: left25.2/top14.4/w49.1/h34, inset ~1%) */
-  .mon-screen{position:absolute;left:26%;top:15.5%;width:47%;height:32.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
+  /* seated on the cropped monitor's cream screen glass (crop 58%: glass top 24.9%/h58.6%, inset ~2%) */
+  .mon-screen{position:absolute;left:26%;top:26.7%;width:47%;height:56.1%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
   .mon-screen.rebooted{animation:screenGlow 1.2s ease;}
   @keyframes screenGlow{0%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 18px #fff);}100%{filter:brightness(1);}}
   .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048vw, 1.05rem);letter-spacing:.3px;}
@@ -577,13 +577,17 @@
 
   /* --- Type C: shrink monitor so keyboard + number tray stay on-screen --- */
   #s-c .center-col{top:51%;width:min(820px,94vw);}
-  #s-c .monitor-stage{width:min(915px,96vw);}
-  /* 숫자 블록을 모니터 키보드 위(측정: top63~75%, 중심 ~69%)에 직접 배치(액자 없음) */
-  #s-c .c-tray-wrap{position:absolute;left:50%;top:68%;transform:translate(-50%,-50%);width:64%;display:flex;flex-direction:column;align-items:center;gap:clamp(5px,1.2vh,12px);z-index:16;}
-  /* 라벨은 키보드 위에서도 읽히도록 크림색 알약 배경 */
-  #s-c .c-tray-wrap .tray-label{margin:0;color:#4a3016;font-weight:900;font-size:clamp(.72rem, 2.3vw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;background:rgba(255,250,236,.9);padding:4px 15px;border-radius:12px;box-shadow:0 2px 6px rgba(60,38,15,.22);}
+  /* 잘라낸 모니터(1182x771, 나무 시작 직전 58%까지)에 맞춰 비율 갱신. 아래 나무 카드와 함께 세로로 들어가도록 폭 축소 */
+  #s-c .monitor-stage{width:min(780px,92vw);aspect-ratio:1182/771;}
+  /* 숫자 블록: 잘라낸 모니터 아래 나무 매트(repair_workbench_mat) 카드 위에 배치 */
+  /* 카드를 위로 겹쳐 올려 모니터 하단에 맞닿게(중간 빈 공간 제거). 카드가 모니터 앞(z위)이라 하단만 살짝 덮음 */
+  #s-c .c-tray-wrap{position:relative;margin-top:clamp(-54px,-6vw,-28px);width:min(660px,92vw);aspect-ratio:1896/830;z-index:16;filter:drop-shadow(0 8px 18px rgba(60,38,15,.35));}
+  #s-c .c-card-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
+  /* 청록 매트 안쪽(측정 left20/top18/…) 상단-중앙 영역: 하단 소품(연필·솔·테이프) 피해 배치 */
+  #s-c .c-card-inner{position:absolute;left:14%;top:18%;width:72%;height:56%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1.2vh,12px);}
+  #s-c .c-tray-wrap .tray-label{margin:0;color:#245049;font-weight:900;font-size:clamp(.72rem, 2.3vw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 rgba(255,255,255,.5);}
   #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(5px, 1.1vw, 12px);max-width:100%;}
-  #s-c .num-block{width:clamp(40px, 5.6vw, 62px);}
+  #s-c .num-block{width:clamp(38px, 5vw, 56px);}
 
   /* --- Story gallery: split the open book into an illustration page + a caption/number page --- */
   /* container must be at least as wide as the enlarged book, else book-stage's margin:0 auto
@@ -862,12 +866,15 @@
           <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
         </div>
       </div>
-      <div class="center-col" style="top:48%;width:min(820px,94vw);">
+      <div class="center-col" style="top:45%;width:min(820px,94vw);">
         <div class="monitor-stage enter d1">
-          <img class="mon" src="assets/library_monitor_body.png" alt="도서관 안내 데스크 위의 빈 화면 컴퓨터 모니터" />
+          <img class="mon" src="assets/library_monitor_cropped.png" alt="도서관 안내 데스크 컴퓨터 모니터(화면부)" />
           <div class="mon-screen" id="cScreen"></div>
-          <!-- 숫자 블록: 모니터 키보드 위에 직접(액자 없이) -->
-          <div class="c-tray-wrap">
+        </div>
+        <!-- 숫자 블록: 잘라낸 모니터 아래 나무 매트 카드 위에 배치 -->
+        <div class="c-tray-wrap">
+          <img class="c-card-bg" src="assets/repair_workbench_mat_blank.png" alt="숫자 블록을 놓는 나무 수리 매트" />
+          <div class="c-card-inner">
             <div class="tray-label">숫자 블록을 화면 빈칸으로 끌어다 놓으세요</div>
             <div class="card-tray" id="cTray"></div>
           </div>
@@ -1029,6 +1036,48 @@
   function chime(ok){ if(ok){beep(660,.12,'triangle');setTimeout(function(){beep(880,.18,'triangle');},110);} else {beep(200,.18,'sawtooth');} }
   function fanfare(){ [523,659,784,1046].forEach(function(f,i){setTimeout(function(){beep(f,.22,'triangle');},i*130);}); }
 
+  /* ---------- 대사 음성(녹음 파일, assets/audio/takeNN.wav) ----------
+     재생 규칙:
+       R1 단일 채널 — 새 대사가 시작되면 이전 대사는 무조건 컷(겹치지 않음).
+       R2 beat/탭 전환 — 다음 대사도 결국 play()를 부르므로 R1로 자동 컷.
+       R3 화면 전환 시 기본 정지 — showSceneById 진입에서 onSceneChange() 호출.
+       R4 예외(keep) — keep=true 대사만 화면이 바뀌어도 끝까지 재생. 단 다음 실제 대사가
+          나오면 R1로 끊긴다. */
+  var Voice=(function(){
+    var base='assets/audio/', cur=null, curKeep=false, muted=false, seqTok=0;
+    function halt(){ if(cur){ try{cur.pause();cur.currentTime=0;}catch(e){} } cur=null; curKeep=false; seqTok++; }
+    function playOne(id,keep){ var a=new Audio(base+id+'.wav'); a.play().catch(function(){}); cur=a; curKeep=!!keep; return a; }
+    function play(id,keep){ halt(); if(muted||!id) return; playOne(id,keep); }               // R1
+    function playSeq(ids,keep){                                                               // 연속 대사(예: 해냈다!→우리 수리 대원)
+      halt(); if(muted||!ids||!ids.length) return;
+      var tok=seqTok, i=0;
+      (function step(){
+        if(tok!==seqTok||i>=ids.length) return;
+        var a=playOne(ids[i],keep);
+        a.addEventListener('ended',function(){ if(tok!==seqTok||cur!==a) return; i++; if(i<ids.length) step(); else { cur=null; curKeep=false; } });
+      })();
+    }
+    function onSceneChange(){ if(cur&&!curKeep) halt(); }                                     // R3/R4
+    return { play:play, playSeq:playSeq, onSceneChange:onSceneChange, stop:halt,
+             mute:function(m){ muted=!!m; if(m) halt(); }, isMuted:function(){ return muted; } };
+  })();
+  window.__Voice=Voice;   // 콘솔/디버그·향후 음소거 버튼 연결용
+
+  /* 씬 진입 시 자동 재생할 대사(도입/아웃트로). s-problem은 beat 시퀀스가 직접 재생하므로 제외. */
+  var SCENE_INTRO={
+    's-tut':   {a:'take04'},
+    's-tutok': {a:'take05', keep:true},              // 튜토 성공 — 화면 전환에도 이어짐(keep)
+    's-a':     {a:'take06'},
+    's-b':     {a:'take07'},
+    's-c':     {a:'take08'},
+    's-repair':{seq:['take09','take10'], keep:true}, // 수리 완료·복구 — keep
+    's-story': {a:'take11'},                          // 이야기 1페이지
+    's-quiz':  {a:'take14'},                          // 마무리 퀴즈 문제
+    's-cert':  {seq:['take16','take17']}
+  };
+  var STORY_AUDIO=['take11','take12','take13'];       // 이야기 페이지별 대사
+  function playSceneIntro(id){ var v=SCENE_INTRO[id]; if(!v) return; if(v.seq) Voice.playSeq(v.seq,v.keep); else Voice.play(v.a,v.keep); }
+
   /* ---------- scene control ---------- */
   var scenes = Array.prototype.slice.call(document.querySelectorAll('.scene'));
   var byQa = {};
@@ -1052,6 +1101,7 @@
     if(!next) return;
     var cur=document.querySelector('.scene.active');
     if(cur && cur!==next){
+      Voice.onSceneChange();   // R3/R4: keep가 아닌 이전 화면 대사는 여기서 정지
       var leaving=cur;
       leaving.classList.add('leaving');
       setTimeout(function(){ leaving.classList.remove('active','leaving'); },360);
@@ -1059,6 +1109,7 @@
     next.classList.remove('leaving');
     next.classList.add('active');
     ensureSceneRendered(id);
+    playSceneIntro(id);        // 이 화면의 도입/아웃트로 대사 자동 재생
     setHudFor(next.getAttribute('data-qa-scene'));
     closeMenu();
     window.scrollTo(0,0);
@@ -1287,14 +1338,16 @@
 
     function hideAll(){ bubbles.forEach(function(b){ b.classList.remove('on'); }); }
     var beats=[
-      function(){ bubbles[0].classList.add('on'); beep(300,.13,'sawtooth'); },
-      function(){ hideAll(); bubbles[1].classList.add('on'); beep(280,.13,'sawtooth'); },
+      function(){ bubbles[0].classList.add('on'); beep(300,.13,'sawtooth'); Voice.play('take01'); },
+      function(){ hideAll(); bubbles[1].classList.add('on'); beep(280,.13,'sawtooth'); Voice.play('take02'); },
       function(){ hideAll(); kid.classList.add('pop');
                  teacher.src='assets/teacher_happy.png'; teacher.classList.remove('worried');
-                 bubbles[2].classList.add('on'); beep(660,.12,'triangle'); },
+                 bubbles[2].classList.add('on'); beep(660,.12,'triangle'); Voice.play('take03'); },
       function(){ hideAll(); cta.classList.add('on'); if(hint) hint.style.display='none'; beep(880,.16,'triangle'); }
     ];
-    var delays=[600,2200,2600,2200];
+    // 자동 전환 지연 = 각 beat 녹음 길이(+여유). 이 값보다 빨리 탭하면 R1로 대사가 컷됨.
+    // 참고 길이: take01≈5.9s, take02≈7.7s, take03≈5.35s. 재녹음 시 함께 조정.
+    var delays=[600,6400,8200,6000];
 
     function schedule(){
       if(idx>=beats.length-1){ running=false; return; }
@@ -1788,8 +1841,8 @@
     bookNext.disabled = stIdx===STORY.length-1;
     btnToQuiz.classList.toggle('hidden', stIdx!==STORY.length-1);
   }
-  bookPrev.addEventListener('click',function(){ if(stIdx>0){stIdx--;renderStory();beep(440,.08);} });
-  bookNext.addEventListener('click',function(){ if(stIdx<STORY.length-1){stIdx++;renderStory();beep(560,.08);} });
+  bookPrev.addEventListener('click',function(){ if(stIdx>0){stIdx--;renderStory();beep(440,.08);Voice.play(STORY_AUDIO[stIdx]);} });
+  bookNext.addEventListener('click',function(){ if(stIdx<STORY.length-1){stIdx++;renderStory();beep(560,.08);Voice.play(STORY_AUDIO[stIdx]);} });
   btnToQuiz.addEventListener('click',function(){ showSceneById('s-quiz'); });
 
   /* =====================================================
@@ -1802,6 +1855,7 @@
       if(btn.getAttribute('data-op')==='1일'){
         quizDone=true;
         chime(true);
+        Voice.play('take15');   // "맞았어! 24시간은 1일과 같지!"
         btn.classList.add('correct');
         document.getElementById('quizWin').classList.remove('hidden');
         document.getElementById('btnToCert').classList.remove('hidden');
