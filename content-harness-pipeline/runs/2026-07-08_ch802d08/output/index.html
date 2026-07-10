@@ -120,6 +120,9 @@
   .plaque .msg{font-weight:700;line-height:1.42;font-size:clamp(.82rem, 2.752vw, 1.382rem);max-width:100%;}
   .plaque .notice{font-weight:900;color:#a3391f;font-size:clamp(1rem, 3.712vw, 1.92rem);margin-top:8px;letter-spacing:.4px;line-height:1.2;}
   .plaque .notice b{color:#7a1f10;}
+  /* two-line question prompt: emphasized time on top, calmer sub-question below (distinct color + size) */
+  .plaque .notice .q-time{display:block;color:#b5330f;font-weight:900;font-size:clamp(1.3rem, 4.8vw, 2.5rem);line-height:1.12;letter-spacing:.6px;}
+  .plaque .notice .q-sub{display:block;color:#5a7a6a;font-weight:800;font-size:clamp(.8rem, 2.4vw, 1.2rem);line-height:1.2;margin-top:4px;letter-spacing:0;}
   .plaque.banner .msg{font-size:clamp(.86rem, 2.944vw, 1.434rem);}
   .plaque.banner .title{font-weight:900;color:#b5791b;font-size:clamp(1.05rem, 3.84vw, 1.984rem);margin-bottom:6px;}
 
@@ -148,6 +151,32 @@
   @keyframes tblink{0%,100%{filter:drop-shadow(0 6px 12px rgba(120,80,30,.22)) brightness(1);}50%{filter:drop-shadow(0 10px 18px rgba(180,130,30,.4)) brightness(1.08);}}
   .ticket-btn.pulse{animation:theartbeat 1.15s ease-in-out infinite;}
   @keyframes theartbeat{0%,100%{transform:scale(1);}30%{transform:scale(1.06);}45%{transform:scale(1);}}
+  /* ---- Primary CTA (intro 시작하기 / problem 시계의 힘으로 수리하러 가기):
+     larger text + an ALWAYS-ON golden glow (previously the glow only showed on
+     hover). The glow is a z-index:-1 halo layer so it never fights the button's
+     entrance opacity / blink / pulse / dlg-cta reveal animations. ---- */
+  #btnStart{font-size:clamp(1.2rem, 3.5vw, 2.05rem);}
+  #btnToTutorial{font-size:clamp(1.05rem, 3.1vw, 1.74rem);}
+  /* soft gold glow that HUGS the ticket silhouette (drop-shadow follows the PNG
+     alpha, so it reads as a natural halo, not a detached blob). base glow for
+     hover / before-reveal; the gentle float below animates it. */
+  #btnStart, #btnToTutorial{
+    filter:drop-shadow(0 5px 10px rgba(120,80,30,.25)) drop-shadow(0 0 9px rgba(255,206,90,.55)) drop-shadow(0 0 20px rgba(255,185,55,.4));
+  }
+  #btnStart:hover, #btnToTutorial:hover{
+    filter:drop-shadow(0 11px 17px rgba(120,80,30,.3)) drop-shadow(0 0 13px rgba(255,206,90,.78)) drop-shadow(0 0 26px rgba(255,185,55,.55)) brightness(1.03);
+  }
+  /* gentle continuous motion (조금 움직이는 효과): soft float + glow breathe */
+  @keyframes ctaFloat{
+    0%,100%{transform:translateY(0) scale(1);
+      filter:drop-shadow(0 5px 10px rgba(120,80,30,.25)) drop-shadow(0 0 8px rgba(255,206,90,.5)) drop-shadow(0 0 18px rgba(255,185,55,.34));}
+    50%{transform:translateY(-5px) scale(1.02);
+      filter:drop-shadow(0 10px 15px rgba(120,80,30,.28)) drop-shadow(0 0 15px rgba(255,206,90,.82)) drop-shadow(0 0 32px rgba(255,185,55,.55));}
+  }
+  /* btnStart floats forever. opacity is a STATIC 1 (never animated) — combining an
+     opacity-animating entrance with the float made it vanish; ctaFloat only moves
+     transform/filter, so the static opacity keeps it visible. */
+  #btnStart{opacity:1;animation:ctaFloat 3s ease-in-out infinite;}
 
   /* ---------------- Sequential story-beat speech bubble (asset surface) ---------------- */
   .dlg-area{position:absolute;inset:0;z-index:22;pointer-events:none;}
@@ -180,7 +209,7 @@
   @keyframes sayPop{from{opacity:0;transform:translateY(16px) scale(.88);}to{opacity:1;transform:translateY(0) scale(1);}}
   /* CTA revealed only on the final beat */
   #btnToTutorial.dlg-cta{opacity:0;pointer-events:none;}
-  #btnToTutorial.dlg-cta.on{opacity:1;pointer-events:auto;animation:enterUp .5s var(--ease) both;}
+  #btnToTutorial.dlg-cta.on{opacity:1;pointer-events:auto;animation:ctaFloat 3s ease-in-out infinite;}
   /* the helper librarian pops in mid-sequence */
   #s-problem .dlg-actor{opacity:0;}
   /* tiny "tap to continue" affordance */
@@ -252,8 +281,8 @@
   .clock{position:relative;flex:0 0 auto;}
   .clock img{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;}
   .clock .hand{position:absolute;left:var(--cx,50%);top:var(--cy,50%);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(0deg);border-radius:40px;background:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.3);}
-  .clock .hand.hour{width:7px;height:26%;background:#4a3016;}
-  .clock .hand.minute{width:5px;height:37%;background:#7a4a1e;}
+  .clock .hand.hour{width:7px;height:21%;background:#4a3016;}
+  .clock .hand.minute{width:5px;height:30%;background:#7a4a1e;}
   .clock .hub{position:absolute;left:var(--cx,50%);top:var(--cy,50%);width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#caa04a,#8a6414);transform:translate(-50%,-50%);box-shadow:0 0 3px rgba(0,0,0,.4);}
   .clock.spin .hand.hour{animation:spin 3s linear infinite;}
   .clock.spin .hand.minute{animation:spin .5s linear infinite;}
@@ -268,10 +297,18 @@
   .choice.picked{transform:translateY(-10px) scale(1.04);filter:drop-shadow(0 0 22px var(--gold));}
   .choice.picked::after{content:"✓";position:absolute;top:-6px;right:-6px;background:var(--gold);color:#5a3800;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.3);animation:stampPop .5s cubic-bezier(.2,1.6,.4,1) both;z-index:3;}
   .choice.wrong{animation:shake .4s;}
-  .choice.correct-reveal{animation:goldReveal .8s ease;}
-  .choice.correct-reveal::after{content:"✓";position:absolute;top:-6px;right:-6px;background:var(--gold);color:#5a3800;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.3);animation:stampPop .5s cubic-bezier(.2,1.6,.4,1) both;z-index:3;}
-  @keyframes goldReveal{0%{filter:drop-shadow(0 0 0 rgba(255,212,94,0));}45%{filter:drop-shadow(0 0 30px var(--gold));}100%{filter:drop-shadow(0 0 16px var(--gold));}}
+  /* spec: after 3 wrong tries the correct clock blinks RED (not gold) before force-advance */
+  .choice.wrong-reveal{animation:redReveal .5s ease-in-out 3;}
+  .choice.wrong-reveal::after{content:"✓";position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.3);z-index:3;}
+  @keyframes redReveal{0%,100%{filter:drop-shadow(0 0 0 rgba(226,96,79,0));}50%{filter:drop-shadow(0 0 30px var(--bad)) brightness(1.04);}}
   @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(9px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+
+  /* text-answer cards (Type A problems where the clock is the question and choices are strings) —
+     wide ticket cards (ticket_time_choice_blank) with the answer centered, like the tutorial cards */
+  .choice.choice-text{background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;border:none;padding:2% 7%;width:clamp(165px, 27vw, 250px);aspect-ratio:2.9/1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-weight:900;color:#7a5320;font-size:clamp(.88rem, 2.5vw, 1.3rem);filter:drop-shadow(0 5px 10px rgba(120,80,30,.26));}
+  .choice.choice-text::before{display:none;}
+  /* the question clock shown on the plaque (전광판) in text-answer problems */
+  .prompt-clock{margin:0 auto 6px;}
 
   /* ---------------- Tutorial workbench (asset surface) ---------------- */
   .workbench{position:relative;width:clamp(360px, 92.16vw, 972.8px);aspect-ratio:1900/840;margin:0 auto;}
@@ -306,10 +343,13 @@
 
   /* input blanks (type B) */
   /* number blanks now sit on a pinned cork-board paper slot asset instead of a plain web input */
-  .kb-blank{display:inline-flex;align-items:center;justify-content:center;width:76px;height:60px;padding:0 6px 8px;background-image:url('assets/cork_input_number_slot_blank.png');background-size:100% 100%;background-repeat:no-repeat;font-weight:900;font-size:1.5rem;color:#5a3b1b;cursor:pointer;margin:0 5px;vertical-align:middle;filter:drop-shadow(0 3px 6px rgba(90,55,20,.24));transition:filter .16s,transform .16s;}
+  .kb-blank{display:inline-flex;align-items:center;justify-content:center;width:86px;height:68px;padding:0 6px 8px;background-image:url('assets/cork_input_number_slot_blank.png');background-size:100% 100%;background-repeat:no-repeat;font-weight:900;font-size:1.7rem;color:#5a3b1b;cursor:pointer;margin:0 5px;vertical-align:middle;filter:drop-shadow(0 3px 6px rgba(90,55,20,.24));transition:filter .16s,transform .16s;}
   .kb-blank.active{filter:drop-shadow(0 0 12px var(--gold));transform:translateY(-2px);}
   .kb-blank.filled{color:#2f6f5a;}
   .kb-blank.bad{animation:shake .4s;}
+  /* spec: after 3 wrong tries the correct answer is revealed with a RED blink, then force-advance */
+  .kb-blank.reveal{color:var(--bad);animation:kbRedBlink .5s ease-in-out 3;}
+  @keyframes kbRedBlink{0%,100%{filter:drop-shadow(0 0 0 rgba(226,96,79,0));}50%{filter:drop-shadow(0 0 16px var(--bad)) brightness(1.05);}}
   .eq-line{font-size:clamp(1.05rem, 4.352vw, 2.048rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
 
   /* ---------------- Feedback toast ---------------- */
@@ -317,6 +357,19 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.ok{color:#1f7a45;border-color:#bff0d1;}
   .toast.bad{color:#b23b2c;border-color:#ffd2ca;}
+
+  /* ---------------- Center answer feedback (both correct & wrong): self-contained CSS card
+       (no image surface — auto-sizes to text, always horizontal & centered) ---------------- */
+  .hint-pop{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) scale(.92);z-index:52;
+    max-width:min(560px,86vw);
+    background:var(--panel);border:4px solid #fff;border-radius:22px;
+    padding:16px 30px;box-shadow:var(--shadow);
+    color:#7a5320;font-weight:900;text-align:center;line-height:1.35;word-break:keep-all;
+    font-size:clamp(1.05rem, 3.2vw, 1.6rem);
+    opacity:0;pointer-events:none;transition:opacity .24s var(--ease),transform .24s var(--ease);}
+  .hint-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+  .hint-pop.ok{color:#1f7a45;border-color:#bdeecd;background:#f2fff7;}
+  .hint-pop.bad{color:#b23b2c;border-color:#ffd2ca;background:#fff4f1;}
 
   /* ---------------- Big wall clock overlay ---------------- */
   .wall-clock{position:absolute;z-index:8;width:clamp(150px, 28.16vw, 345.6px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
@@ -326,7 +379,8 @@
   @keyframes stampSlam{0%{transform:translate(-50%,-50%) rotate(-12deg) scale(2.4);opacity:0;}60%{opacity:1;}100%{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:1;}}
 
   /* ---------------- Storybook ---------------- */
-  .book-stage{position:relative;width:min(860px,94vw);aspect-ratio:1.4/1;margin:0 auto;}
+  /* stage aspect matches storybook_base.png (1536x1024) so contain fills exactly (no letterbox) */
+  .book-stage{position:relative;width:min(1120px,97vw);aspect-ratio:1536/1024;margin:0 auto;}
   .book-stage>img.book{width:100%;height:100%;object-fit:contain;}
   .book-page{position:absolute;left:11%;top:11%;width:78%;height:74%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:6px;animation:pageIn .45s ease both;}
   @keyframes pageIn{from{opacity:0;transform:rotateY(24deg);}to{opacity:1;transform:rotateY(0);}}
@@ -351,12 +405,17 @@
   .board-note-title b{color:#a3391f;}
 
   /* ---------------- Monitor (type C) ---------------- */
-  .monitor-stage{position:relative;width:min(880px,95vw);aspect-ratio:1.5/1;margin:0 auto;}
+  /* stage aspect matches the monitor PNG (1182x1330) so object-fit:contain fills the
+     box exactly (no letterbox) — this lets .mon-screen be positioned as % of the art. */
+  .monitor-stage{position:relative;width:min(880px,95vw);aspect-ratio:1182/1330;margin:0 auto;}
   .monitor-stage>img.mon{width:100%;height:100%;object-fit:contain;}
-  .mon-screen{position:absolute;left:22%;top:14%;width:48%;height:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px;text-align:center;overflow:hidden;}
+  /* seated on the monitor's cream screen glass (measured from art: left25.2/top14.4/w49.1/h34, inset ~1%) */
+  .mon-screen{position:absolute;left:26%;top:15.5%;width:47%;height:32.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
   .mon-screen.rebooted{animation:screenGlow 1.2s ease;}
   @keyframes screenGlow{0%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 18px #fff);}100%{filter:brightness(1);}}
   .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048vw, 1.05rem);letter-spacing:.3px;}
+  /* '재부팅 중' 뒤 점(. .. ...)이 반복될 때 개수 변화로 텍스트가 흔들리지 않도록 폭 고정 */
+  .mon-status .dots{display:inline-block;width:1.3em;text-align:left;}
   .timeline{display:flex;flex-direction:column;gap:5px;font-size:.62rem;font-weight:800;color:#2c5a7a;max-width:100%;}
   .tl-row{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;align-items:center;}
   .tl-tag{background:#2f6f5a;color:#fff;border-radius:6px;padding:2px 8px;font-size:.64rem;letter-spacing:.4px;}
@@ -398,20 +457,107 @@
   #s-tut .center-col{top:50%;}
   /* keep the 3 time tickets on one row so the enlarged workbench + tray fit the viewport */
   #s-tut .card-tray{flex-wrap:nowrap;}
-  .wb-note{position:absolute;left:16%;right:16%;top:13%;z-index:3;text-align:center;color:#3f2a14;font-weight:800;line-height:1.25;font-size:clamp(.6rem, 1.792vw, 1.05rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
-  .wb-note b{color:#c76a3a;}
   .wb-slot .wb-drag-hint{color:#7a4a1e;font-weight:800;font-size:clamp(.62rem, 1.984vw, 1.024rem);line-height:1.24;margin-top:2px;}
+
+  /* ===== Tutorial scene redesign (feedback 2026-07-09) ===== */
+  /* board is pushed lower (inline top:61%) + trimmed so the head-height speech
+     bubbles sit beside each character and clear the board. keep in sync with the
+     #s-tut .center-col inline top. */
+  /* center-col must be at least as wide as the enlarged board, else the board
+     (wider than the default 900px column) aligns flex-start and drifts right */
+  #s-tut .center-col{width:min(1180px, 96vw);}
+  #s-tut .workbench{width:clamp(430px, 92vw, 1118px);}
+  /* (1) clock centered on the teal mat, nudged right + up to clear the painted pencil */
+  #s-tut .wb-clock{left:12%;top:47%;transform:translateY(-50%);width:27%;}
+  /* repaired-clock glow (spec: 멈춘 시계 주변 노란 테두리 글로우) — stronger + pulsing
+     than the default .clock.glow so it reads on the enlarged tutorial clock */
+  #s-tut #tutClock.glow{animation:tutClockGlow 1.1s ease-in-out infinite;}
+  @keyframes tutClockGlow{
+    0%,100%{filter:drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px rgba(244,168,36,.45));}
+    50%{filter:drop-shadow(0 0 22px var(--gold)) drop-shadow(0 0 44px var(--yellow-deep));}
+  }
+  /* slot pulled inward (right:11%) so the question clears the right speech bubble
+     even with the enlarged board; seated inside the teal area */
+  #s-tut .wb-slot{right:11%;top:53%;transform:translateY(-50%);width:40%;gap:clamp(5px,1vh,10px);}
+  /* (5) bigger, kid-friendly question + hint text */
+  #s-tut .wb-slot .qhint{color:#245049;font-weight:900;font-size:clamp(.92rem,2.8vw,1.5rem);line-height:1.2;text-shadow:0 1px 0 rgba(255,255,255,.55);}
+  /* the in-slot "드래그!" hint is redundant with the prominent cue pill below the tray */
+  #s-tut .wb-slot .wb-drag-hint{display:none;}
+  /* cards keep the ticket's landscape proportion (flex stretch was making them tall)
+     and are wider left-to-right; tray size == placed/dropped size */
+  #s-tut .card-tray{align-items:center;gap:clamp(10px,2.4vw,26px);}
+  /* flatter than the ticket art (1417/1140) so the cards are short & wide, not tall */
+  #s-tut .card{width:clamp(134px,23vw,196px);height:auto;aspect-ratio:1417/820;flex:0 0 auto;font-size:clamp(1.2rem,4.4vw,2.15rem);padding:9% 12% 10%;}
+  /* (4) drop slot framed to the wider ticket card so the dragged card meshes in cleanly */
+  #s-tut #tutBlank{width:clamp(142px,24.5vw,206px);aspect-ratio:1417/820;min-width:0;min-height:0;padding:0;border:3px dashed var(--wood-deep);border-radius:16px;background:rgba(255,250,236,.5);font-size:clamp(1.5rem,4.2vw,2.3rem);color:var(--wood-deep);}
+  /* (3) empty slot pulses to invite a drop; strong highlight while a card is held */
+  #s-tut #tutBlank:not(.filled){animation:slotPulse 1.4s ease-in-out infinite;}
+  @keyframes slotPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,212,94,0);border-color:var(--wood-deep);}50%{box-shadow:0 0 20px 5px var(--gold);border-color:var(--gold);}}
+  #s-tut #tutBlank.armed{animation:none;border-style:solid;border-color:var(--gold);background:var(--gold-glow);box-shadow:0 0 26px 7px var(--gold);}
+  #s-tut #tutBlank.filled{animation:none;border-style:solid;border-color:var(--ok);background:transparent;box-shadow:0 0 20px var(--gold);}
+  #s-tut #tutBlank.filled .card.placed{transform:none;filter:drop-shadow(0 6px 12px rgba(120,80,30,.32));}
+  /* general held-card highlight for every drop target */
+  .blank.armed{border-color:var(--gold);box-shadow:0 0 14px var(--gold);}
+  /* placed card sits still, snapped inside the slot */
+  #s-tut .card.placed{cursor:default;animation:none;}
+  #s-tut .card.placed:hover{transform:none;filter:drop-shadow(0 6px 12px rgba(120,80,30,.32));}
+  /* (3) cards glow to signal they are grabbable + sparkle cue under the tray */
+  #s-tut .card:not(.locked):not(.placed){animation:cardInvite 1.6s ease-in-out infinite;}
+  #s-tut .card:hover,#s-tut .card.dragging{animation:none;}
+  @keyframes cardInvite{0%,100%{filter:drop-shadow(0 5px 10px rgba(120,80,30,.24));}50%{filter:drop-shadow(0 9px 16px rgba(255,180,40,.55));}}
+  /* high-contrast dark pill so the cue reads clearly over the wood floor + a glow.
+     NOTE opacity:1 is required: the element also carries `.enter` (opacity:0 base),
+     and our cueBounce animation outranks the `enterUp` reveal, so without this the
+     cue would stay invisible. */
+  #s-tut .tut-drag-cue{display:inline-block;opacity:1;margin-top:8px;padding:8px 20px;border-radius:999px;
+    background:linear-gradient(180deg,#6a4523,#3a2712);color:#ffe89a;font-weight:900;letter-spacing:.5px;
+    font-size:clamp(1rem,3vw,1.55rem);line-height:1.1;
+    box-shadow:0 5px 12px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,212,94,.6), 0 0 18px rgba(255,206,59,.45);
+    text-shadow:0 1px 2px rgba(0,0,0,.55);animation:cueBounce 1.3s ease-in-out infinite;}
+  @keyframes cueBounce{0%,100%{transform:translateY(0);box-shadow:0 5px 12px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,212,94,.6), 0 0 14px rgba(255,206,59,.35);}50%{transform:translateY(-7px);box-shadow:0 9px 16px rgba(0,0,0,.42), inset 0 0 0 2px rgba(255,212,94,.85), 0 0 26px rgba(255,206,59,.6);}}
+  /* (2)+(7) character speech bubbles beside each character's head (intro-style):
+     teacher on the left, kid on the right — anchored to head height (base .speech
+     bottom:calc(var(--char-h)-3rem)), pushed to the outer edge so they clear the board. */
+  #s-tut .dlg-area{z-index:22;}
+  #s-tut .speech{width:clamp(200px,24vw,290px);}
+  #s-tut .speech.teacher-say{left:5%;}
+  #s-tut .speech.kid-say{right:5%;}
+  #s-tut .speech.on{opacity:1;}
+  #s-tut .speech.teacher-say.ok-say .who{color:#1f7a45;}
+  #s-tut .speech.teacher-say.bad-say .who{color:#b23b2c;}
+
+  /* --- Type A: teacher's instruction bubble — bigger so the full line fits, nudged right of the far edge --- */
+  #s-a .speech{width:clamp(270px,30vw,380px);}
+  #s-a .speech.teacher-say{left:9%;}
+  #s-a .speech.on{opacity:1;}
+
+  /* --- Type B: teacher's instruction bubble — 유형 A와 동일 말풍선(speech_bubble) 재사용, 선생님은 왼쪽 --- */
+  #s-b .speech{width:clamp(270px,30vw,380px);}
+  #s-b .speech.teacher-say{left:9%;}
+  #s-b .speech.on{opacity:1;}
+
+  /* --- Type C: teacher's intro bubble — 유형 A·B와 동일 말풍선(speech_bubble) 재사용, 선생님은 왼쪽 --- */
+  #s-c .speech{width:clamp(270px,30vw,380px);}
+  #s-c .speech.teacher-say{left:9%;}
+  #s-c .speech.on{opacity:1;}
+  /* 전광판 board: bigger overall + taller so the question clock has room, tight vertical padding */
+  /* asymmetric top/bottom padding nudges the centered clock+prompt ~2% lower into the cream area */
+  #s-a .plaque{aspect-ratio:1790/920;padding:9% 12% 5%;}
 
   /* --- Type C: shrink monitor so keyboard + number tray stay on-screen --- */
   #s-c .center-col{top:51%;width:min(820px,94vw);}
-  #s-c .monitor-stage{width:min(760px,88vw);}
+  #s-c .monitor-stage{width:min(704px,90vw);}
   #s-c .c-tray-wrap{position:absolute;left:50%;bottom:3.5%;transform:translateX(-50%);width:84%;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:4;}
   #s-c .c-tray-wrap .tray-label{margin:0;color:#4a3016;font-weight:800;font-size:clamp(.64rem, 2.112vw, 1.075rem);text-shadow:0 1px 0 rgba(255,250,236,.5);}
   #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px, 0.896vw, 10.24px);max-width:100%;}
   #s-c .num-block{width:clamp(40px, 5.888vw, 64px);}
 
   /* --- Story gallery: split the open book into an illustration page + a caption/number page --- */
-  #s-story .book-page{flex-direction:row;align-items:stretch;top:14%;height:64%;gap:2%;padding:0 8.5%;}
+  /* container must be at least as wide as the enlarged book, else book-stage's margin:0 auto
+     collapses and align-items:center is ignored → book drifts left/off-center */
+  #s-story .center-col{width:min(1160px,98vw);}
+  /* seated inside the cream page spread (measured left11.8/top8.3/w76.4/h65.3, inset to gold border) */
+  #s-story .book-page{flex-direction:row;align-items:stretch;left:13%;top:11%;width:74%;height:60%;gap:2%;padding:0 3%;}
   #s-story .bp-left{flex:0 0 47%;display:flex;align-items:center;justify-content:center;}
   #s-story .bp-left .ill-wrap{position:relative;display:inline-flex;}
   #s-story .book-page img.ill{max-width:100%;max-height:min(45vh,320px);width:auto;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);}
@@ -429,11 +575,15 @@
   #s-a #aChoices{position:relative;align-items:flex-end;}
   #s-a #aChoices::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);width:90%;height:26px;background:radial-gradient(ellipse at center,rgba(90,55,20,.30),rgba(90,55,20,0) 72%);filter:blur(3px);z-index:-1;pointer-events:none;}
 
-  /* Type B: the 확인 CTA becomes a physical library status label pinned to the board */
-  #s-b #bSubmit{background:transparent;border:none;border-radius:0;padding:0;box-shadow:none;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(150px, 28.16vw, 250.88px);aspect-ratio:3/1;color:#7a1f10;font-weight:900;font-size:clamp(.92rem, 2.688vw, 1.459rem);filter:drop-shadow(0 4px 9px rgba(90,55,20,.28));transition:transform .14s var(--ease),filter .14s;}
-  #s-b #bSubmit::before{content:none;}
-  #s-b #bSubmit:hover{transform:translateY(-2px);filter:drop-shadow(0 8px 13px rgba(90,55,20,.34)) brightness(1.03);}
-  #s-b #bSubmit:active{transform:translateY(1px);}
+  /* Type B: 확인하기 버튼은 보드 밖(아래)으로 빼고 표준 노란 버튼(.btn)으로 표시 */
+  /* 보드 문제 제목: 코르크 배경에서 잘 보이도록 크림색 라벨 칩 + 진한 글자 */
+  #s-b .b-qtitle{display:inline-block;max-width:100%;font-weight:900;color:#7a1f10;background:rgba(255,248,232,.94);padding:7px 16px;border-radius:12px;box-shadow:0 2px 7px rgba(90,55,20,.28);line-height:1.32;font-size:clamp(.9rem, 3vw, 1.5rem);word-break:keep-all;}
+  /* 정답 입력 ?칸: 선택 가능함을 알리는 상시 글로우 펄스(활성/입력완료 시 정지) */
+  #s-b .kb-blank:not(.filled):not(.active){animation:kbInvite 1.4s ease-in-out infinite;}
+  @keyframes kbInvite{
+    0%,100%{filter:drop-shadow(0 3px 6px rgba(90,55,20,.24));}
+    50%{filter:drop-shadow(0 3px 6px rgba(90,55,20,.24)) drop-shadow(0 0 12px var(--gold));}
+  }
 
   /* In-world feedback status tag replaces the floating web toast for learning feedback */
   .status-tag{position:absolute;left:50%;bottom:10.5%;z-index:24;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(230px, 51.2vw, 486.4px);aspect-ratio:3/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5% 13% 7%;font-weight:900;color:#7a5320;font-size:clamp(.82rem, 2.56vw, 1.357rem);line-height:1.24;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.95);transition:opacity .28s ease-out,transform .28s ease-out;filter:drop-shadow(0 5px 11px rgba(90,55,20,.26));}
@@ -444,12 +594,12 @@
   /* Type C: enlarge the live question + drop equation, demote am/pm reference to a thin bar */
   .timeline-bar{display:flex;gap:8px;align-items:center;justify-content:center;font-weight:800;opacity:.9;}
   .timeline-bar .tl-sep{color:#8a5a30;font-weight:900;}
-  #s-c .mon-screen{gap:clamp(6px, 1.92vh, 16.64px);}
-  #s-c .mon-screen .mon-status{font-size:clamp(.64rem, 2.176vw, 1.101rem);}
-  #s-c .mon-screen .timeline-bar{font-size:clamp(.6rem, 1.92vw, 0.998rem);}
-  #s-c .mon-screen .mon-q{font-size:clamp(.98rem, 3.328vw, 1.638rem);line-height:1.3;}
-  #s-c .mon-screen .eq-line{font-size:clamp(1.02rem, 3.84vw, 1.92rem);gap:8px;}
-  #s-c .mon-screen .cblank{min-width:50px;min-height:46px;font-size:1.35rem;}
+  #s-c .mon-screen{gap:clamp(3px, 1vh, 10px);}
+  #s-c .mon-screen .mon-status{font-size:clamp(.62rem, 2vw, .98rem);}
+  #s-c .mon-screen .timeline-bar{font-size:clamp(.56rem, 1.75vw, .88rem);}
+  #s-c .mon-screen .mon-q{font-size:clamp(.92rem, 3vw, 1.46rem);line-height:1.26;word-break:keep-all;}
+  #s-c .mon-screen .eq-line{font-size:clamp(.94rem, 3.2vw, 1.54rem);gap:6px;line-height:1.32;word-break:keep-all;}
+  #s-c .mon-screen .cblank{min-width:42px;min-height:38px;font-size:1.22rem;}
   .mon-status.ok-flash{color:#1f7a45;animation:statusFlash .3s ease-out;}
   @keyframes statusFlash{from{opacity:.2;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
 
@@ -477,6 +627,13 @@
   @media (max-height:520px){
     :root{--char-h:44vh;--kid-h:35.2vh;}
   }
+
+  /* ---------------- Debug scene-jump bar (dev only; hidden unless body.debug) ---------------- */
+  .debug-bar{position:fixed;left:0;right:0;bottom:0;z-index:200;display:none;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;padding:5px 6px;background:rgba(30,18,8,.82);}
+  body.debug .debug-bar{display:flex;}
+  .debug-bar .dbg-label{color:#ffce3b;font:800 11px/1 system-ui,sans-serif;opacity:.85;margin-right:2px;letter-spacing:.5px;}
+  .debug-bar button{font:700 11px/1 system-ui,sans-serif;color:#5a3800;background:#ffce3b;border:none;border-radius:6px;padding:5px 8px;cursor:pointer;}
+  .debug-bar button:hover{background:#ffe08a;}
 </style>
 </head>
 <body>
@@ -553,10 +710,15 @@
       <img class="char left bob" src="assets/teacher_pointing.png" alt="친근한 사서 선생님이 오른쪽을 가리키며 안내하는 모습" />
       <img class="char right pop" src="assets/kid_librarian_explaining.png" alt="꼬마 사서가 한 손을 들고 자신 있게 설명하는 모습" />
       <div class="status-tag" id="tutStatus" aria-live="polite"></div>
-      <div class="center-col" style="top:50%;">
+      <!-- 사서 선생님 말풍선: 진입 시 안내 대사 → 이후 정오답 피드백으로 갱신 -->
+      <div class="dlg-area">
+        <div class="speech teacher-say on" id="tutTeacherSay" aria-live="polite">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해줄래?</span></div>
+        </div>
+      </div>
+      <div class="center-col" style="top:54%;">
         <div class="workbench enter d2">
           <img class="wb-bg" src="assets/repair_workbench_mat_blank.png" alt="따뜻한 도서관 조명 아래 놓인 목재 수리 작업대 매트" />
-          <div class="wb-note"><b>꼬마 사서</b> · 걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!</div>
           <div class="wb-clock">
             <div class="clock" id="tutClock" style="width:100%;aspect-ratio:1/1;--cx:50%;--cy:45%;">
               <img src="assets/table_clock_body.png" alt="바늘 없이 숫자판과 중심축만 있는 작은 탁상 아날로그 시계 몸체" />
@@ -574,6 +736,7 @@
           <div class="card" data-val="4시" draggable="false">4시</div>
           <div class="card" data-val="5시" draggable="false">5시</div>
         </div>
+        <div class="tut-drag-cue enter d3" aria-hidden="true">✨ 카드를 끌어서 놓아요 ✨</div>
       </div>
     </div>
   </section>
@@ -585,16 +748,9 @@
       <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
       <img class="char right bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
       <div class="center-col" style="top:48%;">
-        <div class="clock glow enter d1" style="position:relative;width:clamp(130px, 28.16vw, 243.2px);height:clamp(130px, 28.16vw, 243.2px);--cx:50%;--cy:45%;">
-          <img src="assets/table_clock_body.png" alt="노란 글로우가 감도는 정답 탁상시계, 3시를 가리킴" />
-          <div class="hand hour" style="transform:translate(-50%,-100%) rotate(90deg);"></div>
-          <div class="hand minute" style="transform:translate(-50%,-100%) rotate(0deg);"></div>
-          <div class="hub"></div>
-          <div class="reward-stamp">정답!<br>3시 ⭐</div>
-        </div>
         <div class="plaque banner enter d2" style="width:clamp(340px, 74.24vw, 819.2px);">
-          <span class="who teacher-who">✅ 첫 수리 완료</span>
-          <div class="msg">와, 정답이야! 시계를 아주 잘 보는구나. 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄 거라 믿어!</div>
+          <span class="who teacher-who">첫 수리 완료</span>
+          <div class="msg">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄 거라 믿어!</div>
         </div>
         <button class="ticket-btn pulse wide enter d3" id="btnToMission"><span>좋아요! 본격적으로 수리하러 가기 ▶</span></button>
       </div>
@@ -608,10 +764,14 @@
       <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 전광판을 가리키며 안내하는 모습" />
       <img class="char right bob" id="aKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <div class="status-tag" id="aStatus" aria-live="polite"></div>
+      <!-- 사서 선생님 안내 대사: 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
+      <div class="dlg-area">
+        <div class="speech teacher-say on">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 시계를 찾아줄래?</span></div>
+        </div>
+      </div>
       <div class="center-col" style="top:47%;">
-        <div class="plaque enter d1" style="width:clamp(340px, 74.24vw, 844.8px);">
-          <span class="who teacher-who">🕑 깨진 전광판 안내</span>
-          <div class="msg">전광판의 시간이 다 깨져버렸어. 몇 분 전인지 잘 읽고, 똑같은 시각을 가리키는 시계를 찾아줘!</div>
+        <div class="plaque enter d1" style="width:clamp(360px, 72vw, 840px);">
           <div class="notice" id="aPrompt">문제</div>
         </div>
         <div class="progress-dots enter d2" id="aDots"></div>
@@ -624,14 +784,22 @@
   <section class="scene" id="s-b" data-qa-scene="section_mission_type_b" data-qa-order="6" data-qa-label="유형 B: 독서 교실 시간표 복구하기"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
+      <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 시간표 게시판을 가리키며 안내하는 모습" />
       <img class="char right bob" id="bKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <div class="status-tag" id="bStatus" aria-live="polite"></div>
+      <!-- 사서 선생님 안내 대사: 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
+      <div class="dlg-area">
+        <div class="speech teacher-say on">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">독서 교실 시간표가 지워져서 언제 끝나는지 알 수 없단다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?</span></div>
+        </div>
+      </div>
       <div class="center-col" style="top:50%;width:min(920px,96vw);">
         <div class="board-stage enter d1">
           <img class="board-bg" src="assets/cork_schedule_board.png" alt="도서관 벽에 걸린 따뜻한 코르크 시간표 게시판" />
-          <div id="bContent" style="position:absolute;left:23%;top:15%;width:54%;height:70%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;"></div>
+          <div id="bContent" style="position:absolute;left:23%;top:14%;width:54%;height:72%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:12px;text-align:center;"></div>
         </div>
         <div class="progress-dots enter d2" id="bDots"></div>
+        <button class="btn enter d3" id="bSubmit">확인하기</button>
       </div>
     </div>
   </section>
@@ -642,6 +810,12 @@
     <div class="layer">
       <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 모니터를 가리키며 안내하는 모습" />
       <img class="char right bob" id="cKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
+      <!-- 사서 선생님 도입 대사(원본 SB Scene 3): 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
+      <div class="dlg-area">
+        <div class="speech teacher-say on">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!</span></div>
+        </div>
+      </div>
       <div class="center-col" style="top:51%;width:min(820px,94vw);">
         <div class="monitor-stage enter d1">
           <img class="mon" src="assets/library_monitor_body.png" alt="도서관 안내 데스크 위의 빈 화면 컴퓨터 모니터" />
@@ -672,10 +846,10 @@
       </div>
       <div class="center-col" style="top:54%;">
         <div class="plaque banner enter d1" style="width:clamp(340px, 76.8vw, 870.4px);">
-          <div class="title">🎉 도서관 수리 완료!</div>
+          <div class="title">도서관 수리 완료!</div>
           <div class="msg">해냈다! 시간의 규칙을 모두 풀었어요! 우리 수리 대원 정말 대단해. 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
         </div>
-        <button class="ticket-btn pulse wide enter d2" id="btnToStory"><span>🔖 수리 이야기 보러 가기 ▶</span></button>
+        <button class="ticket-btn pulse wide enter d2" id="btnToStory"><span>수리 이야기 보러 가기 ▶</span></button>
       </div>
     </div>
   </section>
@@ -685,7 +859,7 @@
     style="background-image:url('assets/bg_library_clean_lobby.png');">
     <div class="layer">
       <img class="char left bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
-      <div class="center-col" style="top:50%;">
+      <div class="center-col" style="top:45%;">
         <div class="book-stage enter d1">
           <img class="book" src="assets/storybook_base.png" alt="도서관 책상 위에 펼쳐진 커다란 팝업북" />
           <button class="book-arrow prev" id="bookPrev" aria-label="이전 페이지">‹</button>
@@ -706,7 +880,7 @@
       <div class="status-tag" id="quizStatus" aria-live="polite"></div>
       <div class="center-col" style="top:46%;">
         <div class="plaque enter d1" style="width:clamp(340px, 74.24vw, 844.8px);">
-          <span class="who kid-who">❓ 마무리 퀴즈</span>
+          <span class="who kid-who">마무리 퀴즈</span>
           <div class="msg">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
         </div>
         <div class="row enter d2" id="quizChoices">
@@ -742,7 +916,7 @@
           </div>
         </div>
         <div class="row enter d2">
-          <button class="ticket-btn save" id="btnSaveCert"><span>📷 사진첩에 저장하기</span></button>
+          <button class="ticket-btn save" id="btnSaveCert"><span>사진첩에 저장하기</span></button>
           <button class="ticket-btn invite pulse wide" id="btnNextLesson"><span>딱 맞는 길이를 찾아라! 하러 가기 ▶</span></button>
         </div>
       </div>
@@ -751,6 +925,7 @@
 
   <!-- shared overlays -->
   <div class="toast" id="toast"></div>
+  <div class="hint-pop" id="hintPop" aria-live="assertive"></div>
   <div class="keypad" id="keypad" aria-hidden="true">
     <button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button>
     <button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button>
@@ -769,6 +944,9 @@
       <span class="energy-num" id="energyNum">0%</span>
     </div>
   </div>
+
+  <!-- dev-only scene jumper (hidden; enable with `#debug`, `?debug`, or the ` key) -->
+  <div class="debug-bar" id="debugBar"></div>
 
 </div>
 
@@ -876,6 +1054,15 @@
     clearTimeout(el._t);
     el._t=setTimeout(function(){ el.classList.remove('show'); },ms||1600);
   }
+  /* centered answer feedback (correct & wrong) on the in-world feedback board, horizontal text.
+     kind: 'ok' | 'bad' | '' (neutral). */
+  var hintPopEl=document.getElementById('hintPop'), hintPopT=null;
+  function hintPop(msg,ms,kind){
+    hintPopEl.textContent=msg;
+    hintPopEl.className='hint-pop show'+(kind?' '+kind:'');
+    clearTimeout(hintPopT);
+    hintPopT=setTimeout(function(){ hintPopEl.classList.remove('show'); },ms||1600);
+  }
   var tutStatus=document.getElementById('tutStatus');
   var aStatus=document.getElementById('aStatus');
   var bStatus=document.getElementById('bStatus');
@@ -915,6 +1102,8 @@
       el.setPointerCapture(e.pointerId);
       startX=e.clientX;startY=e.clientY;
       el.classList.add('dragging');
+      // highlight every valid drop target the moment a card is grabbed
+      blanks.forEach(function(b){b.classList.add('armed');});
       el.style.transition='none';
       el.style.transform='translate(0px,0px)';
     });
@@ -928,7 +1117,7 @@
       if(!el.classList.contains('dragging'))return;
       el.classList.remove('dragging');
       var hit=hitBlank(e.clientX,e.clientY,blanks);
-      blanks.forEach(function(b){b.classList.remove('over');});
+      blanks.forEach(function(b){b.classList.remove('over','armed');});
       el.style.transition='';el.style.transform='';
       if(hit){ onDrop(el,hit); }
     });
@@ -948,7 +1137,7 @@
       (function(i){
         var p=document.createElement('div');
         p.className='particle';
-        p.textContent=['✨','⭐','🌟','💫'][i%4];
+        p.textContent=['✨','🌟','💫'][i%3];
         p.style.left=(Math.random()*100)+'%';
         p.style.bottom='-30px';
         p.style.animationDuration=(2+Math.random()*2)+'s';
@@ -1088,24 +1277,44 @@
     setClockHands(tutClock,3,0); // 짧은바늘 3, 긴바늘 12
     var blank=document.getElementById('tutBlank');
     var cards=Array.prototype.slice.call(document.querySelectorAll('#tutTray .card'));
+    var cue=document.querySelector('#s-tut .tut-drag-cue');
+    // teacher speech bubble gives the correct/wrong feedback (horizontal, in-character)
+    var teacherSay=document.getElementById('tutTeacherSay');
+    var teacherMsg=teacherSay?teacherSay.querySelector('.msg'):null;
+    function say(msg,ok){
+      if(!teacherSay||!teacherMsg) return;
+      teacherMsg.textContent=msg;
+      teacherSay.classList.toggle('ok-say',!!ok);
+      teacherSay.classList.toggle('bad-say',!ok);
+      teacherSay.classList.add('on');
+    }
     var solved=false;
     cards.forEach(function(c){
       enableDrag(c,[blank],function(el,b){
         if(solved) return;
         if(el.getAttribute('data-val')===b.getAttribute('data-answer')){
           solved=true;
-          b.textContent=el.getAttribute('data-val');
+          // (4) snap the actual card into the slot so it reads as physically placed
+          el.style.transition='';el.style.transform='';
+          el.classList.remove('dragging');
+          el.classList.add('placed','locked');
+          b.textContent='';
+          b.classList.remove('armed');
           b.classList.add('filled');
-          el.classList.add('locked');
+          b.appendChild(el);
+          cards.forEach(function(o){ if(o!==el) o.classList.add('locked'); });
+          if(cue) cue.style.display='none';
+          // 멈춰있던 시계가 수리된 연출: 노란 테두리 글로우
+          tutClock.classList.add('glow');
           chime(true);
           sparkOnEl(b);
-          showTag(tutStatus,'정답이에요! 🎉','ok');
+          say('정답이야! 시계를 아주 잘 보는구나!',true);
           setEnergy(10);
-          setTimeout(function(){ showSceneById('s-tutok'); },1100);
+          setTimeout(function(){ showSceneById('s-tutok'); },1300);
         }else{
           chime(false);
           b.classList.add('bad');
-          showTag(tutStatus,'음… 다시 생각해볼까요?','bad');
+          say('음… 짧은바늘이 가리키는 숫자를 다시 볼까?',false);
           setTimeout(function(){b.classList.remove('bad');},450);
         }
       });
@@ -1128,11 +1337,13 @@
   /* =====================================================
      SECTION 5: TYPE A (choose matching clock)
   ===================================================== */
+  /* mode 'clock': 전광판에 '몇 분 전' 텍스트 → 알맞은 시계(그림) 고르기.
+     mode 'text' : 전광판에 시계(그림) 제시 → 같은 시각을 나타낸 문자열 보기 고르기. */
   var A_DATA=[
-    {prompt:'3시 5분 전', answer:[2,55], choices:[[2,55],[3,5],[2,45]], note:'3시 5분 전 = 2시 55분'},
-    {prompt:'11시 50분',  answer:[11,50],choices:[[11,50],[12,10],[11,10]], note:'11시 50분 = 12시 10분 전'},
-    {prompt:'8시 15분 전', answer:[7,45], choices:[[8,15],[7,45],[7,15]], note:'8시 15분 전 = 7시 45분'},
-    {prompt:'4시 55분',   answer:[4,55], choices:[[5,5],[4,55],[4,5]], note:'4시 55분 = 5시 5분 전'}
+    {mode:'clock', prompt:'3시 5분 전', answer:[2,55], choices:[[2,55],[3,5],[2,45]], note:'3시 5분 전 = 2시 55분'},
+    {mode:'text',  clock:[11,50], answer:'12시 10분 전', choices:['11시 10분 전','12시 10분 전','12시 50분 전'], note:'11시 50분 = 12시 10분 전'},
+    {mode:'clock', prompt:'8시 15분 전', answer:[7,45], choices:[[8,15],[7,45],[7,15]], note:'8시 15분 전 = 7시 45분'},
+    {mode:'text',  clock:[4,55], answer:'5시 5분 전', choices:['4시 5분 전','5시 5분 전','5시 55분 전'], note:'4시 55분 = 5시 5분 전'}
   ];
   var aIdx=0, aWrong=0;
   var aPrompt=document.getElementById('aPrompt'), aChoices=document.getElementById('aChoices'), aDots=document.getElementById('aDots');
@@ -1142,29 +1353,50 @@
     for(var i=0;i<total;i++){var d=document.createElement('i');d.className=i<idx?'done':(i===idx?'cur':'');el.appendChild(d);}
   }
   function startTypeA(){ aIdx=0; loadA(); }
+  function aIsCorrect(ch,q){
+    return q.mode==='text' ? (ch===q.answer) : (ch[0]===q.answer[0]&&ch[1]===q.answer[1]);
+  }
   function loadA(){
     aWrong=0;
     var q=A_DATA[aIdx];
     renderDots(aDots,A_DATA.length,aIdx);
-    aPrompt.innerHTML='전광판: <b>'+q.prompt+'</b> — 같은 시각의 시계는?';
     aChoices.innerHTML='';
-    var size = window.innerWidth<640?108:146;
-    q.choices.forEach(function(ch){
-      var wrap=document.createElement('div');
-      wrap.className='choice';
-      wrap.appendChild(buildClock(ch[0],ch[1],size));
-      wrap.addEventListener('click',function(){ pickA(wrap,ch,q); });
-      aChoices.appendChild(wrap);
-    });
+    if(q.mode==='text'){
+      // 전광판에 문제 시계를 제시하고, 보기는 문자열 카드로 고른다
+      aPrompt.innerHTML='';
+      // clock scales with the (viewport-sized) board so it never clips out the top
+      var pc=buildClock(q.clock[0],q.clock[1], Math.min(190, Math.round(window.innerWidth*0.22)));
+      pc.classList.add('prompt-clock');
+      aPrompt.appendChild(pc);
+      var sub=document.createElement('div'); sub.className='q-sub'; sub.textContent='이 시계와 같은 시각은?';
+      aPrompt.appendChild(sub);
+      q.choices.forEach(function(txt){
+        var card=document.createElement('div');
+        card.className='choice choice-text';
+        card.textContent=txt;
+        card.addEventListener('click',function(){ pickA(card,txt,q); });
+        aChoices.appendChild(card);
+      });
+    }else{
+      aPrompt.innerHTML='<span class="q-time">'+q.prompt+'</span><span class="q-sub">같은 시각의 시계는?</span>';
+      var size = window.innerWidth<640?108:146;
+      q.choices.forEach(function(ch){
+        var wrap=document.createElement('div');
+        wrap.className='choice';
+        wrap.appendChild(buildClock(ch[0],ch[1],size));
+        wrap.addEventListener('click',function(){ pickA(wrap,ch,q); });
+        aChoices.appendChild(wrap);
+      });
+    }
   }
   function pickA(wrap,ch,q){
     if(wrap.classList.contains('done'))return;
-    var correct = ch[0]===q.answer[0]&&ch[1]===q.answer[1];
+    var correct = aIsCorrect(ch,q);
     if(correct){
       wrap.classList.add('picked');           // gold stamp + glow on the chosen slot
       aKid.src='assets/kid_librarian_success.png'; aKid.className='char right cheer';
       chime(true);
-      showTag(aStatus,'정답! '+q.note,'ok');
+      hintPop('정답! '+q.note,1300,'ok');
       sparkOnEl(wrap);
       bumpMissionEnergy();
       Array.prototype.forEach.call(aChoices.children,function(c){c.style.pointerEvents='none';c.classList.add('done');});
@@ -1175,15 +1407,17 @@
       wrap.classList.add('wrong');             // shake only the wrong slot
       chime(false);
       setTimeout(function(){wrap.classList.remove('wrong');},450);
-      setTimeout(function(){ showTag(aStatus,'다시 생각해보세요','bad',1600); },380);
       if(aWrong>=3){
+        // spec: reveal the correct answer with a RED blink, then force-advance
         Array.prototype.forEach.call(aChoices.children,function(c,i){
-          if(q.choices[i][0]===q.answer[0]&&q.choices[i][1]===q.answer[1]){ c.classList.add('correct-reveal'); } // gold reveal, not red
+          if(aIsCorrect(q.choices[i],q)){ c.classList.add('wrong-reveal'); }
           c.style.pointerEvents='none'; c.classList.add('done');
         });
-        showTag(aStatus,'정답 시계를 확인하고 다음으로!','',1800);
+        hintPop((q.mode==='text'?'정답을':'정답 시계를')+' 확인하고 다음으로!',1900,'bad');
         bumpMissionEnergy();
         setTimeout(nextA,1900);
+      }else{
+        setTimeout(function(){ hintPop('다시 생각해보세요',1600,'bad'); },380);
       }
     }
   }
@@ -1197,7 +1431,6 @@
   /* =====================================================
      SECTION 6: TYPE B (keypad input on cork board)
   ===================================================== */
-  var B_INTRO='독서 교실 시간표가 지워졌어요. 시계를 보고 걸린 시간을 계산해 빈칸을 채워 주세요!';
   var B_DATA=[
     {title:'독서 교실이 8시에 시작해 9시에 끝났어요. 걸린 시간은?',
      clocks:[[8,0,'시작'],[9,0,'끝']], arrow:'→',
@@ -1212,41 +1445,41 @@
      clocks:[[4,30,'시작'],[5,0,'끝']], arrow:'→',
      line:'읽은 시간 = <span class="kb-blank" data-answer="30">?</span> 분', answers:['30'], done:'30분'}
   ];
-  var bIdx=0, bBlanks=[], bActive=null;
+  var bIdx=0, bBlanks=[], bActive=null, bWrong=0;
   var bContent=document.getElementById('bContent'), bDots=document.getElementById('bDots');
   var bKid=document.getElementById('bKid');
   var keypad=document.getElementById('keypad');
   function startTypeB(){ bIdx=0; loadB(); }
   function loadB(){
+    bWrong=0;
     var q=B_DATA[bIdx];
     renderDots(bDots,B_DATA.length,bIdx);
     var clockHtml='<div class="row" style="gap:8px;margin:2px 0;">';
     q.clocks.forEach(function(c,i){
-      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:.72rem">'+c[2]+'</div></div>'; }
-      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:.72rem">끝?</div></div>'; }
+      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:clamp(.86rem,2.4vw,1.15rem);font-weight:800;color:#4a2b0e">'+c[2]+'</div></div>'; }
+      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:clamp(.86rem,2.4vw,1.15rem);font-weight:800;color:#4a2b0e">끝?</div></div>'; }
       if(i===0 && q.clocks.length>1){ clockHtml+='<div style="font-weight:900;color:#7c5a34;">'+q.arrow+'</div>'; }
     });
     clockHtml+='</div>';
     bContent.innerHTML=
-      '<div class="board-note-title">📌 '+B_INTRO+'</div>'+
-      '<div class="qhint" style="font-size:clamp(.82rem, 2.816vw, 1.28rem);font-weight:800;color:#5a3b1b">'+q.title+'</div>'+
+      '<div class="b-qtitle">'+q.title+'</div>'+
       clockHtml+
-      '<div class="eq-line" style="font-size:clamp(.95rem, 3.584vw, 1.728rem)">'+q.line+'</div>'+
-      '<button class="pin-btn" id="bSubmit">확인하기</button>';
+      '<div class="eq-line" style="font-size:clamp(1.05rem, 4vw, 1.95rem);margin-bottom:clamp(6px,1.6vh,18px)">'+q.line+'</div>';
+    var clockSize=window.innerWidth<640?130:175;
     Array.prototype.forEach.call(bContent.querySelectorAll('.miniclock'),function(mc){
       if(mc.classList.contains('empty'))return;
-      var size=window.innerWidth<640?62:78;
-      var c=buildClock(parseInt(mc.getAttribute('data-h'),10),parseInt(mc.getAttribute('data-m'),10),size);
+      var c=buildClock(parseInt(mc.getAttribute('data-h'),10),parseInt(mc.getAttribute('data-m'),10),clockSize);
       mc.appendChild(c);
     });
     Array.prototype.forEach.call(bContent.querySelectorAll('.miniclock.empty'),function(mc){
-      mc.style.cssText='width:66px;height:66px;border:3px dashed #b07a44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#b07a44;margin:auto;';
+      mc.style.cssText='width:'+clockSize+'px;height:'+clockSize+'px;border:3px dashed #b07a44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:900;color:#b07a44;margin:auto;';
     });
     bBlanks=Array.prototype.slice.call(bContent.querySelectorAll('.kb-blank'));
     bBlanks.forEach(function(bl){ bl.textContent='?'; bl.addEventListener('click',function(){ activateBlank(bl); }); });
     bActive=null;
-    document.getElementById('bSubmit').addEventListener('click',submitB);
   }
+  // 확인하기 버튼은 보드 아래 정적 요소이므로 리스너는 1회만 연결
+  document.getElementById('bSubmit').addEventListener('click',submitB);
   function activateBlank(bl){
     bActive=bl;
     bBlanks.forEach(function(x){x.classList.toggle('active',x===bl);});
@@ -1276,7 +1509,7 @@
     if(ok){
       chime(true);
       bKid.src='assets/kid_librarian_success.png'; bKid.className='char right cheer';
-      showTag(bStatus,'정답! '+q.done+' ⭐','ok');
+      hintPop('정답! '+q.done,1200,'ok');
       bBlanks.forEach(function(bl){ sparkOnEl(bl); });
       bumpMissionEnergy();
       closeKeypad();
@@ -1284,7 +1517,17 @@
     }else{
       chime(false);
       bKid.src='assets/kid_librarian_confused.png'; bKid.className='char right tilt';
-      showTag(bStatus,'앗, 다시 계산해볼까요?','bad');
+      bWrong++;
+      if(bWrong>=3){
+        // spec (유형 B follows 유형 A's logic): reveal correct answers with a RED blink, then force-advance
+        bBlanks.forEach(function(bl){ bl.textContent=bl.getAttribute('data-answer'); bl.classList.remove('bad'); bl.classList.add('filled','reveal'); });
+        hintPop('정답을 확인하고 다음으로!',1900,'bad');
+        closeKeypad();
+        bumpMissionEnergy();
+        setTimeout(nextB,1900);
+      }else{
+        hintPop('앗, 다시 계산해볼까요?',1600,'bad');
+      }
     }
   }
   function nextB(){
@@ -1297,7 +1540,7 @@
   /* =====================================================
      SECTION 7: TYPE C (number block drag-drop on monitor)
   ===================================================== */
-  var C_INTRO='도서 대출 시스템 재부팅 — 1일과 24시간의 규칙을 풀어 주세요.';
+  var C_INTRO='도서 대출 시스템 재부팅 중';
   var C_DATA=[
     {q:'24시간은 며칠일까요?', tpl:'24시간 = [b:1] 일', done:'24시간은 1일!'},
     {q:'하루는 오전과 오후로 나뉘어요.', tpl:'하루 = 오전 [b:1][b:2] 시간 + 오후 [b:1][b:2] 시간', done:'12 + 12 = 24시간!'},
@@ -1307,6 +1550,18 @@
   var cIdx=0, cBlanks=[], cScreen=document.getElementById('cScreen'), cDots=document.getElementById('cDots'), cTray=document.getElementById('cTray');
   var cKid=document.getElementById('cKid');
   function startTypeC(){ cIdx=0; loadC(); }
+  /* 재부팅 진행중 표시: 상태문구 끝의 점을 . / .. / ... 로 계속 반복 */
+  var monLoadTimer=null;
+  function startMonLoading(){
+    stopMonLoading();
+    var seq=['.','..','...'], i=0;
+    monLoadTimer=setInterval(function(){
+      var el=cScreen.querySelector('.mon-status .dots');
+      if(!el){ stopMonLoading(); return; }
+      el.textContent=seq[i%3]; i++;
+    },450);
+  }
+  function stopMonLoading(){ if(monLoadTimer){ clearInterval(monLoadTimer); monLoadTimer=null; } }
   function timelineHtml(){
     // demoted to a single thin reference bar so the live question + drop equation dominate the screen
     return '<div class="timeline-bar"><span class="tl-tag">오전 1~12시</span>'+
@@ -1320,13 +1575,14 @@
     });
     cScreen.classList.remove('rebooted');
     cScreen.innerHTML=
-      '<div class="mon-status">▶ '+C_INTRO+'</div>'+
+      '<div class="mon-status">▶ '+C_INTRO+'<span class="dots">.</span></div>'+
       timelineHtml()+
       '<div class="mon-q">'+q.q+'</div>'+
       '<div class="eq-line">'+html+'</div>';
     cBlanks=Array.prototype.slice.call(cScreen.querySelectorAll('.cblank'));
     cBlanks.forEach(function(bl){ bl.textContent='?'; });
     buildCTray();
+    startMonLoading();
   }
   function buildCTray(){
     cTray.innerHTML='';
@@ -1357,35 +1613,34 @@
     var allFilled=cBlanks.every(function(b){return b.classList.contains('filled');});
     if(!allFilled)return;
     var q=C_DATA[cIdx];
+    stopMonLoading();
     chime(true);
     cKid.src='assets/kid_librarian_success.png'; cKid.className='char right cheer';
-    cScreen.classList.add('rebooted');
-    // feedback shows on the monitor's own status line instead of a floating toast
-    var st=cScreen.querySelector('.mon-status');
-    if(st){ st.textContent='✅ '+q.done; st.classList.add('ok-flash'); }
-    sparkOnEl(cScreen);
     bumpMissionEnergy();
-    setTimeout(nextC,1300);
+    // (md Scene 3) 화면이 밝아지며 문제를 지우고 '시스템 재부팅 완료!' 메시지만 잠깐(2초) 출력 후 다음 문제
+    cScreen.classList.add('rebooted');
+    cScreen.innerHTML='<div class="reboot-msg">시스템 재부팅 완료!</div><div class="mon-q reboot-sub">'+q.done+'</div>';
+    cTray.innerHTML='';
+    sparkOnEl(cScreen);
+    setTimeout(nextC,2000);
   }
   function nextC(){
-    cKid.src='assets/kid_librarian_idle.png'; cKid.className='char right bob';
     cIdx++;
-    if(cIdx<C_DATA.length){ loadC(); }
+    if(cIdx<C_DATA.length){
+      cKid.src='assets/kid_librarian_idle.png'; cKid.className='char right bob';
+      loadC();
+    }
     else {
-      cScreen.innerHTML='<div class="reboot-msg">✅ 시스템 재부팅 완료!</div><div class="mon-q">도서 대출 시스템이 다시 켜졌어요.</div>';
-      cScreen.classList.add('rebooted');
-      cTray.innerHTML='';
+      // checkC가 이미 '시스템 재부팅 완료!'를 띄운 상태 — 꼬마 사서는 계속 환호한 채 수리 아웃트로로
       setEnergy(90);
-      setTimeout(function(){
-        showSceneById('s-repair'); goldBurst(20);
-        // Show the messy 'before' state, then repair it away to the clean resting background.
-        var rm=document.getElementById('repairMessy');
-        rm.style.transition='none'; rm.style.opacity='1';
-        requestAnimationFrame(function(){
-          rm.style.transition='opacity 1.4s ease';
-          setTimeout(function(){ rm.style.opacity='0'; goldBurst(16); },700);
-        });
-      },1600);
+      showSceneById('s-repair'); goldBurst(20);
+      // Show the messy 'before' state, then repair it away to the clean resting background.
+      var rm=document.getElementById('repairMessy');
+      rm.style.transition='none'; rm.style.opacity='1';
+      requestAnimationFrame(function(){
+        rm.style.transition='opacity 1.4s ease';
+        setTimeout(function(){ rm.style.opacity='0'; goldBurst(16); },700);
+      });
     }
   }
 
@@ -1452,7 +1707,7 @@
         setEnergy(100,true);
         goldBurst(24);
         sparkOnEl(btn);
-        showTag(quizStatus,'딩동댕! 정답이에요 🎉','ok');
+        showTag(quizStatus,'딩동댕! 정답이에요','ok');
       }else{
         chime(false);
         btn.classList.add('wrong');
@@ -1475,12 +1730,52 @@
     document.getElementById('certScore').textContent='13/13';
   }
   document.getElementById('btnSaveCert').addEventListener('click',function(){
-    toast('인증서를 사진첩에 저장했어요! 📷','ok',1800);
+    toast('인증서를 사진첩에 저장했어요!','ok',1800);
     fireworks();
   });
   document.getElementById('btnNextLesson').addEventListener('click',function(){
     toast('9차시 · 딱 맞는 길이를 찾아라! 로 이동합니다 ▶','',2200);
   });
+
+  /* =====================================================
+     DEBUG: quick scene jumps (dev only)
+     enable with #debug / ?debug, or toggle with the ` (backtick) key.
+     deep-link straight to a scene by opening e.g. index.html#s-a
+  ===================================================== */
+  (function(){
+    var bar=document.getElementById('debugBar');
+    if(!bar) return;
+    // [label, scene id, jump action] — action also runs the scene's init so quizzes/boards populate
+    var JUMPS=[
+      ['타이틀','s-title', function(){ showSceneById('s-title'); }],
+      ['문제발생','s-problem', function(){ showSceneById('s-problem'); if(window.__playProblemIntro) window.__playProblemIntro(); }],
+      ['튜토리얼','s-tut', function(){ showSceneById('s-tut'); }],
+      ['튜토성공','s-tutok', function(){ setEnergy(10); showSceneById('s-tutok'); }],
+      ['유형A','s-a', function(){ startTypeA(); showSceneById('s-a'); }],
+      ['유형B','s-b', function(){ startTypeB(); showSceneById('s-b'); }],
+      ['유형C','s-c', function(){ startTypeC(); showSceneById('s-c'); }],
+      ['복구','s-repair', function(){ setEnergy(90); showSceneById('s-repair'); }],
+      ['이야기','s-story', function(){ startStory(); showSceneById('s-story'); }],
+      ['퀴즈','s-quiz', function(){ setEnergy(90); showSceneById('s-quiz'); }],
+      ['인증서','s-cert', function(){ finishCert(); showSceneById('s-cert'); }]
+    ];
+    var byId={};
+    var lbl=document.createElement('span'); lbl.className='dbg-label'; lbl.textContent='DEBUG'; bar.appendChild(lbl);
+    JUMPS.forEach(function(j,i){
+      byId[j[1]]=i;
+      var b=document.createElement('button'); b.type='button'; b.textContent=j[0];
+      b.addEventListener('click', j[2]);
+      bar.appendChild(b);
+    });
+    function enable(){ document.body.classList.add('debug'); }
+    if(/debug/.test(location.hash+location.search)) enable();
+    window.addEventListener('keydown', function(e){
+      if(e.key==='`'){ document.body.classList.toggle('debug'); }
+    });
+    // deep-link: #s-a jumps straight to that scene on load (and reveals the bar)
+    var h=location.hash.replace('#','');
+    if(byId.hasOwnProperty(h)){ enable(); JUMPS[byId[h]][2](); }
+  })();
 
   // ensure HUD initial visibility matches first scene
   hud.style.display='none';
