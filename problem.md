@@ -33,6 +33,31 @@
 
 <!-- 새 항목은 이 아래에 추가한다. 아직 기록된 문제가 없다. -->
 
+### [ornate-asset-wrong-function] 장식성 강한 에셋(인증서/상장 등)을 기능 UI 표면으로 재사용해 주제와 안 어울림
+
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-c` 숫자 트레이, `assets/certificate_library_repair.png`)
+- 분류 태그: ornate-asset-wrong-function
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-10
+- 최근 발생일: 2026-07-10
+- 사례:
+  - 2026-07-10: 유형 C 숫자 블록 트레이 배경으로 `certificate_library_repair.png`(화려한 금색 인증서/상장 액자)를 얹었더니 "너무 안 어울린다"고 지적. 상장 느낌 액자를 기능적 숫자 키패드 표면으로 쓰니 주제(도서관 컴퓨터 재부팅)와 톤이 안 맞고, 좌우로 늘리며 프레임 장식(시계·책)까지 찌그러져 더 어색했음.
+- 조치: 액자 제거. 숫자 블록을 모니터 키보드 위(측정 중심 ~69%)에 직접 배치(단순 트레이), 라벨만 크림색 알약 배경으로 가독 확보. 사용자에게 3가지 방향(액자 제거/단순 나무매트/왜곡 원복) 제시 후 "액자 제거" 선택. certificate 에셋 파일은 마무리 인증서용으로 보존.
+- 규칙화 메모: 아직 1회. 반복되면 "에셋의 장식 강도를 기능에 맞춘다 — 인증서/상장/트로피 등 '보상·축하' 톤 에셋은 기능적 입력/트레이 표면으로 재사용하지 말고, 입력 표면엔 단순·중립 표면(나무 트레이/코르크/키보드 위 직접)을 쓴다. 장식 asset을 좌우로 늘려 aspect를 왜곡하지 않는다" 규칙을 builder_system.md에 제안 후보.
+### [decorative-asset-background-alpha] 모니터 내부 장식 이미지에 불필요한 불투명 배경이 포함됨
+
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`assets/morning_evening_time_bar.png`)
+- 분류 태그: decorative-asset-background-alpha
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-10
+- 최근 발생일: 2026-07-10
+- 사례:
+  - 2026-07-10: 유형 C 모니터 안에 추가한 아침→저녁 시간대 막대 이미지의 크림색 배경이 화면과 겹쳐 보여, 배경을 투명하게 해야 한다고 지적.
+- 조치: 기존 구도를 마젠타 크로마키 배경으로 편집한 뒤 alpha PNG로 추출했다. 보라색 저녁 영역이 디스필에 손상되는 것을 검수에서 발견해 디스필을 끄고 edge-contract 1로 테두리를 정리한 final asset으로 HTML 참조를 교체했다.
+- 규칙화 메모: 아직 1회. 반복되면 "기존 UI 표면 위에 얹는 장식용 raster asset은 생성 전에 투명 배경 필요 여부를 확인하고 alpha PNG로 검수한다" 규칙을 asset 생성 workflow에 제안 후보.
+
 ### [feedback-stamp-visual-overload] 피드백 도장 이미지가 과밀하고 컨셉 전달이 약함
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/stamp_correct_time.png, stamp_fail_time.png
@@ -53,13 +78,15 @@
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`assets/teacher_*.png`, `assets/kid_librarian_*.png`)
 - 분류 태그: character-asset-identity-alpha
 - 상태: 열림
-- 발생 횟수: 3
+- 발생 횟수: 4
 - 최초 발생일: 2026-07-09
 - 최근 발생일: 2026-07-09
 - 사례:
   - 2026-07-09: 사용자가 캐릭터 에셋 재생성이 필요하다고 지적. 사서 선생님은 치마가 투명하게 보이고, 학생/꼬마 사서는 원래 필요한 캐릭터가 아니라 다른 학생이 생성됨.
   - 2026-07-09: 꼬마 사서는 `kid_librarian_explaining.png`를 anchor로 삼는 방식도 버리고, 기존 꼬마 사서 에셋과 무관한 새 캐릭터로 설계하길 요청. 기존 에셋은 사용처/실패 사례 참고로만 취급해야 함.
   - 2026-07-09: 이미지 생성 실행 중 sub-agent를 쓰겠다고 해놓고 실제 생성 작업을 메인 에이전트가 단독 진행함. 또한 raw 크로마키 결과라 배경이 투명하지 않았고, `teacher_worried`의 돋보기가 손에 잡혀 있지 않아 포즈/소품 요구를 만족하지 못함.
+  - 2026-07-10: output/assets의 꼬마 사서가 포즈마다 성별이 바뀜 — `idle`/`success`/`confused`는 예전 남자아이(7/8 생성), `explaining`만 새 여자아이(7/9 교체됨). 사용자가 asset-revisions final(일관된 여자아이)로 나머지도 교체 요청.
+    - 조치: 두 세트 비교 montage로 불일치 확인(현재 idle/success/confused=남아, revision 전부=여아). revision final의 alpha 투명 검증 후 `kid_librarian_idle/success/confused.png`를 output/assets에 복사(파일명 동일 → HTML 수정 불필요). 교체 후 4개 포즈 여자아이 일관성 시각 확인.
 - 조치: 원본 기획(`2학년_8차시(시간)_임상현_no_img.md`)과 산출 HTML의 캐릭터 사용 위치를 대조해 필요한 캐릭터별 포즈와 화면 배치 검토. 이후 꼬마 사서 design/prompt를 "reference image 없음, 텍스트 identity가 source of truth" 방식으로 수정. 이미지 생성 단계는 sub-agent 병렬 실행과 final alpha PNG 검증을 명시적으로 수행하도록 재진행.
 - 규칙화 메모: 아직 3회. 반복되면 "캐릭터 에셋 생성 시 동일 인물 참조/의상 불투명/PNG alpha 검수/scene별 pose sheet 대조. 기존 에셋이 실패 사례인 경우 anchor로 쓰지 않고 새 textual identity를 source of truth로 명시. 생성 실행 시 raw/chroma 결과와 final alpha 결과를 구분하고, 소품을 손에 쥐는 등 포즈 핵심 요구를 QA한다" 규칙을 asset generation 또는 design review 단계에 제안 후보.
 
@@ -265,13 +292,15 @@
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut #tutBlank`, `.card`)
 - 분류 태그: drag-drop-snap-fit
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-09
+- 최근 발생일: 2026-07-10
 - 사례:
   - 2026-07-09: 정답 카드를 드롭하면 작은 `.blank`(82x66)에 "3시" 텍스트만 써지고 실제 카드는 tray에 opacity로 남아, 카드가 슬롯에 물려 들어가는 물리적 UX가 아님. 슬롯을 카드 크기에 맞추고, 카드가 그대로 슬롯에 스냅되어야 함.
-- 조치: `#tutBlank`을 티켓 카드 크기(aspect 1417/1140)로 확대. 정답 onDrop에서 텍스트 기록 대신 실제 카드 엘리먼트를 슬롯에 `appendChild`하여 스냅(`.placed`), 슬롯은 `.filled`로 카드 프레이밍.
-- 규칙화 메모: 아직 1회. 반복되면 "드롭 타깃은 소스와 동일 크기로, 드롭 성공 시 소스를 타깃에 물리적으로 스냅(텍스트 대체 금지)" 규칙을 builder_system.md에 제안 후보.
+    - 조치: `#tutBlank`을 티켓 카드 크기(aspect 1417/1140)로 확대. 정답 onDrop에서 텍스트 기록 대신 실제 카드 엘리먼트를 슬롯에 `appendChild`하여 스냅(`.placed`), 슬롯은 `.filled`로 카드 프레이밍.
+  - 2026-07-10: 튜토리얼에서 정답을 맞히면 카드 크기가 변해 보임. 원인: 슬롯(`#tutBlank` `clamp(142px,24.5vw,206px)`)을 카드(`clamp(134px,23vw,196px)`)보다 크게 "프레임"으로 잡아서, 196 카드가 206 슬롯 안에 스냅되며 더 작아 보임.
+    - 조치: 슬롯 폭을 카드와 동일한 `clamp(134px,23vw,196px)`로 맞춤 → 빈 슬롯·트레이 카드·스냅된 카드가 모두 같은 폭이라 크기 변화 없음.
+- 규칙화 메모: 2회. 교훈: "드롭 타깃은 소스와 **정확히 동일 크기**로(프레임 여백을 주지 말 것), 드롭 성공 시 소스를 타깃에 물리적으로 스냅(텍스트 대체 금지)" 규칙을 builder_system.md에 제안 후보.
 
 ### [clock-hand-overflow] 아날로그 시계 바늘 길이가 문자판을 벗어남
 
@@ -290,18 +319,23 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut` `.status-tag`)
 - 분류 태그: feedback-as-character-bubble
-- 상태: 열림
-- 발생 횟수: 2
+- 상태: 제안됨
+- 발생 횟수: 4
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-09
+- 최근 발생일: 2026-07-10
 - 사례:
   - 2026-07-09: 정답/오답 피드백이 3:1 좁은 `.status-tag` 표면에서 세로로 깨져 보이고, 피드백을 캐릭터(사서 선생님)가 말풍선으로 주면 더 자연스러움.
   - 2026-07-09: 활동 2 유형 A/B의 오답 피드백("다시 생각해보세요" 등)이 스펙과 달리 상단 `.status-tag`로 뜨고, 스펙이 요구한 "화면 중앙 말풍선 + 👆(손가락) 아이콘 2초 팝업"이 미적용됨.
   - 2026-07-09: (후속) 위에서 만든 `.hint-pop`이 "그냥 (흰) 카드"라 부자연스럽다고 지적. 원래 오답 피드백이 담겼던 in-world 이미지(`library_feedback_status_tag_blank.png`)에 담으라고 요청.
   - 2026-07-09: (후속) 오답 팝업은 좋으나 (a) 👆 손 이모지는 빼고, (b) 정답 피드백도 오답과 "똑같은 크기·위치" 팝업에 표시하되, 정답 note가 좁은 `.status-tag`에서 글자 단위로 세로로 깨지던 것을 가로로 표시하라고 요청.
   - 2026-07-09: (후속) in-world 이미지 표면에 얹으니 여전히 글자가 세로로 깨지고(고정 aspect PNG + `display:flex`의 min-content 축소) 크림색 여백 중앙정렬도 안 맞음. 사용자가 "차라리 이미지 없애고 자체 CSS 카드로 정답/오답 처리하자"고 결정.
-- 조치: 튜토리얼은 `.speech`(teacher-say) 말풍선으로 라우팅(1차). 활동 2 유형 A/B 정답·오답은 화면 중앙 `.hint-pop`으로 통합. 👆 아이콘 제거. 세로 깨짐의 원인은 flex 아이템이 min-content(가장 긴 단어)로 축소된 것. **최종 결정: PNG 표면(`library_feedback_status_tag_blank.png`) 폐기 → 순수 CSS 카드**(`background:var(--panel)`, border/radius/shadow, `text-align:center`, `.ok/.bad` 색·테두리)로 전환. 텍스트 자동 폭·가로 줄바꿈·중앙정렬이 자연스럽게 해결됨.
-- 규칙화 메모: 2회. 교훈: "정답/오답 피드백은 넉넉한 중앙 카드(가로 가독)에. **고정 aspect PNG 표면 위에 동적 텍스트를 얹으면 세로 깨짐·safe-zone 중앙정렬 문제가 반복되므로, 가변 길이 텍스트 피드백은 CSS 카드가 낫다**(그림 표면은 길이가 고정된 라벨에만). flex 컨테이너에 bare 텍스트를 넣으면 min-content로 축소되니 폭 100% 블록으로 감싸거나 block 사용." builder_system.md 제안 후보.
+    - 조치: 튜토리얼은 `.speech`(teacher-say) 말풍선으로 라우팅(1차). 활동 2 유형 A/B 정답·오답은 화면 중앙 `.hint-pop`으로 통합. 👆 아이콘 제거. 세로 깨짐의 원인은 flex 아이템이 min-content(가장 긴 단어)로 축소된 것. **PNG 표면(`library_feedback_status_tag_blank.png`) 폐기 → 순수 CSS 카드**로 전환(당시엔 이게 가변 텍스트에 최적).
+  - 2026-07-10: 이제 정오답 피드백을 전용 **도장 이미지**(`stamp_correct_time.png` 정답!, `stamp_fail_time.png` 실패!)로 주자고 요청. 지금은 문자열 CSS 카드(`hintPop`)만 준다고 지적. (도장 asset은 `[feedback-stamp-visual-overload]`에서 다듬어 둔 것)
+    - 조치: 공용 `.stamp-fx` 오버레이(도장 img + 선택적 개념 note 칩) + `showStamp(ok,note,ms)` 추가(쾅 찍히는 slam 애니메이션). 유형 A(`pickA`)·유형 B(`submitB`)의 `hintPop` 6곳을 `showStamp`로 교체(정답=녹색 시계 도장, 오답=금 간 시계 도장, 개념 note는 도장 아래 작은 칩으로 유지). 이어서 **튜토리얼**(정답/오답 드롭 시 도장, 기존 선생님 말풍선+꼬마 사서 표정+카드 흔들림은 유지)과 **퀴즈**(정답/오답 시 `showTag`→`showStamp` 교체, 정답 설명은 quizWin 말풍선이 담당)까지 확장. `hintPop`/`showTag`(quiz) 호출은 도장으로 대체. 유형 C는 자체 모니터 재부팅 연출 유지.
+  - 2026-07-10: 피드백 시 꼬마 사서가 pose를 바꾸는데(성공/당황), 그 캐릭터 옆에 **간단한 말풍선 대사**(정답="정답이야!", 오답="다른 방안을 생각해보자")를 **모든 문제**에 달아달라고 요청.
+    - 조치(1차): 공용 `.kid-say` CSS 말풍선 1개 + JS로 캐릭터 머리 옆 배치. → **사용자가 "새 말풍선 말고 기존에 쓰던 걸 재사용"이라 지적.**
+    - 조치(2차): 커스텀 `.kid-say` 폐기하고 **기존 `.speech.kid-say`(speech_bubble 그림 에셋) 컴포넌트 재사용**. 각 씬(튜토리얼/유형 A/B/C) dlg-area에 `.speech.kid-say` 요소 추가(오른쪽 꼬마 사서 → 기본 right:19%+`_r.png` 오른쪽꼬리), 퀴즈는 왼쪽 꼬마 사서라 `#s-quiz .speech.kid-say{left:9%;background:speech_bubble_blank.png}`로 좌측·왼쪽꼬리로 뒤집어 재사용. `showKidSay(el,ok)`는 해당 speech의 `.msg`를 갱신하고 `.on` 토글. 정오답 10곳 연결(유형 C 오답·퀴즈 오답은 표정 변경도 함께). 도장(`showStamp`)과 병행.
+- 규칙화 메모: **4회 → rule 승격 제안.** 교훈: 정오답 피드백은 (a)캐릭터 pose 변화 + (b)캐릭터 옆 간단 말풍선(고정 짧은 대사) + (c)중앙 도장/이미지의 3층으로 일관되게. 가변 길이 개념 설명만 별도 텍스트 칩. 초안 규칙: "미션/퀴즈 정오답 피드백은 씬마다 캐릭터 표정 변화 + 캐릭터 말풍선 짧은 대사를 기본 제공하고, 중앙 도장 이미지로 강조한다." 반영 위치: builder_system.md. 사용자 승인 대기.
 
 ### [card-aspect-stretch] flex 트레이의 align-items:stretch가 카드 aspect-ratio를 덮어 세로로 늘림
 
@@ -371,13 +405,15 @@
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-a` `.choice.correct-reveal`, `#s-b` 오답 로직)
 - 분류 태그: spec-fx-color-mismatch
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-09
+- 최근 발생일: 2026-07-10
 - 사례:
   - 2026-07-09: 스펙(활동 2 Scene 1)은 "3회 오답 시 정답 시계가 붉은색으로 깜박인 후 강제 전환"인데, 유형 A 구현이 의도적으로 금색(`goldReveal`, 주석 "gold reveal, not red")으로 바꿔 스펙과 어긋남. 유형 B는 3회 오답 강제 전환/붉은 깜박 자체가 없었음.
-- 조치: 유형 A 3회 오답 리빌을 금색 → `wrong-reveal`(붉은 깜박, `redReveal`)로 변경. 유형 B에 `bWrong` 카운터 + 3회 오답 시 정답 리빌(붉은 깜박 `.kb-blank.reveal`) 후 강제 전환 추가(유형 A와 동일 로직).
-- 규칙화 메모: 아직 1회. 반복되면 "스펙이 색/연출을 명시(붉은 깜박 등)하면 임의 색으로 대체하지 말 것. 심미적 이유로 바꿔야 하면 사용자 확인" 규칙을 builder_system.md에 제안 후보.
+    - 조치: 유형 A 3회 오답 리빌을 금색 → `wrong-reveal`(붉은 깜박, `redReveal`)로 변경. 유형 B에 `bWrong` 카운터 + 3회 오답 시 정답 리빌(붉은 깜박 `.kb-blank.reveal`) 후 강제 전환 추가(유형 A와 동일 로직).
+  - 2026-07-10: 튜토리얼(#s-tut) 오답 시 (a)꼬마 사서가 슬퍼하지 않고(캐릭터 표정 미변경) (b)빈칸 카드 피드백(흔들림/빨강)도 안 나옴. 원인: `.blank.bad`(흔들림+빨강)이 있지만 더 높은 명시도의 `#s-tut #tutBlank:not(.filled)`(slotPulse 애니메이션 + border-color:wood-deep)이 덮어 shake/빨강이 죽음. 캐릭터는 유형 A와 달리 오답 시 `kid_librarian_confused` 교체 로직이 없었음.
+    - 조치: `#s-tut #tutBlank.bad` 규칙(shake .4s + 빨강 border/box-shadow + 연분홍 배경)을 slotPulse 뒤에 배치해 명시도·소스순서로 이기게 함. 튜토리얼 꼬마 사서에 `id="tutKid"` 부여 후 오답 시 `kid_librarian_confused.png`(+tilt)→1.3초 뒤 explaining 복귀, 정답 시 `kid_librarian_success.png`(+cheer) 반응 추가.
+- 규칙화 메모: 2회. 교훈: 스펙 오답 연출을 임의 색으로 바꾸지 말 것 + **정답/오답 피드백은 씬마다 일관되게(카드 흔들림·빨강 + 캐릭터 표정 변화)**. 또 **더 높은 명시도의 scoped 규칙(`#s-x #id:not(...)`)이 범용 `.bad` 상태 피드백을 조용히 덮을 수 있으니, 상태 피드백은 동일 명시도+소스순서 뒤 또는 더 높은 명시도로 보장**한다. builder_system.md에 제안 후보.
 
 ### [spec-mixed-answer-format-flattening] 스펙의 문제별 혼합 정답 형식을 유형별 단일 형식으로 획일화
 
