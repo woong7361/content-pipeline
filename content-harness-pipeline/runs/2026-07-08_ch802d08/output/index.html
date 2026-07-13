@@ -305,7 +305,7 @@
 
   /* text-answer cards (Type A problems where the clock is the question and choices are strings) —
      wide ticket cards (ticket_time_choice_blank) with the answer centered, like the tutorial cards */
-  .choice.choice-text{background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;border:none;padding:2% 7%;width:clamp(165px, 27vw, 250px);aspect-ratio:2.9/1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-weight:900;color:#7a5320;font-size:clamp(.88rem, 2.5vw, 1.3rem);filter:drop-shadow(0 5px 10px rgba(120,80,30,.26));}
+  .choice.choice-text{background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;border:none;padding:2% 7%;width:clamp(210px, 29vw, 300px);aspect-ratio:2.9/1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-weight:900;color:#7a5320;font-size:clamp(1.05rem, 3vw, 1.7rem);filter:drop-shadow(0 5px 10px rgba(120,80,30,.26));}
   .choice.choice-text::before{display:none;}
   /* the question clock shown on the plaque (전광판) in text-answer problems */
   .prompt-clock{margin:0 auto 6px;}
@@ -334,12 +334,45 @@
   .num-block.dragging{z-index:999;cursor:grabbing;filter:drop-shadow(0 12px 20px rgba(0,0,0,.3));}
   .num-block.used{opacity:.32;pointer-events:none;}
 
-  /* ---------------- Keypad ---------------- */
-  .keypad{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateY(110%);z-index:70;background:#fff8ea;border-radius:22px 22px 0 0;box-shadow:0 -8px 30px rgba(60,38,15,.4);padding:16px;display:grid;grid-template-columns:repeat(3,66px);gap:10px;transition:transform .32s cubic-bezier(.4,0,.2,1);}
+  /* ---------------- Keypad (유형 B) — 이미지 없이 CSS, 콘텐츠(따뜻한 도서관) 팔레트 클린 키패드 ---------------- */
+  .keypad{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateY(110%);z-index:70;
+    width:min(340px,93vw);box-sizing:border-box;
+    background:linear-gradient(180deg,#fffaf0,#fff1d8);
+    border:2px solid #f0d49a;border-bottom:none;border-radius:26px 26px 0 0;
+    box-shadow:0 -10px 34px rgba(60,38,15,.34);
+    padding:14px 16px 18px;display:flex;flex-direction:column;gap:12px;
+    transition:transform .32s cubic-bezier(.4,0,.2,1);}
   .keypad.open{transform:translateX(-50%) translateY(0);}
-  .keypad .key{height:56px;border:none;border-radius:12px;background:#fff;box-shadow:0 3px 7px rgba(120,80,30,.2);font-size:1.4rem;font-weight:800;color:var(--wood-deep);cursor:pointer;}
-  .keypad .key.act{background:var(--yellow);color:#5a3800;grid-column:span 3;height:48px;font-size:1.1rem;}
-  .keypad .key.del{background:#ffd9cf;color:#a33;}
+  /* 헤더: '정답 입력' 금색 알약 라벨 + 빨강 원형 닫기 */
+  .kp-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:38px;}
+  .kp-title{background:linear-gradient(180deg,#ffdc74,#f4a824);color:#6a3f16;font-weight:900;font-size:1.02rem;
+    padding:8px 22px;border-radius:999px;box-shadow:0 3px 0 #d98f18,0 5px 10px rgba(210,130,20,.32);letter-spacing:.3px;}
+  .kp-close{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;height:34px;border:none;
+    border-radius:50%;background:#e2604f;color:#fff;font-size:1.05rem;font-weight:900;cursor:pointer;line-height:1;
+    box-shadow:0 3px 0 #b23b2c,0 4px 8px rgba(160,50,35,.35);}
+  .kp-close:active{transform:translateY(-50%) translateY(3px);box-shadow:0 1px 0 #b23b2c;}
+  /* 3열 숫자 그리드 */
+  .kp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  /* 숫자 키: 크림 타일 + 부드러운 하단 립, 초록 숫자(보드 정답색과 통일) */
+  .keypad .key{position:relative;height:56px;border:none;border-radius:16px;cursor:pointer;
+    font-size:1.5rem;font-weight:900;color:#2f6f5a;
+    background:linear-gradient(180deg,#ffffff,#fff2d8);
+    box-shadow:0 3px 0 #eccf98,0 5px 9px rgba(60,38,15,.16);
+    transition:transform .08s ease,box-shadow .08s ease,filter .12s ease;
+    -webkit-user-select:none;user-select:none;}
+  .keypad .key:hover{filter:brightness(1.02);}
+  .keypad .key:active,.keypad .key.pressed{transform:translateY(3px);box-shadow:0 1px 0 #eccf98,0 2px 5px rgba(60,38,15,.16);}
+  /* ←(백스페이스)·지우기: 금색 유틸 키 */
+  .keypad .key.util{color:#7a4a12;background:linear-gradient(180deg,#ffdc74,#f4a824);
+    box-shadow:0 3px 0 #d98f18,0 5px 9px rgba(210,130,20,.28);font-size:1.24rem;}
+  .keypad .key.util:active,.keypad .key.util.pressed{transform:translateY(3px);box-shadow:0 1px 0 #d98f18,0 2px 5px rgba(210,130,20,.28);}
+  /* 확인: 하단 풀폭 금색 버튼 */
+  .keypad .key.act{width:100%;height:54px;border:none;border-radius:16px;cursor:pointer;
+    font-size:1.3rem;font-weight:900;color:#5a3800;letter-spacing:1px;
+    background:linear-gradient(180deg,#ffd257,#f0a018);
+    box-shadow:0 4px 0 #cf8a17,0 7px 13px rgba(210,130,20,.4);
+    transition:transform .08s ease,box-shadow .08s ease;-webkit-user-select:none;user-select:none;}
+  .keypad .key.act:active,.keypad .key.act.pressed{transform:translateY(3px);box-shadow:0 1px 0 #cf8a17,0 3px 7px rgba(210,130,20,.4);}
 
   /* input blanks (type B) */
   /* number blanks now sit on a pinned cork-board paper slot asset instead of a plain web input */
@@ -351,6 +384,8 @@
   .kb-blank.reveal{color:var(--bad);animation:kbRedBlink .5s ease-in-out 3;}
   @keyframes kbRedBlink{0%,100%{filter:drop-shadow(0 0 0 rgba(226,96,79,0));}50%{filter:drop-shadow(0 0 16px var(--bad)) brightness(1.05);}}
   .eq-line{font-size:clamp(1.05rem, 4.352vw, 2.048rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
+  /* 식(eq-line)에서 항 단위 강제 줄바꿈: flex-wrap 컨테이너에서 폭 100% 항목을 끼워 다음 줄로 넘김 */
+  .eq-line .eq-br{flex-basis:100%;width:100%;height:0;margin:0;}
 
   /* ---------------- Feedback toast ---------------- */
   .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) translateY(-14px);z-index:50;background:var(--panel);border:3px solid #fff;border-radius:16px;padding:12px 22px;font-weight:800;color:var(--wood-deep);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:clamp(1rem, 3.84vw, 1.664rem);}
@@ -392,10 +427,10 @@
     100%{transform:rotate(-7deg) scale(1);opacity:1;}
   }
 
-  /* 퀴즈는 꼬마 사서가 왼쪽 → 기존 kid 말풍선(오른쪽 앵커)을 왼쪽·왼쪽꼬리 에셋으로 뒤집어 재사용 */
+  /* 퀴즈 꼬마 사서(오른쪽) 말풍선: 기본 kid-say(오른쪽·오른쪽꼬리 _r.png) 그대로 재사용, 위치만 조정 */
   #s-quiz .speech{width:clamp(230px,28vw,330px);}
   #s-quiz .speech.on{opacity:1;}
-  #s-quiz .speech.kid-say{left:9%;right:auto;background-image:url('assets/speech_bubble_blank.png');}
+  #s-quiz .speech.kid-say{right:8%;}
 
   /* ---------------- Big wall clock overlay ---------------- */
   .wall-clock{position:absolute;z-index:8;width:clamp(150px, 28.16vw, 345.6px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
@@ -413,16 +448,38 @@
   .book-page img.ill{max-width:min(70%,380px);max-height:58%;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);object-fit:cover;}
   .book-page .cap{font-weight:700;color:var(--ink);font-size:clamp(.9rem, 3.072vw, 1.434rem);line-height:1.5;max-width:92%;}
   .book-page .pt{font-weight:900;color:#c76a3a;font-size:clamp(1rem, 3.84vw, 1.664rem);}
-  .book-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:44px;height:64px;border:none;background:linear-gradient(180deg,#e7a24d,#c67e2e);box-shadow:0 5px 12px rgba(90,55,20,.4);font-size:1.5rem;cursor:pointer;color:#fff6e2;font-weight:900;border-radius:8px;transition:transform .14s var(--ease),filter .14s;}
-  .book-arrow:hover:not(:disabled){transform:translateY(-50%) scale(1.08);filter:brightness(1.06);}
-  .book-arrow{width:38px;height:52px;}
-  .book-arrow.prev{left:1.5%;border-radius:6px 12px 12px 6px;} .book-arrow.next{right:1.5%;border-radius:12px 6px 6px 12px;}
-  .book-arrow:disabled{opacity:.3;cursor:default;}
+  /* 페이지 넘김 화살표: 책의 금박·양피지 팔레트에 맞춘 원형 핸들(책 좌우 바깥 가장자리) */
+  .book-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:clamp(46px,4.8vw,62px);height:clamp(46px,4.8vw,62px);display:flex;align-items:center;justify-content:center;line-height:1;padding:0 0 2px;border:3px solid #d99a3e;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff9ec,#f1dfb6 78%);color:#a15c1f;font-size:clamp(1.25rem,2.3vw,1.8rem);font-weight:900;cursor:pointer;box-shadow:0 5px 12px rgba(90,55,20,.4),inset 0 1px 2px rgba(255,255,255,.8);transition:transform .15s var(--ease),filter .15s,box-shadow .15s;}
+  .book-arrow:hover:not(:disabled){transform:translateY(-50%) scale(1.1);filter:brightness(1.05);box-shadow:0 8px 18px rgba(90,55,20,.5),inset 0 1px 2px rgba(255,255,255,.8);}
+  .book-arrow:active:not(:disabled){transform:translateY(-50%) scale(1.02);}
+  .book-arrow.prev{left:-1.8%;} .book-arrow.next{right:-1.8%;}
+  .book-arrow:disabled{opacity:.3;cursor:default;filter:grayscale(.35);}
+  /* 이야기: 사서 선생님 대사는 캡션이 아니라 말풍선으로(왼쪽 선생님 옆) */
+  #s-story .speech{width:clamp(270px,30vw,380px);}
+  #s-story .speech.teacher-say{left:4%;}
+  #s-story .speech.on{opacity:1;}
+  #s-story .speech.kid-say{right:4%;bottom:calc(var(--kid-h) - 2.4rem);}
+  /* 책을 다 넘기면 같은 화면에 뜨는 마무리 팝업 퀴즈(s-quiz와 동일한 플라크+티켓) */
+  .story-quiz-pop{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3.2vh,34px);}
+  .story-quiz-pop.hidden{display:none;}
+  .story-quiz-pop .plaque{margin:0;}
+  /* plaque+row를 center-col(정의 폭·높이 auto)로 감싸 aspect 신장 방지. #s-story .center-col(1160px)에 안 걸리게 폭을 #s-quiz와 동일하게 고정 */
+  /* 이야기 위에 겹쳐 뜨는 팝업이라 등장을 명확히: 오른쪽에서 슬라이드+페이드 인. center-col 자체 정렬 transform(translate -50%)을 유지한 채 X만 이동 */
+  @keyframes quizPopIn{
+    0%{opacity:0;transform:translate(-50%,-50%) translateX(140px) scale(.96);}
+    100%{opacity:1;transform:translate(-50%,-50%) translateX(0) scale(1);}
+  }
+  #s-story .story-quiz-pop .center-col{width:min(900px,94vw);animation:quizPopIn .52s cubic-bezier(.22,.9,.28,1) both;}
+  .story-quiz-pop .row{flex-wrap:nowrap;gap:clamp(8px,2vw,24px);}
+  /* 정답 후 뜨는 인증서 CTA는 답안 티켓(center-col z:10) 위로 올라오게 z-index를 높인다 */
+  .story-quiz-pop .sqp-cert{position:absolute;bottom:4%;left:50%;transform:translateX(-50%);z-index:20;}
   .book-dots{display:flex;gap:8px;justify-content:center;margin-top:12px;}
   .book-dots i{width:11px;height:11px;border-radius:50%;background:#e0c489;}
   .book-dots i.on{background:var(--coral);}
-  .sign-24{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);font-weight:900;color:#e0562f;font-size:clamp(1.4rem, 5.12vw, 3.072rem);text-shadow:0 1px 0 #fff;}
-  .timer-30{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-weight:900;color:#c0392b;font-size:clamp(1rem, 3.84vw, 2.048rem);}
+  .sign-24{position:absolute;left:50%;top:33%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 4.55vw, 2.7rem);text-shadow:0 1px 0 rgba(255,255,255,.55);}
+  /* (이야기: 좌우 화살표 방식으로 되돌림 — 책갈피 컷아웃/중앙 CTA 오버레이 제거) */
+  /* 오른쪽에 그려진 둥근 타이머 면 중심(이미지 기준 측정)에 30분을 얹는다. .ill-wrap 내부라 사진 tilt를 함께 따라감 */
+  .timer-30{position:absolute;left:73%;top:66%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(.78rem, 2.95vw, 1.58rem);}
 
   /* ---------------- Cork board (type B) ---------------- */
   .board-stage{position:relative;width:min(880px,96vw);margin:0 auto;}
@@ -435,8 +492,8 @@
      box exactly (no letterbox) — this lets .mon-screen be positioned as % of the art. */
   .monitor-stage{position:relative;width:min(880px,95vw);aspect-ratio:1182/1330;margin:0 auto;}
   .monitor-stage>img.mon{width:100%;height:100%;object-fit:contain;}
-  /* seated on the cropped monitor's cream screen glass (crop 58%: glass top 24.9%/h58.6%, inset ~2%) */
-  .mon-screen{position:absolute;left:26%;top:26.7%;width:47%;height:56.1%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
+  /* seated on the full monitor's cream screen glass (measured: left25.2/top14.4/w49.1/h34, inset ~1.5%) */
+  .mon-screen{position:absolute;left:26%;top:15.5%;width:47%;height:32.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
   .mon-screen.rebooted{animation:screenGlow 1.2s ease;}
   @keyframes screenGlow{0%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 18px #fff);}100%{filter:brightness(1);}}
   .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048vw, 1.05rem);letter-spacing:.3px;}
@@ -473,13 +530,39 @@
   #s-cert .cert-caption b{color:#b0561f;}
   #s-cert .row{gap:clamp(10px, 2.56vw, 28.16px);flex-wrap:nowrap;}
   #s-cert #btnSaveCert.save{width:clamp(240px, 33.28vw, 412.16px);padding:12% 11%;}
-  #s-cert #btnNextLesson.wide{width:clamp(300px, 51.2vw, 601.6px);}
-  #quizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px, 2.816vw, 28.16px);}
+  /* 다음차시 CTA는 한 줄로: nowrap + 좌(리본/책)·우(자) 장식 사이 크림 영역 가운데에 맞춘 비대칭 패딩 + 영역폭에 맞춘 폰트 */
+  #s-cert #btnNextLesson.wide{width:clamp(300px, 51.2vw, 601.6px);padding:11% 17% 11% 17%;font-size:clamp(.86rem, 2.36vw, 1.29rem);}
+  #s-cert #btnNextLesson span{white-space:nowrap;}
+  #quizChoices,#storyQuizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px, 2.816vw, 28.16px);}
   #aPrompt{font-size:clamp(.86rem, 3.008vw, 1.587rem);line-height:1.18;max-width:100%;word-break:keep-all;}
   /* intro teacher matches the shared character size used on other scenes */
   #s-problem .char.left{left:3%;}
   /* raise the broken wall clock into the upper safe zone so its face reads as the crisis cause */
   #s-problem #bigClock{left:50%;top:3%;width:clamp(130px, 19vw, 240px);}
+  /* 시계 고장 하이라이트: 경고 글로우(지속) + 최초 진입 시 흔들림. 회전 가속은 JS(__introClock)가 담당.
+     shake 키프레임은 배치 transform(translate(-50%,-50%))을 유지한 채 흔든다(원 안에 앉은 위치 보존). */
+  #bigClock.panic{animation:clockPanicGlow .5s ease-in-out infinite;}
+  #bigClock.panic-shake{animation:clockPanicGlow .5s ease-in-out infinite, clockShake .6s cubic-bezier(.36,.07,.19,.97);}
+  @keyframes clockPanicGlow{
+    0%,100%{filter:drop-shadow(0 0 13px rgba(255,150,50,.9)) drop-shadow(0 0 30px rgba(255,90,40,.45));}
+    50%{filter:drop-shadow(0 0 22px rgba(255,185,70,1)) drop-shadow(0 0 56px rgba(255,90,40,.72));}
+  }
+  @keyframes clockShake{
+    0%,100%{transform:translate(-50%,-50%);}
+    12%{transform:translate(-50%,-50%) translate(-5px,2px) rotate(-2.4deg);}
+    28%{transform:translate(-50%,-50%) translate(6px,-2px) rotate(2.4deg);}
+    46%{transform:translate(-50%,-50%) translate(-6px,1px) rotate(-1.8deg);}
+    64%{transform:translate(-50%,-50%) translate(5px,-1px) rotate(1.8deg);}
+    82%{transform:translate(-50%,-50%) translate(-3px,1px) rotate(-.8deg);}
+  }
+  /* 꼬마 사서 등장: 오른쪽에서 튕겨 들어오며 살짝 오버슈트 후 안착(기존 pop 대체) */
+  #s-problem .dlg-actor.hero-in{animation:kidHeroIn .72s cubic-bezier(.2,1.3,.35,1) both;}
+  @keyframes kidHeroIn{
+    0%{opacity:0; transform:translateX(120px) translateY(26px) scale(.72) rotate(7deg);}
+    50%{opacity:1; transform:translateX(-14px) translateY(-9px) scale(1.07) rotate(-3deg);}
+    72%{transform:translateX(5px) translateY(0) scale(.98) rotate(1.6deg);}
+    100%{opacity:1; transform:translateX(0) translateY(0) scale(1) rotate(0);}
+  }
   #s-tut .center-col{top:50%;}
   /* keep the 3 time tickets on one row so the enlarged workbench + tray fit the viewport */
   #s-tut .card-tray{flex-wrap:nowrap;}
@@ -495,6 +578,13 @@
   #s-tut .workbench{width:clamp(430px, 92vw, 1118px);}
   /* (1) clock centered on the teal mat, nudged right + up to clear the painted pencil */
   #s-tut .wb-clock{left:12%;top:47%;transform:translateY(-50%);width:27%;}
+  /* the tutorial uses table_clock_body.png — a stand-mounted clock whose dial is
+     SMALLER and sits higher (--cy:45%) than the wall clock. The global hand lengths
+     (minute 30% / hour 21%) are tuned for the wall clock's full-container dial, so on
+     the table clock the minute hand overshoots the number ring into the wooden rim.
+     Shorten hands for THIS clock only so they land on the number ring. */
+  #tutClock .hand.minute{height:23%;}
+  #tutClock .hand.hour{height:16%;}
   /* repaired-clock glow (spec: 멈춘 시계 주변 노란 테두리 글로우) — stronger + pulsing
      than the default .clock.glow so it reads on the enlarged tutorial clock */
   #s-tut #tutClock.glow{animation:tutClockGlow 1.1s ease-in-out infinite;}
@@ -504,9 +594,10 @@
   }
   /* slot pulled inward (right:11%) so the question clears the right speech bubble
      even with the enlarged board; seated inside the teal area */
-  #s-tut .wb-slot{right:11%;top:53%;transform:translateY(-50%);width:40%;gap:clamp(5px,1vh,10px);}
-  /* (5) bigger, kid-friendly question + hint text */
-  #s-tut .wb-slot .qhint{color:#245049;font-weight:900;font-size:clamp(.92rem,2.8vw,1.5rem);line-height:1.2;text-shadow:0 1px 0 rgba(255,255,255,.55);}
+  /* 질문을 한 줄로 유지하려고 슬롯 폭 확대(작업대 시계 오른쪽 공간 활용) */
+  #s-tut .wb-slot{right:11%;top:53%;transform:translateY(-50%);width:46%;gap:clamp(5px,1vh,10px);}
+  /* (5) bigger, kid-friendly question. nowrap로 한 줄 고정 + 한 줄에 들어가는 최대 크기. position+top으로 질문만 살짝 위로(드롭 슬롯 유지) */
+  #s-tut .wb-slot .qhint{color:#245049;font-weight:900;font-size:clamp(1.05rem,3.2vw,1.7rem);line-height:1.22;text-shadow:0 1px 0 rgba(255,255,255,.55);white-space:nowrap;position:relative;top:-.55rem;}
   /* the in-slot "드래그!" hint is redundant with the prominent cue pill below the tray */
   #s-tut .wb-slot .wb-drag-hint{display:none;}
   /* cards keep the ticket's landscape proportion (flex stretch was making them tall)
@@ -571,21 +662,77 @@
   #s-c .speech.teacher-say{left:9%;}
   #s-c .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-c .speech.on{opacity:1;}
+
+  /* --- Repair outro: 선생님(왼쪽)·꼬마 사서(오른쪽) 순차 대사 — 기존 speech_bubble 재사용 --- */
+  #s-repair .speech{width:clamp(270px,30vw,380px);}
+  #s-repair .speech.teacher-say{left:9%;}
+  #s-repair .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
+  #s-repair .speech.on{opacity:1;}
+  /* --- Certificate outro: 선생님(왼쪽)·꼬마 사서(오른쪽) 순차 대사 — repair와 동일 배치 --- */
+  #s-cert .speech{width:clamp(270px,30vw,380px);}
+  #s-cert .speech.teacher-say{left:9%;}
+  #s-cert .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
+  #s-cert .speech.on{opacity:1;}
+  /* CTA는 마지막 beat에서만 노출 (s-problem #btnToTutorial.dlg-cta와 동일 패턴) */
+  #btnToStory.dlg-cta{opacity:0;pointer-events:none;}
+  #btnToStory.dlg-cta.on{opacity:1;pointer-events:auto;animation:ctaFloat 3s ease-in-out infinite;}
+  .scene.qa-still #btnToStory.dlg-cta{opacity:1!important;}
+
+  /* --- Repair outro 스포트라이트 집중: 주변 dim(radial) + 시계 금색 글로우.
+         backdrop-filter 미사용(렌더 아티팩트 회피) — radial-gradient/rgba만 사용. --- */
+  .focus-dim{
+    position:absolute; inset:0; z-index:30; pointer-events:none;
+    opacity:0; transition:opacity .55s ease;
+    background:radial-gradient(circle var(--fr,220px) at var(--fx,50%) var(--fy,30%),
+      rgba(24,14,4,0) 0%, rgba(24,14,4,0) 55%, rgba(24,14,4,.62) 100%);
+  }
+  .focus-dim.on{opacity:1;}
+  /* 집중 중 시계는 dim 위로 올리고 금색 글로우(시계 PNG 실루엣을 따라 drop-shadow) */
+  #repairClock.focus{z-index:35;
+    filter:drop-shadow(0 0 22px rgba(255,212,94,.92)) drop-shadow(0 0 52px rgba(255,190,60,.55));
+    transition:filter .5s ease;}
+  /* 정지 순간 부드러운 settle-pulse (원 중심 유지: translate(-50%,-50%)) */
+  #repairClock.settle{animation:clockSettle .62s cubic-bezier(.2,1.5,.4,1);}
+  @keyframes clockSettle{
+    0%{transform:translate(-50%,-50%) scale(1);}
+    45%{transform:translate(-50%,-50%) scale(1.06);}
+    100%{transform:translate(-50%,-50%) scale(1);}
+  }
+  /* 복구 완료 타이틀: 화면 중앙, 완료 순간 pop-in */
+  #repairDone{
+    position:absolute; left:50%; top:50%; z-index:40;
+    width:clamp(520px, 78vw, 950px); height:auto;
+    transform:translate(-50%,-50%) scale(.6); opacity:0; pointer-events:none;
+    filter:drop-shadow(0 14px 26px rgba(90,55,20,.32));
+  }
+  #repairDone.on{animation:repairDonePop .6s cubic-bezier(.2,1.5,.4,1) forwards;}
+  @keyframes repairDonePop{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(.6);}
+    60%{opacity:1; transform:translate(-50%,-50%) scale(1.06);}
+    100%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  }
+  .scene.qa-still #repairDone{opacity:1; transform:translate(-50%,-50%) scale(1);}
   /* 전광판 board: bigger overall + taller so the question clock has room, tight vertical padding */
   /* asymmetric top/bottom padding nudges the centered clock+prompt ~2% lower into the cream area */
   #s-a .plaque{aspect-ratio:1790/920;padding:9% 12% 5%;}
+  /* text 모드: 넓은 전광판을 가로로 활용 — 시계 왼쪽 · 질문 오른쪽. 크림 영역(padding) 안에 유지 */
+  #s-a .notice.prompt-row{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(14px,2.8vw,36px);margin-top:0;width:100%;}
+  #s-a .notice.prompt-row .prompt-clock{margin:0;flex:0 0 auto;position:relative;top:6px;}
+  /* 유형 A 질문: 문제별 고유 문장 + 대괄호 값 강조(.q-hi). text 모드=시계 오른쪽, clock 모드=전광판 중앙 */
+  #s-a .notice.prompt-row .a-question{margin:0;text-align:left;max-width:52%;word-break:keep-all;line-height:1.3;color:#1a1a1a;font-weight:800;font-size:clamp(1.02rem,2.9vw,1.62rem);}
+  #s-a .notice:not(.prompt-row) .a-question{text-align:center;max-width:min(400px,72vw);word-break:keep-all;line-height:1.38;color:#1a1a1a;font-weight:800;font-size:clamp(.95rem,2.5vw,1.4rem);}
+  #s-a .a-question .q-hi{color:#b5330f;font-weight:900;font-size:1.13em;white-space:nowrap;}
 
   /* --- Type C: shrink monitor so keyboard + number tray stay on-screen --- */
   #s-c .center-col{top:51%;width:min(820px,94vw);}
-  /* 잘라낸 모니터(1182x771, 나무 시작 직전 58%까지)에 맞춰 비율 갱신. 아래 나무 카드와 함께 세로로 들어가도록 폭 축소 */
-  #s-c .monitor-stage{width:min(780px,92vw);aspect-ratio:1182/771;}
-  /* 숫자 블록: 잘라낸 모니터 아래 나무 매트(repair_workbench_mat) 카드 위에 배치 */
-  /* 카드를 위로 겹쳐 올려 모니터 하단에 맞닿게(중간 빈 공간 제거). 카드가 모니터 앞(z위)이라 하단만 살짝 덮음 */
-  #s-c .c-tray-wrap{position:relative;margin-top:clamp(-54px,-6vw,-28px);width:min(660px,92vw);aspect-ratio:1896/830;z-index:16;filter:drop-shadow(0 8px 18px rgba(60,38,15,.35));}
-  #s-c .c-card-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
-  /* 청록 매트 안쪽(측정 left20/top18/…) 상단-중앙 영역: 하단 소품(연필·솔·테이프) 피해 배치 */
+  /* 전체 모니터 이미지(1182x1330, 책상·키보드 포함) */
+  #s-c .monitor-stage{width:min(915px,96vw);aspect-ratio:1182/1330;}
+  /* 숫자 블록: 나무 매트(repair_workbench_mat) 카드 위에. 전체 모니터의 하단(책상/키보드) 영역에 얹음 */
+  #s-c .c-tray-wrap{position:absolute;left:50%;top:73%;transform:translate(-50%,-50%);width:72%;aspect-ratio:1896/830;z-index:16;filter:drop-shadow(0 8px 18px rgba(60,38,15,.35));}
+  #s-c .c-card-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;}
+  /* 청록 매트 안쪽 상단-중앙(하단 소품 회피) */
   #s-c .c-card-inner{position:absolute;left:14%;top:18%;width:72%;height:56%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1.2vh,12px);}
-  #s-c .c-tray-wrap .tray-label{margin:0;color:#245049;font-weight:900;font-size:clamp(.72rem, 2.3vw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 rgba(255,255,255,.5);}
+  #s-c .c-tray-wrap .tray-label{margin:0;color:var(--wood-deep);font-weight:900;font-size:clamp(.72rem, 2.3vw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 rgba(255,246,226,.75);}
   #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(5px, 1.1vw, 12px);max-width:100%;}
   #s-c .num-block{width:clamp(38px, 5vw, 56px);}
 
@@ -596,11 +743,17 @@
   /* seated inside the cream page spread (measured left11.8/top8.3/w76.4/h65.3, inset to gold border) */
   #s-story .book-page{flex-direction:row;align-items:stretch;left:13%;top:11%;width:74%;height:60%;gap:2%;padding:0 3%;}
   #s-story .bp-left{flex:0 0 47%;display:flex;align-items:center;justify-content:center;}
-  #s-story .bp-left .ill-wrap{position:relative;display:inline-flex;}
-  #s-story .book-page img.ill{max-width:100%;max-height:min(45vh,320px);width:auto;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);}
-  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(6px, 1.792vh, 15.36px);text-align:center;padding:0 3%;}
-  #s-story .book-page .pt{font-size:clamp(.96rem, 3.072vw, 1.562rem);}
-  #s-story .key-badge{font-weight:900;color:#e0562f;font-size:clamp(1.5rem, 4.608vw, 2.816rem);text-shadow:0 2px 0 #fff;line-height:1.05;}
+  /* 삽화 사진을 책 지면의 살짝 눕혀진 면에 맞춰 눕힘(정면으로 '서 있는' 인상 제거). 사진+오버레이(24/30분)를 함께 감싼 .ill-wrap에 적용해 글자도 같이 눕음 */
+  #s-story .bp-left .ill-wrap{position:relative;display:inline-flex;transform:perspective(900px) rotateX(8deg) rotate(3deg);transform-origin:center 68%;}
+  #s-story .book-page img.ill{max-width:100%;max-height:min(45vh,320px);width:auto;border-radius:14px;box-shadow:0 3px 7px rgba(90,55,20,.28);}
+  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px, 1.4vh, 12px);text-align:center;padding:0 3%;}
+  #s-story .book-page .pt{font-size:clamp(.96rem, 3.072vw, 1.562rem);color:#1a1a1a;}
+  #s-story .key-badge{font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 3.7vw, 2.24rem);line-height:1.08;}
+  /* 오른쪽 지면이 단문 하나로 허전하지 않게: 핵심어(badge) 아래 '알아두기' 팩트 3개로 위계 부여. 말풍선 cap과 중복되지 않는 보충 정보만 담는다 */
+  #s-story .fact-head{font-weight:900;color:var(--ink-soft);font-size:clamp(.9rem, 2.6vw, 1.34rem);margin-top:clamp(2px,.6vh,8px);}
+  #s-story .fact-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(4px,1.1vh,9px);text-align:left;max-width:min(92%,360px);}
+  #s-story .fact-list li{position:relative;padding-left:1.2em;font-weight:700;color:#1a1a1a;font-size:clamp(.8rem, 2.24vw, 1.14rem);line-height:1.4;}
+  #s-story .fact-list li::before{content:'●';position:absolute;left:0;top:.05em;color:#1a1a1a;font-size:.62em;line-height:1.9;}
   #s-story .book-page .cap{max-width:96%;font-size:clamp(.88rem, 2.56vw, 1.357rem);line-height:1.44;}
 
   /* --- HUD: read as library loan-card / bookmark tab, not floating web pills --- */
@@ -608,6 +761,8 @@
   .hud .hamburger{width:44px;height:52px;border-radius:6px 6px 11px 11px;box-shadow:0 3px 8px rgba(90,55,20,.22),inset 0 2px 3px rgba(255,255,255,.4);border:1px solid rgba(180,130,70,.35);}
 
   /* ===== design refine iter 005 ===== */
+  /* 보기(시계·티켓)가 커져도 3개가 한 줄에 들어가도록 컨테이너 확대 */
+  #s-a .center-col{width:min(1100px, 96vw);}
   /* Type A: ground the three candidate clocks on a shared inspection band, not floating */
   #s-a #aChoices{position:relative;align-items:flex-end;}
   #s-a #aChoices::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);width:90%;height:26px;background:radial-gradient(ellipse at center,rgba(90,55,20,.30),rgba(90,55,20,0) 72%);filter:blur(3px);z-index:-1;pointer-events:none;}
@@ -629,13 +784,14 @@
   .status-tag.bad{color:#b23b2c;}
 
   /* Type C: enlarge the live question + drop equation, demote am/pm reference to a thin bar */
-  .timeline-bar{position:relative;width:min(100%,430px);height:clamp(52px,8.2vw,72px);flex:0 0 auto;font-weight:900;overflow:hidden;}
+  .timeline-bar{position:relative;width:min(100%,490px);height:clamp(60px,9.4vw,82px);flex:0 0 auto;font-weight:900;overflow:hidden;}
   .timeline-bar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:10px;}
-  .timeline-labels{position:absolute;left:4%;right:4%;bottom:8%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;color:#fff;font-size:clamp(.5rem,1.6vw,.8rem);text-shadow:0 1px 3px rgba(25,35,75,.85);}
+  .timeline-labels{position:absolute;left:4%;right:4%;bottom:8%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;color:#fff;font-size:clamp(.58rem,1.9vw,.94rem);text-shadow:0 1px 3px rgba(25,35,75,.85);}
   .timeline-labels .tl-sep{color:#fff4ba;font-size:1.15em;}
-  #s-c .mon-screen{gap:clamp(3px, 1vh, 10px);}
-  #s-c .mon-screen .mon-status{font-size:clamp(.62rem, 2vw, .98rem);}
-  #s-c .mon-screen .mon-q{font-size:clamp(.92rem, 3vw, 1.46rem);line-height:1.26;word-break:keep-all;}
+  /* 문제 문구가 완성형 문장(2~3줄)으로 길어져도 유리 안에 넣기 위해 여백/폰트만 조인다(타임라인 막대는 잘리지 않게 원본 크기 유지) */
+  #s-c .mon-screen{gap:clamp(2px, .7vh, 7px);}
+  #s-c .mon-screen .mon-status{font-size:clamp(.6rem, 1.9vw, .92rem);}
+  #s-c .mon-screen .mon-q{font-size:clamp(.84rem, 2.7vw, 1.26rem);line-height:1.24;word-break:keep-all;}
   #s-c .mon-screen .eq-line{font-size:clamp(.94rem, 3.2vw, 1.54rem);gap:6px;line-height:1.32;word-break:keep-all;}
   #s-c .mon-screen .cblank{min-width:42px;min-height:38px;font-size:1.22rem;}
   .mon-status.ok-flash{color:#1f7a45;animation:statusFlash .3s ease-out;}
@@ -713,7 +869,7 @@
   <section class="scene" id="s-problem" data-qa-scene="section_problem_intro" data-qa-order="2" data-qa-label="고장 난 도서관 시계"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
-      <div class="wall-clock clock spin" id="bigClock" style="--cx:50%;--cy:50%;">
+      <div class="wall-clock clock" id="bigClock" style="--cx:50%;--cy:50%;">
         <img src="assets/wall_clock_body.png" alt="바늘 없이 숫자판과 중심축만 있는 따뜻한 나무색 원형 도서관 벽시계 몸체" />
         <div class="hand hour"></div><div class="hand minute"></div><div class="hub"></div>
       </div>
@@ -729,7 +885,7 @@
           <div class="say-in"><span class="who">사서 선생님</span><span class="msg">당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</span></div>
         </div>
         <div class="speech kid-say" data-beat="3">
-          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg">걱정 마세요! 시계 보는 법을 잘 아는 제가 완벽하게 고쳐 놓을게요!</span></div>
+          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg">걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!</span></div>
         </div>
       </div>
 
@@ -745,7 +901,7 @@
   <section class="scene" id="s-tut" data-qa-scene="section_tutorial_clock" data-qa-order="3" data-qa-label="꼬마 사서의 첫 수리"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
-      <img class="char left bob" src="assets/teacher_pointing.png" alt="친근한 사서 선생님이 오른쪽을 가리키며 안내하는 모습" />
+      <img class="char left bob" src="assets/teacher_pointing_v2.png" alt="친근한 사서 선생님이 오른쪽을 가리키며 안내하는 모습" />
       <img class="char right pop" id="tutKid" src="assets/kid_librarian_explaining.png" alt="꼬마 사서가 한 손을 들고 자신 있게 설명하는 모습" />
       <div class="status-tag" id="tutStatus" aria-live="polite"></div>
       <!-- 사서 선생님 말풍선: 진입 시 안내 대사 → 이후 정오답 피드백으로 갱신 -->
@@ -787,7 +943,7 @@
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
       <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
-      <img class="char right bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
+      <img class="char right bob" src="assets/teacher_happy_v2.png" alt="돋보기를 들고 환하게 웃으며 기뻐하는 사서 선생님" />
       <div class="center-col" style="top:48%;">
         <div class="plaque banner enter d2" style="width:clamp(340px, 74.24vw, 819.2px);">
           <span class="who teacher-who">첫 수리 완료</span>
@@ -802,7 +958,7 @@
   <section class="scene" id="s-a" data-qa-scene="section_mission_type_a" data-qa-order="5" data-qa-label="유형 A: 엉망이 된 도서관 시계 맞추기"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
-      <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 전광판을 가리키며 안내하는 모습" />
+      <img class="char left bob" src="assets/teacher_pointing_v2.png" alt="사서 선생님이 전광판을 가리키며 안내하는 모습" />
       <img class="char right bob" id="aKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <div class="status-tag" id="aStatus" aria-live="polite"></div>
       <!-- 사서 선생님 안내 대사: 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
@@ -828,7 +984,7 @@
   <section class="scene" id="s-b" data-qa-scene="section_mission_type_b" data-qa-order="6" data-qa-label="유형 B: 독서 교실 시간표 복구하기"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
-      <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 시간표 게시판을 가리키며 안내하는 모습" />
+      <img class="char left bob" src="assets/teacher_pointing_v2.png" alt="사서 선생님이 시간표 게시판을 가리키며 안내하는 모습" />
       <img class="char right bob" id="bKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <div class="status-tag" id="bStatus" aria-live="polite"></div>
       <!-- 사서 선생님 안내 대사: 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
@@ -855,7 +1011,7 @@
   <section class="scene" id="s-c" data-qa-scene="section_mission_type_c" data-qa-order="7" data-qa-label="유형 C: 도서 대출 시스템 재부팅"
     style="background-image:url('assets/bg_library_messy_lobby.png');">
     <div class="layer">
-      <img class="char left bob" src="assets/teacher_pointing.png" alt="사서 선생님이 모니터를 가리키며 안내하는 모습" />
+      <img class="char left bob" src="assets/teacher_pointing_v2.png" alt="사서 선생님이 모니터를 가리키며 안내하는 모습" />
       <img class="char right bob" id="cKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
       <!-- 사서 선생님 도입 대사(원본 SB Scene 3): 이전 씬들과 같은 말풍선(speech_bubble) 재사용 -->
       <div class="dlg-area">
@@ -866,17 +1022,17 @@
           <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
         </div>
       </div>
-      <div class="center-col" style="top:45%;width:min(820px,94vw);">
+      <div class="center-col" style="top:48%;width:min(820px,94vw);">
         <div class="monitor-stage enter d1">
-          <img class="mon" src="assets/library_monitor_cropped.png" alt="도서관 안내 데스크 컴퓨터 모니터(화면부)" />
+          <img class="mon" src="assets/library_monitor_body.png" alt="도서관 안내 데스크 위의 빈 화면 컴퓨터 모니터" />
           <div class="mon-screen" id="cScreen"></div>
-        </div>
-        <!-- 숫자 블록: 잘라낸 모니터 아래 나무 매트 카드 위에 배치 -->
-        <div class="c-tray-wrap">
-          <img class="c-card-bg" src="assets/repair_workbench_mat_blank.png" alt="숫자 블록을 놓는 나무 수리 매트" />
-          <div class="c-card-inner">
-            <div class="tray-label">숫자 블록을 화면 빈칸으로 끌어다 놓으세요</div>
-            <div class="card-tray" id="cTray"></div>
+          <!-- 숫자 블록: 나무 매트 카드 위에(전체 모니터의 하단 책상/키보드 영역에 얹음) -->
+          <div class="c-tray-wrap">
+            <img class="c-card-bg" src="assets/number_board_wood_only.png" alt="왼쪽에는 작은 시계들이 있고 오른쪽에는 마우스가 놓인 나무 숫자 블록 보드" />
+            <div class="c-card-inner">
+              <div class="tray-label">숫자 블록을 화면 빈칸으로 끌어다 놓으세요</div>
+              <div class="card-tray" id="cTray"></div>
+            </div>
           </div>
         </div>
         <div class="progress-dots enter d2" id="cDots"></div>
@@ -890,20 +1046,35 @@
     <img id="repairMessy" src="assets/bg_library_messy_lobby.png" alt="복구 직전의 어질러진 도서관 로비"
       style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease;z-index:1;" />
     <div class="layer">
-      <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
-      <img class="char right bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
+      <!-- 스포트라이트 집중: 주변을 어둡게(radial dim), 시계 위치는 __placeRepairClock가 갱신 -->
+      <div class="focus-dim" id="repairFocus"></div>
+      <!-- 선생님 왼쪽 / 꼬마 사서 오른쪽 -->
+      <img class="char left bob" src="assets/teacher_happy_v2.png" alt="돋보기를 들고 환하게 웃으며 기뻐하는 사서 선생님" />
+      <img class="char right cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
       <div class="wall-clock clock" id="repairClock" style="--cx:50%;--cy:50%;">
         <img src="assets/wall_clock_body.png" alt="정상 속도로 돌아온 도서관 벽시계" />
         <div class="hand hour" style="transform:translate(-50%,-100%) rotate(300deg);"></div>
         <div class="hand minute" style="transform:translate(-50%,-100%) rotate(60deg);"></div>
         <div class="hub"></div>
       </div>
-      <div class="center-col" style="top:54%;">
-        <div class="plaque banner enter d1" style="width:clamp(340px, 76.8vw, 870.4px);">
-          <div class="title">도서관 수리 완료!</div>
-          <div class="msg">해냈다! 시간의 규칙을 모두 풀었어요! 우리 수리 대원 정말 대단해. 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</div>
+
+      <!-- 순차 대사: 꼬마 사서 → 사서 선생님 (기존 speech_bubble 에셋 재사용) -->
+      <div class="dlg-area">
+        <div class="speech kid-say" data-beat="1">
+          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg">해냈다! 시간의 규칙을 모두 풀었어요!</span></div>
         </div>
-        <button class="ticket-btn pulse wide enter d2" id="btnToStory"><span>수리 이야기 보러 가기 ▶</span></button>
+        <div class="speech teacher-say" data-beat="2">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!</span></div>
+        </div>
+      </div>
+
+      <div class="tap-hint" id="repairTapHint">터치하면 계속 ▶</div>
+
+      <!-- 시계가 정상 복귀(settle)하는 순간 화면 중앙에 생성 타이틀 pop-in -->
+      <img id="repairDone" src="assets/repair_title_complete_v1.png" alt="복구가 완료되었어요!" />
+
+      <div class="bottom-bar">
+        <button class="ticket-btn pulse wide dlg-cta" id="btnToStory"><span>수리 이야기 보러 가기 ▶</span></button>
       </div>
     </div>
   </section>
@@ -912,16 +1083,39 @@
   <section class="scene" id="s-story" data-qa-scene="section_story_gallery" data-qa-order="9" data-qa-label="수리 이야기: 생활 속 시간"
     style="background-image:url('assets/bg_library_clean_lobby.png');">
     <div class="layer">
-      <img class="char left bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
+      <img class="char left bob" id="storyTeacher" src="assets/teacher_happy_v2.png" alt="돋보기를 들고 환하게 웃으며 기뻐하는 사서 선생님" />
+      <img class="char right bob" id="storyKid" src="assets/kid_librarian_idle.png" alt="밝은 표정으로 서 있는 꼬마 사서" />
+      <div class="dlg-area">
+        <div class="speech teacher-say" id="storySay" aria-live="polite">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg"></span></div>
+        </div>
+        <div class="speech kid-say" id="storyKidSay" aria-live="polite">
+          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
+        </div>
+      </div>
       <div class="center-col" style="top:45%;">
         <div class="book-stage enter d1">
           <img class="book" src="assets/storybook_base.png" alt="도서관 책상 위에 펼쳐진 커다란 팝업북" />
-          <button class="book-arrow prev" id="bookPrev" aria-label="이전 페이지">‹</button>
-          <button class="book-arrow next" id="bookNext" aria-label="다음 페이지">›</button>
+          <button class="book-arrow prev" id="bookPrev" aria-label="이전 페이지">❮</button>
+          <button class="book-arrow next" id="bookNext" aria-label="다음 페이지">❯</button>
           <div class="book-page" id="bookPage"></div>
         </div>
         <div class="book-dots enter d2" id="bookDots"></div>
-        <button class="ticket-btn pulse wide hidden enter d3" id="btnToQuiz"><span>마무리 퀴즈 풀러 가기 ▶</span></button>
+      </div>
+      <!-- 책을 다 넘기면 같은 화면 위에 뜨는 마무리 팝업 퀴즈(s-quiz와 동일한 플라크+티켓 구성) -->
+      <div class="story-quiz-pop hidden" id="storyQuizPop">
+        <div class="center-col">
+          <div class="plaque" style="width:clamp(340px, 74.24vw, 844.8px);">
+            <span class="who kid-who">마무리 퀴즈</span>
+            <div class="msg">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
+          </div>
+          <div class="row" id="storyQuizChoices">
+            <button class="choice-ticket sq-op" data-op="1일"><span>1일</span></button>
+            <button class="choice-ticket sq-op" data-op="1시간"><span>1시간</span></button>
+            <button class="choice-ticket sq-op" data-op="24일"><span>24일</span></button>
+          </div>
+        </div>
+        <div class="sqp-cert"><button class="ticket-btn pulse wide hidden" id="btnStoryCert"><span>인증서 받으러 가기 ▶</span></button></div>
       </div>
     </div>
   </section>
@@ -930,9 +1124,9 @@
   <section class="scene" id="s-quiz" data-qa-scene="section_popup_quiz" data-qa-order="10" data-qa-label="마무리 퀴즈"
     style="background-image:url('assets/bg_library_clean_lobby.png');">
     <div class="layer">
-      <img class="char left pop" id="quizKid" src="assets/kid_librarian_explaining.png" alt="화면 앞으로 나온 꼬마 사서" />
+      <img class="char right pop" id="quizKid" src="assets/kid_librarian_explaining.png" alt="화면 앞으로 나온 꼬마 사서" />
       <div class="status-tag" id="quizStatus" aria-live="polite"></div>
-      <!-- 꼬마 사서 피드백 말풍선(왼쪽 꼬마 사서 옆, 기존 speech 컴포넌트 재사용) -->
+      <!-- 꼬마 사서 피드백/정답 대사 말풍선(오른쪽 꼬마 사서 옆, 기존 speech 컴포넌트 재사용) -->
       <div class="dlg-area">
         <div class="speech kid-say" id="quizKidSay" aria-live="polite">
           <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
@@ -948,9 +1142,10 @@
           <button class="choice-ticket quiz-op" data-op="1시간"><span>1시간</span></button>
           <button class="choice-ticket quiz-op" data-op="24일"><span>24일</span></button>
         </div>
-        <div class="bubble kid hidden" id="quizWin" style="max-width:min(620px,92vw);">
-          <span class="who">꼬마 사서</span>맞았어! 24시간은 1일과 같지!
-        </div>
+      </div>
+      <!-- 정답 후 나타나는 CTA는 center-col flex 흐름에 넣으면 퀴즈를 위로 밀어 올리므로,
+           다른 씬 전환 버튼과 동일하게 절대배치 bottom-bar 오버레이로 띄운다(reflow 방지) -->
+      <div class="bottom-bar">
         <button class="ticket-btn pulse wide hidden" id="btnToCert"><span>인증서 받으러 가기 ▶</span></button>
       </div>
     </div>
@@ -960,8 +1155,21 @@
   <section class="scene" id="s-cert" data-qa-scene="section_final_certificate" data-qa-order="11" data-qa-label="최종 완료와 인증"
     style="background-image:url('assets/bg_library_clean_lobby.png');">
     <div class="layer">
-      <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
-      <img class="char right bob" src="assets/teacher_happy.png" alt="환하게 웃으며 박수치는 사서 선생님" />
+      <!-- 선생님 왼쪽 / 꼬마 사서 오른쪽 -->
+      <img class="char left bob" src="assets/teacher_happy_v2.png" alt="돋보기를 들고 환하게 웃으며 기뻐하는 사서 선생님" />
+      <img class="char right cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
+
+      <!-- 마무리 순차 대사: 사서 선생님(좌) → 꼬마 사서(우). 인증서 안 캡션 대신 기존 speech_bubble 재사용, 음성 길이에 맞춰 표시 -->
+      <div class="dlg-area">
+        <div class="speech teacher-say" data-beat="1">
+          <div class="say-in"><span class="who">사서 선생님</span><span class="msg">정말 고마워! 네 덕분에 도서관이 완벽해졌어!</span></div>
+        </div>
+        <div class="speech kid-say" data-beat="2">
+          <div class="say-in"><span class="who">꼬마 사서</span><span class="msg">언제든 제 수학실력이 필요하면 불러주세요!</span></div>
+        </div>
+      </div>
+      <div class="tap-hint" id="certTapHint">터치하면 계속 ▶</div>
+
       <div class="center-col" style="top:52%;">
         <div class="cert-stage enter d1">
           <img class="cert" src="assets/certificate_paper.png" alt="책과 시계 장식이 둘러진 축하 인증서 종이" />
@@ -972,7 +1180,6 @@
               <span>맞힌 문제 <b id="certScore">13/13</b></span>
               <span>클리어 시간 <b id="certTime">00:00</b></span>
             </div>
-            <div class="cert-caption">🎗️ <b>사서 선생님</b> “정말 고마워! 네 덕분에 도서관이 완벽해졌어!” · <b>꼬마 사서</b> “언제든 제 수학실력이 필요하면 불러주세요!”</div>
           </div>
         </div>
         <div class="row enter d2">
@@ -991,11 +1198,14 @@
     <div class="stamp-fx-note" id="stampFxNote"></div>
   </div>
   <div class="keypad" id="keypad" aria-hidden="true">
-    <button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button>
-    <button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button>
-    <button class="key" data-k="7">7</button><button class="key" data-k="8">8</button><button class="key" data-k="9">9</button>
-    <button class="key del" data-k="del">⌫</button><button class="key" data-k="0">0</button><button class="key" data-k="close">닫기</button>
-    <button class="key act" data-k="ok">확인하기</button>
+    <div class="kp-head"><span class="kp-title">✓ 정답 입력</span><button class="kp-close" data-k="close" aria-label="닫기">✕</button></div>
+    <div class="kp-grid">
+      <button class="key" data-k="7">7</button><button class="key" data-k="8">8</button><button class="key" data-k="9">9</button>
+      <button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button>
+      <button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button>
+      <button class="key util" data-k="del">←</button><button class="key" data-k="0">0</button><button class="key util" data-k="clear">지우기</button>
+    </div>
+    <button class="key act" data-k="ok">확인</button>
   </div>
   <div class="fx" id="fx"></div>
 
@@ -1033,7 +1243,88 @@
       o.start();o.stop(AC.currentTime+(dur||.18));
     }catch(e){}
   }
-  function chime(ok){ if(ok){beep(660,.12,'triangle');setTimeout(function(){beep(880,.18,'triangle');},110);} else {beep(200,.18,'sawtooth');} }
+  /* 정답 성공 효과음(녹음 파일). 대사 채널(Voice)과 별개라 대사 위에 겹쳐 재생됨.
+     매번 새 Audio로 재생해 연속 정답에도 겹쳐서 울린다. 로딩 실패 시 무음. */
+  function successSfx(){ try{ var a=new Audio('assets/audio/universfield-new-notification-036-485897.mp3'); a.volume=.9; a.play().catch(function(){}); }catch(e){} }
+  function failSfx(){ try{ var a=new Audio('assets/audio/u_3bsnvt0dsu-spin-fail-295088.mp3'); a.volume=.9; a.play().catch(function(){}); }catch(e){} }
+  function startSfx(){ try{ var a=new Audio('assets/audio/freesound_community-game-start-6104.mp3'); a.volume=.9; a.play().catch(function(){}); }catch(e){} }
+  /* 복구 완료('복구가 완료되었어요!') 반짝임 효과음 — 금빛 파티클 연출과 동시에 재생 */
+  function repairDoneSfx(){ try{ var a=new Audio('assets/audio/shidenbeatsmusic-sound-effect-twinklesparkle-115095.mp3'); a.volume=.9; a.play().catch(function(){}); }catch(e){} }
+  /* 유형C 숫자 블록 정답 스냅('착 달라붙음') 효과음 — pop음, 블록마다 반복되므로 볼륨↓ */
+  function snapSfx(){ try{ var a=new Audio('assets/audio/soundreality-pop-423717.mp3'); a.volume=.45; a.play().catch(function(){}); }catch(e){} }
+  function chime(ok){ if(ok){ successSfx(); } else { failSfx(); } }
+
+  /* 반복 재생 앰비언스: '시계가 빠르게 도는' 문제 발생(s-problem) 화면의 배경 시계소리.
+     작은 볼륨 + 루프. 단, 파일 끝 TAIL(1초)이 무음이라 그대로 loop=true로 돌리면 매 바퀴 1초 공백이
+     생긴다 → loop을 끄고 (duration - TAIL) 시점에 도달하면 0으로 되감아 무음 구간을 건너뛴다.
+     (file:// 에서도 되도록 Web Audio 대신 미디어 엘리먼트 사용) */
+  var ClockLoop=(function(){
+    var SRC='assets/audio/phoenix_connection_brazil-time-passing-sound-effect-fast-clock-108403.mp3';
+    var TAIL=1.0;                       // 끝에서 제외할 무음 길이(초)
+    var a=null, want=false, loopEnd=Infinity;
+    function rewind(){ if(!want) return; try{ a.currentTime=0; }catch(e){} a.play().catch(function(){}); }
+    function ensure(){
+      if(a) return;
+      a=new Audio(SRC); a.volume=.10; a.loop=false;
+      a.addEventListener('loadedmetadata',function(){ if(isFinite(a.duration)) loopEnd=Math.max(.1, a.duration - TAIL); });
+      a.addEventListener('timeupdate',function(){ if(want && a.currentTime>=loopEnd) rewind(); });  // 무음 직전 되감기
+      a.addEventListener('ended',function(){ if(want) rewind(); });                                  // 안전망
+    }
+    function start(){ ensure(); want=true; try{ a.currentTime=0; }catch(e){} a.play().catch(function(){}); }
+    function stop(){ want=false; if(a){ try{ a.pause(); a.currentTime=0; }catch(e){} } }
+    return { start:start, stop:stop };
+  })();
+
+  /* 배경음악(BGM): 씬별로 지정된 곡을 그 화면에 머무는 동안 무한 반복(loop=true).
+     - BGM-1: s-problem(활동1 Scene2 문제 발생)
+     - BGM-2: s-tut(활동1 Scene3 튜토리얼) → s-tutok → 활동2 미션(s-a/s-b/s-c)까지 같은 곡을 이어서 사용
+       (BGM-3 자리를 BGM-2로 공용. 같은 src라 씬 전환에도 재시작 없이 연속 재생됨)
+     - BGM-4: s-story(이야기) → s-quiz(퀴즈) → s-cert(인증서)까지 활동3 전체를 이어서(따뜻·평화)
+     같은 곡이 이미 돌고 있으면 다시 시작하지 않고 이어서 재생(씬 내부 beat 전환에도 끊김 없음).
+     화면 시작은 [시작하기] 버튼 클릭 이후라 브라우저 자동재생 정책에 걸리지 않는다. */
+  var Bgm=(function(){
+    var BGM2='assets/audio/BGM-2.mp3';
+    var MAP={ 's-problem':{src:'assets/audio/BGM-1.mp3', vol:.30, start:10},  // 앞 도입부가 거의 안 들려 10초부터 재생/반복
+              's-tut':    {src:BGM2, vol:.30},
+              's-tutok':  {src:BGM2, vol:.30},
+              's-a':      {src:BGM2, vol:.30},
+              's-b':      {src:BGM2, vol:.30},
+              's-c':      {src:BGM2, vol:.30},
+              's-story':  {src:'assets/audio/BGM-4.mp3', vol:.35, start:15},   // 활동3 Scene1(이야기) 따뜻·평화, 15초부터
+              's-quiz':   {src:'assets/audio/BGM-4.mp3', vol:.35, start:15},   // 활동3 Scene2(마무리 퀴즈)까지 이어서
+              's-cert':   {src:'assets/audio/BGM-4.mp3', vol:.35, start:15} };  // 활동3 Scene3(인증서)까지 이어서
+    /* src별 Audio를 한 번만 만들어 재사용(pool)한다. start 오프셋이 있는 곡은
+       페이지 로드 때 미리 만들어 사전 로드·사전 seek 해두므로, 해당 화면 진입 즉시
+       start 지점(예: 15초)부터 끊김 없이 바로 재생된다. */
+    var START={}, pool={}, curSrc=null;
+    Object.keys(MAP).forEach(function(id){ var m=MAP[id]; if(START[m.src]===undefined) START[m.src]=m.start||0; });
+    function make(src){
+      var s=START[src]||0, a=new Audio(src); a.preload='auto';
+      if(s>0){
+        a.loop=false;
+        a.addEventListener('loadedmetadata',function(){ try{ if(a.currentTime<s) a.currentTime=s; }catch(e){} });  // 미리 start로 위치
+        a.addEventListener('ended',function(){ try{ a.currentTime=s; }catch(e){} a.play().catch(function(){}); });  // 곡 끝 → start로 재시작
+      } else { a.loop=true; }                                                                                       // 오프셋 없으면 무한 반복
+      pool[src]=a; return a;
+    }
+    Object.keys(START).forEach(function(src){ if(START[src]>0) make(src); });   // 오프셋 곡 사전 프라임(진입 즉시 재생)
+    function setScene(id){
+      var m=MAP[id]||null;
+      if(m && curSrc===m.src) return;                 // 같은 곡 유지 → 그대로 둠
+      if(curSrc && pool[curSrc]){ var pa=pool[curSrc]; try{ pa.pause(); pa.currentTime=START[curSrc]||0; }catch(e){} }  // 이전 곡 정지+되감기
+      curSrc=null;
+      if(!m) return;
+      curSrc=m.src;
+      var a=pool[m.src]||make(m.src), s=START[m.src]||0;
+      a.volume=m.vol;
+      if(s>0 && a.currentTime<s){ try{ a.currentTime=s; }catch(e){} }   // 아직 사전 seek 전이면 보정
+      a.play().catch(function(){});                                    // 사전 프라임된 곡은 여기서 바로 start부터 남
+    }
+    function stop(){ if(curSrc && pool[curSrc]){ var pa=pool[curSrc]; try{ pa.pause(); pa.currentTime=START[curSrc]||0; }catch(e){} } curSrc=null; }
+    function debug(){ var a=curSrc&&pool[curSrc]; return a?{src:curSrc, paused:a.paused, t:+a.currentTime.toFixed(2), vol:a.volume, dur:a.duration, ready:a.readyState}:{src:null}; }
+    return { setScene:setScene, stop:stop, debug:debug };
+  })();
+  window.__Bgm=Bgm;   // 콘솔/디버그용
   function fanfare(){ [523,659,784,1046].forEach(function(f,i){setTimeout(function(){beep(f,.22,'triangle');},i*130);}); }
 
   /* ---------- 대사 음성(녹음 파일, assets/audio/takeNN.wav) ----------
@@ -1063,17 +1354,17 @@
   })();
   window.__Voice=Voice;   // 콘솔/디버그·향후 음소거 버튼 연결용
 
-  /* 씬 진입 시 자동 재생할 대사(도입/아웃트로). s-problem은 beat 시퀀스가 직접 재생하므로 제외. */
+  /* 씬 진입 시 자동 재생할 대사(도입/아웃트로). s-problem·s-repair·s-cert은 beat 시퀀스가 대사를 직접 재생하므로 제외. */
   var SCENE_INTRO={
     's-tut':   {a:'take04'},
     's-tutok': {a:'take05', keep:true},              // 튜토 성공 — 화면 전환에도 이어짐(keep)
     's-a':     {a:'take06'},
     's-b':     {a:'take07'},
     's-c':     {a:'take08'},
-    's-repair':{seq:['take09','take10'], keep:true}, // 수리 완료·복구 — keep
+    // s-repair: take09('해냈다!')→take10('우리 수리 대원')을 beat 시퀀스에서 재생
     's-story': {a:'take11'},                          // 이야기 1페이지
-    's-quiz':  {a:'take14'},                          // 마무리 퀴즈 문제
-    's-cert':  {seq:['take16','take17']}
+    's-quiz':  {a:'take14'}                           // 마무리 퀴즈 문제
+    // s-cert: take16(선생님)→take17(꼬마 사서)를 __playCertOutro beat 시퀀스에서 재생
   };
   var STORY_AUDIO=['take11','take12','take13'];       // 이야기 페이지별 대사
   function playSceneIntro(id){ var v=SCENE_INTRO[id]; if(!v) return; if(v.seq) Voice.playSeq(v.seq,v.keep); else Voice.play(v.a,v.keep); }
@@ -1110,6 +1401,8 @@
     next.classList.add('active');
     ensureSceneRendered(id);
     playSceneIntro(id);        // 이 화면의 도입/아웃트로 대사 자동 재생
+    if(id==='s-problem') ClockLoop.start(); else ClockLoop.stop();  // 빠른 시계소리: 문제 발생 화면에서만 루프
+    Bgm.setScene(id);          // BGM-1(s-problem)/BGM-2(s-tut) 해당 섹션 동안 무한 반복
     setHudFor(next.getAttribute('data-qa-scene'));
     closeMenu();
     window.scrollTo(0,0);
@@ -1190,13 +1483,26 @@
   }
   /* 꼬마 사서 피드백: 기존 말풍선(.speech.kid-say, speech_bubble 에셋)을 재사용.
      el = 해당 씬의 kid-say 말풍선 요소. 정답='정답이야!', 오답='다른 방안을 생각해보자'. */
-  function showKidSay(el,ok,ms){
+  function showKidSay(el,ok,ms,msg){
     if(!el) return;
     var m=el.querySelector('.msg');
-    if(m) m.textContent = ok ? '정답이야!' : '다른 방안을 생각해보자';
+    if(m) m.textContent = msg || (ok ? '정답이야!' : '다른 방안을 생각해보자');
     el.classList.add('on');
     clearTimeout(el._kt);
     el._kt=setTimeout(function(){ el.classList.remove('on'); },ms||1500);
+  }
+  /* 오답 시 꼬마 사서: confused(고민) pose로 바꾸고 말풍선을 띄운 뒤,
+     말풍선이 사라지는 시점(ms)에 idle(대기) pose로 복귀. 복귀 타이머(_poseT)는
+     정답 처리에서 clearTimeout으로 취소해 환호(cheer) pose를 덮어쓰지 않게 한다. */
+  function kidWrongPose(kidEl, sayEl, ms){
+    if(!kidEl) return;
+    ms = ms || 1300;
+    kidEl.src='assets/kid_librarian_confused.png'; kidEl.className='char right tilt';
+    showKidSay(sayEl, false, ms);
+    clearTimeout(kidEl._poseT);
+    kidEl._poseT=setTimeout(function(){
+      kidEl.src='assets/kid_librarian_idle.png'; kidEl.className='char right bob';
+    }, ms);
   }
   var aKidSay=document.getElementById('aKidSay'), bKidSay=document.getElementById('bKidSay'),
       cKidSay=document.getElementById('cKidSay'), quizKidSay=document.getElementById('quizKidSay');
@@ -1317,7 +1623,7 @@
      SECTION 1: TITLE
   ===================================================== */
   document.getElementById('btnStart').addEventListener('click',function(){
-    beep(720,.14,'triangle');
+    startSfx();   // 시작하기 버튼 시작음(freesound game-start)
     showSceneById('s-problem');
     if(window.__playProblemIntro) window.__playProblemIntro();
   });
@@ -1338,11 +1644,15 @@
 
     function hideAll(){ bubbles.forEach(function(b){ b.classList.remove('on'); }); }
     var beats=[
-      function(){ bubbles[0].classList.add('on'); beep(300,.13,'sawtooth'); Voice.play('take01'); },
-      function(){ hideAll(); bubbles[1].classList.add('on'); beep(280,.13,'sawtooth'); Voice.play('take02'); },
-      function(){ hideAll(); kid.classList.add('pop');
-                 teacher.src='assets/teacher_happy.png'; teacher.classList.remove('worried');
-                 bubbles[2].classList.add('on'); beep(660,.12,'triangle'); Voice.play('take03'); },
+      // "큰일 났어! 시계가 고장 나서…" — 잠깐 정상이던 시계가 점점 빨라지며 폭주(무엇이 큰일인지 시각화)
+      function(){ bubbles[0].classList.add('on'); Voice.play('take01');
+                 if(window.__introClock){ setTimeout(function(){ window.__introClock.runaway(); }, 900); } },
+      function(){ hideAll(); bubbles[1].classList.add('on'); Voice.play('take02'); },
+      function(){ hideAll();
+                 kid.classList.remove('pop'); kid.classList.add('hero-in');   // 오른쪽에서 튕겨 들어오는 등장
+                 setTimeout(function(){ sparkOnEl(kid); }, 380);              // 착지 반짝임
+                 teacher.src='assets/teacher_happy_v2.png'; teacher.classList.remove('worried');
+                 bubbles[2].classList.add('on'); Voice.play('take03'); },
       function(){ hideAll(); cta.classList.add('on'); if(hint) hint.style.display='none'; beep(880,.16,'triangle'); }
     ];
     // 자동 전환 지연 = 각 beat 녹음 길이(+여유). 이 값보다 빨리 탭하면 R1로 대사가 컷됨.
@@ -1369,8 +1679,71 @@
 
     window.__playProblemIntro=function(){
       clearTimeout(timer); idx=-1; running=true;
-      hideAll(); kid.classList.remove('pop'); cta.classList.remove('on');
+      hideAll(); kid.classList.remove('pop','hero-in','bob'); cta.classList.remove('on');
       teacher.src='assets/teacher_worried.png'; teacher.classList.add('worried');
+      if(window.__introClock) window.__introClock.startNormal();   // 시계는 정상 속도로 시작
+      if(hint) hint.style.display='';
+      schedule();
+    };
+  })();
+
+  /* =====================================================
+     SECTION 8: REPAIR OUTRO — 순차 대사(꼬마 사서 → 사서 선생님)
+       꼬마 사서: "해냈다! 시간의 규칙을 모두 풀었어요!"(take09)
+       사서 선생님: "우리 수리 대원 정말 대단해. …"(take10) -> CTA 노출
+     s-problem과 동일: 자동 진행 + 탭하면 다음 beat로 스킵. 기존 speech_bubble 재사용.
+  ===================================================== */
+  (function(){
+    var scene=document.getElementById('s-repair');
+    var cta=document.getElementById('btnToStory');
+    var hint=document.getElementById('repairTapHint');
+    var done=document.getElementById('repairDone');
+    var bubbles=Array.prototype.slice.call(scene.querySelectorAll('.speech'));
+    var timer=null, idx=-1, running=false;
+
+    function hideAll(){ bubbles.forEach(function(b){ b.classList.remove('on'); }); }
+    var beats=[
+      function(){ bubbles[0].classList.add('on'); Voice.play('take09',true); },   // 꼬마 사서
+      function(){ hideAll(); bubbles[1].classList.add('on'); Voice.play('take10',true); }, // 사서 선생님
+      // 대사 종료 → 시계 감속+스포트라이트 집중, 정상(10:10) 복귀 → 완료 배너 pop-in → CTA 노출
+      function(){ hideAll(); if(hint) hint.style.display='none';
+        function celebrate(){
+          if(done) done.classList.add('on');   // '복구가 완료되었어요!' 배너
+          repairDoneSfx();                      // 반짝임 완료 효과음
+          goldBurst(16);
+          setTimeout(function(){ cta.classList.add('on'); beep(880,.16,'triangle'); }, 900);
+        }
+        if(window.__repairClock){ window.__repairClock.normalize(celebrate); }
+        else { celebrate(); }
+      }
+    ];
+    // 자동 전환 지연 = 각 beat 녹음 길이(+여유). 실측: take09≈3.96s, take10≈10.56s(선생님).
+    // delays[n]은 'beat n-1이 뜬 뒤 beat n까지의 대기'이므로, 말풍선이 대사 끝까지 남도록 녹음 길이+여유로 잡는다. 재녹음 시 함께 조정.
+    var delays=[500,4500,11100];
+
+    function schedule(){
+      if(idx>=beats.length-1){ running=false; return; }
+      var n=idx+1;
+      timer=setTimeout(function(){ runBeat(n); }, delays[n]);
+    }
+    function runBeat(n){
+      if(n<=idx || n>=beats.length) return;
+      idx=n; beats[n](); schedule();
+    }
+    function advance(){
+      if(!running || idx>=beats.length-1) return;
+      clearTimeout(timer); runBeat(idx+1);
+    }
+    scene.addEventListener('click',function(e){
+      if(e.target.closest('#btnToStory')) return;   // CTA handles its own click
+      advance();
+    });
+
+    window.__playRepairOutro=function(){
+      clearTimeout(timer); idx=-1; running=true;
+      hideAll(); cta.classList.remove('on');
+      if(done) done.classList.remove('on');                   // 완료 배너 초기화
+      if(window.__repairClock) window.__repairClock.spin();   // 시작 시 시계 회전
       if(hint) hint.style.display='';
       schedule();
     };
@@ -1401,6 +1774,148 @@
     window.__placeBigClock=place;
     window.addEventListener('resize',place);
     place();
+  })();
+
+  /* 인트로 시계 '고장' 연출: 정상 속도로 째깍이다가 → 점점 빨라져(가속) 마구 도는 상태로.
+     각도는 JS로 직접 제어(CSS spin 대체). runaway 시 경고 글로우+흔들림으로 하이라이트. */
+  (function(){
+    var clock=document.getElementById('bigClock');
+    if(!clock) return;
+    var hourEl=clock.querySelector('.hand.hour');
+    var minEl=clock.querySelector('.hand.minute');
+    var M_NORM=360/6000, M_MAX=360/240;    // deg/ms 분침: 정상(느긋, 6s/바퀴) → 폭주(빠름, 0.24s/바퀴)
+    var RAMP=2600;                          // 가속 시간(ms): '점점 빨리'
+    var hAng=300, mAng=60, raf=null, last=0, phase='idle', rampT=0;   // 시작 ~10:10
+    function apply(){
+      hourEl.style.transform='translate(-50%,-100%) rotate('+hAng+'deg)';
+      minEl.style.transform='translate(-50%,-100%) rotate('+mAng+'deg)';
+    }
+    function stop(){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+    function mspeed(){
+      if(phase==='normal') return M_NORM;
+      if(phase==='runaway'){ var e=rampT>=1?1:rampT*rampT; return M_NORM+(M_MAX-M_NORM)*e; }  // ease-in
+      return 0;
+    }
+    function frame(ts){
+      if(!last) last=ts; var dt=Math.min(50, ts-last); last=ts;
+      if(phase==='runaway' && rampT<1){ rampT+=dt/RAMP; if(rampT>1) rampT=1; }
+      var ms=mspeed(); mAng+=ms*dt; hAng+=ms/12*dt; apply();
+      raf=requestAnimationFrame(frame);
+    }
+    function startNormal(){
+      stop(); phase='normal'; last=0; rampT=0;
+      clock.classList.remove('panic','panic-shake');
+      raf=requestAnimationFrame(frame);
+    }
+    function runaway(){
+      if(phase==='runaway') return;
+      phase='runaway'; rampT=0; last=0;
+      if(!raf) raf=requestAnimationFrame(frame);
+      clock.classList.remove('panic'); clock.classList.add('panic-shake');   // 흔들림+글로우
+      setTimeout(function(){ clock.classList.remove('panic-shake'); clock.classList.add('panic'); }, 600); // 이후 글로우만 지속
+    }
+    function reset(){
+      stop(); phase='idle'; hAng=300; mAng=60; apply();
+      clock.classList.remove('panic','panic-shake');
+    }
+    window.__introClock={ startNormal:startNormal, runaway:runaway, reset:reset };
+  })();
+
+  /* Repair outro: seat the wall clock onto the painted ring mount in the CLEAN lobby art,
+     exactly like the intro clock (same cover-scale math, different bg + ring geometry). */
+  (function(){
+    var clock=document.getElementById('repairClock');
+    if(!clock) return;
+    var focus=document.getElementById('repairFocus');
+    var IMG_W=1672, IMG_H=941;                 // bg_library_clean_lobby.png natural size
+    var RING_CX=850, RING_CY=281, RING_R=146;  // ring centerline (measured from art)
+    var CLOCK_FILL=0.859;                       // clock outer rim / clock png side (same asset)
+    function place(){
+      var W=window.innerWidth, H=window.innerHeight;
+      var s=Math.max(W/IMG_W, H/IMG_H);         // cover scale
+      var ox=(W-IMG_W*s)/2, oy=(H-IMG_H*s)/2;   // background-position:center offsets
+      var cx=ox+RING_CX*s, cy=oy+RING_CY*s;
+      var box=(RING_R*2*s)/CLOCK_FILL;          // box sized so the visible rim == ring
+      clock.style.width=box+'px';
+      clock.style.height=box+'px';
+      clock.style.left=cx+'px';
+      clock.style.top=cy+'px';
+      clock.style.transform='translate(-50%,-50%)';
+      // spotlight dim centers on the clock; clear core > clock rim, fade just outside
+      if(focus){
+        focus.style.setProperty('--fx', cx+'px');
+        focus.style.setProperty('--fy', cy+'px');
+        focus.style.setProperty('--fr', (box*0.92)+'px');
+      }
+    }
+    window.__placeRepairClock=place;
+    window.addEventListener('resize',place);
+    place();
+  })();
+
+  /* 복구 씬 시계: 회전(spin) → 대사 종료 후 감속(decel)하며 ~10:10에 정지 + 스포트라이트 집중.
+     회전/감속은 JS로 각도를 직접 제어(정확한 착지 각도 보장), 정지 순간 settle-pulse+반짝임. */
+  (function(){
+    var clock=document.getElementById('repairClock');
+    if(!clock) return;
+    var hourEl=clock.querySelector('.hand.hour');
+    var minEl=clock.querySelector('.hand.minute');
+    var focus=document.getElementById('repairFocus');
+    var TARGET_H=300, TARGET_M=60;         // ~10:10 최종 정지 각도
+    var HSPD=360/3000, MSPD=360/520;       // deg/ms 회전 속도 (시침 3s/바퀴, 분침 ~.52s/바퀴)
+    var hAng=TARGET_H, mAng=TARGET_M, raf=null, phase='idle', last=0;
+    function apply(){
+      hourEl.style.transform='translate(-50%,-100%) rotate('+hAng+'deg)';
+      minEl.style.transform='translate(-50%,-100%) rotate('+mAng+'deg)';
+    }
+    function stopRaf(){ if(raf){ cancelAnimationFrame(raf); raf=null; } }
+    function norm(x){ return ((x%360)+360)%360; }
+    function spinFrame(ts){
+      if(!last) last=ts; var dt=Math.min(50, ts-last); last=ts;
+      hAng+=HSPD*dt; mAng+=MSPD*dt; apply();
+      raf=requestAnimationFrame(spinFrame);
+    }
+    function spin(){
+      stopRaf(); phase='spin'; last=0;
+      clock.classList.remove('focus','settle');
+      if(focus) focus.classList.remove('on');
+      clock.style.transition='none'; clock.style.opacity='1';   // 기본 표시(메뉴 직접 진입). nextC는 이 뒤에 숨김 처리
+      raf=requestAnimationFrame(spinFrame);
+    }
+    function normalize(cb){
+      if(phase==='decel') return;
+      stopRaf(); phase='decel'; last=0;
+      if(focus) focus.classList.add('on');   // 주변 dim in
+      clock.classList.add('focus');          // 시계 금색 글로우 + dim 위로
+      var hStart=hAng, mStart=mAng;
+      var hEnd=hStart + norm(TARGET_H-hStart) + 360*2;   // 시침 +2바퀴 후 착지
+      var mEnd=mStart + norm(TARGET_M-mStart) + 360*5;   // 분침 +5바퀴 후 착지
+      var D=2600, t0=0;
+      function ease(t){ return 1-Math.pow(1-t,5); }        // easeOutQuint: 길게 감속 후 살짝 멈춤
+      function step(ts){
+        if(!t0) t0=ts;
+        var t=Math.min(1,(ts-t0)/D), e=ease(t);
+        hAng=hStart+(hEnd-hStart)*e; mAng=mStart+(mEnd-mStart)*e; apply();
+        if(t<1){ raf=requestAnimationFrame(step); return; }
+        hAng=TARGET_H; mAng=TARGET_M; apply();   // 정확히 10:10 착지
+        phase='idle'; raf=null;
+        clock.classList.add('settle');           // 멈추는 순간 부드러운 pulse
+        setTimeout(function(){ clock.classList.remove('settle'); },640);
+        sparkOnEl(clock);                        // 반짝임
+        setTimeout(function(){                   // 스포트라이트 해제 후 CTA
+          if(focus) focus.classList.remove('on');
+          clock.classList.remove('focus');
+          if(cb) cb();
+        },680);
+      }
+      raf=requestAnimationFrame(step);
+    }
+    function reset(){
+      stopRaf(); phase='idle'; hAng=TARGET_H; mAng=TARGET_M; apply();
+      if(focus) focus.classList.remove('on');
+      clock.classList.remove('focus','settle');
+    }
+    window.__repairClock={ spin:spin, normalize:normalize, reset:reset };
   })();
 
   /* SECTION 2 -> 3 */
@@ -1488,12 +2003,12 @@
   /* mode 'clock': 전광판에 '몇 분 전' 텍스트 → 알맞은 시계(그림) 고르기.
      mode 'text' : 전광판에 시계(그림) 제시 → 같은 시각을 나타낸 문자열 보기 고르기. */
   var A_DATA=[
-    {mode:'clock', prompt:'3시 5분 전', answer:[2,55], choices:[[2,55],[3,5],[2,45]], note:'3시 5분 전 = 2시 55분'},
-    {mode:'text',  clock:[11,50], answer:'12시 10분 전', choices:['11시 10분 전','12시 10분 전','12시 50분 전'], note:'11시 50분 = 12시 10분 전'},
-    {mode:'clock', prompt:'8시 15분 전', answer:[7,45], choices:[[8,15],[7,45],[7,15]], note:'8시 15분 전 = 7시 45분'},
-    {mode:'text',  clock:[4,55], answer:'5시 5분 전', choices:['4시 5분 전','5시 5분 전','5시 55분 전'], note:'4시 55분 = 5시 5분 전'}
+    {mode:'clock', prompt:'3시 5분 전', q:'전광판에 [3시 5분 전]이라고 적혀 있어요. 알맞은 시계를 찾아주세요!', answer:[2,55], choices:[[2,55],[3,5],[3,55]], note:'3시 5분 전 = 2시 55분'},
+    {mode:'text',  clock:[11,50], q:'멈춰버린 시계가 [11시 50분]을 가리키고 있어요. 다른 말로 어떻게 읽을까요?', answer:'12시 10분 전', choices:['11시 10분 전','12시 10분 전','12시 50분 전'], note:'11시 50분 = 12시 10분 전'},
+    {mode:'clock', prompt:'8시 15분 전', q:'다음 중 [8시 15분 전]을 가리키는 시계는 어느 것인가요?', answer:[7,45], choices:[[8,15],[7,45],[8,45]], note:'8시 15분 전 = 7시 45분'},
+    {mode:'text',  clock:[4,55], q:'시계가 [4시 55분]에 멈췄어요. 바르게 읽은 것을 고르세요.', answer:'5시 5분 전', choices:['4시 5분 전','5시 5분 전','5시 55분 전'], note:'4시 55분 = 5시 5분 전'}
   ];
-  var aIdx=0, aWrong=0;
+  var aIdx=0, aWrong=0, aBusy=false;   // aBusy: 보기 선택 직후 1초 잠금(객관식 연타 방지)
   var aPrompt=document.getElementById('aPrompt'), aChoices=document.getElementById('aChoices'), aDots=document.getElementById('aDots');
   var aKid=document.getElementById('aKid');
   function renderDots(el,total,idx){
@@ -1504,19 +2019,24 @@
   function aIsCorrect(ch,q){
     return q.mode==='text' ? (ch===q.answer) : (ch[0]===q.answer[0]&&ch[1]===q.answer[1]);
   }
+  // 유형 A 질문 문장의 [값] 부분을 강조(.q-hi)로 감싼다(대괄호 유지)
+  function aQuestionHtml(s){ return (s||'').replace(/\[([^\]]+)\]/g,'<b class="q-hi">[$1]</b>'); }
   function loadA(){
     aWrong=0;
+    aBusy=false;                 // 새 문제 로드 시 잠금 해제
     var q=A_DATA[aIdx];
     renderDots(aDots,A_DATA.length,aIdx);
     aChoices.innerHTML='';
     if(q.mode==='text'){
-      // 전광판에 문제 시계를 제시하고, 보기는 문자열 카드로 고른다
+      // 전광판에 문제 시계를 제시하고, 보기는 문자열 카드로 고른다. 시계는 왼쪽, 질문은 오른쪽(가로 배치)
+      aPrompt.className='notice prompt-row';
       aPrompt.innerHTML='';
-      // clock scales with the (viewport-sized) board so it never clips out the top
-      var pc=buildClock(q.clock[0],q.clock[1], Math.min(190, Math.round(window.innerWidth*0.22)));
+      // 시계 크기는 전광판(plaque) 폭에 비례 → 크림 영역 안에서 항상 안 벗어남
+      var plaqueW=Math.max(360, Math.min(840, window.innerWidth*0.72));
+      var pc=buildClock(q.clock[0],q.clock[1], Math.round(plaqueW*0.285));
       pc.classList.add('prompt-clock');
       aPrompt.appendChild(pc);
-      var sub=document.createElement('div'); sub.className='q-sub'; sub.textContent='이 시계와 같은 시각은?';
+      var sub=document.createElement('div'); sub.className='a-question'; sub.innerHTML=aQuestionHtml(q.q);
       aPrompt.appendChild(sub);
       q.choices.forEach(function(txt){
         var card=document.createElement('div');
@@ -1526,8 +2046,10 @@
         aChoices.appendChild(card);
       });
     }else{
-      aPrompt.innerHTML='<span class="q-time">'+q.prompt+'</span><span class="q-sub">같은 시각의 시계는?</span>';
-      var size = window.innerWidth<640?108:146;
+      aPrompt.className='notice';   // 세로 배치(질문 문장 + 보기 시계)로 복귀
+      aPrompt.innerHTML='<div class="a-question">'+aQuestionHtml(q.q)+'</div>';
+      // 보기 시계는 3개뿐이라 여유가 있어 크게(초등 대상 가독). 데스크톱 200 / 모바일 150
+      var size = window.innerWidth<640?150:200;
       q.choices.forEach(function(ch){
         var wrap=document.createElement('div');
         wrap.className='choice';
@@ -1539,9 +2061,12 @@
   }
   function pickA(wrap,ch,q){
     if(wrap.classList.contains('done'))return;
+    if(aBusy)return;             // 선택 직후 1초 동안은 다음 선택 무시(연타 방지)
+    aBusy=true;
     var correct = aIsCorrect(ch,q);
     if(correct){
       wrap.classList.add('picked');           // gold stamp + glow on the chosen slot
+      clearTimeout(aKid._poseT);              // cancel a pending confused→idle revert so it doesn't override the cheer
       aKid.src='assets/kid_librarian_success.png'; aKid.className='char right cheer';
       chime(true);
       showStamp(true, q.note, 1300);
@@ -1552,8 +2077,7 @@
       setTimeout(nextA,1300);
     }else{
       aWrong++;
-      aKid.src='assets/kid_librarian_confused.png'; aKid.className='char right tilt';
-      showKidSay(aKidSay, false, 1300);
+      kidWrongPose(aKid, aKidSay, 1300);       // 고민 pose → 말풍선 사라질 때 대기 pose로 복귀
       wrap.classList.add('wrong');             // shake only the wrong slot
       chime(false);
       setTimeout(function(){wrap.classList.remove('wrong');},450);
@@ -1568,6 +2092,7 @@
         setTimeout(nextA,1900);
       }else{
         setTimeout(function(){ showStamp(false, '다시 생각해보세요', 1300); },380);
+        setTimeout(function(){ aBusy=false; },1000);   // 1초 뒤 재선택 허용
       }
     }
   }
@@ -1582,16 +2107,16 @@
      SECTION 6: TYPE B (keypad input on cork board)
   ===================================================== */
   var B_DATA=[
-    {title:'독서 교실이 8시에 시작해 9시에 끝났어요. 걸린 시간은?',
+    {title:'첫 번째 독서 교실은 8시에 시작해서 9시에 끝났어요. 걸린 시간은 얼마인가요?',
      clocks:[[8,0,'시작'],[9,0,'끝']], arrow:'→',
      line:'걸린 시간 = <span class="kb-blank" data-answer="1">?</span> 시간', answers:['1'], done:'1시간'},
-    {title:'11시 30분부터 30분 후에 끝나요. 끝나는 시각은?',
+    {title:'두 번째 독서 교실은 11시 30분에 시작해서 30분 동안 진행돼요. 끝나는 시각은 언제일까요?',
      clocks:[[11,30,'시작'],null], arrow:'+30분 →',
      line:'끝나는 시각 = <span class="kb-blank" data-answer="12">?</span> 시 <span class="kb-blank" data-answer="0">?</span> 분', answers:['12','0'], done:'12시 0분'},
-    {title:'오후 2시부터 1시간 후에 독서가 끝나요. 끝나는 시각은?',
+    {title:'책 정리 봉사활동을 오후 2시에 시작해서 1시간 동안 했어요. 봉사활동이 끝난 시각은 언제일까요?',
      clocks:[[2,0,'오후 2시'],null], arrow:'+1시간 →',
      line:'오후 <span class="kb-blank" data-answer="3">?</span> 시', answers:['3'], done:'오후 3시'},
-    {title:'4시 30분부터 5시까지 책을 읽었어요. 읽은 시간은?',
+    {title:'꼬마 사서가 4시 30분부터 5시까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?',
      clocks:[[4,30,'시작'],[5,0,'끝']], arrow:'→',
      line:'읽은 시간 = <span class="kb-blank" data-answer="30">?</span> 분', answers:['30'], done:'30분'}
   ];
@@ -1606,8 +2131,8 @@
     renderDots(bDots,B_DATA.length,bIdx);
     var clockHtml='<div class="row" style="gap:8px;margin:2px 0;">';
     q.clocks.forEach(function(c,i){
-      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:clamp(.86rem,2.4vw,1.15rem);font-weight:800;color:#4a2b0e">'+c[2]+'</div></div>'; }
-      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:clamp(.86rem,2.4vw,1.15rem);font-weight:800;color:#4a2b0e">끝?</div></div>'; }
+      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:clamp(1rem,2.8vw,1.4rem);font-weight:800;color:#4a2b0e">'+c[2]+'</div></div>'; }
+      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:clamp(1rem,2.8vw,1.4rem);font-weight:800;color:#4a2b0e">끝?</div></div>'; }
       if(i===0 && q.clocks.length>1){ clockHtml+='<div style="font-weight:900;color:#7c5a34;">'+q.arrow+'</div>'; }
     });
     clockHtml+='</div>';
@@ -1639,27 +2164,42 @@
   function closeKeypad(){ keypad.classList.remove('open'); bBlanks.forEach(function(x){x.classList.remove('active');}); bActive=null; }
   keypad.addEventListener('click',function(e){
     var k=e.target.getAttribute&&e.target.getAttribute('data-k'); if(!k)return;
-    if(k==='close'){ closeKeypad(); return; }
-    if(k==='ok'){ closeKeypad(); return; }
+    if(k==='close'||k==='ok'){ closeKeypad(); return; }
     if(!bActive){ showTag(bStatus,'먼저 빈칸을 눌러 주세요','',1200); return; }
-    if(k==='del'){ bActive.textContent='?'; bActive.classList.remove('filled'); return; }
+    if(k==='del'){ var s=bActive.textContent==='?'?'':bActive.textContent; s=s.slice(0,-1); bActive.textContent=s||'?'; if(!s)bActive.classList.remove('filled'); return; }
+    if(k==='clear'){ bActive.textContent='?'; bActive.classList.remove('filled'); return; }
     var cur=bActive.textContent==='?'?'':bActive.textContent;
     if(cur.length>=2) cur='';
     cur+=k;
     bActive.textContent=cur; bActive.classList.add('filled');
     beep(520,.06,'square');
   });
+  /* 입체 키 press 반응: 터치에서도 확실히 눌리도록 .pressed 토글(:active 보완) */
+  keypad.addEventListener('pointerdown',function(e){
+    var b=e.target.closest&&e.target.closest('.key'); if(b) b.classList.add('pressed');
+  });
+  function clearKeyPressed(){
+    Array.prototype.forEach.call(keypad.querySelectorAll('.key.pressed'),function(b){ b.classList.remove('pressed'); });
+  }
+  keypad.addEventListener('pointerup',clearKeyPressed);
+  keypad.addEventListener('pointercancel',clearKeyPressed);
+  window.addEventListener('pointerup',clearKeyPressed);
+  function isNumericAnswerMatch(value,answer){
+    if(value==='') return false;
+    return Number(value)===Number(answer);
+  }
   function submitB(){
     var q=B_DATA[bIdx];
     var ok=true;
     bBlanks.forEach(function(bl){
       var val=bl.textContent==='?'?'':bl.textContent;
-      if(val!==bl.getAttribute('data-answer')){ ok=false; bl.classList.add('bad'); setTimeout(function(){bl.classList.remove('bad');},450); }
+      if(!isNumericAnswerMatch(val,bl.getAttribute('data-answer'))){ ok=false; bl.classList.add('bad'); setTimeout(function(){bl.classList.remove('bad');},450); }
     });
     if(ok){
       chime(true);
+      clearTimeout(bKid._poseT);              // cancel a pending confused→idle revert so it doesn't override the cheer
       bKid.src='assets/kid_librarian_success.png'; bKid.className='char right cheer';
-      showStamp(true, q.done, 1300);
+      showStamp(true, null, 1300);   // 정답 시 스탬프만: 하단 초록 정답 카드(q.done) 제거
       showKidSay(bKidSay, true, 1300);
       bBlanks.forEach(function(bl){ sparkOnEl(bl); });
       bumpMissionEnergy();
@@ -1667,8 +2207,7 @@
       setTimeout(nextB,1200);
     }else{
       chime(false);
-      bKid.src='assets/kid_librarian_confused.png'; bKid.className='char right tilt';
-      showKidSay(bKidSay, false, 1300);
+      kidWrongPose(bKid, bKidSay, 1300);       // 고민 pose → 말풍선 사라질 때 대기 pose로 복귀
       bWrong++;
       if(bWrong>=3){
         // spec (유형 B follows 유형 A's logic): reveal correct answers with a RED blink, then force-advance
@@ -1694,10 +2233,10 @@
   ===================================================== */
   var C_INTRO='도서 대출 시스템 재부팅 중';
   var C_DATA=[
-    {q:'24시간은 며칠일까요?', tpl:'24시간 = [b:1] 일', done:'24시간은 1일!'},
-    {q:'하루는 오전과 오후로 나뉘어요.', tpl:'하루 = 오전 [b:1][b:2] 시간 + 오후 [b:1][b:2] 시간', done:'12 + 12 = 24시간!'},
-    {q:'오후 3시에서 하루가 지나면?', tpl:'오후 3시 + 1일 = 내일 오후 [b:3] 시', done:'내일 오후 3시!'},
-    {q:'1일은 몇 시간일까요?', tpl:'1일 = [b:2][b:4] 시간', done:'1일 = 24시간!'}
+    {q:'도서관 대출 시스템을 켜려면 암호가 필요해요. 24시간은 며칠과 같을까요?', tpl:'24시간 = [b:1] 일', done:'24시간은 1일!'},
+    {q:'하루는 오전과 오후로 이루어져 있어요. 빈칸에 알맞은 수를 넣으세요.', tpl:'하루 = 오전 [b:1][b:2] 시간 +[br]오후 [b:1][b:2] 시간', done:'12 + 12 = 24시간!'},
+    {q:'오늘 오후 3시에 책을 빌렸어요. 하루(1일)가 지나면 내일 언제일까요?', tpl:'오후 3시 + 1일 = 내일 오후 [b:3] 시', done:'내일 오후 3시!'},
+    {q:'이 마법 책은 딱 1일 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?', tpl:'1일 = [b:2][b:4] 시간', done:'1일 = 24시간!'}
   ];
   var cIdx=0, cBlanks=[], cScreen=document.getElementById('cScreen'), cDots=document.getElementById('cDots'), cTray=document.getElementById('cTray');
   var cKid=document.getElementById('cKid');
@@ -1724,7 +2263,7 @@
     renderDots(cDots,C_DATA.length,cIdx);
     var html=q.tpl.replace(/\[b:(\d)\]/g,function(_,ans){
       return '<span class="blank cblank" data-answer="'+ans+'">?</span>';
-    });
+    }).replace(/\[br\]/g,'<span class="eq-br"></span>');   // 항 단위 강제 줄바꿈(flex-basis:100%)
     cScreen.classList.remove('rebooted');
     cScreen.innerHTML=
       '<div class="mon-status">▶ '+C_INTRO+'<span class="dots">.</span></div>'+
@@ -1750,15 +2289,13 @@
           if(el.getAttribute('data-val')===blank.getAttribute('data-answer')){
             blank.textContent=el.getAttribute('data-val');
             blank.classList.add('filled');
-            beep(700,.08,'square');
+            snapSfx();                 // 정답 블록이 착 달라붙는 스냅 효과음
             checkC();
           }else{
             blank.classList.add('bad');
             chime(false);
-            cKid.src='assets/kid_librarian_confused.png'; cKid.className='char right tilt';
-            showKidSay(cKidSay, false, 1300);
+            kidWrongPose(cKid, cKidSay, 1300);   // 고민 pose → 말풍선 사라질 때 대기 pose로 복귀
             setTimeout(function(){blank.classList.remove('bad');},450);
-            setTimeout(function(){ cKid.src='assets/kid_librarian_idle.png'; cKid.className='char right bob'; },1300);
           }
         });
       })(n);
@@ -1770,6 +2307,7 @@
     var q=C_DATA[cIdx];
     stopMonLoading();
     chime(true);
+    clearTimeout(cKid._poseT);              // cancel a pending confused→idle revert so it doesn't override the cheer
     cKid.src='assets/kid_librarian_success.png'; cKid.className='char right cheer';
     showKidSay(cKidSay, true, 1400);
     bumpMissionEnergy();
@@ -1789,19 +2327,28 @@
     else {
       // checkC가 이미 '시스템 재부팅 완료!'를 띄운 상태 — 꼬마 사서는 계속 환호한 채 수리 아웃트로로
       setEnergy(90);
-      showSceneById('s-repair'); goldBurst(20);
-      // Show the messy 'before' state, then repair it away to the clean resting background.
       var rm=document.getElementById('repairMessy');
+      var rc=document.getElementById('repairClock');
+      showSceneById('s-repair');   // goldBurst(아래→위 아이콘) 제거: C→복구 씬 전환에선 사용 안 함
+      if(window.__playRepairOutro) window.__playRepairOutro();
+      // 시계는 clean 배경의 원(ring)에 앉으므로, 배경이 드러나기 전엔 숨겨둔다.
+      if(rc){ rc.style.transition='none'; rc.style.opacity='0'; }
+      // Show the messy 'before' state, then repair it away to the clean resting background.
       rm.style.transition='none'; rm.style.opacity='1';
       requestAnimationFrame(function(){
         rm.style.transition='opacity 1.4s ease';
-        setTimeout(function(){ rm.style.opacity='0'; goldBurst(16); },700);
+        setTimeout(function(){
+          rm.style.opacity='0';   // goldBurst(아래→위 이모지) 제거: 복구 씬 진입 배경 전환에선 사용 안 함
+          // 배경 전환(messy→clean)과 동시에 시계를 같은 속도로 fade-in
+          if(rc){ rc.style.transition='opacity 1.4s ease'; rc.style.opacity='1'; }
+        },700);
       });
     }
   }
 
   /* SECTION 8 -> 9 */
   document.getElementById('btnToStory').addEventListener('click',function(){
+    if(window.__repairClock) window.__repairClock.reset();   // 시계 rAF 정지·정상 각도 고정
     startStory(); showSceneById('s-story');
   });
 
@@ -1810,20 +2357,40 @@
   ===================================================== */
   var STORY=[
     {img:'assets/story_page_convenience_24.png', alt:'낮과 밤이 함께 보이는 밝은 동네 편의점 입구',
-     overlay:'<div class="sign-24">24</div>', pt:'페이지 1 · 24시간', badge:'24시간 = 1일',
+     overlay:'<div class="sign-24">24</div>', pt:'24시간', badge:'24시간 = 1일',
+     facts:['하루는 낮 12시간 + 밤 12시간','밤 12시가 지나면 새로운 하루!','편의점은 24시간 내내 열려 있어요'],
      cap:'우리 동네 편의점 간판에 왜 24가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!'},
     {img:'assets/story_page_sundial.png', alt:'햇빛 아래 마당에 놓인 해시계와 바닥에 드리운 그림자',
-     overlay:'', pt:'페이지 2 · 해시계', badge:'해 그림자로 시간 읽기',
+     overlay:'', pt:'해시계', badge:'해 그림자로 시간 읽기',
+     facts:['해가 뜨면 막대의 그림자가 생겨요','해가 움직이면 그림자도 움직여요','흐린 날이나 밤에는 쓸 수 없어요'],
      cap:'시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!'},
     {img:'assets/story_page_oven_timer.png', alt:'따뜻한 주방의 오븐과 둥근 요리 타이머',
-     overlay:'<div class="timer-30">30분</div>', pt:'페이지 3 · 30분 타이머', badge:'30분 뒤에 꺼내기',
+     overlay:'<div class="timer-30">30분</div>', pt:'30분 타이머', badge:'30분 뒤에 꺼내기',
+     facts:['30분은 1시간의 반이에요','긴바늘이 6을 가리키면 30분이에요'],
      cap:'오븐에 빵을 넣고 30분 후에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.'}
   ];
   var stIdx=0;
+  var storyEl=document.getElementById('s-story');
   var bookPage=document.getElementById('bookPage'), bookDots=document.getElementById('bookDots');
   var bookPrev=document.getElementById('bookPrev'), bookNext=document.getElementById('bookNext');
-  var btnToQuiz=document.getElementById('btnToQuiz');
-  function startStory(){ stIdx=0; renderStory(); }
+  var storySay=document.getElementById('storySay'), storyMsg=storySay?storySay.querySelector('.msg'):null;
+  var storyKid=document.getElementById('storyKid'), storyKidSay=document.getElementById('storyKidSay');
+  var storyQuizPop=document.getElementById('storyQuizPop'), btnStoryCert=document.getElementById('btnStoryCert');
+  var storyQuizOn=false, storyQuizDone=false, storyQuizBusy=false;
+  function startStory(){
+    stIdx=0; storyQuizOn=false; storyQuizDone=false; storyQuizBusy=false;
+    if(storyQuizPop) storyQuizPop.classList.add('hidden');
+    if(btnStoryCert) btnStoryCert.classList.add('hidden');
+    if(storyKidSay) storyKidSay.classList.remove('on');
+    if(storyKid){ storyKid.src='assets/kid_librarian_idle.png'; storyKid.className='char right bob'; }
+    renderStory();
+  }
+  function storyFactsHtml(facts){
+    if(!facts||!facts.length) return '';
+    var html='';
+    for(var i=0;i<facts.length;i++){ html+='<li>'+facts[i]+'</li>'; }
+    return html;
+  }
   function renderStory(){
     var p=STORY[stIdx];
     bookPage.innerHTML=
@@ -1831,56 +2398,88 @@
         '<img class="ill" src="'+p.img+'" alt="'+p.alt+'" />'+ p.overlay +
       '</div></div>'+
       '<div class="bp-right">'+
-        '<div class="pt">'+p.pt+'</div>'+
         '<div class="key-badge">'+p.badge+'</div>'+
-        '<div class="cap">'+p.cap+'</div>'+
+        '<div class="fact-head">알아두기</div>'+
+        '<ul class="fact-list">'+ storyFactsHtml(p.facts) +'</ul>'+
       '</div>';
+    if(storyMsg){ storyMsg.textContent=p.cap; storySay.classList.add('on'); }   // 대사는 선생님 말풍선으로 표시
     bookDots.innerHTML='';
     STORY.forEach(function(_,i){var d=document.createElement('i');if(i===stIdx)d.className='on';bookDots.appendChild(d);});
     bookPrev.disabled = stIdx===0;
-    bookNext.disabled = stIdx===STORY.length-1;
-    btnToQuiz.classList.toggle('hidden', stIdx!==STORY.length-1);
+    bookNext.disabled = false;   // 마지막 페이지에서 next는 팝업 퀴즈 트리거
   }
-  bookPrev.addEventListener('click',function(){ if(stIdx>0){stIdx--;renderStory();beep(440,.08);Voice.play(STORY_AUDIO[stIdx]);} });
-  bookNext.addEventListener('click',function(){ if(stIdx<STORY.length-1){stIdx++;renderStory();beep(560,.08);Voice.play(STORY_AUDIO[stIdx]);} });
-  btnToQuiz.addEventListener('click',function(){ showSceneById('s-quiz'); });
+  function startStoryQuiz(){
+    if(storyQuizOn) return; storyQuizOn=true;
+    if(storySay) storySay.classList.remove('on');
+    if(storyKid){ storyKid.src='assets/kid_librarian_explaining.png'; storyKid.className='char right pop'; }
+    if(storyQuizPop) storyQuizPop.classList.remove('hidden');
+    Voice.play('take14');
+  }
+  bookPrev.addEventListener('click',function(){ if(storyQuizOn) return; if(stIdx>0){stIdx--;renderStory();beep(440,.08);Voice.play(STORY_AUDIO[stIdx]);} });
+  bookNext.addEventListener('click',function(){
+    if(storyQuizOn) return;
+    if(stIdx<STORY.length-1){ stIdx++; renderStory(); beep(560,.08); Voice.play(STORY_AUDIO[stIdx]); }
+    else { startStoryQuiz(); }   // 책을 다 넘기면 → 같은 화면에 팝업 퀴즈
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.sq-op'),function(btn){
+    btn.addEventListener('click',function(){
+      if(storyQuizDone||storyQuizBusy) return; storyQuizBusy=true;
+      if(btn.getAttribute('data-op')==='1일'){
+        storyQuizDone=true; chime(true); Voice.play('take15');
+        btn.classList.add('correct');
+        if(storyKid){ storyKid.src='assets/kid_librarian_success.png'; storyKid.className='char right cheer'; }
+        setEnergy(100,true); sparkOnEl(btn); showStamp(true,null,1400);
+        showKidSay(storyKidSay, true, 6000, '맞았어! 24시간은 1일과 같지!');
+        if(btnStoryCert) btnStoryCert.classList.remove('hidden');
+      } else {
+        chime(false); btn.classList.add('wrong'); setTimeout(function(){btn.classList.remove('wrong');},420);
+        showStamp(false,'다시 한 번 생각해볼까요?',1300);
+        if(storyKid){ storyKid.src='assets/kid_librarian_confused.png'; storyKid.className='char right tilt'; }
+        showKidSay(storyKidSay, false, 1300);
+        setTimeout(function(){ if(storyKid && !storyQuizDone){ storyKid.src='assets/kid_librarian_explaining.png'; storyKid.className='char right pop'; } },1300);
+        setTimeout(function(){ storyQuizBusy=false; },1000);
+      }
+    });
+  });
+  btnStoryCert.addEventListener('click',function(){ finishCert(); showSceneById('s-cert'); if(window.__playCertOutro) window.__playCertOutro(); fanfare(); fireworks(); });
 
   /* =====================================================
      SECTION 10: POPUP QUIZ
   ===================================================== */
-  var quizDone=false;
+  var quizDone=false, quizBusy=false;   // quizBusy: 보기 선택 직후 1초 잠금(연타 방지)
   Array.prototype.forEach.call(document.querySelectorAll('.quiz-op'),function(btn){
     btn.addEventListener('click',function(){
       if(quizDone)return;
+      if(quizBusy)return;               // 선택 직후 1초 동안은 다음 선택 무시
+      quizBusy=true;
       if(btn.getAttribute('data-op')==='1일'){
         quizDone=true;
         chime(true);
         Voice.play('take15');   // "맞았어! 24시간은 1일과 같지!"
         btn.classList.add('correct');
-        document.getElementById('quizWin').classList.remove('hidden');
         document.getElementById('btnToCert').classList.remove('hidden');
         var qk=document.getElementById('quizKid');
-        qk.className='char left cheer';
+        qk.className='char right cheer';
         qk.src='assets/kid_librarian_success.png';
         setEnergy(100,true);
-        goldBurst(24);
-        sparkOnEl(btn);
+        sparkOnEl(btn);   // goldBurst(아래→위 아이콘) 제거: 마무리 퀴즈에선 사용 안 함
         showStamp(true, null, 1400);
-        showKidSay(quizKidSay, true, 1500);
+        showKidSay(quizKidSay, true, 6000, '맞았어! 24시간은 1일과 같지!');
       }else{
         chime(false);
         btn.classList.add('wrong');
         setTimeout(function(){btn.classList.remove('wrong');},420);
         showStamp(false, '다시 한 번 생각해볼까요?', 1300);
         var qk2=document.getElementById('quizKid');
-        qk2.src='assets/kid_librarian_confused.png'; qk2.className='char left tilt';
+        qk2.src='assets/kid_librarian_confused.png'; qk2.className='char right tilt';
         showKidSay(quizKidSay, false, 1300);
-        setTimeout(function(){ qk2.src='assets/kid_librarian_explaining.png'; qk2.className='char left bob'; },1300);
+        setTimeout(function(){ qk2.src='assets/kid_librarian_explaining.png'; qk2.className='char right bob'; },1300);
+        setTimeout(function(){ quizBusy=false; },1000);   // 1초 뒤 재선택 허용
       }
     });
   });
   document.getElementById('btnToCert').addEventListener('click',function(){
-    finishCert(); showSceneById('s-cert'); fanfare(); fireworks(); goldBurst(30);
+    finishCert(); showSceneById('s-cert'); if(window.__playCertOutro) window.__playCertOutro(); fanfare(); fireworks();   // goldBurst(아래→위 아이콘) 제거: 인증서에선 사용 안 함
   });
 
   /* =====================================================
@@ -1892,6 +2491,34 @@
     document.getElementById('certTime').textContent=(mm<10?'0'+mm:mm)+':'+(ss<10?'0'+ss:ss);
     document.getElementById('certScore').textContent='13/13';
   }
+
+  /* -----------------------------------------------------
+     CERTIFICATE OUTRO — 순차 대사(사서 선생님 → 꼬마 사서)
+       사서 선생님(좌): "정말 고마워! …"(take16)
+       꼬마 사서(우):   "언제든 제 수학실력이 …"(take17)
+     s-problem·s-repair과 동일: 자동 진행 + 탭하면 다음 beat로 스킵, speech_bubble 재사용.
+  ----------------------------------------------------- */
+  (function(){
+    var scene=document.getElementById('s-cert');
+    var hint=document.getElementById('certTapHint');
+    var bubbles=Array.prototype.slice.call(scene.querySelectorAll('.speech'));
+    var timer=null, idx=-1, running=false;
+    function hideAll(){ bubbles.forEach(function(b){ b.classList.remove('on'); }); }
+    var beats=[
+      function(){ bubbles[0].classList.add('on'); Voice.play('take16'); },              // 사서 선생님(좌)
+      function(){ hideAll(); bubbles[1].classList.add('on'); Voice.play('take17'); },    // 꼬마 사서(우)
+      function(){ hideAll(); if(hint) hint.style.display='none'; }                       // 대사 종료 → 말풍선 정리
+    ];
+    // 자동 전환 지연 = 각 beat 녹음 길이(+여유). 실측: take16≈5.01s(선생님), take17≈3.92s(꼬마 사서).
+    // delays[n]은 'beat n-1이 뜬 뒤 beat n까지의 대기'이므로 말풍선이 대사 끝까지 남도록 녹음 길이+여유로 잡는다.
+    var delays=[500,5900,4800];
+    function schedule(){ if(idx>=beats.length-1){ running=false; return; } var n=idx+1; timer=setTimeout(function(){ runBeat(n); }, delays[n]); }
+    function runBeat(n){ if(n<=idx || n>=beats.length) return; idx=n; beats[n](); schedule(); }
+    function advance(){ if(!running || idx>=beats.length-1) return; clearTimeout(timer); runBeat(idx+1); }
+    scene.addEventListener('click',function(e){ if(e.target.closest('.ticket-btn')) return; advance(); });   // 저장/다음 버튼은 자기 클릭 처리
+    window.__playCertOutro=function(){ clearTimeout(timer); idx=-1; running=true; hideAll(); if(hint) hint.style.display=''; schedule(); };
+  })();
+
   document.getElementById('btnSaveCert').addEventListener('click',function(){
     toast('인증서를 사진첩에 저장했어요!','ok',1800);
     fireworks();
@@ -1917,10 +2544,10 @@
       ['유형A','s-a', function(){ startTypeA(); showSceneById('s-a'); }],
       ['유형B','s-b', function(){ startTypeB(); showSceneById('s-b'); }],
       ['유형C','s-c', function(){ startTypeC(); showSceneById('s-c'); }],
-      ['복구','s-repair', function(){ setEnergy(90); showSceneById('s-repair'); }],
+      ['복구','s-repair', function(){ setEnergy(90); showSceneById('s-repair'); if(window.__playRepairOutro) window.__playRepairOutro(); }],
       ['이야기','s-story', function(){ startStory(); showSceneById('s-story'); }],
       ['퀴즈','s-quiz', function(){ setEnergy(90); showSceneById('s-quiz'); }],
-      ['인증서','s-cert', function(){ finishCert(); showSceneById('s-cert'); }]
+      ['인증서','s-cert', function(){ finishCert(); showSceneById('s-cert'); if(window.__playCertOutro) window.__playCertOutro(); }]
     ];
     var byId={};
     var lbl=document.createElement('span'); lbl.className='dbg-label'; lbl.textContent='DEBUG'; bar.appendChild(lbl);

@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900" role="img" aria-labelledby="title desc">
+  <title id="title">도서관에 선 소녀 캐릭터</title>
+  <desc id="desc">별 모양 머리핀을 한 검은 단발머리 소녀가 청록색 조끼와 노란 치마를 입고 작은 책가방을 멘 모습</desc>
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ffd9b6"/><stop offset="1" stop-color="#f1a675"/>
+    </linearGradient>
+    <linearGradient id="hair" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#3b2921"/><stop offset="0.55" stop-color="#171514"/><stop offset="1" stop-color="#4a3025"/>
+    </linearGradient>
+    <linearGradient id="vest" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#159d9a"/><stop offset="1" stop-color="#087275"/>
+    </linearGradient>
+    <linearGradient id="skirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4c33e"/><stop offset="1" stop-color="#d99520"/>
+    </linearGradient>
+    <linearGradient id="shoe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#94512f"/><stop offset="1" stop-color="#542b20"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+
+  <!-- ground shadow -->
+  <ellipse cx="304" cy="839" rx="175" ry="25" fill="#3a241a" opacity=".18" filter="url(#shadow)"/>
+
+  <!-- back hair mass -->
+  <path d="M181 256c-24-114 36-199 126-204 94-5 166 70 151 191-5 40 18 74-1 112-17 34-49 45-80 33-43 30-117 27-153-7-41 11-73-15-73-55 0-30 21-43 30-70z" fill="url(#hair)" stroke="#2b211d" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M181 252c-10 52 4 101 44 129-14-47 6-78 20-109zm273-1c9 57-7 105-43 130 14-43-6-79-19-108z" fill="#5a3829" opacity=".65"/>
+
+  <!-- neck -->
+  <path d="M273 309h69v92h-69z" fill="url(#skin)" stroke="#d98b64" stroke-width="5"/>
+
+  <!-- ears and face -->
+  <ellipse cx="194" cy="223" rx="33" ry="43" fill="url(#skin)" stroke="#d98b64" stroke-width="5"/>
+  <ellipse cx="423" cy="223" rx="33" ry="43" fill="url(#skin)" stroke="#d98b64" stroke-width="5"/>
+  <path d="M204 173c8-80 62-110 109-110 72 0 112 49 108 131-3 73-43 139-110 142-66 3-112-53-116-126-1-13 2-25 9-37z" fill="url(#skin)" stroke="#d98b64" stroke-width="6"/>
+
+  <!-- fringe -->
+  <path d="M198 181c-3-82 46-128 113-128 74 0 118 51 113 134-25-8-43-31-54-62-22 35-75 62-141 69 18-18 26-37 28-55-16 21-35 34-59 42z" fill="url(#hair)" stroke="#2b211d" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M257 83c-17 20-26 46-29 77 38-11 78-32 101-60-28 17-48 22-72 23 13-16 26-29 44-41z" fill="#6c4431" opacity=".35"/>
+
+  <!-- hair clip -->
+  <path d="M202 111l12 14 18-5-7 18 11 15-19-1-11 16-5-19-18-6 16-11z" fill="#90dfc6" stroke="#4da990" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- eyes -->
+  <ellipse cx="260" cy="218" rx="28" ry="35" fill="#fffaf0" stroke="#7b4e37" stroke-width="4"/>
+  <ellipse cx="365" cy="218" rx="28" ry="35" fill="#fffaf0" stroke="#7b4e37" stroke-width="4"/>
+  <ellipse cx="263" cy="221" rx="18" ry="25" fill="#39261b"/>
+  <ellipse cx="362" cy="221" rx="18" ry="25" fill="#39261b"/>
+  <ellipse cx="267" cy="216" rx="8" ry="12" fill="#111"/>
+  <ellipse cx="359" cy="216" rx="8" ry="12" fill="#111"/>
+  <circle cx="274" cy="208" r="6" fill="#fff"/><circle cx="369" cy="208" r="6" fill="#fff"/>
+  <path d="M235 184q26-16 50 0M340 181q25-14 49 2" fill="none" stroke="#3c251b" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- face details -->
+  <path d="M309 222q-8 25 8 26" fill="none" stroke="#d88862" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="225" cy="263" rx="24" ry="12" fill="#ef8379" opacity=".4"/><ellipse cx="398" cy="263" rx="24" ry="12" fill="#ef8379" opacity=".4"/>
+  <path d="M280 271q31 31 63-2" fill="#fff" stroke="#a64d42" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- arms behind clothes -->
+  <path d="M220 395c-35 22-43 89-56 149-8 38-20 90-12 104 9 15 28 5 34-13 18-54 41-112 56-171 10-40 5-57-22-69z" fill="url(#skin)" stroke="#d98b64" stroke-width="6"/>
+  <path d="M402 396c34 16 47 84 60 143 8 35 22 82 15 101-7 18-27 12-34-9-19-55-42-110-58-169-10-37-7-56 17-66z" fill="url(#skin)" stroke="#d98b64" stroke-width="6"/>
+  <path d="M151 636q-10 22 2 44m24-47q4 26-9 44M450 630q-2 26 12 42m8-45q10 25 2 43" fill="none" stroke="#d98b64" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- shirt -->
+  <path d="M225 368l62-26h54l61 27 8 139H212z" fill="#fff5dd" stroke="#dfc7a4" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M225 368q-31 15-42 64l54 24 24-66zm177 1q31 17 41 62l-54 25-24-66z" fill="#fff5dd" stroke="#dfc7a4" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M268 345l43 42-44 30-26-54zm87 0l-44 42 42 30 28-53z" fill="#fffdf4" stroke="#d6bea0" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- vest -->
+  <path d="M242 367l50 28 18 122-91-2 2-123zM378 367l-50 28-18 122 92-2-2-123z" fill="url(#vest)" stroke="#075f63" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M292 395h36" stroke="#075f63" stroke-width="5"/>
+
+  <!-- tie -->
+  <path d="M296 389l17-14 18 15-11 25h-15z" fill="#f15b4f" stroke="#b83f3b" stroke-width="5"/>
+  <path d="M305 413h16l15 76-24 25-24-26z" fill="#ef6650" stroke="#b83f3b" stroke-width="5"/>
+
+  <!-- badge -->
+  <path d="M365 424l12 6 12-6 5 13-5 14-12 7-13-7-5-14z" fill="#f5da68" stroke="#fff2b2" stroke-width="4"/>
+  <path d="M370 437l6 8 9-12" fill="none" stroke="#668c70" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- skirt -->
+  <path d="M236 497h148l60 207q-131 47-267 0z" fill="url(#skirt)" stroke="#bc7e18" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M260 511l-20 178m72-178v200m50-200l25 181" fill="none" stroke="#ce8c1c" stroke-width="5" opacity=".6"/>
+
+  <!-- bag strap and bag -->
+  <path d="M382 379L225 610" fill="none" stroke="#e5ae24" stroke-width="17" stroke-linecap="round"/>
+  <path d="M382 379L225 610" fill="none" stroke="#6c5827" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+  <rect x="211" y="549" width="30" height="14" rx="5" transform="rotate(-55 226 556)" fill="#f6df6b" stroke="#735728" stroke-width="4"/>
+  <path d="M198 591l63 18-12 99-69-20z" fill="#dca62d" stroke="#72512c" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M198 591l63 18-23 30-49-14z" fill="#f2c94b" stroke="#72512c" stroke-width="5"/>
+  <rect x="205" y="641" width="23" height="41" rx="3" transform="rotate(16 216 661)" fill="#fff0c2" stroke="#9e7042" stroke-width="4"/>
+  <path d="M213 649l11 3m-14 8l11 3" stroke="#e65c55" stroke-width="4"/>
+
+  <!-- legs -->
+  <path d="M228 690l72 4-8 111h-58zM331 694l70-5 8 116h-60z" fill="url(#skin)" stroke="#d98b64" stroke-width="6"/>
+
+  <!-- socks -->
+  <path d="M232 770h61l-3 69h-58zM347 770h61l5 69h-61z" fill="#fff8e8" stroke="#d8c8ac" stroke-width="6"/>
+  <path d="M233 792h58m-59 20h58m59-20h60m-59 20h61" stroke="#d8b98c" stroke-width="5"/>
+
+  <!-- shoes -->
+  <path d="M230 824c19-9 48-8 61 7l15 25c7 13-2 27-17 29h-65c-18-2-27-21-17-36z" fill="url(#shoe)" stroke="#45251d" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M351 826c18-11 47-10 59 5l20 25c9 13 1 27-15 29h-66c-17-2-26-20-17-35z" fill="url(#shoe)" stroke="#45251d" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M220 850q40 13 76-1m47 1q39 14 76-1" fill="none" stroke="#bc7041" stroke-width="7" stroke-linecap="round"/>
+  <path d="M242 825h38m120 0h-38" stroke="#f4d6a5" stroke-width="9" stroke-linecap="round"/>
+</svg>
