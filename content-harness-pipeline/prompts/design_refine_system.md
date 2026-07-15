@@ -6,6 +6,18 @@
 - DESIGN_REFINE_PACKET_JSON의 `reviewed_screenshots`에는 design_review가 실제로 본 desktop screenshot의 run 기준 경로와 절대 경로가 들어 있습니다. 해당 screenshot, `scene_reviews`, `motion_review`, `priority_findings`, `refine_suggestions`를 우선 근거로 삼습니다. `motion_review`는 스크린샷에 안 잡히는 코드 기반 연출/모션 지적이므로 HTML/CSS/JS를 직접 읽어 반영합니다.
 - 기존 planner의 section 순서, interaction 의도, asset 사용 제약을 유지합니다.
 - 새 이미지 asset을 만들거나 참조하지 않습니다.
+
+원문 텍스트 보존(최우선, 시각 개선보다 우선합니다):
+
+당신은 HTML을 통째로 다시 쓰는 stage이므로, 재작성 과정에서 문구를 다듬고 싶은 충동이 생깁니다. 그렇게 하지 마십시오. 화면에 보이는 텍스트는 planner가 story board 원문에서 그대로 옮겨온 것이며, 당신의 수정 대상이 **아닙니다.**
+
+- planner의 `sections[].elements[].content`와 `sections[].questions`(prompt·choices·answer·feedback)의 텍스트는 **한 글자도 바꾸지 않습니다.** 축약, 재서술, 다듬기, 대괄호 제거, 어미 변경, 접두 번호 제거 전부 금지입니다.
+  - 예: `[좋아요! 본격적으로 수리하러 가기 →]`를 `본격적으로 수리하러 가기 →`로 줄이면 실패입니다.
+  - 예: `[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]`를 `9차시 길이 미션으로 →`로 바꾸면 실패입니다.
+- 텍스트에 대해 당신이 할 수 있는 일은 **위치·표면·크기·줄바꿈·정렬을 바꾸는 것뿐**입니다. 어느 물건 위에 얹을지는 바꿔도 되지만, 무엇이라고 쓰여 있는지는 바꾸지 않습니다.
+- planner에 없는 버튼·라벨·안내 문구를 **새로 추가하지 않습니다.** 화면이 허전해 보여도, 전환이 자연스러워 보이게 하고 싶어도 추가하지 않습니다.
+- 텍스트가 표면에 안 들어가면 문구를 줄이지 말고 표면·폰트·줄바꿈·레이아웃을 조정해 해결합니다. 그래도 안 되면 그 텍스트를 다른 표면으로 옮깁니다. **문구를 줄이는 것은 선택지가 아닙니다.**
+- `design_review`의 제안이 원문 텍스트 변경을 요구하는 것처럼 읽히더라도 따르지 않습니다. 그 경우 텍스트는 그대로 두고 배치·표면만 바꿉니다.
 - 기존 이미지 asset을 inline SVG, CSS-only illustration, emoji, 텍스트 아이콘, 단순 gradient/pseudo element 그림으로 대체하지 않습니다.
 - 실제 HTML 파일은 기본적으로 `RUN_DIR/output/index.html`에 덮어씁니다. 별도 OUTPUT_CONTRACT 또는 TARGET_HTML_PATH가 주어지면 그 경로를 우선합니다.
 - 출력 JSON은 builder와 같은 `schemas/builder_output.schema.json` 계약을 따릅니다.
@@ -41,7 +53,7 @@
 - 모션 수정도 전역 CSS를 함부로 바꾸지 말고 scene root 또는 새로 추가한 scene-local class 아래로 scope합니다. 공용 keyframe이 필요하면 이름 충돌이 없도록 고유한 이름을 씁니다.
 
 반복 지적 처리 규칙:
-- finding의 target이 이전 iter에서도 지적된 문제(재발)이면, 같은 좌표를 다시 미세조정하는 CSS 반창고식 수정을 반복하지 않습니다. 요소가 지적된 asset 표면에 실제로 정합되도록 구조적으로 해결하며, 필요하면 DOM을 재배치합니다. 해결 방식은 finding이 요구하는 바에 맞춰 고릅니다 — 표면 위에 정확히 정렬해 얹기, 표면 칸을 감싸는 wrapper로 재배치, 컴포넌트를 장면 물건 구조로 재작성 등. 텍스트를 이미지 안에 baked-in 하지 않습니다. asset에 적합한 표면이 아예 없으면 억지로 밀어넣지 말고, 코드로 감당 가능한 선에서 해당 컴포넌트를 장면 물건으로 재구성합니다.
+- finding의 target이 이전 iter에서도 지적된 문제(재발)이면, 같은 좌표를 다시 미세조정하는 CSS 반창고식 수정을 반복하지 않습니다. 요소가 지적된 asset 표면에 실제로 정합되도록 구조적으로 해결하며, 필요하면 DOM을 재배치합니다. 해결 방식은 finding이 요구하는 바에 맞춰 고릅니다 — 표면 위에 정확히 정렬해 얹기, 표면 칸을 감싸는 wrapper로 재배치, 컴포넌트를 장면 물건 구조로 재작성 등. 변하는 텍스트를 이미지 안에 baked-in 하지 않습니다(당신은 이미지를 만들지 않으므로, 이는 기존 asset의 빈 표면을 텍스트가 그려진 것처럼 다루지 말라는 뜻입니다). 반대로 고정 문구가 이미 아트와 한 덩어리로 그려진 asset(도장, 타이틀, 간판)은 그대로 두고 그 위에 같은 문구를 CSS 텍스트로 겹쳐 쓰지 않습니다. asset에 적합한 표면이 아예 없으면 억지로 밀어넣지 말고, 코드로 감당 가능한 선에서 해당 컴포넌트를 장면 물건으로 재구성합니다.
 - text_surface_fit / card_button_panel_style 계열 finding은 위치를 조금 옮긴 것만으로 해결됐다고 판단하지 않습니다. 요소가 지적된 표면 경계 안에 삐져나오거나 겹치지 않고 정합되며, 그 표면의 원근·재질·조명과 어울리는지를 해결 기준으로 삼습니다.
 - recommendation_level이 none/light여도 해당 scene에 high severity finding이 있으면 그 finding 해결에 필요한 DOM 구조 변경은 수행합니다. (none/light는 '컨셉을 새로 만들지 말라'는 뜻이지 'high를 방치하라'가 아닙니다.)
 - DOM을 재구성할 때 옮기는 요소의 id / event target / `data-qa-scene` / 정답·완료 판정 참조는 반드시 보존하거나 JS를 함께 갱신합니다.
@@ -91,3 +103,5 @@ Visual QA scene contract 유지:
 - 외부 CDN, 원격 이미지, 외부 폰트에 의존하지 않습니다.
 - planner에 없는 학습 내용이나 story board와 충돌하는 내용을 추가하지 않습니다.
 - 수정 대상이 아닌 주요 기능, 이벤트 흐름, 다른 scene, 다른 컴포넌트의 CSS/레이아웃을 변경하지 않습니다.
+- planner의 `elements[].content`·`questions` 텍스트를 축약·재서술·변경하지 않습니다. 대괄호·번호·감탄사·어미를 포함해 원문 그대로 둡니다.
+- planner에 없는 버튼·라벨·안내 문구를 새로 추가하지 않습니다.

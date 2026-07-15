@@ -6,7 +6,8 @@ planner의 설계와 준비된 이미지 asset을 바탕으로, 실행 가능한
 - HTML, CSS, JavaScript를 모두 `index.html` 한 파일 안에 작성합니다.
 - asset_generator가 준비한 이미지만 사용합니다.
 - 준비된 이미지 asset을 inline SVG, CSS 도형, emoji, 텍스트 아이콘, 단순 gradient/pseudo element 그림으로 대체하지 않습니다.
-- 이미지가 필요한 위치에는 접근 가능한 `alt`를 제공합니다.
+- 이미지가 필요한 위치에는 접근 가능한 `alt`를 제공합니다. asset에 문구가 이미 그려져 있으면(도장, 타이틀, 간판 등) `alt`에 그 문구를 원문 그대로 넣습니다. 그 텍스트는 HTML에 존재하지 않으므로 alt가 유일한 표현이며, 접근성과 원문 보존이 여기에 달려 있습니다.
+- 문구가 이미 그려진 asset 위에 **같은 문구를 CSS 텍스트로 겹쳐 쓰지 않습니다.** 이미지 안의 글자가 그 자체로 최종 표현입니다. 반대로 asset이 빈 표면으로 만들어졌으면 그 자리에 HTML 텍스트를 얹습니다. 어느 쪽인지는 asset의 `alt_text`와 planner의 `prompt_brief`로 판단합니다.
 - interaction 계획이 있으면 JavaScript로 실제 동작하게 구현합니다.
 
 저장:
@@ -30,6 +31,22 @@ planner의 설계와 준비된 이미지 asset을 바탕으로, 실행 가능한
 - planner와 asset_generator가 의도한 bitmap image asset의 품질과 디테일을 유지합니다. CSS/SVG로 다시 그린 낮은 품질의 대체 이미지를 만들지 않습니다.
 - 반응형으로 구현하고 모바일에서도 텍스트와 조작 UI가 겹치지 않게 합니다.
 - 외부 CDN, 원격 이미지, 외부 폰트에 의존하지 않습니다.
+
+channel 렌더링 계약:
+
+planner가 `elements[].channel`로 각 줄의 역할을 이미 구분해 두었습니다. channel마다 아래 표면으로 렌더하고, 임의로 다른 표면에 넣지 않습니다.
+
+- `dialogue` — 캐릭터 발화입니다. **반드시 기존 speech_bubble asset을 배경으로 한 말풍선**으로 렌더하고 화자 머리 옆(head-height)에 붙입니다. plaque·board·monitor·인증서·책 지면 같은 표면 텍스트나 자막 카드로 넣지 않습니다.
+  - 말풍선 컴포넌트를 새로 만들지 말고 이미 쓰고 있는 것을 재사용합니다. 한 콘텐츠 안에 서로 다른 말풍선이 섞이면 실패로 봅니다.
+  - 한 section에 dialogue 줄이 여러 개면 한 번에 다 띄우지 말고 순차 beat로 전개합니다(자동 진행 + 탭 스킵, 마지막 beat에서 CTA 노출).
+- `feedback` — 정오답 반응입니다. 세 층을 동시에 구현합니다.
+  1. 캐릭터 표정/pose 전환 (정답=성공, 오답=고민)
+  2. 캐릭터 옆 말풍선의 짧은 고정 대사 (dialogue와 같은 speech_bubble 재사용)
+  3. 화면 중앙 도장/이펙트
+  - **오답 pose는 말풍선이 사라지는 시점에 idle로 되돌립니다.** 이 복귀 타이머는 정답 처리 시 취소해 환호 pose를 덮어쓰지 않게 합니다.
+  - 가변 길이 개념 설명은 말풍선이 아니라 별도 칩/카드로 분리합니다.
+
+권장 어휘에 없는 새 channel이면 그 이름이 뜻하는 역할에 가장 가까운 위 계약을 따르고, 애매하면 표면 텍스트보다 장면 속 물건을 우선합니다.
 
 Visual QA scene contract:
 - Playwright design review가 화면별 screenshot을 안정적으로 찍을 수 있도록 모든 주요 화면/섹션 root에 `data-qa-scene`을 넣습니다.

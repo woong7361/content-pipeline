@@ -9,6 +9,12 @@
 - 같은 분류 태그가 누적 **5회 이상**이 되면 다음 작업 전에 rule 승격을 제안한다.
 - rule로 승격되면 해당 항목 `상태`를 `규칙화됨`으로 바꾸고 어느 AGENTS.md에 반영했는지 적는다.
 
+### 보류(SKIP) 처리
+
+- 기술적으로 불가능하거나 하지 않기로 결정한 항목은 상태를 `보류`로 둔다. **`보류`인 항목은 5회를 넘어도 rule 승격을 다시 제안하지 않는다.** (`열림`은 "아직 안 했다", `보류`는 "안 하기로 했다"로 구분한다.)
+- 발생 횟수와 사례는 그대로 유지한다. 재발해도 횟수만 갱신하고 승격 제안은 하지 않는다.
+- 보류로 바꿀 때는 **왜 불가능한지**와 **무엇이 바뀌면 다시 열 것인지(해제 조건)** 를 반드시 함께 적는다. 해제 조건이 충족되면 `열림`으로 되돌린다.
+
 ### 규칙화됨 항목 보관과 재발 처리
 
 - 항목이 `규칙화됨`이 되면 사례·조치 **전문은 `solved-log.md`로 옮겨 보존**하고, `problem.md`에는 **스텁만** 남긴다. "어떤 문제였고 어떻게 해결했는가"라는 지식은 요약해 날리지 않는다.
@@ -23,7 +29,7 @@
 
 - 대상: content-harness-pipeline/... (구체 경로 또는 index.html)
 - 분류 태그: <중복 감지 기준이 되는 짧은 카테고리>
-- 상태: 열림 | 제안됨 | 규칙화됨
+- 상태: 열림 | 제안됨 | 규칙화됨 | 보류
 - 발생 횟수: N
 - 최초 발생일: YYYY-MM-DD
 - 최근 발생일: YYYY-MM-DD
@@ -37,11 +43,48 @@
 
 <!-- 규칙화된 항목은 여기 스텁 한 줄로 남긴다. 문제+해결 전문은 solved-log.md 참조. -->
 
+- [dialogue-as-speech-bubble] · 횟수 8 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약". feedback-as-character-bubble·sequential-scene-choreography와 하나의 규칙으로 통합(실질 16회).
+- [feedback-as-character-bubble] · 횟수 5 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약"의 `feedback` 절.
+- [sequential-scene-choreography] · 횟수 3 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약"의 dialogue 순차 beat 조항. (5회 미만이나 dialogue 계열로 통합 승격.)
 - [character-asset-identity-alpha] · 횟수 9 · 규칙화됨 · solved-log.md#character-asset-identity-alpha-캐릭터-에셋이-포즈마다-다른-인물로-생성됨-정체성-부분 · 반영: AGENTS.md 문서 규칙이 아니라 파이프라인 구조로 강제 (planner_output.schema.json characters 엔티티 · runner.py patch merge/identity_context · design_review.py allowlist · planner/design_review/asset_generator 프롬프트). 원 항목 17회 중 알파 8회는 [character-asset-alpha-fringe]로 분리되어 열린 상태.
 
 ## 문제 로그
 
-<!-- 새 항목은 이 아래에 추가한다. 아직 기록된 문제가 없다. -->
+<!-- 새 항목은 이 아래에 추가한다. -->
+
+### [refine-alters-spec-text] design_refine이 시각 수정 중 원문 텍스트를 축약·변경·추가해 content_fidelity를 훼손함
+
+- 대상: content-harness-pipeline/prompts/design_refine_system.md, prompts/design_review_system.md (관측: runs/2026-07-15_ch8a0715)
+- 분류 태그: refine-alters-spec-text
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-15
+- 최근 발생일: 2026-07-15
+- 사례:
+  - 2026-07-15: full run(ch8a0715)에서 **content 품질 루프가 순손실**로 관측됨. content_eval 총점이 iter를 거치며 **4.2 → 3.08 → 2.9**로 하락했고 weak_axes는 1개 → 2개 → 3개로 늘었다. 특히 `content_fidelity`가 **5 → 1**로 추락. iter 001은 총점 4.2로 min_total(4.2)을 이미 만족했고 `feedback_scaffolding`(3<4.0) 하나 때문에 REJECT였는데, 그것을 고치려 돌린 refine이 나머지를 무너뜨렸다. eval이 지목한 근거:
+    - planner에 없는 전환 버튼 `도와주러 가기`가 **추가됨**
+    - `[좋아요! 본격적으로 수리하러 가기 →]` → `본격적으로 수리하러 가기 →` **축약**
+    - `[3. 수리 이야기 보러 가기 →]` → `수리 이야기 보러 가기 →` **축약**
+    - `[내 사진첩에 저장하기]` → `사진첩에 저장하기` **축약**
+    - `[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]` → `9차시 길이 미션으로 →` **변경**
+    - 문항·보기·정답 데이터 자체는 살아 있으나 "필수 노출 라벨과 전환 텍스트 불일치가 누적"되어 원문 충실도 조건을 만족하지 못함.
+- 조치: (기록 시점 미조치) 근본 원인 후보 — `design_refine_system.md`는 텍스트를 "장면 속 물건으로 흡수합니다"라고 **옮기라고만** 하고, **원문 내용을 바꾸지 말라는 제약이 어디에도 없다.** design_refine이 HTML을 통째로 다시 쓰는 stage이므로, 재작성 과정에서 라벨을 자연스럽게 다듬어 버린다. planner의 `elements[].content`가 원문 보존 대상이라는 사실이 builder_system.md에는 있으나 design_refine_system.md에는 없다. design_review 역시 원문 변경을 제안하지 말라는 제약이 없다.
+- 규칙화 메모: 아직 1회이나 **파이프라인 설계 차원의 문제**라 즉시 대응 가치가 큼(루프를 돌릴수록 나빠지므로 refine 자체가 순손실). 반복되면 "design_refine과 design_review는 시각·레이아웃만 다루고 planner `elements[].content`/`questions`의 원문 텍스트는 한 글자도 바꾸지 않는다. 텍스트는 위치만 옮길 수 있다"를 두 프롬프트에 고정. 상류 [planner-storyboard-detail-loss]·[typeB-problem-text-mismatch-spec]과 같은 '원문 보존' 계열이나 **범인이 다름**(planner도 builder도 아닌 design_refine).
+
+### [asset-native-ui-design-reject] design_review가 웹 패널형 학습 UI와 asset 표면 미정합을 REJECT함
+
+- 대상: content-harness-pipeline/runs/2026-07-15_ch8a0715/output/index.html
+- 분류 태그: asset-native-ui-design-reject
+- 상태: 열림
+- 발생 횟수: 3
+- 최초 발생일: 2026-07-15
+- 최근 발생일: 2026-07-15
+- 사례:
+  - 2026-07-15: design_review가 desktop 기준 REJECT. 튜토리얼, 활동2 유형 A/B/C, 팝업 퀴즈, 최종 인증서에서 핵심 학습 UI가 장면 속 asset 표면에 흡수되지 않고 흰 웹 패널/카드/키패드/모달처럼 떠 있으며, 최종 장면에서는 말풍선과 CTA가 겹친다고 지적.
+  - 2026-07-15: design_review iter_002가 desktop 기준 REJECT. Type B/C 키패드와 확인 버튼이 콘솔 밖으로 돌출되고, 팝업 퀴즈 질문·선택지가 종이 카드 밖에 떠 있으며, 팝업북 asset이 배경을 포함해 restored lobby 위에 다른 장면처럼 겹친다고 지적. 반복 CTA도 일반 CSS 버튼처럼 보인다고 지적.
+  - 2026-07-15: design_review iter_003가 desktop 기준 REJECT. 튜토리얼 작업대의 안내문·카드 라벨이 asset surface 경계에 걸치고, 활동2 Type A/B/C 콘솔의 시계 라벨·키패드·확인 CTA가 버튼/슬롯 중심에 맞지 않으며, 에너지 게이지와 scene title도 웹 UI처럼 보인다고 지적.
+- 조치: 이번 refine에서 기존 생성 asset(`title_mission_banner`, `reusable_library_ticket_button`, `tutorial_repair_workbench`, `time_quiz_control_console`, `popup_quiz_paper_card`, `final_certificate_frame`)을 활용해 HTML/CSS/JS 배치를 수정하고 `design_refine_preview` desktop 캡처로 확인.
+- 규칙화 메모: 아직 2회. 반복되면 "builder/refine은 planner가 요구한 interaction surface asset이 존재할 때 full-width 웹 패널을 유지하지 말고, 동적 텍스트와 조작 target을 asset safe zone 안으로 정렬한다" 규칙을 builder/refine prompt에 제안 후보.
 
 ### [planner-storyboard-detail-loss] planner.json이 storyboard 세부(문제 보기·대사·오디오·모션·효과)를 압축/누락함
 
@@ -114,7 +157,7 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-08_*/output/assets/intro_title_time_repair_v1.png
 - 분류 태그: transparent-asset-alpha-not-validated
-- 상태: 제안됨
+- 상태: 보류
 - 발생 횟수: 7
 - 최초 발생일: 2026-07-13
 - 최근 발생일: 2026-07-13
@@ -127,7 +170,9 @@
   - 2026-07-13: 느낌표 오른쪽과 스패너 바깥 사이에 남은 흰색만 제거하고 스패너 내부는 보존해 달라고 이미지로 위치를 지정.
   - 2026-07-13: 위쪽 `박` 글자 아래, 두 줄 사이에 남은 흰색 조각을 이미지로 지정해 제거 요청.
 - 조치: 실제 재작업 전 rule 승격 제안 완료. 지정된 흰색 연결 성분만 투명화하고 주변 글자 테두리·별 장식은 보존·검증.
-- 규칙화 메모: 5회 누적으로 rule 승격 제안. 초안: "투명 PNG 수정은 원본을 보존한 채 작업하고, 배경·프린지와 내부의 밝은 소재를 별도 마스크로 분리한다. 교체 전 흰색·검정·고채도 단색 배경에서 외곽 프린지와 내부 손상을 시각 검수하고, RGBA/alpha 범위·투명 픽셀 수·보호 영역 표본을 수치 검증한다. 검수 이미지를 확인하기 전 대상 파일을 덮어쓰지 않는다." 반영 위치 제안: content-harness-pipeline/AGENTS.md의 기본 원칙 아래.
+- 규칙화 메모: **2026-07-15 보류(SKIP) 결정.** 사용자 판단: "기술적으로 안 되더라, prompt 처리를 해도." 프롬프트·스키마 수준으로는 해결되지 않는 문제라 rule 승격을 하지 않는다. 근거: 누적 사례가 전부 프롬프트 지시가 아니라 **수동 픽셀 보정**(flood-fill, despill, alpha 마스크 수축, 크로마키 색 교체)으로만 해결됐다. 이미지 생성이 애초에 진짜 alpha를 안 내고 체크무늬를 RGB로 그려주는 것이 근본이며, 이건 프롬프트로 교정할 수 있는 층위가 아니다.
+  - 해제 조건: (1) 진짜 alpha 채널을 내는 이미지 생성 도구/MCP가 실행 환경에 생기거나, (2) LLM이 아닌 **결정적 후처리 코드**(캔버스 외곽 연결 성분 flood-fill → despill → 마스크 수축 → alpha 수치 검증)를 파이프라인 단계로 넣기로 하면 다시 `열림`으로 되돌린다. ([asset-generation-method-mismatch]에 기록된 "codex에 이미지 생성 도구 없음"이 (1)의 선행 조건.)
+  - 폐기하지 않고 남겨둔 기존 초안: "투명 PNG 수정은 원본을 보존한 채 작업하고, 배경·프린지와 내부의 밝은 소재를 별도 마스크로 분리한다. 교체 전 흰색·검정·고채도 단색 배경에서 외곽 프린지와 내부 손상을 시각 검수하고, RGBA/alpha 범위·투명 픽셀 수·보호 영역 표본을 수치 검증한다. 검수 이미지를 확인하기 전 대상 파일을 덮어쓰지 않는다." — 해제 시 (2)의 코드 사양으로 재활용 가능.
 
 ### [story-cert-button-behind-tickets] 마무리 퀴즈 정답 후 인증서 버튼이 답안 티켓 뒤에 가려짐
 
@@ -291,7 +336,10 @@
     - 조치: PIL 산출물 삭제. 사용자에게 (a)이미지gen 경로 제공 (b)기존 plaque 배너 전환 (c)PIL 다듬기 중 선택 요청 → **기존 plaque(`library_dialogue_plaque_blank.png`) 배너 재사용**으로 전환. `#repairDone`에 '복구가 완료되었어요!' `.title`을 얹어 시계 settle 순간 중앙 pop-in(top:64%, goldBurst 동반) 후 CTA 노출.
   - 2026-07-10: 이미지 생성 도구로 만든 투명 `repair_title_complete_v1.png`가 준비된 뒤에도 복구 완료 화면에는 임시 plaque 텍스트 카드가 남아 있어, 사용자가 카드를 빼고 생성 이미지를 화면 가운데에 넣도록 요청.
     - 조치: `#repairDone`을 plaque/text 구조에서 투명 PNG `<img>`로 교체하고, 화면 정중앙에 pop-in되도록 CSS를 수정.
-- 규칙화 메모: **3회.** 교훈: (1) 사용자가 이미지 gen을 요구하면 로컬 코드 렌더링으로 대체하지 않는다. (2) **codex는 이미지 생성 도구가 없으면 경고 없이 PIL로 폴백하므로, 이미지 생성 전에 실행 환경(codex config)에 image-gen MCP/도구가 실제로 있는지 먼저 확인한다. 없으면 로컬 렌더 산출을 결과로 쓰지 말고 사용자에게 경로를 확인하거나 기존 에셋(plaque/도장 등) 재사용으로 대체 제안한다.** (3) 생성 에셋이 준비되면 임시 대체 UI를 남기지 말고 실제 에셋으로 교체한다. 반영 위치: content-harness-pipeline/AGENTS.md 또는 asset generation workflow. 사용자 승인 대기.
+- 규칙화 메모: **3회.** 교훈: (1) 사용자가 이미지 gen을 요구하면 로컬 코드 렌더링으로 대체하지 않는다. (2) 생성 에셋이 준비되면 임시 대체 UI를 남기지 말고 실제 에셋으로 교체한다. 반영 위치: content-harness-pipeline/AGENTS.md 또는 asset generation workflow. 사용자 승인 대기.
+  - **⚠️ 2026-07-15 정정 — 이 항목의 "근본 원인" 서술은 더 이상 유효하지 않다.** 위 7/10 사례에 *"codex 설정에 이미지 생성 MCP/도구가 없어 현재 환경 codex로는 진짜 이미지 생성 불가"* 라고 적혀 있으나, 확인 결과 **이미지 생성은 정상 동작한다.** 근거: `runs/2026-07-14_ch802d14`의 asset 21개가 전부 `status: generated`이고 800KB~2.2MB 알파 PNG 일러스트이며, 2026-07-15 full run(ch8a0715)도 asset 28개를 정상 생성했다. `~/.codex/config.toml`의 MCP 목록에 image-gen이 없는 것은 사실이나, 그것이 이미지 생성 불가를 뜻하지 않는다(codex가 다른 경로로 생성함 — `codex-runtime-home/generated_images/`에 산출물이 쌓임).
+  - **이 기록이 실제로 해를 끼쳤다.** 2026-07-15 세션에서 이 항목을 근거로 "전체 run은 돌리면 안 된다"고 반복 판단해 version0.3의 end-to-end 검증을 미뤘고, docs/version_log.md와 solved-log.md에 틀린 한계 서술을 커밋했다. 교훈 추가: **problem.md의 과거 환경 진단은 시간이 지나면 낡는다. 이를 근거로 판단하기 전에 실제 산출물로 재확인한다.**
+  - 7/10 당시 PIL 폴백이 실제로 있었는지, 아니면 그때도 오진이었는지는 확실치 않다. 어느 쪽이든 현재는 정상이다.
 
 ### [ornate-asset-wrong-function] 장식성 강한 에셋(인증서/상장 등)을 기능 UI 표면으로 재사용해 주제와 안 어울림
 
@@ -313,14 +361,15 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`assets/morning_evening_time_bar.png`)
 - 분류 태그: decorative-asset-background-alpha
-- 상태: 열림
+- 상태: 보류
 - 발생 횟수: 1
 - 최초 발생일: 2026-07-10
 - 최근 발생일: 2026-07-10
 - 사례:
   - 2026-07-10: 유형 C 모니터 안에 추가한 아침→저녁 시간대 막대 이미지의 크림색 배경이 화면과 겹쳐 보여, 배경을 투명하게 해야 한다고 지적.
 - 조치: 기존 구도를 마젠타 크로마키 배경으로 편집한 뒤 alpha PNG로 추출했다. 보라색 저녁 영역이 디스필에 손상되는 것을 검수에서 발견해 디스필을 끄고 edge-contract 1로 테두리를 정리한 final asset으로 HTML 참조를 교체했다.
-- 규칙화 메모: 아직 1회. 반복되면 "기존 UI 표면 위에 얹는 장식용 raster asset은 생성 전에 투명 배경 필요 여부를 확인하고 alpha PNG로 검수한다" 규칙을 asset 생성 workflow에 제안 후보.
+- 규칙화 메모: **2026-07-15 보류(SKIP) 결정.** [transparent-asset-alpha-not-validated]·[character-asset-alpha-fringe]와 같은 알파 계열이라 동일 사유로 함께 보류한다 — 프롬프트로는 해결되지 않는 층위. 이 사례도 결국 크로마키 편집·디스필 조정·edge-contract 같은 수동 픽셀 작업으로 해결됐다. 해제 조건은 그 항목들과 같다.
+  - 해제 시 살릴 초안: "기존 UI 표면 위에 얹는 장식용 raster asset은 생성 전에 투명 배경 필요 여부를 확인하고 alpha PNG로 검수한다."
 
 ### [feedback-stamp-visual-overload] 피드백 도장 이미지가 과밀하고 컨셉 전달이 약함
 
@@ -341,7 +390,7 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/ (`teacher_*.png`, `kid_librarian_*.png`)
 - 분류 태그: character-asset-alpha-fringe
-- 상태: 열림
+- 상태: 보류
 - 발생 횟수: 8
 - 최초 발생일: 2026-07-09
 - 최근 발생일: 2026-07-13
@@ -355,7 +404,9 @@
   - 2026-07-13: 얼굴·머리 외곽 전체에 흰 배경 프린지 잔존 → 색상 기준이 아니라 alpha 마스크 3px 수축으로 제거.
   - 2026-07-13: 머리 상단·번 주변에 흰 부분이 조금 남음 → 해당 ROI만 추가 2px 수축.
 - 조치: (개별 사례는 그때그때 수동 보정으로 해결. 구조적 대응은 아직 없음.)
-- 규칙화 메모: 원래 [character-asset-identity-alpha](17회)에 정체성 문제와 함께 묶여 있었으나, 2026-07-15에 정체성 부분(9회)이 파이프라인 구조로 해소되면서 알파/프린지 8회를 이 태그로 분리했다. **이 항목은 [transparent-asset-alpha-not-validated](7회, 제안됨)와 사실상 같은 문제**(투명 PNG 알파 검증 부재)이므로, 알파 작업을 시작할 때 두 항목을 하나로 병합해 실질 15회로 다루는 것을 권장한다. 사용자가 2026-07-15에 알파 후처리는 후순위로 미루기로 결정. 교훈 후보: 크로마키 색은 대상 팔레트와 충돌하지 않는 색으로 고르고(마젠타 vs 코랄 의상 충돌 사례), 검수 이미지를 확인하기 전 대상 파일을 덮어쓰지 않는다.
+- 규칙화 메모: 원래 [character-asset-identity-alpha](17회)에 정체성 문제와 함께 묶여 있었으나, 2026-07-15에 정체성 부분(9회)이 파이프라인 구조로 해소되면서 알파/프린지 8회를 이 태그로 분리했다. **이 항목은 [transparent-asset-alpha-not-validated](7회)와 사실상 같은 문제**(투명 PNG 알파 검증 부재)이므로, 해제 시 두 항목을 하나로 병합해 실질 15회로 다루는 것을 권장한다.
+  - **2026-07-15 보류(SKIP) 결정.** [transparent-asset-alpha-not-validated]와 동일 사유 — 프롬프트로는 해결되지 않는 층위의 문제. 해제 조건도 그 항목과 같다(진짜 alpha를 내는 생성 도구, 또는 결정적 후처리 코드 도입).
+  - 해제 시 살릴 교훈: 크로마키 색은 대상 팔레트와 충돌하지 않는 색으로 고른다(마젠타가 코랄 의상·피부 경계와 충돌해 보라 프린지가 남았고, 초록으로 바꿔 해결한 사례). 검수 이미지를 확인하기 전 대상 파일을 덮어쓰지 않는다.
 
 ### [asset-batch-incomplete-execution] 캐릭터 에셋 배치를 일부만 생성하고 전체 세트를 완료하지 않음
 
@@ -404,23 +455,6 @@
     - 조치: clean lobby bg의 원을 Hough식 밴드 탐색으로 측정(중심 (850,281), 반지름 146, IMG 1672×941), intro와 동일한 cover-scale 배치 JS(`__placeRepairClock`, resize 대응) 추가. 시계 PNG rim 채움비(0.859) 반영해 box=2R/0.859로 산정. 배경에 시계 PNG 합성해 원 안에 정확히 안착 시각 검증(임시 검증 파일은 삭제). (후속: 시계가 회전→감속하며 정상 복귀하는 효과는 다음 단계)
   - 2026-07-13: 이야기 3페이지 오븐 이미지 위 `30분` 오버레이(`.timer-30`)가 이미지 중앙(left50/top50)에 있어 오븐 위에 떠 있음. 이미지 오른쪽에 그려진 둥근 타이머(시계) 면 안에 넣어야 한다고 지적. → 타이머 크림색 면 중심을 이미지 기준 픽셀 측정(약 left71/top66%)해 `.timer-30`을 그 위치로 이동. (`.timer-30`은 `.ill-wrap`(contain, 안정 좌표) 안이라 정적 %로 충분하고 사진 tilt도 함께 따라감)
 - 규칙화 메모: **6회 → rule 승격 제안.** 교훈: **asset을 얹는 컨테이너는 `aspect-ratio`를 asset 원본 비율에 맞춰라 — 안 맞으면 `object-fit:contain`이 레터박스를 만들어 %좌표 오버레이가 어긋난다. 또 `background-size:cover` 배경의 앵커(원형 거치대 등)는 정적 %로 못 맞추므로, 원 지오메트리를 픽셀 측정해 런타임에서 cover 스케일·크롭을 계산하는 JS로 앉히고 resize에 재적용한다(intro의 `__placeBigClock`/복구의 `__placeRepairClock` 패턴 재사용).** 반영 위치: builder_system.md. 사용자 승인 대기.
-
-### [sequential-scene-choreography] 스토리 씬이 순차 대사 연출 없이 단일 장면·단일 애니메이션으로 끝남
-
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-problem`, `#s-repair`, `#s-cert`)
-- 분류 태그: sequential-scene-choreography
-- 상태: 제안됨
-- 발생 횟수: 3
-- 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-10
-- 사례:
-  - 2026-07-09: 문제 인트로 씬이 스토리보드(시계 회전 → 선생님 대사1 → 2초 후 대사2 → 사서 등장 대사 → 수리하러 가기 버튼)처럼 순차 연출되어야 하는데, 모든 요소가 한 번에 뜨는 단일 장면·단일 애니메이션으로 끝남. 대사가 시간축을 따라 beat 단위로 전개되지 않음.
-    - 조치: `#s-problem`을 타임라인 기반 beat 연출로 재구성(시계 스핀 → 말풍선 순차 노출 → 꼬마 사서 pop-in → CTA 버튼). 말풍선은 temp/dialogue_plaque_set.png의 말풍선을 크롭한 asset을 배경으로 사용. auto-timed(2초 간격) + 탭하면 다음 beat로 스킵.
-  - 2026-07-10: 복구(`#s-repair`) 씬이 "해냈다! … / 우리 수리 대원 정말 대단해 …"를 하나의 중앙 plaque banner에 통째로 담은 단일 장면이었음. 사용자가 이를 꼬마 사서→사서 선생님 순차 대사로 나누고, 선생님 왼쪽·사서 오른쪽 배치, 말풍선은 기존 speech_bubble 재사용을 요청. (같은 [dialogue-as-speech-bubble] 계열: 기존 말풍선 재사용)
-    - 조치: plaque banner 제거 → `.dlg-area`에 `.speech.kid-say`(beat1='해냈다!', take09)·`.speech.teacher-say`(beat2='우리 수리 대원…', take10) 추가. 캐릭터 좌우 교체(teacher `char left`/kid `char right`). `#s-repair .speech` 스코프 CSS를 A·B·C와 동일하게. CTA(`#btnToStory`)는 `.dlg-cta`로 마지막 beat에서 노출. s-problem과 동일 beat 컨트롤러(`__playRepairOutro`, 자동 진행+탭 스킵) 추가, nextC·메뉴 진입에서 호출. SCENE_INTRO의 s-repair 자동 seq 재생은 beat가 대신 재생하므로 제거. (후속: intro 대형 시계가 focus되며 천천히 정상 복귀하는 효과는 2단계로 예정)
-  - 2026-07-10: 최종 인증서(`#s-cert`)도 마무리 대사가 인증서 안 캡션 텍스트로 박힌 단일 장면이었음. 사용자가 음성 길이에 맞춘 순차 말풍선 연출 + 선생님 좌/꼬마 사서 우 배치를 요청(같은 [dialogue-as-speech-bubble] 계열). 이로써 인트로·복구·인증서 3개 아웃트로/인트로가 모두 beat 연출로 통일됨.
-    - 조치: `#s-cert`에 `__playCertOutro` beat 컨트롤러 추가(s-problem·s-repair과 동일 패턴). take16(선생님)·take17(꼬마 사서) 음성 실측으로 delays `[500,5900,4800]`. SCENE_INTRO seq 재생 제거, btnToCert·메뉴 진입에서 호출.
-- 규칙화 메모: **3회 → rule 승격 제안.** 반복되면 "스토리/인트로/아웃트로 씬은 단일 장면이 아니라 순차 beat 연출로(캐릭터별 대사는 기존 speech_bubble 재사용, 화자별 좌/우 배치, 자동 진행+탭 스킵, 자동전환 지연은 음성 실측 기반, 마지막 beat에서 CTA 노출)" 규칙을 builder_system.md에 제안 후보. ([dialogue-as-speech-bubble]·[beat-timing-vs-audio]와 묶어 하나의 '씬 연출' 규칙으로 통합 가능)
 
 ### [motion-supporting-narration] 나레이션이 말하는 상황을 뒷받침하는 시각 액션이 없고 등장 애니메이션이 밋밋함
 
@@ -579,33 +613,6 @@
 - 조치: `enableDrag`를 position:fixed+left/top 방식에서 **`transform:translate(dx,dy)` 델타 이동** 방식으로 교체(요소를 흐름에 유지, 컨테이닝 블록과 무관하게 포인터 델타만큼 이동). 드래그 중 `transition:none`으로 지연 제거. CSS/`!important` 미사용. 드롭 판정(`hitBlank`, clientX/Y 기반)은 그대로.
 - 규칙화 메모: 아직 1회. 반복되면 "드래그로 요소를 움직일 때 position:fixed+뷰포트좌표 대신 transform:translate 델타를 쓴다(transform 조상 컨테이닝블록 문제 회피)" 규칙을 builder_system.md에 제안 후보.
 
-### [dialogue-as-speech-bubble] 캐릭터 대사를 표면 빈 공간에 억지로 넣지 말고 말풍선/상단으로
-
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut .wb-note`, `#s-cert .cert-caption`)
-- 분류 태그: dialogue-as-speech-bubble
-- 상태: 제안됨
-- 발생 횟수: 8
-- 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-10
-- 사례:
-  - 2026-07-09: 튜토리얼에서 꼬마 사서 대사("걱정 마세요! …")를 작업대 보드의 빈 공간(`.wb-note`)에 작게 끼워 넣었는데, 위치가 어색하고 글자도 작음. 대사이므로 인트로처럼 캐릭터 위 말풍선으로 올리거나 상단에 크게 배치하는 게 맞음.
-    - 조치: `.wb-note` 제거. `.speech`(말풍선 asset) 컴포넌트로 꼬마 사서 대사를 배치.
-  - 2026-07-09: (후속) 말풍선을 상단 코너(`top:5%`)에 고정했더니 캐릭터와 떨어져 "붕 떠 보인다"고 지적. 인트로처럼 캐릭터 머리 옆에 붙여야 함.
-    - 조치: 상단 코너 고정 제거. 인트로와 동일하게 head-height 앵커(`.speech` 기본 `bottom:calc(var(--char-h)-3rem)`)로 되돌리고 좌/우 5%로 캐릭터 옆 배치. 중앙 보드는 `top:61%`로 낮추고 폭(≤780px) 축소해 말풍선과 분리.
-  - 2026-07-09: 유형 A에서 사서 선생님 안내 대사가 전광판(plaque) 안의 `.msg` 텍스트로 들어가 있었음. 사용자가 "선생님 대사니까 말풍선으로 바꾸고 이전 말풍선을 재사용하라"고 지적.
-    - 조치: plaque의 `.msg` 제거, `#s-a`에 `.speech.teacher-say`(기존 speech_bubble asset 재사용) 추가. 전광판(plaque)과 겹치지 않게 말풍선은 `left:3%`로 좌측 고정, plaque 폭은 620px로 축소.
-  - 2026-07-09: 유형 B(시간표 복구)도 유형 A처럼 사서 선생님을 왼쪽에 세우고, 보드에 있던 안내 문구(📌 독서 교실 시간표가 지워졌어요…)를 지운 뒤 선생님 안내 대사를 말풍선(speech_bubble)으로 넣도록 요청.
-    - 조치: `#s-b`에 `char left`(teacher_pointing)와 `.speech.teacher-say`(기존 speech_bubble asset 재사용) 추가, `#s-b .speech` 스코프 CSS를 유형 A와 동일하게 지정. `loadB`의 `board-note-title`(`B_INTRO`) 라인 제거 및 미사용 `B_INTRO` 변수 삭제.
-  - 2026-07-09: 유형 C(도서 대출 시스템 재부팅)에도 A·B처럼 사서 선생님 말풍선을 추가해달라고 요청(사용자가 첨부한 md는 다른 차시 SB였고, 이 run의 실제 원본 `2학년_8차시(시간)_임상현.md` Scene 3의 도입 대사를 사용).
-    - 조치: `#s-c`에 `.speech.teacher-say`(기존 speech_bubble asset 재사용) 추가, 대사는 원본 SB Scene 3 도입 대사("도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!"). `#s-c .speech` 스코프 CSS를 A·B와 동일하게 지정.
-  - 2026-07-10: 퀴즈 정답 대사("맞았어! 24시간은 1일과 같지!")가 다른 씬과 다른 `.bubble` CSS 컴포넌트로 떠 있었음. 다른 것들과 똑같은 말풍선으로 재사용하고, 꼬마 사서는 오른쪽에 두라고 요청.
-    - 조치: 옛 `.bubble kid`(quizWin) 요소·JS 참조 제거. 정답 대사를 기존 `.speech.kid-say`(quizKidSay, `_r.png` 오른쪽꼬리) 말풍선으로 표시(`showKidSay`에 커스텀 msg 파라미터 추가). `quizKid`를 `char right`로, `#s-quiz .speech.kid-say` 왼쪽 override 제거 후 `right:8%`.
-  - 2026-07-10: 최종 인증서(`#s-cert`)에서 마무리 대사(선생님 "정말 고마워! …" · 꼬마 사서 "언제든 …")가 인증서 종이 안 `.cert-caption` 텍스트로 박혀 있었음. 사용자가 이를 음성 길이에 맞춰 말풍선(기존 speech_bubble 재사용)으로 순차 표시하고, 선생님 좌·꼬마 사서 우로 배치하라고 요청. (같은 [sequential-scene-choreography]·[beat-timing-vs-audio] 계열)
-    - 조치: `.cert-caption` 제거, 캐릭터 좌우 교체(teacher `char left`/kid `char right`). `.dlg-area`에 `.speech.teacher-say`(beat1='정말 고마워…', take16)·`.speech.kid-say`(beat2='언제든…', take17) 추가. s-problem·s-repair과 동일한 beat 컨트롤러 `__playCertOutro`(자동 진행+탭 스킵) 추가, 지연은 음성 실측(take16≈5.01s·take17≈3.92s)으로 `[500,5900,4800]`. `SCENE_INTRO['s-cert']` seq 재생 제거(beat가 대신 재생), btnToCert·메뉴 진입에서 `__playCertOutro` 호출.
-  - 2026-07-10: 이야기(`#s-story`) 갤러리에서 사서 선생님 대사(take11/12/13, 예: "우리 동네 편의점 간판에 왜 24가…")가 책 오른쪽 지면의 `.cap` 캡션 텍스트로 박혀 있었음. 사용자가 "이건 대사니까 말풍선에 있어야 한다"고 지적.
-    - 조치: `renderStory`의 `.cap`(대사) 제거(책 지면엔 `.pt`+`.key-badge`만 유지). `#s-story .layer`에 `.dlg-area`+`.speech.teacher-say`(`#storySay`) 추가하고, 페이지마다 `storyMsg.textContent=p.cap`+`.on`으로 선생님 말풍선에 대사 표시. `#s-story .speech` 스코프 CSS를 다른 미션 씬과 동일하게(teacher `left:4%`).
-- 규칙화 메모: **8회 → rule 승격 재제안(계속 재발).** 초안: "캐릭터 발화는 표면(plaque/board/monitor) 텍스트가 아니라 화자 머리 옆(head-height) 말풍선(speech_bubble asset)으로 재사용하고, 미션 씬마다 화자(사서 선생님/꼬마 사서) 안내 말풍선을 일관되게 배치한다. 중앙 오브젝트와 겹치면 오브젝트를 낮추거나 줄여서 확보." 반영 위치: content-harness-pipeline/builder_system.md. 사용자 승인 대기.
-
 ### [weak-drag-affordance] 드래그 상호작용의 유도가 약함(정적 힌트만)
 
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut` 튜토리얼 카드/슬롯)
@@ -648,30 +655,6 @@
     - 조치: `#tutClock` 스코프로 바늘 길이만 축소(분침 30%→23%, 시침 21%→16%). 벽시계 기반 다른 시계(`#bigClock`, `buildClock`의 퀴즈/선택 시계)는 `--cy:50%`·꽉 찬 문자판이라 전역값 유지.
 - 조치: (2026-07-09) `.hand.minute` 37%→30%, `.hand.hour` 26%→21%로 전역 축소. (2026-07-10) 받침대로 문자판이 작은 탁상시계는 `#tutClock` 스코프로 분침 23%·시침 16%로 재조정.
 - 규칙화 메모: 2회. 반복되면 "div로 그린 시계 바늘 길이는 문자판 반지름(숫자 링) 안쪽으로 제한하되, 시계 몸체 asset마다 문자판 반지름(=중심 `--cy`와 dial 크기)이 다르므로 **asset별로 바늘 길이를 보정**한다(전역 한 값으로 통일하지 말 것)" 규칙을 builder_system.md에 제안 후보.
-
-### [feedback-as-character-bubble] 학습 피드백이 좁은 태그에 세로로 깨지고 캐릭터 발화가 아님
-
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut` `.status-tag`)
-- 분류 태그: feedback-as-character-bubble
-- 상태: 제안됨
-- 발생 횟수: 5
-- 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-10
-- 사례:
-  - 2026-07-09: 정답/오답 피드백이 3:1 좁은 `.status-tag` 표면에서 세로로 깨져 보이고, 피드백을 캐릭터(사서 선생님)가 말풍선으로 주면 더 자연스러움.
-  - 2026-07-09: 활동 2 유형 A/B의 오답 피드백("다시 생각해보세요" 등)이 스펙과 달리 상단 `.status-tag`로 뜨고, 스펙이 요구한 "화면 중앙 말풍선 + 👆(손가락) 아이콘 2초 팝업"이 미적용됨.
-  - 2026-07-09: (후속) 위에서 만든 `.hint-pop`이 "그냥 (흰) 카드"라 부자연스럽다고 지적. 원래 오답 피드백이 담겼던 in-world 이미지(`library_feedback_status_tag_blank.png`)에 담으라고 요청.
-  - 2026-07-09: (후속) 오답 팝업은 좋으나 (a) 👆 손 이모지는 빼고, (b) 정답 피드백도 오답과 "똑같은 크기·위치" 팝업에 표시하되, 정답 note가 좁은 `.status-tag`에서 글자 단위로 세로로 깨지던 것을 가로로 표시하라고 요청.
-  - 2026-07-09: (후속) in-world 이미지 표면에 얹으니 여전히 글자가 세로로 깨지고(고정 aspect PNG + `display:flex`의 min-content 축소) 크림색 여백 중앙정렬도 안 맞음. 사용자가 "차라리 이미지 없애고 자체 CSS 카드로 정답/오답 처리하자"고 결정.
-    - 조치: 튜토리얼은 `.speech`(teacher-say) 말풍선으로 라우팅(1차). 활동 2 유형 A/B 정답·오답은 화면 중앙 `.hint-pop`으로 통합. 👆 아이콘 제거. 세로 깨짐의 원인은 flex 아이템이 min-content(가장 긴 단어)로 축소된 것. **PNG 표면(`library_feedback_status_tag_blank.png`) 폐기 → 순수 CSS 카드**로 전환(당시엔 이게 가변 텍스트에 최적).
-  - 2026-07-10: 이제 정오답 피드백을 전용 **도장 이미지**(`stamp_correct_time.png` 정답!, `stamp_fail_time.png` 실패!)로 주자고 요청. 지금은 문자열 CSS 카드(`hintPop`)만 준다고 지적. (도장 asset은 `[feedback-stamp-visual-overload]`에서 다듬어 둔 것)
-    - 조치: 공용 `.stamp-fx` 오버레이(도장 img + 선택적 개념 note 칩) + `showStamp(ok,note,ms)` 추가(쾅 찍히는 slam 애니메이션). 유형 A(`pickA`)·유형 B(`submitB`)의 `hintPop` 6곳을 `showStamp`로 교체(정답=녹색 시계 도장, 오답=금 간 시계 도장, 개념 note는 도장 아래 작은 칩으로 유지). 이어서 **튜토리얼**(정답/오답 드롭 시 도장, 기존 선생님 말풍선+꼬마 사서 표정+카드 흔들림은 유지)과 **퀴즈**(정답/오답 시 `showTag`→`showStamp` 교체, 정답 설명은 quizWin 말풍선이 담당)까지 확장. `hintPop`/`showTag`(quiz) 호출은 도장으로 대체. 유형 C는 자체 모니터 재부팅 연출 유지.
-  - 2026-07-10: 피드백 시 꼬마 사서가 pose를 바꾸는데(성공/당황), 그 캐릭터 옆에 **간단한 말풍선 대사**(정답="정답이야!", 오답="다른 방안을 생각해보자")를 **모든 문제**에 달아달라고 요청.
-    - 조치(1차): 공용 `.kid-say` CSS 말풍선 1개 + JS로 캐릭터 머리 옆 배치. → **사용자가 "새 말풍선 말고 기존에 쓰던 걸 재사용"이라 지적.**
-    - 조치(2차): 커스텀 `.kid-say` 폐기하고 **기존 `.speech.kid-say`(speech_bubble 그림 에셋) 컴포넌트 재사용**. 각 씬(튜토리얼/유형 A/B/C) dlg-area에 `.speech.kid-say` 요소 추가(오른쪽 꼬마 사서 → 기본 right:19%+`_r.png` 오른쪽꼬리), 퀴즈는 왼쪽 꼬마 사서라 `#s-quiz .speech.kid-say{left:9%;background:speech_bubble_blank.png}`로 좌측·왼쪽꼬리로 뒤집어 재사용. `showKidSay(el,ok)`는 해당 speech의 `.msg`를 갱신하고 `.on` 토글. 정오답 10곳 연결(유형 C 오답·퀴즈 오답은 표정 변경도 함께). 도장(`showStamp`)과 병행.
-  - 2026-07-10: 유형 A·B·C 오답 시 꼬마 사서가 confused(고민) pose로 바뀐 뒤 **말풍선이 지워질 때 대기(idle) pose로 돌아오지 않는다**고 지적. 확인 결과 유형 C(`enableDrag` 오답 콜백)만 1300ms 뒤 idle 복귀 로직이 있었고, 유형 A(`pickA`)·유형 B(`submitB`)는 confused pose를 설정만 하고 복귀시키지 않아 정답/다음 문제 전까지 고민 pose가 고착됨.
-    - 조치: 공용 `kidWrongPose(kidEl, sayEl, ms)` 헬퍼 추가 — confused pose 세팅 + `showKidSay(...,false,ms)` + 말풍선 제거 시점(ms)에 idle pose 복귀를 취소 가능한 `kidEl._poseT` 타이머로 예약. 정답 처리(A/B/C 성공 pose 세팅)에서 `clearTimeout(kidEl._poseT)`로 stray 복귀가 환호 pose를 덮어쓰지 않게 함. 유형 A/B/C 오답 분기를 헬퍼로 통일(기존 C의 인라인 복귀 로직 포함).
-- 규칙화 메모: **5회 → rule 승격 제안(재확인).** 교훈: 정오답 피드백은 (a)캐릭터 pose 변화 + (b)캐릭터 옆 간단 말풍선(고정 짧은 대사) + (c)중앙 도장/이미지의 3층으로 일관되게. **오답 pose(confused)는 말풍선이 사라지는 시점에 idle(대기) pose로 되돌리고, 이 복귀 타이머는 정답 시 취소해 환호 pose를 덮지 않게 한다.** 가변 길이 개념 설명만 별도 텍스트 칩. 초안 규칙: "미션/퀴즈 정오답 피드백은 씬마다 캐릭터 표정 변화 + 캐릭터 말풍선 짧은 대사를 기본 제공하고, 오답 표정은 말풍선 종료 시 idle로 복귀(취소 가능 타이머), 중앙 도장 이미지로 강조한다." 반영 위치: builder_system.md. 사용자 승인 대기.
 
 ### [card-aspect-stretch] flex 트레이의 align-items:stretch가 카드 aspect-ratio를 덮어 세로로 늘림
 
@@ -841,26 +824,6 @@
   - 2026-07-10: 마무리 퀴즈에서 정답을 맞히면 하단 `인증서 받으러 가기` 버튼(`#btnToCert`)이 `.hidden` 해제되며 나타나는데, 이 버튼이 `.center-col`(transform으로 세로 중앙정렬된 flex 컬럼)의 flex 자식이라 나타나는 순간 컬럼 높이가 커져 퀴즈(문제 plaque+보기)가 위로 밀려 올라감. 사용자가 "밀어 올리지 말고 CTA를 오버레이로 위에 덮으라"고 지적.
 - 조치: `#btnToCert`를 `.center-col` flex 흐름에서 빼내 다른 씬 전환 CTA와 동일한 절대배치 `.bottom-bar`(position:absolute; bottom:3.5%; z-index:16) 오버레이로 이동. 나타나도 컬럼 높이가 변하지 않아 퀴즈가 그대로 유지되고 버튼은 위(z-index)로 떠서 덮음. `hidden` 토글은 버튼 자체에 유지되어 JS 변경 불필요.
 - 규칙화 메모: 아직 1회. 반복되면 "정답/완료 시 나중에 나타나는 CTA·요소는 중앙 정렬(flex/translate) 컨테이너의 흐름에 넣지 말고, 절대배치 오버레이(`.bottom-bar` 등)로 배치해 reflow로 기존 콘텐츠가 튀지 않게 한다" 규칙을 builder_system.md에 제안 후보. (`[action-control-on-art-surface]`의 'CTA 배치' 계열)
-
-### [story-page-navigation-ux] 이야기 갤러리 페이지 이동이 어색하고 배경 아트의 책갈피를 UI로 활용하지 않음
-
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-story` `.book-arrow`, `.book-dots`, `.sign-24`, `#btnToQuiz`)
-- 분류 태그: story-page-navigation-ux
-- 상태: 열림
-- 발생 횟수: 5
-- 최초 발생일: 2026-07-10
-- 최근 발생일: 2026-07-10
-- 사례:
-  - 2026-07-10: (후속4) 되돌린 좌/우 화살표가 책 이미지 에셋과 안 어울림 — 책 팔레트에 맞게 디자인 개선 요청. → `.book-arrow`를 주황 사각 버튼에서 **금박(#d99a3e) 테두리 + 양피지 radial 배경 원형 핸들**(❮/❯, inset 하이라이트+그림자, hover 확대)로 재디자인, 책 좌우 바깥 가장자리(left/right -1.8%)에 배치. (배경 아트 위 웹 컨트롤은 아트 팔레트에 맞춰야 함 — story-page-navigation-ux 규칙 노트 계열)
-  - 2026-07-10: (후속3·방향 전환) 책갈피 방식을 취소하고 "처음처럼 좌우 화살표"로 되돌릴 것. 그리고 이야기 화면 우측에 사서(꼬마 사서) 캐릭터가 있어야 함.
-    - 조치: 책갈피 컷아웃/중앙 CTA 오버레이/step 모델 폐기 → `.book-arrow prev/next`+`bookPrev/bookNext` 원복, `#btnToQuiz`를 책 아래 `.ticket-btn pulse wide hidden`로 원복. `#s-story .layer`에 `char right`(kid_librarian_idle) 추가. `.bm`/`@keyframes bmGlow`/`#bm*`/`.book-cta` CSS 제거(생성한 `bm_*.png` 4개는 미사용으로 남겨둠). `.sign-24` 검정/중앙은 유지. 교훈: 배경 아트 어포던스(책갈피) 활용이 항상 더 나은 UX는 아님 — 사용자는 단순 좌우 화살표를 선호. 같은 대상 왕복 변경(design churn)이므로 다음에 유사 제안 시 먼저 사용자 선호를 확인.
-  - 2026-07-10: 이야기(s-story) 갤러리 페이지의 좌/우 화살표(`.book-arrow`) 페이지 넘김이 어색함. 책 배경 아트(storybook_base.png)에 이미 그려진 책갈피(ribbon bookmark)를 클릭 UI로 쓰길 요청. 왼쪽 책갈피부터 순서대로, 다음에 눌러야 할 책갈피가 빛나는 하이라이트로 클릭을 유도해야 함. 마지막 페이지 뒤에는 '마무리 퀴즈 풀러가기' 버튼을 책 중앙에 올릴 것. 또 페이지1 편의점 이미지의 `24`가 간판 안에 안 들어가 있고 빨간색이라, 간판 안에 앉히고 검은색으로 바꿀 것.
-  - 2026-07-10: (후속) 책갈피 4개를 전부 사용할 것. glow를 네모 상자(box-shadow/사각 배경)로 하면 주변까지 빛나므로, 책갈피(리본) 모양 그대로 빛나게 할 것. 클릭 순서는 왼쪽 위→왼쪽 아래→오른쪽 위→오른쪽 아래이며, 오른쪽 아래 책갈피를 누르면 책 가운데에 '마무리 퀴즈 풀러가기'를 올릴 것.
-    - 조치: 사각 핫스팟(box-shadow/radial 사각 배경) 폐기. 배경 아트에서 리본 4개를 flood-fill(밝은 크림/어두운 책등/따뜻한 지면색을 배경으로, 중심 연결 최대 덩어리만 유지, 얇은 지면 줄무늬 꼬리는 행별 폭 필터로 제거)로 투명 컷아웃 추출 → `assets/bm_leaf/flower/star/heart.png`. 각 컷아웃을 원본 좌표(잎 5.0/24.4, 꽃 4.23/38.0, 별 85.1/22.5, 하트 86.8/36.4 %)에 `<img>`로 겹쳐두고, 활성일 때만 `filter:drop-shadow`(알파 모양을 따라감)로 리본 모양 발광+scale pulse. 4단계 step 모델로 왼위→왼아래→오위→오아래 순 발광, 하트 클릭 시 `.book-cta`(책 중앙) 노출. 책 위 합성으로 정렬 검증(컷아웃이 그려진 리본과 정확히 일치).
-  - 2026-07-10: (후속2) 중앙 CTA가 책 정중앙이 아니라 우하단에 찍힘 + 책 페이지 내용 위에 겹침. 또 클릭을 왼쪽 위가 아니라 "왼쪽 위는 이미 펼쳐진 첫 페이지"로 보고 왼쪽 아래(꽃)부터 시작해야 3페이지·4책갈피가 딱 맞음. CTA는 책 경계 무시하고 정중앙에 크게 올릴 것.
-    - 조치: (원인) `#btnToQuiz`에 `pulse`(theartbeat) 애니메이션의 `transform:scale`이 중앙정렬용 `transform:translate(-50%,-50%)`을 덮어써 좌상단이 중앙에 찍힘 → 버튼을 `.book-cta`(position:absolute; left/top 50%; translate) **래퍼로 감싸** 래퍼가 정렬·버튼이 pulse를 담당하도록 분리. `.book-cta` top 80%→50%(정중앙, 페이지 경계 무시). 단계 모델을 `stIdx`(현재 페이지)+`bms[stIdx+1]` 발광으로 단순화 — 잎(0)은 첫 페이지라 발광 안 함, 꽃(1)→2p·별(2)→3p·하트(3)→책 비우고 중앙 CTA. `STEP_PAGE` 제거. 하트 클릭 시 `bookPage.innerHTML=''`로 책 내부 비움.
-- 조치: 좌/우 화살표(`.book-arrow`) 제거. 배경 책갈피를 픽셀 측정(왼쪽 잎≈x8.5%/y30%, 꽃≈x9%/y47%; 오른쪽 별·하트는 장식 유지)해 왼쪽 2개 위에 클릭 핫스팟(`.bm-hotspot` `#bmLeafTop`/`#bmFlowerMid`) 배치. 순차 진행(페이지 i→i+1)에서 다음 책갈피만 `bmGlow`로 발광 유도. 마지막 페이지에서 `#btnToQuiz`를 `.book-cta`(책 중앙 하단 오버레이)로 노출. `.sign-24`는 간판 중앙(top 26%→33%)으로 재배치하고 색 `#e0562f`→`#1a1a1a`(검정). `.book-dots`(진행 표시)는 유지. 파일 CRLF+IDE 린터 경합으로 Edit 대신 Node 원자 치환으로 반영.
-- 규칙화 메모: 아직 1회. 반복되면 "책/장부 등 배경 아트에 그려진 인터랙션 어포던스(책갈피/탭/버튼 자국)는 별도 웹 컨트롤(화살표/닷)로 대체하지 말고 해당 자국 위에 핫스팟을 얹어 쓰고, 순차 진행은 다음 대상만 glow로 유도한다" 규칙을 builder_system.md에 제안 후보. ([action-control-on-art-surface]/[bg-anchor-alignment] 계열)
 
 ### [unwanted-celebration-fx] 특정 씬에서 원치 않는 축하 이펙트 제거 요청
 

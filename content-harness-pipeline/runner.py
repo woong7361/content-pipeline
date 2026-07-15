@@ -108,6 +108,9 @@ DEFAULT_ASSET_BUDGET = 9
 DEFAULT_CONTENT_MAX_ITERATIONS = 5
 MAX_ASSET_REVISION_REQUESTS = 6
 DEFAULT_TIMEOUT_SECONDS = 1200
+# design_refine은 10만 자 규모의 HTML을 통째로 다시 쓰므로 다른 stage보다 훨씬 오래 걸린다.
+# 실제로 1200초에서 TimeoutError가 났다(2026-07-15 run ch8a0715 iter003).
+DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS = 2400
 DEFAULT_BUILDER_HTML_PATH = "output/index.html"
 DEBUG_DESIGN_REFINE_HTML_PATH = "output/refine.html"
 
@@ -1598,6 +1601,19 @@ def merge_asset_review_outputs(*review_outputs: dict) -> dict:
     return {"asset_review": merged_asset_review}
 
 
+def resolve_design_refine_timeout(args: argparse.Namespace) -> int:
+    """design_refine에 적용할 timeout을 정한다.
+
+    명시적으로 --design-refine-timeout-seconds를 주면 그 값을 쓴다.
+    아니면 기본 2400과 전역 --timeout-seconds 중 큰 값을 쓴다. 전역을 2400보다 높게 올린
+    사용자의 의도를 깎지 않으면서, 전역이 기본값(1200)일 때도 design_refine만 넉넉히 준다.
+    """
+    override = getattr(args, "design_refine_timeout_seconds", None)
+    if override:
+        return override
+    return max(args.timeout_seconds, DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS)
+
+
 def ensure_asset_spec_defaults(asset: dict) -> dict:
     asset.setdefault("character_id", "")
     asset.setdefault("visual_role", asset.get("purpose", "Support the section's learning goal"))
@@ -2085,7 +2101,7 @@ def run_design_refine_stage(
                 claude_bin=args.claude_bin,
                 llm_provider=agent_providers[AGENT_DESIGN_REFINE],
                 model=agent_models[AGENT_DESIGN_REFINE],
-                timeout_seconds=args.timeout_seconds,
+                timeout_seconds=resolve_design_refine_timeout(args),
                 output_schema_path=temp_builder_schema_path,
                 target_html_path=target_html_path,
             )
@@ -2917,6 +2933,14 @@ def main() -> int:
         help="Reuse existing files under output/assets and generate only missing planned assets.",
     )
     parser.add_argument("--timeout-seconds", type=int, default=DEFAULT_TIMEOUT_SECONDS)
+    parser.add_argument(
+        "--design-refine-timeout-seconds",
+        type=int,
+        help=(
+            "Timeout for the Design Refine agent. Defaults to the larger of --timeout-seconds and "
+            f"{DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS}, because rewriting the full HTML takes longer than other stages."
+        ),
+    )
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")
     args = parser.parse_args()
     normalize_claude_options(args)

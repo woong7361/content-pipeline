@@ -1,0 +1,159 @@
+{
+  "status": "PASS",
+  "checked_at": "2026-07-15T13:55:32+09:00",
+  "html_path": "output/index.html",
+  "viewports": [
+    "desktop"
+  ],
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_002/design_refine_preview/desktop.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_activity1_scene2_intro_problem",
+      "path": "iter_002/design_refine_preview/desktop__01_activity1_scene2_intro_problem.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_activity1_scene3_tutorial",
+      "path": "iter_002/design_refine_preview/desktop__02_activity1_scene3_tutorial.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_activity1_scene4_success",
+      "path": "iter_002/design_refine_preview/desktop__03_activity1_scene4_success.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_activity2_scene1_type_a",
+      "path": "iter_002/design_refine_preview/desktop__04_activity2_scene1_type_a.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_activity2_scene2_type_b",
+      "path": "iter_002/design_refine_preview/desktop__05_activity2_scene2_type_b.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_activity2_scene3_type_c",
+      "path": "iter_002/design_refine_preview/desktop__06_activity2_scene3_type_c.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_activity2_scene4_repair_complete",
+      "path": "iter_002/design_refine_preview/desktop__07_activity2_scene4_repair_complete.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_activity3_scene1_real_life_history",
+      "path": "iter_002/design_refine_preview/desktop__08_activity3_scene1_real_life_history.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_activity3_scene2_popup_quiz",
+      "path": "iter_002/design_refine_preview/desktop__09_activity3_scene2_popup_quiz.png",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_activity3_scene3_final_certificate",
+      "path": "iter_002/design_refine_preview/desktop__10_activity3_scene3_final_certificate.png",
+      "width": 1440,
+      "height": 960
+    }
+  ],
+  "render_checks": {
+    "console_errors": [],
+    "page_errors": [],
+    "request_failures": [],
+    "broken_images": [],
+    "horizontal_overflow": [],
+    "text_clipping": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "span:nth-child(1)",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      }
+    ],
+    "small_touch_targets": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "button.key",
+        "evidence": "Touch target is 54x37px.",
+        "suggested_fix": "Increase padding or min-size so the target is easy to tap."
+      }
+    ],
+    "overlaps": [],
+    "fixed_overlay_risks": []
+  },
+  "design_review": {
+    "status": "PASS",
+    "summary": "Visual QA did not find high-priority design risks.",
+    "card_template_risk": "low",
+    "asset_integration_risk": "low",
+    "interface_affordance_risk": "medium",
+    "composition_risk": "low",
+    "evidence": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "type": "interface_affordance",
+        "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
+        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "small_touch_target",
+      "evidence": "button.key: Touch target is 54x37px.",
+      "suggested_fix": "Increase padding or min-size so the target is easy to tap."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "span:nth-child(1): Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "interface_affordance",
+      "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
+      "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+    }
+  ],
+  "refine_suggestions": [
+    "[desktop] Increase padding or min-size so the target is easy to tap.",
+    "[desktop] Allow wrapping, reduce fixed height, or move long copy to a larger responsive area.",
+    "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
+  ]
+}

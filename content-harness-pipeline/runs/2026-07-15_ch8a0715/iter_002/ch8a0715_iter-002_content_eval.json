@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 5
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.08
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 4개 이상: activity1_scene4_success CTA 원문 '[좋아요! 본격적으로 수리하러 가기 →]'가 HTML에서는 '본격적으로 수리하러 가기 →'로 축약됨; activity2_scene4_repair_complete CTA 원문 '[3. 수리 이야기 보러 가기 →]'가 HTML에서는 '수리 이야기 보러 가기 →'로 축약됨; activity3_scene3_final_certificate CTA 원문 '[내 사진첩에 저장하기]'가 HTML에서는 '사진첩에 저장하기'로 축약됨; activity3_scene3_final_certificate 다음 미션 CTA 원문 '[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]'가 HTML 가시 텍스트에서는 '9차시 길이 미션으로 →'로 대체됨. 주요 문항 13개와 보기·정답 처리는 대체로 보존되지만, 필수 전환·보상 라벨 불일치가 4개 이상이다.",
+    "learning_goal_alignment": "몇 분 전 시각, 걸린 시간, 1일과 24시간 관계를 각 유형 A/B/C와 마무리 퀴즈에서 직접 다룬다. 도서관 수리 콘셉트도 문제 해결, 에너지 게이지, 시스템 재부팅, 인증서 흐름과 연결되어 있다. 다만 피드백 설명이 개념 이해를 충분히 확장하지 못해 5점 수준의 적용·이해 지원까지는 아니다.",
+    "feedback_scaffolding": "피드백이 없는 문항 수는 0개다. 모든 문항에 정답/오답 반응은 있으나, 대부분 '딩동댕!', '띠익', '다시 생각해보세요', '좋아! 시간이 맞춰지고 있어요!'처럼 결과 통보에 가깝고 왜 맞거나 틀렸는지, 다음에 어떤 시간 관계를 다시 보아야 하는지에 대한 개념적 발판은 약하다.",
+    "interaction_flow_clarity": "시작, 튜토리얼, 유형별 문제, 복구, 갤러리, 팝업 퀴즈, 인증서까지 desktop 기준 진행 순서와 다음 버튼은 대체로 명확하다. 게이지와 장면 타이틀도 현재 위치를 알려 준다. 일부 자동 전환과 축약된 CTA 라벨 때문에 원문만큼 단계 의미가 선명하지 않은 구간은 있다.",
+    "functional_integrity": "필수 버튼, 드래그/선택/키패드 입력, 진행 게이지, 정답 후 장면 전환, 인증서 저장 처리가 JS상 연결되어 있다. blocking runtime error나 완료 흐름 차단은 확인되지 않는다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding"
+  ],
+  "calibration_note": "content_fidelity는 rubric의 deterministic_count 규칙에 따라 필수 노출 라벨 불일치 4개 이상으로 1점이다. weighted_total 3.08로 min_total 4.2 미만이며, content_fidelity와 feedback_scaffolding도 min_axis 기준 미달이므로 REJECT다."
+}

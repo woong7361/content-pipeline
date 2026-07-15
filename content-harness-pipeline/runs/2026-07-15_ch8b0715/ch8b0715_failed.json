@@ -1,0 +1,36 @@
+{
+  "brief_hash": "ch8b0715",
+  "run_id": "2026-07-15_ch8b0715",
+  "failed_at": "2026-07-15T12:53:16+09:00",
+  "stage": "asset_generator",
+  "error_type": "TimeoutError",
+  "message": "Codex CLI timed out in non-interactive mode.\ncommand: ['codex', 'exec', '--model', 'gpt-5.5', '--ephemeral', '--json', '--dangerously-bypass-approvals-and-sandbox', '-C', 'C:\\\\Users\\\\PC-220627-03\\\\Desktop\\\\project\\\\my\\\\architecture-thinking\\\\content-harness-pipeline', '--output-schema', 'C:\\\\Users\\\\PC-220627-03\\\\Desktop\\\\project\\\\my\\\\architecture-thinking\\\\content-harness-pipeline\\\\schemas\\\\asset_generator_output.schema.json', '--output-last-message', 'C:\\\\Users\\\\PC-220~1\\\\AppData\\\\Local\\\\Temp\\\\content-harness-assets-b3tqqn_x\\\\asset-generator-batch-004.json', '-']\ntimeout_seconds: 1200",
+  "config": {
+    "codex_bin": "codex",
+    "codex_access": "dangerously-bypass-approvals-and-sandbox",
+    "agent_models": {
+      "planner": "gpt-5.5",
+      "asset_generator": "gpt-5.5",
+      "builder": "gpt-5.5",
+      "design_review": "gpt-5.5",
+      "design_refine": "gpt-5.5",
+      "content_critique": "gpt-5.5",
+      "content_eval": "gpt-5.5",
+      "content_refine": "gpt-5.5",
+      "gen": "gpt-5.5",
+      "critique": "gpt-5.5",
+      "eval": "gpt-5.5",
+      "refine": "gpt-5.5"
+    },
+    "timeout_seconds": 1200,
+    "asset_batch_size": 3,
+    "asset_parallelism": 7,
+    "asset_generator_missing_only": false,
+    "mode": "asset_generator_only"
+  },
+  "lineage": {
+    "input": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8b0715\\ch8b0715_input.json",
+    "planner": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8b0715\\ch8b0715_planner.json",
+    "asset_generator": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8b0715\\ch8b0715_asset_generator.json"
+  }
+}

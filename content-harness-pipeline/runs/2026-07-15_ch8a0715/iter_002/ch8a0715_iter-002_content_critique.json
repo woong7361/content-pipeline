@@ -1,0 +1,130 @@
+{
+  "axis_critiques": {
+    "content_fidelity": {
+      "strengths": [
+        "All 13 planner questions are represented in the HTML data, including the tutorial, Type A 4 questions, Type B 4 questions, Type C 4 questions, and popup quiz.",
+        "The answer keys and distractor labels for the main questions match the planner in the JS question arrays.",
+        "The main scene order follows the planner sequence from title, problem, tutorial, success, Type A/B/C, repair complete, gallery, popup quiz, and final certificate."
+      ],
+      "problems": [
+        "Several required CTA labels differ from planner text: Scene 4 omits \"좋아요!\", repair completion omits \"3.\", final save omits \"내\", and the next mission button replaces the full planner label with \"9차시 길이 미션으로 →\".",
+        "The intro/projection flow adds a visible \"도와주러 가기\" transition button not authored in the planner, while the planner's Scene 2 only specifies the problem setup and common UI interactions.",
+        "Type C is titled and introduced as drag-and-drop, but only q_type_c_10 uses drag/drop; q_type_c_09 and q_type_c_12 are keypad and q_type_c_11 is choice, so the section-level visible framing can misrepresent the authored mixed interaction set."
+      ],
+      "recommendations": [
+        "Restore planner-authored CTA text exactly where it is user-visible: \"좋아요! 본격적으로 수리하러 가기 →\", \"3. 수리 이야기 보러 가기 →\", \"내 사진첩에 저장하기\", and the full next mission label.",
+        "If a transition control is needed after Scene 2, make its label and timing serve the authored problem-to-tutorial handoff without introducing a competing planner-unlisted mission command.",
+        "Change Type C's visible heading or prompt framing so it reflects the actual mixed keypad, drag-drop, and choice question sequence while preserving the planner question texts."
+      ]
+    },
+    "learning_goal_alignment": {
+      "strengths": [
+        "The question set covers the planner goal areas: reading clocks, interpreting '몇 분 전', elapsed time and end time, and the relationship between 1 day and 24 hours.",
+        "The gallery pages connect 24 hours, sundials, and 30-minute cooking timers to real-life or historical contexts.",
+        "Progression from tutorial to 12 repair questions to a final 1일/24시간 quiz supports cumulative practice."
+      ],
+      "problems": [
+        "Most wrong-answer feedback only says to try again, so learners are not guided back to the underlying concept such as subtracting minutes from the next hour, counting elapsed minutes, or matching 24 hours to 1 day.",
+        "Type B keypad inputs require exact numeric fields, but the interface does not explain whether to enter 0 for minutes in \"12시 0분\" or how multiple blanks are filled, which weakens the connection between calculation and representation.",
+        "The Type A sign displays the full prompt, but the three clock choices are mainly selected by label and image; there is no explicit learning nudge after mistakes to connect '3시 5분 전' to '2시 55분'."
+      ],
+      "recommendations": [
+        "Add concept-specific hints after wrong answers for each question type, using the same authored problems and answers.",
+        "For keypad questions, add brief functional guidance in the answer area such as which blank is active and what numeric form is expected.",
+        "For '몇 분 전' questions, add a short feedback explanation that points to the previous hour and remaining minutes when learners choose an incorrect option."
+      ]
+    },
+    "feedback_scaffolding": {
+      "strengths": [
+        "Every question has a correct and wrong feedback path in the JS logic.",
+        "Wrong answers generally allow retry, and Type A has a 3-wrong fallback that highlights the correct choice before moving on.",
+        "Correct answers update progress and provide a visible success stamp, which helps learners know that the interaction was accepted."
+      ],
+      "problems": [
+        "Feedback is mostly generic: correct feedback uses \"딩동댕!\" or a generic \"좋아! 시간이 맞춰지고 있어요!\", and wrong feedback uses \"다시 생각해보세요\" without explaining why.",
+        "The Type A 3-wrong forced transition highlights the correct answer but does not explain the reasoning before moving forward, so the learner may advance without understanding the time conversion.",
+        "Type C repeatedly shows \"[시스템 재부팅 완료!]\" after correct answers, but it does not distinguish whether the learner proved 24시간=1일, 오전/오후 12시간씩, or 하루 뒤 같은 시각."
+      ],
+      "recommendations": [
+        "Replace or supplement generic stamps with per-question explanation text after correct and wrong attempts.",
+        "Before Type A forced transition after 3 wrong attempts, show a short explanation of the correct conversion and then move to the next question.",
+        "For Type C, make each correct feedback state the concept just solved, not only the system completion message."
+      ]
+    },
+    "interaction_flow_clarity": {
+      "strengths": [
+        "The topbar progress and hamburger menu are consistently available after the title scene.",
+        "Scene transitions are mostly reachable through clear buttons or automatic progression after correct answers.",
+        "The gallery has previous and next controls and automatically opens the popup quiz after the last page."
+      ],
+      "problems": [
+        "The tutorial enables its cards only after timed dialogue, but the user has no explicit control to advance or replay the two dialogue beats; this can feel like waiting without knowing when the task starts.",
+        "The Type B and Type C keypad flows do not clearly tell the learner which blank is currently active beyond a visual active state, and there is no text instruction to tap a blank before entering numbers.",
+        "In Type C drag/drop, the clear action resets both blanks at once, but the flow does not explain whether each blank needs two digits or one block sequence, which can confuse second-grade learners."
+      ],
+      "recommendations": [
+        "Add a clear task-ready state after tutorial dialogue, such as enabling the cards with an instruction that dragging or clicking a card now answers the question.",
+        "Add concise operation text near keypad answer fields explaining that learners tap a blank, enter numbers, and press 확인하기.",
+        "For Type C drag/drop, clarify that both 오전 and 오후 blanks should become 12 before pressing 확인하기."
+      ]
+    },
+    "functional_integrity": {
+      "strengths": [
+        "Core navigation from title through final scene is implemented with event handlers.",
+        "Main quiz interactions support choice, keypad, drag/drop, retry, progress updates, certificate download, and next mission hash navigation.",
+        "The hamburger menu opens and includes a current lesson item and a 9차시 route action."
+      ],
+      "problems": [
+        "Calling setupTutorial each time the tutorial scene is entered attaches duplicate event listeners to tutorial cards and drop slot, which can cause repeated feedback or repeated scene transitions if the scene is revisited through test hooks or future navigation.",
+        "The Type A 3-wrong forced transition advances without incrementing solvedMain or progress, so progress and certificate correctness can diverge from the actual completed question count.",
+        "The next mission control only changes the hash to \"lesson-9-length\" instead of routing to the 9차시 webpage described by planner, so the intended transition may not actually leave the current content."
+      ],
+      "recommendations": [
+        "Guard tutorial initialization so event listeners are bound once, or reset and rebind predictably when the scene is entered.",
+        "Decide whether forced completion after 3 wrong attempts counts as solved; then update progress, record keeping, and feedback consistently.",
+        "Implement the next mission button with the actual project route or URL expected for the 9차시 page, not only a local hash unless that hash is handled elsewhere."
+      ]
+    }
+  },
+  "priority_issues": [
+    {
+      "axis": "content_fidelity",
+      "issue": "Multiple required user-facing CTA labels do not match planner text exactly.",
+      "why_it_matters": "The rubric treats authored button and reward-flow text as required content; shortened labels change the storyboard handoff and final hook.",
+      "suggested_fix": "Restore the planner labels exactly for Scene 4, repair completion, save certificate, and next mission buttons."
+    },
+    {
+      "axis": "feedback_scaffolding",
+      "issue": "Correct and wrong feedback mostly reports the result without explaining the time concept.",
+      "why_it_matters": "Second-grade learners can proceed by guessing without understanding '몇 분 전', elapsed time, or 1일=24시간.",
+      "suggested_fix": "Add per-question or per-type explanation text for wrong answers and correct answers while keeping retry behavior."
+    },
+    {
+      "axis": "functional_integrity",
+      "issue": "Type A forced transition after 3 wrong attempts can skip progress and solved-count updates.",
+      "why_it_matters": "The completion state and certificate record can become inconsistent with the actual number of attempted questions.",
+      "suggested_fix": "When the forced transition happens, either count it as completed with a distinct assisted-completion state or keep the learner on the question after showing the explanation."
+    },
+    {
+      "axis": "interaction_flow_clarity",
+      "issue": "Keypad and drag/drop tasks do not sufficiently explain the required input sequence.",
+      "why_it_matters": "Learners may not know which blank is active, whether to enter 0 minutes, or when to press 확인하기.",
+      "suggested_fix": "Add short functional instructions around active blanks, numeric input, and confirmation for Type B and Type C."
+    },
+    {
+      "axis": "functional_integrity",
+      "issue": "Tutorial setup can bind duplicate handlers if the tutorial scene is initialized more than once.",
+      "why_it_matters": "Repeated listeners can trigger duplicated feedback, progress changes, or scene transitions in revisits and automated scene testing.",
+      "suggested_fix": "Make tutorial initialization idempotent by binding listeners once or clearing existing listeners before rebinding."
+    }
+  ],
+  "refine_suggestions": [
+    "Restore all planner-authored CTA labels exactly in the visible HTML text.",
+    "Add concept-specific feedback explanations for each question type after wrong answers and after correct answers.",
+    "Before advancing after three wrong Type A attempts, show why the highlighted answer is correct and keep progress accounting consistent.",
+    "Add keypad instructions that tell learners to tap a blank, enter the number, and press 확인하기, including the expected 0 minutes case.",
+    "Add Type C drag/drop guidance that both 오전 and 오후 blanks must be filled with 12 before confirming.",
+    "Make setupTutorial idempotent so revisiting the tutorial does not attach duplicate event handlers.",
+    "Implement the final next-mission action with the actual 9차시 route or handled navigation target."
+  ]
+}

@@ -31,6 +31,27 @@
 
 <!-- 규칙화된 항목의 전문을 이 아래에 추가한다. -->
 
+### [dialogue-as-speech-bubble] 대사·피드백을 표면 텍스트로 넣고 말풍선을 매번 새로 만듦 (channel 렌더링 계약으로 통합)
+
+- 대상: content-harness-pipeline/prompts/builder_system.md (산출: runs/2026-07-08_ch802d08/output/index.html 전반)
+- 분류 태그: dialogue-as-speech-bubble · feedback-as-character-bubble · sequential-scene-choreography **3개 태그를 하나의 규칙으로 통합**
+- 최종 발생 횟수: 16 (dialogue 8 + feedback 5 + sequential 3)
+- 규칙화일: 2026-07-15
+- 반영한 rule 위치: `prompts/builder_system.md`의 "channel 렌더링 계약" 절
+- 사례:
+  - **dialogue-as-speech-bubble (8회)** — 튜토리얼 대사를 작업대 보드 빈 공간(`.wb-note`)에 끼워 넣음 / 말풍선을 상단 코너에 고정해 캐릭터와 떨어져 "붕 떠 보임" / 유형 A·B·C 안내 대사가 전광판·보드·모니터의 표면 텍스트로 들어감 / 퀴즈 정답 대사가 다른 씬과 **다른 `.bubble` 컴포넌트**로 떠 있음 / 인증서 마무리 대사가 인증서 종이 안 `.cert-caption`에 박힘 / 이야기 대사가 책 지면 `.cap` 캡션에 박힘.
+  - **feedback-as-character-bubble (5회)** — 정오답 피드백이 3:1 좁은 `.status-tag`에서 세로로 깨짐 / 스펙이 요구한 중앙 말풍선 팝업 미적용 / 피드백을 전용 도장 이미지로 요청 / 캐릭터 옆 짧은 대사를 모든 문제에 요청했는데 **새 말풍선을 만들어 "기존 것을 재사용하라"고 재지적** / 오답 시 confused pose가 idle로 복귀하지 않아 고민 표정이 고착됨.
+  - **sequential-scene-choreography (3회)** — 문제 인트로가 모든 요소를 한 번에 띄우는 단일 장면 / 복구 씬이 두 캐릭터 대사를 하나의 plaque banner에 통째로 담음 / 인증서 씬도 마무리 대사가 캡션으로 박힌 단일 장면.
+- 조치(전문):
+  - **근본 원인.** planner는 `elements[].channel`로 각 줄의 역할(`dialogue`, `feedback`, ...)을 **이미 태깅하고 있었는데**, builder에는 그 channel을 어떻게 렌더할지에 대한 계약이 없었다. 그래서 builder가 매번 자기 판단으로 표면을 골랐고, 대사가 plaque·board·monitor·인증서·책 지면 등 그때그때 다른 곳에 들어갔다. 말풍선도 계약이 없으니 씬마다 새로 만들어져 `.speech`와 `.bubble`과 `.kid-say`가 혼재했다.
+  - **수정.** `builder_system.md`에 "channel 렌더링 계약" 절 신설. `dialogue`는 반드시 기존 speech_bubble asset 재사용 + 화자 머리 옆(head-height) 배치, 표면 텍스트·자막 카드 금지, 한 section에 여러 줄이면 순차 beat 전개. `feedback`은 캐릭터 표정 전환 + 캐릭터 옆 말풍선(dialogue와 같은 에셋) + 중앙 도장의 3층 동시 구현, 오답 pose는 말풍선 종료 시 idle 복귀(취소 가능 타이머).
+  - **왜 이 위치인가.** design_review의 creative_direction(제안)이 아니라 builder의 계약(예방)에 넣었다. 검출만 두면 builder가 계속 틀리고 iteration을 낭비한다. 그리고 `channel`이 planner 스키마의 실제 필드이므로 "태깅은 스키마가, 렌더는 계약이" 맡는 반(半)구조적 형태가 된다.
+- rule 문구: "`elements[].channel`이 `dialogue`면 기존 speech_bubble 에셋 말풍선으로 화자 머리 옆에 렌더하고 표면 텍스트로 넣지 않는다. 말풍선은 새로 만들지 말고 재사용한다. 여러 줄이면 순차 beat로 전개한다. `feedback`이면 표정 전환 + 캐릭터 말풍선 + 중앙 도장을 함께 구현하고, 오답 pose는 말풍선 종료 시 idle로 되돌린다."
+- 검증: **미검증.** 프롬프트 계약이라 builder 산출 HTML을 실제로 확인해야 한다. 2026-07-15 full run(ch8a0715)이 돌긴 했으나 이 계약을 넣기 **전**의 프롬프트로 실행된 것이라 검증에 쓸 수 없다. 검증 방법은 명확하다 — 새 run의 HTML에서 `channel: dialogue` 요소가 speech_bubble asset 위에 렌더됐는지, 씬마다 다른 말풍선 컴포넌트가 섞이지 않았는지 확인한다.
+- 한계: 스키마로 강제할 수 없는 프롬프트 규칙이다. 다만 "dialogue 요소가 `.speech` 안에 렌더됐는가"는 사후 검증이 가능하므로, 재발하면 design_review 체크나 코드 검증으로 승격할 여지가 있다.
+- 재발 이력:
+  - 없음 (2026-07-15 기준).
+
 ### [character-asset-identity-alpha] 캐릭터 에셋이 포즈마다 다른 인물로 생성됨 (정체성 부분)
 
 - 대상: content-harness-pipeline (planner/design_review/asset_generator 경로 전반), 산출 예: runs/2026-07-08_ch802d08/output/assets/teacher_*.png, kid_librarian_*.png
@@ -61,7 +82,10 @@
     - `asset_generator_output`에 `character_id` 기록(정체성 추적).
     - 스키마/프롬프트 모순 해소: `assetRegenerationRequest`의 `minLength:1`이 빈 문자열 patch 정책을 금지하고 있어 제거. `design_review_output`의 `newAssetRequest`에 `character_id`가 없어 `additionalProperties:false`로 최종 출력이 REJECT 날 상태였던 것을 model 스키마와 거울로 맞춤. `reason`/`impact` 등 근거 필드는 `minLength:1` 유지해 근거 없는 재생성 요청은 계속 차단.
   - **검증.** codex `--output-schema` 3개(planner/asset_generator/design_review_model) 전부 수락, 산출물도 스키마 통과. 실제 스토리보드로 planner-only run 실행(`runs/2026-07-15_ch802d14`, PASS, 196s) → 캐릭터 2명·포즈 7개가 나왔고 **7개 전부 `style_constraints`에 정체성 재서술 0건**(포즈·표정·시선만). 단일 포즈 재생성 시뮬레이션에서 batch에 asset 1개만 남아도 identity + 기준 포즈 + 형제 목록이 따라오는 것 확인.
-  - **미검증(중요).** 전체 run은 돌리지 않았다. codex에 이미지 생성 MCP/도구가 없어(등록: db 3개 + open-design) asset_generator가 PIL로 폴백하므로, "재생성해도 같은 인물인가"라는 최종 확인은 이미지 생성 경로가 생긴 뒤에야 가능하다. 지금 확인된 범위는 **정체성이 payload에 온전히 실려 생성기까지 도달한다**는 것까지다. ([asset-generation-method-mismatch] 참조)
+  - **full run 검증(2026-07-15).** 위에 "codex에 이미지 생성 도구가 없어 전체 run 불가"라고 적었던 것은 **틀린 판단이었다**(MCP 목록만 보고 problem.md의 7/10 기록을 검증 없이 믿음 — 실제로는 이미지 생성이 정상 동작). ch8_input.json으로 full run 2회 실행 결과:
+    - **정체성은 run 안에서 완벽히 유지됐다.** 두 캐릭터 × 3포즈가 모두 같은 인물이고 identity 명세와 일치.
+    - **그러나 이 수정의 타깃 시나리오는 발생하지 않았다.** design_review의 재생성 요청 13건이 전부 소품·표면이라 캐릭터가 하나도 재생성되지 않았고, 각 캐릭터의 포즈가 한 batch에 묶여 생성돼 기존 "batch 안에서 맞춘다" 방식만으로도 성립하는 상황이었다. **즉 D1/D2가 막는 상황이 안 왔으므로 이 수정의 효과는 여전히 미검증이다.**
+    - 검증에 필요한 조건: design_review가 **캐릭터 asset**의 재생성을 요청하고, 그 포즈가 형제와 분리된 batch로 가는 경우. 재현하려면 캐릭터 하나를 의도적으로 `--asset-generator-missing-only`로 단독 재생성해 보는 것이 가장 빠르다.
 - rule 문구: "캐릭터 정체성은 planner의 `characters`가 단일 소유자다. asset은 `character_id`로 참조만 하고 정체성을 재서술하지 않는다. 정체성 판단이 갈리면 `reference_asset_id`의 기준 포즈가 source of truth다. 재생성 요청은 덮어쓰기가 아니라 patch이며(빈 값 = 원본 유지), 원본을 보지 못한 stage는 그 필드를 재작성하지 않는다. 포즈를 하나만 재생성하더라도 identity와 기준 포즈가 batch까지 따라간다." — 문서 규칙이 아니라 schema/runner/prompt로 강제됨.
 - 재발 이력:
   - 없음 (2026-07-15 기준). 재발 시 problem.md 스텁의 횟수를 +1 하고 여기에 사례를 덧붙인다.

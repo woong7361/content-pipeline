@@ -1,0 +1,2775 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시간이 뒤죽박죽! 도서관 시계 수리</title>
+  <style>
+    :root {
+      --ink: #26313c;
+      --paper: #fff8df;
+      --paper-strong: #fff1ad;
+      --mint: #58c9b9;
+      --teal: #137b83;
+      --sky: #74c9e8;
+      --coral: #f27662;
+      --gold: #ffc83d;
+      --wood: #9b653b;
+      --danger: #e14f4f;
+      --shadow: 0 18px 38px rgba(36, 31, 24, .24);
+      --soft-shadow: 0 10px 24px rgba(44, 34, 18, .18);
+      --radius: 8px;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      color: var(--ink);
+      background: #1f4251;
+      overflow: hidden;
+    }
+    button, input { font: inherit; }
+    button {
+      border: 0;
+      cursor: pointer;
+      color: var(--ink);
+      touch-action: manipulation;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      user-select: none;
+      pointer-events: none;
+    }
+    .app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      min-height: 560px;
+      overflow: hidden;
+      background: #f8d88a;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .scene.active { display: block; }
+    .scene.leaving { display: block; pointer-events: none; z-index: 2; }
+    .scene.fade-in { animation: sceneFade .52s cubic-bezier(.2,.8,.2,1) both; }
+    .scene.fade-out { animation: sceneFadeOut .26s ease both; }
+    @keyframes sceneFade {
+      from { opacity: .1; transform: translateX(26px) scale(1.015); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes sceneFadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: translateX(-22px) scale(.99); }
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -3;
+    }
+    .shade {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background: linear-gradient(180deg, rgba(29, 38, 45, .12), rgba(19, 65, 75, .18));
+    }
+    .title-shade {
+      background: radial-gradient(circle at 50% 42%, rgba(255, 248, 221, .66), rgba(255, 248, 221, .18) 42%, rgba(38, 49, 60, .38));
+      backdrop-filter: blur(1px);
+    }
+
+    .topbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 76px;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px clamp(14px, 2.8vw, 34px);
+      pointer-events: none;
+    }
+    .topbar.visible { display: flex; }
+    .icon-btn, .nav-arrow {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .93);
+      box-shadow: var(--soft-shadow);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(91, 67, 38, .14);
+      pointer-events: auto;
+      font-weight: 900;
+      font-size: 24px;
+    }
+    .icon-btn:hover, .nav-arrow:hover, .choice:hover, .cta:hover, .key:hover, .number-block:hover {
+      transform: translateY(-2px);
+    }
+    .hamburger-lines {
+      width: 24px;
+      height: 17px;
+      display: grid;
+      gap: 4px;
+    }
+    .hamburger-lines span {
+      display: block;
+      height: 3px;
+      border-radius: 4px;
+      background: var(--teal);
+    }
+    .energy-wrap {
+      position: relative;
+      width: min(344px, 52vw);
+      min-width: 244px;
+      height: 72px;
+      padding: 10px 34px 14px 78px;
+      background: url("assets/repair_energy_meter.png") center / 100% 100% no-repeat;
+      filter: drop-shadow(0 10px 16px rgba(44, 34, 18, .22));
+      pointer-events: auto;
+    }
+    .energy-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #5a3718;
+      text-shadow: 0 1px 0 rgba(255,255,255,.7);
+      margin: 0 0 2px;
+    }
+    .energy-shell {
+      height: 18px;
+      padding: 3px;
+      border-radius: 999px;
+      background: rgba(19, 93, 96, .28);
+      border: 0;
+      box-shadow: inset 0 2px 5px rgba(22, 61, 55, .32);
+    }
+    .energy-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--mint), var(--gold));
+      transition: width .72s cubic-bezier(.22, 1, .36, 1), filter .35s ease;
+    }
+    .energy-shell.glow .energy-fill {
+      filter: drop-shadow(0 0 13px #ffdf4b) drop-shadow(0 0 20px #fff07c);
+      background: linear-gradient(90deg, #f7f06f, #ffbc2e, #fff2a3);
+    }
+
+    .slide-menu {
+      position: absolute;
+      z-index: 80;
+      top: 0;
+      left: 0;
+      width: min(310px, 82vw);
+      height: 100%;
+      padding: 88px 18px 24px;
+      background: rgba(255, 248, 221, .97);
+      box-shadow: 16px 0 34px rgba(31, 40, 46, .28);
+      clip-path: inset(0 100% 0 0);
+      visibility: hidden;
+      opacity: 0;
+      transition: clip-path .34s ease, opacity .18s ease, visibility .18s ease;
+      border-right: 4px solid rgba(19, 123, 131, .22);
+    }
+    .slide-menu.open {
+      clip-path: inset(0 0 0 0);
+      visibility: visible;
+      opacity: 1;
+    }
+    .lesson-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .lesson-list button {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 8px;
+      background: #fff3c6;
+      border: 2px solid #ead59c;
+      text-align: left;
+      padding: 9px 12px;
+      font-weight: 800;
+    }
+    .lesson-list button.current {
+      background: #dff8f5;
+      border-color: var(--mint);
+      color: #075e66;
+    }
+
+    .center-stack {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8vh 6vw;
+      text-align: center;
+      gap: 22px;
+    }
+    .main-title {
+      color: #4f2c16;
+      font-size: clamp(32px, 5.35vw, 68px);
+      line-height: 1.08;
+      font-weight: 1000;
+      text-shadow: 0 5px 0 #ffe18a, 0 12px 24px rgba(45, 29, 18, .2);
+      margin: 0;
+      max-width: 1020px;
+      animation: titlePop .78s cubic-bezier(.18, 1.2, .28, 1) both .25s;
+    }
+    .main-title span {
+      display: block;
+      max-width: 700px;
+      margin: .28em auto 0;
+      font-size: .56em;
+      line-height: 1.18;
+      color: #126f72;
+    }
+    .title-banner {
+      width: min(1040px, 86vw);
+      min-height: clamp(250px, 32vw, 410px);
+      padding: clamp(70px, 8vw, 122px) clamp(94px, 10vw, 150px) clamp(68px, 8vw, 118px);
+      background: url("assets/title_mission_banner.png") center / contain no-repeat;
+      filter: drop-shadow(0 18px 30px rgba(44, 34, 18, .24));
+      display: grid;
+      place-items: center;
+    }
+    @keyframes titlePop {
+      from { opacity: 0; transform: scale(.82) translateY(18px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 56px;
+      max-width: min(92vw, 620px);
+      padding: 13px 24px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffe46d, #ffc33a);
+      border: 3px solid rgba(116, 80, 25, .26);
+      box-shadow: 0 8px 0 #c98222, 0 16px 26px rgba(53, 41, 24, .25);
+      font-size: clamp(17px, 2.3vw, 25px);
+      font-weight: 1000;
+      line-height: 1.25;
+      transition: transform .18s ease, box-shadow .18s ease;
+      text-align: center;
+    }
+    .cta:active {
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #c98222, 0 8px 18px rgba(53, 41, 24, .2);
+    }
+    .cta.pulse { animation: pulse 1.35s ease-in-out infinite; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.035); }
+    }
+
+    .stage-area {
+      position: absolute;
+      inset: 76px 0 0;
+      display: grid;
+      grid-template-columns: minmax(160px, 25vw) 1fr minmax(150px, 24vw);
+      grid-template-rows: 1fr auto;
+      gap: 12px;
+      padding: 10px clamp(16px, 3vw, 38px) 22px;
+      align-items: end;
+    }
+    .scene-title-chip {
+      position: absolute;
+      top: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 7;
+      width: min(720px, 82vw);
+      min-height: 64px;
+      padding: 18px 92px 16px;
+      border-radius: 0;
+      background: url("assets/scene_chapter_plaque.png") center / 100% 100% no-repeat;
+      box-shadow: none;
+      filter: drop-shadow(0 9px 14px rgba(44, 34, 18, .18));
+      font-weight: 900;
+      color: #075e66;
+      text-align: center;
+      max-width: min(88vw, 720px);
+      font-size: clamp(13px, 1.15vw, 16px);
+      line-height: 1.28;
+    }
+
+    .character {
+      position: absolute;
+      z-index: 9;
+      bottom: 4vh;
+      width: min(25vw, 230px);
+      max-height: 70vh;
+      object-fit: contain;
+      transform-origin: bottom center;
+    }
+    .character.librarian { right: clamp(18px, 5vw, 80px); width: min(24vw, 250px); }
+    .character.child { left: clamp(18px, 4vw, 70px); width: min(22vw, 210px); }
+    .character.center-child { left: 50%; transform: translateX(-50%); width: min(24vw, 220px); }
+    .character.distressed { animation: tremble .55s linear infinite; }
+    .character.success { animation: hop .78s ease; }
+    .character.enter-right { animation: walkIn .8s ease both; }
+    @keyframes tremble {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-3px) rotate(-1deg); }
+      75% { transform: translateX(3px) rotate(1deg); }
+    }
+    @keyframes hop {
+      0%, 100% { transform: translateY(0); }
+      45% { transform: translateY(-24px); }
+    }
+    @keyframes walkIn {
+      from { opacity: 0; transform: translateX(80px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .speech {
+      position: absolute;
+      z-index: 30;
+      width: min(520px, 50vw);
+      min-height: 146px;
+      padding: 34px 46px 42px 42px;
+      background-image: url("assets/speech_bubble_blank.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      filter: drop-shadow(0 10px 18px rgba(44, 34, 18, .22));
+      font-size: clamp(16px, 1.75vw, 21px);
+      line-height: 1.45;
+      font-weight: 850;
+      display: none;
+    }
+    .speech.visible { display: block; animation: bubbleIn .28s cubic-bezier(.2, 1.25, .42, 1) both; }
+    .speech .speaker { display: block; color: #0c727a; font-weight: 1000; margin-bottom: 4px; }
+    .speech.librarian-bubble { right: clamp(160px, 23vw, 320px); bottom: min(56vh, 460px); }
+    .speech.child-bubble { left: clamp(150px, 22vw, 295px); bottom: min(50vh, 410px); }
+    .speech.center-bubble { left: 50%; bottom: 38vh; transform: translateX(-50%); }
+    @keyframes bubbleIn {
+      from { opacity: 0; transform: translateY(12px) scale(.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .clock-object {
+      position: relative;
+      width: min(30vw, 270px);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      flex: 0 0 auto;
+    }
+    .clock-object.large {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 15vh;
+      transform: translateX(-50%);
+      width: min(29vw, 310px);
+    }
+    .clock-object.small { width: min(23vw, 205px); }
+    .clock-object.choice-clock { width: min(24vw, 210px); }
+    .clock-object img { width: 100%; height: 100%; object-fit: contain; }
+    .hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      transform-origin: 50% 100%;
+      border-radius: 999px;
+      background: #29323a;
+      box-shadow: 0 1px 2px rgba(255,255,255,.38);
+    }
+    .hour-hand { width: 4.4%; height: 25%; margin-left: -2.2%; }
+    .minute-hand { width: 3.2%; height: 34%; margin-left: -1.6%; background: #d44e4b; }
+    .pin {
+      position: absolute;
+      width: 8.5%;
+      height: 8.5%;
+      border-radius: 999px;
+      background: #ffdf60;
+      border: 2px solid #2e3438;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .clock-object.spinning .hour-hand { animation: spinHands 1.2s linear infinite; }
+    .clock-object.spinning .minute-hand { animation: spinHands .46s linear infinite reverse; }
+    .clock-object.normal .minute-hand { animation: spinHands 24s linear infinite; }
+    @keyframes spinHands { to { transform: rotate(360deg); } }
+    .glow-target { box-shadow: 0 0 0 6px rgba(255, 212, 58, .6), 0 0 34px 12px rgba(255, 212, 58, .65); border-radius: 18px; }
+    .clock-object.glow-target {
+      border-radius: 50%;
+      box-shadow: 0 0 0 7px rgba(255, 212, 58, .52), 0 0 34px 13px rgba(255, 212, 58, .58);
+    }
+
+    .tutorial-workbench {
+      position: absolute;
+      z-index: 12;
+      left: 50%;
+      bottom: 15vh;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 3vw, 34px);
+      padding: 16px 18px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .84);
+      box-shadow: var(--shadow);
+    }
+    .drop-slot, .answer-field {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 94px;
+      min-height: 58px;
+      border-radius: 8px;
+      border: 3px dashed #d59d2a;
+      background: #fff9d8;
+      font-weight: 1000;
+      color: #7a5118;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    .drop-slot.ready { background: #e6fff9; border-color: var(--mint); }
+    .cards-row, .choices-row, .number-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .card, .choice, .number-block, .key {
+      border-radius: 8px;
+      border: 2px solid rgba(73, 62, 38, .16);
+      background: #fff2bd;
+      box-shadow: 0 6px 0 rgba(137, 96, 37, .32), var(--soft-shadow);
+      font-weight: 1000;
+      min-height: 52px;
+      padding: 10px 16px;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .card { min-width: 110px; font-size: 20px; }
+    .card.dragging, .number-block.dragging { opacity: .48; transform: scale(.96); }
+    .shake { animation: shake .34s linear; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .pop { animation: popChoice .35s ease both; }
+    @keyframes popChoice {
+      0% { transform: translateY(0) scale(1); }
+      55% { transform: translateY(-14px) scale(1.04); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .bottom-panel {
+      position: absolute;
+      z-index: 28;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      width: min(1050px, calc(100vw - 28px));
+      min-height: 104px;
+      padding: 15px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .94);
+      box-shadow: var(--shadow);
+      border: 2px solid rgba(122, 81, 24, .16);
+    }
+    .bottom-panel.disabled {
+      opacity: .42;
+      pointer-events: none;
+    }
+
+    .quiz-layout {
+      position: absolute;
+      inset: 76px 0 0;
+      padding: 18px clamp(16px, 3vw, 34px) 18px;
+      display: grid;
+      grid-template-columns: minmax(140px, 230px) 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+    .quiz-surface {
+      grid-column: 2;
+      align-self: stretch;
+      justify-self: center;
+      width: min(930px, 100%);
+      min-height: 380px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 12px 114px;
+    }
+    .surface-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: -1;
+      filter: drop-shadow(0 18px 30px rgba(35, 25, 15, .18));
+    }
+    .sign-text, .board-text, .monitor-text {
+      position: relative;
+      z-index: 2;
+      max-width: min(82%, 720px);
+      padding: 12px 18px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: clamp(18px, 2.35vw, 31px);
+      line-height: 1.35;
+      font-weight: 1000;
+      color: #fff8d8;
+      text-shadow: 0 2px 0 rgba(31, 25, 20, .36);
+      background: rgba(14, 75, 83, .74);
+    }
+    .board-text {
+      color: #482b17;
+      text-shadow: none;
+      background: rgba(255, 250, 226, .82);
+      margin-top: 36px;
+    }
+    .monitor-text {
+      color: #eaffff;
+      background: rgba(7, 66, 75, .78);
+      box-shadow: inset 0 0 0 2px rgba(149, 240, 223, .28);
+    }
+    .quiz-question {
+      grid-column: 1 / -1;
+      align-self: end;
+      z-index: 20;
+      width: min(1060px, 100%);
+      justify-self: center;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .96);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+      text-align: center;
+    }
+    .quiz-prompt {
+      font-size: clamp(17px, 2vw, 24px);
+      line-height: 1.35;
+      font-weight: 950;
+    }
+    .clock-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(130px, 1fr));
+      gap: 14px;
+      width: min(820px, 100%);
+      margin: 0 auto;
+    }
+    .clock-choice {
+      border-radius: 8px;
+      padding: 8px;
+      background: #e8fff9;
+      border: 3px solid transparent;
+      box-shadow: var(--soft-shadow);
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      font-weight: 900;
+    }
+    .clock-choice.correct-flash {
+      border-color: var(--danger);
+      animation: correctFlash .8s ease 3;
+    }
+    @keyframes correctFlash {
+      0%,100% { box-shadow: var(--soft-shadow); }
+      50% { box-shadow: 0 0 0 8px rgba(225, 79, 79, .35), 0 0 22px rgba(225, 79, 79, .8); }
+    }
+    .visual-clocks {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      z-index: 2;
+      position: relative;
+      padding: 8px 16px;
+      background: rgba(255,255,255,.44);
+      border-radius: 8px;
+    }
+    .arrow-label {
+      color: #664320;
+      font-size: clamp(20px, 3vw, 34px);
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+    .keypad-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      width: min(900px, 100%);
+      margin: 0 auto;
+    }
+    .answer-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      min-height: 62px;
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 950;
+    }
+    .answer-field.active { outline: 4px solid rgba(88, 201, 185, .42); background: #e8fff9; }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 54px);
+      gap: 7px;
+    }
+    .key {
+      min-height: 46px;
+      padding: 0;
+      font-size: 20px;
+      background: #ffe7a6;
+    }
+    .confirm-btn {
+      background: var(--teal);
+      color: white;
+      grid-column: span 3;
+      box-shadow: 0 6px 0 #075b60;
+    }
+    .blank-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      position: relative;
+      z-index: 3;
+    }
+    .number-block {
+      min-width: 48px;
+      padding: 8px 13px;
+      background: #dcfff7;
+      color: #075e66;
+      font-size: 20px;
+    }
+    .system-complete {
+      color: #fff8ac;
+      font-weight: 1000;
+      margin-top: 10px;
+      min-height: 26px;
+      text-shadow: 0 0 12px #fff06b;
+    }
+    .monitor-on {
+      filter: drop-shadow(0 0 26px rgba(255, 228, 109, .9));
+    }
+
+    .feedback-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      display: none;
+    }
+    .feedback-layer.visible { display: block; }
+    .stamp {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%) rotate(-8deg);
+      min-width: 190px;
+      min-height: 118px;
+      padding: 28px 34px;
+      border-radius: 0;
+      background: url("assets/repair_feedback_stamp_set.png") center / contain no-repeat;
+      color: #0b747c;
+      border: 0;
+      font-size: clamp(24px, 3.6vw, 44px);
+      font-weight: 1000;
+      text-align: center;
+      box-shadow: none;
+      filter: drop-shadow(0 12px 18px rgba(44, 34, 18, .26));
+      animation: stampIn .36s cubic-bezier(.18,1.3,.34,1) both;
+    }
+    .stamp.wrong {
+      color: #9f2e28;
+      border-color: #ef7d6e;
+    }
+    .feedback-layer.scene-type-a .stamp { border-color: #58c9b9; color: #075e66; }
+    .feedback-layer.scene-type-b .stamp { border-color: #ffc83d; color: #7a5118; }
+    .feedback-layer.scene-type-c .stamp { border-color: #74c9e8; color: #075e66; }
+    .feedback-layer.feedback-wrong .stamp {
+      color: #9f2e28;
+      animation: stampIn .28s ease both, shake .34s linear .08s;
+    }
+    @keyframes stampIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(1.5) rotate(-8deg); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-8deg); }
+    }
+    .particle-field {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 18;
+    }
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: var(--gold);
+      opacity: .9;
+      animation: particleFall 1.6s ease-out forwards;
+    }
+    @keyframes particleFall {
+      from { transform: translateY(0) rotate(0); opacity: 1; }
+      to { transform: translateY(210px) rotate(280deg); opacity: 0; }
+    }
+
+    .restore-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 1.25s ease;
+    }
+    #scene-repair.active .restore-layer {
+      opacity: 1;
+    }
+    .restore-layer.show { opacity: 1; }
+    .floating-books {
+      position: absolute;
+      z-index: 12;
+      left: 22%;
+      bottom: 20%;
+      width: 56%;
+      height: 35%;
+      pointer-events: none;
+      display: none;
+    }
+    .floating-books.show { display: block; }
+    .book-piece {
+      position: absolute;
+      width: 48px;
+      height: 32px;
+      border-radius: 5px;
+      background: #58c9b9;
+      border: 3px solid rgba(57, 37, 18, .28);
+      animation: bookFloat 1.65s ease-in-out forwards;
+    }
+    .book-piece:nth-child(2) { left: 28%; bottom: 8%; background: #ffc83d; animation-delay: .18s; }
+    .book-piece:nth-child(3) { left: 54%; bottom: 4%; background: #f27662; animation-delay: .32s; }
+    .book-piece:nth-child(4) { left: 75%; bottom: 11%; background: #74c9e8; animation-delay: .46s; }
+    @keyframes bookFloat {
+      0% { transform: translateY(80px) rotate(-18deg); opacity: 0; }
+      35% { opacity: 1; }
+      100% { transform: translateY(-130px) rotate(6deg); opacity: 0; }
+    }
+
+    .popup-book-wrap {
+      position: absolute;
+      z-index: 8;
+      left: 50%;
+      top: 54%;
+      transform: translate(-50%, -50%);
+      width: min(1060px, 88vw);
+      height: min(710px, 74vh);
+      display: grid;
+      place-items: center;
+    }
+    .popup-book-wrap > img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 30px rgba(35, 25, 15, .2));
+    }
+    .book-page-content {
+      position: absolute;
+      z-index: 2;
+      left: 13%;
+      top: 19%;
+      width: 74%;
+      height: 56%;
+      transform-style: preserve-3d;
+      transform-origin: center;
+    }
+    .page-image {
+      position: absolute;
+      left: 3%;
+      top: 10%;
+      width: 42%;
+      min-width: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--soft-shadow);
+      aspect-ratio: 1.5;
+      background: #fff9df;
+    }
+    .page-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .page-overlay-text {
+      position: absolute;
+      top: 9%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 5px 11px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .92);
+      color: #0b747c;
+      font-size: clamp(18px, 2vw, 28px);
+      font-weight: 1000;
+      white-space: nowrap;
+      box-shadow: var(--soft-shadow);
+    }
+    .page-caption {
+      position: absolute;
+      left: 56%;
+      top: 13%;
+      width: 38%;
+      min-width: 0;
+      font-size: clamp(16px, 1.7vw, 22px);
+      line-height: 1.48;
+      font-weight: 900;
+      color: #51351d;
+      padding: 14px;
+      background: transparent;
+      border-radius: 8px;
+    }
+    .book-page-content.turn-out-next { animation: pageTurnOutNext .18s ease both; transform-origin: right center; }
+    .book-page-content.turn-in-next { animation: pageTurnInNext .32s ease both; transform-origin: left center; }
+    .book-page-content.turn-out-prev { animation: pageTurnOutPrev .18s ease both; transform-origin: left center; }
+    .book-page-content.turn-in-prev { animation: pageTurnInPrev .32s ease both; transform-origin: right center; }
+    @keyframes pageTurnOutNext {
+      to { opacity: 0; transform: perspective(900px) rotateY(-24deg) translateX(-12px); }
+    }
+    @keyframes pageTurnInNext {
+      from { opacity: 0; transform: perspective(900px) rotateY(18deg) translateX(12px); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes pageTurnOutPrev {
+      to { opacity: 0; transform: perspective(900px) rotateY(24deg) translateX(12px); }
+    }
+    @keyframes pageTurnInPrev {
+      from { opacity: 0; transform: perspective(900px) rotateY(-18deg) translateX(-12px); }
+      to { opacity: 1; transform: none; }
+    }
+    .book-nav {
+      position: absolute;
+      z-index: 18;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .book-nav.prev { left: 1%; }
+    .book-nav.next { right: 1%; }
+    .popup-book-wrap .nav-arrow {
+      width: 70px;
+      height: 58px;
+      background: url("assets/reusable_library_ticket_button.png") center / 100% 100% no-repeat;
+      border: 0;
+      box-shadow: none;
+      color: #0b747c;
+      text-shadow: 0 2px 0 rgba(255,255,255,.74);
+      font-size: 28px;
+      filter: drop-shadow(0 7px 10px rgba(44, 34, 18, .18));
+    }
+
+    .quiz-popup {
+      position: absolute;
+      z-index: 18;
+      left: 50%;
+      top: 51%;
+      transform: translate(-50%, -50%);
+      width: min(720px, 88vw);
+      padding: 20px;
+      border-radius: 8px;
+      background: rgba(255, 248, 221, .97);
+      box-shadow: var(--shadow);
+      text-align: center;
+      border: 4px solid rgba(255, 200, 61, .65);
+    }
+    .popup-child {
+      position: absolute;
+      z-index: 16;
+      left: 4vw;
+      bottom: 4vh;
+      width: min(25vw, 250px);
+      animation: popForward .48s ease both;
+    }
+    @keyframes popForward {
+      from { opacity: 0; transform: scale(.75) translateY(50px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .certificate-box {
+      position: absolute;
+      z-index: 12;
+      left: 50%;
+      top: 47%;
+      transform: translate(-50%, -50%);
+      width: min(780px, 88vw);
+      min-height: 430px;
+      padding: 30px clamp(20px, 4vw, 48px);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff7d1, #fffef0);
+      border: 8px solid #e3a52f;
+      box-shadow: var(--shadow), inset 0 0 0 4px rgba(255, 218, 116, .52);
+      text-align: center;
+      display: grid;
+      gap: 14px;
+      align-content: center;
+    }
+    .certificate-box h2 {
+      margin: 0;
+      font-size: clamp(29px, 4.3vw, 52px);
+      color: #7a4c13;
+      line-height: 1.22;
+      overflow: visible;
+    }
+    .certificate-box p {
+      margin: 0;
+      font-size: clamp(16px, 2vw, 23px);
+      line-height: 1.55;
+      font-weight: 850;
+    }
+    .record-line {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: #0b747c;
+      font-weight: 1000;
+    }
+    .final-characters {
+      position: absolute;
+      z-index: 13;
+      left: 0;
+      right: 0;
+      bottom: 74px;
+      pointer-events: none;
+    }
+    .final-characters img { position: absolute; bottom: 0; }
+    .final-characters .librarian-final { right: 5vw; width: min(18vw, 170px); }
+    .final-characters .child-final { left: 5vw; width: min(20vw, 170px); }
+    .final-actions {
+      position: absolute;
+      z-index: 20;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: min(900px, 94vw);
+    }
+    #scene-final .speech {
+      width: min(390px, 36vw);
+      min-height: 114px;
+      padding: 26px 34px 30px;
+      font-size: clamp(14px, 1.4vw, 18px);
+      bottom: 112px;
+    }
+    #scene-final .speech.librarian-bubble {
+      right: clamp(130px, 18vw, 260px);
+      left: auto;
+    }
+    #scene-final .speech.child-bubble {
+      left: clamp(130px, 18vw, 260px);
+      right: auto;
+    }
+    .save-btn { background: linear-gradient(180deg, #b7fff0, #58c9b9); box-shadow: 0 8px 0 #157a80, 0 16px 26px rgba(53,41,24,.25); }
+    .next-btn { background: linear-gradient(180deg, #ffe46d, #ffb13a); }
+
+    /* Design refine: place dynamic controls onto generated scene surfaces. */
+    #startBtn,
+    #introNext,
+    #goStep2,
+    #goStep3,
+    .final-actions .cta {
+      width: min(470px, 78vw);
+      min-height: 118px;
+      padding: 26px 68px 32px;
+      border: 0;
+      background: url("assets/reusable_library_ticket_button.png") center / contain no-repeat;
+      background-size: 100% 100%;
+      box-shadow: none;
+      border-radius: 0;
+      filter: drop-shadow(0 12px 18px rgba(53, 41, 24, .22));
+      color: #4f2c16;
+      font-size: clamp(17px, 1.75vw, 23px);
+      text-shadow: 0 1px 0 rgba(255,255,255,.65);
+    }
+    #startBtn { min-width: 260px; }
+    #introNext,
+    #goStep2,
+    #goStep3 {
+      width: min(560px, 84vw);
+      min-height: 112px;
+      font-size: clamp(18px, 1.8vw, 24px);
+    }
+    #scene-intro .bottom-panel,
+    #scene-success .bottom-panel,
+    #scene-repair .bottom-panel {
+      width: auto;
+      min-height: 0;
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+    }
+    #scene-intro .speech.librarian-bubble {
+      width: min(400px, 31vw);
+      right: min(8vw, 118px);
+      bottom: min(39vh, 330px);
+      display: block;
+      font-size: clamp(15px, 1.45vw, 18px);
+      padding: 30px 39px 38px 36px;
+    }
+
+    #scene-tutorial .character.child,
+    #scene-success .character.child { bottom: 9vh; z-index: 16; }
+    #scene-tutorial .character.librarian,
+    #scene-success .character.librarian { bottom: 9vh; z-index: 16; }
+    #scene-tutorial .tutorial-workbench,
+    #scene-success .tutorial-workbench {
+      width: min(760px, 58vw);
+      height: min(365px, 40vh);
+      bottom: 8vh;
+      padding: 0;
+      gap: 0;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      display: block;
+    }
+    .workbench-surface {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 30px rgba(35, 25, 15, .24));
+      z-index: -1;
+    }
+    .workbench-clock {
+      position: absolute;
+      left: 17%;
+      top: 24%;
+      width: 30%;
+      display: grid;
+      place-items: center;
+    }
+    .workbench-slot {
+      position: absolute;
+      left: 64%;
+      top: 34%;
+      width: 20%;
+      min-width: 108px;
+    }
+    .workbench-card-tray {
+      position: absolute;
+      inset: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      text-align: center;
+    }
+    .workbench-card-tray.disabled {
+      opacity: 1;
+      pointer-events: none;
+    }
+    .workbench-card-tray .quiz-prompt {
+      position: absolute;
+      left: 42%;
+      top: 29%;
+      width: 26%;
+      bottom: auto;
+      font-size: clamp(17px, 1.36vw, 19px);
+      line-height: 1.27;
+      color: #5b3919;
+      text-shadow: 0 1px 0 rgba(255,255,255,.7);
+    }
+    .workbench-card-tray .cards-row {
+      position: absolute;
+      left: 17%;
+      right: 15%;
+      bottom: 6.5%;
+      height: 15%;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 3.2%;
+    }
+    .workbench-card-tray .card {
+      min-width: clamp(92px, 10vw, 128px);
+      min-height: 54px;
+      padding: 8px 12px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      color: #6a411c;
+      font-size: clamp(20px, 1.8vw, 25px);
+      line-height: 1.1;
+      text-shadow: 0 1px 0 rgba(255,255,255,.74);
+    }
+    #scene-success .tutorial-workbench::after {
+      content: "수리 완료";
+      position: absolute;
+      left: 62%;
+      top: 20%;
+      width: 26%;
+      min-height: 76px;
+      transform: rotate(-6deg);
+      display: grid;
+      place-items: center;
+      padding: 14px 20px;
+      border-radius: 0;
+      color: #8a4e0e;
+      background: url("assets/repair_feedback_stamp_set.png") center / contain no-repeat;
+      border: 0;
+      font-weight: 1000;
+      box-shadow: none;
+      filter: drop-shadow(0 8px 12px rgba(44, 34, 18, .2));
+    }
+    #scene-success .tutorial-workbench.glow-target {
+      box-shadow: none;
+      border-radius: 0;
+    }
+    #scene-success .workbench-slot.glow-target,
+    #scene-success .workbench-slot.ready {
+      box-shadow: 0 0 0 5px rgba(255, 212, 58, .45), 0 0 22px rgba(255, 212, 58, .55);
+    }
+
+    #scene-type-a .quiz-layout,
+    #scene-type-b .quiz-layout,
+    #scene-type-c .quiz-layout {
+      grid-template-columns: minmax(125px, 210px) 1fr minmax(125px, 210px);
+      grid-template-rows: 1fr;
+    }
+    #scene-type-a .character.child,
+    #scene-type-b .character.child,
+    #scene-type-c .character.child { left: clamp(10px, 2vw, 34px); bottom: 6vh; width: min(17vw, 175px); }
+    #scene-type-a .character.librarian,
+    #scene-type-b .character.librarian,
+    #scene-type-c .character.librarian { right: clamp(8px, 2vw, 30px); bottom: 6vh; width: min(18vw, 190px); }
+    #scene-type-a .quiz-surface,
+    #scene-type-b .quiz-surface,
+    #scene-type-c .quiz-surface {
+      grid-column: 2;
+      align-self: start;
+      width: min(760px, 62vw);
+      min-height: 360px;
+      padding: 0;
+      margin-top: 34px;
+    }
+    #scene-type-a .surface-img,
+    #scene-type-c .surface-img { inset: 0; width: 100%; height: 100%; }
+    #scene-type-a .sign-text {
+      position: absolute;
+      left: 21.5%;
+      top: 25%;
+      width: 58%;
+      height: 44%;
+      max-width: none;
+      padding: 0;
+      background: transparent;
+      font-size: clamp(19px, 2vw, 28px);
+      line-height: 1.25;
+      display: grid;
+      place-items: center;
+    }
+    #scene-type-b .board-text {
+      position: absolute;
+      left: 28%;
+      top: 22%;
+      width: 44%;
+      max-width: none;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      font-size: clamp(18px, 1.55vw, 23px);
+      line-height: 1.22;
+    }
+    #scene-type-b .visual-clocks {
+      position: absolute;
+      left: 24%;
+      top: 48%;
+      width: 52%;
+      margin: 0;
+      padding: 0;
+      gap: 14px;
+      background: transparent;
+    }
+    #scene-type-b .visual-clocks .clock-object.small { width: min(12vw, 128px); }
+    #scene-type-b .arrow-label { font-size: clamp(16px, 1.8vw, 24px); }
+    #scene-type-c .monitor-text {
+      position: absolute;
+      left: 27%;
+      top: 19%;
+      width: 46%;
+      height: 50%;
+      max-width: none;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      font-size: clamp(17px, 1.55vw, 23px);
+      line-height: 1.25;
+      display: grid;
+      place-items: center;
+    }
+    #scene-type-c .blank-group {
+      position: absolute;
+      left: 25%;
+      top: 54%;
+      width: 50%;
+      margin: 0;
+      color: #eaffff;
+      font-weight: 1000;
+    }
+    #scene-type-c .system-complete {
+      position: absolute;
+      left: 25%;
+      top: 70%;
+      width: 50%;
+      text-align: center;
+    }
+    #scene-type-a .quiz-question,
+    #scene-type-b .quiz-question,
+    #scene-type-c .quiz-question {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: min(900px, 70vw);
+      height: min(430px, 45vh);
+      padding: 0;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      display: block;
+      overflow: visible;
+    }
+    .console-surface {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 16px 25px rgba(36, 31, 24, .22));
+      z-index: -1;
+    }
+    #typeAQuestion .clock-options {
+      position: absolute;
+      left: 8.5%;
+      right: 32.5%;
+      top: 12%;
+      height: 76%;
+      width: auto;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    #typeAQuestion .clock-choice {
+      position: relative;
+      min-height: 0;
+      background: transparent;
+      box-shadow: none;
+      border-color: transparent;
+      padding: 0;
+      gap: 2px;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    #typeAQuestion.is-entered .clock-choice {
+      animation: slotPop .42s cubic-bezier(.2,1.15,.3,1) both;
+    }
+    #typeAQuestion.is-entered .clock-choice:nth-child(2) { animation-delay: .12s; }
+    #typeAQuestion.is-entered .clock-choice:nth-child(3) { animation-delay: .24s; }
+    #typeAQuestion .clock-choice::before {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: 12%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 4px rgba(255, 213, 73, .16);
+      transition: box-shadow .18s ease, transform .18s ease;
+    }
+    #typeAQuestion .clock-choice:hover::before,
+    #typeAQuestion .clock-choice.glow-target::before,
+    #typeAQuestion .clock-choice.cartridge-lock::before {
+      box-shadow: 0 0 0 6px rgba(255, 200, 61, .34), inset 0 0 0 4px rgba(255, 230, 109, .36);
+    }
+    #typeAQuestion .clock-object.choice-clock {
+      position: absolute;
+      left: 50%;
+      top: 13%;
+      transform: translateX(-50%);
+      width: min(12.4vw, 146px);
+    }
+    #typeAQuestion .clock-choice > span {
+      position: absolute;
+      left: 4%;
+      right: 4%;
+      bottom: 7%;
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+      color: #5a3718;
+      font-size: clamp(18px, 1.36vw, 20px);
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+      opacity: 1;
+      text-shadow: 0 1px 0 rgba(255,255,255,.7);
+    }
+    @keyframes slotPop {
+      from { transform: translateY(12px) scale(.97); }
+      to { transform: translateY(0) scale(1); }
+    }
+    #typeASign.is-lit { animation: ledFlicker .45s ease both; }
+    @keyframes ledFlicker {
+      0%, 34% { opacity: .35; filter: brightness(.75); }
+      18%, 62%, 100% { opacity: 1; filter: brightness(1.12); }
+    }
+    .clock-choice.correct-flash {
+      border-color: var(--gold);
+      animation: hintReveal .8s ease 3;
+    }
+    .clock-choice.cartridge-lock {
+      animation: cartridgeLock .45s cubic-bezier(.2,1.1,.3,1) both;
+    }
+    @keyframes hintReveal {
+      0%,100% { box-shadow: none; }
+      50% { box-shadow: 0 0 0 7px rgba(255, 200, 61, .28), 0 0 24px rgba(88, 201, 185, .72); }
+    }
+    @keyframes cartridgeLock {
+      0% { transform: translateY(0) scale(1); }
+      54% { transform: translateY(16px) scale(1.04); }
+      100% { transform: translateY(8px) scale(1.01); }
+    }
+    #typeBQuestion .keypad-wrap,
+    #typeCQuestion .keypad-wrap {
+      position: absolute;
+      inset: 0;
+      width: auto;
+      display: block;
+    }
+    #typeBQuestion .answer-line,
+    #typeCQuestion .answer-line {
+      position: absolute;
+      left: 9%;
+      top: 67.5%;
+      width: 57%;
+      height: 16%;
+      justify-content: center;
+      align-items: center;
+      color: #5a3718;
+      min-height: 0;
+      font-size: clamp(22px, 1.9vw, 26px);
+      line-height: 1;
+    }
+    #typeBQuestion .keypad,
+    #typeCQuestion .keypad {
+      position: absolute;
+      right: 8.5%;
+      top: 25%;
+      width: 19%;
+      height: 38%;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+      gap: 5px;
+    }
+    #typeBQuestion .key,
+    #typeCQuestion .key {
+      min-height: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: clamp(20px, 1.6vw, 23px);
+      line-height: 1;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      color: #5a3718;
+      text-shadow: 0 1px 0 rgba(255,255,255,.72);
+    }
+    #typeBQuestion .confirm-btn,
+    #typeCQuestion .confirm-btn {
+      position: absolute;
+      right: 8.5%;
+      bottom: 15%;
+      width: 19%;
+      height: 13%;
+      display: grid;
+      place-items: center;
+      font-size: clamp(17px, 1.35vw, 19px);
+      line-height: 1;
+      color: #075e66;
+    }
+    #typeBQuestion .answer-field,
+    #typeCQuestion .answer-field {
+      min-width: 100px;
+      min-height: 50px;
+      height: 50px;
+      padding: 0 14px;
+      line-height: 1;
+      display: inline-grid;
+      place-items: center;
+    }
+    #typeBQuestion .answer-line > span,
+    #typeCQuestion .answer-line > span {
+      min-height: 50px;
+      display: inline-grid;
+      place-items: center;
+    }
+    #typeBQuestion .choices-row,
+    #typeCQuestion .choices-row,
+    #typeCQuestion .number-row {
+      position: absolute;
+      left: 10%;
+      right: 34%;
+      top: 31%;
+      flex-wrap: nowrap;
+    }
+    #typeCQuestion .number-row {
+      left: auto;
+      right: 8.5%;
+      top: 25%;
+      width: 19%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+    }
+    #typeCQuestion .number-row .number-block {
+      min-width: 0;
+      min-height: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      color: #075e66;
+      font-size: clamp(19px, 1.5vw, 22px);
+      line-height: 1;
+    }
+    #typeCQuestion #checkBlocks {
+      position: absolute;
+      right: 8.5%;
+      bottom: 15%;
+      width: 19%;
+      min-height: 0;
+      height: 13%;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: clamp(17px, 1.35vw, 19px);
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      filter: none;
+      color: #075e66;
+    }
+    #scene-type-b.device-ok .quiz-surface { animation: boardStamp .42s ease both; }
+    #scene-type-c.device-ok #monitorSurface { animation: monitorScan .72s ease both; }
+    #scene-type-a.device-ok #typeASign { animation: ledSweep .62s ease both; }
+    #scene-type-a.device-wrong .quiz-surface,
+    #scene-type-b.device-wrong .quiz-surface,
+    #scene-type-c.device-wrong #monitorSurface { animation: deviceBlink .32s ease 2; }
+    @keyframes boardStamp { 50% { transform: translateY(-4px) rotate(-1deg); } }
+    @keyframes monitorScan { 50% { filter: drop-shadow(0 0 24px rgba(88,201,185,.9)) brightness(1.12); } }
+    @keyframes deviceBlink { 50% { filter: drop-shadow(0 0 18px rgba(225,79,79,.78)); } }
+    @keyframes ledSweep {
+      0% { filter: brightness(1); }
+      45% { filter: drop-shadow(0 0 18px rgba(255, 230, 109, .95)) brightness(1.25); }
+      100% { filter: drop-shadow(0 0 8px rgba(88, 201, 185, .72)) brightness(1.08); }
+    }
+    #scene-type-b .board-text,
+    #scene-type-b .visual-clocks,
+    #scene-type-c .monitor-text,
+    #scene-type-c .blank-group {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    #scene-type-b.is-entered .board-text,
+    #scene-type-c.is-entered .monitor-text { animation: devicePartIn .34s ease both .12s; }
+    #scene-type-b.is-entered .visual-clocks,
+    #scene-type-c.is-entered .blank-group { animation: devicePartIn .34s ease both .26s; }
+    #scene-type-b.is-entered #typeBQuestion .answer-line,
+    #scene-type-c.is-entered #typeCQuestion .answer-line,
+    #scene-type-b.is-entered #typeBQuestion .key,
+    #scene-type-c.is-entered #typeCQuestion .key,
+    #scene-type-c.is-entered #typeCQuestion .number-block {
+      animation: keypadTapIn .34s ease both;
+    }
+    @keyframes keypadTapIn {
+      from { transform: translateY(5px) scale(.98); }
+      to { transform: translateY(0) scale(1); }
+    }
+    @keyframes devicePartIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .quiz-popup {
+      width: min(940px, 76vw);
+      min-height: min(690px, 72vh);
+      padding: 0;
+      border: 0;
+      background: url("assets/popup_quiz_paper_card.png") center / contain no-repeat;
+      box-shadow: none;
+      display: block;
+    }
+    #popupQuiz .quiz-prompt {
+      position: absolute;
+      left: 17%;
+      top: 23%;
+      width: 66%;
+      font-size: clamp(20px, 1.75vw, 25px);
+      line-height: 1.45;
+      color: #5a3718;
+    }
+    #popupQuiz .choices-row {
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      bottom: 14%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4%;
+      flex-wrap: nowrap;
+    }
+    #popupQuiz .choice {
+      min-width: 0;
+      min-height: 132px;
+      padding: 0 12px;
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      color: #5a3718;
+      font-size: clamp(22px, 2.1vw, 31px);
+    }
+
+    .certificate-box {
+      top: 45%;
+      width: min(760px, 68vw);
+      min-height: 390px;
+      padding: 78px 150px 74px;
+      border: 0;
+      background: url("assets/final_certificate_frame.png") center / contain no-repeat;
+      box-shadow: none;
+      gap: 8px;
+    }
+    .certificate-box h2 { font-size: clamp(26px, 3.5vw, 42px); }
+    .certificate-box p {
+      max-width: 82%;
+      margin: 0 auto;
+      font-size: clamp(14px, 1.35vw, 18px);
+      line-height: 1.45;
+    }
+    .final-characters { bottom: 62px; z-index: 14; }
+    .final-characters .child-final { left: 4vw; width: min(16vw, 150px); }
+    .final-characters .librarian-final { right: 4vw; width: min(16vw, 155px); }
+    #scene-final .speech {
+      bottom: auto;
+      top: 61%;
+      width: min(330px, 26vw);
+      min-height: 102px;
+      padding: 24px 30px 28px;
+      font-size: clamp(13px, 1.18vw, 16px);
+      z-index: 24;
+    }
+    #scene-final .speech.librarian-bubble { right: 12vw; }
+    #scene-final .speech.child-bubble { left: 12vw; }
+    .final-actions {
+      bottom: 22px;
+      width: min(900px, 80vw);
+      display: grid;
+      grid-template-columns: minmax(260px, 340px) minmax(390px, 1fr);
+      align-items: center;
+    }
+    .final-actions .cta {
+      width: 100%;
+      min-height: 100px;
+      font-size: clamp(15px, 1.55vw, 19px);
+      padding: 18px 52px 26px;
+    }
+    .final-actions .save-btn,
+    .final-actions .next-btn {
+      background: url("assets/reusable_library_ticket_button.png") center / contain no-repeat;
+      box-shadow: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 760px) {
+      .app { min-height: 620px; }
+      .topbar { height: 66px; padding: 10px 12px; }
+      .icon-btn { width: 46px; height: 46px; }
+      .energy-wrap { width: 54vw; min-width: 160px; }
+      .center-stack { padding: 7vh 5vw; }
+      .stage-area, .quiz-layout {
+        inset: 66px 0 0;
+        grid-template-columns: 1fr;
+        padding: 10px 10px 12px;
+      }
+      .quiz-layout {
+        inset: 132px 0 0;
+      }
+      .scene-title-chip { top: 74px; font-size: 13px; }
+      .character.librarian { right: 8px; width: min(31vw, 150px); bottom: 118px; }
+      .character.child { left: 0; width: min(34vw, 165px); bottom: 104px; }
+      .speech {
+        width: min(94vw, 420px);
+        padding: 28px 34px 36px;
+        font-size: 15px;
+      }
+      .speech.librarian-bubble, .speech.child-bubble, .speech.center-bubble {
+        left: 3vw;
+        right: auto;
+        bottom: 284px;
+        transform: none;
+      }
+      .tutorial-workbench {
+        bottom: 220px;
+        width: calc(100vw - 24px);
+        gap: 10px;
+        padding: 10px;
+      }
+      .bottom-panel {
+        bottom: 8px;
+        padding: 10px;
+      }
+      .clock-options {
+        grid-template-columns: 1fr;
+        max-height: 38vh;
+        overflow: auto;
+      }
+      .clock-object.choice-clock { width: 132px; }
+      .quiz-surface {
+        grid-column: 1;
+        min-height: 330px;
+        padding-bottom: 106px;
+      }
+      .quiz-question { grid-column: 1; padding: 10px; }
+      .keypad-wrap { grid-template-columns: 1fr; }
+      .keypad { justify-self: center; }
+      .book-page-content {
+        width: 82%;
+        height: 62%;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .page-caption { font-size: 14px; padding: 8px; }
+      .book-nav.prev { left: 1%; }
+      .book-nav.next { right: 1%; }
+      .nav-arrow { width: 46px; height: 46px; }
+      .popup-child { width: 145px; left: 4px; bottom: 82px; }
+      .certificate-box { top: 35%; min-height: 300px; padding: 14px; }
+      .certificate-box h2 { font-size: 24px; }
+      .certificate-box p { font-size: 14px; }
+      #scene-final .speech {
+        left: 4vw;
+        right: auto;
+        width: 92vw;
+        min-height: 76px;
+        padding: 18px 26px 22px;
+        font-size: 13px;
+        transform: none;
+      }
+      #scene-final .speech.librarian-bubble,
+      #scene-final .speech.child-bubble {
+        left: 4vw;
+        right: auto;
+      }
+      #scene-final .speech.librarian-bubble { top: 462px; bottom: auto; }
+      #scene-final .speech.child-bubble { top: 548px; bottom: auto; }
+      .final-characters { display: none; }
+      .final-actions { bottom: 8px; }
+      .final-actions .cta { min-height: 48px; font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <nav class="slide-menu" id="slideMenu" aria-label="차시 목록">
+      <ul class="lesson-list">
+        <li><button type="button">1차시 수 세기</button></li>
+        <li><button type="button">2차시 덧셈</button></li>
+        <li><button type="button">3차시 뺄셈</button></li>
+        <li><button type="button">4차시 곱셈</button></li>
+        <li><button type="button">5차시 도형</button></li>
+        <li><button type="button">6차시 표와 그래프</button></li>
+        <li><button type="button">7차시 돈 계산</button></li>
+        <li><button type="button" class="current">8차시 시간</button></li>
+        <li><button type="button" id="menuNextMission">9차시 길이 재기</button></li>
+        <li><button type="button">10차시 복습</button></li>
+      </ul>
+    </nav>
+
+    <header class="topbar" id="topbar">
+      <button class="icon-btn" id="hamburger" type="button" aria-label="차시 목록 열기">
+        <span class="hamburger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <div class="energy-wrap" aria-label="진행도 게이지">
+        <div class="energy-label"><span>수리 에너지</span><span id="energyText">0%</span></div>
+        <div class="energy-shell" id="energyShell"><div class="energy-fill" id="energyFill"></div></div>
+      </div>
+    </header>
+
+    <div class="feedback-layer" id="feedbackLayer" aria-live="polite"></div>
+    <div class="particle-field" id="particleField" aria-hidden="true"></div>
+
+    <section class="scene active" id="scene-title" data-qa-scene="activity1_scene1_title" data-qa-order="1" data-qa-label="타이틀 화면">
+      <img class="bg" src="assets/bg_messy_lobby_blur.png" alt="중앙 타이틀 영역을 비워 둔 흐릿한 어질러진 마을 도서관 로비 배경">
+      <div class="shade title-shade"></div>
+      <div class="center-stack">
+        <div class="title-banner">
+          <h1 class="main-title">시간이 뒤죽박죽!<span>수학의 힘으로 도서관 시계를 수리하라!</span></h1>
+        </div>
+        <button type="button" class="cta pulse" id="startBtn">시작하기</button>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-intro" data-qa-scene="activity1_scene2_intro_problem" data-qa-order="2" data-qa-label="문제 발생">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 2. INTRO &amp; PROBLEM (문제 발생)</div>
+      <div class="clock-object large spinning" id="bigClock">
+        <img src="assets/large_clock_body.png" alt="바늘 없이 숫자판과 나무 테두리만 있는 큰 둥근 도서관 벽시계 몸체">
+        <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+      </div>
+      <img class="character librarian distressed" src="assets/librarian_distressed.png" alt="같은 사서 선생님이 양손을 머리 가까이 올리고 당황한 표정으로 서 있는 전신 일러스트">
+      <div class="speech librarian-bubble" id="introSpeech"><span class="speaker">사서 선생님</span>큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
+      <div class="bottom-panel">
+        <button type="button" class="cta" id="introNext">도와주러 가기</button>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-tutorial" data-qa-scene="activity1_scene3_tutorial" data-qa-order="3" data-qa-label="튜토리얼">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 3. TUTORIAL (조력자 등장 및 튜토리얼)</div>
+      <img class="character child enter-right" src="assets/child_idle.png" alt="노란 상의와 파란 멜빵을 입은 꼬마 사서가 한 손을 들고 자신감 있게 서 있는 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_explaining.png" alt="둥근 안경과 청록 앞치마를 한 사서 선생님이 돋보기를 들고 한 손으로 설명하듯 가리키는 반신 일러스트">
+      <div class="speech child-bubble" id="tutorialSpeech"></div>
+      <div class="tutorial-workbench">
+        <img class="workbench-surface" src="assets/tutorial_repair_workbench.png" alt="시계 홈, 시간 카드 슬롯, 세 장의 카드 트레이가 비어 있는 도서관 시계 수리용 목재 작업대">
+        <div class="workbench-clock">
+        <div class="clock-object small" data-clock-time="3:00">
+          <img src="assets/analog_clock_body.png" alt="바늘 없이 숫자판과 나무 테두리만 있는 작은 둥근 아날로그 시계 몸체">
+          <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+        </div>
+        </div>
+        <div class="drop-slot workbench-slot" id="tutorialDrop" data-answer="[3시]" tabindex="0">[?]</div>
+      <div class="workbench-card-tray disabled" id="tutorialPanel">
+        <div class="quiz-prompt">지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</div>
+        <div class="cards-row">
+          <button class="card" draggable="true" data-value="[3시]">[3시]</button>
+          <button class="card" draggable="true" data-value="[4시]">[4시]</button>
+          <button class="card" draggable="true" data-value="[5시]">[5시]</button>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-success" data-qa-scene="activity1_scene4_success" data-qa-order="4" data-qa-label="튜토리얼 성공">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 4. SUCCESS (수리 성공 및 다음 단계 전환)</div>
+      <div class="tutorial-workbench glow-target">
+        <img class="workbench-surface" src="assets/tutorial_repair_workbench.png" alt="시계 홈, 시간 카드 슬롯, 세 장의 카드 트레이가 비어 있는 도서관 시계 수리용 목재 작업대">
+        <div class="workbench-clock">
+        <div class="clock-object small glow-target" data-clock-time="3:00">
+          <img src="assets/analog_clock_body.png" alt="바늘 없이 숫자판과 나무 테두리만 있는 작은 둥근 아날로그 시계 몸체">
+          <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+        </div>
+        </div>
+        <div class="drop-slot ready workbench-slot">[3시]</div>
+      </div>
+      <img class="character child success" src="assets/child_success.png" alt="같은 꼬마 사서가 활짝 웃으며 뛰어오르고 한 손으로 브이를 그리는 성공 포즈 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_applauding.png" alt="같은 사서 선생님이 환하게 웃으며 박수를 치는 전신 일러스트">
+      <div class="speech librarian-bubble visible"><span class="speaker">사서 선생님</span>와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
+      <div class="bottom-panel">
+        <button type="button" class="cta pulse" id="goStep2">본격적으로 수리하러 가기 →</button>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-type-a" data-qa-scene="activity2_scene1_type_a" data-qa-order="5" data-qa-label="유형 A 객관식">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 1. [유형 A] 엉망이 된 도서관 시계 맞추기 (객관식 터치)</div>
+      <img class="character child" id="typeAChild" src="assets/child_idle.png" alt="노란 상의와 파란 멜빵을 입은 꼬마 사서가 한 손을 들고 자신감 있게 서 있는 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_explaining.png" alt="둥근 안경과 청록 앞치마를 한 사서 선생님이 돋보기를 들고 한 손으로 설명하듯 가리키는 반신 일러스트">
+      <div class="speech librarian-bubble" id="typeASpeech"><span class="speaker">사서 선생님</span>전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?</div>
+      <div class="quiz-layout">
+        <div></div>
+        <div class="quiz-surface">
+          <img class="surface-img" src="assets/signboard_broken_time.png" alt="문제 문구를 올릴 수 있도록 중앙이 비어 있는 고장 난 도서관 전광판">
+          <div class="sign-text" id="typeASign"></div>
+        </div>
+        <div class="quiz-question" id="typeAQuestion"></div>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-type-b" data-qa-scene="activity2_scene2_type_b" data-qa-order="6" data-qa-label="유형 B 키패드">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 2. [유형 B] 독서 교실 시간표 복구하기 (키패드 입력)</div>
+      <img class="character child" id="typeBChild" src="assets/child_idle.png" alt="노란 상의와 파란 멜빵을 입은 꼬마 사서가 한 손을 들고 자신감 있게 서 있는 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_explaining.png" alt="둥근 안경과 청록 앞치마를 한 사서 선생님이 돋보기를 들고 한 손으로 설명하듯 가리키는 반신 일러스트">
+      <div class="speech librarian-bubble" id="typeBSpeech"><span class="speaker">사서 선생님</span>독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?</div>
+      <div class="quiz-layout">
+        <div></div>
+        <div class="quiz-surface">
+          <img class="surface-img" src="assets/cork_timetable_board.png" alt="시간표 문제와 시계 보조 자료를 올릴 수 있는 빈 코르크 게시판">
+          <div class="board-text" id="typeBBoard"></div>
+          <div class="visual-clocks" id="typeBVisual"></div>
+        </div>
+        <div class="quiz-question" id="typeBQuestion"></div>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-type-c" data-qa-scene="activity2_scene3_type_c" data-qa-order="7" data-qa-label="유형 C 대출 시스템">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 3. [유형 C] 도서 대출 시스템 재부팅 (드래그 앤 드롭)</div>
+      <img class="character child" id="typeCChild" src="assets/child_idle.png" alt="노란 상의와 파란 멜빵을 입은 꼬마 사서가 한 손을 들고 자신감 있게 서 있는 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_explaining.png" alt="둥근 안경과 청록 앞치마를 한 사서 선생님이 돋보기를 들고 한 손으로 설명하듯 가리키는 반신 일러스트">
+      <div class="speech librarian-bubble" id="typeCSpeech"><span class="speaker">사서 선생님</span>도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!</div>
+      <div class="quiz-layout">
+        <div></div>
+        <div class="quiz-surface" id="monitorSurface">
+          <img class="surface-img" src="assets/lending_system_monitor.png" alt="1일과 24시간 문제를 표시할 수 있도록 화면이 비어 있는 도서 대출 시스템 모니터">
+          <div class="monitor-text" id="typeCMonitor"></div>
+          <div class="blank-group" id="typeCBlanks"></div>
+          <div class="system-complete" id="systemComplete"></div>
+        </div>
+        <div class="quiz-question" id="typeCQuestion"></div>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-repair" data-qa-scene="activity2_scene4_repair_complete" data-qa-order="8" data-qa-label="수리 완료">
+      <img class="bg" src="assets/bg_messy_lobby.png" alt="책이 흩어지고 큰 시계 오버레이 공간이 비어 있는 수리 전 마을 도서관 로비 배경">
+      <img class="bg restore-layer" id="restoreBg" src="assets/bg_restored_lobby.png" alt="팝업북과 인증서가 올라갈 중앙 여백을 둔 따뜻하고 정돈된 수리 후 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 4. 수리 완료! (Outro)</div>
+      <div class="clock-object large normal glow-target">
+        <img src="assets/large_clock_body.png" alt="바늘 없이 숫자판과 나무 테두리만 있는 큰 둥근 도서관 벽시계 몸체">
+        <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+      </div>
+      <div class="floating-books" id="floatingBooks"><span class="book-piece"></span><span class="book-piece"></span><span class="book-piece"></span><span class="book-piece"></span></div>
+      <img class="character child success" src="assets/child_success.png" alt="같은 꼬마 사서가 활짝 웃으며 뛰어오르고 한 손으로 브이를 그리는 성공 포즈 전신 캐릭터">
+      <img class="character librarian" src="assets/librarian_applauding.png" alt="같은 사서 선생님이 환하게 웃으며 박수를 치는 전신 일러스트">
+      <div class="speech child-bubble" id="repairSpeech"></div>
+      <div class="bottom-panel">
+        <button type="button" class="cta pulse" id="goStep3" hidden>수리 이야기 보러 가기 →</button>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-gallery" data-qa-scene="activity3_scene1_real_life_history" data-qa-order="9" data-qa-label="실생활 역사 연계">
+      <img class="bg" src="assets/bg_restored_lobby.png" alt="팝업북과 인증서가 올라갈 중앙 여백을 둔 따뜻하고 정돈된 수리 후 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="scene-title-chip">Scene 1. 실생활 및 역사 연계</div>
+      <div class="popup-book-wrap">
+        <img src="assets/magic_popup_book.png" alt="복구된 도서관 중앙에 펼쳐진 빈 페이지의 커다란 마법 팝업북">
+        <button class="nav-arrow book-nav prev" id="bookPrev" type="button" aria-label="이전 페이지">◀</button>
+        <div class="book-page-content" id="bookPageContent"></div>
+        <button class="nav-arrow book-nav next" id="bookNext" type="button" aria-label="다음 페이지">▶</button>
+      </div>
+    </section>
+
+    <section class="scene" id="scene-popup-quiz" data-qa-scene="activity3_scene2_popup_quiz" data-qa-order="10" data-qa-label="마무리 퀴즈">
+      <img class="bg" src="assets/bg_restored_lobby.png" alt="팝업북과 인증서가 올라갈 중앙 여백을 둔 따뜻하고 정돈된 수리 후 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <img class="popup-child" src="assets/child_success.png" alt="같은 꼬마 사서가 활짝 웃으며 뛰어오르고 한 손으로 브이를 그리는 성공 포즈 전신 캐릭터">
+      <div class="quiz-popup" id="popupQuiz"></div>
+    </section>
+
+    <section class="scene" id="scene-final" data-qa-scene="activity3_scene3_final_certificate" data-qa-order="11" data-qa-label="최종 인증서">
+      <img class="bg" src="assets/bg_restored_lobby.png" alt="팝업북과 인증서가 올라갈 중앙 여백을 둔 따뜻하고 정돈된 수리 후 마을 도서관 로비 배경">
+      <div class="shade"></div>
+      <div class="certificate-box" id="certificateBox">
+        <h2>마을 수리대원 인증서<br>(도서관 편)</h2>
+        <p>"위 대원은 정확한 시간 계산으로<br>도서관 안내문을 완벽하게 수리하였기에<br>이 증서를 수여합니다."</p>
+        <div class="record-line">
+          <span>맞힌 문제 수: <strong id="correctRecord">13/13</strong></span>
+          <span>클리어 소요 시간: <strong id="timeRecord">00:00</strong></span>
+        </div>
+      </div>
+      <div class="final-characters">
+        <img class="child-final" src="assets/child_success.png" alt="같은 꼬마 사서가 활짝 웃으며 뛰어오르고 한 손으로 브이를 그리는 성공 포즈 전신 캐릭터">
+        <img class="librarian-final" src="assets/librarian_applauding.png" alt="같은 사서 선생님이 환하게 웃으며 박수를 치는 전신 일러스트">
+      </div>
+      <div class="speech librarian-bubble visible"><span class="speaker">사서 선생님</span>정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
+      <div class="speech child-bubble visible"><span class="speaker">꼬마 사서</span>언제든 제 수학실력이 필요하면 불러주세요!</div>
+      <div class="final-actions">
+        <button type="button" class="cta save-btn" id="saveCertificate">사진첩에 저장하기</button>
+        <button type="button" class="cta next-btn" id="nextMission" aria-label="마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기">9차시 길이 미션으로 가기 →</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const assets = {
+        childIdle: "assets/child_idle.png",
+        childSuccess: "assets/child_success.png",
+        childConfused: "assets/child_confused.png",
+        analog: "assets/analog_clock_body.png",
+        console: "assets/time_quiz_control_console.png",
+        store: "assets/popup_book_page_store.png",
+        sundial: "assets/popup_book_page_sundial.png",
+        timer: "assets/popup_book_page_timer.png"
+      };
+
+      const scenes = Array.from(document.querySelectorAll(".scene"));
+      const topbar = document.getElementById("topbar");
+      const energyFill = document.getElementById("energyFill");
+      const energyText = document.getElementById("energyText");
+      const energyShell = document.getElementById("energyShell");
+      const feedbackLayer = document.getElementById("feedbackLayer");
+      const particleField = document.getElementById("particleField");
+      const slideMenu = document.getElementById("slideMenu");
+      const startedAt = Date.now();
+      let currentScene = "scene-title";
+      let progress = 0;
+      let solvedMain = 0;
+      let correctTotal = 0;
+      let feedbackResetTimer = null;
+
+      const typeAQuestions = [
+        {
+          id: "q_type_a_01",
+          prompt: "전광판에 **[3시 5분 전]**이라고 적혀 있어요. 알맞은 시계를 찾아주세요!",
+          choices: [
+            { label: "2시 55분 시계", time: "2:55", correct: true },
+            { label: "3시 5분 시계", time: "3:05", correct: false },
+            { label: "3시 55분 시계", time: "3:55", correct: false }
+          ],
+          answer: "2시 55분 시계",
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_a_02",
+          prompt: "멈춰버린 시계가 **[11시 50분]**을 가리키고 있어요. 다른 말로 어떻게 읽을까요?",
+          choices: [
+            { label: "11시 10분 전", time: "11:10", correct: false },
+            { label: "12시 10분 전", time: "11:50", correct: true },
+            { label: "12시 50분 전", time: "12:50", correct: false }
+          ],
+          answer: "12시 10분 전",
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_a_03",
+          prompt: "다음 중 **[8시 15분 전]**을 가리키는 시계는 어느 것인가요?",
+          choices: [
+            { label: "7시 45분 시계", time: "7:45", correct: true },
+            { label: "8시 15분 시계", time: "8:15", correct: false },
+            { label: "8시 45분 시계", time: "8:45", correct: false }
+          ],
+          answer: "7시 45분 시계",
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_a_04",
+          prompt: "시계가 **[4시 55분]**에 멈췄어요. 바르게 읽은 것을 고르세요.",
+          choices: [
+            { label: "4시 5분 전", time: "3:55", correct: false },
+            { label: "5시 5분 전", time: "4:55", correct: true },
+            { label: "5시 55분 전", time: "5:55", correct: false }
+          ],
+          answer: "5시 5분 전",
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        }
+      ];
+
+      const typeBQuestions = [
+        {
+          id: "q_type_b_05",
+          prompt: "첫 번째 독서 교실은 **8시**에 시작해서 **9시**에 끝났어요. 걸린 시간은 얼마인가요?",
+          input_type: "keypad",
+          answer: "[1]시간",
+          visual: { start: "8:00", label: "8:00 → 9:00" },
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_b_06",
+          prompt: "두 번째 독서 교실은 **11시 30분**에 시작해서 **30분** 동안 진행돼요. 끝나는 시각은 언제일까요?",
+          input_type: "keypad",
+          answer: "[12]시 [0]분",
+          visual: { start: "11:30", label: "30분 후 →" },
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_b_07",
+          prompt: "책 정리 봉사활동을 오후 2시에 시작해서 **1시간** 동안 했어요. 봉사활동이 끝난 시각은 언제일까요?",
+          input_type: "choice",
+          choices: [
+            { label: "오후 2시 30분", correct: false },
+            { label: "오후 3시", correct: true },
+            { label: "오후 4시", correct: false }
+          ],
+          answer: "오후 3시",
+          visual: { start: "2:00", label: "1시간 후 →" },
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_b_08",
+          prompt: "꼬마 사서가 **4시 30분**부터 **5시**까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?",
+          input_type: "keypad",
+          answer: "[30]분",
+          visual: { start: "4:30", label: "4:30 → 5:00" },
+          feedback: { correct: "딩동댕!", wrong: "다시 생각해보세요" }
+        }
+      ];
+
+      const typeCQuestions = [
+        {
+          id: "q_type_c_09",
+          prompt: "도서관 대출 시스템을 켜려면 암호가 필요해요. **24시간**은 며칠과 같을까요?",
+          input_type: "keypad",
+          answer: "[1]일",
+          feedback: { correct: "[시스템 재부팅 완료!]", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_c_10",
+          prompt: "하루는 오전 `[?]`시간과 오후 `[?]`시간으로 이루어져 있어요. 빈칸에 알맞은 수를 넣으세요.",
+          input_type: "drag_drop",
+          answer: "[12], [12]",
+          feedback: { correct: "[시스템 재부팅 완료!]", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_c_11",
+          prompt: "오늘 오후 **3시**에 책을 빌렸어요. 하루(1일)가 지나면 내일 언제일까요?",
+          input_type: "choice",
+          choices: [
+            { label: "오전 3시", correct: false },
+            { label: "오후 3시", correct: true },
+            { label: "오후 4시", correct: false }
+          ],
+          answer: "오후 3시",
+          feedback: { correct: "[시스템 재부팅 완료!]", wrong: "다시 생각해보세요" }
+        },
+        {
+          id: "q_type_c_12",
+          prompt: "이 마법 책은 딱 **1일** 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?",
+          input_type: "keypad",
+          answer: "[24]시간",
+          feedback: { correct: "[시스템 재부팅 완료!]", wrong: "다시 생각해보세요" }
+        }
+      ];
+
+      const galleryPages = [
+        {
+          img: assets.store,
+          alt: "큰 빈 간판이 있는 밝은 동네 편의점 외관 삽화",
+          overlay: "24시간",
+          text: "사서 선생님 대사: \"우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!\""
+        },
+        {
+          img: assets.sundial,
+          alt: "햇빛과 그림자가 보이는 옛 해시계 삽화",
+          overlay: "",
+          text: "사서 선생님 대사: \"시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!\""
+        },
+        {
+          img: assets.timer,
+          alt: "왼쪽에는 김이 나는 오븐과 빵이 있고 오른쪽에는 숫자 오버레이를 위한 빈 둥근 요리 타이머가 놓인 따뜻한 주방 삽화",
+          overlay: "30분",
+          text: "사서 선생님 대사: \"오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.\""
+        }
+      ];
+
+      let typeAIndex = 0;
+      let typeBIndex = 0;
+      let typeCIndex = 0;
+      let wrongCount = {};
+      let galleryIndex = 0;
+
+      function showScene(id) {
+        const target = scenes.find(scene => scene.id === id || scene.dataset.qaScene === id);
+        if (!target) return;
+        const previous = scenes.find(scene => scene.classList.contains("active"));
+        if (previous && previous !== target) {
+          previous.classList.add("leaving", "fade-out");
+          window.setTimeout(() => {
+            previous.classList.remove("active", "leaving", "fade-out", "fade-in");
+          }, 260);
+        }
+        target.classList.add("active");
+        target.classList.remove("fade-out", "leaving", "fade-in");
+        requestAnimationFrame(() => target.classList.add("fade-in"));
+        currentScene = target.id;
+        topbar.classList.toggle("visible", currentScene !== "scene-title");
+        slideMenu.classList.remove("open");
+      }
+
+      window.__contentHarnessShowScene = function(sceneId) {
+        const target = scenes.find(scene => scene.dataset.qaScene === sceneId || scene.id === sceneId);
+        if (!target) return false;
+        showScene(target.id);
+        if (target.id === "scene-type-a") renderTypeA();
+        if (target.id === "scene-type-b") renderTypeB();
+        if (target.id === "scene-type-c") renderTypeC();
+        if (target.id === "scene-gallery") renderGallery();
+        if (target.id === "scene-popup-quiz") renderPopupQuiz();
+        return true;
+      };
+
+      function setProgress(value, glow = false) {
+        progress = Math.max(0, Math.min(100, value));
+        energyFill.style.width = progress + "%";
+        energyText.textContent = Math.round(progress) + "%";
+        energyShell.classList.toggle("glow", glow || progress >= 100);
+        if (glow) setTimeout(() => energyShell.classList.remove("glow"), 1400);
+      }
+
+      function formatRich(text) {
+        return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/`([^`]+)`/g, "<strong>$1</strong>");
+      }
+
+      function renderClocks(root = document) {
+        root.querySelectorAll("[data-clock-time]").forEach(clock => {
+          const [hRaw, mRaw] = clock.dataset.clockTime.split(":");
+          const h = parseInt(hRaw, 10);
+          const m = parseInt(mRaw, 10);
+          const hourDeg = (h % 12) * 30 + m * .5;
+          const minuteDeg = m * 6;
+          const hour = clock.querySelector(".hour-hand");
+          const minute = clock.querySelector(".minute-hand");
+          if (hour) hour.style.transform = `rotate(${hourDeg}deg)`;
+          if (minute) minute.style.transform = `rotate(${minuteDeg}deg)`;
+        });
+      }
+
+      function showBubble(target, html, className) {
+        target.className = "speech visible " + className;
+        target.innerHTML = html;
+      }
+
+      function showFeedback(ok, message, childSelector) {
+        clearTimeout(feedbackResetTimer);
+        const child = childSelector ? document.querySelector(childSelector) : null;
+        if (child) {
+          child.src = ok ? assets.childSuccess : assets.childConfused;
+          child.classList.toggle("success", ok);
+        }
+        const sceneMessages = {
+          "scene-type-a": ok ? "전광판 불빛이 돌아왔어요!" : "전광판이 빨갛게 깜빡였어요.",
+          "scene-type-b": ok ? "시간표 칸에 수리 도장이 찍혔어요!" : "게시판 조각이 흔들렸어요.",
+          "scene-type-c": ok ? "대출 시스템이 재부팅되고 있어요!" : "모니터가 경고 표시를 보냈어요.",
+          "scene-popup-quiz": ok ? "맞았어! 24시간은 1일과 같지!" : "다시 골라 볼까요?"
+        };
+        const stampText = ok ? message : message;
+        feedbackLayer.innerHTML = `
+          <div class="stamp ${ok ? "" : "wrong"}">${stampText}</div>
+          <div class="speech visible child-bubble"><span class="speaker">꼬마 사서</span>${sceneMessages[currentScene] || (ok ? "좋아! 시간이 맞춰지고 있어요!" : "잠깐, 다시 생각해보세요.")}</div>
+        `;
+        feedbackLayer.className = `feedback-layer visible ${currentScene} ${ok ? "feedback-ok" : "feedback-wrong"}`;
+        if (ok) burstParticles(26);
+        setTimeout(() => {
+          feedbackLayer.classList.remove("visible");
+          feedbackLayer.innerHTML = "";
+        }, ok ? 680 : 1300);
+        if (!ok && child) {
+          feedbackResetTimer = setTimeout(() => {
+            child.src = assets.childIdle;
+            child.classList.remove("success");
+          }, 1550);
+        }
+      }
+
+      function reactDevice(sceneId, ok) {
+        const scene = document.getElementById(sceneId);
+        if (!scene) return;
+        scene.classList.remove("device-ok", "device-wrong");
+        requestAnimationFrame(() => scene.classList.add(ok ? "device-ok" : "device-wrong"));
+        setTimeout(() => scene.classList.remove("device-ok", "device-wrong"), 820);
+      }
+
+      function burstParticles(count) {
+        particleField.innerHTML = "";
+        for (let i = 0; i < count; i += 1) {
+          const p = document.createElement("span");
+          p.className = "particle";
+          p.style.left = (12 + Math.random() * 76) + "%";
+          p.style.top = (10 + Math.random() * 48) + "%";
+          p.style.background = ["#ffc83d", "#58c9b9", "#f27662", "#74c9e8"][i % 4];
+          p.style.animationDelay = (Math.random() * .26) + "s";
+          particleField.appendChild(p);
+        }
+        setTimeout(() => { particleField.innerHTML = ""; }, 2100);
+      }
+
+      function afterMainCorrect(next) {
+        correctTotal += 1;
+        solvedMain += 1;
+        setProgress(10 + (solvedMain * (80 / 12)), true);
+        setTimeout(next, 1150);
+      }
+
+      function bindDragCards() {
+        document.querySelectorAll(".card[draggable='true'], .number-block[draggable='true']").forEach(card => {
+          card.addEventListener("dragstart", ev => {
+            card.classList.add("dragging");
+            ev.dataTransfer.setData("text/plain", card.dataset.value);
+          });
+          card.addEventListener("dragend", () => card.classList.remove("dragging"));
+        });
+      }
+
+      function setupTutorial() {
+        const drop = document.getElementById("tutorialDrop");
+        const panel = document.getElementById("tutorialPanel");
+        const speech = document.getElementById("tutorialSpeech");
+        const beats = [
+          ["child-bubble", "<span class=\"speaker\">꼬마 사서</span>걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!"],
+          ["librarian-bubble", "<span class=\"speaker\">사서 선생님</span>다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?"]
+        ];
+        let beat = 0;
+        function nextBeat() {
+          if (beat < beats.length) {
+            showBubble(speech, beats[beat][1], beats[beat][0]);
+            beat += 1;
+            setTimeout(nextBeat, 2400);
+          } else {
+            panel.classList.remove("disabled");
+          }
+        }
+        nextBeat();
+        drop.addEventListener("dragover", ev => ev.preventDefault());
+        drop.addEventListener("drop", ev => {
+          ev.preventDefault();
+          checkTutorial(ev.dataTransfer.getData("text/plain"));
+        });
+        document.querySelectorAll("#tutorialPanel .card").forEach(card => {
+          card.addEventListener("click", () => checkTutorial(card.dataset.value));
+        });
+        bindDragCards();
+      }
+
+      function checkTutorial(value) {
+        const drop = document.getElementById("tutorialDrop");
+        if (value === "[3시]") {
+          drop.textContent = "[3시]";
+          drop.classList.add("ready", "glow-target");
+          correctTotal += 1;
+          setProgress(10, true);
+          showFeedback(true, "딩동댕!", ".character.child");
+          setTimeout(() => showScene("scene-success"), 1100);
+        } else {
+          drop.classList.add("shake");
+          showFeedback(false, "띠익", ".character.child");
+          setTimeout(() => drop.classList.remove("shake"), 400);
+        }
+      }
+
+      function renderTypeA() {
+        document.getElementById("scene-type-a").classList.remove("is-entered");
+        const q = typeAQuestions[typeAIndex];
+        const sign = document.getElementById("typeASign");
+        sign.innerHTML = formatRich(q.prompt);
+        sign.classList.remove("is-lit");
+        requestAnimationFrame(() => sign.classList.add("is-lit"));
+        const wrap = document.getElementById("typeAQuestion");
+        wrap.classList.remove("is-entered");
+        wrongCount[q.id] = wrongCount[q.id] || 0;
+        wrap.innerHTML = `
+          <img class="console-surface" src="${assets.console}" alt="세 개의 시계 카트리지 슬롯과 빈 답안판, 숫자 키패드 자리, 확인 버튼 자리가 있는 도서관 수리 조작 콘솔">
+          <div class="clock-options">
+            ${q.choices.map((choice, index) => `
+              <button class="clock-choice" type="button" data-index="${index}" aria-label="${choice.label}">
+                <div class="clock-object choice-clock" data-clock-time="${choice.time}">
+                  <img src="${assets.analog}" alt="${choice.label}">
+                  <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+                </div>
+                <span>${choice.label}</span>
+              </button>`).join("")}
+          </div>
+        `;
+        renderClocks(wrap);
+        requestAnimationFrame(() => {
+          wrap.classList.add("is-entered");
+          document.getElementById("scene-type-a").classList.add("is-entered");
+        });
+        wrap.querySelectorAll(".clock-choice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const choice = q.choices[Number(btn.dataset.index)];
+            btn.classList.add("pop");
+            setTimeout(() => btn.classList.remove("pop"), 370);
+            if (choice.correct) {
+              btn.classList.add("glow-target", "cartridge-lock");
+              reactDevice("scene-type-a", true);
+              showFeedback(true, q.feedback.correct, "#typeAChild");
+              afterMainCorrect(() => {
+                typeAIndex += 1;
+                if (typeAIndex < typeAQuestions.length) renderTypeA();
+                else {
+                  typeBIndex = 0;
+                  showScene("scene-type-b");
+                  showBubble(document.getElementById("typeBSpeech"), "<span class=\"speaker\">사서 선생님</span>독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?", "librarian-bubble");
+                  setTimeout(renderTypeB, 900);
+                }
+              });
+            } else {
+              wrongCount[q.id] += 1;
+              btn.classList.add("shake");
+              reactDevice("scene-type-a", false);
+              showFeedback(false, q.feedback.wrong, "#typeAChild");
+              setTimeout(() => btn.classList.remove("shake"), 400);
+              if (wrongCount[q.id] >= 3) {
+                const right = Array.from(wrap.querySelectorAll(".clock-choice")).find((node, idx) => q.choices[idx].correct);
+                right.classList.add("correct-flash", "cartridge-lock");
+                setTimeout(() => {
+                  typeAIndex += 1;
+                  if (typeAIndex < typeAQuestions.length) renderTypeA();
+                  else {
+                    showScene("scene-type-b");
+                    renderTypeB();
+                  }
+                }, 1800);
+              }
+            }
+          });
+        });
+      }
+
+      function renderTypeB() {
+        document.getElementById("scene-type-b").classList.remove("is-entered");
+        const q = typeBQuestions[typeBIndex];
+        document.getElementById("typeBBoard").innerHTML = formatRich(q.prompt);
+        document.getElementById("typeBVisual").innerHTML = `
+          <div class="clock-object small" data-clock-time="${q.visual.start}">
+            <img src="${assets.analog}" alt="${q.visual.start}을 가리키는 작은 아날로그 시계">
+            <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
+          </div>
+          <div class="arrow-label">${q.visual.label}</div>
+          <div class="clock-object small">
+            <img src="${assets.analog}" alt="바늘을 채워야 하는 빈 시계">
+          </div>`;
+        renderClocks(document.getElementById("typeBVisual"));
+        const wrap = document.getElementById("typeBQuestion");
+        wrap.innerHTML = `<img class="console-surface" src="${assets.console}" alt="세 개의 시계 카트리지 슬롯과 빈 답안판, 숫자 키패드 자리, 확인 버튼 자리가 있는 도서관 수리 조작 콘솔">` + (q.input_type === "choice" ? renderChoices(q.choices) : renderKeypadAnswer(q.answer));
+        if (q.input_type === "choice") {
+          bindChoice(wrap, q, "#typeBChild", () => {
+            typeBIndex += 1;
+            if (typeBIndex < typeBQuestions.length) renderTypeB();
+            else {
+              typeCIndex = 0;
+              showScene("scene-type-c");
+              showBubble(document.getElementById("typeCSpeech"), "<span class=\"speaker\">사서 선생님</span>도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!", "librarian-bubble");
+              setTimeout(renderTypeC, 900);
+            }
+          });
+        } else {
+          bindKeypad(wrap, q, "#typeBChild", () => {
+            typeBIndex += 1;
+            if (typeBIndex < typeBQuestions.length) renderTypeB();
+            else {
+              typeCIndex = 0;
+              showScene("scene-type-c");
+              setTimeout(renderTypeC, 900);
+            }
+          });
+        }
+        requestAnimationFrame(() => document.getElementById("scene-type-b").classList.add("is-entered"));
+      }
+
+      function renderTypeC() {
+        document.getElementById("scene-type-c").classList.remove("is-entered");
+        const q = typeCQuestions[typeCIndex];
+        document.getElementById("typeCMonitor").innerHTML = formatRich(q.prompt);
+        document.getElementById("systemComplete").textContent = "";
+        document.getElementById("monitorSurface").classList.remove("monitor-on");
+        const blanks = document.getElementById("typeCBlanks");
+        const wrap = document.getElementById("typeCQuestion");
+        blanks.innerHTML = "";
+        wrap.innerHTML = `<img class="console-surface" src="${assets.console}" alt="세 개의 시계 카트리지 슬롯과 빈 답안판, 숫자 키패드 자리, 확인 버튼 자리가 있는 도서관 수리 조작 콘솔">`;
+        if (q.input_type === "choice") {
+          wrap.innerHTML += renderChoices(q.choices);
+          bindChoice(wrap, q, "#typeCChild", nextTypeC);
+        } else if (q.input_type === "drag_drop") {
+          blanks.innerHTML = `
+            <span>오전</span><span class="drop-slot" data-expected="12" data-value="" tabindex="0">[?]</span><span>시간</span>
+            <span>오후</span><span class="drop-slot" data-expected="12" data-value="" tabindex="0">[?]</span><span>시간</span>
+          `;
+          wrap.innerHTML += `
+            <div class="number-row" aria-label="숫자 블록">
+              ${Array.from({ length: 10 }, (_, n) => `<button class="number-block" draggable="true" data-value="${n}">${n}</button>`).join("")}
+              <button class="number-block" data-action="clear">지우기</button>
+            </div>
+            <button type="button" class="cta" id="checkBlocks">확인하기</button>
+          `;
+          bindNumberBlocks(q);
+        } else {
+          wrap.innerHTML += renderKeypadAnswer(q.answer);
+          bindKeypad(wrap, q, "#typeCChild", nextTypeC);
+        }
+        requestAnimationFrame(() => document.getElementById("scene-type-c").classList.add("is-entered"));
+      }
+
+      function nextTypeC() {
+        document.getElementById("monitorSurface").classList.add("monitor-on");
+        document.getElementById("systemComplete").textContent = "[시스템 재부팅 완료!]";
+        reactDevice("scene-type-c", true);
+        typeCIndex += 1;
+        setTimeout(() => {
+          if (typeCIndex < typeCQuestions.length) renderTypeC();
+          else {
+            setProgress(90, true);
+            showScene("scene-repair");
+            playRepairScene();
+          }
+        }, 1000);
+      }
+
+      function renderChoices(choices) {
+        return `<div class="choices-row">${choices.map((choice, index) => `<button class="choice" type="button" data-index="${index}">${choice.label}</button>`).join("")}</div>`;
+      }
+
+      function bindChoice(wrap, q, childSelector, onCorrect) {
+        wrap.querySelectorAll(".choice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const choice = q.choices[Number(btn.dataset.index)];
+            if (choice.correct) {
+              btn.classList.add("glow-target");
+              if (currentScene === "scene-type-b") reactDevice("scene-type-b", true);
+              if (currentScene === "scene-type-c") reactDevice("scene-type-c", true);
+              showFeedback(true, q.feedback.correct, childSelector);
+              afterMainCorrect(onCorrect);
+            } else {
+              btn.classList.add("shake");
+              if (currentScene === "scene-type-b") reactDevice("scene-type-b", false);
+              if (currentScene === "scene-type-c") reactDevice("scene-type-c", false);
+              showFeedback(false, q.feedback.wrong, childSelector);
+              setTimeout(() => btn.classList.remove("shake"), 400);
+            }
+          });
+        });
+      }
+
+      function parseAnswerFields(answer) {
+        const fields = [];
+        answer.replace(/\[([^\]]+)\]/g, (_, value) => { fields.push(value); return ""; });
+        return fields;
+      }
+
+      function renderKeypadAnswer(answer) {
+        const parts = answer.split(/(\[[^\]]+\])/g).filter(Boolean);
+        let fieldIndex = 0;
+        return `
+          <div class="keypad-wrap">
+            <div class="answer-line">
+              ${parts.map(part => {
+                const match = part.match(/^\[([^\]]+)\]$/);
+                if (!match) return `<span>${part}</span>`;
+                const index = fieldIndex++;
+                return `<button type="button" class="answer-field ${index === 0 ? "active" : ""}" data-field="${index}">[?]</button>`;
+              }).join("")}
+            </div>
+            <div class="keypad" aria-label="숫자 키패드">
+              ${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" class="key" data-num="${n}">${n}</button>`).join("")}
+              <button type="button" class="key" data-action="back">⌫</button>
+              <button type="button" class="key" data-num="0">0</button>
+            </div>
+            <button type="button" class="key confirm-btn" data-action="confirm">확인하기</button>
+          </div>`;
+      }
+
+      function bindKeypad(wrap, q, childSelector, onCorrect) {
+        const expected = parseAnswerFields(q.answer);
+        const values = expected.map(() => "");
+        let active = 0;
+        const fields = Array.from(wrap.querySelectorAll(".answer-field"));
+        function refresh() {
+          fields.forEach((field, index) => {
+            field.textContent = values[index] ? `[${values[index]}]` : "[?]";
+            field.classList.toggle("active", index === active);
+          });
+        }
+        fields.forEach((field, index) => field.addEventListener("click", () => { active = index; refresh(); }));
+        wrap.querySelectorAll(".key").forEach(key => {
+          key.addEventListener("click", () => {
+            if (key.dataset.num) {
+              values[active] = (values[active] + key.dataset.num).slice(0, 2);
+              if (values[active].length >= expected[active].length && active < values.length - 1) active += 1;
+              refresh();
+              return;
+            }
+            if (key.dataset.action === "back") {
+              values[active] = values[active].slice(0, -1);
+              refresh();
+              return;
+            }
+            if (key.dataset.action === "confirm") {
+              const ok = expected.every((value, index) => values[index] === value);
+              if (ok) {
+                if (currentScene === "scene-type-b") reactDevice("scene-type-b", true);
+                if (currentScene === "scene-type-c") reactDevice("scene-type-c", true);
+                showFeedback(true, q.feedback.correct, childSelector);
+                afterMainCorrect(onCorrect);
+              } else {
+                wrap.querySelector(".answer-line").classList.add("shake");
+                if (currentScene === "scene-type-b") reactDevice("scene-type-b", false);
+                if (currentScene === "scene-type-c") reactDevice("scene-type-c", false);
+                showFeedback(false, q.feedback.wrong, childSelector);
+                setTimeout(() => wrap.querySelector(".answer-line").classList.remove("shake"), 400);
+              }
+            }
+          });
+        });
+      }
+
+      function bindNumberBlocks(q) {
+        let activeDrop = document.querySelector("#typeCBlanks .drop-slot");
+        const drops = Array.from(document.querySelectorAll("#typeCBlanks .drop-slot"));
+        drops.forEach(drop => {
+          drop.addEventListener("click", () => activeDrop = drop);
+          drop.addEventListener("dragover", ev => ev.preventDefault());
+          drop.addEventListener("drop", ev => {
+            ev.preventDefault();
+            appendDigit(drop, ev.dataTransfer.getData("text/plain"));
+          });
+        });
+        function appendDigit(drop, digit) {
+          drop.dataset.value = (drop.dataset.value + digit).slice(0, 2);
+          drop.textContent = `[${drop.dataset.value}]`;
+          drop.classList.add("ready");
+          activeDrop = drop;
+        }
+        document.querySelectorAll("#typeCQuestion .number-block").forEach(block => {
+          if (block.dataset.action === "clear") {
+            block.addEventListener("click", () => {
+              drops.forEach(drop => { drop.dataset.value = ""; drop.textContent = "[?]"; drop.classList.remove("ready"); });
+            });
+          } else {
+            block.addEventListener("click", () => appendDigit(activeDrop, block.dataset.value));
+          }
+        });
+        bindDragCards();
+        document.getElementById("checkBlocks").addEventListener("click", () => {
+          const ok = drops.every(drop => drop.dataset.value === drop.dataset.expected);
+          if (ok) {
+            reactDevice("scene-type-c", true);
+            showFeedback(true, q.feedback.correct, "#typeCChild");
+            afterMainCorrect(nextTypeC);
+          } else {
+            document.getElementById("typeCBlanks").classList.add("shake");
+            reactDevice("scene-type-c", false);
+            showFeedback(false, q.feedback.wrong, "#typeCChild");
+            setTimeout(() => document.getElementById("typeCBlanks").classList.remove("shake"), 400);
+          }
+        });
+      }
+
+      function playRepairScene() {
+        setProgress(90, true);
+        const speech = document.getElementById("repairSpeech");
+        const go = document.getElementById("goStep3");
+        document.getElementById("restoreBg").classList.add("show");
+        const beats = [
+          ["child-bubble", "<span class=\"speaker\">꼬마 사서</span>해냈다! 시간의 규칙을 모두 풀었어요!"],
+          ["librarian-bubble", "<span class=\"speaker\">사서 선생님</span>우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!"]
+        ];
+        let i = 0;
+        function beat() {
+          if (i < beats.length) {
+            showBubble(speech, beats[i][1], beats[i][0]);
+            i += 1;
+            setTimeout(beat, 2600);
+          } else {
+            burstParticles(58);
+            document.getElementById("floatingBooks").classList.add("show");
+            setTimeout(() => { go.hidden = false; }, 950);
+          }
+        }
+        beat();
+      }
+
+      function renderGalleryContent() {
+        const page = galleryPages[galleryIndex];
+        document.getElementById("bookPageContent").innerHTML = `
+          <div class="page-image">
+            <img src="${page.img}" alt="${page.alt}">
+            ${page.overlay ? `<div class="page-overlay-text">${page.overlay}</div>` : ""}
+          </div>
+          <div class="page-caption">${page.text}</div>
+        `;
+        document.getElementById("bookPrev").disabled = galleryIndex === 0;
+        document.getElementById("bookNext").textContent = galleryIndex === galleryPages.length - 1 ? "▶" : "▶";
+      }
+
+      function renderGallery(direction = "") {
+        const content = document.getElementById("bookPageContent");
+        if (!direction || !content.innerHTML.trim()) {
+          renderGalleryContent();
+          return;
+        }
+        content.classList.remove("turn-in-next", "turn-in-prev", "turn-out-next", "turn-out-prev");
+        content.classList.add(direction === "next" ? "turn-out-next" : "turn-out-prev");
+        setTimeout(() => {
+          renderGalleryContent();
+          content.classList.remove("turn-out-next", "turn-out-prev");
+          content.classList.add(direction === "next" ? "turn-in-next" : "turn-in-prev");
+          setTimeout(() => content.classList.remove("turn-in-next", "turn-in-prev"), 340);
+        }, 180);
+      }
+
+      function renderPopupQuiz() {
+        document.getElementById("popupQuiz").innerHTML = `
+          <div class="quiz-prompt">꼬마 사서 대사: "그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?"</div>
+          <div class="choices-row">
+            <button class="choice" type="button" data-correct="true">[1일]</button>
+            <button class="choice" type="button" data-correct="false">[1시간]</button>
+            <button class="choice" type="button" data-correct="false">[24일]</button>
+          </div>
+        `;
+        document.querySelectorAll("#popupQuiz .choice").forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (btn.dataset.correct === "true") {
+              correctTotal += 1;
+              showFeedback(true, "맞았어! 24시간은 1일과 같지!", ".popup-child");
+              setProgress(100, true);
+              setTimeout(() => {
+                burstParticles(80);
+                setRecords();
+                showScene("scene-final");
+              }, 1500);
+            } else {
+              btn.classList.add("shake");
+              showFeedback(false, "띠익", ".popup-child");
+              setTimeout(() => btn.classList.remove("shake"), 400);
+            }
+          });
+        });
+      }
+
+      function setRecords() {
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+        const ss = String(elapsed % 60).padStart(2, "0");
+        document.getElementById("correctRecord").textContent = `${Math.min(correctTotal, 13)}/13`;
+        document.getElementById("timeRecord").textContent = `${mm}:${ss}`;
+      }
+
+      function downloadCertificate() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1200;
+        canvas.height = 800;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#fff7d1";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#e3a52f";
+        ctx.lineWidth = 28;
+        ctx.strokeRect(38, 38, canvas.width - 76, canvas.height - 76);
+        ctx.fillStyle = "#7a4c13";
+        ctx.textAlign = "center";
+        ctx.font = "bold 72px Malgun Gothic, sans-serif";
+        ctx.fillText("마을 수리대원 인증서", 600, 190);
+        ctx.font = "bold 42px Malgun Gothic, sans-serif";
+        ctx.fillText("(도서관 편)", 600, 250);
+        ctx.fillStyle = "#26313c";
+        ctx.font = "bold 34px Malgun Gothic, sans-serif";
+        ctx.fillText("위 대원은 정확한 시간 계산으로", 600, 380);
+        ctx.fillText("도서관 안내문을 완벽하게 수리하였기에", 600, 430);
+        ctx.fillText("이 증서를 수여합니다.", 600, 480);
+        ctx.fillStyle = "#0b747c";
+        ctx.font = "bold 32px Malgun Gothic, sans-serif";
+        ctx.fillText(`맞힌 문제 수: ${document.getElementById("correctRecord").textContent}`, 600, 590);
+        ctx.fillText(`클리어 소요 시간: ${document.getElementById("timeRecord").textContent}`, 600, 640);
+        const link = document.createElement("a");
+        link.download = "library_time_certificate.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+
+      document.getElementById("hamburger").addEventListener("click", () => slideMenu.classList.toggle("open"));
+      document.getElementById("startBtn").addEventListener("click", () => {
+        showScene("scene-intro");
+        document.getElementById("introSpeech").classList.add("visible");
+      });
+      document.getElementById("introNext").addEventListener("click", () => {
+        showScene("scene-tutorial");
+        setupTutorial();
+      });
+      document.getElementById("goStep2").addEventListener("click", () => {
+        showScene("scene-type-a");
+        showBubble(document.getElementById("typeASpeech"), "<span class=\"speaker\">사서 선생님</span>전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?", "librarian-bubble");
+        renderTypeA();
+      });
+      document.getElementById("goStep3").addEventListener("click", () => {
+        showScene("scene-gallery");
+        renderGallery();
+      });
+      document.getElementById("bookPrev").addEventListener("click", () => {
+        galleryIndex = Math.max(0, galleryIndex - 1);
+        renderGallery("prev");
+      });
+      document.getElementById("bookNext").addEventListener("click", () => {
+        if (galleryIndex < galleryPages.length - 1) {
+          galleryIndex += 1;
+          renderGallery("next");
+        } else {
+          showScene("scene-popup-quiz");
+          renderPopupQuiz();
+        }
+      });
+      document.getElementById("saveCertificate").addEventListener("click", downloadCertificate);
+      document.getElementById("nextMission").addEventListener("click", () => {
+        window.location.hash = "lesson-9-length";
+      });
+      document.getElementById("menuNextMission").addEventListener("click", () => {
+        window.location.hash = "lesson-9-length";
+        slideMenu.classList.remove("open");
+      });
+
+      renderClocks();
+      setProgress(0);
+    })();
+  </script>
+</body>
+</html>

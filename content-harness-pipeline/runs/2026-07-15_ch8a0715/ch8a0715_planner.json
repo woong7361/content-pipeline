@@ -1,0 +1,1783 @@
+{
+  "page": {
+    "goal": "초등 2학년 학습자가 도서관 수리 모험을 따라가며 1시간과 1분의 관계, 몇 분 전 시각, 걸린 시간, 1일과 24시간의 관계를 이해하고 시간 표현 문제를 해결하게 한다.",
+    "audience": "초등학교 2학년 학습자",
+    "tone": "밝고 게임적인 도서관 수리 모험 분위기, 위기 상황은 우스꽝스럽게 표현하고 성공 피드백은 경쾌하고 성취감 있게 연출"
+  },
+  "art_direction": {
+    "style_name": "밝은 어린이 모험 게임풍 래스터 일러스트",
+    "palette": "따뜻한 도서관 목재색과 크림색을 바탕으로 노랑, 민트, 하늘색, 코랄 포인트를 균형 있게 사용한다. 고장 장면은 채도를 조금 낮추고 복구·성공 장면은 금빛과 밝은 청록 계열을 더한다.",
+    "line_style": "둥글고 읽기 쉬운 형태, 중간 굵기의 부드러운 외곽선, 사물은 초등 저학년이 즉시 알아볼 수 있도록 단순화하되 질감은 래스터 브러시로 표현한다.",
+    "lighting": "실내 도서관의 부드러운 확산광을 기본으로 하고, 성공·복구 순간에는 노란 글로우와 금빛 파티클을 더한다. 그림자는 짧고 부드럽게 처리한다.",
+    "character_rules": "표정은 눈썹, 눈 모양, 입 모양을 크게 단순화해 멀리서도 감정이 읽히게 한다. 감정 변화는 말풍선, 땀방울, 점프, 박수처럼 큰 동작으로 보조한다.",
+    "component_rules": "반복 시계는 바늘 없는 둥근 몸체와 숫자판을 별도 재사용 컴포넌트로 고정하고, 시곗바늘·선택 테두리·정답 글로우는 builder가 HTML/CSS/JS로 얹는다. 반복 전광판·게시판·모니터는 장면 속 실제 물건으로 만들고 표시 문구와 빈칸은 HTML 텍스트 오버레이로 처리한다.",
+    "background_rules": "배경은 도서관 로비, 안내 데스크, 독서 교실 게시판, 대출 시스템 데스크처럼 학습 맥락이 드러나는 공간으로 구성한다. 배경 안에는 주요 반복 캐릭터를 넣지 않고, 익명 학생은 작고 흐릿한 분위기 요소로만 허용한다.",
+    "continuity_rules": "모든 장면은 같은 마을 도서관 안의 연속된 사건처럼 보이게 한다. 책장, 대형 시계 위치, 안내 데스크의 재질, 성공 글로우 색을 반복해 batch가 나뉘어도 같은 콘텐츠 세트로 보이게 한다.",
+    "forbidden_styles": [
+      "실사 사진 합성풍",
+      "어두운 공포 분위기",
+      "순수 flat vector UI",
+      "SVG icon kit 스타일",
+      "과도한 3D 렌더",
+      "단색 보라·남색 중심 팔레트",
+      "텍스트가 이미지에 박혀 있는 asset"
+    ]
+  },
+  "characters": [
+    {
+      "id": "char_librarian_teacher",
+      "name": "사서 선생님",
+      "role": "문제 상황을 설명하고 학습자를 안내하는 조력자",
+      "identity": {
+        "face": "둥근 얼굴형, 밝은 살구빛 피부톤, 작은 둥근 코, 반달 모양의 친절한 눈, 얇은 갈색 둥근 안경",
+        "hair": "짙은 밤색 머리, 귀 아래 길이의 단정한 보브컷, 앞머리는 왼쪽으로 살짝 넘김",
+        "outfit": "연한 민트색 셔츠, 짙은 청록색 앞치마, 작은 도서관 명찰, 갈색 낮은 굽 신발",
+        "palette": "민트 셔츠, 청록 앞치마, 밤색 머리, 갈색 안경과 신발, 금색 명찰 포인트",
+        "proportions": "성인 조력자 비율, 어린이 캐릭터보다 키가 크고 팔·다리가 길며 머리는 몸에 비해 약간 크게 단순화",
+        "distinctive_features": "둥근 안경과 청록 앞치마, 왼쪽 가슴의 작은 명찰이 항상 보이는 것이 핵심 구분 특징"
+      },
+      "reference_asset_id": "asset_librarian_explaining"
+    },
+    {
+      "id": "char_child_librarian",
+      "name": "꼬마 사서",
+      "role": "학습자의 아바타이자 도서관 시계를 수리하는 주인공",
+      "identity": {
+        "face": "작고 둥근 얼굴형, 밝은 살구빛 피부톤, 큰 검은 눈, 작은 코, 활짝 웃을 때 U자형 입",
+        "hair": "따뜻한 갈색의 짧은 머리, 정수리 쪽에 살짝 솟은 앞머리 한 가닥",
+        "outfit": "노란 반팔 상의, 파란 멜빵 반바지, 작은 책 모양 배지, 흰 양말과 빨간 운동화",
+        "palette": "노란 상의, 파란 멜빵, 빨간 운동화, 갈색 머리, 흰 양말 포인트",
+        "proportions": "초등 저학년 어린이 비율, 머리가 크고 팔다리가 짧은 귀여운 체형",
+        "distinctive_features": "책 모양 배지와 빨간 운동화, 위로 솟은 앞머리 한 가닥이 항상 유지되는 핵심 구분 특징"
+      },
+      "reference_asset_id": "asset_child_idle"
+    }
+  ],
+  "sections": [
+    {
+      "id": "activity1_scene1_title",
+      "title": "Scene 1. 타이틀 화면 (도입)",
+      "purpose": "콘텐츠 접속 직후 도서관 시계 수리 미션을 명확하게 제시하고 시작 행동을 유도한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "어질러진 도서관 로비의 전경이 약간 블러(Blur) 처리되어 게임의 배경 역할을 함.",
+          "notes": "첫 화면 전체 배경으로 깔고 중앙 타이틀 가독성을 위해 배경 대비를 낮춘다.",
+          "refs": [
+            "asset_bg_messy_lobby_blur"
+          ]
+        },
+        {
+          "channel": "title",
+          "content": "시간이 뒤죽박죽! (상단) / 수학의 힘으로 도서관 시계를 수리하라! (하단)",
+          "notes": "화면 중앙에 크고 입체적인 텍스트로 배치한다.",
+          "refs": []
+        },
+        {
+          "channel": "cta",
+          "content": "[시작하기]",
+          "notes": "화면 하단 중앙에 노란색의 커다란 버튼으로 배치하고 천천히 깜빡이며 클릭을 유도한다. 클릭 시 Scene 2로 전환된다.",
+          "refs": [
+            "interaction_start_to_intro"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "배경이 먼저 보이고 타이틀이 살짝 확대되며 등장한 뒤 시작 버튼이 깜빡인다."
+      ],
+      "interaction_ids": [
+        "interaction_start_to_intro"
+      ],
+      "asset_ids": [
+        "asset_bg_messy_lobby_blur",
+        "asset_reusable_library_ticket_button",
+        "asset_title_mission_banner"
+      ]
+    },
+    {
+      "id": "activity1_scene2_intro_problem",
+      "title": "Scene 2. INTRO & PROBLEM (문제 발생)",
+      "purpose": "시계 고장으로 혼란에 빠진 도서관 상황을 보여주고 수리 필요성을 만든다.",
+      "elements": [
+        {
+          "channel": "navigation",
+          "content": "좌측 상단(햄버거 메뉴): 아이콘. 클릭 시 1~10차시 목록이 슬라이드 아웃 방식으로 나타남. / 다른 차시와 동일한 형태로 개발",
+          "notes": "전체 학습 화면 공통 위치에 유지한다.",
+          "refs": [
+            "interaction_hamburger_menu"
+          ]
+        },
+        {
+          "channel": "progress",
+          "content": "우측 상단(진행도 게이지): 에너지 바 형태의 UI. (현재 1단계이므로 게이지 0% 상태). / 다른 차시와 동일한 형태",
+          "notes": "0% 상태로 표시한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        },
+        {
+          "channel": "background",
+          "content": "어질러진 도서관 로비: 도서관 중앙 벽에 걸린 커다란 대형 시계의 시계바늘이 미친 듯이 빠르게 핑글핑글 돎. 주변 학생들 머리 위로 ? 말풍선 팝업.",
+          "notes": "대형 시계 바늘은 asset에 고정하지 말고 회전 오버레이로 처리한다.",
+          "refs": [
+            "asset_bg_messy_lobby",
+            "asset_large_clock_body",
+            "interaction_spinning_clock"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "사서 선생님: 고장 난 대형 시계 앞에서 머리를 감싸 쥐고 땀을 흘리며(💦) 당황하는 모션.",
+          "notes": "고장 난 시계 앞쪽에 배치하고 짧은 떨림 모션을 준다.",
+          "refs": [
+            "asset_librarian_distressed"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!\"",
+          "notes": "사서 선생님 위쪽 말풍선으로 표시한다.",
+          "refs": [
+            "asset_librarian_distressed"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "타이틀 화면이 밝게 전환된 뒤 어질러진 로비와 회전하는 시계가 나타나고, 사서 선생님이 앞으로 등장하며 대사가 열린다."
+      ],
+      "interaction_ids": [
+        "interaction_hamburger_menu",
+        "interaction_energy_progress",
+        "interaction_spinning_clock"
+      ],
+      "asset_ids": [
+        "asset_bg_messy_lobby",
+        "asset_large_clock_body",
+        "asset_librarian_distressed",
+        "asset_reusable_library_ticket_button",
+        "asset_repair_energy_meter",
+        "asset_scene_chapter_plaque"
+      ]
+    },
+    {
+      "id": "activity1_scene3_tutorial",
+      "title": "Scene 3. TUTORIAL (조력자 등장 및 튜토리얼)",
+      "purpose": "꼬마 사서를 등장시키고 간단한 시계 읽기 드래그 문제로 조작 방식을 익히게 한다.",
+      "elements": [
+        {
+          "channel": "screen_effect",
+          "content": "화면 우측 하단에서 꼬마 사서 캐릭터가 자신감 있는 표정으로 걸어 나옴. 대형 시계 밑에 멈춰 있는 작은 탁상시계(예: 짧은바늘 3, 긴바늘 12)와 빈칸 UI `[?]` 생성.",
+          "notes": "탁상시계는 바늘 오버레이로 3시를 표시하고 빈칸은 시계 옆에 둔다.",
+          "refs": [
+            "asset_child_idle",
+            "asset_analog_clock_body",
+            "interaction_tutorial_drag_clock"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "꼬마 사서: 가슴을 펴고 한 손을 번쩍 드는 모션.",
+          "notes": "화면 우측 하단에서 중앙 쪽으로 걸어 나온 뒤 멈춘다.",
+          "refs": [
+            "asset_child_idle"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "사서 선생님: 돋보기를 들고 탁상시계를 가리키는 모션.",
+          "notes": "탁상시계 옆에 서서 시선을 빈칸 쪽으로 유도한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "꼬마 사서: \"걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!\"",
+          "notes": "꼬마 사서 말풍선으로 먼저 표시한다.",
+          "refs": [
+            "asset_child_idle"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?\"",
+          "notes": "사서 선생님 말풍선으로 이어서 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "question_group",
+          "content": "화면 하단에 숫자 카드 3장 노출: `[3시]`, `[4시]`, `[5시]`. 드래그 앤 드롭: 하단의 숫자 카드를 `[?]` 빈칸으로 드래그. 오답 시: \"띠익\" 경고음과 함께 카드가 제자리로 튕겨 돌아감.",
+          "notes": "문제 본문은 questions의 q_tutorial_clock를 참조하고, 카드는 하단에서 빈칸까지 드래그 가능하게 한다.",
+          "refs": [
+            "q_tutorial_clock"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "q_tutorial_clock",
+          "prompt": "지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?",
+          "input_type": "drag_drop",
+          "choices": [
+            {
+              "label": "[3시]",
+              "correct": true
+            },
+            {
+              "label": "[4시]",
+              "correct": false
+            },
+            {
+              "label": "[5시]",
+              "correct": false
+            }
+          ],
+          "answer": "[3시]",
+          "feedback": {
+            "correct": "",
+            "wrong": "띠익"
+          }
+        }
+      ],
+      "staging_notes": [
+        "꼬마 사서 등장 후 두 캐릭터 대사가 순서대로 나오고, 대사가 끝나면 숫자 카드와 빈칸이 활성화된다."
+      ],
+      "interaction_ids": [
+        "interaction_tutorial_drag_clock"
+      ],
+      "asset_ids": [
+        "asset_child_idle",
+        "asset_librarian_explaining",
+        "asset_analog_clock_body",
+        "asset_tutorial_repair_workbench",
+        "asset_scene_chapter_plaque"
+      ]
+    },
+    {
+      "id": "activity1_scene4_success",
+      "title": "Scene 4. SUCCESS (수리 성공 및 다음 단계 전환)",
+      "purpose": "튜토리얼 성공을 축하하고 본격 수리 미션으로 이동하게 한다.",
+      "elements": [
+        {
+          "channel": "feedback",
+          "content": "빈칸에 `[3시]`가 정상적으로 표시되고, 멈춰있던 시계 주변에 노란색 테두리 글로우(Glow) 효과 발생. 우측 상단 진행도 게이지(에너지 바)가 10%로 살짝 차오름.",
+          "notes": "튜토리얼 정답 직후 시계와 빈칸 주변에 글로우를 적용한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "꼬마 사서: 제자리에서 폴짝 뛰며 만세 하는 모션.",
+          "notes": "점프 후 착지할 때 작은 별 파티클을 더한다.",
+          "refs": [
+            "asset_child_success"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "사서 선생님: 안도하며 환하게 웃고 박수를 치는 모션. 주변 학생들의 ? 말풍선이 웃는 얼굴 이모티콘으로 변경됨.",
+          "notes": "박수 모션과 함께 배경의 말풍선을 전환한다.",
+          "refs": [
+            "asset_librarian_applauding"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!\"",
+          "notes": "성공 글로우 이후 사서 선생님 말풍선으로 표시한다.",
+          "refs": [
+            "asset_librarian_applauding"
+          ]
+        },
+        {
+          "channel": "cta",
+          "content": "[좋아요! 본격적으로 수리하러 가기 →]",
+          "notes": "화면 하단 중앙에 활성화하고 심장 박동처럼 커졌다 작아지는 펄스 효과를 준다. 클릭 시 화면이 밝아지며 `[STEP 2. 수리로 해결해요]` 화면으로 이동한다.",
+          "refs": [
+            "interaction_go_to_step2"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "정답 표시와 글로우가 먼저 발생하고 게이지가 10%로 오른 뒤 캐릭터 성공 모션, 대사, 전환 버튼 순서로 열린다."
+      ],
+      "interaction_ids": [
+        "interaction_energy_progress",
+        "interaction_go_to_step2"
+      ],
+      "asset_ids": [
+        "asset_child_success",
+        "asset_librarian_applauding",
+        "asset_tutorial_repair_workbench",
+        "asset_reusable_library_ticket_button",
+        "asset_scene_chapter_plaque"
+      ]
+    },
+    {
+      "id": "activity2_global_ui",
+      "title": "공통 화면 설정 (Global UI)",
+      "purpose": "활동 2의 12문제에서 반복되는 메뉴, 게이지, 주인공 대기 상태를 고정한다.",
+      "elements": [
+        {
+          "channel": "navigation",
+          "content": "좌측 상단 (햄버거 메뉴): = 아이콘. 클릭 시 1~10차시 목록 슬라이드 아웃.",
+          "notes": "활동 2 모든 문제 화면에 동일하게 유지한다.",
+          "refs": [
+            "interaction_hamburger_menu"
+          ]
+        },
+        {
+          "channel": "progress",
+          "content": "우측 상단 (에너지 게이지): 0%에서 시작하여 문제 1개를 맞힐 때마다 에너지가 차오르는 막대 바(Progress Bar) 형태.",
+          "notes": "활동 2 진입 시에는 이전 성공을 반영해 10%에서 이어가고, 문제 해결마다 상승하도록 구현한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "화면 좌측 하단에 꼬마 사서(주인공)가 대기 모션으로 서 있음.",
+          "notes": "문제 풀이 중 기본 idle pose로 고정하고 피드백 때 success 또는 confused pose로 교체한다.",
+          "refs": [
+            "asset_child_idle"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "활동 2의 각 문제 장면 위에 공통 UI 레이어로 계속 유지한다."
+      ],
+      "interaction_ids": [
+        "interaction_hamburger_menu",
+        "interaction_energy_progress"
+      ],
+      "asset_ids": [
+        "asset_child_idle",
+        "asset_repair_energy_meter"
+      ]
+    },
+    {
+      "id": "activity2_scene1_type_a",
+      "title": "Scene 1. [유형 A] 엉망이 된 도서관 시계 맞추기 (객관식 터치)",
+      "purpose": "'몇 분 전' 표현과 실제 시각을 연결해 알맞은 아날로그 시계를 선택하게 한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?\"",
+          "notes": "문제 시작 시 사서 선생님이 화면에 등장하며 말풍선 팝업으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "화면 중앙 상단의 대형 전광판에 문제 텍스트 출력. 예: 전광판에 `[8시 15분 전]`이라고 적혀 있어요. 알맞은 시계를 찾아주세요!",
+          "notes": "전광판 asset 위에 각 문제 문구를 HTML 텍스트로 바꿔 표시한다.",
+          "refs": [
+            "asset_signboard_broken_time"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "전광판 아래에 3개의 아날로그 시계 이미지가 나란히 배치됨. 각 시계는 7:45, 8:15, 8:45를 가리키고 있음.",
+          "notes": "시계 몸체 asset은 재사용하고 바늘은 문제별 정답·오답 값에 맞춰 오버레이한다.",
+          "refs": [
+            "asset_analog_clock_body"
+          ]
+        },
+        {
+          "channel": "question_group",
+          "content": "3개의 시계 중 하나를 직접 터치하여 선택. 터치한 시계는 살짝 위로 튀어 오르는(Pop) 애니메이션 효과 적용.",
+          "notes": "q_type_a_01부터 q_type_a_04까지 순차 출제한다.",
+          "refs": [
+            "q_type_a_01",
+            "q_type_a_02",
+            "q_type_a_03",
+            "q_type_a_04"
+          ]
+        },
+        {
+          "channel": "feedback",
+          "content": "정답(7:45 시계) 터치 시: \"딩동댕!\" 효과음 발생. 선택한 시계 테두리에 반짝이는 노란색 글로우(Glow) 효과 적용. 꼬마 사서가 제자리에서 점프하며 기뻐하는 모션. 에너지 게이지 상승 후 다음 문제로 자동 전환.",
+          "notes": "정답 피드백은 선택한 시계와 꼬마 사서 성공 pose를 함께 강조한다.",
+          "refs": [
+            "asset_child_success",
+            "interaction_type_a_choice"
+          ]
+        },
+        {
+          "channel": "feedback",
+          "content": "오답 터치 시: \"띠익\" 경고음 발생. 시계가 좌우로 흔들림(Shake), 화면 중앙에 다시 생각해보세요 말풍선과 👆(손가락) 아이콘 2초간 팝업. 꼬마 사서가 고개를 갸우뚱하는 모션. (3회 오답 시 정답 시계가 붉은색으로 깜박인 후 강제 전환)",
+          "notes": "오답은 동일 문제를 다시 선택할 수 있게 하되 3회 오답 시 정답 강조 후 넘어간다.",
+          "refs": [
+            "asset_child_confused",
+            "interaction_type_a_choice"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "q_type_a_01",
+          "prompt": "전광판에 **[3시 5분 전]**이라고 적혀 있어요. 알맞은 시계를 찾아주세요!",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "2시 55분 시계",
+              "correct": true
+            },
+            {
+              "label": "3시 5분 시계",
+              "correct": false
+            },
+            {
+              "label": "3시 55분 시계",
+              "correct": false
+            }
+          ],
+          "answer": "2시 55분 시계",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_a_02",
+          "prompt": "멈춰버린 시계가 **[11시 50분]**을 가리키고 있어요. 다른 말로 어떻게 읽을까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "11시 10분 전",
+              "correct": false
+            },
+            {
+              "label": "12시 10분 전",
+              "correct": true
+            },
+            {
+              "label": "12시 50분 전",
+              "correct": false
+            }
+          ],
+          "answer": "12시 10분 전",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_a_03",
+          "prompt": "다음 중 **[8시 15분 전]**을 가리키는 시계는 어느 것인가요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "7시 45분 시계",
+              "correct": true
+            },
+            {
+              "label": "8시 15분 시계",
+              "correct": false
+            },
+            {
+              "label": "8시 45분 시계",
+              "correct": false
+            }
+          ],
+          "answer": "7시 45분 시계",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_a_04",
+          "prompt": "시계가 **[4시 55분]**에 멈췄어요. 바르게 읽은 것을 고르세요.",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "4시 5분 전",
+              "correct": false
+            },
+            {
+              "label": "5시 5분 전",
+              "correct": true
+            },
+            {
+              "label": "5시 55분 전",
+              "correct": false
+            }
+          ],
+          "answer": "5시 5분 전",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        }
+      ],
+      "staging_notes": [
+        "사서 선생님 도입 대사 후 전광판 문제, 세 개의 시계 선택지, 피드백 순서로 반복한다. 각 문제 종료 후 같은 화면 구성에서 다음 문제 문구와 바늘 값만 전환한다."
+      ],
+      "interaction_ids": [
+        "interaction_type_a_choice",
+        "interaction_energy_progress"
+      ],
+      "asset_ids": [
+        "asset_librarian_explaining",
+        "asset_signboard_broken_time",
+        "asset_analog_clock_body",
+        "asset_child_success",
+        "asset_child_confused",
+        "asset_time_quiz_control_console",
+        "asset_scene_chapter_plaque",
+        "asset_repair_feedback_stamp_set"
+      ]
+    },
+    {
+      "id": "activity2_scene2_type_b",
+      "title": "Scene 2. [유형 B] 독서 교실 시간표 복구하기 (키패드 입력)",
+      "purpose": "시작 시각, 끝난 시각, 걸린 시간을 이용해 빈칸에 숫자로 답하게 한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?\"",
+          "notes": "문제 유형 전환 시 사서 선생님의 말풍선 팝업으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "도서관 벽면의 코르크 게시판 형태로 문제 제시. 예: 독서 교실이 **11시 30분**에 시작해서 **30분** 동안 진행돼요. 끝나는 시각은 언제일까요?",
+          "notes": "게시판 asset 위에 문제별 텍스트를 HTML로 표시한다.",
+          "refs": [
+            "asset_cork_timetable_board"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "게시판 하단에 **11:30**을 가리키는 시계와 `[30분 후 →]` 화살표, 그리고 바늘이 없는 빈 시계 이미지 제공.",
+          "notes": "문제 6 중심 예시이며 문제별로 시계와 화살표 정보를 바꿔 표시한다.",
+          "refs": [
+            "asset_analog_clock_body"
+          ]
+        },
+        {
+          "channel": "question_group",
+          "content": "`[?]`시 `[?]`분 형태의 빈칸 UI 제공. 빈칸 터치 시 우측 하단에 숫자 키패드 팝업. 숫자 입력 후 `[확인하기]` 버튼 터치.",
+          "notes": "q_type_b_05부터 q_type_b_08까지 순차 출제하며 객관식 문항은 선택 버튼으로 전환한다.",
+          "refs": [
+            "q_type_b_05",
+            "q_type_b_06",
+            "q_type_b_07",
+            "q_type_b_08"
+          ]
+        },
+        {
+          "channel": "feedback",
+          "content": "Scene 1과 동일한 정답/오답 로직 및 이펙트(별, 흔들림 등) 적용.",
+          "notes": "입력값이 맞으면 별과 글로우, 틀리면 빈칸 흔들림을 적용한다.",
+          "refs": [
+            "interaction_type_b_keypad"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "q_type_b_05",
+          "prompt": "첫 번째 독서 교실은 **8시**에 시작해서 **9시**에 끝났어요. 걸린 시간은 얼마인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[1]시간",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_b_06",
+          "prompt": "두 번째 독서 교실은 **11시 30분**에 시작해서 **30분** 동안 진행돼요. 끝나는 시각은 언제일까요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[12]시 [0]분",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_b_07",
+          "prompt": "책 정리 봉사활동을 오후 2시에 시작해서 **1시간** 동안 했어요. 봉사활동이 끝난 시각은 언제일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "오후 2시 30분",
+              "correct": false
+            },
+            {
+              "label": "오후 3시",
+              "correct": true
+            },
+            {
+              "label": "오후 4시",
+              "correct": false
+            }
+          ],
+          "answer": "오후 3시",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_b_08",
+          "prompt": "꼬마 사서가 **4시 30분**부터 **5시**까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[30]분",
+          "feedback": {
+            "correct": "딩동댕!",
+            "wrong": "다시 생각해보세요"
+          }
+        }
+      ],
+      "staging_notes": [
+        "유형 전환 시 게시판 배경으로 슬라이드 이동하고, 게시판 문제와 보조 시각화가 열린 뒤 키패드 또는 선택지가 활성화된다."
+      ],
+      "interaction_ids": [
+        "interaction_type_b_keypad",
+        "interaction_type_b_choice",
+        "interaction_energy_progress"
+      ],
+      "asset_ids": [
+        "asset_librarian_explaining",
+        "asset_cork_timetable_board",
+        "asset_analog_clock_body",
+        "asset_time_quiz_control_console",
+        "asset_scene_chapter_plaque",
+        "asset_repair_feedback_stamp_set"
+      ]
+    },
+    {
+      "id": "activity2_scene3_type_c",
+      "title": "Scene 3. [유형 C] 도서 대출 시스템 재부팅 (드래그 앤 드롭)",
+      "purpose": "오전·오후와 1일 24시간 관계를 숫자 블록 배치로 확인하게 한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!\"",
+          "notes": "도서관 데스크 모니터 화면으로 넘어가며 사서 선생님의 말풍선 팝업으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "데스크의 컴퓨터 모니터 화면으로 연출. 예: **하루는 오전 [?] 시간과 오후 [?] 시간으로 이루어져 있어요. 빈칸을 채워 시스템을 켜주세요!**",
+          "notes": "모니터 화면 안에 문제 텍스트와 빈칸을 HTML 오버레이로 둔다.",
+          "refs": [
+            "asset_lending_system_monitor"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "모니터 화면 안에 1~12(오전), 1~12(오후)로 나뉜 가로형 낮과 밤 수직선(타임라인) 그래픽 제공.",
+          "notes": "타임라인은 모니터 내부 그래픽으로 표시하되 숫자 가독성을 확보한다.",
+          "refs": [
+            "asset_lending_system_monitor"
+          ]
+        },
+        {
+          "channel": "question_group",
+          "content": "화면 하단에 0~9의 숫자 블록 배치. 숫자 블록을 모니터 안의 `[?]` 빈칸으로 드래그 앤 드롭. 빈칸 근처에서 쏙(Snap) 들어가는 애니메이션과 \"착!\" 효과음 적용.",
+          "notes": "q_type_c_09부터 q_type_c_12까지 순차 출제하며 객관식 문항은 보기 버튼으로 전환한다.",
+          "refs": [
+            "q_type_c_09",
+            "q_type_c_10",
+            "q_type_c_11",
+            "q_type_c_12"
+          ]
+        },
+        {
+          "channel": "feedback",
+          "content": "알맞은 블록을 모두 넣으면 자동 정답 처리. 모니터 화면이 밝아지며 `[시스템 재부팅 완료!]` 메시지 출력.",
+          "notes": "유형 C 마지막 정답 또는 각 드래그 문항 정답 완료 시 모니터 밝기와 성공 메시지를 보여준다.",
+          "refs": [
+            "interaction_type_c_drag_blocks"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "q_type_c_09",
+          "prompt": "도서관 대출 시스템을 켜려면 암호가 필요해요. **24시간**은 며칠과 같을까요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[1]일",
+          "feedback": {
+            "correct": "[시스템 재부팅 완료!]",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_c_10",
+          "prompt": "하루는 오전 `[?]`시간과 오후 `[?]`시간으로 이루어져 있어요. 빈칸에 알맞은 수를 넣으세요.",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "[12], [12]",
+          "feedback": {
+            "correct": "[시스템 재부팅 완료!]",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_c_11",
+          "prompt": "오늘 오후 **3시**에 책을 빌렸어요. 하루(1일)가 지나면 내일 언제일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "오전 3시",
+              "correct": false
+            },
+            {
+              "label": "오후 3시",
+              "correct": true
+            },
+            {
+              "label": "오후 4시",
+              "correct": false
+            }
+          ],
+          "answer": "오후 3시",
+          "feedback": {
+            "correct": "[시스템 재부팅 완료!]",
+            "wrong": "다시 생각해보세요"
+          }
+        },
+        {
+          "id": "q_type_c_12",
+          "prompt": "이 마법 책은 딱 **1일** 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[24]시간",
+          "feedback": {
+            "correct": "[시스템 재부팅 완료!]",
+            "wrong": "다시 생각해보세요"
+          }
+        }
+      ],
+      "staging_notes": [
+        "게시판 장면에서 데스크 모니터 장면으로 전환하고, 모니터가 켜지는 연출 후 문제와 숫자 블록이 활성화된다."
+      ],
+      "interaction_ids": [
+        "interaction_type_c_drag_blocks",
+        "interaction_type_c_keypad",
+        "interaction_type_c_choice",
+        "interaction_energy_progress"
+      ],
+      "asset_ids": [
+        "asset_librarian_explaining",
+        "asset_lending_system_monitor",
+        "asset_time_quiz_control_console",
+        "asset_scene_chapter_plaque",
+        "asset_repair_feedback_stamp_set"
+      ]
+    },
+    {
+      "id": "activity2_scene4_repair_complete",
+      "title": "Scene 4. 수리 완료! (Outro)",
+      "purpose": "12문제 해결 후 도서관 복구를 보여주고 실생활 연계 단계로 이동하게 한다.",
+      "elements": [
+        {
+          "channel": "progress",
+          "content": "우측 상단의 에너지 바가 **90%**까지 차오르며 반짝입니다. (나머지 10%는 다음 단계인 '수리 이야기'를 모두 시청한 후 100%가 됩니다.)",
+          "notes": "12문제 완료 직후 90% 상태를 강조한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "꼬마 사서: \"해냈다! 시간의 규칙을 모두 풀었어요!\"",
+          "notes": "도서관이 아직 어질러진 상태에서 꼬마 사서 말풍선으로 표시한다.",
+          "refs": [
+            "asset_child_success"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!\"",
+          "notes": "사서 선생님 말풍선으로 이어서 표시한다.",
+          "refs": [
+            "asset_librarian_applauding"
+          ]
+        },
+        {
+          "channel": "screen_effect",
+          "content": "대사가 끝난 직후, 화면 전체에 화려한 금빛 파티클(폭죽)과 마법 가루 이펙트가 발생합니다.",
+          "notes": "화면 전체를 덮되 다음 복구 애니메이션을 가리지 않게 투명도를 조절한다.",
+          "refs": [
+            "interaction_library_restore"
+          ]
+        },
+        {
+          "channel": "screen_effect",
+          "content": "복구 애니메이션: 지저거리던 대형 전광판의 글자가 올바른 시간으로 선명하게 맞춰지고, 미친 듯이 돌던 시계 바늘이 정상 속도로 움직이며, 바닥에 떨어져 있던 책들이 마법처럼 둥둥 떠올라 책장에 가지런히 정리됩니다.",
+          "notes": "messy 배경에서 restored 배경으로 단계적으로 전환한다.",
+          "refs": [
+            "asset_bg_messy_lobby",
+            "asset_bg_restored_lobby",
+            "interaction_library_restore"
+          ]
+        },
+        {
+          "channel": "character_motion",
+          "content": "캐릭터 모션: 복구된 도서관을 보며 사서 선생님은 안도와 기쁨의 박수를 치고, 꼬마 사서는 허리에 손을 얹고 브이(V)를 그리는 자랑스러운 모션을 취합니다.",
+          "notes": "복구 완료 시 두 캐릭터를 전경에 배치한다.",
+          "refs": [
+            "asset_librarian_applauding",
+            "asset_child_success"
+          ]
+        },
+        {
+          "channel": "cta",
+          "content": "[3. 수리 이야기 보러 가기 →]",
+          "notes": "복구 연출이 모두 끝난 후 화면 하단 중앙에 활성화하고 펄스 효과로 클릭을 유도한다. 클릭 시 마지막 단계인 실생활 연계(STEP 3) 화면으로 이동한다.",
+          "refs": [
+            "interaction_go_to_step3"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "90% 게이지 강조 후 두 캐릭터 대사가 끝나면 금빛 파티클, 배경 복구, 캐릭터 완료 pose, 전환 버튼 순서로 진행한다."
+      ],
+      "interaction_ids": [
+        "interaction_energy_progress",
+        "interaction_library_restore",
+        "interaction_go_to_step3"
+      ],
+      "asset_ids": [
+        "asset_bg_messy_lobby",
+        "asset_bg_restored_lobby",
+        "asset_librarian_applauding",
+        "asset_child_success",
+        "asset_reusable_library_ticket_button",
+        "asset_repair_energy_meter",
+        "asset_scene_chapter_plaque"
+      ]
+    },
+    {
+      "id": "activity3_scene1_real_life_history",
+      "title": "Scene 1. 실생활 및 역사 연계",
+      "purpose": "평화로운 도서관에서 시간 개념이 실생활과 역사 속에서 어떻게 쓰이는지 연결한다.",
+      "elements": [
+        {
+          "channel": "navigation",
+          "content": "좌측 상단 (햄버거 메뉴): = 아이콘 유지.",
+          "notes": "활동 3에서도 동일 위치에 유지한다.",
+          "refs": [
+            "interaction_hamburger_menu"
+          ]
+        },
+        {
+          "channel": "progress",
+          "content": "우측 상단 (진행도 게이지): 90% 달성 상태로 유지되며 은은하게 반짝임.",
+          "notes": "마무리 퀴즈 전까지 90% 상태를 유지한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        },
+        {
+          "channel": "background",
+          "content": "공간적 배경: 깨끗하게 정리된 도서관 로비. 따뜻하고 평화로운 BGM 재생.",
+          "notes": "복구된 도서관 배경을 사용하고 조명은 따뜻하게 한다.",
+          "refs": [
+            "asset_bg_restored_lobby"
+          ]
+        },
+        {
+          "channel": "visual_aid",
+          "content": "화면 중앙에 커다란 팝업북(또는 스마트 패드) UI 등장. 좌우 화살표(◀, ▶)를 터치하여 페이지를 넘길 수 있음.",
+          "notes": "팝업북 형태를 사용하고 페이지 넘김은 좌우 화살표로 제어한다.",
+          "refs": [
+            "asset_magic_popup_book",
+            "interaction_gallery_pages"
+          ]
+        },
+        {
+          "channel": "gallery_page",
+          "content": "이미지: '24시간'이라고 크게 적힌 동네 편의점 간판 사진.",
+          "notes": "페이지 1의 이미지 영역에 표시한다. 이미지 안의 실제 문구는 asset에 고정하기보다 HTML 텍스트 오버레이로 처리한다.",
+          "refs": [
+            "asset_popup_book_page_store"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님 대사: \"우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!\"",
+          "notes": "페이지 1에서 사서 선생님 말풍선 또는 책 하단 캡션으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "gallery_page",
+          "content": "이미지: 해시계(앙부일구)의 그림자가 시간을 가리키는 그림.",
+          "notes": "페이지 2의 이미지 영역에 표시한다.",
+          "refs": [
+            "asset_popup_book_page_sundial"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님 대사: \"시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!\"",
+          "notes": "페이지 2에서 사서 선생님 말풍선 또는 책 하단 캡션으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        },
+        {
+          "channel": "gallery_page",
+          "content": "이미지: 김이 모락모락 나는 오븐과 30분에 맞춰진 요리 타이머 사진.",
+          "notes": "페이지 3의 이미지 영역에 표시한다. 타이머 숫자는 HTML 오버레이로 처리할 수 있게 안전 영역을 둔다.",
+          "refs": [
+            "asset_popup_book_page_timer"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님 대사: \"오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.\"",
+          "notes": "페이지 3에서 사서 선생님 말풍선 또는 책 하단 캡션으로 표시한다.",
+          "refs": [
+            "asset_librarian_explaining"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "복구된 도서관 배경 위에 팝업북이 펼쳐지고, 좌우 화살표로 페이지 1, 2, 3을 순서대로 넘긴다. 마지막 페이지를 넘기면 다음 퀴즈 장면으로 이어진다."
+      ],
+      "interaction_ids": [
+        "interaction_hamburger_menu",
+        "interaction_energy_progress",
+        "interaction_gallery_pages"
+      ],
+      "asset_ids": [
+        "asset_bg_restored_lobby",
+        "asset_magic_popup_book",
+        "asset_popup_book_page_store",
+        "asset_popup_book_page_sundial",
+        "asset_popup_book_page_timer",
+        "asset_librarian_explaining",
+        "asset_repair_energy_meter",
+        "asset_scene_chapter_plaque"
+      ]
+    },
+    {
+      "id": "activity3_scene2_popup_quiz",
+      "title": "Scene 2. 가벼운 마무리 퀴즈 (Pop-up Quiz)",
+      "purpose": "1일과 24시간의 관계를 짧은 돌발 퀴즈로 확인하고 게이지를 100%로 완성한다.",
+      "elements": [
+        {
+          "channel": "screen_effect",
+          "content": "갤러리의 마지막 페이지를 넘기면 꼬마 사서가 화면 앞으로 톡 튀어나오며 퀴즈 창(Pop-up)을 띄움.",
+          "notes": "꼬마 사서 success pose가 전경으로 확대되며 팝업 퀴즈가 열린다.",
+          "refs": [
+            "asset_child_success",
+            "interaction_popup_quiz"
+          ]
+        },
+        {
+          "channel": "question_group",
+          "content": "꼬마 사서 대사: \"그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?\"\n\n보기 버튼: `[1일]` / `[1시간]` / `[24일]`",
+          "notes": "q_popup_13을 참조해 보기 버튼 3개를 표시한다.",
+          "refs": [
+            "q_popup_13"
+          ]
+        },
+        {
+          "channel": "feedback",
+          "content": "오답 터치 시: 가벼운 \"띠익\" 소리와 함께 보기가 흔들림. (틀려도 다시 선택 가능)\n\n정답(`[1일]`) 터치 시: \"딩동댕!\" 효과음 발생. 꼬마 사서가 \"맞았어! 24시간은 1일과 같지!\"라고 외침.",
+          "notes": "오답은 재시도 가능, 정답은 성공 대사와 게이지 완료 연출로 이어진다.",
+          "refs": [
+            "interaction_popup_quiz",
+            "asset_child_success"
+          ]
+        },
+        {
+          "channel": "progress",
+          "content": "정답을 맞히는 순간, 우측 상단의 에너지 바가 **90%에서 100%로 쭈욱** 차오르며 황금색으로 강하게 발광(Glow)함.",
+          "notes": "정답 직후 게이지 100% 애니메이션을 크게 강조한다.",
+          "refs": [
+            "interaction_energy_progress"
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "id": "q_popup_13",
+          "prompt": "꼬마 사서 대사: \"그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?\"",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "[1일]",
+              "correct": true
+            },
+            {
+              "label": "[1시간]",
+              "correct": false
+            },
+            {
+              "label": "[24일]",
+              "correct": false
+            }
+          ],
+          "answer": "[1일]",
+          "feedback": {
+            "correct": "맞았어! 24시간은 1일과 같지!",
+            "wrong": "띠익"
+          }
+        }
+      ],
+      "staging_notes": [
+        "갤러리 마지막 페이지 이후 꼬마 사서가 앞으로 나오고 퀴즈 팝업이 뜬다. 정답 선택 시 게이지가 100%로 차오른 뒤 최종 완료 장면으로 전환한다."
+      ],
+      "interaction_ids": [
+        "interaction_popup_quiz",
+        "interaction_energy_progress"
+      ],
+      "asset_ids": [
+        "asset_child_success",
+        "asset_popup_quiz_paper_card",
+        "asset_repair_energy_meter",
+        "asset_repair_feedback_stamp_set"
+      ]
+    },
+    {
+      "id": "activity3_scene3_final_certificate",
+      "title": "Scene 3. 최종 완료 및 인증 (Outro & Hook)",
+      "purpose": "학습 완료 보상을 제공하고 다음 차시로 자연스럽게 이동하게 한다.",
+      "elements": [
+        {
+          "channel": "screen_effect",
+          "content": "100% 달성과 동시에 화면 전체에 팡파르(폭죽) 이펙트가 터지며 축제 분위기 연출.",
+          "notes": "게이지 완료 직후 화면 전체 축하 파티클을 보여준다.",
+          "refs": [
+            "interaction_final_celebration"
+          ]
+        },
+        {
+          "channel": "certificate",
+          "content": "화면 중앙에 반짝이는 **[마을 수리대원 인증서]** 팝업 등장.",
+          "notes": "중앙 인증서 팝업을 크게 띄운다.",
+          "refs": [
+            "interaction_save_certificate"
+          ]
+        },
+        {
+          "channel": "title",
+          "content": "마을 수리대원 인증서 (도서관 편)",
+          "notes": "인증서 상단 타이틀로 표시한다.",
+          "refs": []
+        },
+        {
+          "channel": "certificate",
+          "content": "\"위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.\"",
+          "notes": "인증서 본문 중앙에 표시한다.",
+          "refs": []
+        },
+        {
+          "channel": "certificate",
+          "content": "기록 표시: 맞힌 문제 수 (예: 13/13), 클리어 소요 시간 표시.",
+          "notes": "실제 기록값은 builder가 런타임 데이터로 채운다.",
+          "refs": []
+        },
+        {
+          "channel": "cta",
+          "content": "[내 사진첩에 저장하기]",
+          "notes": "인증서 하단에 배치하고 클릭 시 기기에 이미지 저장한다. 다른 차시 인증서와 비슷한 디자인으로 맞춘다.",
+          "refs": [
+            "interaction_save_certificate"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"정말 고마워! 네 덕분에 도서관이 완벽해졌어!\"",
+          "notes": "인증서 아래 또는 옆 말풍선으로 표시한다.",
+          "refs": [
+            "asset_librarian_applauding"
+          ]
+        },
+        {
+          "channel": "dialogue",
+          "content": "꼬마 사서: \"언제든 제 수학실력이 필요하면 불러주세요!\"",
+          "notes": "사서 선생님 대사 다음에 표시한다.",
+          "refs": [
+            "asset_child_success"
+          ]
+        },
+        {
+          "channel": "cta",
+          "content": "[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]",
+          "notes": "화면 하단 중앙에 커다란 화살표 버튼으로 활성화한다. 클릭 시 9차시(길이 재기) 웹페이지로 즉시 라우팅(이동) 된다.",
+          "refs": [
+            "interaction_next_mission"
+          ]
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "100% 게이지 후 폭죽 이펙트, 인증서 팝업, 저장 버튼, 마무리 대사, 다음 미션 버튼 순서로 등장한다."
+      ],
+      "interaction_ids": [
+        "interaction_final_celebration",
+        "interaction_save_certificate",
+        "interaction_next_mission"
+      ],
+      "asset_ids": [
+        "asset_librarian_applauding",
+        "asset_child_success",
+        "asset_bg_restored_lobby",
+        "asset_final_certificate_frame",
+        "asset_reusable_library_ticket_button",
+        "asset_repair_energy_meter"
+      ]
+    }
+  ],
+  "interactions": [
+    {
+      "id": "interaction_start_to_intro",
+      "type": "button",
+      "description": "타이틀 화면의 [시작하기] 버튼을 클릭하면 Scene 2로 전환한다."
+    },
+    {
+      "id": "interaction_hamburger_menu",
+      "type": "slide_menu",
+      "description": "좌측 상단 햄버거 아이콘 클릭 시 1~10차시 목록이 슬라이드 아웃으로 나타난다."
+    },
+    {
+      "id": "interaction_energy_progress",
+      "type": "progress_bar",
+      "description": "문제 정답과 장면 완료에 따라 에너지 게이지가 0%, 10%, 90%, 100% 등으로 상승하고 반짝임 또는 황금 글로우를 표시한다."
+    },
+    {
+      "id": "interaction_spinning_clock",
+      "type": "animation",
+      "description": "고장 난 대형 시계의 바늘을 빠르게 회전시키고 성공 후 정상 속도로 전환한다."
+    },
+    {
+      "id": "interaction_tutorial_drag_clock",
+      "type": "drag_drop",
+      "description": "[3시], [4시], [5시] 숫자 카드를 [?] 빈칸으로 드래그해 3시를 맞히는 튜토리얼 상호작용이다."
+    },
+    {
+      "id": "interaction_go_to_step2",
+      "type": "button",
+      "description": "[좋아요! 본격적으로 수리하러 가기 →] 버튼 클릭 시 STEP 2 화면으로 이동한다."
+    },
+    {
+      "id": "interaction_type_a_choice",
+      "type": "quiz",
+      "description": "유형 A의 3개 아날로그 시계 중 하나를 터치해 선택하고 정답·오답 피드백을 제공한다."
+    },
+    {
+      "id": "interaction_type_b_keypad",
+      "type": "keypad",
+      "description": "유형 B의 빈칸을 터치하면 숫자 키패드가 나타나고 [확인하기]로 입력값을 제출한다."
+    },
+    {
+      "id": "interaction_type_b_choice",
+      "type": "quiz",
+      "description": "유형 B 중 객관식 문항에서 보기 버튼을 터치해 답을 고른다."
+    },
+    {
+      "id": "interaction_type_c_drag_blocks",
+      "type": "drag_drop",
+      "description": "0~9 숫자 블록을 모니터 안의 [?] 빈칸으로 드래그 앤 드롭하고 Snap 애니메이션을 제공한다."
+    },
+    {
+      "id": "interaction_type_c_keypad",
+      "type": "keypad",
+      "description": "유형 C 중 숫자 직접 입력 문항에서 키패드로 값을 입력한다."
+    },
+    {
+      "id": "interaction_type_c_choice",
+      "type": "quiz",
+      "description": "유형 C 중 객관식 문항에서 보기 버튼을 터치해 답을 고른다."
+    },
+    {
+      "id": "interaction_library_restore",
+      "type": "animation",
+      "description": "전광판 글자 복구, 시계 바늘 정상화, 책 정리, 금빛 파티클을 순차 재생한다."
+    },
+    {
+      "id": "interaction_go_to_step3",
+      "type": "button",
+      "description": "[3. 수리 이야기 보러 가기 →] 버튼 클릭 시 STEP 3 화면으로 이동한다."
+    },
+    {
+      "id": "interaction_gallery_pages",
+      "type": "tabs",
+      "description": "팝업북 좌우 화살표를 눌러 실생활, 역사, 걸린 시간 연계 페이지를 순서대로 넘긴다."
+    },
+    {
+      "id": "interaction_popup_quiz",
+      "type": "quiz",
+      "description": "마무리 퀴즈 보기 [1일], [1시간], [24일]을 터치해 선택하고 오답 재시도와 정답 성공 대사를 제공한다."
+    },
+    {
+      "id": "interaction_final_celebration",
+      "type": "animation",
+      "description": "100% 달성 후 폭죽과 축제 이펙트를 재생한다."
+    },
+    {
+      "id": "interaction_save_certificate",
+      "type": "button",
+      "description": "[내 사진첩에 저장하기] 버튼 클릭 시 인증서를 이미지로 저장한다."
+    },
+    {
+      "id": "interaction_next_mission",
+      "type": "button",
+      "description": "[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →] 버튼 클릭 시 9차시 웹페이지로 이동한다."
+    }
+  ],
+  "asset_plan": [
+    {
+      "id": "asset_bg_messy_lobby_blur",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg_messy_lobby_blur.png",
+      "purpose": "타이틀 화면 배경으로 사용할 흐릿한 어질러진 도서관 로비 전경",
+      "prompt_brief": "책이 흩어지고 안내판이 어긋난 마을 도서관 로비를 밝은 어린이 모험 게임풍 래스터 일러스트로 그린다.",
+      "visual_role": "첫 화면에서 미션 상황을 암시하는 흐릿한 도서관 로비 배경",
+      "style_constraints": "배경 전체를 약간 부드럽게 흐린 느낌으로 만들고 중앙 타이틀 영역은 복잡도를 낮춘다.",
+      "composition_notes": "16:9 넓은 화면, 중앙은 타이틀 safe zone으로 비워두고 책장과 안내 데스크는 좌우에 배치한다. 주요 캐릭터는 넣지 않는다.",
+      "negative_prompt": "주요 반복 캐릭터 포함 금지, 선명한 텍스트 삽입 금지, flat vector UI, SVG style, icon kit, plain geometric panel",
+      "usage_section_ids": [
+        "activity1_scene1_title"
+      ]
+    },
+    {
+      "id": "asset_bg_messy_lobby",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg_messy_lobby.png",
+      "purpose": "고장 난 도서관 로비와 수리 전 상황을 보여주는 배경",
+      "prompt_brief": "어질러진 마을 도서관 로비, 중앙 벽의 큰 시계 자리, 바닥의 책, 삐뚤어진 전광판과 당황한 익명 학생 실루엣을 그린다.",
+      "visual_role": "문제 발생과 수리 완료 전 장면의 핵심 배경",
+      "style_constraints": "대형 시계 바늘과 전광판 문구는 그리지 않고 오버레이 safe zone을 남긴다.",
+      "composition_notes": "중앙 벽에는 대형 시계 몸체가 얹힐 둥근 공간을 비우고, 우측 상단 게이지와 좌측 상단 메뉴 영역은 비워둔다. 주요 캐릭터는 넣지 않는다.",
+      "negative_prompt": "사서 선생님과 꼬마 사서 포함 금지, 시곗바늘 고정 금지, 읽을 수 있는 텍스트 삽입 금지, flat vector UI, CSS component",
+      "usage_section_ids": [
+        "activity1_scene2_intro_problem",
+        "activity2_scene4_repair_complete"
+      ]
+    },
+    {
+      "id": "asset_bg_restored_lobby",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg_restored_lobby.png",
+      "purpose": "수리 후 깨끗하고 평화로운 도서관 로비 배경",
+      "prompt_brief": "책이 가지런히 정리되고 안내 데스크와 책장이 깨끗해진 마을 도서관 로비를 따뜻한 빛으로 그린다.",
+      "visual_role": "복구 완료, 수리 이야기, 최종 인증 장면의 평화로운 배경",
+      "style_constraints": "고장 흔적 없이 정돈된 분위기, 중앙에는 팝업북 또는 인증서가 올라갈 여백을 둔다.",
+      "composition_notes": "16:9 배경, 중앙 전경 safe zone 넓게 확보, 좌우 책장은 장면 깊이를 주되 텍스트 오버레이를 방해하지 않는다. 주요 캐릭터는 넣지 않는다.",
+      "negative_prompt": "주요 반복 캐릭터 포함 금지, 선명한 텍스트 삽입 금지, 어두운 조명, flat vector UI",
+      "usage_section_ids": [
+        "activity2_scene4_repair_complete",
+        "activity3_scene1_real_life_history",
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_librarian_explaining",
+      "kind": "image",
+      "character_id": "char_librarian_teacher",
+      "intended_path": "output/assets/librarian_explaining.png",
+      "purpose": "사서 선생님의 기본 안내 및 기준 포즈",
+      "prompt_brief": "사서 선생님이 한 손으로 앞쪽을 가리키며 설명하는 반신 투명 배경 캐릭터 asset",
+      "visual_role": "도입 대사, 유형 안내, 실생활 설명에서 쓰이는 조력자 캐릭터",
+      "style_constraints": "친절하게 설명하는 표정, 한 손은 가리키고 다른 손은 작은 돋보기를 든 포즈, 시선은 화면 중앙을 향함",
+      "composition_notes": "반신 캐릭터, 투명 배경, 왼쪽 또는 오른쪽 하단 배치에 맞게 캐릭터 주변 여백을 둔다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity1_scene3_tutorial",
+        "activity2_scene1_type_a",
+        "activity2_scene2_type_b",
+        "activity2_scene3_type_c",
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_librarian_distressed",
+      "kind": "image",
+      "character_id": "char_librarian_teacher",
+      "intended_path": "output/assets/librarian_distressed.png",
+      "purpose": "문제 발생 장면에서 당황한 사서 선생님 표현",
+      "prompt_brief": "사서 선생님이 머리를 감싸 쥐고 땀을 흘리며 당황하는 전신 투명 배경 캐릭터 asset",
+      "visual_role": "고장 난 대형 시계 앞의 위기감 표현",
+      "style_constraints": "당황한 표정, 양손을 머리 근처에 올린 포즈, 땀방울 효과가 들어갈 여백, 시선은 고장 난 시계 쪽",
+      "composition_notes": "전신 또는 3/4신, 투명 배경, 대형 시계 앞에 겹쳐 배치할 수 있게 하단 발 위치를 안정적으로 둔다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity1_scene2_intro_problem"
+      ]
+    },
+    {
+      "id": "asset_librarian_applauding",
+      "kind": "image",
+      "character_id": "char_librarian_teacher",
+      "intended_path": "output/assets/librarian_applauding.png",
+      "purpose": "성공과 완료 장면에서 사서 선생님의 칭찬을 표현",
+      "prompt_brief": "사서 선생님이 환하게 웃으며 박수치는 전신 투명 배경 캐릭터 asset",
+      "visual_role": "정답 성공, 복구 완료, 최종 감사 대사의 긍정 피드백 캐릭터",
+      "style_constraints": "안도하고 기뻐하는 표정, 박수치는 손동작, 시선은 꼬마 사서 또는 학습자 쪽",
+      "composition_notes": "전신 투명 배경, 꼬마 사서와 나란히 배치할 수 있도록 좌우 여백을 둔다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity1_scene4_success",
+        "activity2_scene4_repair_complete",
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_child_idle",
+      "kind": "image",
+      "character_id": "char_child_librarian",
+      "intended_path": "output/assets/child_idle.png",
+      "purpose": "꼬마 사서의 기본 대기 및 기준 포즈",
+      "prompt_brief": "꼬마 사서가 자신감 있게 서서 한 손을 번쩍 드는 전신 투명 배경 캐릭터 asset",
+      "visual_role": "학습자 아바타의 기본 등장 및 대기 상태",
+      "style_constraints": "자신감 있는 표정, 한 손을 들고 가슴을 편 포즈, 시선은 화면 중앙을 향함",
+      "composition_notes": "전신 투명 배경, 화면 좌측 하단 고정 배치에 맞게 발 아래 여백을 작게 둔다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity1_scene3_tutorial",
+        "activity2_global_ui"
+      ]
+    },
+    {
+      "id": "asset_child_success",
+      "kind": "image",
+      "character_id": "char_child_librarian",
+      "intended_path": "output/assets/child_success.png",
+      "purpose": "정답과 최종 성공 시 꼬마 사서의 기쁨 표현",
+      "prompt_brief": "꼬마 사서가 폴짝 뛰며 만세하거나 브이(V)를 그리는 전신 투명 배경 캐릭터 asset",
+      "visual_role": "정답 피드백, 수리 완료, 팝업 퀴즈, 최종 완료에서 성취감을 보여주는 캐릭터",
+      "style_constraints": "활짝 웃는 표정, 두 팔을 올리거나 한 손으로 브이(V)를 그리는 포즈, 시선은 학습자 쪽",
+      "composition_notes": "전신 투명 배경, 점프 모션 프레임처럼 위쪽 여백을 넉넉히 둔다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity1_scene4_success",
+        "activity2_scene1_type_a",
+        "activity2_scene4_repair_complete",
+        "activity3_scene2_popup_quiz",
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_child_confused",
+      "kind": "image",
+      "character_id": "char_child_librarian",
+      "intended_path": "output/assets/child_confused.png",
+      "purpose": "오답 피드백에서 꼬마 사서의 갸우뚱한 반응 표현",
+      "prompt_brief": "꼬마 사서가 고개를 갸우뚱하고 생각하는 전신 투명 배경 캐릭터 asset",
+      "visual_role": "오답 후 다시 생각하도록 돕는 부드러운 피드백 캐릭터",
+      "style_constraints": "난처하지만 부드러운 표정, 한 손을 턱 근처에 둔 생각하는 포즈, 시선은 선택지 쪽",
+      "composition_notes": "전신 투명 배경, 화면 좌측 하단 idle 위치와 자연스럽게 교체될 수 있게 크기를 맞춘다.",
+      "negative_prompt": "다른 얼굴·헤어·의상·팔레트로 변형 금지, 배경 포함 금지, 텍스트 삽입 금지",
+      "usage_section_ids": [
+        "activity2_scene1_type_a"
+      ]
+    },
+    {
+      "id": "asset_large_clock_body",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/large_clock_body.png",
+      "purpose": "고장 난 대형 벽시계의 재사용 몸체",
+      "prompt_brief": "도서관 중앙 벽에 걸릴 큰 둥근 벽시계 몸체를 래스터 일러스트로 그린다.",
+      "visual_role": "문제 발생과 복구 연출의 중심 물체",
+      "style_constraints": "바늘 없이 숫자판과 테두리만 표현하고 중앙축은 바늘 오버레이를 얹기 쉽게 비워둔다.",
+      "composition_notes": "정면 수평 시점, 투명 배경, 중앙축과 바늘 회전 safe zone을 명확히 남긴다.",
+      "negative_prompt": "시곗바늘 그리지 말 것, 표시 숫자 외 추가 텍스트 금지, 켜진 글로우 고정 금지, flat vector UI, SVG style",
+      "usage_section_ids": [
+        "activity1_scene2_intro_problem"
+      ]
+    },
+    {
+      "id": "asset_analog_clock_body",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/analog_clock_body.png",
+      "purpose": "탁상시계와 보기 시계에 반복 사용할 바늘 없는 아날로그 시계 몸체",
+      "prompt_brief": "도서관 책상 위와 문제 보기에서 쓸 작은 둥근 아날로그 시계 몸체를 그린다.",
+      "visual_role": "튜토리얼과 유형 A·B 문제에서 시각을 나타내는 반복 학습 도구",
+      "style_constraints": "바늘은 그리지 않고 숫자판, 테두리, 중앙축만 표현한다. 선택 테두리와 글로우는 포함하지 않는다.",
+      "composition_notes": "정면 수평 시점, 투명 배경, 중앙축 기준으로 시곗바늘 오버레이 safe zone 확보, 문제 보기 3개로 나란히 배치해도 선명한 형태.",
+      "negative_prompt": "시곗바늘 그리지 말 것, 정답 표시 금지, 켜진 글로우 금지, 텍스트 라벨 금지, flat vector UI, icon kit",
+      "usage_section_ids": [
+        "activity1_scene3_tutorial",
+        "activity2_scene1_type_a",
+        "activity2_scene2_type_b"
+      ]
+    },
+    {
+      "id": "asset_signboard_broken_time",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/signboard_broken_time.png",
+      "purpose": "유형 A 문제 문구를 올릴 도서관 전광판 물체",
+      "prompt_brief": "도서관 안내 데스크 위쪽에 있는 살짝 고장 난 대형 전광판을 장면 속 물건처럼 그린다.",
+      "visual_role": "몇 분 전 문제를 제시하는 물리적 전광판",
+      "style_constraints": "문제 텍스트는 넣지 않고, 전광판 물체만 남긴 투명 배경 PNG로 만든다. 중앙 화면은 HTML 텍스트가 들어갈 수 있게 어둡고 균일한 safe zone으로 둔다.",
+      "composition_notes": "가로형 전광판만 정면에 가깝게 배치한다. 주변 도서관 벽, 책장, 창문, 사각 배경 이미지는 포함하지 않는다. 화면 내부 텍스트 safe zone 비율은 전체 폭의 약 70%, 높이의 약 45%로 확보한다.",
+      "negative_prompt": "배경 포함 금지, 도서관 벽/책장 포함 금지, 읽을 수 있는 문구 삽입 금지, 순수 UI 패널 금지, flat vector UI, CSS component, plain geometric panel",
+      "usage_section_ids": [
+        "activity2_scene1_type_a"
+      ]
+    },
+    {
+      "id": "asset_cork_timetable_board",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/cork_timetable_board.png",
+      "purpose": "유형 B 시간표 복구 문제를 표시할 코르크 게시판",
+      "prompt_brief": "도서관 벽면의 코르크 게시판과 시간표 종이, 작은 압정, 시계 표시 공간을 따뜻한 래스터 일러스트로 그린다.",
+      "visual_role": "독서 교실 시간표 문제와 보조 도구가 올라가는 실제 게시판",
+      "style_constraints": "문제 문장, 숫자, 읽을 수 있는 라벨은 넣지 않는다. 장식 시계나 핀은 문제 text safe zone 밖으로 밀어낸다.",
+      "composition_notes": "가로형 게시판 정면 시점. 상단 중앙 65% 폭, 28% 높이의 깨끗한 크림 종이 safe zone을 확보하고, 하단에는 시계 두 개와 화살표 오버레이를 얹을 빈 영역을 둔다. 장식 요소는 모서리와 가장자리로 제한한다.",
+      "negative_prompt": "decorative clocks overlapping text safe zone, readable text, crowded paper, flat vector UI",
+      "usage_section_ids": [
+        "activity2_scene2_type_b"
+      ]
+    },
+    {
+      "id": "asset_lending_system_monitor",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/lending_system_monitor.png",
+      "purpose": "유형 C 도서 대출 시스템 재부팅 문제를 표시할 데스크 모니터",
+      "prompt_brief": "도서관 안내 데스크 위의 컴퓨터 모니터와 키보드, 시간 규칙을 풀어야 하는 시스템 화면을 그린다.",
+      "visual_role": "1일과 24시간 관계 문제를 풀어 시스템을 재부팅하는 물리적 장치",
+      "style_constraints": "모니터 문제 문구, 숫자, 빈칸, 완료 메시지는 넣지 않는다. 투명 배경의 물리 콘솔로 만들고 화면 내부는 넓은 민트 LCD safe zone으로 둔다.",
+      "composition_notes": "정면에 가까운 3/4 시점은 유지하되 주변 도서관 벽이나 별도 배경은 넣지 않는다. 화면 safe zone과 하단 키보드/버튼 tray가 HTML 오버레이 기준으로 명확해야 한다.",
+      "negative_prompt": "배경 포함 금지, 읽을 수 있는 텍스트 삽입 금지, 숫자 고정 금지, 켜진 완료 메시지 금지, flat vector UI, CSS component",
+      "usage_section_ids": [
+        "activity2_scene3_type_c"
+      ]
+    },
+    {
+      "id": "asset_magic_popup_book",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/magic_popup_book.png",
+      "purpose": "활동 3 실생활·역사 연계 갤러리를 담는 팝업북 본체",
+      "prompt_brief": "실생활·역사 연계 갤러리를 담는 마법 팝업북 본체만 그린 투명 배경 PNG.",
+      "visual_role": "시간의 쓰임새를 보여주는 페이지 넘김 장치",
+      "style_constraints": "책 뒤 배경, 책장, 창문, 방 전체를 포함하지 않는다. 좌우 페이지는 HTML 이미지와 캡션을 얹을 수 있게 빈 종이 surface로 둔다.",
+      "composition_notes": "정면 약간 위에서 본 큰 펼친 책. 좌우 페이지 safe zone을 넓게 비우고, 책갈피와 금빛 sparkle만 포함한다. 16:9 화면 중앙 table 위에 얹기 좋게 책 외곽만 투명하게 남긴다.",
+      "negative_prompt": "background room, rectangular scene crop, bookshelves behind book, readable text, baked UI arrows, flat vector UI",
+      "usage_section_ids": [
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_popup_book_page_store",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/popup_book_page_store.png",
+      "purpose": "실생활 연계 페이지의 24시간 편의점 간판 장면",
+      "prompt_brief": "동네 편의점 외관과 24시간을 상징하는 밝은 간판 자리를 어린이 교재풍 래스터 일러스트로 그린다.",
+      "visual_role": "1일이 24시간이라 하루 종일 문을 여는 상황을 보여주는 페이지 이미지",
+      "style_constraints": "간판의 '24시간' 문구는 HTML 오버레이가 들어갈 수 있게 빈 간판 형태로 남긴다.",
+      "composition_notes": "팝업북 페이지 안에 들어갈 가로형 삽화, 간판 영역을 크게 두고 주변은 단순한 거리 배경으로 처리한다.",
+      "negative_prompt": "텍스트를 이미지에 직접 삽입 금지, 실사 사진풍 금지, flat vector UI",
+      "usage_section_ids": [
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_popup_book_page_sundial",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/popup_book_page_sundial.png",
+      "purpose": "역사 연계 페이지의 해시계 장면",
+      "prompt_brief": "앙부일구처럼 생긴 옛 해시계와 햇빛 그림자가 시간을 가리키는 장면을 밝은 교육 일러스트로 그린다.",
+      "visual_role": "옛날 사람들이 해의 그림자로 시간을 알았다는 설명을 보조하는 이미지",
+      "style_constraints": "복잡한 한자나 읽을 수 있는 글자는 넣지 않고 해시계 형태와 그림자를 쉽게 알아보게 표현한다.",
+      "composition_notes": "팝업북 페이지 안에 들어갈 단일 삽화, 해시계는 중앙에 크게, 햇빛 방향과 그림자가 명확히 보이게 한다.",
+      "negative_prompt": "읽을 수 있는 세부 글자 삽입 금지, 실사 박물관 사진풍 금지, 어두운 역사 다큐 분위기 금지",
+      "usage_section_ids": [
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_popup_book_page_timer",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/popup_book_page_timer.png",
+      "purpose": "걸린 시간 연계 페이지의 오븐과 타이머 장면",
+      "prompt_brief": "김이 모락모락 나는 오븐과 둥근 요리 타이머가 있는 따뜻한 주방 장면을 어린이 교재풍 래스터 일러스트로 그린다.",
+      "visual_role": "30분 후 꺼내는 요리 상황을 통해 걸린 시간 계산 필요성을 보여주는 이미지",
+      "style_constraints": "타이머 숫자와 '30분' 표시는 넣지 않고 타이머 표시 영역을 비워둔다.",
+      "composition_notes": "팝업북 페이지 안에 들어갈 가로형 삽화, 오븐은 왼쪽, 타이머는 오른쪽 전경에 크게 배치해 숫자 오버레이 safe zone을 확보한다.",
+      "negative_prompt": "타이머 숫자 고정 금지, 텍스트 삽입 금지, 실사 사진풍 금지, flat vector UI",
+      "usage_section_ids": [
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_tutorial_repair_workbench",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/tutorial_repair_workbench.png",
+      "purpose": "시계 보기 튜토리얼의 물리 작업대 surface",
+      "prompt_brief": "도서관 시계 수리 모험용 목재 작업대. 작은 아날로그 시계가 올라갈 둥근 홈, 오른쪽 [?] 시간 카드 슬롯, 아래쪽 세 장의 시간 카드 트레이가 있는 밝은 어린이 게임풍 래스터 일러스트.",
+      "visual_role": "튜토리얼의 시계, 드롭 슬롯, 시간 카드 선택지를 하나의 장면 속 작업대에 통합하는 표면",
+      "style_constraints": "따뜻한 목재와 크림 종이 재질, 민트/노랑 포인트, 부드러운 중간 굵기 외곽선. 텍스트와 숫자는 넣지 않는다.",
+      "composition_notes": "투명 배경 PNG. 16:9 화면 중앙 하단에 놓기 좋은 가로형. 왼쪽 둥근 시계 홈, 오른쪽 카드 슬롯, 하단 3개 카드 tray safe zone을 명확히 비워 둔다.",
+      "negative_prompt": "읽을 수 있는 텍스트 삽입 금지, 캐릭터 포함 금지, flat vector UI, plain CSS panel, 배경 포함 금지",
+      "usage_section_ids": [
+        "activity1_scene3_tutorial",
+        "activity1_scene4_success"
+      ]
+    },
+    {
+      "id": "asset_time_quiz_control_console",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/time_quiz_control_console.png",
+      "purpose": "활동 2 문제 선택지, 답 입력, 키패드가 올라갈 공통 조작 콘솔",
+      "prompt_brief": "활동 2 하단 full-width 콘솔을 대체하는 도서관 수리 조작 콘솔. 세 개의 시계/답안 슬롯, 넓은 답안 nameplate, 3열 숫자 키패드 dock, 큰 확인 버튼 safe zone이 모두 콘솔 내부에 들어가야 한다.",
+      "visual_role": "하단 full-width 웹 패널을 대체하고 선택지/입력/CTA를 장면 속 물리 장치로 통합",
+      "style_constraints": "동적 숫자와 텍스트는 넣지 말고, 키패드 버튼 몸체와 확인 버튼 몸체는 비어 있는 물리 버튼 surface로 만든다.",
+      "composition_notes": "투명 배경 PNG. 16:9 desktop 하단 중앙 배치용. 오른쪽 25%에 3x4 키패드 버튼 safe zone, 그 아래 또는 옆에 확인 버튼 safe zone을 확보한다. 각 버튼은 초등 저학년이 읽을 HTML 숫자가 들어갈 만큼 크고 서로 겹치지 않아야 한다.",
+      "negative_prompt": "tiny keypad, crowded controls, text baked into image, numbers baked into image, CSS component, flat vector UI",
+      "usage_section_ids": [
+        "activity2_scene1_type_a",
+        "activity2_scene2_type_b",
+        "activity2_scene3_type_c"
+      ]
+    },
+    {
+      "id": "asset_popup_quiz_paper_card",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/popup_quiz_paper_card.png",
+      "purpose": "마무리 퀴즈 질문과 세 선택지가 들어갈 팝업북 종이 질문판",
+      "prompt_brief": "마무리 퀴즈 질문과 세 선택지가 들어갈 넓은 마법 팝업북 종이 질문판.",
+      "visual_role": "#popupQuiz 웹 모달을 대체하는 장면 속 질문 표면",
+      "style_constraints": "질문 글자와 답안 글자는 넣지 않는다. 선택지 탭은 비어 있는 물리 탭 surface로 만든다.",
+      "composition_notes": "투명 배경 PNG. desktop 중앙에서 폭 820~900px 정도로 보이는 넓은 크림 종이 카드. 상단 2~3줄 질문 safe zone과 하단 3개 답안 탭 safe zone을 크게 확보한다. 카드 가장자리에 접힌 모서리와 금빛 sparkle을 넣되 safe zone을 침범하지 않는다.",
+      "negative_prompt": "small card, narrow safe zone, text baked into image, numbers baked into image, plain geometric panel, flat vector UI",
+      "usage_section_ids": [
+        "activity3_scene2_popup_quiz"
+      ]
+    },
+    {
+      "id": "asset_final_certificate_frame",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/final_certificate_frame.png",
+      "purpose": "최종 인증서 내용을 올릴 금장 액자/수료증 surface",
+      "prompt_brief": "도서관 중앙 벽에 걸 수 있는 금장 액자와 크림색 수료증 종이. 리본과 작은 시계 장식이 있지만 텍스트는 비어 있는 어린이 모험 게임풍 래스터 일러스트.",
+      "visual_role": "#certificateBox의 CSS 카드 배경을 대체하는 보상용 인증서 표면",
+      "style_constraints": "따뜻한 금색 프레임, 크림 종이, 짧고 부드러운 그림자, 도서관 목재와 어울리는 팔레트. 고정 텍스트는 넣지 않는다.",
+      "composition_notes": "투명 배경 PNG. 중앙에 제목, 본문, 기록 두 줄이 들어갈 safe zone을 넓게 둔다. 하단 CTA/말풍선 영역과 겹치지 않도록 높이는 과도하게 크지 않게 한다.",
+      "negative_prompt": "텍스트 삽입 금지, 캐릭터 포함 금지, flat vector UI, CSS panel, 실사풍",
+      "usage_section_ids": [
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_reusable_library_ticket_button",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/reusable_library_ticket_button.png",
+      "purpose": "동적 CTA 텍스트를 얹을 수 있는 재사용 도서관 수리 티켓/대출카드 버튼 surface",
+      "prompt_brief": "밝은 어린이 도서관 모험 게임풍의 가로형 황금 수리 티켓 버튼 surface. 텍스트는 넣지 않고 중앙 safe zone을 넓게 비운다.",
+      "visual_role": "일반 CSS CTA를 대체해 장면 속 물리 티켓처럼 보이게 하는 reusable button body",
+      "style_constraints": "따뜻한 금색과 크림색 종이, 민트 작은 리벳 또는 책갈피 포인트, 부드러운 래스터 질감, 중간 굵기 외곽선. 텍스트와 아이콘은 넣지 않는다.",
+      "composition_notes": "투명 배경 PNG. 기본 가로 비율은 약 4:1. 중앙 75% 폭은 HTML 텍스트 safe zone으로 비우고, 좌우에는 절취선과 둥근 홈을 둔다. hover/press용 CSS transform이 어울리도록 아래쪽 얕은 두께감이 보이게 한다.",
+      "negative_prompt": "readable text, baked arrow, flat vector UI, CSS component, plain rounded rectangle, dark horror style",
+      "usage_section_ids": [
+        "activity1_scene1_title",
+        "activity1_scene2_intro_problem",
+        "activity1_scene4_success",
+        "activity2_scene4_repair_complete",
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_title_mission_banner",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/title_mission_banner.png",
+      "purpose": "타이틀 화면 제목을 얹을 도서관 로비 미션 현수막 또는 목재 안내판 surface",
+      "prompt_brief": "도서관 로비 중앙 아치 아래에 걸린 듯한 따뜻한 목재 프레임의 크림 종이 미션 현수막 surface. 고정 텍스트는 넣지 않고 HTML 제목 safe zone을 비운다.",
+      "visual_role": "반투명 title card를 대체하는 첫 화면 hero text surface",
+      "style_constraints": "밝은 어린이 모험 게임풍 래스터 일러스트, 따뜻한 목재색과 크림 종이, 노랑·민트 작은 장식, 부드러운 확산광. 텍스트는 넣지 않는다.",
+      "composition_notes": "투명 배경 PNG. 16:9 desktop 중앙에 폭 900~1050px로 놓기 좋게 제작한다. 중앙 80% 폭, 60% 높이의 제목 safe zone을 확보하고, 위쪽에 작은 끈이나 핀을 넣어 실제 걸린 안내판처럼 보이게 한다.",
+      "negative_prompt": "readable text, flat vector UI, plain translucent rectangle, SVG icon kit, dark palette",
+      "usage_section_ids": [
+        "activity1_scene1_title"
+      ]
+    },
+    {
+      "id": "asset_repair_energy_meter",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/repair_energy_meter.png",
+      "purpose": "수리 에너지 진행도를 얹을 수 있는 도서관 벽면용 물리 계량기 surface",
+      "prompt_brief": "따뜻한 도서관 목재와 민트 유리관이 결합된 수리 에너지 미터. 텍스트와 숫자는 넣지 않고, 내부에 HTML fill bar가 들어갈 긴 유리 safe zone을 비워 둔다.",
+      "visual_role": "상단 우측 progress bar를 장면 속 수리 장치로 흡수하는 reusable UI surface",
+      "style_constraints": "밝은 어린이 모험 게임풍 래스터, 중간 굵기 외곽선, 따뜻한 목재와 민트 유리, 짧고 부드러운 그림자. 텍스트·숫자 삽입 금지.",
+      "composition_notes": "투명 배경 PNG. 가로형 320x60px 비율. 중앙 75% 폭에 fill bar safe zone, 좌우에 작은 나사와 도서관 책갈피 장식. desktop top-right에 놓아도 배경을 과하게 가리지 않게 얕은 두께감.",
+      "negative_prompt": "readable text, numbers baked into image, flat vector UI, CSS component, plain rounded progress bar, dark palette",
+      "usage_section_ids": [
+        "activity1_scene2_intro_problem",
+        "activity2_global_ui",
+        "activity2_scene4_repair_complete",
+        "activity3_scene1_real_life_history",
+        "activity3_scene2_popup_quiz",
+        "activity3_scene3_final_certificate"
+      ]
+    },
+    {
+      "id": "asset_scene_chapter_plaque",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/scene_chapter_plaque.png",
+      "purpose": "장면 제목을 얹는 작은 도서관 목재 책갈피/층 안내판 surface",
+      "prompt_brief": "도서관 벽에 붙은 작은 목재 안내판 또는 책갈피형 chapter plaque. 중앙은 HTML scene title이 들어갈 빈 크림색 label safe zone으로 비워 둔다.",
+      "visual_role": "흰색 scene-title-chip을 장면 속 표지판으로 대체하는 reusable surface",
+      "style_constraints": "따뜻한 목재, 크림 종이, 민트 작은 리벳, 둥근 외곽선, 래스터 질감. 텍스트 삽입 금지.",
+      "composition_notes": "투명 배경 PNG. 가로 520x58px 정도 비율. 중앙 85% 텍스트 safe zone, 양끝 작은 나사/책갈피 장식. 상단 중앙에 놓기 적합하게 얕은 drop shadow가 어울리는 형태.",
+      "negative_prompt": "readable text, flat vector UI, white web pill, CSS component, plain geometric panel",
+      "usage_section_ids": [
+        "activity1_scene2_intro_problem",
+        "activity1_scene3_tutorial",
+        "activity1_scene4_success",
+        "activity2_scene1_type_a",
+        "activity2_scene2_type_b",
+        "activity2_scene3_type_c",
+        "activity2_scene4_repair_complete",
+        "activity3_scene1_real_life_history"
+      ]
+    },
+    {
+      "id": "asset_repair_feedback_stamp_set",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/repair_feedback_stamp_set.png",
+      "purpose": "정답/오답 메시지를 얹을 수 있는 작은 수리 도장 또는 경고 태그 surface 세트",
+      "prompt_brief": "정답용 금빛 수리 도장 surface와 오답용 코랄 경고 태그 surface. 동적 텍스트는 넣지 않고 중앙 safe zone을 비운다.",
+      "visual_role": "중앙 웹 stamp를 장면 속 수리 도장/경고표로 대체하는 feedback surface",
+      "style_constraints": "밝은 어린이 모험 게임풍 래스터, 금빛 성공 도장과 코랄 경고 태그, 부드러운 외곽선과 종이/잉크 질감. 텍스트 삽입 금지.",
+      "composition_notes": "투명 배경 PNG sprite 또는 별도 두 표면. 각 표면은 300x150px 안에 들어가고 중앙 70%는 HTML feedback text safe zone. stampIn/rotate animation에 어울리는 형태.",
+      "negative_prompt": "readable text, flat vector UI, plain rectangular alert, CSS panel, dark horror style",
+      "usage_section_ids": [
+        "activity2_scene1_type_a",
+        "activity2_scene2_type_b",
+        "activity2_scene3_type_c",
+        "activity3_scene2_popup_quiz"
+      ]
+    }
+  ],
+  "asset_groups": [
+    {
+      "id": "group_librarian_teacher_poses",
+      "asset_ids": [
+        "asset_librarian_explaining",
+        "asset_librarian_distressed",
+        "asset_librarian_applauding"
+      ],
+      "grouping_reason": "같은 사서 선생님 캐릭터의 포즈 asset이므로 얼굴·헤어·의상 일관성을 유지해야 한다."
+    },
+    {
+      "id": "group_child_librarian_poses",
+      "asset_ids": [
+        "asset_child_idle",
+        "asset_child_success",
+        "asset_child_confused"
+      ],
+      "grouping_reason": "같은 꼬마 사서 캐릭터의 포즈 asset이므로 정체성과 크기를 맞춰야 한다."
+    },
+    {
+      "id": "group_library_lobby_backgrounds",
+      "asset_ids": [
+        "asset_bg_messy_lobby_blur",
+        "asset_bg_messy_lobby",
+        "asset_bg_restored_lobby"
+      ],
+      "grouping_reason": "같은 도서관 로비의 수리 전후 상태이므로 공간 구조와 조명 연속성이 중요하다."
+    },
+    {
+      "id": "group_clock_components",
+      "asset_ids": [
+        "asset_large_clock_body",
+        "asset_analog_clock_body"
+      ],
+      "grouping_reason": "대형 시계와 문제용 시계가 같은 콘텐츠 세계의 시계로 보이도록 숫자판 스타일과 재질을 맞춘다."
+    },
+    {
+      "id": "group_activity2_problem_surfaces",
+      "asset_ids": [
+        "asset_signboard_broken_time",
+        "asset_cork_timetable_board",
+        "asset_lending_system_monitor"
+      ],
+      "grouping_reason": "활동 2의 문제 제시 물체들이 같은 도서관 안의 수리 대상처럼 보여야 한다."
+    },
+    {
+      "id": "group_popup_book_pages",
+      "asset_ids": [
+        "asset_magic_popup_book",
+        "asset_popup_book_page_store",
+        "asset_popup_book_page_sundial",
+        "asset_popup_book_page_timer"
+      ],
+      "grouping_reason": "활동 3의 갤러리 페이지 세트이므로 팝업북 안에 자연스럽게 들어가는 비율과 화풍을 맞춘다."
+    },
+    {
+      "id": "asset_revision_001",
+      "asset_ids": [
+        "asset_signboard_broken_time",
+        "asset_lending_system_monitor",
+        "asset_tutorial_repair_workbench",
+        "asset_time_quiz_control_console",
+        "asset_popup_quiz_paper_card",
+        "asset_final_certificate_frame"
+      ],
+      "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction."
+    },
+    {
+      "id": "asset_revision_002",
+      "asset_ids": [
+        "asset_cork_timetable_board",
+        "asset_magic_popup_book",
+        "asset_time_quiz_control_console",
+        "asset_popup_quiz_paper_card",
+        "asset_reusable_library_ticket_button",
+        "asset_title_mission_banner"
+      ],
+      "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction."
+    },
+    {
+      "id": "asset_revision_003",
+      "asset_ids": [
+        "asset_repair_energy_meter",
+        "asset_scene_chapter_plaque",
+        "asset_repair_feedback_stamp_set"
+      ],
+      "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction."
+    }
+  ]
+}

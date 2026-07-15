@@ -17,6 +17,13 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - `schemas/asset_generator_output.schema.json` 계약에 맞춰 `assets`만 출력합니다.
 - 실행 메타데이터(`brief_hash`, `stage`, `model`, `metadata` 등)는 runner가 붙이므로 출력하지 않습니다.
 
+이미지 안의 텍스트:
+- 판단 기준은 "텍스트냐 아니냐"가 아니라 **"변하느냐 고정이냐"** 입니다. 시곗바늘·표시 값을 안 그리는 이유가 "바늘이라서"가 아니라 "상태에 따라 변해서"인 것과 같은 원칙을 텍스트에도 적용합니다.
+- planner가 `prompt_brief`에 **그려 넣을 문구를 명시**했다면 그 문구를 이미지 안에 그립니다. 이때 글자는 장식이 아니라 그 asset의 핵심 디자인이므로, 아트와 한 덩어리로 통합해 그립니다(예: 도장의 글자는 도장 면 안에 새겨지고, 타이틀의 글자는 장식·소품과 얽혀 하나의 그래픽이 됩니다).
+- 문구는 planner가 준 **원문 그대로** 그립니다. 줄이거나 다듬거나 다른 말로 바꾸지 않습니다. 맞춤법·띄어쓰기도 그대로 둡니다.
+- planner가 문구를 명시하지 않았다면 이미지에 글자를 넣지 않습니다. 특히 배경·표면·컴포넌트 asset은 HTML 텍스트가 올라갈 자리이므로 비워 둡니다.
+- 문항 문구, 보기, 정답, 시각 값처럼 **상태에 따라 바뀌는 텍스트는 어떤 경우에도 그리지 않습니다.** 그 자리는 `composition_notes`의 safe zone대로 비워 둡니다.
+
 캐릭터 정체성 고정(`identity_context`):
 - `identity_context`는 이 batch에 등장하는 캐릭터의 정체성 기준입니다. **여기 있는 asset은 생성 대상이 아닙니다.** 오직 정체성을 맞추기 위한 참고 자료입니다. 생성 대상은 `asset_plan`에 있는 것뿐입니다.
 - 포즈를 하나만 재생성하더라도 그 캐릭터가 이전과 다른 인물이 되면 실패입니다. batch에 그 캐릭터의 asset이 하나뿐이어도 `identity_context`가 맞출 기준을 제공합니다.
@@ -31,7 +38,7 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - 반복 등장 컴포넌트 asset은 `art_direction.component_rules`를 따라 고정 몸체만 그리고, 상태에 따라 바뀌는 가변부(시곗바늘, 표시 값, 켜진 불빛 등)는 그리지 않습니다. 가변부가 얹힐 자리는 `composition_notes`의 safe zone과 투명 배경 지시대로 비워 둡니다.
 - 각 asset은 장식보다 화면 안에서 맡는 학습적 역할이 먼저 드러나야 합니다.
 - `prompt_brief`만 보지 말고 `visual_role`로 화면 내 기능을 확인하고, `composition_notes`로 실제 배치 가능성을 맞춥니다.
-- `negative_prompt`에 적힌 표현은 사용하지 않습니다. 특히 텍스트가 이미지 안에 들어가거나, 다른 asset과 다른 렌더링 매체처럼 보이면 실패로 봅니다.
+- `negative_prompt`에 적힌 표현은 사용하지 않습니다. 특히 다른 asset과 다른 렌더링 매체처럼 보이면 실패로 봅니다.
 - 생성한 이미지의 `path`, `status`, `usage_section_ids`, `alt_text`를 정확히 기록합니다.
 - `character_id`는 해당 `asset_plan` 항목의 값을 그대로 옮겨 적습니다. 임의로 바꾸거나 비우지 않습니다.
 
