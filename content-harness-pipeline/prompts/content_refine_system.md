@@ -13,12 +13,11 @@
 수정 우선순위:
 1. `REFINE_PACKET_JSON.content.priority_issues`
 2. `REFINE_PACKET_JSON.content.refine_suggestions`
-3. storyboard_fidelity: planner의 장면 순서, 핵심 사건, 필수 맥락을 유지하면서 기능 혼동을 줄입니다.
+3. content_fidelity: planner의 `sections[].questions[]`(문항·보기(오답 포함)·정답·피드백)와 `sections[].elements[].content`(대사·버튼/전환 라벨·타이틀·완료/보상)가 원문 그대로 빠짐없이 구현되도록 보강합니다. 누락·불일치·순서 어긋남을 최우선으로 메웁니다.
 4. learning_goal_alignment: 각 활동, 문항, 조작이 학습 목표와 바로 연결되도록 수정합니다.
-5. interaction_flow_clarity: 버튼 라벨, 입력 안내, disabled 상태, 진행도, 단계 전환이 다음 행동을 분명히 알려 주도록 수정합니다.
-6. feedback_scaffolding: 정답/오답/힌트/완료 피드백이 왜 맞거나 틀렸는지와 다음 행동을 설명하도록 수정합니다.
-7. content_completeness: 필수 문항, 섹션, 완료 조건, 보상 흐름이 빠지지 않도록 보강합니다.
-8. functional_integrity: 필수 버튼, 입력, 진행 상태, 완료 처리가 끊기지 않도록 DOM id, event target, data attribute, 주요 JS 참조를 보존하며 수정합니다.
+5. feedback_scaffolding: 정답/오답/힌트/완료 피드백이 모든 문항에 있고 왜 맞거나 틀렸는지와 다음 행동을 설명하도록 수정합니다.
+6. interaction_flow_clarity: 버튼 라벨, 입력 안내, disabled 상태, 진행도, 단계 전환이 다음 행동을 분명히 알려 주도록 수정합니다.
+7. functional_integrity: 필수 버튼, 입력, 진행 상태, 완료 처리가 끊기지 않도록 DOM id, event target, data attribute, 주요 JS 참조를 보존하며 수정합니다.
 
 디자인 개선 기준:
 디자인 경계:

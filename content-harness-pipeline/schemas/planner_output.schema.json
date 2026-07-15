@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Planner Direct Output",
   "type": "object",
-  "required": ["page", "art_direction", "sections", "interactions", "asset_plan", "asset_groups"],
+  "required": ["page", "art_direction", "characters", "sections", "interactions", "asset_plan", "asset_groups"],
   "properties": {
     "page": {
       "type": "object",
@@ -64,7 +64,7 @@
         "character_rules": {
           "type": "string",
           "minLength": 1,
-          "description": "캐릭터 비율, 표정, 의상, 반복 등장 시 유지할 특징"
+          "description": "모든 캐릭터에 공통으로 적용할 연출·표현 기법만 적는다. 예: 표정을 어떻게 단순화해 읽히게 할지, 감정 표현의 과장 정도. 개별 캐릭터를 식별하는 정보(얼굴, 헤어, 의상, 팔레트, 비율·등신, 키, 연령감)는 여기 적지 않는다 — 그것은 characters[].identity가 소유하며, 여기에 다시 쓰면 두 곳이 어긋나 포즈마다 다른 인물이 되는 원인이 된다. 외곽선은 line_style, 음영은 lighting이 담당하므로 중복해 적지 않는다. 캐릭터가 없으면 그 취지를 간단히 적는다"
         },
         "component_rules": {
           "type": "string",
@@ -93,13 +93,82 @@
       },
       "additionalProperties": false
     },
+    "characters": {
+      "type": "array",
+      "description": "반복 등장하는 캐릭터의 정체성 정의. 이 배열이 캐릭터 정체성의 단일 소유자다. asset_plan은 character_id로 여기를 참조만 하고 정체성을 다시 서술하지 않는다. 캐릭터가 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "role", "identity", "reference_asset_id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "asset_plan의 character_id가 참조할 캐릭터 식별자"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "콘텐츠 안에서 부르는 이름"
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "description": "학습 흐름에서 맡는 역할"
+          },
+          "identity": {
+            "type": "object",
+            "required": ["face", "hair", "outfit", "palette", "proportions", "distinctive_features"],
+            "description": "포즈가 바뀌어도 절대 변하지 않아야 하는 고정 특징. 포즈·표정·소품처럼 asset마다 달라지는 것은 여기 적지 않고 asset_plan의 style_constraints에 적는다",
+            "properties": {
+              "face": {
+                "type": "string",
+                "minLength": 1,
+                "description": "얼굴형, 눈·코·입 형태, 피부톤, 안경 등 얼굴 고정 특징"
+              },
+              "hair": {
+                "type": "string",
+                "minLength": 1,
+                "description": "머리 색, 길이, 묶음 형태 등 고정 특징"
+              },
+              "outfit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "상의·하의·신발·액세서리의 고정 구성"
+              },
+              "palette": {
+                "type": "string",
+                "minLength": 1,
+                "description": "이 캐릭터에만 쓰는 색 조합. 포즈가 달라도 동일해야 한다"
+              },
+              "proportions": {
+                "type": "string",
+                "minLength": 1,
+                "description": "키, 머리 대 몸 비율, 연령감"
+              },
+              "distinctive_features": {
+                "type": "string",
+                "minLength": 1,
+                "description": "이 캐릭터를 다른 캐릭터와 구분 짓는 결정적 특징. 없으면 없다고 적는다"
+              }
+            },
+            "additionalProperties": false
+          },
+          "reference_asset_id": {
+            "type": "string",
+            "pattern": "^$|^[a-z][a-z0-9_-]*$",
+            "description": "이 캐릭터의 기준 포즈가 되는 asset_plan의 id. 정체성 판단이 갈릴 때 이 asset이 source of truth다. 기준을 정하지 않으면 빈 문자열을 사용한다"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "sections": {
       "type": "array",
       "minItems": 1,
       "description": "단일 HTML 안에 배치할 주요 섹션 계획",
       "items": {
         "type": "object",
-        "required": ["id", "title", "purpose", "content_outline", "staging_notes", "interaction_ids", "asset_ids"],
+        "required": ["id", "title", "purpose", "elements", "questions", "staging_notes", "interaction_ids", "asset_ids"],
         "properties": {
           "id": {
             "type": "string",
@@ -115,18 +184,108 @@
             "minLength": 1,
             "description": "이 섹션이 필요한 이유"
           },
-          "content_outline": {
+          "elements": {
             "type": "array",
             "minItems": 1,
+            "description": "이 섹션을 이루는 스토리보드 줄들. 스토리보드의 각 줄(배경, 대사, 캐릭터 모션, 문제, 버튼 등)을 요소 하나로 담아 builder가 그대로 화면으로 옮긴다. 스토리보드 줄 하나당 요소 하나로 나눠 개수를 보존한다",
             "items": {
-              "type": "string",
-              "minLength": 1
-            },
-            "description": "builder가 HTML로 옮길 핵심 내용"
+              "type": "object",
+              "required": ["channel", "content", "notes", "refs"],
+              "properties": {
+                "channel": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "이 요소가 담는 스토리보드 줄의 종류. 권장 어휘: background, title, dialogue, character_motion, cta, visual_aid, feedback, question_group. 권장 어휘에 없는 새 형식이면 스토리보드 줄 이름에 맞는 새 channel 이름을 만든다"
+                },
+                "content": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "화면·장면에 들어갈 핵심 내용. 대사·문구·버튼 라벨·성공 메시지는 원문 그대로 옮긴다. 화자가 있으면 '사서 선생님: ...'처럼 화자를 원문에 포함한다. 요약하거나 대표 예시로 줄이지 않는다"
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "이 요소 하나의 연출·모션·효과 힌트(등장 방식, 표정, 흔들림 등). 없으면 빈 문자열"
+                },
+                "refs": {
+                  "type": "array",
+                  "description": "이 요소가 가리키는 asset id 또는 question id. 없으면 빈 배열",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]*$"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "questions": {
+            "type": "array",
+            "description": "이 섹션의 평가 문항. 스토리보드의 문제 하나당 항목 하나로 담아 문항 수를 보존한다. 문항이 없으면 빈 배열",
+            "items": {
+              "type": "object",
+              "required": ["id", "prompt", "input_type", "choices", "answer", "feedback"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$",
+                  "description": "문항 식별자. elements[].refs에서 이 id로 참조한다"
+                },
+                "prompt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "문제 문구 원문 그대로"
+                },
+                "input_type": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "입력 방식. 권장 어휘: choice, keypad, drag_drop. 새 방식이면 그에 맞는 이름을 만든다"
+                },
+                "choices": {
+                  "type": "array",
+                  "description": "객관식 보기. 오답 보기까지 원문 그대로 모두 담는다. choice가 아니면 빈 배열",
+                  "items": {
+                    "type": "object",
+                    "required": ["label", "correct"],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "보기 원문(오답 포함)"
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "정답 보기이면 true"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "answer": {
+                  "type": "string",
+                  "description": "정답 원문. 서술형·키패드 등 보기가 없는 경우 정답 값을 쓴다"
+                },
+                "feedback": {
+                  "type": "object",
+                  "required": ["correct", "wrong"],
+                  "properties": {
+                    "correct": {
+                      "type": "string",
+                      "description": "정답 피드백 원문. 없으면 빈 문자열"
+                    },
+                    "wrong": {
+                      "type": "string",
+                      "description": "오답 피드백 원문. 없으면 빈 문자열"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
           },
           "staging_notes": {
             "type": "array",
-            "description": "이 섹션에서 의도하는 연출 힌트. 순차 등장, 화면 전환 느낌, 정답/오답 반응 등을 평어로 적는다. 항상 이 키를 포함하되 연출이 없으면 빈 배열로 둔다. content_outline(필수 내용)과 섞지 말고 여기에 따로 쓴다",
+            "description": "요소들 사이의 섹션 레벨 연출만. 요소 등장 순서, 화면 전환 느낌 등을 평어로 적는다. 개별 요소 하나의 연출은 elements[].notes에 쓴다. 항상 이 키를 포함하되 연출이 없으면 빈 배열로 둔다",
             "items": {
               "type": "string",
               "minLength": 1
@@ -182,6 +341,7 @@
         "required": [
           "id",
           "kind",
+          "character_id",
           "intended_path",
           "purpose",
           "prompt_brief",
@@ -199,6 +359,11 @@
           "kind": {
             "type": "string",
             "enum": ["image"]
+          },
+          "character_id": {
+            "type": "string",
+            "pattern": "^$|^[a-z][a-z0-9_-]*$",
+            "description": "이 asset이 그리는 캐릭터의 characters[].id. 캐릭터가 등장하지 않는 asset(배경, 소품, UI 표면 등)이면 빈 문자열을 사용한다. 값이 있으면 그 캐릭터의 identity가 이 asset의 얼굴·헤어·의상·팔레트를 결정하며, style_constraints로 정체성을 덮어쓰지 않는다"
           },
           "intended_path": {
             "type": "string",
@@ -222,7 +387,7 @@
           "style_constraints": {
             "type": "string",
             "minLength": 1,
-            "description": "art_direction 안에서 이 asset에 특별히 적용해야 할 화풍, 색감, 캐릭터, 조명 제약"
+            "description": "art_direction 안에서 이 asset에만 적용할 제약. character_id가 있는 asset이면 포즈·표정·손에 든 소품·시선처럼 이 컷에서만 달라지는 것만 적고, 얼굴·헤어·의상·팔레트 같은 고정 정체성은 적지 않는다(그것은 characters[].identity가 소유한다)"
           },
           "composition_notes": {
             "type": "string",

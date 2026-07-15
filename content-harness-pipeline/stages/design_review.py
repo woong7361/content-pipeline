@@ -188,15 +188,33 @@ def compact_planner_context(planner_output: dict) -> dict:
     asset_plan = planner_output.get("asset_plan", [])
     if not isinstance(asset_plan, list):
         asset_plan = []
+    characters = planner_output.get("characters", [])
+    if not isinstance(characters, list):
+        characters = []
     return {
+        # page.audience/tone은 디자인 판정의 기준이다. 대상 학습자를 모르면 "초등 대상인데 글자가 작다"
+        # 같은 판단을 할 수 없다.
+        "page": planner_output.get("page", {}),
         "art_direction": planner_output.get("art_direction", ""),
-        "interaction_summary": planner_output.get("interaction_summary", ""),
+        "asset_groups": planner_output.get("asset_groups", []),
+        "characters": [
+            {
+                "id": character.get("id"),
+                "name": character.get("name"),
+                "role": character.get("role"),
+                "identity": character.get("identity", {}),
+                "reference_asset_id": character.get("reference_asset_id", ""),
+            }
+            for character in characters
+            if isinstance(character, dict)
+        ],
+        "interactions": planner_output.get("interactions", []),
         "sections": [
             {
                 "id": section.get("id"),
                 "title": section.get("title"),
                 "purpose": section.get("purpose"),
-                "interaction": section.get("interaction"),
+                "interaction_ids": section.get("interaction_ids", []),
                 "asset_ids": section.get("asset_ids", []),
             }
             for section in sections
@@ -205,8 +223,12 @@ def compact_planner_context(planner_output: dict) -> dict:
         "asset_plan": [
             {
                 "id": asset.get("id"),
+                "character_id": asset.get("character_id", ""),
                 "purpose": asset.get("purpose"),
                 "visual_role": asset.get("visual_role"),
+                "style_constraints": asset.get("style_constraints", ""),
+                "composition_notes": asset.get("composition_notes", ""),
+                "negative_prompt": asset.get("negative_prompt", ""),
                 "usage_section_ids": asset.get("usage_section_ids", []),
             }
             for asset in asset_plan
@@ -223,9 +245,11 @@ def compact_asset_output(asset_output: dict) -> dict:
         "assets": [
             {
                 "id": asset.get("id"),
+                "character_id": asset.get("character_id", ""),
                 "path": asset.get("path"),
+                "status": asset.get("status", ""),
                 "usage_section_ids": asset.get("usage_section_ids", []),
-                "notes": asset.get("notes", ""),
+                "alt_text": asset.get("alt_text", ""),
             }
             for asset in assets
             if isinstance(asset, dict)

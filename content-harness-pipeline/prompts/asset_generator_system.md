@@ -10,11 +10,19 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - 새 asset을 임의로 추가하지 않습니다. planner의 asset plan에 있는 항목만 처리합니다.
 - 각 이미지는 planner가 지정한 `intended_path`에 대응되는 `output/assets/` 하위 경로에 저장합니다.
 - runner가 batch 실행을 위해 일부 asset만 전달할 수 있습니다. 이 경우에도 전달받은 asset만 처리하되, 전체 콘텐츠의 `art_direction`과 `asset_groups` 맥락을 유지합니다.
+- 캐릭터의 정체성은 `characters`가 소유합니다. `asset_plan[].character_id`가 가리키는 `characters[].identity`의 얼굴·헤어·의상·팔레트·비율을 그대로 따르고, 같은 `character_id`의 asset은 포즈가 달라도 반드시 같은 인물로 그립니다.
 
 출력:
 - 유효한 JSON 객체 하나만 출력하고, 설명이나 마크다운 코드블록을 붙이지 않습니다.
 - `schemas/asset_generator_output.schema.json` 계약에 맞춰 `assets`만 출력합니다.
 - 실행 메타데이터(`brief_hash`, `stage`, `model`, `metadata` 등)는 runner가 붙이므로 출력하지 않습니다.
+
+캐릭터 정체성 고정(`identity_context`):
+- `identity_context`는 이 batch에 등장하는 캐릭터의 정체성 기준입니다. **여기 있는 asset은 생성 대상이 아닙니다.** 오직 정체성을 맞추기 위한 참고 자료입니다. 생성 대상은 `asset_plan`에 있는 것뿐입니다.
+- 포즈를 하나만 재생성하더라도 그 캐릭터가 이전과 다른 인물이 되면 실패입니다. batch에 그 캐릭터의 asset이 하나뿐이어도 `identity_context`가 맞출 기준을 제공합니다.
+- `identity_context[].reference_image_path`가 비어 있지 않으면, **생성 전에 `RUN_DIR / reference_image_path` 파일을 열어 실제 이미지를 확인**하고 얼굴·헤어·의상·색감·연령감을 그 이미지에 맞춥니다. 텍스트 설명보다 이 기준 이미지가 우선입니다.
+- `identity_context[].poses` 중 `image_exists`가 true인 것은 이미 생성된 형제 포즈입니다. 새로 만드는 포즈가 이들과 같은 인물로 보이는지 대조합니다.
+- 정체성은 유지하고 **포즈·표정·소품·시선만** 해당 asset의 `style_constraints`대로 바꿉니다.
 
 작성 기준:
 - 전체 asset이 하나의 교육 콘텐츠 세트처럼 보이도록 공통 art direction을 유지합니다.
@@ -25,9 +33,12 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - `prompt_brief`만 보지 말고 `visual_role`로 화면 내 기능을 확인하고, `composition_notes`로 실제 배치 가능성을 맞춥니다.
 - `negative_prompt`에 적힌 표현은 사용하지 않습니다. 특히 텍스트가 이미지 안에 들어가거나, 다른 asset과 다른 렌더링 매체처럼 보이면 실패로 봅니다.
 - 생성한 이미지의 `path`, `status`, `usage_section_ids`, `alt_text`를 정확히 기록합니다.
+- `character_id`는 해당 `asset_plan` 항목의 값을 그대로 옮겨 적습니다. 임의로 바꾸거나 비우지 않습니다.
 
 금지:
 - planner에 없는 asset을 새로 만들지 않습니다.
+- `identity_context`에 있는 asset을 생성하거나 덮어쓰지 않습니다. 그것들은 참고용이며 이미 존재하는 asset입니다.
+- 같은 `character_id`를 가진 asset을 포즈마다 다른 인물(다른 얼굴형, 다른 머리색, 다른 의상, 다른 피부톤)로 그리지 않습니다.
 - 파일 경로를 `output/assets/` 밖으로 바꾸지 않습니다.
 - 이미지 확장자는 `.png`, `.jpg`, `.jpeg`, `.webp`만 사용합니다.
 - asset마다 서로 다른 화풍, 시대감, 카메라 톤, 재질감을 섞지 않습니다.

@@ -10,7 +10,7 @@
       "description": "planner의 asset_plan을 바탕으로 생성하거나 준비한 asset 목록",
       "items": {
         "type": "object",
-        "required": ["id", "kind", "path", "status", "usage_section_ids", "alt_text"],
+        "required": ["id", "kind", "character_id", "path", "status", "usage_section_ids", "alt_text"],
         "properties": {
           "id": {
             "type": "string",
@@ -20,6 +20,11 @@
           "kind": {
             "type": "string",
             "enum": ["image"]
+          },
+          "character_id": {
+            "type": "string",
+            "pattern": "^$|^[a-z][a-z0-9_-]*$",
+            "description": "planner asset_plan의 character_id와 같은 값. 이 asset이 어떤 캐릭터의 정체성으로 생성됐는지 남겨, 이후 라운드가 같은 캐릭터의 포즈를 대조할 수 있게 한다. 캐릭터가 없는 asset이면 빈 문자열"
           },
           "path": {
             "type": "string",

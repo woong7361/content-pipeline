@@ -5,12 +5,16 @@
 ## 사용 규칙
 
 - 사용자가 결과를 교정·지적할 때마다 아래 "문제 로그"에 항목을 추가한다.
-- 같은 **분류 태그(category)** 의 
-
-
-항목이 이미 있으면 새로 만들지 말고 그 항목의 `발생 횟수`와 `최근 발생일`, `사례`를 갱신한다.
+- 같은 **분류 태그(category)** 의 항목이 이미 있으면 새로 만들지 말고 그 항목의 `발생 횟수`와 `최근 발생일`, `사례`를 갱신한다.
 - 같은 분류 태그가 누적 **5회 이상**이 되면 다음 작업 전에 rule 승격을 제안한다.
 - rule로 승격되면 해당 항목 `상태`를 `규칙화됨`으로 바꾸고 어느 AGENTS.md에 반영했는지 적는다.
+
+### 규칙화됨 항목 보관과 재발 처리
+
+- 항목이 `규칙화됨`이 되면 사례·조치 **전문은 `solved-log.md`로 옮겨 보존**하고, `problem.md`에는 **스텁만** 남긴다. "어떤 문제였고 어떻게 해결했는가"라는 지식은 요약해 날리지 않는다.
+- 스텁 형식: `- [태그] · 횟수 N · 규칙화됨 · solved-log#앵커 · 반영: (AGENTS.md 위치)` — 아래 "규칙화됨 아카이브 (스텁)" 섹션에 둔다.
+- 스텁을 같은 파일에 남기는 이유: **중복 감지와 재발 카운트를 유지**하기 위해서다. 규칙화됨 항목을 통째로 딴 파일로 빼면 재발이 신규(횟수=1)로 잡혀 "rule이 있는데도 재발"이라는 신호를 놓친다.
+- `규칙화됨` 이후 같은 태그 피드백이 다시 오면, 신규 항목을 만들지 말고 스텁 횟수를 **+1** 하고 재발 사례는 solved-log에 덧붙인 뒤, rule 재검토(문구 강화 / 적용 범위 확대 / 예외 정리)를 제안한다(상태: `제안됨(재검토)`).
 
 ## 항목 템플릿
 
@@ -29,9 +33,28 @@
 - 규칙화 메모: <제안한 rule 초안 / 반영 위치 / 승인 여부>
 ```
 
+## 규칙화됨 아카이브 (스텁)
+
+<!-- 규칙화된 항목은 여기 스텁 한 줄로 남긴다. 문제+해결 전문은 solved-log.md 참조. -->
+
+- [character-asset-identity-alpha] · 횟수 9 · 규칙화됨 · solved-log.md#character-asset-identity-alpha-캐릭터-에셋이-포즈마다-다른-인물로-생성됨-정체성-부분 · 반영: AGENTS.md 문서 규칙이 아니라 파이프라인 구조로 강제 (planner_output.schema.json characters 엔티티 · runner.py patch merge/identity_context · design_review.py allowlist · planner/design_review/asset_generator 프롬프트). 원 항목 17회 중 알파 8회는 [character-asset-alpha-fringe]로 분리되어 열린 상태.
+
 ## 문제 로그
 
 <!-- 새 항목은 이 아래에 추가한다. 아직 기록된 문제가 없다. -->
+
+### [planner-storyboard-detail-loss] planner.json이 storyboard 세부(문제 보기·대사·오디오·모션·효과)를 압축/누락함
+
+- 대상: content-harness-pipeline/stages/planner.py, schemas/planner_output.schema.json, prompts/planner_system.md (산출: runs/2026-07-08_ch802d08/ch802d08_planner.json)
+- 분류 태그: planner-storyboard-detail-loss
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-13
+- 최근 발생일: 2026-07-13
+- 사례:
+  - 2026-07-13: `2학년_8차시(시간)_임상현.md`(storyboard)와 `ch802d08_planner.json`을 비교하니 차이가 큼. storyboard가 요구한 요소(이미지, 대사, 문제 문구, 보기(distractor), 캐릭터 포즈, 효과, 애니메이션, 오디오/SFX)가 요약되거나 생략됨. 특히 활동2 12문제의 정확한 문제 문구·보기 3개·정답이 planner에서는 content_outline 한 줄로 압축되어 정답만 남고 오답 보기가 사라짐. 사용자가 schema가 너무 정적이거나 prompt 문제로 추정하고, storyboard를 온전히 담을 수정 방향을 요청.
+- 조치: (분석 제공) 근본원인 = (1) section schema가 scene-level 자유문자열 배열(content_outline/staging_notes)뿐이라 문제항목/대사/오디오/피드백을 담을 typed 슬롯이 없음 → 모델이 압축. (2) 문제·보기·정답을 담는 구조가 아예 없어 12문제가 한 줄로 뭉개짐(하류 [typeB-problem-text-mismatch-spec]/[typeA-prompt-text-small-terse]의 상류 원인). (3) prompt가 verbatim 보존을 요구하지 않고 오히려 "생략" 을 정상 절차로 언급, asset 지시(20여 줄)에 편중. (4) 오디오/SFX는 schema·prompt 어디에도 없음. → 권고: ①section에 닫힌 `questions` 배열(prompt/choices/answer/input_type/feedback, 모든 필드 required·N/A는 빈값) 추가 ②대사/오디오/피드백 typed 슬롯 분리 ③"문제문구·보기·정답·대사·버튼/전환 텍스트는 원문 그대로 보존, 오답 보기도 전부 보존" verbatim 규칙을 prompt에 추가 ④section에 `source_ref`(storyboard scene) 추가해 커버리지 결정적 검증(→[content-eval-scoring-too-lenient] 연계) ⑤오디오 범위 명시(담을지/의도적 제외인지).
+- 규칙화 메모: 아직 1회. 이 항목은 상위 원인(메타)에 가까움 — 하류 [typeB-problem-text-mismatch-spec], [typeA-prompt-text-small-terse], [spec-success-feedback-missing], [type-per-problem-answer-format] 계열이 "builder가 spec대로 안 만든다"로 반복되는데, 실은 planner가 spec을 온전히 안 넘긴 것이 상류 원인. 반복되면 "planner는 storyboard의 문제 문구·보기·정답·대사·전환/성공 메시지를 원문 그대로 보존하고, 자유문자열로 압축하지 말고 typed 슬롯(questions/dialogue/audio/feedback)에 담는다" 규칙을 planner_system.md에 제안 후보.
 
 ### [typeB-correct-note-card-unwanted] 유형 B 정답 시 스탬프와 함께 뜨는 초록 정답 카드 제거
 
@@ -314,47 +337,25 @@
 - 조치: 도장형 과밀 그래픽과 상태색 시계 배경을 버리고, 단일 생성 이미지 안에 애니메이션풍 시계 도장+`정답!`/`실패!` 텍스트가 포함되도록 재생성.
 - 규칙화 메모: 아직 3회. 반복되면 "학습 피드백 이미지는 핵심 메시지 텍스트와 배경 메타포를 분리하고, 배경 오브젝트는 화면 기존 asset 팔레트를 유지하며 상태색은 텍스트/강조에만 쓴다. 사용자가 단일 asset을 요구하면 기존 asset 합성/코드 합성 대신 생성 이미지 하나로 만든다" 규칙을 asset generation workflow에 제안 후보.
 
-### [character-asset-identity-alpha] 캐릭터 에셋의 정체성 불일치 또는 의상 투명도 오류
+### [character-asset-alpha-fringe] 캐릭터 에셋의 알파/프린지 후처리가 반복 실패함
 
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`assets/teacher_*.png`, `assets/kid_librarian_*.png`)
-- 분류 태그: character-asset-identity-alpha
-- 상태: 제안됨
-- 발생 횟수: 17
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/ (`teacher_*.png`, `kid_librarian_*.png`)
+- 분류 태그: character-asset-alpha-fringe
+- 상태: 열림
+- 발생 횟수: 8
 - 최초 발생일: 2026-07-09
 - 최근 발생일: 2026-07-13
 - 사례:
-  - 2026-07-09: 사용자가 캐릭터 에셋 재생성이 필요하다고 지적. 사서 선생님은 치마가 투명하게 보이고, 학생/꼬마 사서는 원래 필요한 캐릭터가 아니라 다른 학생이 생성됨.
-  - 2026-07-09: 꼬마 사서는 `kid_librarian_explaining.png`를 anchor로 삼는 방식도 버리고, 기존 꼬마 사서 에셋과 무관한 새 캐릭터로 설계하길 요청. 기존 에셋은 사용처/실패 사례 참고로만 취급해야 함.
-  - 2026-07-09: 이미지 생성 실행 중 sub-agent를 쓰겠다고 해놓고 실제 생성 작업을 메인 에이전트가 단독 진행함. 또한 raw 크로마키 결과라 배경이 투명하지 않았고, `teacher_worried`의 돋보기가 손에 잡혀 있지 않아 포즈/소품 요구를 만족하지 못함.
-  - 2026-07-10: output/assets의 꼬마 사서가 포즈마다 성별이 바뀜 — `idle`/`success`/`confused`는 예전 남자아이(7/8 생성), `explaining`만 새 여자아이(7/9 교체됨). 사용자가 asset-revisions final(일관된 여자아이)로 나머지도 교체 요청.
-    - 조치: 두 세트 비교 montage로 불일치 확인(현재 idle/success/confused=남아, revision 전부=여아). revision final의 alpha 투명 검증 후 `kid_librarian_idle/success/confused.png`를 output/assets에 복사(파일명 동일 → HTML 수정 불필요). 교체 후 4개 포즈 여자아이 일관성 시각 확인.
-  - 2026-07-10: output/assets의 사서 선생님(`teacher_happy/pointing/worried`)이 여전히 예전 버전(7/8 생성)이라 치마가 투명하게 비쳐 보임. 사용자가 asset-revisions final(7/9)로 교체 요청.
-    - 조치: 양쪽 alpha 채널 비교 — OLD는 반투명(0<a<255) 픽셀 2~10%(치마 등 비침 원인), NEW final은 반투명 0%로 정리됨을 확인. `teacher_happy/pointing/worried.png` 3종을 `asset-revisions/characters/generated/final/`에서 output/assets로 복사(파일명 동일 → HTML 수정 불필요). `teacher_pointing`은 revision 비율이 864×1821로 다르나 `.char`가 height 기준(width auto)이라 레이아웃 영향 없음.
-  - 2026-07-10: `teacher_happy.png`와 `teacher_pointing.png`가 `teacher_worried.png`와 캐릭터 색상·디자인이 달라 같은 인물로 보이지 않는다고 지적. worried를 기준으로 정체성을 통일하되 happy/pointing의 포즈는 유지하도록 요청.
-    - 조치: `teacher_worried.png`를 얼굴·헤어·의상·색상·렌더링 스타일의 단일 기준으로 삼아 happy/pointing을 각각 재생성했다. happy의 박수 포즈와 pointing의 오른쪽 지시 포즈·돋보기는 유지했다. 마젠타 크로마키 원본에서 alpha PNG로 추출하고 두 output asset을 같은 파일명으로 교체했다.
-  - 2026-07-10: 투명 PNG로 재생성한 `teacher_happy.png` 얼굴에 기준 이미지보다 강한 홍조가 생겼다고 지적.
-    - 조치: worried의 중립적인 피부색을 기준으로 happy의 볼 홍조·분홍색 얼굴 틴트만 제거해 재생성했다. 박수 포즈·웃는 표정·얼굴 형태·의상은 유지하고, 크로마키 제거 후 실제 alpha PNG로 같은 파일을 교체했다.
-  - 2026-07-10: 홍조 제거 후 `teacher_happy.png` 외곽에 보라색 크로마키 프린지가 남아 있다고 지적.
-    - 조치: 마젠타가 캐릭터의 코랄 계열 의상·피부 가장자리와 충돌하므로 초록 크로마키로 다시 생성했다. despill 포함 alpha 추출 후 보라색 프린지가 없는지 시각 검수하고 output asset을 교체했다.
-  - 2026-07-13: `kid_librarian_idle.png`만 다른 꼬마 사서 포즈보다 전체 색감이 붉다고 지적. 다른 포즈의 중립적인 피부·의상 팔레트를 기준으로 idle 포즈는 유지한 채 색감을 통일해 재생성 요청.
-    - 조치: confused/explaining을 색상 기준으로 삼아 생성 편집을 시도했으나 결과가 실제 alpha 대신 체크무늬가 합성된 RGB라 폐기했다. 원본을 복구한 뒤 idle의 픽셀·포즈·실루엣·alpha를 그대로 보존하는 색상 행렬 교정(적색 0.94, 청색 1.03)을 적용해 과도한 주황/적색 틴트만 낮췄다. 최종 PNG가 32bpp ARGB이고 모서리 alpha=0인지 검증했다.
-  - 2026-07-13: `teacher_happy.png`가 다른 teacher 포즈들과 비교해 캐릭터 통일성이 어색하다고 지적. happy의 박수 포즈는 유지하면서 기준 포즈와 얼굴·의상·색감·렌더링을 다시 통일하도록 요청.
-  - 2026-07-13: 재생성 시안의 얼굴에 얼룩처럼 보이는 불균일한 피부 명암이 있다고 재지적. 박수 포즈와 동일 인물 정체성을 유지하면서 깨끗하고 균일한 얼굴로 다시 생성 요청.
-    - 조치: API 키가 필요한 네이티브 투명 재생성 대신 기존 alpha PNG를 로컬 보정했다. 얼굴 영역의 피부색 픽셀만 제한적으로 선택해 3×3 이웃색을 약하게 혼합하고 과도한 적색 편차를 제한했다. 포즈·윤곽·눈·안경·의상은 유지했으며 최종 파일이 1024×1536 32bpp ARGB, 모서리 alpha=0인지 검증했다.
-  - 2026-07-13: 로컬 얼굴 보정으로도 문제가 해결되지 않아, 사용자가 새 기준 이미지를 첨부하고 `teacher_happy.png` 전체를 새로 생성하도록 요청.
-    - 조치: 첨부 이미지를 단일 기준으로 얼굴·의상·박수 포즈를 새로 생성했다. 생성 결과의 체크무늬 배경이 실제 RGB로 포함되어 있어, 캐릭터 내부의 흰색·안경은 보존하고 캔버스 외곽과 연결된 밝은 저채도 체크 영역만 flood-fill로 제거해 alpha PNG로 변환했다. 최종 파일을 같은 이름으로 교체하고 933×1686 32bpp ARGB, 모서리 alpha=0을 검증했다.
-  - 2026-07-13: 교체된 `teacher_happy.png`에 대해 사용자가 별도 세부 조건 없이 다시 전체 재생성을 요청.
-    - 조치: 기존 happy의 박수 자세와 worried/pointing의 얼굴·연령·팔레트를 함께 참조해 새 버전을 생성했다. 과장된 열린 입 대신 차분한 미소로 조정하고, 외곽과 연결된 체크무늬 RGB 배경만 flood-fill 제거해 alpha PNG로 변환했다. 최종 파일을 교체하고 911×1727 32bpp ARGB, 모서리 alpha=0을 검증했다.
-  - 2026-07-13: 새 `teacher_happy.png`의 머리 뒤 닫힌 공간에 흰 체크 배경 조각이 남아 있다고 지적.
-    - 조치: 머리카락과 목 사이의 닫힌 배경 영역을 별도 seed로 flood-fill해 밝은 저채도 배경 픽셀만 alpha=0으로 제거했다. 머리카락·귀·얼굴·스카프는 유지한 채 시각 검수했다.
-  - 2026-07-13: 머리 뒤 조각 제거 후에도 얼굴·머리 외곽 전체에 흰 배경 프린지가 남아 있다고 재지적.
-    - 조치: 얼굴·머리 ROI에서 투명 픽셀과 직접 맞닿은 밝은 저채도 픽셀을 단계적으로 제거해 흰 프린지를 축소했다. 얼굴 내부·눈·안경·머리카락 본체는 건드리지 않고 최종 alpha와 외곽을 시각 검수했다.
-  - 2026-07-13: 흰 프린지를 색상 기준보다 더 과감하게 쳐내 달라고 요청.
-    - 조치: 얼굴·머리 ROI의 alpha 마스크를 색상과 무관하게 3px 수축해 외곽 픽셀을 직접 제거했다. 흰 프린지는 모두 제거하고 얼굴 내부·눈·안경은 유지했다.
-  - 2026-07-13: 대부분 제거됐으나 첨부 화면에서 머리 상단·번 주변에 흰 부분이 조금 남아 있다고 지적.
-    - 조치: 얼굴·안경 영역을 제외하고 머리 상단과 번 ROI의 alpha 마스크만 추가로 2px 수축해 남은 흰 테두리를 제거했다. 최종 시각 검수에서 머리 주변 흰 픽셀이 보이지 않는 것을 확인했다.
-- 조치: 원본 기획(`2학년_8차시(시간)_임상현_no_img.md`)과 산출 HTML의 캐릭터 사용 위치를 대조해 필요한 캐릭터별 포즈와 화면 배치 검토. 이후 꼬마 사서 design/prompt를 "reference image 없음, 텍스트 identity가 source of truth" 방식으로 수정. 이미지 생성 단계는 sub-agent 병렬 실행과 final alpha PNG 검증을 명시적으로 수행하도록 재진행.
-- 규칙화 메모: **6회 → rule 승격 제안.** 초안: "캐릭터 포즈 세트는 기준 포즈 1개를 source of truth로 삼아 얼굴·헤어·의상·팔레트·렌더링 스타일을 고정하고, 포즈만 변경한 뒤 전체 세트를 나란히 QA한다. 의상 불투명도와 alpha도 정량 검수한다." 반영 위치: content-harness-pipeline/AGENTS.md. 사용자 승인 대기.
+  - 2026-07-09: 사서 선생님 치마가 투명하게 비쳐 보임(반투명 픽셀 잔존).
+  - 2026-07-09: raw 크로마키 결과라 배경이 투명하지 않은 상태로 산출됨.
+  - 2026-07-10: output/assets의 teacher 3종이 예전 버전이라 치마 비침이 남아 있음 → asset-revisions final(반투명 0%)로 교체.
+  - 2026-07-10: 재생성한 `teacher_happy` 외곽에 보라색 크로마키 프린지 잔존. 원인: 마젠타가 캐릭터의 코랄 의상·피부 가장자리와 충돌 → 초록 크로마키로 재생성해 해결.
+  - 2026-07-13: 생성 결과에 체크무늬 배경이 실제 RGB로 포함돼 있어 알파로 오판할 뻔함(캔버스 외곽 연결 영역만 flood-fill로 제거).
+  - 2026-07-13: `teacher_happy` 머리 뒤 닫힌 공간에 흰 체크 배경 조각 잔존.
+  - 2026-07-13: 얼굴·머리 외곽 전체에 흰 배경 프린지 잔존 → 색상 기준이 아니라 alpha 마스크 3px 수축으로 제거.
+  - 2026-07-13: 머리 상단·번 주변에 흰 부분이 조금 남음 → 해당 ROI만 추가 2px 수축.
+- 조치: (개별 사례는 그때그때 수동 보정으로 해결. 구조적 대응은 아직 없음.)
+- 규칙화 메모: 원래 [character-asset-identity-alpha](17회)에 정체성 문제와 함께 묶여 있었으나, 2026-07-15에 정체성 부분(9회)이 파이프라인 구조로 해소되면서 알파/프린지 8회를 이 태그로 분리했다. **이 항목은 [transparent-asset-alpha-not-validated](7회, 제안됨)와 사실상 같은 문제**(투명 PNG 알파 검증 부재)이므로, 알파 작업을 시작할 때 두 항목을 하나로 병합해 실질 15회로 다루는 것을 권장한다. 사용자가 2026-07-15에 알파 후처리는 후순위로 미루기로 결정. 교훈 후보: 크로마키 색은 대상 팔레트와 충돌하지 않는 색으로 고르고(마젠타 vs 코랄 의상 충돌 사례), 검수 이미지를 확인하기 전 대상 파일을 덮어쓰지 않는다.
 
 ### [asset-batch-incomplete-execution] 캐릭터 에셋 배치를 일부만 생성하고 전체 세트를 완료하지 않음
 
@@ -901,3 +902,16 @@
   - 2026-07-13: `teacher_worried.png` 그림체에 맞춰 `teacher_pointing_v2.png`, `teacher_happy_v2.png`를 생성한 뒤 실제 화면의 기존 캐릭터 이미지를 V2로 바꿔달라고 요청.
 - 조치: `index.html`의 정적 이미지 참조와 런타임 교체 경로를 V2 파일명으로 변경하고, 새 happy 포즈에 맞게 박수 표현의 대체 텍스트도 수정. 기존 PNG 파일은 보존.
 - 규칙화 메모: 아직 1회. 반복되면 "기존 화면용 대체 에셋을 생성한 작업은 파일 생성에서 끝내지 말고, 대상 HTML/CSS/JS 참조 교체와 미사용 구버전 참조 검색까지 통합 검증한다" 규칙을 content-harness-pipeline/AGENTS.md에 제안 후보.
+
+### [content-eval-scoring-too-lenient] content-eval 점수체계가 널널해 storyboard/스펙 미준수를 못 걸러냄
+
+- 대상: content-harness-pipeline/content_rubric.yaml, prompts/content_eval_system.md, schemas/content_eval_output.schema.json
+- 분류 태그: content-eval-scoring-too-lenient
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-13
+- 최근 발생일: 2026-07-13
+- 사례:
+  - 2026-07-13: 그동안 파이프라인을 돌려보니 content-eval 점수체계가 너무 널널해서 산출 HTML이 storyboard(planner spec)를 잘 안 따르는데도 PASS가 남. 원인 진단: (1) storyboard_fidelity가 weight 0.20으로 최고인데 min_axis는 3.8로 최저(가장 널널). (2) weighted_total 4.0이 6축 가중평균이라 약한 storyboard가 다른 축으로 상쇄됨. (3) rubric의 hard_gates(핵심 장면 누락 등)와 모델 verdict 필드가 runner(get_content_eval_status)에서 실제로는 무시되고 숫자 threshold만 봄. (4) anchor가 1/3/5만 정의돼 모델이 4.2~4.6 소수점에 몰려 채점(인플레). 사용자가 축과 점수체계를 결정적(deterministic) 채점으로 재설계하기로 함.
+- 조치: (설계 진행 중) storyboard_fidelity + content_completeness를 "요구사항 대응" 단일 축(weight 0.4)으로 병합하고, planner content_outline/interactions를 레퍼런스로 "불일치 개수→점수" 결정적 채점(5=0불일치, 3=2불일치, 1=5불일치)으로 전환. 나머지 축의 결정성 강화 방식은 사용자와 논의 중.
+- 규칙화 메모: 이 항목은 상위 원인(메타). 하위 증상 계열 — [spec-interaction-flow-mismatch], [spec-success-feedback-missing], [sequential-scene-choreography], [typeB-problem-text-mismatch-spec] 등 "builder가 planner spec을 안 따른다"가 반복되는데 eval이 이를 REJECT로 못 잡은 결과. eval 채점을 결정적으로 만들면 이 계열의 재발을 상류에서 차단하는 것이 목표.

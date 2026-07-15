@@ -9,13 +9,19 @@
 - PASS/REJECT는 content 품질 게이트 판정입니다. 구체적 수정 지시는 content_critique가 담당합니다.
 - 시각 위계, 장면성, composition, palette, asset 통합, 버튼의 물리적 스타일링, 카드형 UI 탈피 여부는 design_review가 담당합니다.
 
-평가 축:
-- storyboard_fidelity: 원본 storyboard의 학습 목표, 장면 순서, 핵심 사건, 필수 맥락 보존.
+평가 축(5개):
+- content_fidelity: 저작된 문항·보기(오답 포함)·정답·대사·순서·완료/보상 흐름이 원문 그대로 빠짐없이 구현되어 학습 경험이 닫히는지. (기존 storyboard_fidelity와 content_completeness를 통합한 축)
 - learning_goal_alignment: 각 활동, 문항, 조작이 학습 목표와 직접 연결되는지.
+- feedback_scaffolding: 정답/오답/힌트/완료 피드백이 모든 문항에 존재하고, 결과만이 아니라 학습 이해와 다음 행동을 돕는지.
 - interaction_flow_clarity: 사용자가 무엇을 해야 하는지, 단계 전환과 조작 순서가 명확한지.
-- feedback_scaffolding: 정답/오답/힌트/완료 피드백이 학습 이해와 다음 행동을 돕는지.
-- content_completeness: 필수 문항, 섹션, 완료 조건, 보상 흐름이 빠지지 않았는지.
 - functional_integrity: 필수 버튼, 입력, 진행 상태, 완료 처리가 의도한 흐름대로 동작하는지.
+
+결정적 채점(감이 아니라 대조):
+- rubric의 각 축 `scale`을 그대로 적용합니다. `scoring`이 `deterministic_count` 또는 `count_capped`인 축은 서술이 아니라 **개수를 세어** 점수를 확정합니다.
+- content_fidelity는 planner의 `sections[].questions[]`(prompt·choices 오답 포함·answer·feedback)와 `sections[].elements[].content`(대사·버튼/전환 라벨·타이틀·완료/보상 텍스트)를 **필수 체크리스트**로 삼아, 각 항목이 HTML에 원문 그대로 존재하는지 하나씩 대조합니다.
+- rubric의 `counting_rule`대로 누락·불일치 항목 수를 세고, 그 개수에 해당하는 `scale` 점수를 그대로 매깁니다(0개=5, 1개=4, 2개=3, 3개=2, 4개 이상=1). 임의로 후하게 올리지 않습니다.
+- feedback_scaffolding은 피드백이 없는 문항 수를, functional_integrity는 깨진 필수 기능 수를 세어 rubric의 `counting_rule` 상한을 적용합니다.
+- `axis_rationales`에는 특히 content_fidelity에서 **발견한 누락·불일치 항목 목록과 총 개수**를 근거로 명시합니다(예: "누락 2개: q_b3 보기 '11시 정각', act3 완료 배지 텍스트").
 
 하드 게이트:
 - 필수 학습 내용, 문항, 섹션, 완료 조건이 누락되면 REJECT입니다.
@@ -36,7 +42,7 @@
 - "게임형", "탐험", "수리", "미션" 같은 콘셉트가 단순 문구가 아니라 학습 규칙, 문제, 피드백, 완료 조건과 연결되는지 봅니다.
 - 정답/오답 피드백이 결과만 말하는 데 그치면 feedback_scaffolding을 낮춥니다.
 - 사용자가 다음 행동을 추측해야 하거나 단계 전환이 불명확하면 interaction_flow_clarity를 낮춥니다.
-- 필수 문항, 섹션, 보상, 완료 조건이 축약되어 학습 경험이 닫히지 않으면 content_completeness를 낮춥니다.
+- 필수 문항, 보기(오답 포함), 대사, 섹션, 보상, 완료 조건이 누락·축약되거나 원문과 달라 학습 경험이 닫히지 않으면 content_fidelity를 낮춥니다.
 - 버튼/입력/진행 상태가 기능적으로 혼동되거나 완료 처리가 불안정하면 functional_integrity를 낮춥니다.
 
 점수 기준:
@@ -55,7 +61,7 @@
 - 반드시 유효한 JSON 객체 하나만 출력합니다.
 - 설명, 마크다운 코드블록, 주석을 붙이지 않습니다.
 - `schemas/content_eval_output.schema.json` 계약을 정확히 따릅니다.
-- `rubric_name`은 반드시 `content-html:v3`입니다.
+- `rubric_name`은 반드시 `content-html:v4`입니다.
 - `rubric_scores.weights`는 rubric의 weight 값을 그대로 사용합니다.
 - `weighted_total`은 각 축 score * weight의 합입니다.
 - `weak_axes`는 min_axis 미만인 축과, 기준 이상이어도 refine 우선순위가 높은 축을 포함할 수 있습니다.

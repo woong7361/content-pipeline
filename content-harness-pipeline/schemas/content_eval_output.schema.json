@@ -13,7 +13,7 @@
   "properties": {
     "rubric_name": {
       "type": "string",
-      "const": "content-html:v3"
+      "const": "content-html:v4"
     },
     "verdict": {
       "type": "string",
@@ -26,19 +26,17 @@
         "scores": {
           "type": "object",
           "required": [
-            "storyboard_fidelity",
+            "content_fidelity",
             "learning_goal_alignment",
-            "interaction_flow_clarity",
             "feedback_scaffolding",
-            "content_completeness",
+            "interaction_flow_clarity",
             "functional_integrity"
           ],
           "properties": {
-            "storyboard_fidelity": { "type": "number", "minimum": 0, "maximum": 5 },
+            "content_fidelity": { "type": "number", "minimum": 0, "maximum": 5 },
             "learning_goal_alignment": { "type": "number", "minimum": 0, "maximum": 5 },
-            "interaction_flow_clarity": { "type": "number", "minimum": 0, "maximum": 5 },
             "feedback_scaffolding": { "type": "number", "minimum": 0, "maximum": 5 },
-            "content_completeness": { "type": "number", "minimum": 0, "maximum": 5 },
+            "interaction_flow_clarity": { "type": "number", "minimum": 0, "maximum": 5 },
             "functional_integrity": { "type": "number", "minimum": 0, "maximum": 5 }
           },
           "additionalProperties": false
@@ -46,20 +44,18 @@
         "weights": {
           "type": "object",
           "required": [
-            "storyboard_fidelity",
+            "content_fidelity",
             "learning_goal_alignment",
-            "interaction_flow_clarity",
             "feedback_scaffolding",
-            "content_completeness",
+            "interaction_flow_clarity",
             "functional_integrity"
           ],
           "properties": {
-            "storyboard_fidelity": { "type": "number", "const": 0.2 },
-            "learning_goal_alignment": { "type": "number", "const": 0.18 },
-            "interaction_flow_clarity": { "type": "number", "const": 0.17 },
-            "feedback_scaffolding": { "type": "number", "const": 0.17 },
-            "content_completeness": { "type": "number", "const": 0.18 },
-            "functional_integrity": { "type": "number", "const": 0.1 }
+            "content_fidelity": { "type": "number", "const": 0.28 },
+            "learning_goal_alignment": { "type": "number", "const": 0.22 },
+            "feedback_scaffolding": { "type": "number", "const": 0.2 },
+            "interaction_flow_clarity": { "type": "number", "const": 0.18 },
+            "functional_integrity": { "type": "number", "const": 0.12 }
           },
           "additionalProperties": false
         },
@@ -74,19 +70,17 @@
     "axis_rationales": {
       "type": "object",
       "required": [
-        "storyboard_fidelity",
+        "content_fidelity",
         "learning_goal_alignment",
-        "interaction_flow_clarity",
         "feedback_scaffolding",
-        "content_completeness",
+        "interaction_flow_clarity",
         "functional_integrity"
       ],
       "properties": {
-        "storyboard_fidelity": { "type": "string", "minLength": 1 },
+        "content_fidelity": { "type": "string", "minLength": 1 },
         "learning_goal_alignment": { "type": "string", "minLength": 1 },
-        "interaction_flow_clarity": { "type": "string", "minLength": 1 },
         "feedback_scaffolding": { "type": "string", "minLength": 1 },
-        "content_completeness": { "type": "string", "minLength": 1 },
+        "interaction_flow_clarity": { "type": "string", "minLength": 1 },
         "functional_integrity": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
@@ -106,11 +100,10 @@
     "contentAxis": {
       "type": "string",
       "enum": [
-        "storyboard_fidelity",
+        "content_fidelity",
         "learning_goal_alignment",
-        "interaction_flow_clarity",
         "feedback_scaffolding",
-        "content_completeness",
+        "interaction_flow_clarity",
         "functional_integrity"
       ]
     }

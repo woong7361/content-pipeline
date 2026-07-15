@@ -854,6 +854,74 @@ def build_asset_batches(planner_output: dict, max_batch_size: int) -> list[list[
     return [batch for batch in batches if batch]
 
 
+def attach_identity_context(planner_output: dict, run_dir: Path) -> dict:
+    """캐릭터별 기준 포즈와 형제 포즈를 planner_output에 붙인다.
+
+    batch가 asset 하나로 쪼개지면 asset_plan에서 형제 포즈가 사라져, asset_generator의
+    "batch 안의 asset끼리 캐릭터를 맞춘다"는 지시가 맞출 대상을 잃는다. 그 결과 포즈를 하나만
+    재생성할 때마다 인물이 미묘하게 달라진다. identity_context는 asset_plan이 좁아져도 남으므로
+    (build_batch_planner_output이 dict를 copy하기 때문에) 기준 포즈가 배치까지 따라간다.
+    asset_plan에 넣지 않는 이유: 넣으면 형제 포즈까지 재생성돼 멀쩡한 asset을 덮어쓴다.
+    """
+    characters = planner_output.get("characters", [])
+    asset_plan = planner_output.get("asset_plan", [])
+    if not isinstance(characters, list) or not isinstance(asset_plan, list):
+        return planner_output
+
+    poses_by_character: dict[str, list[dict]] = {}
+    for asset in asset_plan:
+        if not isinstance(asset, dict):
+            continue
+        character_id = asset.get("character_id")
+        if not isinstance(character_id, str) or not character_id:
+            continue
+        image_path = asset.get("intended_path", "")
+        poses_by_character.setdefault(character_id, []).append(
+            {
+                "asset_id": asset.get("id"),
+                "style_constraints": asset.get("style_constraints", ""),
+                "image_path": image_path,
+                "image_exists": bool(image_path) and (run_dir / image_path).exists(),
+            }
+        )
+
+    identity_context = []
+    for character in characters:
+        if not isinstance(character, dict):
+            continue
+        character_id = character.get("id")
+        if not isinstance(character_id, str):
+            continue
+        poses = poses_by_character.get(character_id, [])
+        reference_asset_id = character.get("reference_asset_id", "")
+        reference_image_path = ""
+        for pose in poses:
+            if pose["asset_id"] == reference_asset_id and pose["image_exists"]:
+                reference_image_path = pose["image_path"]
+                break
+        if not reference_image_path:
+            for pose in poses:
+                if pose["image_exists"]:
+                    reference_image_path = pose["image_path"]
+                    break
+        identity_context.append(
+            {
+                "character_id": character_id,
+                "name": character.get("name", ""),
+                "identity": character.get("identity", {}),
+                "reference_asset_id": reference_asset_id,
+                "reference_image_path": reference_image_path,
+                "poses": poses,
+            }
+        )
+
+    if not identity_context:
+        return planner_output
+    planner_output = planner_output.copy()
+    planner_output["identity_context"] = identity_context
+    return planner_output
+
+
 def build_batch_planner_output(planner_output: dict, asset_batch: list[dict]) -> dict:
     batch_asset_ids = {asset["id"] for asset in asset_batch}
     batch_groups = []
@@ -1031,6 +1099,8 @@ def run_asset_generator_only(args: argparse.Namespace) -> dict:
             stage = "asset_generator"
             existing_asset_output = {"assets": []}
             assets_to_generate = asset_plan
+            # 좁히기 전에 붙여야 형제 포즈와 기준 이미지가 살아남는다.
+            planner_output = attach_identity_context(planner_output, context.run_dir)
             generation_planner_output = planner_output
             if args.asset_generator_missing_only:
                 existing_asset_output, assets_to_generate = build_existing_asset_output(asset_plan, context.run_dir)
@@ -1168,6 +1238,8 @@ def run_asset_generator_for_asset_ids(
     with tempfile.TemporaryDirectory(prefix="content-harness-asset-revision-") as temp_dir:
         temp_dir_path = Path(temp_dir)
         temp_asset_output_path = temp_dir_path / "asset-generator-output.json"
+        # 좁히기 전에 붙여야 형제 포즈와 기준 이미지가 살아남는다.
+        planner_output = attach_identity_context(planner_output, context.run_dir)
         generation_planner_output = build_batch_planner_output(planner_output, target_assets)
         asset_batches = build_asset_batches(generation_planner_output, args.asset_batch_size)
         worker_count = min(args.asset_parallelism, len(asset_batches))
@@ -1434,8 +1506,8 @@ def resolve_asset_generator_path(context: RunContext, planner_output: dict) -> P
     return context.asset_generator_path
 
 
-def has_asset_review_changes(content_critique_output: dict) -> bool:
-    asset_review = content_critique_output.get("asset_review", {})
+def has_asset_review_changes(asset_review_output: dict) -> bool:
+    asset_review = asset_review_output.get("asset_review", {})
     if not isinstance(asset_review, dict):
         return False
     change_keys = ("remove_assets", "regenerate_assets", "new_asset_requests")
@@ -1443,8 +1515,13 @@ def has_asset_review_changes(content_critique_output: dict) -> bool:
 
 
 def merge_asset_review_outputs(*review_outputs: dict) -> dict:
+    """asset_review를 합치고 중복을 제거한 뒤 MAX_ASSET_REVISION_REQUESTS 상한을 적용한다.
+
+    현재 asset_review를 내는 stage는 design_review 하나뿐이라 인자도 보통 하나지만,
+    상한·중복 제거가 여기에 있으므로 단일 입력이어도 이 경로를 거친다.
+    """
     merged_asset_review = {
-        "overall_asset_fit": "Merged asset review from content critique and design review.",
+        "overall_asset_fit": "Normalized asset review from design review.",
         "keep_assets": [],
         "reposition_assets": [],
         "remove_assets": [],
@@ -1522,10 +1599,34 @@ def merge_asset_review_outputs(*review_outputs: dict) -> dict:
 
 
 def ensure_asset_spec_defaults(asset: dict) -> dict:
+    asset.setdefault("character_id", "")
     asset.setdefault("visual_role", asset.get("purpose", "Support the section's learning goal"))
     asset.setdefault("style_constraints", "Follow the shared art_direction exactly.")
     asset.setdefault("composition_notes", asset.get("prompt_brief", "Use a clear composition for the target section."))
     asset.setdefault("negative_prompt", "No embedded text, no mismatched visual style, no unrelated decoration.")
+    return asset
+
+
+# design_review는 asset 하나의 문제만 보고 재생성을 요청하므로, 채우지 않은 필드까지 통째로 대입하면
+# planner가 정해둔 나머지 지시가 조용히 사라진다. 빈 값은 "이 필드는 그대로 두라"는 뜻으로 읽고 원본을 보존한다.
+# character_id는 여기에 없다 — asset이 어느 캐릭터를 그리는지는 planner의 characters만 정한다.
+ASSET_REGENERATION_PATCH_FIELDS = (
+    ("prompt_brief", "revised_prompt_brief"),
+    ("visual_role", "visual_role"),
+    ("style_constraints", "style_constraints"),
+    ("composition_notes", "composition_notes"),
+    ("negative_prompt", "negative_prompt"),
+    ("usage_section_ids", "usage_section_ids"),
+)
+
+
+def apply_asset_regeneration_patch(asset: dict, regeneration: dict) -> dict:
+    for target_key, source_key in ASSET_REGENERATION_PATCH_FIELDS:
+        value = regeneration.get(source_key)
+        if isinstance(value, str) and value.strip():
+            asset[target_key] = value
+        elif isinstance(value, list) and value:
+            asset[target_key] = value
     return asset
 
 
@@ -1548,8 +1649,8 @@ def asset_ids_from_decisions(decisions: object) -> set[str]:
     return ids
 
 
-def apply_asset_review_to_planner(planner_output: dict, content_critique_output: dict, iteration: str) -> tuple[dict, dict]:
-    asset_review = content_critique_output.get("asset_review", {})
+def apply_asset_review_to_planner(planner_output: dict, asset_review_output: dict, iteration: str) -> tuple[dict, dict]:
+    asset_review = asset_review_output.get("asset_review", {})
     if not isinstance(asset_review, dict):
         return planner_output, {"removed": [], "regenerated": [], "added": []}
 
@@ -1587,12 +1688,7 @@ def apply_asset_review_to_planner(planner_output: dict, content_critique_output:
         updated_asset = ensure_asset_spec_defaults(asset.copy())
         regeneration = regenerate_by_id.get(asset_id)
         if regeneration:
-            updated_asset["prompt_brief"] = regeneration["revised_prompt_brief"]
-            updated_asset["visual_role"] = regeneration["visual_role"]
-            updated_asset["style_constraints"] = regeneration["style_constraints"]
-            updated_asset["composition_notes"] = regeneration["composition_notes"]
-            updated_asset["negative_prompt"] = regeneration["negative_prompt"]
-            updated_asset["usage_section_ids"] = regeneration["usage_section_ids"]
+            apply_asset_regeneration_patch(updated_asset, regeneration)
             regenerated_ids.append(asset_id)
         updated_asset_plan.append(updated_asset)
         used_ids.add(asset_id)
@@ -1609,6 +1705,7 @@ def apply_asset_review_to_planner(planner_output: dict, content_critique_output:
             {
                 "id": asset_id,
                 "kind": request.get("kind", "image"),
+                "character_id": request.get("character_id", ""),
                 "intended_path": intended_path,
                 "purpose": request["purpose"],
                 "prompt_brief": request["prompt_brief"],
@@ -1694,11 +1791,9 @@ def run_asset_revision_stage(
     progress: ProgressReporter,
     input_path: Path,
     context: RunContext,
-    asset_review_output: dict | None = None,
+    asset_review_output: dict,
 ) -> dict:
     planner_output = load_json(context.planner_path)
-    if asset_review_output is None:
-        asset_review_output = load_json(context.content_critique_path)
     updated_planner_output, summary = apply_asset_review_to_planner(
         planner_output,
         asset_review_output,
@@ -2616,8 +2711,10 @@ def run(args: argparse.Namespace) -> dict:
         eval_status = latest_eval_result.get("status", "REJECT")
         status = "PASS" if design_status == "PASS" and eval_status == "PASS" else "REJECT"
         design_review_output = load_json(context.design_review_path)
-        content_critique_output = load_json(context.content_critique_path)
-        asset_review_output = merge_asset_review_outputs(content_critique_output, design_review_output)
+        # asset 재생성/신규 요청은 design_review만 낸다. content_critique의 출력 계약
+        # (content_critique_output.schema.json)에는 asset_review가 없고 additionalProperties도 막혀 있어
+        # 여기에 넘겨봐야 항상 빈손이었다. 예산 상한과 중복 제거는 아래 merge가 그대로 담당한다.
+        asset_review_output = merge_asset_review_outputs(design_review_output)
         asset_change_needed = has_asset_review_changes(asset_review_output)
         if status == "PASS" and not asset_change_needed:
             progress.line(

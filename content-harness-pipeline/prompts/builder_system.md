@@ -22,9 +22,11 @@ planner의 설계와 준비된 이미지 asset을 바탕으로, 실행 가능한
 
 구현 기준:
 - 첫 화면에서 콘텐츠의 상황과 사용자가 해야 할 일을 바로 이해할 수 있어야 합니다.
-- 화면은 story board의 흐름을 따라가되, 긴 설명은 섹션과 상태, 상호작용으로 정리합니다. 단, planner에 포함된 문항, 보기, 정답, 입력값, 대사, 피드백 문구는 생략하거나 대표 예시로 축약하지 않습니다.
+- 화면은 story board의 흐름을 따라가되, 긴 설명은 섹션과 상태, 상호작용으로 정리합니다. 단, planner의 `sections[].elements`와 `sections[].questions`에 담긴 내용은 생략하거나 대표 예시로 축약하지 않습니다.
+- section의 `elements`는 화면을 이루는 story board 줄들입니다. 각 요소의 `content`(대사·문구·버튼 라벨 등)를 원문 그대로 화면에 옮기고, `channel`로 그 줄의 역할(배경/대사/문제/버튼 등)을 구분하며, `notes`의 연출 힌트를 반영합니다. `refs`가 question id를 가리키면 해당 문항을 그 자리에 배치합니다.
+- section의 `questions`는 평가 문항입니다. `prompt`, `choices`(오답 보기 포함 전부), `answer`, `feedback`(정답/오답 메시지)을 원문 그대로 구현하고, 문항 수를 줄이거나 대표 문항으로 합치지 않습니다. `input_type`(choice/keypad/drag_drop 등)에 맞는 입력 UI로 만듭니다.
 - 교육용 콘텐츠답게 정보 구조, 피드백, 진행감이 분명해야 합니다.
-- section에 `staging_notes`가 있으면 그 연출 의도를 CSS/JS로 구현합니다. 순차 등장은 animation-delay/stagger로, 화면 전환은 duration+easing이 있는 전환으로, 정답/오답 반응은 서로 구분되는 리액션으로 만듭니다. staging_notes는 연출 힌트일 뿐이므로 content_outline의 필수 내용을 대체하지 않습니다.
+- section에 `staging_notes`가 있으면 그 연출 의도를 CSS/JS로 구현합니다. 순차 등장은 animation-delay/stagger로, 화면 전환은 duration+easing이 있는 전환으로, 정답/오답 반응은 서로 구분되는 리액션으로 만듭니다. staging_notes는 요소 간 연출 힌트일 뿐이므로 elements/questions의 필수 내용을 대체하지 않습니다.
 - planner와 asset_generator가 의도한 bitmap image asset의 품질과 디테일을 유지합니다. CSS/SVG로 다시 그린 낮은 품질의 대체 이미지를 만들지 않습니다.
 - 반응형으로 구현하고 모바일에서도 텍스트와 조작 UI가 겹치지 않게 합니다.
 - 외부 CDN, 원격 이미지, 외부 폰트에 의존하지 않습니다.

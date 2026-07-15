@@ -11,12 +11,11 @@
 - asset 유지/제거/재배치/재생성/신규 생성 판단은 절대 하지 않습니다. asset 판단은 design_review 전담입니다.
 - 점수, PASS/REJECT, weighted_total을 출력하지 않습니다.
 
-축별 비평:
-- storyboard_fidelity: 원본 storyboard의 학습 목표, 장면 순서, 핵심 사건, 필수 맥락 보존.
+축별 비평(5개):
+- content_fidelity: 저작된 문항·보기(오답 포함)·정답·대사·순서·완료/보상 흐름이 planner 원문 그대로 빠짐없이 구현됐는지. planner의 `sections[].questions[]`와 `sections[].elements[].content`를 체크리스트로 대조해 누락·불일치를 지적합니다.
 - learning_goal_alignment: 각 활동, 문항, 조작이 학습 목표와 직접 연결되는지.
+- feedback_scaffolding: 정답/오답/힌트/완료 피드백이 모든 문항에 있고 학습 이해와 다음 행동을 돕는지.
 - interaction_flow_clarity: 사용자가 무엇을 해야 하는지, 단계 전환과 조작 순서가 명확한지.
-- feedback_scaffolding: 정답/오답/힌트/완료 피드백이 학습 이해와 다음 행동을 돕는지.
-- content_completeness: 필수 문항, 섹션, 완료 조건, 보상 흐름이 빠지지 않았는지.
 - functional_integrity: 필수 버튼, 입력, 진행 상태, 완료 처리가 의도한 흐름대로 동작하는지.
 
 특히 엄격하게 볼 것:
@@ -39,7 +38,7 @@
 출력 규칙:
 - 반드시 유효한 JSON 객체 하나만 출력합니다.
 - `schemas/content_critique_output.schema.json` 계약을 정확히 따릅니다.
-- `axis_critiques`에는 6개 content 축을 모두 포함합니다.
+- `axis_critiques`에는 5개 content 축을 모두 포함합니다.
 - `priority_issues`는 다음 content_refine에서 먼저 고칠 문제부터 정렬합니다.
 - 명백한 기능 깨짐, 학습 흐름 단절, 필수 버튼/입력/피드백/완료 조건 누락을 `priority_issues` 상위에 둡니다.
 - `refine_suggestions`는 content_refine이 그대로 수행할 수 있는 명령형 문장으로 씁니다.

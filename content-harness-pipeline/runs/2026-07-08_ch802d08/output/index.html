@@ -17,8 +17,10 @@
     --shadow:0 10px 26px rgba(90,55,20,.28);
     --ease:cubic-bezier(.22,1,.36,1);
     /* shared character height (matches across all scenes); kid = 0.8x */
-    --char-h:clamp(140px, 66.56vh, 565.76px);
-    --kid-h:clamp(112px, 53.248vh, 452.608px);
+    --char-h:clamp(140px, 66.56cqh, 565.76px);
+    --kid-h:clamp(112px, 53.248cqh, 452.608px);
+    --stage-scale:1;   /* JS가 창 크기에 맞춰 갱신 (min(W/1920, H/1080)) */
+    --stage-rot:0deg;  /* 모바일 세로에선 90deg로 회전해 가로로 표시 */
     font-size:16px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -28,7 +30,17 @@
     background:#2b1c0e;color:var(--ink);
     overflow:hidden;
   }
-  #stage{position:fixed;inset:0;overflow:hidden;background:#1f140a;}
+  /* 고정 캔버스: 뷰포트를 채우는 검은 무대(#viewport) 위에 1920×1080 스테이지를 중앙 배치하고
+     통짜로 스케일. 안쪽 요소는 cqw/cqh(=1920×1080 기준)로 해석되어 비율을 유지하며 함께 커진다. */
+  #viewport{position:fixed;inset:0;overflow:hidden;background:#1f140a;display:grid;place-items:center;}
+  #stage{
+    position:absolute;left:50%;top:50%;
+    width:1920px;height:1080px;
+    transform:translate(-50%,-50%) rotate(var(--stage-rot,0deg)) scale(var(--stage-scale,1));
+    transform-origin:center center;
+    overflow:hidden;background:#1f140a;
+    container-type:size;container-name:stage;   /* cqw/cqh 기준 컨테이너 */
+  }
 
   /* ---------------- Scenes ---------------- */
   .scene{
@@ -56,21 +68,21 @@
   .scene.qa-still .enter{opacity:1!important;animation:none!important;}
 
   /* ---------------- Top HUD ---------------- */
-  .hud{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:14px clamp(12px, 3.072vw, 35.84px);pointer-events:none;}
+  .hud{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:14px clamp(12px, 3.072cqw, 35.84px);pointer-events:none;}
   .hud>*{pointer-events:auto;}
   .hamburger{width:52px;height:52px;border:none;border-radius:14px;background:var(--panel);box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;transition:transform .14s var(--ease);}
   .hamburger:hover{transform:translateY(-2px);}
   .hamburger span{width:24px;height:3px;border-radius:3px;background:var(--wood-deep);}
   .energy-wrap{display:flex;align-items:center;gap:10px;background:var(--panel);padding:8px 14px;border-radius:16px;box-shadow:var(--shadow);}
   .energy-ico{font-size:22px;}
-  .energy-bar{width:clamp(110px, 25.6vw, 243.2px);height:16px;border-radius:10px;background:#e7d3a8;overflow:hidden;box-shadow:inset 0 2px 4px rgba(120,80,30,.35);}
+  .energy-bar{width:clamp(110px, 25.6cqw, 243.2px);height:16px;border-radius:10px;background:#e7d3a8;overflow:hidden;box-shadow:inset 0 2px 4px rgba(120,80,30,.35);}
   .energy-fill{height:100%;width:0%;border-radius:10px;background:linear-gradient(90deg,var(--mint),var(--yellow),var(--gold));transition:width .9s var(--ease);box-shadow:0 0 10px var(--gold-glow);}
   .energy-num{font-weight:800;color:var(--wood-deep);min-width:44px;text-align:right;font-variant-numeric:tabular-nums;}
   .energy-fill.max{animation:gaugePulse 1s ease-in-out infinite;}
   @keyframes gaugePulse{0%,100%{box-shadow:0 0 10px var(--gold-glow);}50%{box-shadow:0 0 26px 4px var(--gold);}}
 
   /* ---------------- Lesson menu ---------------- */
-  .menu-panel{position:absolute;top:0;left:0;bottom:0;width:min(78vw,320px);z-index:60;background:linear-gradient(180deg,#fff9ec,#ffe9c4);box-shadow:8px 0 30px rgba(60,38,15,.4);transform:translateX(-105%);transition:transform .38s cubic-bezier(.5,0,.2,1);padding:22px 18px;overflow-y:auto;}
+  .menu-panel{position:absolute;top:0;left:0;bottom:0;width:min(78cqw,320px);z-index:60;background:linear-gradient(180deg,#fff9ec,#ffe9c4);box-shadow:8px 0 30px rgba(60,38,15,.4);transform:translateX(-105%);transition:transform .38s cubic-bezier(.5,0,.2,1);padding:22px 18px;overflow-y:auto;}
   .menu-panel.open{transform:translateX(0);}
   .menu-panel h3{margin:8px 6px 14px;color:var(--wood-deep);}
   .menu-panel ul{list-style:none;margin:0;padding:0;}
@@ -98,7 +110,7 @@
   @keyframes shiver{0%,100%{transform:translate(0,0) rotate(-1.5deg);}25%{transform:translate(-2px,0) rotate(1deg);}75%{transform:translate(2px,0) rotate(-1deg);}}
 
   /* ---------------- Speech bubble (short character lines only) ---------------- */
-  .bubble{position:relative;max-width:min(560px,86vw);background:var(--panel);border:3px solid #fff;border-radius:22px;padding:14px 18px;box-shadow:var(--shadow);color:var(--ink);font-weight:600;line-height:1.5;font-size:clamp(.92rem, 2.944vw, 1.408rem);}
+  .bubble{position:relative;max-width:min(560px,86cqw);background:var(--panel);border:3px solid #fff;border-radius:22px;padding:14px 18px;box-shadow:var(--shadow);color:var(--ink);font-weight:600;line-height:1.5;font-size:clamp(.92rem, 2.944cqw, 1.408rem);}
   .bubble .who{display:block;font-weight:800;color:var(--wood-deep);margin-bottom:4px;font-size:.9em;}
   .bubble.tail-b::after{content:"";position:absolute;bottom:-16px;left:44px;border:11px solid transparent;border-top-color:var(--panel);}
   .bubble.tail-r::after{content:"";position:absolute;bottom:26px;right:-16px;border:11px solid transparent;border-left-color:var(--panel);}
@@ -110,36 +122,36 @@
     position:relative;
     background-image:url('assets/library_dialogue_plaque_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(340px, 79.36vw, 896px);aspect-ratio:1790/900;
+    width:clamp(340px, 79.36cqw, 896px);aspect-ratio:1790/900;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:19% 14% 15%;text-align:center;color:var(--ink);
   }
-  .plaque .who{display:block;font-weight:800;font-size:clamp(.72rem, 2.304vw, 1.152rem);margin-bottom:4px;letter-spacing:.5px;}
+  .plaque .who{display:block;font-weight:800;font-size:clamp(.72rem, 2.304cqw, 1.152rem);margin-bottom:4px;letter-spacing:.5px;}
   .plaque .who.teacher-who{color:#2f6f9a;}
   .plaque .who.kid-who{color:#c76a3a;}
-  .plaque .msg{font-weight:700;line-height:1.42;font-size:clamp(.82rem, 2.752vw, 1.382rem);max-width:100%;}
-  .plaque .notice{font-weight:900;color:#a3391f;font-size:clamp(1rem, 3.712vw, 1.92rem);margin-top:8px;letter-spacing:.4px;line-height:1.2;}
+  .plaque .msg{font-weight:700;line-height:1.42;font-size:clamp(.82rem, 2.752cqw, 1.382rem);max-width:100%;}
+  .plaque .notice{font-weight:900;color:#a3391f;font-size:clamp(1rem, 3.712cqw, 1.92rem);margin-top:8px;letter-spacing:.4px;line-height:1.2;}
   .plaque .notice b{color:#7a1f10;}
   /* two-line question prompt: emphasized time on top, calmer sub-question below (distinct color + size) */
-  .plaque .notice .q-time{display:block;color:#b5330f;font-weight:900;font-size:clamp(1.3rem, 4.8vw, 2.5rem);line-height:1.12;letter-spacing:.6px;}
-  .plaque .notice .q-sub{display:block;color:#5a7a6a;font-weight:800;font-size:clamp(.8rem, 2.4vw, 1.2rem);line-height:1.2;margin-top:4px;letter-spacing:0;}
-  .plaque.banner .msg{font-size:clamp(.86rem, 2.944vw, 1.434rem);}
-  .plaque.banner .title{font-weight:900;color:#b5791b;font-size:clamp(1.05rem, 3.84vw, 1.984rem);margin-bottom:6px;}
+  .plaque .notice .q-time{display:block;color:#b5330f;font-weight:900;font-size:clamp(1.3rem, 4.8cqw, 2.5rem);line-height:1.12;letter-spacing:.6px;}
+  .plaque .notice .q-sub{display:block;color:#5a7a6a;font-weight:800;font-size:clamp(.8rem, 2.4cqw, 1.2rem);line-height:1.2;margin-top:4px;letter-spacing:0;}
+  .plaque.banner .msg{font-size:clamp(.86rem, 2.944cqw, 1.434rem);}
+  .plaque.banner .title{font-weight:900;color:#b5791b;font-size:clamp(1.05rem, 3.84cqw, 1.984rem);margin-bottom:6px;}
 
   /* ---------------- Asset surface: ticket / invitation CTA button ---------------- */
   .ticket-btn{
     position:relative;border:none;cursor:pointer;background:transparent;font-family:inherit;
     background-image:url('assets/golden_repair_ticket_button_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(230px, 51.2vw, 435.2px);aspect-ratio:1790/900;
+    width:clamp(230px, 51.2cqw, 435.2px);aspect-ratio:1790/900;
     display:flex;align-items:center;justify-content:center;text-align:center;
     padding:14% 15%;
-    font-weight:900;color:#7a5320;font-size:clamp(1rem, 2.944vw, 1.613rem);line-height:1.22;
+    font-weight:900;color:#7a5320;font-size:clamp(1rem, 2.944cqw, 1.613rem);line-height:1.22;
     transition:transform .14s var(--ease),filter .14s var(--ease);
     filter:drop-shadow(0 6px 12px rgba(120,80,30,.22));
   }
-  .ticket-btn.wide{width:clamp(320px, 74.24vw, 716.8px);padding:11% 15%;font-size:clamp(.9rem, 2.816vw, 1.485rem);}
-  .ticket-btn.save{width:clamp(300px, 58.88vw, 501.76px);padding:12% 12%;}
+  .ticket-btn.wide{width:clamp(320px, 74.24cqw, 716.8px);padding:11% 15%;font-size:clamp(.9rem, 2.816cqw, 1.485rem);}
+  .ticket-btn.save{width:clamp(300px, 58.88cqw, 501.76px);padding:12% 12%;}
   .ticket-btn.invite{background-image:url('assets/next_lesson_invitation_ticket_blank.png');}
   .ticket-btn:hover{transform:translateY(-4px) scale(1.03);filter:drop-shadow(0 12px 18px rgba(120,80,30,.32)) brightness(1.04);}
   .ticket-btn:active{transform:translateY(2px) scale(.99);filter:drop-shadow(0 4px 8px rgba(120,80,30,.28));}
@@ -155,8 +167,8 @@
      larger text + an ALWAYS-ON golden glow (previously the glow only showed on
      hover). The glow is a z-index:-1 halo layer so it never fights the button's
      entrance opacity / blink / pulse / dlg-cta reveal animations. ---- */
-  #btnStart{font-size:clamp(1.2rem, 3.5vw, 2.05rem);}
-  #btnToTutorial{font-size:clamp(1.05rem, 3.1vw, 1.74rem);}
+  #btnStart{font-size:clamp(1.2rem, 3.5cqw, 2.05rem);}
+  #btnToTutorial{font-size:clamp(1.05rem, 3.1cqw, 1.74rem);}
   /* soft gold glow that HUGS the ticket silhouette (drop-shadow follows the PNG
      alpha, so it reads as a natural halo, not a detached blob). base glow for
      hover / before-reveal; the gentle float below animates it. */
@@ -187,7 +199,7 @@
     bottom:calc(var(--char-h) - 3rem);
     background-image:url('assets/speech_bubble_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(260px, 23.4vw, 325px);aspect-ratio:479/421;
+    width:clamp(260px, 23.4cqw, 325px);aspect-ratio:479/421;
     display:flex;align-items:center;justify-content:center;
     text-align:center;color:var(--ink);
     filter:drop-shadow(0 12px 20px rgba(90,55,20,.30));
@@ -201,8 +213,8 @@
   .speech.kid-say{right:19%;background-image:url('assets/speech_bubble_blank_r.png');
     bottom:calc(var(--kid-h) - 3rem);}
   .speech .say-in{padding:4% 13% 22%;max-width:100%;}
-  .speech .who{display:block;font-weight:900;font-size:clamp(.88rem, 2.47vw, 1.3rem);margin-bottom:5px;letter-spacing:.3px;}
-  .speech .msg{font-weight:800;line-height:1.36;font-size:clamp(1.04rem, 2.67vw, 1.56rem);word-break:keep-all;}
+  .speech .who{display:block;font-weight:900;font-size:clamp(.88rem, 2.47cqw, 1.3rem);margin-bottom:5px;letter-spacing:.3px;}
+  .speech .msg{font-weight:800;line-height:1.36;font-size:clamp(1.04rem, 2.67cqw, 1.56rem);word-break:keep-all;}
   .speech.teacher-say .who{color:#2f6f9a;}
   .speech.kid-say .who{color:#c76a3a;}
   .speech.on{pointer-events:auto;animation:sayPop .42s cubic-bezier(.2,1.4,.4,1) both;}
@@ -213,7 +225,7 @@
   /* the helper librarian pops in mid-sequence */
   #s-problem .dlg-actor{opacity:0;}
   /* tiny "tap to continue" affordance */
-  .tap-hint{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);z-index:18;color:#fff;font-weight:800;font-size:clamp(.8rem,2.3vw,1.1rem);text-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.85;animation:tapPulse 1.4s ease-in-out infinite;pointer-events:none;}
+  .tap-hint{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);z-index:18;color:#fff;font-weight:800;font-size:clamp(.8rem,2.3cqw,1.1rem);text-shadow:0 2px 6px rgba(0,0,0,.5);opacity:.85;animation:tapPulse 1.4s ease-in-out infinite;pointer-events:none;}
   @keyframes tapPulse{0%,100%{opacity:.35;}50%{opacity:.9;}}
   /* QA still: snap to the final beat (kid celebrating + CTA visible, bubbles cleared) */
   .scene.qa-still .speech{opacity:0!important;animation:none!important;}
@@ -226,10 +238,10 @@
     position:relative;border:none;cursor:pointer;background:transparent;font-family:inherit;
     background-image:url('assets/ticket_time_choice_blank.png');
     background-size:100% 100%;background-repeat:no-repeat;
-    width:clamp(120px, 23.04vw, 215.04px);aspect-ratio:1417/1140;
+    width:clamp(120px, 23.04cqw, 215.04px);aspect-ratio:1417/1140;
     display:flex;align-items:center;justify-content:center;text-align:center;
     padding:20% 20% 22%;
-    font-weight:900;color:#7a5320;font-size:clamp(1rem, 3.584vw, 1.818rem);
+    font-weight:900;color:#7a5320;font-size:clamp(1rem, 3.584cqw, 1.818rem);
     transition:transform .16s var(--ease),filter .2s var(--ease);
     filter:drop-shadow(0 6px 12px rgba(120,80,30,.2));
   }
@@ -241,7 +253,7 @@
   @keyframes stampPop{from{transform:scale(0) rotate(-30deg);opacity:0;}to{transform:scale(1) rotate(-12deg);opacity:1;}}
 
   /* ---------------- Buttons (utility: keypad ok / small submit) ---------------- */
-  .btn{border:none;cursor:pointer;font-weight:800;font-family:inherit;background:linear-gradient(180deg,var(--yellow),var(--yellow-deep));color:#5a3800;border-radius:16px;padding:clamp(12px, 2.56vw, 21.76px) clamp(20px, 5.12vw, 48.64px);font-size:clamp(1rem, 3.328vw, 1.6rem);box-shadow:0 6px 0 #d18f16,0 12px 20px rgba(120,80,30,.3);transition:transform .12s,box-shadow .12s,filter .12s;}
+  .btn{border:none;cursor:pointer;font-weight:800;font-family:inherit;background:linear-gradient(180deg,var(--yellow),var(--yellow-deep));color:#5a3800;border-radius:16px;padding:clamp(12px, 2.56cqw, 21.76px) clamp(20px, 5.12cqw, 48.64px);font-size:clamp(1rem, 3.328cqw, 1.6rem);box-shadow:0 6px 0 #d18f16,0 12px 20px rgba(120,80,30,.3);transition:transform .12s,box-shadow .12s,filter .12s;}
   .btn:hover{transform:translateY(-2px);filter:brightness(1.04);}
   .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #d18f16,0 6px 12px rgba(120,80,30,.3);}
   .btn.ghost{background:linear-gradient(180deg,#fff,#ffe9c4);color:var(--wood-deep);box-shadow:0 5px 0 #e0c489,0 10px 16px rgba(120,80,30,.25);}
@@ -252,19 +264,19 @@
   .pin-btn:active{transform:translateY(1px);}
 
   /* ---------------- Generic centered content ---------------- */
-  .center-col{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;width:min(900px,94vw);display:flex;flex-direction:column;align-items:center;gap:clamp(10px, 2.816vh, 25.6px);text-align:center;}
+  .center-col{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;width:min(900px,94cqw);display:flex;flex-direction:column;align-items:center;gap:clamp(10px, 2.816cqh, 25.6px);text-align:center;}
   .title-wrap{z-index:10;}
   .game-title{margin:0;font-weight:900;line-height:1.12;color:#fff;text-shadow:0 4px 0 var(--wood-deep),0 8px 18px rgba(0,0,0,.4);max-width:560px;}
-  .game-title .l1{display:block;font-size:clamp(2rem, 8.96vw, 5.376rem);color:var(--yellow);}
-  .game-title .l2{display:block;font-size:clamp(1.1rem, 4.864vw, 2.56rem);color:#fff;margin-top:6px;}
+  .game-title .l1{display:block;font-size:clamp(2rem, 8.96cqw, 5.376rem);color:var(--yellow);}
+  .game-title .l2{display:block;font-size:clamp(1.1rem, 4.864cqw, 2.56rem);color:#fff;margin-top:6px;}
   /* title bound to a physical library plaque surface */
-  .title-plaque{width:clamp(360px, 81.92vw, 921.6px);padding:15% 12% 13%;}
+  .title-plaque{width:clamp(360px, 81.92cqw, 921.6px);padding:15% 12% 13%;}
   .title-plaque .game-title{text-shadow:none;max-width:100%;margin:0;}
-  .title-plaque .game-title .l1{color:#c0561f;font-size:clamp(1.7rem, 6.912vw, 4.096rem);}
-  .title-plaque .game-title .l2{color:#5a3b1b;font-size:clamp(1rem, 3.84vw, 1.984rem);}
+  .title-plaque .game-title .l1{color:#c0561f;font-size:clamp(1.7rem, 6.912cqw, 4.096rem);}
+  .title-plaque .game-title .l2{color:#5a3b1b;font-size:clamp(1rem, 3.84cqw, 1.984rem);}
   /* intro title rendered as a single image asset */
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-  .intro-title-img{display:block;width:clamp(340px, 84.48vw, 972.8px);max-width:94vw;height:auto;filter:drop-shadow(0 16px 22px rgba(0,0,0,.5));margin-bottom:clamp(6px, 2.048vh, 20.48px);}
+  .intro-title-img{display:block;width:clamp(340px, 84.48cqw, 972.8px);max-width:94cqw;height:auto;filter:drop-shadow(0 16px 22px rgba(0,0,0,.5));margin-bottom:clamp(6px, 2.048cqh, 20.48px);}
   /* darken + soften the title background so the title art and start button pop */
   #s-title::after{
     background:
@@ -290,7 +302,7 @@
   .clock.glow{filter:drop-shadow(0 0 16px var(--gold));}
 
   /* choice clocks (physical clock tokens on the rug) */
-  .choice-row{display:flex;gap:clamp(10px, 3.072vw, 33.28px);justify-content:center;flex-wrap:wrap;}
+  .choice-row{display:flex;gap:clamp(10px, 3.072cqw, 33.28px);justify-content:center;flex-wrap:wrap;}
   .choice{position:relative;background:transparent;border:4px solid transparent;border-radius:22px;padding:6px;cursor:pointer;transition:transform .16s var(--ease),filter .2s;filter:drop-shadow(0 8px 12px rgba(120,80,30,.28));}
   .choice::before{content:"";position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:74%;height:14px;border-radius:50%;background:rgba(90,55,20,.22);filter:blur(4px);z-index:-1;}
   .choice:hover{transform:translateY(-7px) scale(1.02);}
@@ -305,38 +317,38 @@
 
   /* text-answer cards (Type A problems where the clock is the question and choices are strings) —
      wide ticket cards (ticket_time_choice_blank) with the answer centered, like the tutorial cards */
-  .choice.choice-text{background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;border:none;padding:2% 7%;width:clamp(210px, 29vw, 300px);aspect-ratio:2.9/1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-weight:900;color:#7a5320;font-size:clamp(1.05rem, 3vw, 1.7rem);filter:drop-shadow(0 5px 10px rgba(120,80,30,.26));}
+  .choice.choice-text{background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;border:none;padding:2% 7%;width:clamp(210px, 29cqw, 300px);aspect-ratio:2.9/1;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;font-weight:900;color:#7a5320;font-size:clamp(1.05rem, 3cqw, 1.7rem);filter:drop-shadow(0 5px 10px rgba(120,80,30,.26));}
   .choice.choice-text::before{display:none;}
   /* the question clock shown on the plaque (전광판) in text-answer problems */
   .prompt-clock{margin:0 auto 6px;}
 
   /* ---------------- Tutorial workbench (asset surface) ---------------- */
-  .workbench{position:relative;width:clamp(360px, 92.16vw, 972.8px);aspect-ratio:1900/840;margin:0 auto;}
+  .workbench{position:relative;width:clamp(360px, 92.16cqw, 972.8px);aspect-ratio:1900/840;margin:0 auto;}
   .workbench .wb-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}
   .wb-clock{position:absolute;left:7%;top:27%;width:28%;}
   .wb-slot{position:absolute;right:8%;top:31%;width:36%;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
-  .wb-slot .qhint{color:#2b5a4c;font-weight:800;font-size:clamp(.72rem, 2.432vw, 1.254rem);text-shadow:0 1px 0 rgba(255,255,255,.4);}
+  .wb-slot .qhint{color:#2b5a4c;font-weight:800;font-size:clamp(.72rem, 2.432cqw, 1.254rem);text-shadow:0 1px 0 rgba(255,255,255,.4);}
 
   /* ---------------- Drag cards / blocks ---------------- */
-  .card{position:relative;background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(88px, 19.2vw, 153.6px);aspect-ratio:1417/1140;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1rem, 3.84vw, 1.856rem);color:#7a5320;cursor:grab;touch-action:none;user-select:none;padding:20% 18% 22%;white-space:nowrap;filter:drop-shadow(0 5px 10px rgba(120,80,30,.24));transition:transform .14s var(--ease),filter .16s;}
+  .card{position:relative;background-image:url('assets/ticket_time_choice_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(88px, 19.2cqw, 153.6px);aspect-ratio:1417/1140;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1rem, 3.84cqw, 1.856rem);color:#7a5320;cursor:grab;touch-action:none;user-select:none;padding:20% 18% 22%;white-space:nowrap;filter:drop-shadow(0 5px 10px rgba(120,80,30,.24));transition:transform .14s var(--ease),filter .16s;}
   .card:hover{transform:translateY(-4px) scale(1.03);filter:drop-shadow(0 10px 15px rgba(120,80,30,.3));}
   .card.dragging{cursor:grabbing;z-index:999;filter:drop-shadow(0 14px 24px rgba(0,0,0,.32));}
   .card.locked{cursor:default;opacity:.4;}
-  .blank{min-width:82px;min-height:66px;border:3px solid var(--wood-deep);border-radius:12px;background:rgba(255,250,236,.92);box-shadow:inset 0 2px 6px rgba(120,80,30,.25);display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.1rem, 4.352vw, 2.048rem);color:var(--wood-deep);padding:6px 12px;transition:background .2s,border-color .2s,box-shadow .2s;vertical-align:middle;}
+  .blank{min-width:82px;min-height:66px;border:3px solid var(--wood-deep);border-radius:12px;background:rgba(255,250,236,.92);box-shadow:inset 0 2px 6px rgba(120,80,30,.25);display:inline-flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.1rem, 4.352cqw, 2.048rem);color:var(--wood-deep);padding:6px 12px;transition:background .2s,border-color .2s,box-shadow .2s;vertical-align:middle;}
   .blank.over{background:var(--gold-glow);border-color:var(--gold);box-shadow:0 0 14px var(--gold);}
   .blank.filled{border-color:var(--ok);background:#eafff1;box-shadow:inset 0 2px 6px rgba(63,174,107,.25);}
   .blank.bad{border-color:var(--bad);animation:shake .4s;}
 
-  .card-tray{display:flex;gap:clamp(8px, 2.304vw, 20.48px);flex-wrap:wrap;justify-content:center;}
-  .num-block{position:relative;width:clamp(46px, 11.52vw, 76.8px);aspect-ratio:1/1;background-image:url('assets/number_block_blank_physical_tile.png');background-size:100% 100%;background-repeat:no-repeat;color:#5a3b1b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.2rem, 3.84vw, 1.984rem);cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 4px 7px rgba(120,80,30,.28));transition:transform .12s var(--ease),filter .12s;}
+  .card-tray{display:flex;gap:clamp(8px, 2.304cqw, 20.48px);flex-wrap:wrap;justify-content:center;}
+  .num-block{position:relative;width:clamp(46px, 11.52cqw, 76.8px);aspect-ratio:1/1;background-image:url('assets/number_block_blank_physical_tile.png');background-size:100% 100%;background-repeat:no-repeat;color:#5a3b1b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(1.2rem, 3.84cqw, 1.984rem);cursor:grab;touch-action:none;user-select:none;filter:drop-shadow(0 4px 7px rgba(120,80,30,.28));transition:transform .12s var(--ease),filter .12s;}
   .num-block:hover{transform:translateY(-3px) scale(1.05);filter:drop-shadow(0 8px 12px rgba(120,80,30,.34)) brightness(1.03);}
   .num-block:active{transform:translateY(0) scale(.98);}
   .num-block.dragging{z-index:999;cursor:grabbing;filter:drop-shadow(0 12px 20px rgba(0,0,0,.3));}
   .num-block.used{opacity:.32;pointer-events:none;}
 
   /* ---------------- Keypad (유형 B) — 이미지 없이 CSS, 콘텐츠(따뜻한 도서관) 팔레트 클린 키패드 ---------------- */
-  .keypad{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateY(110%);z-index:70;
-    width:min(340px,93vw);box-sizing:border-box;
+  .keypad{position:absolute;left:50%;bottom:0;transform:translateX(-50%) translateY(110%);z-index:70;
+    width:min(340px,93cqw);box-sizing:border-box;
     background:linear-gradient(180deg,#fffaf0,#fff1d8);
     border:2px solid #f0d49a;border-bottom:none;border-radius:26px 26px 0 0;
     box-shadow:0 -10px 34px rgba(60,38,15,.34);
@@ -383,12 +395,12 @@
   /* spec: after 3 wrong tries the correct answer is revealed with a RED blink, then force-advance */
   .kb-blank.reveal{color:var(--bad);animation:kbRedBlink .5s ease-in-out 3;}
   @keyframes kbRedBlink{0%,100%{filter:drop-shadow(0 0 0 rgba(226,96,79,0));}50%{filter:drop-shadow(0 0 16px var(--bad)) brightness(1.05);}}
-  .eq-line{font-size:clamp(1.05rem, 4.352vw, 2.048rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
+  .eq-line{font-size:clamp(1.05rem, 4.352cqw, 2.048rem);font-weight:800;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;line-height:2;}
   /* 식(eq-line)에서 항 단위 강제 줄바꿈: flex-wrap 컨테이너에서 폭 100% 항목을 끼워 다음 줄로 넘김 */
   .eq-line .eq-br{flex-basis:100%;width:100%;height:0;margin:0;}
 
   /* ---------------- Feedback toast ---------------- */
-  .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) translateY(-14px);z-index:50;background:var(--panel);border:3px solid #fff;border-radius:16px;padding:12px 22px;font-weight:800;color:var(--wood-deep);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:clamp(1rem, 3.84vw, 1.664rem);}
+  .toast{position:absolute;left:50%;top:16%;transform:translateX(-50%) translateY(-14px);z-index:50;background:var(--panel);border:3px solid #fff;border-radius:16px;padding:12px 22px;font-weight:800;color:var(--wood-deep);box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;font-size:clamp(1rem, 3.84cqw, 1.664rem);}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.ok{color:#1f7a45;border-color:#bff0d1;}
   .toast.bad{color:#b23b2c;border-color:#ffd2ca;}
@@ -396,11 +408,11 @@
   /* ---------------- Center answer feedback (both correct & wrong): self-contained CSS card
        (no image surface — auto-sizes to text, always horizontal & centered) ---------------- */
   .hint-pop{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) scale(.92);z-index:52;
-    max-width:min(560px,86vw);
+    max-width:min(560px,86cqw);
     background:var(--panel);border:4px solid #fff;border-radius:22px;
     padding:16px 30px;box-shadow:var(--shadow);
     color:#7a5320;font-weight:900;text-align:center;line-height:1.35;word-break:keep-all;
-    font-size:clamp(1.05rem, 3.2vw, 1.6rem);
+    font-size:clamp(1.05rem, 3.2cqw, 1.6rem);
     opacity:0;pointer-events:none;transition:opacity .24s var(--ease),transform .24s var(--ease);}
   .hint-pop.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
   .hint-pop.ok{color:#1f7a45;border-color:#bdeecd;background:#f2fff7;}
@@ -410,11 +422,11 @@
   .stamp-fx{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:54;
     display:flex;flex-direction:column;align-items:center;gap:10px;
     pointer-events:none;opacity:0;transition:opacity .28s ease;}
-  .stamp-fx-img{width:clamp(180px, 40vw, 320px);height:auto;
+  .stamp-fx-img{width:clamp(180px, 40cqw, 320px);height:auto;
     transform:rotate(-7deg);filter:drop-shadow(0 14px 26px rgba(60,38,15,.5));}
-  .stamp-fx-note{max-width:min(460px,84vw);background:var(--panel);border:3px solid #fff;border-radius:16px;
+  .stamp-fx-note{max-width:min(460px,84cqw);background:var(--panel);border:3px solid #fff;border-radius:16px;
     padding:8px 18px;box-shadow:var(--shadow);font-weight:900;text-align:center;line-height:1.3;word-break:keep-all;
-    font-size:clamp(.95rem, 2.9vw, 1.4rem);color:#7a5320;}
+    font-size:clamp(.95rem, 2.9cqw, 1.4rem);color:#7a5320;}
   .stamp-fx.ok .stamp-fx-note{color:#1f7a45;border-color:#bdeecd;background:#f2fff7;}
   .stamp-fx.bad .stamp-fx-note{color:#b23b2c;border-color:#ffd2ca;background:#fff4f1;}
   .stamp-fx-note:empty{display:none;}
@@ -428,12 +440,12 @@
   }
 
   /* 퀴즈 꼬마 사서(오른쪽) 말풍선: 기본 kid-say(오른쪽·오른쪽꼬리 _r.png) 그대로 재사용, 위치만 조정 */
-  #s-quiz .speech{width:clamp(230px,28vw,330px);}
+  #s-quiz .speech{width:clamp(230px,28cqw,330px);}
   #s-quiz .speech.on{opacity:1;}
   #s-quiz .speech.kid-say{right:8%;}
 
   /* ---------------- Big wall clock overlay ---------------- */
-  .wall-clock{position:absolute;z-index:8;width:clamp(150px, 28.16vw, 345.6px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
+  .wall-clock{position:absolute;z-index:8;width:clamp(150px, 28.16cqw, 345.6px);aspect-ratio:1/1;left:41%;top:15%;transform:translateX(-50%);}
 
   /* ---------------- reward stamp on tutorial success ---------------- */
   .reward-stamp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);z-index:5;background:radial-gradient(circle at 40% 35%,#ffe89a,#f4b73c);color:#7a3d10;font-weight:900;border-radius:50%;width:96px;height:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:0 6px 16px rgba(160,100,20,.45),inset 0 0 0 4px rgba(255,255,255,.55);animation:stampSlam .55s cubic-bezier(.2,1.5,.4,1) both;font-size:1.05rem;text-align:center;}
@@ -441,26 +453,26 @@
 
   /* ---------------- Storybook ---------------- */
   /* stage aspect matches storybook_base.png (1536x1024) so contain fills exactly (no letterbox) */
-  .book-stage{position:relative;width:min(1120px,97vw);aspect-ratio:1536/1024;margin:0 auto;}
+  .book-stage{position:relative;width:min(1120px,97cqw);aspect-ratio:1536/1024;margin:0 auto;}
   .book-stage>img.book{width:100%;height:100%;object-fit:contain;}
   .book-page{position:absolute;left:11%;top:11%;width:78%;height:74%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:6px;animation:pageIn .45s ease both;}
   @keyframes pageIn{from{opacity:0;transform:rotateY(24deg);}to{opacity:1;transform:rotateY(0);}}
   .book-page img.ill{max-width:min(70%,380px);max-height:58%;border-radius:14px;box-shadow:0 6px 14px rgba(90,55,20,.3);object-fit:cover;}
-  .book-page .cap{font-weight:700;color:var(--ink);font-size:clamp(.9rem, 3.072vw, 1.434rem);line-height:1.5;max-width:92%;}
-  .book-page .pt{font-weight:900;color:#c76a3a;font-size:clamp(1rem, 3.84vw, 1.664rem);}
+  .book-page .cap{font-weight:700;color:var(--ink);font-size:clamp(.9rem, 3.072cqw, 1.434rem);line-height:1.5;max-width:92%;}
+  .book-page .pt{font-weight:900;color:#c76a3a;font-size:clamp(1rem, 3.84cqw, 1.664rem);}
   /* 페이지 넘김 화살표: 책의 금박·양피지 팔레트에 맞춘 원형 핸들(책 좌우 바깥 가장자리) */
-  .book-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:clamp(46px,4.8vw,62px);height:clamp(46px,4.8vw,62px);display:flex;align-items:center;justify-content:center;line-height:1;padding:0 0 2px;border:3px solid #d99a3e;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff9ec,#f1dfb6 78%);color:#a15c1f;font-size:clamp(1.25rem,2.3vw,1.8rem);font-weight:900;cursor:pointer;box-shadow:0 5px 12px rgba(90,55,20,.4),inset 0 1px 2px rgba(255,255,255,.8);transition:transform .15s var(--ease),filter .15s,box-shadow .15s;}
+  .book-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:6;width:clamp(46px,4.8cqw,62px);height:clamp(46px,4.8cqw,62px);display:flex;align-items:center;justify-content:center;line-height:1;padding:0 0 2px;border:3px solid #d99a3e;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fff9ec,#f1dfb6 78%);color:#a15c1f;font-size:clamp(1.25rem,2.3cqw,1.8rem);font-weight:900;cursor:pointer;box-shadow:0 5px 12px rgba(90,55,20,.4),inset 0 1px 2px rgba(255,255,255,.8);transition:transform .15s var(--ease),filter .15s,box-shadow .15s;}
   .book-arrow:hover:not(:disabled){transform:translateY(-50%) scale(1.1);filter:brightness(1.05);box-shadow:0 8px 18px rgba(90,55,20,.5),inset 0 1px 2px rgba(255,255,255,.8);}
   .book-arrow:active:not(:disabled){transform:translateY(-50%) scale(1.02);}
   .book-arrow.prev{left:-1.8%;} .book-arrow.next{right:-1.8%;}
   .book-arrow:disabled{opacity:.3;cursor:default;filter:grayscale(.35);}
   /* 이야기: 사서 선생님 대사는 캡션이 아니라 말풍선으로(왼쪽 선생님 옆) */
-  #s-story .speech{width:clamp(270px,30vw,380px);}
+  #s-story .speech{width:clamp(270px,30cqw,380px);}
   #s-story .speech.teacher-say{left:4%;}
   #s-story .speech.on{opacity:1;}
   #s-story .speech.kid-say{right:4%;bottom:calc(var(--kid-h) - 2.4rem);}
   /* 책을 다 넘기면 같은 화면에 뜨는 마무리 팝업 퀴즈(s-quiz와 동일한 플라크+티켓) */
-  .story-quiz-pop{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3.2vh,34px);}
+  .story-quiz-pop{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3.2cqh,34px);}
   .story-quiz-pop.hidden{display:none;}
   .story-quiz-pop .plaque{margin:0;}
   /* plaque+row를 center-col(정의 폭·높이 auto)로 감싸 aspect 신장 방지. #s-story .center-col(1160px)에 안 걸리게 폭을 #s-quiz와 동일하게 고정 */
@@ -469,34 +481,34 @@
     0%{opacity:0;transform:translate(-50%,-50%) translateX(140px) scale(.96);}
     100%{opacity:1;transform:translate(-50%,-50%) translateX(0) scale(1);}
   }
-  #s-story .story-quiz-pop .center-col{width:min(900px,94vw);animation:quizPopIn .52s cubic-bezier(.22,.9,.28,1) both;}
-  .story-quiz-pop .row{flex-wrap:nowrap;gap:clamp(8px,2vw,24px);}
+  #s-story .story-quiz-pop .center-col{width:min(900px,94cqw);animation:quizPopIn .52s cubic-bezier(.22,.9,.28,1) both;}
+  .story-quiz-pop .row{flex-wrap:nowrap;gap:clamp(8px,2cqw,24px);}
   /* 정답 후 뜨는 인증서 CTA는 답안 티켓(center-col z:10) 위로 올라오게 z-index를 높인다 */
   .story-quiz-pop .sqp-cert{position:absolute;bottom:4%;left:50%;transform:translateX(-50%);z-index:20;}
   .book-dots{display:flex;gap:8px;justify-content:center;margin-top:12px;}
   .book-dots i{width:11px;height:11px;border-radius:50%;background:#e0c489;}
   .book-dots i.on{background:var(--coral);}
-  .sign-24{position:absolute;left:50%;top:33%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 4.55vw, 2.7rem);text-shadow:0 1px 0 rgba(255,255,255,.55);}
+  .sign-24{position:absolute;left:50%;top:33%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 4.55cqw, 2.7rem);text-shadow:0 1px 0 rgba(255,255,255,.55);}
   /* (이야기: 좌우 화살표 방식으로 되돌림 — 책갈피 컷아웃/중앙 CTA 오버레이 제거) */
   /* 오른쪽에 그려진 둥근 타이머 면 중심(이미지 기준 측정)에 30분을 얹는다. .ill-wrap 내부라 사진 tilt를 함께 따라감 */
-  .timer-30{position:absolute;left:73%;top:66%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(.78rem, 2.95vw, 1.58rem);}
+  .timer-30{position:absolute;left:73%;top:66%;transform:translate(-50%,-50%);font-weight:900;color:#1a1a1a;font-size:clamp(.78rem, 2.95cqw, 1.58rem);}
 
   /* ---------------- Cork board (type B) ---------------- */
-  .board-stage{position:relative;width:min(880px,96vw);margin:0 auto;}
+  .board-stage{position:relative;width:min(880px,96cqw);margin:0 auto;}
   .board-stage>img.board-bg{width:100%;display:block;}
-  .board-note-title{font-weight:900;color:#6a3b16;font-size:clamp(.86rem, 2.944vw, 1.434rem);line-height:1.4;}
+  .board-note-title{font-weight:900;color:#6a3b16;font-size:clamp(.86rem, 2.944cqw, 1.434rem);line-height:1.4;}
   .board-note-title b{color:#a3391f;}
 
   /* ---------------- Monitor (type C) ---------------- */
   /* stage aspect matches the monitor PNG (1182x1330) so object-fit:contain fills the
      box exactly (no letterbox) — this lets .mon-screen be positioned as % of the art. */
-  .monitor-stage{position:relative;width:min(880px,95vw);aspect-ratio:1182/1330;margin:0 auto;}
+  .monitor-stage{position:relative;width:min(880px,95cqw);aspect-ratio:1182/1330;margin:0 auto;}
   .monitor-stage>img.mon{width:100%;height:100%;object-fit:contain;}
   /* seated on the full monitor's cream screen glass (measured: left25.2/top14.4/w49.1/h34, inset ~1.5%) */
   .mon-screen{position:absolute;left:26%;top:15.5%;width:47%;height:32.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:10px 12px;text-align:center;overflow:hidden;}
   .mon-screen.rebooted{animation:screenGlow 1.2s ease;}
   @keyframes screenGlow{0%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 18px #fff);}100%{filter:brightness(1);}}
-  .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048vw, 1.05rem);letter-spacing:.3px;}
+  .mon-status{font-weight:800;color:#2f6f5a;font-size:clamp(.6rem, 2.048cqw, 1.05rem);letter-spacing:.3px;}
   /* '재부팅 중' 뒤 점(. .. ...)이 반복될 때 개수 변화로 텍스트가 흔들리지 않도록 폭 고정 */
   .mon-status .dots{display:inline-block;width:1.3em;text-align:left;}
   .timeline{display:flex;flex-direction:column;gap:5px;font-size:.62rem;font-weight:800;color:#2c5a7a;max-width:100%;}
@@ -505,40 +517,47 @@
   .tl-tag.pm{background:#7a4a86;}
   .timeline .slot{background:#dff1ff;border-radius:5px;padding:2px 6px;border:1px solid #a9d6f2;min-width:16px;text-align:center;}
   .timeline .slot.pm{background:#e9defb;border-color:#c9b1ee;color:#5b3a86;}
-  .mon-q{font-weight:800;color:#123;font-size:clamp(.8rem, 2.688vw, 1.306rem);line-height:1.4;}
-  .reboot-msg{font-weight:900;color:#1f7a45;font-size:clamp(1rem, 3.84vw, 1.792rem);}
-  .tray-label{font-weight:800;color:#4a3016;font-size:clamp(.78rem, 2.56vw, 1.254rem);margin-bottom:2px;}
+  .mon-q{font-weight:800;color:#123;font-size:clamp(.8rem, 2.688cqw, 1.306rem);line-height:1.4;}
+  .reboot-msg{font-weight:900;color:#1f7a45;font-size:clamp(1rem, 3.84cqw, 1.792rem);}
+  .tray-label{font-weight:800;color:#4a3016;font-size:clamp(.78rem, 2.56cqw, 1.254rem);margin-bottom:2px;}
 
   /* ---------------- Certificate ---------------- */
-  .cert-stage{position:relative;width:min(760px,94vw);aspect-ratio:1.5/1;margin:0 auto;animation:certIn .8s cubic-bezier(.2,1.3,.4,1) both;}
+  /* 세로형 상장(certificate_award.png, 1055x1491): 높이 기준으로 크기를 잡아 화면에 맞춘다 */
+  .cert-stage{position:relative;height:min(72cqh,560px);aspect-ratio:1055/1491;margin:0 auto;animation:certIn .8s cubic-bezier(.2,1.3,.4,1) both;}
   @keyframes certIn{from{opacity:0;transform:scale(.7) rotate(-3deg);}to{opacity:1;transform:scale(1) rotate(-.6deg);}}
   .cert-stage>img.cert{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(90,55,20,.4));}
-  .cert-inner{position:absolute;inset:15% 13% 13%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;}
-  .cert-inner h2{margin:0;color:#a06a1f;font-size:clamp(1.1rem, 4.352vw, 2.432rem);}
-  .cert-inner p{margin:0;color:var(--ink);font-weight:600;font-size:clamp(.82rem, 2.944vw, 1.344rem);line-height:1.5;max-width:88%;}
-  .cert-record{display:flex;gap:18px;font-weight:800;color:var(--wood-deep);font-size:clamp(.85rem, 3.072vw, 1.344rem);margin-top:6px;}
-  .cert-caption{font-weight:700;color:var(--ink-soft);font-size:clamp(.78rem, 2.56vw, 1.254rem);line-height:1.4;max-width:min(680px,92vw);}
+  /* 상단 ~30%는 메달·리본 영역이므로 글자는 그 아래 크림 공간에만 앉힌다 */
+  .cert-inner{position:absolute;inset:34% 12% 8%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;}
+  .cert-inner h2{margin:0;color:#a06a1f;font-size:clamp(1rem, 3.2cqw, 1.8rem);}
+  .cert-inner p{margin:0;color:var(--ink);font-weight:600;font-size:clamp(.72rem, 2.2cqw, 1.15rem);line-height:1.45;max-width:92%;}
+  .cert-record{display:flex;gap:18px;font-weight:800;color:var(--wood-deep);font-size:clamp(.85rem, 3.072cqw, 1.344rem);margin-top:6px;}
+  .cert-name-row{display:flex;justify-content:center;margin-top:2px;}
+  .cert-name-row input{width:clamp(140px,38cqw,240px);padding:2px 8px 4px;border:none;border-bottom:2px dashed #d9a441;background:transparent;text-align:center;font-family:inherit;font-weight:900;color:#5a3b1b;font-size:clamp(.9rem, 3cqw, 1.55rem);}
+  .cert-name-row input::placeholder{color:#b79a6a;font-weight:700;font-size:.72em;}
+  .cert-name-row input:focus{outline:none;border-bottom-color:#b0561f;}
+  .cert-date{font-weight:700;color:var(--wood-deep);font-size:clamp(.72rem, 2.3cqw, 1.1rem);margin-top:2px;}
+  .cert-caption{font-weight:700;color:var(--ink-soft);font-size:clamp(.78rem, 2.56cqw, 1.254rem);line-height:1.4;max-width:min(680px,92cqw);}
   /* scene-scoped refinements (design refine iter 004) */
-  #s-cert .center-col{top:52%;gap:clamp(8px, 2.048vh, 17.92px);}
-  #s-cert .cert-stage{width:min(620px,88vw);}
-  #s-cert .cert-inner{inset:13% 13% 12%;gap:clamp(4px, 1.152vh, 10.24px);}
-  #s-cert .cert-inner h2{font-size:clamp(1.02rem, 3.84vw, 2.048rem);}
-  #s-cert .cert-inner p{font-size:clamp(.74rem, 2.432vw, 1.203rem);line-height:1.38;max-width:90%;}
-  #s-cert .cert-record{font-size:clamp(.78rem, 2.56vw, 1.229rem);margin-top:2px;}
+  #s-cert .center-col{top:52%;gap:clamp(8px, 2.048cqh, 17.92px);}
+  #s-cert .cert-stage{height:min(66cqh,520px);}
+  #s-cert .cert-inner{inset:34% 12% 8%;gap:clamp(3px, 1cqh, 9px);}
+  #s-cert .cert-inner h2{font-size:clamp(.95rem, 3cqw, 1.7rem);}
+  #s-cert .cert-inner p{font-size:clamp(.7rem, 2.1cqw, 1.1rem);line-height:1.36;max-width:92%;}
+  #s-cert .cert-record{font-size:clamp(.72rem, 2.2cqw, 1.1rem);margin-top:2px;}
   /* final celebration caption now sits ON the certificate paper, not the dark table */
-  #s-cert .cert-caption{margin:0;max-width:90%;color:#6a4a24;font-weight:700;font-size:clamp(.66rem, 2.112vw, 1.075rem);line-height:1.3;}
+  #s-cert .cert-caption{margin:0;max-width:90%;color:#6a4a24;font-weight:700;font-size:clamp(.66rem, 2.112cqw, 1.075rem);line-height:1.3;}
   #s-cert .cert-caption b{color:#b0561f;}
-  #s-cert .row{gap:clamp(10px, 2.56vw, 28.16px);flex-wrap:nowrap;}
-  #s-cert #btnSaveCert.save{width:clamp(240px, 33.28vw, 412.16px);padding:12% 11%;}
+  #s-cert .row{gap:clamp(10px, 2.56cqw, 28.16px);flex-wrap:nowrap;}
+  #s-cert #btnSaveCert.save{width:clamp(240px, 33.28cqw, 412.16px);padding:12% 11%;}
   /* 다음차시 CTA는 한 줄로: nowrap + 좌(리본/책)·우(자) 장식 사이 크림 영역 가운데에 맞춘 비대칭 패딩 + 영역폭에 맞춘 폰트 */
-  #s-cert #btnNextLesson.wide{width:clamp(300px, 51.2vw, 601.6px);padding:11% 17% 11% 17%;font-size:clamp(.86rem, 2.36vw, 1.29rem);}
+  #s-cert #btnNextLesson.wide{width:clamp(300px, 51.2cqw, 601.6px);padding:11% 17% 11% 17%;font-size:clamp(.86rem, 2.36cqw, 1.29rem);}
   #s-cert #btnNextLesson span{white-space:nowrap;}
-  #quizChoices,#storyQuizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px, 2.816vw, 28.16px);}
-  #aPrompt{font-size:clamp(.86rem, 3.008vw, 1.587rem);line-height:1.18;max-width:100%;word-break:keep-all;}
+  #quizChoices,#storyQuizChoices{display:grid;grid-template-columns:repeat(3,minmax(0,168px));justify-content:center;align-items:start;gap:clamp(10px, 2.816cqw, 28.16px);}
+  #aPrompt{font-size:clamp(.86rem, 3.008cqw, 1.587rem);line-height:1.18;max-width:100%;word-break:keep-all;}
   /* intro teacher matches the shared character size used on other scenes */
   #s-problem .char.left{left:3%;}
   /* raise the broken wall clock into the upper safe zone so its face reads as the crisis cause */
-  #s-problem #bigClock{left:50%;top:3%;width:clamp(130px, 19vw, 240px);}
+  #s-problem #bigClock{left:50%;top:3%;width:clamp(130px, 19cqw, 240px);}
   /* 시계 고장 하이라이트: 경고 글로우(지속) + 최초 진입 시 흔들림. 회전 가속은 JS(__introClock)가 담당.
      shake 키프레임은 배치 transform(translate(-50%,-50%))을 유지한 채 흔든다(원 안에 앉은 위치 보존). */
   #bigClock.panic{animation:clockPanicGlow .5s ease-in-out infinite;}
@@ -566,7 +585,7 @@
   #s-tut .center-col{top:50%;}
   /* keep the 3 time tickets on one row so the enlarged workbench + tray fit the viewport */
   #s-tut .card-tray{flex-wrap:nowrap;}
-  .wb-slot .wb-drag-hint{color:#7a4a1e;font-weight:800;font-size:clamp(.62rem, 1.984vw, 1.024rem);line-height:1.24;margin-top:2px;}
+  .wb-slot .wb-drag-hint{color:#7a4a1e;font-weight:800;font-size:clamp(.62rem, 1.984cqw, 1.024rem);line-height:1.24;margin-top:2px;}
 
   /* ===== Tutorial scene redesign (feedback 2026-07-09) ===== */
   /* board is pushed lower (inline top:61%) + trimmed so the head-height speech
@@ -574,8 +593,8 @@
      #s-tut .center-col inline top. */
   /* center-col must be at least as wide as the enlarged board, else the board
      (wider than the default 900px column) aligns flex-start and drifts right */
-  #s-tut .center-col{width:min(1180px, 96vw);}
-  #s-tut .workbench{width:clamp(430px, 92vw, 1118px);}
+  #s-tut .center-col{width:min(1180px, 96cqw);}
+  #s-tut .workbench{width:clamp(430px, 92cqw, 1118px);}
   /* (1) clock centered on the teal mat, nudged right + up to clear the painted pencil */
   #s-tut .wb-clock{left:12%;top:47%;transform:translateY(-50%);width:27%;}
   /* the tutorial uses table_clock_body.png — a stand-mounted clock whose dial is
@@ -595,18 +614,18 @@
   /* slot pulled inward (right:11%) so the question clears the right speech bubble
      even with the enlarged board; seated inside the teal area */
   /* 질문을 한 줄로 유지하려고 슬롯 폭 확대(작업대 시계 오른쪽 공간 활용) */
-  #s-tut .wb-slot{right:11%;top:53%;transform:translateY(-50%);width:46%;gap:clamp(5px,1vh,10px);}
+  #s-tut .wb-slot{right:11%;top:53%;transform:translateY(-50%);width:46%;gap:clamp(5px,1cqh,10px);}
   /* (5) bigger, kid-friendly question. nowrap로 한 줄 고정 + 한 줄에 들어가는 최대 크기. position+top으로 질문만 살짝 위로(드롭 슬롯 유지) */
-  #s-tut .wb-slot .qhint{color:#245049;font-weight:900;font-size:clamp(1.05rem,3.2vw,1.7rem);line-height:1.22;text-shadow:0 1px 0 rgba(255,255,255,.55);white-space:nowrap;position:relative;top:-.55rem;}
+  #s-tut .wb-slot .qhint{color:#245049;font-weight:900;font-size:clamp(1.05rem,3.2cqw,1.7rem);line-height:1.22;text-shadow:0 1px 0 rgba(255,255,255,.55);white-space:nowrap;position:relative;top:-.55rem;}
   /* the in-slot "드래그!" hint is redundant with the prominent cue pill below the tray */
   #s-tut .wb-slot .wb-drag-hint{display:none;}
   /* cards keep the ticket's landscape proportion (flex stretch was making them tall)
      and are wider left-to-right; tray size == placed/dropped size */
-  #s-tut .card-tray{align-items:center;gap:clamp(10px,2.4vw,26px);}
+  #s-tut .card-tray{align-items:center;gap:clamp(10px,2.4cqw,26px);}
   /* flatter than the ticket art (1417/1140) so the cards are short & wide, not tall */
-  #s-tut .card{width:clamp(134px,23vw,196px);height:auto;aspect-ratio:1417/820;flex:0 0 auto;font-size:clamp(1.2rem,4.4vw,2.15rem);padding:9% 12% 10%;}
+  #s-tut .card{width:clamp(134px,23cqw,196px);height:auto;aspect-ratio:1417/820;flex:0 0 auto;font-size:clamp(1.2rem,4.4cqw,2.15rem);padding:9% 12% 10%;}
   /* (4) drop slot는 카드와 '동일 크기'로 맞춘다(전엔 슬롯이 더 커서 스냅 시 카드가 작아 보였음) */
-  #s-tut #tutBlank{width:clamp(134px,23vw,196px);aspect-ratio:1417/820;min-width:0;min-height:0;padding:0;border:3px dashed var(--wood-deep);border-radius:16px;background:rgba(255,250,236,.5);font-size:clamp(1.5rem,4.2vw,2.3rem);color:var(--wood-deep);}
+  #s-tut #tutBlank{width:clamp(134px,23cqw,196px);aspect-ratio:1417/820;min-width:0;min-height:0;padding:0;border:3px dashed var(--wood-deep);border-radius:16px;background:rgba(255,250,236,.5);font-size:clamp(1.5rem,4.2cqw,2.3rem);color:var(--wood-deep);}
   /* (3) empty slot pulses to invite a drop; strong highlight while a card is held */
   #s-tut #tutBlank:not(.filled){animation:slotPulse 1.4s ease-in-out infinite;}
   @keyframes slotPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,212,94,0);border-color:var(--wood-deep);}50%{box-shadow:0 0 20px 5px var(--gold);border-color:var(--gold);}}
@@ -630,7 +649,7 @@
      cue would stay invisible. */
   #s-tut .tut-drag-cue{display:inline-block;opacity:1;margin-top:8px;padding:8px 20px;border-radius:999px;
     background:linear-gradient(180deg,#6a4523,#3a2712);color:#ffe89a;font-weight:900;letter-spacing:.5px;
-    font-size:clamp(1rem,3vw,1.55rem);line-height:1.1;
+    font-size:clamp(1rem,3cqw,1.55rem);line-height:1.1;
     box-shadow:0 5px 12px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,212,94,.6), 0 0 18px rgba(255,206,59,.45);
     text-shadow:0 1px 2px rgba(0,0,0,.55);animation:cueBounce 1.3s ease-in-out infinite;}
   @keyframes cueBounce{0%,100%{transform:translateY(0);box-shadow:0 5px 12px rgba(0,0,0,.4), inset 0 0 0 2px rgba(255,212,94,.6), 0 0 14px rgba(255,206,59,.35);}50%{transform:translateY(-7px);box-shadow:0 9px 16px rgba(0,0,0,.42), inset 0 0 0 2px rgba(255,212,94,.85), 0 0 26px rgba(255,206,59,.6);}}
@@ -638,7 +657,7 @@
      teacher on the left, kid on the right — anchored to head height (base .speech
      bottom:calc(var(--char-h)-3rem)), pushed to the outer edge so they clear the board. */
   #s-tut .dlg-area{z-index:22;}
-  #s-tut .speech{width:clamp(200px,24vw,290px);}
+  #s-tut .speech{width:clamp(200px,24cqw,290px);}
   #s-tut .speech.teacher-say{left:5%;}
   #s-tut .speech.kid-say{right:7%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-tut .speech.on{opacity:1;}
@@ -646,30 +665,30 @@
   #s-tut .speech.teacher-say.bad-say .who{color:#b23b2c;}
 
   /* --- Type A: teacher's instruction bubble — bigger so the full line fits, nudged right of the far edge --- */
-  #s-a .speech{width:clamp(270px,30vw,380px);}
+  #s-a .speech{width:clamp(270px,30cqw,380px);}
   #s-a .speech.teacher-say{left:9%;}
   #s-a .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-a .speech.on{opacity:1;}
 
   /* --- Type B: teacher's instruction bubble — 유형 A와 동일 말풍선(speech_bubble) 재사용, 선생님은 왼쪽 --- */
-  #s-b .speech{width:clamp(270px,30vw,380px);}
+  #s-b .speech{width:clamp(270px,30cqw,380px);}
   #s-b .speech.teacher-say{left:9%;}
   #s-b .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-b .speech.on{opacity:1;}
 
   /* --- Type C: teacher's intro bubble — 유형 A·B와 동일 말풍선(speech_bubble) 재사용, 선생님은 왼쪽 --- */
-  #s-c .speech{width:clamp(270px,30vw,380px);}
+  #s-c .speech{width:clamp(270px,30cqw,380px);}
   #s-c .speech.teacher-say{left:9%;}
   #s-c .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-c .speech.on{opacity:1;}
 
   /* --- Repair outro: 선생님(왼쪽)·꼬마 사서(오른쪽) 순차 대사 — 기존 speech_bubble 재사용 --- */
-  #s-repair .speech{width:clamp(270px,30vw,380px);}
+  #s-repair .speech{width:clamp(270px,30cqw,380px);}
   #s-repair .speech.teacher-say{left:9%;}
   #s-repair .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-repair .speech.on{opacity:1;}
   /* --- Certificate outro: 선생님(왼쪽)·꼬마 사서(오른쪽) 순차 대사 — repair와 동일 배치 --- */
-  #s-cert .speech{width:clamp(270px,30vw,380px);}
+  #s-cert .speech{width:clamp(270px,30cqw,380px);}
   #s-cert .speech.teacher-say{left:9%;}
   #s-cert .speech.kid-say{right:8%;bottom:calc(var(--kid-h) - 2.4rem);}
   #s-cert .speech.on{opacity:1;}
@@ -701,7 +720,7 @@
   /* 복구 완료 타이틀: 화면 중앙, 완료 순간 pop-in */
   #repairDone{
     position:absolute; left:50%; top:50%; z-index:40;
-    width:clamp(520px, 78vw, 950px); height:auto;
+    width:clamp(520px, 78cqw, 950px); height:auto;
     transform:translate(-50%,-50%) scale(.6); opacity:0; pointer-events:none;
     filter:drop-shadow(0 14px 26px rgba(90,55,20,.32));
   }
@@ -716,45 +735,45 @@
   /* asymmetric top/bottom padding nudges the centered clock+prompt ~2% lower into the cream area */
   #s-a .plaque{aspect-ratio:1790/920;padding:9% 12% 5%;}
   /* text 모드: 넓은 전광판을 가로로 활용 — 시계 왼쪽 · 질문 오른쪽. 크림 영역(padding) 안에 유지 */
-  #s-a .notice.prompt-row{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(14px,2.8vw,36px);margin-top:0;width:100%;}
+  #s-a .notice.prompt-row{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(14px,2.8cqw,36px);margin-top:0;width:100%;}
   #s-a .notice.prompt-row .prompt-clock{margin:0;flex:0 0 auto;position:relative;top:6px;}
   /* 유형 A 질문: 문제별 고유 문장 + 대괄호 값 강조(.q-hi). text 모드=시계 오른쪽, clock 모드=전광판 중앙 */
-  #s-a .notice.prompt-row .a-question{margin:0;text-align:left;max-width:52%;word-break:keep-all;line-height:1.3;color:#1a1a1a;font-weight:800;font-size:clamp(1.02rem,2.9vw,1.62rem);}
-  #s-a .notice:not(.prompt-row) .a-question{text-align:center;max-width:min(400px,72vw);word-break:keep-all;line-height:1.38;color:#1a1a1a;font-weight:800;font-size:clamp(.95rem,2.5vw,1.4rem);}
+  #s-a .notice.prompt-row .a-question{margin:0;text-align:left;max-width:52%;word-break:keep-all;line-height:1.3;color:#1a1a1a;font-weight:800;font-size:clamp(1.02rem,2.9cqw,1.62rem);}
+  #s-a .notice:not(.prompt-row) .a-question{text-align:center;max-width:min(400px,72cqw);word-break:keep-all;line-height:1.38;color:#1a1a1a;font-weight:800;font-size:clamp(.95rem,2.5cqw,1.4rem);}
   #s-a .a-question .q-hi{color:#b5330f;font-weight:900;font-size:1.13em;white-space:nowrap;}
 
   /* --- Type C: shrink monitor so keyboard + number tray stay on-screen --- */
-  #s-c .center-col{top:51%;width:min(820px,94vw);}
+  #s-c .center-col{top:51%;width:min(820px,94cqw);}
   /* 전체 모니터 이미지(1182x1330, 책상·키보드 포함) */
-  #s-c .monitor-stage{width:min(915px,96vw);aspect-ratio:1182/1330;}
+  #s-c .monitor-stage{width:min(915px,96cqw);aspect-ratio:1182/1330;}
   /* 숫자 블록: 나무 매트(repair_workbench_mat) 카드 위에. 전체 모니터의 하단(책상/키보드) 영역에 얹음 */
   #s-c .c-tray-wrap{position:absolute;left:50%;top:73%;transform:translate(-50%,-50%);width:72%;aspect-ratio:1896/830;z-index:16;filter:drop-shadow(0 8px 18px rgba(60,38,15,.35));}
   #s-c .c-card-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;}
   /* 청록 매트 안쪽 상단-중앙(하단 소품 회피) */
-  #s-c .c-card-inner{position:absolute;left:14%;top:18%;width:72%;height:56%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1.2vh,12px);}
-  #s-c .c-tray-wrap .tray-label{margin:0;color:var(--wood-deep);font-weight:900;font-size:clamp(.72rem, 2.3vw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 rgba(255,246,226,.75);}
-  #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(5px, 1.1vw, 12px);max-width:100%;}
-  #s-c .num-block{width:clamp(38px, 5vw, 56px);}
+  #s-c .c-card-inner{position:absolute;left:14%;top:18%;width:72%;height:56%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1.2cqh,12px);}
+  #s-c .c-tray-wrap .tray-label{margin:0;color:var(--wood-deep);font-weight:900;font-size:clamp(.72rem, 2.3cqw, 1.15rem);line-height:1.2;text-align:center;word-break:keep-all;text-shadow:0 1px 0 rgba(255,246,226,.75);}
+  #s-c #cTray{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(5px, 1.1cqw, 12px);max-width:100%;}
+  #s-c .num-block{width:clamp(38px, 5cqw, 56px);}
 
   /* --- Story gallery: split the open book into an illustration page + a caption/number page --- */
   /* container must be at least as wide as the enlarged book, else book-stage's margin:0 auto
      collapses and align-items:center is ignored → book drifts left/off-center */
-  #s-story .center-col{width:min(1160px,98vw);}
+  #s-story .center-col{width:min(1160px,98cqw);}
   /* seated inside the cream page spread (measured left11.8/top8.3/w76.4/h65.3, inset to gold border) */
   #s-story .book-page{flex-direction:row;align-items:stretch;left:13%;top:11%;width:74%;height:60%;gap:2%;padding:0 3%;}
   #s-story .bp-left{flex:0 0 47%;display:flex;align-items:center;justify-content:center;}
   /* 삽화 사진을 책 지면의 살짝 눕혀진 면에 맞춰 눕힘(정면으로 '서 있는' 인상 제거). 사진+오버레이(24/30분)를 함께 감싼 .ill-wrap에 적용해 글자도 같이 눕음 */
   #s-story .bp-left .ill-wrap{position:relative;display:inline-flex;transform:perspective(900px) rotateX(8deg) rotate(3deg);transform-origin:center 68%;}
-  #s-story .book-page img.ill{max-width:100%;max-height:min(45vh,320px);width:auto;border-radius:14px;box-shadow:0 3px 7px rgba(90,55,20,.28);}
-  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px, 1.4vh, 12px);text-align:center;padding:0 3%;}
-  #s-story .book-page .pt{font-size:clamp(.96rem, 3.072vw, 1.562rem);color:#1a1a1a;}
-  #s-story .key-badge{font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 3.7vw, 2.24rem);line-height:1.08;}
+  #s-story .book-page img.ill{max-width:100%;max-height:min(45cqh,320px);width:auto;border-radius:14px;box-shadow:0 3px 7px rgba(90,55,20,.28);}
+  #s-story .bp-right{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px, 1.4cqh, 12px);text-align:center;padding:0 3%;}
+  #s-story .book-page .pt{font-size:clamp(.96rem, 3.072cqw, 1.562rem);color:#1a1a1a;}
+  #s-story .key-badge{font-weight:900;color:#1a1a1a;font-size:clamp(1.25rem, 3.7cqw, 2.24rem);line-height:1.08;}
   /* 오른쪽 지면이 단문 하나로 허전하지 않게: 핵심어(badge) 아래 '알아두기' 팩트 3개로 위계 부여. 말풍선 cap과 중복되지 않는 보충 정보만 담는다 */
-  #s-story .fact-head{font-weight:900;color:var(--ink-soft);font-size:clamp(.9rem, 2.6vw, 1.34rem);margin-top:clamp(2px,.6vh,8px);}
-  #s-story .fact-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(4px,1.1vh,9px);text-align:left;max-width:min(92%,360px);}
-  #s-story .fact-list li{position:relative;padding-left:1.2em;font-weight:700;color:#1a1a1a;font-size:clamp(.8rem, 2.24vw, 1.14rem);line-height:1.4;}
+  #s-story .fact-head{font-weight:900;color:var(--ink-soft);font-size:clamp(.9rem, 2.6cqw, 1.34rem);margin-top:clamp(2px,.6cqh,8px);}
+  #s-story .fact-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(4px,1.1cqh,9px);text-align:left;max-width:min(92%,360px);}
+  #s-story .fact-list li{position:relative;padding-left:1.2em;font-weight:700;color:#1a1a1a;font-size:clamp(.8rem, 2.24cqw, 1.14rem);line-height:1.4;}
   #s-story .fact-list li::before{content:'●';position:absolute;left:0;top:.05em;color:#1a1a1a;font-size:.62em;line-height:1.9;}
-  #s-story .book-page .cap{max-width:96%;font-size:clamp(.88rem, 2.56vw, 1.357rem);line-height:1.44;}
+  #s-story .book-page .cap{max-width:96%;font-size:clamp(.88rem, 2.56cqw, 1.357rem);line-height:1.44;}
 
   /* --- HUD: read as library loan-card / bookmark tab, not floating web pills --- */
   .hud .energy-wrap{border-radius:8px;padding:7px 12px;box-shadow:0 3px 8px rgba(90,55,20,.22),inset 0 2px 4px rgba(120,80,30,.14);border:1px solid rgba(180,130,70,.35);}
@@ -762,14 +781,14 @@
 
   /* ===== design refine iter 005 ===== */
   /* 보기(시계·티켓)가 커져도 3개가 한 줄에 들어가도록 컨테이너 확대 */
-  #s-a .center-col{width:min(1100px, 96vw);}
+  #s-a .center-col{width:min(1100px, 96cqw);}
   /* Type A: ground the three candidate clocks on a shared inspection band, not floating */
   #s-a #aChoices{position:relative;align-items:flex-end;}
   #s-a #aChoices::after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);width:90%;height:26px;background:radial-gradient(ellipse at center,rgba(90,55,20,.30),rgba(90,55,20,0) 72%);filter:blur(3px);z-index:-1;pointer-events:none;}
 
   /* Type B: 확인하기 버튼은 보드 밖(아래)으로 빼고 표준 노란 버튼(.btn)으로 표시 */
   /* 보드 문제 제목: 코르크 배경에서 잘 보이도록 크림색 라벨 칩 + 진한 글자 */
-  #s-b .b-qtitle{display:inline-block;max-width:100%;font-weight:900;color:#7a1f10;background:rgba(255,248,232,.94);padding:7px 16px;border-radius:12px;box-shadow:0 2px 7px rgba(90,55,20,.28);line-height:1.32;font-size:clamp(.9rem, 3vw, 1.5rem);word-break:keep-all;}
+  #s-b .b-qtitle{display:inline-block;max-width:100%;font-weight:900;color:#7a1f10;background:rgba(255,248,232,.94);padding:7px 16px;border-radius:12px;box-shadow:0 2px 7px rgba(90,55,20,.28);line-height:1.32;font-size:clamp(.9rem, 3cqw, 1.5rem);word-break:keep-all;}
   /* 정답 입력 ?칸: 선택 가능함을 알리는 상시 글로우 펄스(활성/입력완료 시 정지) */
   #s-b .kb-blank:not(.filled):not(.active){animation:kbInvite 1.4s ease-in-out infinite;}
   @keyframes kbInvite{
@@ -778,21 +797,21 @@
   }
 
   /* In-world feedback status tag replaces the floating web toast for learning feedback */
-  .status-tag{position:absolute;left:50%;bottom:10.5%;z-index:24;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(230px, 51.2vw, 486.4px);aspect-ratio:3/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5% 13% 7%;font-weight:900;color:#7a5320;font-size:clamp(.82rem, 2.56vw, 1.357rem);line-height:1.24;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.95);transition:opacity .28s ease-out,transform .28s ease-out;filter:drop-shadow(0 5px 11px rgba(90,55,20,.26));}
+  .status-tag{position:absolute;left:50%;bottom:10.5%;z-index:24;background-image:url('assets/library_feedback_status_tag_blank.png');background-size:100% 100%;background-repeat:no-repeat;width:clamp(230px, 51.2cqw, 486.4px);aspect-ratio:3/1;display:flex;align-items:center;justify-content:center;text-align:center;padding:5% 13% 7%;font-weight:900;color:#7a5320;font-size:clamp(.82rem, 2.56cqw, 1.357rem);line-height:1.24;pointer-events:none;opacity:0;transform:translate(-50%,8px) scale(.95);transition:opacity .28s ease-out,transform .28s ease-out;filter:drop-shadow(0 5px 11px rgba(90,55,20,.26));}
   .status-tag.show{opacity:1;transform:translate(-50%,0) scale(1);}
   .status-tag.ok{color:#1f7a45;}
   .status-tag.bad{color:#b23b2c;}
 
   /* Type C: enlarge the live question + drop equation, demote am/pm reference to a thin bar */
-  .timeline-bar{position:relative;width:min(100%,490px);height:clamp(60px,9.4vw,82px);flex:0 0 auto;font-weight:900;overflow:hidden;}
+  .timeline-bar{position:relative;width:min(100%,490px);height:clamp(60px,9.4cqw,82px);flex:0 0 auto;font-weight:900;overflow:hidden;}
   .timeline-bar img{width:100%;height:100%;display:block;object-fit:cover;border-radius:10px;}
-  .timeline-labels{position:absolute;left:4%;right:4%;bottom:8%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;color:#fff;font-size:clamp(.58rem,1.9vw,.94rem);text-shadow:0 1px 3px rgba(25,35,75,.85);}
+  .timeline-labels{position:absolute;left:4%;right:4%;bottom:8%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;color:#fff;font-size:clamp(.58rem,1.9cqw,.94rem);text-shadow:0 1px 3px rgba(25,35,75,.85);}
   .timeline-labels .tl-sep{color:#fff4ba;font-size:1.15em;}
   /* 문제 문구가 완성형 문장(2~3줄)으로 길어져도 유리 안에 넣기 위해 여백/폰트만 조인다(타임라인 막대는 잘리지 않게 원본 크기 유지) */
-  #s-c .mon-screen{gap:clamp(2px, .7vh, 7px);}
-  #s-c .mon-screen .mon-status{font-size:clamp(.6rem, 1.9vw, .92rem);}
-  #s-c .mon-screen .mon-q{font-size:clamp(.84rem, 2.7vw, 1.26rem);line-height:1.24;word-break:keep-all;}
-  #s-c .mon-screen .eq-line{font-size:clamp(.94rem, 3.2vw, 1.54rem);gap:6px;line-height:1.32;word-break:keep-all;}
+  #s-c .mon-screen{gap:clamp(2px, .7cqh, 7px);}
+  #s-c .mon-screen .mon-status{font-size:clamp(.6rem, 1.9cqw, .92rem);}
+  #s-c .mon-screen .mon-q{font-size:clamp(.84rem, 2.7cqw, 1.26rem);line-height:1.24;word-break:keep-all;}
+  #s-c .mon-screen .eq-line{font-size:clamp(.94rem, 3.2cqw, 1.54rem);gap:6px;line-height:1.32;word-break:keep-all;}
   #s-c .mon-screen .cblank{min-width:42px;min-height:38px;font-size:1.22rem;}
   .mon-status.ok-flash{color:#1f7a45;animation:statusFlash .3s ease-out;}
   @keyframes statusFlash{from{opacity:.2;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
@@ -803,7 +822,7 @@
   /* ---------------- Effects: particles / fireworks ---------------- */
   .fx{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden;}
   .particle{position:absolute;font-size:22px;animation:floatUp linear forwards;}
-  @keyframes floatUp{from{transform:translateY(0) rotate(0);opacity:1;}to{transform:translateY(-120vh) rotate(360deg);opacity:0;}}
+  @keyframes floatUp{from{transform:translateY(0) rotate(0);opacity:1;}to{transform:translateY(-120cqh) rotate(360deg);opacity:0;}}
   .spark{position:absolute;width:10px;height:10px;border-radius:50%;animation:burst .9s ease-out forwards;}
   @keyframes burst{from{transform:translate(0,0) scale(1);opacity:1;}to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0;}}
 
@@ -813,17 +832,13 @@
   .hidden{display:none!important;}
   .bottom-bar{position:absolute;left:50%;bottom:3.5%;transform:translateX(-50%);z-index:16;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
 
-  @media (max-width:640px){
-    :root{--char-h:clamp(120px, 49.92vh, 366.08px);--kid-h:clamp(96px, 39.936vh, 292.864px);}
-    .energy-bar{width:96px;}
-    .center-col{width:96vw;}
-  }
-  @media (max-height:520px){
-    :root{--char-h:44vh;--kid-h:35.2vh;}
-  }
+  /* (구) 뷰포트 기반 반응형 분기(max-width:640 / max-height:520)는 제거했다.
+     고정 캔버스(1920×1080)를 통짜로 스케일하는 지금 구조에선 뷰포트 경계마다 값이
+     불연속으로 튀어(캐릭터 크기·center-col 폭 급변) 오히려 문제가 된다. 세로 화면은
+     스테이지 90° 회전으로 처리하므로 별도 축소 분기가 필요 없다. */
 
   /* ---------------- Debug scene-jump bar (dev only; hidden unless body.debug) ---------------- */
-  .debug-bar{position:fixed;left:0;right:0;bottom:0;z-index:200;display:none;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;padding:5px 6px;background:rgba(30,18,8,.82);}
+  .debug-bar{position:absolute;left:0;right:0;bottom:0;z-index:200;display:none;flex-wrap:wrap;gap:4px;justify-content:center;align-items:center;padding:5px 6px;background:rgba(30,18,8,.82);}
   body.debug .debug-bar{display:flex;}
   .debug-bar .dbg-label{color:#ffce3b;font:800 11px/1 system-ui,sans-serif;opacity:.85;margin-right:2px;letter-spacing:.5px;}
   .debug-bar button{font:700 11px/1 system-ui,sans-serif;color:#5a3800;background:#ffce3b;border:none;border-radius:6px;padding:5px 8px;cursor:pointer;}
@@ -831,6 +846,7 @@
 </style>
 </head>
 <body>
+<div id="viewport">
 <div id="stage">
 
   <!-- ===== Lesson menu (shared) ===== -->
@@ -945,7 +961,7 @@
       <img class="char left cheer" src="assets/kid_librarian_success.png" alt="만세하며 기뻐하는 꼬마 사서" />
       <img class="char right bob" src="assets/teacher_happy_v2.png" alt="돋보기를 들고 환하게 웃으며 기뻐하는 사서 선생님" />
       <div class="center-col" style="top:48%;">
-        <div class="plaque banner enter d2" style="width:clamp(340px, 74.24vw, 819.2px);">
+        <div class="plaque banner enter d2" style="width:clamp(340px, 74.24cqw, 819.2px);">
           <span class="who teacher-who">첫 수리 완료</span>
           <div class="msg">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄 거라 믿어!</div>
         </div>
@@ -971,7 +987,7 @@
         </div>
       </div>
       <div class="center-col" style="top:47%;">
-        <div class="plaque enter d1" style="width:clamp(360px, 72vw, 840px);">
+        <div class="plaque enter d1" style="width:clamp(360px, 72cqw, 840px);">
           <div class="notice" id="aPrompt">문제</div>
         </div>
         <div class="progress-dots enter d2" id="aDots"></div>
@@ -996,7 +1012,7 @@
           <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
         </div>
       </div>
-      <div class="center-col" style="top:50%;width:min(920px,96vw);">
+      <div class="center-col" style="top:50%;width:min(920px,96cqw);">
         <div class="board-stage enter d1">
           <img class="board-bg" src="assets/cork_schedule_board.png" alt="도서관 벽에 걸린 따뜻한 코르크 시간표 게시판" />
           <div id="bContent" style="position:absolute;left:23%;top:14%;width:54%;height:72%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:12px;text-align:center;"></div>
@@ -1022,7 +1038,7 @@
           <div class="say-in"><span class="who">꼬마 사서</span><span class="msg"></span></div>
         </div>
       </div>
-      <div class="center-col" style="top:48%;width:min(820px,94vw);">
+      <div class="center-col" style="top:48%;width:min(820px,94cqw);">
         <div class="monitor-stage enter d1">
           <img class="mon" src="assets/library_monitor_body.png" alt="도서관 안내 데스크 위의 빈 화면 컴퓨터 모니터" />
           <div class="mon-screen" id="cScreen"></div>
@@ -1105,7 +1121,7 @@
       <!-- 책을 다 넘기면 같은 화면 위에 뜨는 마무리 팝업 퀴즈(s-quiz와 동일한 플라크+티켓 구성) -->
       <div class="story-quiz-pop hidden" id="storyQuizPop">
         <div class="center-col">
-          <div class="plaque" style="width:clamp(340px, 74.24vw, 844.8px);">
+          <div class="plaque" style="width:clamp(340px, 74.24cqw, 844.8px);">
             <span class="who kid-who">마무리 퀴즈</span>
             <div class="msg">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
           </div>
@@ -1133,7 +1149,7 @@
         </div>
       </div>
       <div class="center-col" style="top:46%;">
-        <div class="plaque enter d1" style="width:clamp(340px, 74.24vw, 844.8px);">
+        <div class="plaque enter d1" style="width:clamp(340px, 74.24cqw, 844.8px);">
           <span class="who kid-who">마무리 퀴즈</span>
           <div class="msg">그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?</div>
         </div>
@@ -1172,14 +1188,18 @@
 
       <div class="center-col" style="top:52%;">
         <div class="cert-stage enter d1">
-          <img class="cert" src="assets/certificate_paper.png" alt="책과 시계 장식이 둘러진 축하 인증서 종이" />
+          <img class="cert" src="assets/certificate_award.png" alt="별 메달과 리본, 꽃 장식이 둘러진 세로형 축하 상장" />
           <div class="cert-inner">
             <h2>마을 수리대원 인증서 (도서관 편)</h2>
+            <div class="cert-name-row">
+              <input id="certName" type="text" maxlength="8" placeholder="이름을 적어요" autocomplete="off" aria-label="이름" />
+            </div>
             <p>위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.</p>
             <div class="cert-record">
               <span>맞힌 문제 <b id="certScore">13/13</b></span>
               <span>클리어 시간 <b id="certTime">00:00</b></span>
             </div>
+            <div class="cert-date" id="certDate"></div>
           </div>
         </div>
         <div class="row enter d2">
@@ -1222,7 +1242,32 @@
   <!-- dev-only scene jumper (hidden; enable with `#debug`, `?debug`, or the ` key) -->
   <div class="debug-bar" id="debugBar"></div>
 
-</div>
+</div><!-- /#stage -->
+</div><!-- /#viewport -->
+
+<script>
+/* 고정 캔버스 스케일러: 창 크기에 맞춰 1920×1080 스테이지를 통짜로 확대/축소(비율 유지, 레터박스).
+   화면이 세로(모바일)면 스테이지를 90° 돌려 자동으로 가로로 채운다. */
+(function(){
+  var DESIGN_W=1920, DESIGN_H=1080, root=document.documentElement;
+  function resizeStage(){
+    var portrait = window.innerHeight > window.innerWidth;
+    var s, rot;
+    if(portrait){   // 90° 회전 후: 캔버스 폭(1920)은 세로로, 높이(1080)는 가로로 놓인다
+      s = Math.min(window.innerWidth/DESIGN_H, window.innerHeight/DESIGN_W);
+      rot = '90deg';
+    } else {
+      s = Math.min(window.innerWidth/DESIGN_W, window.innerHeight/DESIGN_H);
+      rot = '0deg';
+    }
+    root.style.setProperty('--stage-rot', rot);
+    root.style.setProperty('--stage-scale', s.toFixed(4));
+  }
+  window.addEventListener('resize', resizeStage);
+  window.addEventListener('orientationchange', resizeStage);
+  resizeStage();
+})();
+</script>
 
 <script>
 (function(){
@@ -1284,15 +1329,15 @@
      화면 시작은 [시작하기] 버튼 클릭 이후라 브라우저 자동재생 정책에 걸리지 않는다. */
   var Bgm=(function(){
     var BGM2='assets/audio/BGM-2.mp3';
-    var MAP={ 's-problem':{src:'assets/audio/BGM-1.mp3', vol:.30, start:10},  // 앞 도입부가 거의 안 들려 10초부터 재생/반복
-              's-tut':    {src:BGM2, vol:.30},
-              's-tutok':  {src:BGM2, vol:.30},
-              's-a':      {src:BGM2, vol:.30},
-              's-b':      {src:BGM2, vol:.30},
-              's-c':      {src:BGM2, vol:.30},
-              's-story':  {src:'assets/audio/BGM-4.mp3', vol:.35, start:15},   // 활동3 Scene1(이야기) 따뜻·평화, 15초부터
-              's-quiz':   {src:'assets/audio/BGM-4.mp3', vol:.35, start:15},   // 활동3 Scene2(마무리 퀴즈)까지 이어서
-              's-cert':   {src:'assets/audio/BGM-4.mp3', vol:.35, start:15} };  // 활동3 Scene3(인증서)까지 이어서
+    var MAP={ 's-problem':{src:'assets/audio/BGM-1.mp3', vol:.17, start:10},  // 앞 도입부가 거의 안 들려 10초부터 재생/반복
+              's-tut':    {src:BGM2, vol:.10},
+              's-tutok':  {src:BGM2, vol:.10},
+              's-a':      {src:BGM2, vol:.10},
+              's-b':      {src:BGM2, vol:.10},
+              's-c':      {src:BGM2, vol:.10},
+              's-story':  {src:'assets/audio/BGM-4.mp3', vol:.22, start:15},   // 활동3 Scene1(이야기) 따뜻·평화, 15초부터
+              's-quiz':   {src:'assets/audio/BGM-4.mp3', vol:.22, start:15},   // 활동3 Scene2(마무리 퀴즈)까지 이어서
+              's-cert':   {src:'assets/audio/BGM-4.mp3', vol:.22, start:15} };  // 활동3 Scene3(인증서)까지 이어서
     /* src별 Audio를 한 번만 만들어 재사용(pool)한다. start 오프셋이 있는 곡은
        페이지 로드 때 미리 만들어 사전 로드·사전 seek 해두므로, 해당 화면 진입 즉시
        start 지점(예: 15초)부터 끊김 없이 바로 재생된다. */
@@ -1530,6 +1575,26 @@
     return d;
   }
 
+  /* ---------- 스테이지 좌표 변환 (스케일 + 세로모드 90° 회전 보정) ---------- */
+  function stageMetrics(){
+    var cs=getComputedStyle(document.documentElement);
+    var k=parseFloat(cs.getPropertyValue('--stage-scale'))||1;
+    var rot=(cs.getPropertyValue('--stage-rot')||'').indexOf('90')>-1?90:0;
+    return {k:k, rot:rot};
+  }
+  // 화면(스크린) 델타 → 스테이지 로컬 델타: /스케일 후, 90° 회전이면 축을 되돌린다
+  function screenVecToLocal(dx,dy){
+    var m=stageMetrics(); dx/=m.k; dy/=m.k;
+    return m.rot===90 ? {x:dy, y:-dx} : {x:dx, y:dy};
+  }
+  // 화면 좌표 → 스테이지 로컬 백분율(0~100). fx 오버레이가 이 로컬 좌표계를 쓴다
+  function screenPtToStagePct(px,py){
+    var st=document.getElementById('stage'); if(!st) return {x:50,y:50};
+    var sr=st.getBoundingClientRect();   // 중심은 회전과 무관하게 고정
+    var v=screenVecToLocal(px-(sr.left+sr.width/2), py-(sr.top+sr.height/2));
+    return {x:(v.x+960)/1920*100, y:(v.y+540)/1080*100};
+  }
+
   /* ---------- generic pointer drag ---------- */
   function enableDrag(el, blanks, onDrop){
     // Move the element with a transform delta rather than switching to
@@ -1552,7 +1617,9 @@
     });
     el.addEventListener('pointermove',function(e){
       if(!el.classList.contains('dragging'))return;
-      el.style.transform='translate('+(e.clientX-startX)+'px,'+(e.clientY-startY)+'px)';
+      // 포인터 델타를 스테이지 로컬 좌표로 변환(스케일 + 세로모드 90° 회전 보정) → 화면상 1:1 추종
+      var d=screenVecToLocal(e.clientX-startX, e.clientY-startY);
+      el.style.transform='translate('+d.x+'px,'+d.y+'px)';
       var hit=hitBlank(e.clientX,e.clientY,blanks);
       blanks.forEach(function(b){b.classList.toggle('over',b===hit);});
     });
@@ -1616,7 +1683,9 @@
   function sparkOnEl(el){
     var r=el.getBoundingClientRect();
     if(!r.width) return;
-    sparkAt((r.left+r.width/2)/window.innerWidth*100,(r.top+r.height/2)/window.innerHeight*100);
+    // 화면 좌표 → 스테이지 로컬 %(스케일·회전 보정). fx가 로컬 좌표계를 쓰므로 세로모드에서도 정확
+    var p=screenPtToStagePct(r.left+r.width/2, r.top+r.height/2);
+    sparkAt(p.x, p.y);
   }
 
   /* =====================================================
@@ -1760,7 +1829,7 @@
     var RING_CX=862, RING_CY=292, RING_R=155;  // ring centerline (measured from art)
     var CLOCK_FILL=0.859;                       // clock outer rim / clock png side
     function place(){
-      var W=window.innerWidth, H=window.innerHeight;
+      var W=1920, H=1080;                       // 고정 스테이지(캔버스) 크기 — 씬 배경이 채우는 영역
       var s=Math.max(W/IMG_W, H/IMG_H);         // cover scale
       var ox=(W-IMG_W*s)/2, oy=(H-IMG_H*s)/2;   // background-position:center offsets
       var cx=ox+RING_CX*s, cy=oy+RING_CY*s;
@@ -1831,7 +1900,7 @@
     var RING_CX=850, RING_CY=281, RING_R=146;  // ring centerline (measured from art)
     var CLOCK_FILL=0.859;                       // clock outer rim / clock png side (same asset)
     function place(){
-      var W=window.innerWidth, H=window.innerHeight;
+      var W=1920, H=1080;                       // 고정 스테이지(캔버스) 크기 — 씬 배경이 채우는 영역
       var s=Math.max(W/IMG_W, H/IMG_H);         // cover scale
       var ox=(W-IMG_W*s)/2, oy=(H-IMG_H*s)/2;   // background-position:center offsets
       var cx=ox+RING_CX*s, cy=oy+RING_CY*s;
@@ -2032,7 +2101,7 @@
       aPrompt.className='notice prompt-row';
       aPrompt.innerHTML='';
       // 시계 크기는 전광판(plaque) 폭에 비례 → 크림 영역 안에서 항상 안 벗어남
-      var plaqueW=Math.max(360, Math.min(840, window.innerWidth*0.72));
+      var plaqueW=Math.max(360, Math.min(840, 1920*0.72));   // 고정 캔버스(1920) 기준
       var pc=buildClock(q.clock[0],q.clock[1], Math.round(plaqueW*0.285));
       pc.classList.add('prompt-clock');
       aPrompt.appendChild(pc);
@@ -2049,7 +2118,7 @@
       aPrompt.className='notice';   // 세로 배치(질문 문장 + 보기 시계)로 복귀
       aPrompt.innerHTML='<div class="a-question">'+aQuestionHtml(q.q)+'</div>';
       // 보기 시계는 3개뿐이라 여유가 있어 크게(초등 대상 가독). 데스크톱 200 / 모바일 150
-      var size = window.innerWidth<640?150:200;
+      var size = 200;   // 고정 캔버스(1920)에선 데스크톱 크기 고정
       q.choices.forEach(function(ch){
         var wrap=document.createElement('div');
         wrap.className='choice';
@@ -2131,16 +2200,16 @@
     renderDots(bDots,B_DATA.length,bIdx);
     var clockHtml='<div class="row" style="gap:8px;margin:2px 0;">';
     q.clocks.forEach(function(c,i){
-      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:clamp(1rem,2.8vw,1.4rem);font-weight:800;color:#4a2b0e">'+c[2]+'</div></div>'; }
-      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:clamp(1rem,2.8vw,1.4rem);font-weight:800;color:#4a2b0e">끝?</div></div>'; }
+      if(c){ clockHtml+='<div style="text-align:center"><div class="miniclock" data-h="'+c[0]+'" data-m="'+c[1]+'"></div><div class="qhint" style="font-size:clamp(1rem,2.8cqw,1.4rem);font-weight:800;color:#4a2b0e">'+c[2]+'</div></div>'; }
+      else { clockHtml+='<div style="text-align:center"><div class="miniclock empty">?</div><div class="qhint" style="font-size:clamp(1rem,2.8cqw,1.4rem);font-weight:800;color:#4a2b0e">끝?</div></div>'; }
       if(i===0 && q.clocks.length>1){ clockHtml+='<div style="font-weight:900;color:#7c5a34;">'+q.arrow+'</div>'; }
     });
     clockHtml+='</div>';
     bContent.innerHTML=
       '<div class="b-qtitle">'+q.title+'</div>'+
       clockHtml+
-      '<div class="eq-line" style="font-size:clamp(1.05rem, 4vw, 1.95rem);margin-bottom:clamp(6px,1.6vh,18px)">'+q.line+'</div>';
-    var clockSize=window.innerWidth<640?130:175;
+      '<div class="eq-line" style="font-size:clamp(1.05rem, 4cqw, 1.95rem);margin-bottom:clamp(6px,1.6cqh,18px)">'+q.line+'</div>';
+    var clockSize=175;   // 고정 캔버스(1920)에선 데스크톱 크기 고정
     Array.prototype.forEach.call(bContent.querySelectorAll('.miniclock'),function(mc){
       if(mc.classList.contains('empty'))return;
       var c=buildClock(parseInt(mc.getAttribute('data-h'),10),parseInt(mc.getAttribute('data-m'),10),clockSize);
@@ -2490,6 +2559,8 @@
     var mm=Math.floor(sec/60), ss=sec%60;
     document.getElementById('certTime').textContent=(mm<10?'0'+mm:mm)+':'+(ss<10?'0'+ss:ss);
     document.getElementById('certScore').textContent='13/13';
+    var d=new Date();
+    document.getElementById('certDate').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
   }
 
   /* -----------------------------------------------------
@@ -2515,14 +2586,73 @@
     function schedule(){ if(idx>=beats.length-1){ running=false; return; } var n=idx+1; timer=setTimeout(function(){ runBeat(n); }, delays[n]); }
     function runBeat(n){ if(n<=idx || n>=beats.length) return; idx=n; beats[n](); schedule(); }
     function advance(){ if(!running || idx>=beats.length-1) return; clearTimeout(timer); runBeat(idx+1); }
-    scene.addEventListener('click',function(e){ if(e.target.closest('.ticket-btn')) return; advance(); });   // 저장/다음 버튼은 자기 클릭 처리
+    scene.addEventListener('click',function(e){ if(e.target.closest('.ticket-btn')||e.target.closest('.cert-name-row')) return; advance(); });   // 저장/다음 버튼·이름 입력란은 자기 클릭 처리
     window.__playCertOutro=function(){ clearTimeout(timer); idx=-1; running=true; hideAll(); if(hint) hint.style.display=''; schedule(); };
   })();
 
-  document.getElementById('btnSaveCert').addEventListener('click',function(){
-    toast('인증서를 사진첩에 저장했어요!','ok',1800);
-    fireworks();
-  });
+  document.getElementById('btnSaveCert').addEventListener('click', downloadCertificate);
+
+  /* ---- 인증서 캔버스 생성 후 PNG 저장 ----
+     화면은 HTML 오버레이로 그대로 두고, 저장 시엔 인쇄용 캔버스에 프레임(certificate_award.png, 세로형)+텍스트를
+     다시 그려 내려받는다. 제목/본문/기록은 DOM에서 읽어 생성물이 바뀌어도 자동으로 반영된다.
+     좌표는 화면 .cert-inner(상단 메달 아래 크림 영역) 배치와 맞춰 세로 비율로 잡는다. */
+  function downloadCertificate(){
+    var frame=document.querySelector('#s-cert .cert-stage img.cert');
+    if(!frame||!frame.complete||!frame.naturalWidth){ toast('인증서 이미지를 아직 준비 중이에요. 잠시 후 다시 눌러 주세요.','',2000); return; }
+    var box=document.querySelector('#s-cert .cert-inner');
+    var name=(document.getElementById('certName').value||'').trim()||'수리 대원';
+    var clean=function(s){ return (s||'').replace(/\s+/g,' ').trim(); };
+    var title=clean(box.querySelector('h2') && box.querySelector('h2').textContent);
+    var desc=clean(box.querySelector('p') && box.querySelector('p').textContent);
+    var record=Array.prototype.map.call(box.querySelectorAll('.cert-record span'),function(s){ return clean(s.textContent); }).join('   ·   ');
+    var dateStr=clean(document.getElementById('certDate') && document.getElementById('certDate').textContent);
+    if(!dateStr){ var dd=new Date(); dateStr=dd.getFullYear()+'년 '+(dd.getMonth()+1)+'월 '+dd.getDate()+'일'; }
+
+    var cv=document.createElement('canvas');
+    cv.width=frame.naturalWidth; cv.height=frame.naturalHeight;
+    var g=cv.getContext('2d'), W=cv.width, H=cv.height, cx=W/2;
+    var fam='"Pretendard","Noto Sans KR","Malgun Gothic",sans-serif';
+    g.drawImage(frame,0,0,W,H);
+    g.textAlign='center'; g.textBaseline='alphabetic';
+
+    g.fillStyle='#a06a1f';
+    var tSize=Math.round(W*.058), tMin=Math.round(W*.034);
+    g.font='900 '+tSize+'px '+fam;
+    while(tSize>tMin && g.measureText(title).width>W*.84){ tSize=Math.round(tSize*.94); g.font='900 '+tSize+'px '+fam; }
+    g.fillText(title, cx, H*.40);
+    g.fillStyle='#5a3b1b'; g.font='900 '+Math.round(W*.072)+'px '+fam;
+    g.fillText(name, cx, H*.52);
+    var bodySize=Math.round(W*.034); g.fillStyle='#4a3418'; g.font='700 '+bodySize+'px '+fam;
+    var lines=wrapCanvasText(g, desc, W*.72), lh=Math.round(bodySize*1.45), by=H*.61;
+    lines.forEach(function(ln,i){ g.fillText(ln, cx, by+i*lh); });
+    g.fillStyle='#7a5320'; g.font='800 '+Math.round(W*.034)+'px '+fam;
+    g.fillText(record, cx, H*.79);
+    g.font='700 '+Math.round(W*.028)+'px '+fam;
+    g.fillText(dateStr, cx, H*.865);
+
+    try{
+      var a=document.createElement('a');
+      a.download=((title.replace(/[\\/:*?"<>|()\s]/g,'')||'인증서')+'_'+name+'.png');
+      a.href=cv.toDataURL('image/png');
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      toast('인증서를 저장했어요!','ok',1800);
+      fireworks();
+    }catch(err){
+      /* file:// 로 직접 열면 캔버스 오염(taint)으로 toDataURL 이 막힐 수 있다 → 웹서버로 열면 정상 저장된다 */
+      toast('저장이 브라우저에 막혔어요. 콘텐츠를 웹서버로 열면 저장돼요.','',2600);
+    }
+  }
+
+  function wrapCanvasText(g, text, maxW){
+    var words=(text||'').split(' '), lines=[], cur='';
+    for(var i=0;i<words.length;i++){
+      var t=cur?cur+' '+words[i]:words[i];
+      if(cur && g.measureText(t).width>maxW){ lines.push(cur); cur=words[i]; }
+      else cur=t;
+    }
+    if(cur) lines.push(cur);
+    return lines;
+  }
   document.getElementById('btnNextLesson').addEventListener('click',function(){
     toast('9차시 · 딱 맞는 길이를 찾아라! 로 이동합니다 ▶','',2200);
   });
