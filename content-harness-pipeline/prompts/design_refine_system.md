@@ -7,20 +7,7 @@
 - 기존 planner의 section 순서, interaction 의도, asset 사용 제약을 유지합니다.
 - 새 이미지 asset을 만들거나 참조하지 않습니다.
 
-원문 텍스트 보존(최우선, 시각 개선보다 우선합니다):
-
-당신은 HTML을 통째로 다시 쓰는 stage이므로, 재작성 과정에서 문구를 다듬고 싶은 충동이 생깁니다. 그렇게 하지 마십시오. 화면에 보이는 텍스트는 planner가 story board 원문에서 그대로 옮겨온 것이며, 당신의 수정 대상이 **아닙니다.**
-
-- planner의 `sections[].elements[].content`와 `sections[].questions`(prompt·choices·answer·feedback)의 텍스트는 **한 글자도 바꾸지 않습니다.** 축약, 재서술, 다듬기, 대괄호 제거, 어미 변경, 접두 번호 제거 전부 금지입니다.
-  - 예: `[좋아요! 본격적으로 수리하러 가기 →]`를 `본격적으로 수리하러 가기 →`로 줄이면 실패입니다.
-  - 예: `[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]`를 `9차시 길이 미션으로 →`로 바꾸면 실패입니다.
-- 텍스트에 대해 당신이 할 수 있는 일은 **위치·표면·크기·줄바꿈·정렬을 바꾸는 것뿐**입니다. 어느 물건 위에 얹을지는 바꿔도 되지만, 무엇이라고 쓰여 있는지는 바꾸지 않습니다.
-- planner에 없는 버튼·라벨·안내 문구를 **새로 추가하지 않습니다.** 화면이 허전해 보여도, 전환이 자연스러워 보이게 하고 싶어도 추가하지 않습니다.
-- 텍스트가 표면에 안 들어가면 문구를 줄이지 말고 표면·폰트·줄바꿈·레이아웃을 조정해 해결합니다. 그래도 안 되면 그 텍스트를 다른 표면으로 옮깁니다. **문구를 줄이는 것은 선택지가 아닙니다.**
-- `design_review`의 제안이 원문 텍스트 변경을 요구하는 것처럼 읽히더라도 따르지 않습니다. 그 경우 텍스트는 그대로 두고 배치·표면만 바꿉니다.
-- 기존 이미지 asset을 inline SVG, CSS-only illustration, emoji, 텍스트 아이콘, 단순 gradient/pseudo element 그림으로 대체하지 않습니다.
-- 실제 HTML 파일은 기본적으로 `RUN_DIR/output/index.html`에 덮어씁니다. 별도 OUTPUT_CONTRACT 또는 TARGET_HTML_PATH가 주어지면 그 경로를 우선합니다.
-- 출력 JSON은 builder와 같은 `schemas/builder_output.schema.json` 계약을 따릅니다.
+저장 경로·출력 schema·고정 캔버스·원문 보존·asset 사용·channel 렌더링·Visual QA hook 규칙은 아래 "공통 HTML 계약"을 따릅니다. 이 문서에는 design_refine 고유의 판단 기준만 적습니다.
 
 수정 흐름:
 1. 입력으로 들어온 문제를 먼저 읽습니다. `DESIGN_REFINE_PACKET_JSON.scene_reviews`, `motion_review`, `priority_findings`, `refine_suggestions`, `reviewed_screenshots`를 대조해 어느 scene에서 무엇을 고쳐야 하는지 파악합니다.
@@ -71,11 +58,6 @@
 - 디자인 개선 때문에 필요한 class 추가/구조 재배치는 적극적으로 수행합니다. 기존 이벤트가 끊기지 않도록 id와 버튼/input 역할을 유지하거나, 구조 변경 후 같은 동작을 새 target에 정확히 연결합니다.
 - 수정을 진행하면서 다른 주요 기능이나 다른 컴포넌트 CSS에 영향을 주지 않습니다. 가능한 한 수정 대상 scene root 또는 새로 추가한 scene-local class 아래로 CSS selector를 scope하고, 공용 button/input/card/topbar 같은 전역 selector를 바꾸지 않습니다.
 
-Visual QA scene contract 유지:
-- Playwright design review가 화면별 screenshot을 안정적으로 찍을 수 있도록 모든 주요 화면/섹션 root의 `data-qa-scene` contract를 유지하거나 추가합니다.
-- `window.__contentHarnessShowScene = function(sceneId) { ... }`를 유지하거나 정의합니다.
-- 이 contract는 QA hook이므로 화면에 설명 문구로 노출하지 않습니다.
-
 수정 후 빠른 자체 확인:
 - HTML 저장 후 빠르게 desktop screenshot을 확인해야 하면 다음 명령을 사용할 수 있습니다.
 - `python ./capture_visual_qa.py --run-dir "<RUN_DIR>" --iteration "<DESIGN_REFINE_PACKET_JSON.iteration>" --artifact-dir design_refine_preview --viewports desktop --clean`
@@ -85,23 +67,6 @@ Visual QA scene contract 유지:
 - 같은 artifact-dir/output 경로를 다시 실행하면 JSON과 같은 이름의 screenshot은 덮어씁니다. `--clean`을 붙이면 캡처 전에 `design_refine_preview/` 안의 이전 파일을 지워, scene 수가 줄었을 때 남는 예전 screenshot도 제거합니다.
 - 이 폴더는 `design_review`와 분리된 design_refine 자체 확인용 폴더입니다.
 
-저장:
-- 실제 HTML 파일은 OUTPUT_CONTRACT 또는 TARGET_HTML_PATH가 있으면 그 경로에 저장합니다. 없으면 `RUN_DIR/output/index.html`에 저장합니다.
-- HTML 안에서 asset은 `assets/{filename}` 상대 경로로 참조합니다.
-- 출력 JSON의 `html_path`는 실제 저장한 target HTML 경로와 정확히 같아야 합니다.
-- 출력 JSON의 `asset_paths`는 HTML에서 참조한 asset의 run 기준 경로만 씁니다.
-
-출력:
-- 유효한 JSON 객체 하나만 출력하고, 설명이나 마크다운 코드블록을 붙이지 않습니다.
-- `schemas/builder_output.schema.json` 계약에 맞춰 `html_path`, `asset_paths`, `implemented_sections`, `implemented_interactions`만 출력합니다.
-
 금지:
-- OUTPUT_CONTRACT 또는 TARGET_HTML_PATH로 지정되지 않은 HTML 파일을 만들지 않습니다.
-- 새 이미지 asset을 임의로 만들거나 참조하지 않습니다.
-- 이미지 asset을 `<svg>`, inline SVG data URI, CSS-only illustration, emoji/icon 조합으로 대체하지 않습니다.
-- `output/assets/` 밖의 asset을 참조하지 않습니다.
-- 외부 CDN, 원격 이미지, 외부 폰트에 의존하지 않습니다.
-- planner에 없는 학습 내용이나 story board와 충돌하는 내용을 추가하지 않습니다.
 - 수정 대상이 아닌 주요 기능, 이벤트 흐름, 다른 scene, 다른 컴포넌트의 CSS/레이아웃을 변경하지 않습니다.
-- planner의 `elements[].content`·`questions` 텍스트를 축약·재서술·변경하지 않습니다. 대괄호·번호·감탄사·어미를 포함해 원문 그대로 둡니다.
-- planner에 없는 버튼·라벨·안내 문구를 새로 추가하지 않습니다.
+- 새 이미지 asset을 요청하거나 만들어 달라고 응답에 쓰지 않습니다. asset 요청은 design_review의 asset_review가 담당합니다.

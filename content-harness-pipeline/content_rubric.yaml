@@ -8,7 +8,7 @@
     "content_fidelity": {
       "weight": 0.28,
       "scoring": "deterministic_count",
-      "counting_rule": "누락·불일치 항목 1개 = 다음 중 하나로 센다. (a) planner sections[].questions[] 문항이 HTML에 없음, (b) 문항의 보기(choices[].label, 오답 포함) 하나가 없거나 원문과 다름, (c) 정답이 다르거나 HTML의 정답 처리가 planner choices[].correct 또는 answer와 불일치, (d) planner sections[].elements[] 중 사용자에게 노출되는 필수 content(대사, 버튼/전환 라벨, 타이틀, 완료·보상 텍스트)가 없거나 원문과 다름, (e) planner 대비 장면 또는 문항 순서가 뒤바뀜. 항목마다 1개씩 누적한다.",
+      "counting_rule": "누락·불일치 항목 1개 = 다음 중 하나로 센다. (a) planner sections[].questions[] 문항이 HTML에 없음, (b) 문항의 보기(choices[].label, 오답 포함) 하나가 없거나 원문과 다름, (c) 정답이 다르거나 HTML의 정답 처리가 planner choices[].correct 또는 answer와 불일치, (d) planner sections[].elements[].rendered_text 의 문자열 하나가 HTML에 원문 그대로 없음, (e) planner 대비 장면 또는 문항 순서가 뒤바뀜. 항목마다 1개씩 누적한다. elements[].content 는 원문 서술이며 체크 대상이 아니다 — 제작 지시와 '예:' 예시가 섞여 있어 화면에 없는 것이 정상이다. rendered_text 가 빈 배열인 element 는 세지 않는다. 대조는 grep -cF 로 하고 -F 를 반드시 붙인다(대괄호가 정규식 문자클래스로 해석되면 오판한다).",
       "scale": {
         "1": "누락·불일치 4개 이상.",
         "2": "누락·불일치 3개.",

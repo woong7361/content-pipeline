@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
+from stages.scripts.prompt_parts import with_common_html_contract
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -107,7 +108,7 @@ def build_prompt(
     run_dir: Path,
     target_html_path: str,
 ) -> str:
-    system_prompt = DESIGN_REFINE_SYSTEM_PROMPT.read_text(encoding="utf-8")
+    system_prompt = with_common_html_contract(DESIGN_REFINE_SYSTEM_PROMPT.read_text(encoding="utf-8"))
     return f"""{system_prompt}
 
 RUN_DIR:

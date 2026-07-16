@@ -12,7 +12,7 @@
 - 점수, PASS/REJECT, weighted_total을 출력하지 않습니다.
 
 축별 비평(5개):
-- content_fidelity: 저작된 문항·보기(오답 포함)·정답·대사·순서·완료/보상 흐름이 planner 원문 그대로 빠짐없이 구현됐는지. planner의 `sections[].questions[]`와 `sections[].elements[].content`를 체크리스트로 대조해 누락·불일치를 지적합니다.
+- content_fidelity: 저작된 문항·보기(오답 포함)·정답·대사·순서·완료/보상 흐름이 planner 원문 그대로 빠짐없이 구현됐는지. planner의 `sections[].questions[]`와 `sections[].elements[].rendered_text`(비어 있지 않은 항목만)를 체크리스트로 대조해 누락·불일치를 지적합니다. `elements[].content`는 원문 서술이며 체크리스트가 아닙니다 — 연출·조작 설명 같은 제작 지시와 `예:` 예시가 섞여 있어 화면에 없는 것이 정상이고, `rendered_text`가 빈 배열인 element는 누락으로 보지 않습니다. 대조는 `grep -cF "<문자열>" output/index.html`로 하고 **반드시 `-F`를 붙입니다**(대괄호가 정규식 문자클래스로 해석되면 오판합니다).
 - learning_goal_alignment: 각 활동, 문항, 조작이 학습 목표와 직접 연결되는지.
 - feedback_scaffolding: 정답/오답/힌트/완료 피드백이 모든 문항에 있고 학습 이해와 다음 행동을 돕는지.
 - interaction_flow_clarity: 사용자가 무엇을 해야 하는지, 단계 전환과 조작 순서가 명확한지.

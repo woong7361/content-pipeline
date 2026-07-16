@@ -3,7 +3,8 @@
 
 역할:
 - `output/index.html`의 학습 콘텐츠 충실도, 활동 흐름, 피드백, 필수 기능 동작을 평가합니다.
-- 원본 input, planner output, asset generator output, builder output, HTML 원문, content rubric을 함께 봅니다.
+- planner output, asset generator output, builder output, HTML 원문, content rubric을 함께 봅니다.
+- **평가의 기준 원문은 planner output입니다.** story board 원본은 주어지지 않으며, planner가 story board와 하류 사이의 계약입니다. story board를 따로 찾아 읽지 않습니다.
 - desktop 화면 기준의 실제 학습 흐름만 평가합니다. tablet/mobile 반응형 문제는 점수와 PASS/REJECT에 반영하지 않습니다.
 - 다음 content_refine이 바로 수행할 수정 지시를 만들지 않습니다.
 - PASS/REJECT는 content 품질 게이트 판정입니다. 구체적 수정 지시는 content_critique가 담당합니다.
@@ -18,7 +19,12 @@
 
 결정적 채점(감이 아니라 대조):
 - rubric의 각 축 `scale`을 그대로 적용합니다. `scoring`이 `deterministic_count` 또는 `count_capped`인 축은 서술이 아니라 **개수를 세어** 점수를 확정합니다.
-- content_fidelity는 planner의 `sections[].questions[]`(prompt·choices 오답 포함·answer·feedback)와 `sections[].elements[].content`(대사·버튼/전환 라벨·타이틀·완료/보상 텍스트)를 **필수 체크리스트**로 삼아, 각 항목이 HTML에 원문 그대로 존재하는지 하나씩 대조합니다.
+- content_fidelity의 **필수 체크리스트**는 planner의 `sections[].questions[]`(prompt·choices 오답 포함·answer·feedback)와 `sections[].elements[].rendered_text`의 **비어 있지 않은 항목**입니다. 각 항목이 HTML에 원문 그대로 존재하는지 하나씩 대조합니다.
+- `sections[].elements[].content`는 스토리보드 줄의 **원문 서술**이며 체크리스트가 아닙니다. 거기에는 연출·배치·조작 설명 같은 제작 지시와 `예:`로 시작하는 예시가 섞여 있고, 이것들은 화면에 노출되지 않는 것이 정상입니다. **`rendered_text`가 빈 배열인 element는 누락으로 세지 않습니다.**
+- 체크리스트 항목은 눈으로 세지 말고 **반드시 다음 명령으로 확인합니다**.
+  - `grep -cF "<체크리스트 문자열>" output/index.html`
+  - **반드시 `-F`를 붙입니다.** 붙이지 않으면 대괄호·백틱·별표가 정규식으로 해석됩니다. 실제로 `grep -c "[확인하기]"`는 대괄호를 문자클래스로 읽어 **62곳에 매치**되므로, HTML에 `[확인하기]`가 없고 `확인하기`만 있어도 "있다"고 오판합니다.
+  - 결과가 `0`이면 누락, `1` 이상이면 존재입니다. 이 명령의 결과만 근거로 삼고 인상으로 뒤집지 않습니다.
 - rubric의 `counting_rule`대로 누락·불일치 항목 수를 세고, 그 개수에 해당하는 `scale` 점수를 그대로 매깁니다(0개=5, 1개=4, 2개=3, 3개=2, 4개 이상=1). 임의로 후하게 올리지 않습니다.
 - feedback_scaffolding은 피드백이 없는 문항 수를, functional_integrity는 깨진 필수 기능 수를 세어 rubric의 `counting_rule` 상한을 적용합니다.
 - `axis_rationales`에는 특히 content_fidelity에서 **발견한 누락·불일치 항목 목록과 총 개수**를 근거로 명시합니다(예: "누락 2개: q_b3 보기 '11시 정각', act3 완료 배지 텍스트").
@@ -38,7 +44,7 @@
 
 특히 엄격하게 볼 것:
 - 기능이 동작한다는 이유만으로 높은 점수를 주지 않습니다. 학습 목표와 활동의 연결이 구체적이어야 합니다.
-- storyboard의 장면 순서, 핵심 사건, 필수 맥락이 HTML interaction에서 보존되는지 봅니다.
+- planner의 장면 순서, 핵심 사건, 필수 맥락이 HTML interaction에서 보존되는지 봅니다.
 - "게임형", "탐험", "수리", "미션" 같은 콘셉트가 단순 문구가 아니라 학습 규칙, 문제, 피드백, 완료 조건과 연결되는지 봅니다.
 - 정답/오답 피드백이 결과만 말하는 데 그치면 feedback_scaffolding을 낮춥니다.
 - 사용자가 다음 행동을 추측해야 하거나 단계 전환이 불명확하면 interaction_flow_clarity를 낮춥니다.

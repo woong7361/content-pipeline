@@ -38,6 +38,7 @@ BUILDER_OUTPUT_SCHEMA_PATH = PROJECT_DIR / "schemas" / "builder_output.schema.js
 KST = timezone(timedelta(hours=9))
 
 MODEL_CODEX_DEFAULT = None
+MODEL_GPT_5_6_SOL = "gpt-5.6-sol"
 MODEL_GPT_5_5 = "gpt-5.5"
 MODEL_GPT_5_4 = "gpt-5.4"
 MODEL_GPT_5_4_MINI = "gpt-5.4-mini"
@@ -71,6 +72,24 @@ def default_claude_bin() -> str:
 
 DEFAULT_CLAUDE_BIN = default_claude_bin()
 
+
+def default_codex_bin() -> str:
+    """실행할 codex 바이너리 경로를 확정한다.
+
+    "codex" 문자열을 그대로 subprocess에 넘기면 Windows CreateProcess가 확장자 없는 이름에
+    .exe만 붙여 찾으므로, npm이 설치한 codex.cmd를 건너뛰고 PATH 뒤쪽의 다른 codex.exe를
+    실행할 수 있다. 실제로 구버전(0.133.0-alpha.1)이 잡혀 gpt-5.6-sol이 400으로 거절됐다
+    (2026-07-15 run ch8c0716). shell은 0.144.3을 타는데 Python만 구버전을 타서, 같은 명령을
+    터미널에서 돌리면 성공해 원인이 드러나지 않았다. shutil.which로 shell과 같은 해석을 쓴다.
+    """
+    if sys.platform != "win32":
+        return "codex"
+
+    return shutil.which("codex") or "codex"
+
+
+DEFAULT_CODEX_BIN = default_codex_bin()
+
 AGENT_GEN = "gen"
 AGENT_PLANNER = "planner"
 AGENT_ASSET_GENERATOR = "asset_generator"
@@ -85,18 +104,18 @@ AGENT_EVAL = "eval"
 AGENT_REFINE = "refine"
 
 AGENT_MODELS = {
-    AGENT_PLANNER: MODEL_GPT_5_5,
-    AGENT_ASSET_GENERATOR: MODEL_GPT_5_5,
-    AGENT_BUILDER: MODEL_GPT_5_5,
-    AGENT_DESIGN_REVIEW: MODEL_GPT_5_5,
-    AGENT_DESIGN_REFINE: MODEL_GPT_5_5,
-    AGENT_CONTENT_CRITIQUE: MODEL_GPT_5_5,
-    AGENT_CONTENT_EVAL: MODEL_GPT_5_5,
-    AGENT_CONTENT_REFINE: MODEL_GPT_5_5,
-    AGENT_GEN: MODEL_GPT_5_5,
-    AGENT_CRITIQUE: MODEL_GPT_5_5,
-    AGENT_EVAL: MODEL_GPT_5_5,
-    AGENT_REFINE: MODEL_GPT_5_5,
+    AGENT_PLANNER: MODEL_GPT_5_6_SOL,
+    AGENT_ASSET_GENERATOR: MODEL_GPT_5_6_SOL,
+    AGENT_BUILDER: MODEL_GPT_5_6_SOL,
+    AGENT_DESIGN_REVIEW: MODEL_GPT_5_6_SOL,
+    AGENT_DESIGN_REFINE: MODEL_GPT_5_6_SOL,
+    AGENT_CONTENT_CRITIQUE: MODEL_GPT_5_6_SOL,
+    AGENT_CONTENT_EVAL: MODEL_GPT_5_6_SOL,
+    AGENT_CONTENT_REFINE: MODEL_GPT_5_6_SOL,
+    AGENT_GEN: MODEL_GPT_5_6_SOL,
+    AGENT_CRITIQUE: MODEL_GPT_5_6_SOL,
+    AGENT_EVAL: MODEL_GPT_5_6_SOL,
+    AGENT_REFINE: MODEL_GPT_5_6_SOL,
 }
 CLAUDE_HTML_AGENTS = (AGENT_BUILDER, AGENT_DESIGN_REFINE, AGENT_CONTENT_REFINE)
 CLAUDE_MODEL_ALIASES = {MODEL_CLAUDE_OPUS, MODEL_CLAUDE_SONNET}
@@ -107,10 +126,13 @@ DEFAULT_ASSET_PARALLELISM = 15
 DEFAULT_ASSET_BUDGET = 9
 DEFAULT_CONTENT_MAX_ITERATIONS = 5
 MAX_ASSET_REVISION_REQUESTS = 6
-DEFAULT_TIMEOUT_SECONDS = 1200
+DEFAULT_TIMEOUT_SECONDS = 2400
 # design_refine은 10만 자 규모의 HTML을 통째로 다시 쓰므로 다른 stage보다 훨씬 오래 걸린다.
 # 실제로 1200초에서 TimeoutError가 났다(2026-07-15 run ch8a0715 iter003).
 DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS = 2400
+# design_review도 같은 HTML 전문과 asset 이미지를 모두 읽으므로 무겁다.
+# 실제로 1200초에서 TimeoutError가 났다(2026-07-15 run ch8c0717 iter002).
+DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS = 2400
 DEFAULT_BUILDER_HTML_PATH = "output/index.html"
 DEBUG_DESIGN_REFINE_HTML_PATH = "output/refine.html"
 
@@ -1614,6 +1636,18 @@ def resolve_design_refine_timeout(args: argparse.Namespace) -> int:
     return max(args.timeout_seconds, DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS)
 
 
+def resolve_design_review_timeout(args: argparse.Namespace) -> int:
+    """design_review에 적용할 timeout을 정한다.
+
+    resolve_design_refine_timeout과 같은 규칙이다. 명시적 override가 있으면 그 값을,
+    없으면 기본 2400과 전역 --timeout-seconds 중 큰 값을 쓴다.
+    """
+    override = getattr(args, "design_review_timeout_seconds", None)
+    if override:
+        return override
+    return max(args.timeout_seconds, DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS)
+
+
 def ensure_asset_spec_defaults(asset: dict) -> dict:
     asset.setdefault("character_id", "")
     asset.setdefault("visual_role", asset.get("purpose", "Support the section's learning goal"))
@@ -1826,19 +1860,14 @@ def run_asset_revision_stage(
         context=context,
         asset_ids=summary["regenerated"] + summary["added"],
     )
-    builder_result = run_design_refine_stage(
-        args=args,
-        progress=progress,
-        input_path=input_path,
-        context=context,
-    )
+    # 여기서 design_refine을 부르지 않는다. 호출자가 design 축을 따로 태우므로
+    # 여기서도 부르면 한 iteration에 design_refine이 두 번 돈다.
+    # asset 변경을 HTML에 반영하는 것은 호출자의 design_refine이 담당한다
+    # (asset 변경 후 builder 재빌드가 아니라 refine으로 잇는다는 결정은 유지된다).
     progress.line(f"iter {context.iteration} asset_revision PASS")
     return {
         "asset_revision": summary,
         "asset_generator": asset_result.get("asset_generator"),
-        "builder": builder_result.get("builder"),
-        "html": builder_result.get("html"),
-        "output": builder_result.get("output"),
     }
 
 
@@ -1868,7 +1897,7 @@ def run_design_review_stage(
                 output_path=temp_design_review_path,
                 codex_bin=args.codex_bin,
                 model=resolve_agent_models(args)[AGENT_DESIGN_REVIEW],
-                timeout_seconds=args.timeout_seconds,
+                timeout_seconds=resolve_design_review_timeout(args),
                 asset_budget=getattr(args, "asset_budget", DEFAULT_ASSET_BUDGET),
             )
 
@@ -1945,7 +1974,6 @@ def run_content_eval_stage(
             f"{display_model(resolve_agent_models(args)[AGENT_CONTENT_EVAL])} start"
         )
         evaluate_content(
-            input_path=input_path,
             planner_path=context.planner_path,
             asset_generator_path=asset_generator_path,
             builder_path=context.builder_path,
@@ -2260,6 +2288,14 @@ def run_content_eval_only(args: argparse.Namespace) -> dict:
         if not context.html_path.exists():
             raise FileNotFoundError(f"html not found: {context.html_path}")
 
+        # planner를 검증하지 않으면 rendered_text가 없는 구형 planner로도 조용히 채점된다.
+        # 그 경우 content_fidelity 체크리스트가 통째로 비어 "누락 0개 = 5점"이 나와 거짓 PASS가 된다.
+        # 점수가 아니라 채점 기준이 사라진 것이므로, 여기서 schema로 막는다.
+        stage = "planner_output_validate"
+        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        progress.validation("planner_output_validate", planner_result)
+        ensure_pass(planner_result, context.planner_validation_path)
+
         planner_output = load_json(context.planner_path)
         asset_generator_path: Path | None = None
         if planner_output.get("asset_plan"):
@@ -2276,7 +2312,6 @@ def run_content_eval_only(args: argparse.Namespace) -> dict:
                 live=True,
             ):
                 evaluate_content(
-                    input_path=input_path,
                     planner_path=context.planner_path,
                     asset_generator_path=asset_generator_path,
                     builder_path=context.builder_path,
@@ -2748,6 +2783,12 @@ def run(args: argparse.Namespace) -> dict:
             )
             break
 
+        # design 축과 content 축은 독립이다. 예전에는 if/elif/else 한 줄로 묶여 있어
+        # content_refine이 "design_review가 PASS일 때만" 도달하는 3순위 분기였고,
+        # design_review가 REJECT인 동안에는 영원히 실행되지 않았다. 실제로 run
+        # ch8c0716/ch8c0717은 10 iteration 전부 design REJECT라 content_refine이 0회 돌았고,
+        # content_critique는 매 iter 생성만 되고 아무도 읽지 않았다.
+        # 이제 각 축이 자기 게이트(design_review / content_eval)에만 반응한다.
         if asset_change_needed:
             revision_result = run_asset_revision_stage(
                 args=args,
@@ -2760,20 +2801,21 @@ def run(args: argparse.Namespace) -> dict:
                 "status": "PASS",
                 "asset_generator": revision_result.get("asset_generator"),
             }
-            builder_result = {
-                "builder": revision_result.get("builder"),
-                "html": revision_result.get("html"),
-                "output": revision_result.get("output"),
-            }
             status = "REJECT"
-        elif design_status != "PASS":
+
+        # design 축: asset이 바뀌었으면 HTML에 반영해야 하므로 함께 태운다.
+        if asset_change_needed or design_status != "PASS":
             builder_result = run_design_refine_stage(
                 args=args,
                 progress=progress,
                 input_path=input_path,
                 context=context,
             )
-        else:
+
+        # content 축: design_refine이 HTML을 다시 썼을 수 있으므로 그 뒤에 순차로 돈다.
+        # content_refine이 마지막인 이유는 더 보수적인 stage이기 때문이다(CSS·레이아웃을
+        # 건드리지 않는다). 반대로 두면 design_refine의 통짜 재작성이 content 수정을 지운다.
+        if eval_status != "PASS":
             builder_result = run_content_refine_stage(
                 args=args,
                 progress=progress,
@@ -2871,7 +2913,7 @@ def normalize_claude_model(option_name: str, value: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run content harness pipeline.")
     parser.add_argument("input", type=Path, help="Path to an input JSON file matching input.schema.json.")
-    parser.add_argument("--codex-bin", default="codex")
+    parser.add_argument("--codex-bin", default=DEFAULT_CODEX_BIN)
     parser.add_argument("--claude-bin", default=DEFAULT_CLAUDE_BIN)
     parser.add_argument(
         "--claude-html-stages",
@@ -2939,6 +2981,15 @@ def main() -> int:
         help=(
             "Timeout for the Design Refine agent. Defaults to the larger of --timeout-seconds and "
             f"{DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS}, because rewriting the full HTML takes longer than other stages."
+        ),
+    )
+    parser.add_argument(
+        "--design-review-timeout-seconds",
+        type=int,
+        help=(
+            "Timeout for the Senior Designer Review agent. Defaults to the larger of --timeout-seconds and "
+            f"{DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS}, because reading the full HTML and every asset takes longer "
+            "than other stages."
         ),
     )
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")

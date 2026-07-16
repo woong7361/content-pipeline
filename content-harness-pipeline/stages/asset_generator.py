@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from stages.scripts.codex_client import CodexClient
+from stages.scripts.prompt_parts import ASSET_EXAMPLES_DIR, load_asset_examples
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -42,8 +43,13 @@ def build_prompt(input_data: dict, planner_output: dict, run_dir: Path) -> str:
     planner_json = json.dumps(planner_output, ensure_ascii=False, indent=2)
     return f"""{system_prompt}
 
+{load_asset_examples()}
+
 RUN_DIR:
 {run_dir.resolve()}
+
+ASSET_EXAMPLES_DIR:
+{ASSET_EXAMPLES_DIR.resolve()}
 
 저장 규칙:
 - JSON의 `path`는 planner의 `intended_path`와 같은 `output/assets/...` 상대 경로를 사용합니다.

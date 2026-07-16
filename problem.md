@@ -52,15 +52,35 @@
 
 <!-- 새 항목은 이 아래에 추가한다. -->
 
+### [content-refine-never-runs] design_review가 REJECT인 한 content_refine이 영원히 실행되지 않아 content critique가 통째로 버려짐
+
+- 대상: content-harness-pipeline/runner.py (`run_content_pipeline` 품질 루프 분기, 2785~2816행)
+- 분류 태그: content-refine-never-runs
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-16
+- 최근 발생일: 2026-07-16
+- 사례:
+  - 2026-07-16: 사용자가 "runs에 추가된 애들 eval이 계속 낮아진다"고 지적해 ch8c0716·ch8c0717의 critique/eval 로그를 추적한 결과 발견. 루프 분기가 `if asset_change_needed: … elif design_status != "PASS": design_refine … else: content_refine` 구조라, **content_refine은 design_review가 PASS일 때만 도달 가능한 3순위 분기**다. 두 run 10 iteration 전부 design_review=REJECT였고(asset_change_needed도 8/10에서 True), 실제 실행 분기는 asset_revision 8회 + design_refine 2회 = **content_refine 0회**. asset_revision(`run_asset_revision_stage`)도 내부에서 `run_design_refine_stage`를 호출하므로 결국 **HTML을 고친 stage는 10/10 전부 design_refine**. 그런데 design_refine의 프롬프트(`stages/design_refiner.py:build_prompt`)에는 design_review packet만 들어가고 **content_critique·content_eval이 없다**. 그 결과 content_critique는 매 iter 생성·저장되지만(무거운 모델 호출 1회) 아무도 읽지 않고 버려진다. 증거: 두 run의 critique `priority_issues`가 iter 001~005 내내 **같은 항목을 그대로 반복** — 제출 잠금 없음(중복 클릭), 9차시 CTA가 실제 라우팅 없이 hash만 변경, 피드백이 결과 통보형, 복구 장면 순서 미구현, 유형 C 자동 채점 누락. 5번 지적됐지만 5번 다 아무도 받지 않았다.
+- 조치: **2026-07-16 수정 완료.** 후보 ①을 채택 — `if/elif/else` 한 덩어리를 축별 독립 분기로 쪼갰다. `if asset_change_needed:` asset 재생성 → `if asset_change_needed or design_status != "PASS":` design_refine → `if eval_status != "PASS":` content_refine. 각 축이 자기 게이트에만 반응하므로 design이 REJECT여도 content_refine이 돈다. 함께 고친 것: `run_asset_revision_stage`가 내부에서 `run_design_refine_stage`를 부르던 것을 제거했다(안 그러면 새 분기에서 한 iteration에 design_refine이 두 번 돈다). asset 변경을 rebuild가 아니라 refine으로 잇는다는 [asset-revision-refine-routing]의 결정은 유지되며, 이제 호출자의 design 축이 그 일을 맡는다. 실행 순서는 design → content — content_refine이 CSS·레이아웃을 안 건드리는 보수적 stage라 마지막이 안전하고, 반대로 두면 design_refine의 통짜 재작성이 content 수정을 지운다. **비용**: 두 축이 다 REJECT면 한 iteration에 HTML 전체 재작성이 2회(각 최대 2400초)라 iteration당 최악 80분.
+- 규칙화 메모: 아직 1회이나 [refine-alters-spec-text]와 마찬가지로 **파이프라인 설계 차원의 문제**. 두 항목이 합쳐지면 "critique는 내지만 아무도 안 읽는" + "유일한 수정자가 원문을 훼손한다"가 되어 루프가 개선이 아니라 랜덤 워크가 된다. 연관: [asset-revision-refine-routing](asset 변경 후 design_refine으로 잇기로 한 사용자 결정이 이 분기의 1순위를 만든 원인 — 그 결정 자체는 유효하나 content 축을 막는 부작용이 검토되지 않았음).
+
 ### [refine-alters-spec-text] design_refine이 시각 수정 중 원문 텍스트를 축약·변경·추가해 content_fidelity를 훼손함
 
 - 대상: content-harness-pipeline/prompts/design_refine_system.md, prompts/design_review_system.md (관측: runs/2026-07-15_ch8a0715)
 - 분류 태그: refine-alters-spec-text
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-15
-- 최근 발생일: 2026-07-15
+- 최근 발생일: 2026-07-16
 - 사례:
+  - 2026-07-16: (재발하되 **정도는 크게 경미해짐**) run ch8c0717에서 노출 채널 원문 위반 **2건** 확인 — ①`transition_label` `[STEP 2. 수리로 해결해요]`가 HTML에 **아예 없음**, ②`cta` `[확인하기]`가 **대괄호가 벗겨진 `확인하기`로 표시**됨. ②는 `common_html_contract.md`가 "대괄호 제거 전부 금지"로 **명시적으로 금지한 바로 그 항목**이라 규칙이 있어도 새는 구간이 있다는 뜻. 다만 ch8a0715의 문장 축약·재서술(`[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]` → `9차시 길이 미션으로 →`) 같은 **중대 훼손은 사라졌다** → 규칙이 대부분 작동 중이고 잔여 누수만 남은 상태.
+- 검증 기록:
+  - 2026-07-16: planner ↔ `output/index.html` 결정적 대조(normalize: markdown·화자 접두어·따옴표·공백·HTML entity) 실측 결과.
+    - **ch8c0716: 노출 채널 원문 위반 0건.** `questions[].prompt`+`choices` **38/38**, `dialogue` 14/14, `cta` 5/5, `certificate_text` 1/1 전부 원문 그대로. eval이 센 "누락 6개"는 **전부 오탐**이었다(→ [content-eval-scoring-too-lenient]).
+    - **ch8c0717: 위반 2건**(위 사례). 나머지 `dialogue` 15/15, `title` 3/3, `certificate_text` 1/1은 보존.
+    - 공통: HTML은 planner 텍스트를 `**` markdown까지 문자 그대로 JS에 담고(`/* Question data (verbatim from planner) */`) `formatRich()`가 `**…**`→`<strong>`으로 변환해 렌더한다. 원문 보존과 표시가 양립하는 올바른 구현.
+  - **주의(자기 교정):** 최초 기록 때 "eval content_fidelity=1이 계속 나오니 원문이 훼손되고 있다"고 횟수 2로 올렸으나, 그 근거는 **틀렸다**. 0716의 6건은 전부 eval 오탐이었고, 재발의 실제 근거는 뒤늦게 0717에서 따로 확인한 2건이다. 결론(횟수 2)은 우연히 같아도 **근거가 달랐다**. 교훈: **eval 점수를 1차 증거로 쓰지 말 것.** 원문 판정은 산출물을 직접 대조해야 하며, 그게 곧 이 판정을 LLM에서 결정적 검증기로 옮겨야 하는 이유다.
   - 2026-07-15: full run(ch8a0715)에서 **content 품질 루프가 순손실**로 관측됨. content_eval 총점이 iter를 거치며 **4.2 → 3.08 → 2.9**로 하락했고 weak_axes는 1개 → 2개 → 3개로 늘었다. 특히 `content_fidelity`가 **5 → 1**로 추락. iter 001은 총점 4.2로 min_total(4.2)을 이미 만족했고 `feedback_scaffolding`(3<4.0) 하나 때문에 REJECT였는데, 그것을 고치려 돌린 refine이 나머지를 무너뜨렸다. eval이 지목한 근거:
     - planner에 없는 전환 버튼 `도와주러 가기`가 **추가됨**
     - `[좋아요! 본격적으로 수리하러 가기 →]` → `본격적으로 수리하러 가기 →` **축약**
@@ -376,15 +396,16 @@
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/stamp_correct_time.png, stamp_fail_time.png
 - 분류 태그: feedback-stamp-visual-overload
 - 상태: 열림
-- 발생 횟수: 3
+- 발생 횟수: 4
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-09
+- 최근 발생일: 2026-07-16
 - 사례:
   - 2026-07-09: 정답/실패 도장 시안이 시계 눈금, 바늘, 체크/X, 깨짐선, 큰 글자가 겹쳐 너무 이상하게 보임. 사용자가 원형 시계 배경 위에 `정답!`/`실패!` 글자를 단순히 얹는 방식이 낫다고 지적.
   - 2026-07-09: 재생성한 시계 배경까지 초록/빨강으로 물들어 `index.html`의 애니메이션풍 도서관 시계 톤과 맞지 않음. 사용자가 시계는 상태색이 아니라 index.html 느낌의 애니메이션풍 시계로 두고, 글자만 초록/빨강으로 하라고 지적.
   - 2026-07-09: 기존 시계 asset을 결합하는 방식이 아니라, 도장 자체를 단일 이미지로 생성해야 한다고 지적.
-- 조치: 도장형 과밀 그래픽과 상태색 시계 배경을 버리고, 단일 생성 이미지 안에 애니메이션풍 시계 도장+`정답!`/`실패!` 텍스트가 포함되도록 재생성.
-- 규칙화 메모: 아직 3회. 반복되면 "학습 피드백 이미지는 핵심 메시지 텍스트와 배경 메타포를 분리하고, 배경 오브젝트는 화면 기존 asset 팔레트를 유지하며 상태색은 텍스트/강조에만 쓴다. 사용자가 단일 asset을 요구하면 기존 asset 합성/코드 합성 대신 생성 이미지 하나로 만든다" 규칙을 asset generation workflow에 제안 후보.
+  - 2026-07-16: asset_generator 예시(exemplar) 도입 검증 중 관측. leak test(심해 정거장, 보라·라임 art_direction)에서 오답 도장이 연보라 잉크 on 보라 패널로 나와 "오답"이 안 읽힘. 정답=코랄, 오답=슬레이트로 만든 예시도 한국 관습(빨간펜=오답)과 반대였음. 사용자가 "오답이 빨간색이면 좋겠다, 문자열이라도"라고 교정. **결정**(질문 확인): 오답 신호는 **글자·심볼만 빨강**, 도장 몸체는 그 run의 세계관 팔레트 유지. 예시 재생성은 안 함(예시 색은 어차피 art_direction이 덮어씀). 2026-07-09 두 번째 사례("몸체는 세계관색, 글자만 상태색")와 **같은 원칙의 재발**이며, 이번엔 index.html이 아니라 asset_generator/exemplar 층에서 발생.
+- 조치: **2026-07-16 프롬프트 규칙 추가.** planner_system.md 이미지 텍스트 절에 "판정 피드백(오답) 도장의 문구·심볼은 art_direction 팔레트와 무관하게 경고 빨강을 유지하고, 도장 몸체·테두리만 세계관 팔레트를 따른다"를 명시. 상류 2026-07-09 조치(도장형 과밀 그래픽·상태색 배경 버리고 단일 생성 이미지)는 유지.
+- 규칙화 메모: **4회 — 5회 도달 시 다음 작업 전 rule 승격 제안 예정.** 누적 원칙이 안정적임: "학습 피드백 이미지는 핵심 메시지 텍스트와 배경 메타포를 분리하고, 배경 오브젝트는 화면 기존 asset 팔레트를 유지하며 상태색(특히 오답=빨강)은 텍스트/심볼에만 쓴다. 사용자가 단일 asset을 요구하면 기존 asset 합성/코드 합성 대신 생성 이미지 하나로 만든다." 반영 위치 후보: `content-harness-pipeline/AGENTS.md`(파이프라인 지역 규칙). 연관 [spec-fx-color-mismatch](오답 연출색을 임의로 바꾸지 말 것 — index.html 층의 같은 '오답=빨강' 계열).
 
 ### [character-asset-alpha-fringe] 캐릭터 에셋의 알파/프린지 후처리가 반복 실패함
 
@@ -871,10 +892,46 @@
 - 대상: content-harness-pipeline/content_rubric.yaml, prompts/content_eval_system.md, schemas/content_eval_output.schema.json
 - 분류 태그: content-eval-scoring-too-lenient
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-13
-- 최근 발생일: 2026-07-13
+- 최근 발생일: 2026-07-16
 - 사례:
+  - 2026-07-16: **(핵심) eval이 "제작 지시"를 "필수 노출 원문"으로 오분류해 없는 누락을 세고 있음.** ch8c0716의 content_fidelity=1(누락 6개)을 planner와 직접 대조해 분해한 결과, 6개 전부가 **오탐**이었다. 내역: ①`channel=question_display` ×3 — 이건 문항이 아니라 **storyboard의 예시 화면 문구**다. 해당 section에는 `questions[]`에 실제 문항 4개(a1~a4)가 이미 있고 builder가 그 4개를 원문 그대로 렌더했는데, eval은 예시 문구까지 화면에 나와야 한다고 셌다(그대로 따르면 5번째 가짜 문항이 생긴다). ②`channel=interaction_instruction` ×3 — "3개의 시계 중 하나를 직접 터치하여 선택." 같은 **조작 방법 제작 지시**이지 화면에 띄울 문장이 아니다. 근본 원인: planner `elements[].content`가 **(a)실제 노출 문구·(b)제작 지시 산문·(c)예시 mockup을 한 필드에 섞어** 담고 있고, rubric의 counting_rule (d)는 "사용자에게 노출되는 필수 content"라고만 해서 **셋을 가르는 판단을 LLM 재량에 맡긴다.** `channel` 필드가 이미 그 구분을 할 수 있는데 rubric이 안 쓴다. 판정이 매 iter 흔들리는 이유도 이것 — 점수가 산출물이 아니라 **judge의 그때그때 분류 변덕**을 측정한다(ch8c0717: 5→2→4→?→1개). 실제 원문 보존율은 questions 38/38, dialogue 14/14로 **사실상 만점**인데 축 점수는 1점이다.
+  - 2026-07-16: (같은 대상의 **반대 극** — 결정적 채점 전환 후) 인플레는 잡혔으나 이번엔 **척도 포화로 신호가 사라짐**. `content-html:v4`의 content_fidelity는 "누락·불일치 **4개 이상 = 1점**"이라 ch8c0716의 6→5→7개 변동이 전부 같은 1점으로 뭉개진다. 3개를 고쳐도 점수가 그대로라 refine에 **개선 gradient가 없다**. functional_integrity도 값이 1/3/5 세 개뿐(2개 이상=1, 1개=3, 0개=5)이라 5→2개 개선이 0점 변화, 2→1개가 +2점 점프를 만들어 총점이 계단식으로 튄다. feedback_scaffolding은 `count_capped`로 "피드백 없는 문항 1개라도 있으면 3점 초과 불가"라 사실상 3에 고정. 게다가 eval은 **stateless** — `stages/content_evaluator.py`가 이전 eval을 안 넘기므로 매 iter 10만 자 HTML에서 위반을 새로 세고, 그 개수 자체가 표본 노이즈(ch8c0717: 5→2→4→?→1). 결과적으로 총점은 개선 신호가 아니라 **판정 분산**을 측정한다(ch8c0716: 3.06→2.64→2.88→2.88→2.88 / ch8c0717: 2.64→3.38→2.42→2.24→3.66). 부수 관측: 루프에 **best-so-far 보존이 없어** `output/index.html`을 매번 덮어쓰므로, ch8c0717 iter002(3.38)처럼 더 좋았던 산출물이 남지 않고 최종은 마지막 iter가 된다.
   - 2026-07-13: 그동안 파이프라인을 돌려보니 content-eval 점수체계가 너무 널널해서 산출 HTML이 storyboard(planner spec)를 잘 안 따르는데도 PASS가 남. 원인 진단: (1) storyboard_fidelity가 weight 0.20으로 최고인데 min_axis는 3.8로 최저(가장 널널). (2) weighted_total 4.0이 6축 가중평균이라 약한 storyboard가 다른 축으로 상쇄됨. (3) rubric의 hard_gates(핵심 장면 누락 등)와 모델 verdict 필드가 runner(get_content_eval_status)에서 실제로는 무시되고 숫자 threshold만 봄. (4) anchor가 1/3/5만 정의돼 모델이 4.2~4.6 소수점에 몰려 채점(인플레). 사용자가 축과 점수체계를 결정적(deterministic) 채점으로 재설계하기로 함.
-- 조치: (설계 진행 중) storyboard_fidelity + content_completeness를 "요구사항 대응" 단일 축(weight 0.4)으로 병합하고, planner content_outline/interactions를 레퍼런스로 "불일치 개수→점수" 결정적 채점(5=0불일치, 3=2불일치, 1=5불일치)으로 전환. 나머지 축의 결정성 강화 방식은 사용자와 논의 중.
+- 조치: **2026-07-16 1차 수정 완료 — 실측으로 검증됨.**
+  - (1) `planner_output.schema.json`의 `elements[]`에 `rendered_text: string[]` 추가(required, `[]`=노출 없음 — Codex strict 제약상 optional 불가). 판정 기준은 **"학습자가 화면에서 이 문자열을 읽는가" 하나**. 원문 서술은 `content`에 그대로 남으므로 지시를 잃지 않는다.
+  - (2) `content_eval_system.md`·`content_critique_system.md`·`content_rubric.yaml`의 체크리스트를 `elements[].content` → `elements[].rendered_text`(비어 있지 않은 것만)로 교체. 대조는 `grep -cF` 강제 — `-F` 없이 `grep -c "[확인하기]"`를 하면 대괄호가 정규식 문자클래스로 읽혀 **62곳에 매치**되어 진짜 누락을 놓친다(실측). 그 근거를 프롬프트에 함께 적었다.
+  - (3) `content_evaluator.py`에서 `input.json`을 입력에서 제거. 거기엔 story board 본문이 없고 `md_path` 경로만 있어 "story board를 보라"는 착각만 만들었다. eval의 기준 원문은 planner임을 명시.
+  - (4) `--content-eval-only`에 planner schema 검증 추가 — 없으면 구형 planner(rendered_text 없음)로 채점할 때 체크리스트가 통째로 비어 "누락 0개 = 5점" 거짓 PASS가 난다.
+  - **검증(같은 입력 planner 2회 독립 실행)**: 두 표본 모두 `예:` 예시 누출 0건, v1이 과다 포함하던 `90%`/`1~12(오전)`/`[?]`/`착!` 0건, v2가 잃던 `[확인하기]`/`[내 사진첩에 저장하기]`/`[3. 수리 이야기 보러 가기 →]` 전부 포착. **content_fidelity 1점 → 3점, 두 표본 동일.** 남은 누락 2건은 전부 진짜(`[확인하기]` 대괄호 벗김, `[STEP 2. 수리로 해결해요]`는 노출 여부 미정). 체크리스트 크기는 40 vs 47로 흔들렸지만 **점수는 동일** — 흔들린 항목(키패드 숫자 0~9, `오전`/`오후`)이 전부 HTML에 실재해 누락으로 안 잡히기 때문. **드리프트가 점수에 영향을 주지 않는다.**
+  - 부수 효과: min_axis 5.0 게이트가 **만족 가능해졌다.** 예전엔 eval이 제작 지시를 세는 한 누락 0개가 원리적으로 불가능했다.
+  - 남은 것: 척도 포화(4개 이상=1)와 stateless 판정은 그대로. 결정적 검증기(C)로 축을 옮기는 것은 미착수.
 - 규칙화 메모: 이 항목은 상위 원인(메타). 하위 증상 계열 — [spec-interaction-flow-mismatch], [spec-success-feedback-missing], [sequential-scene-choreography], [typeB-problem-text-mismatch-spec] 등 "builder가 planner spec을 안 따른다"가 반복되는데 eval이 이를 REJECT로 못 잡은 결과. eval 채점을 결정적으로 만들면 이 계열의 재발을 상류에서 차단하는 것이 목표.
+
+### [codex-bin-resolution-mismatch] Python subprocess가 shell과 다른(낡은) codex 바이너리를 실행함
+
+- 대상: content-harness-pipeline/runner.py (`--codex-bin` 기본값 `"codex"`), stages/scripts/codex_client.py
+- 분류 태그: codex-bin-resolution-mismatch
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-15
+- 최근 발생일: 2026-07-15
+- 사례:
+  - 2026-07-15: `gpt-5.6-sol` 전환 후 planner가 62.94초 만에 RuntimeError. API 400 `"The 'gpt-5.6-sol' model requires a newer version of Codex."` + stderr `codex_models_manager::cache: failed to load models cache: unknown variant 'max'`. **모델·스키마·코드 문제가 아니라 실행 바이너리 문제였음.** 이 머신에 codex가 둘 설치돼 있고(`AppData/Roaming/npm/codex.CMD` = 0.144.3, `~/.codex/bin/codex.exe` = 0.133.0-alpha.1), bash `codex`는 0.144.3을 타는데 **Python `subprocess.run(['codex',...])`은 0.133.0-alpha.1을 탐**. 원인: Windows `CreateProcess`가 확장자 없는 이름에 `.exe`만 붙여 탐색하므로 npm의 `codex.CMD`를 건너뛰고 PATH 뒤쪽 `codex.exe`(구버전)를 잡음. `shutil.which('codex')`는 `npm\codex.CMD`를 답해서 **which로 확인하면 정상처럼 보이는 함정**이 있음(실제 실행 경로와 불일치). 구버전이라 gpt-5.5는 통과했고 gpt-5.6-sol만 400으로 거절돼, 모델을 바꾸기 전까지 증상이 드러나지 않았음. `unknown variant 'max'` 캐시 에러는 신버전이 쓴 models 캐시를 구버전이 못 읽는 같은 원인의 곁가지.
+- 조치: `default_claude_bin()`과 같은 패턴으로 `default_codex_bin()` 추가 — win32에서 `shutil.which("codex")`로 shell과 동일한 해석을 쓰고, `--codex-bin` 기본값을 `DEFAULT_CODEX_BIN`으로 교체. 검증: 수정 전 `CodexClient(codex_bin='codex')` + gpt-5.6-sol → FAIL(400), 수정 후 `DEFAULT_CODEX_BIN` = `...\npm\codex.CMD`(0.144.3)로 해석되고 planner schema 실호출 PASS. 구버전 `~/.codex/bin/codex.exe`(0.133.0-alpha.1)는 다른 도구가 의존할 수 있어 사용자 결정으로 **그대로 둠** — 해석 함수가 npm 쪽을 타므로 파이프라인은 영향 없음.
+- 규칙화 메모: 아직 1회. `default_claude_bin()`이 이미 같은 계열의 Windows 바이너리 해석 문제를 claude 쪽에서만 해결해둔 상태라(codex는 `"codex"` 문자열 그대로), 이 항목은 그 비대칭이 드러난 것. 반복되면 "외부 CLI를 subprocess로 부를 때는 이름 문자열을 그대로 넘기지 말고 플랫폼별 해석 함수를 거쳐 실제 실행 경로를 확정하고, 그 경로와 버전을 run config에 기록한다"를 content-harness-pipeline/AGENTS.md에 제안 후보. 진단 비용이 컸던 이유가 **config에 `codex_bin: "codex"`라는 문자열만 남고 실제 실행된 바이너리·버전이 안 남아서**이므로, 규칙화 시 `config`에 resolved path + `--version` 기록을 포함할 것.
+
+### [stage-timeout-underprovisioned] HTML 전문을 다루는 무거운 stage가 전역 timeout에 걸려 run 전체가 죽음
+
+- 대상: content-harness-pipeline/runner.py (run_design_review_stage, resolve_design_refine_timeout, DEFAULT_TIMEOUT_SECONDS)
+- 분류 태그: stage-timeout-underprovisioned
+- 상태: 열림
+- 발생 횟수: 2
+- 최초 발생일: 2026-07-15
+- 최근 발생일: 2026-07-15
+- 사례:
+  - 2026-07-15: (선행 사례) design_refine이 10만 자 규모 HTML을 통째로 재작성하다 1200초에서 TimeoutError (run ch8a0715 iter003). `DEFAULT_DESIGN_REFINE_TIMEOUT_SECONDS=2400` 특례를 추가해 해결했으나, 조치가 코드 주석(runner.py:111-113)에만 남고 problem.md에는 기록되지 않아 같은 패턴의 재발 신호로 축적되지 못함. **횟수는 이 주석 기록을 근거로 소급 집계한 것이므로, 사용자 피드백 기준으로만 세려면 1로 조정.**
+  - 2026-07-15: design_review가 iter 002에서 1211초 만에 TimeoutError로 죽어 run ch8c0717 전체가 종료(`--timeout-seconds` 기본값 1200). design_refine과 동일한 원인 — HTML 전문 + asset 이미지를 모두 읽는 무거운 stage인데, design_refine만 전용 timeout 특례를 받고 design_review는 `args.timeout_seconds`를 그대로 받고 있었음. 30분 넘게 돌린 run이 통째로 날아감.
+- 조치: (1) 전역 `DEFAULT_TIMEOUT_SECONDS`를 1200 → **2400**으로 상향(사용자 결정). 이제 planner/asset_generator/builder/content_critique/content_eval/content_refine 등 모든 stage가 기본 2400초를 받음. (2) design_refine과 같은 패턴으로 design_review 전용 timeout 추가 — `DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS=2400`, `resolve_design_review_timeout()`, `--design-review-timeout-seconds`. 전역이 2400이 된 지금은 `max()` 결과가 같아 겹치지만, `--timeout-seconds`를 낮춰 돌릴 때 무거운 stage의 하한선으로 남음(검증: `--timeout 600`에서도 design_review/design_refine은 2400 유지). `run_design_review_only`도 같은 stage 함수를 거치므로 함께 적용됨.
+- 규칙화 메모: 2회. 같은 패턴이 3번째 나오면(content_refine, builder가 후보 — 둘 다 HTML 전문을 쓰는데 전역 timeout을 씀) "HTML 전문을 읽거나 쓰는 stage는 전역 timeout이 아니라 stage 전용 timeout을 갖는다"를 content-harness-pipeline/AGENTS.md에 rule로 제안 후보. 다만 stage마다 `resolve_*_timeout` 함수를 복제하는 현재 방식은 3번째부터 중복이 커지므로, rule 승격 시 `AGENT_MODELS`처럼 stage별 timeout 테이블(`AGENT_TIMEOUTS`)로 일반화하는 편이 나음. 별도 관찰: content 루프에는 `write_failed` 래퍼가 없어 이렇게 죽으면 `{hash}_failed.json`이 안 남음(사용자 선택으로 이번 범위에서 제외).

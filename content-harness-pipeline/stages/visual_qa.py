@@ -8,8 +8,11 @@ from typing import Any
 
 
 KST = timezone(timedelta(hours=9))
+# 콘텐츠는 1920x1080 고정 캔버스를 통짜로 스케일하는 구조다. desktop 뷰포트를 그 비율에 맞춰야
+# 캡처에 레터박스 여백이 생기지 않고 design_review가 콘텐츠만 본다. 1440x960은 3:2라 위아래가 잘린 채
+# 여백이 끼었다.
 VIEWPORTS = {
-    "desktop": {"width": 1440, "height": 960},
+    "desktop": {"width": 1920, "height": 1080},
     "tablet": {"width": 834, "height": 1112},
     "mobile": {"width": 390, "height": 844},
 }

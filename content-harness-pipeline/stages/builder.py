@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
+from stages.scripts.prompt_parts import with_common_html_contract
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -54,7 +55,7 @@ def load_asset_output(asset_generator_path: Path | None) -> dict:
 
 
 def build_prompt(input_data: dict, planner_output: dict, asset_output: dict, run_dir: Path) -> str:
-    system_prompt = BUILDER_SYSTEM_PROMPT.read_text(encoding="utf-8")
+    system_prompt = with_common_html_contract(BUILDER_SYSTEM_PROMPT.read_text(encoding="utf-8"))
     input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
     planner_json = json.dumps(planner_output, ensure_ascii=False, indent=2)
     asset_json = json.dumps(asset_output, ensure_ascii=False, indent=2)
@@ -62,11 +63,6 @@ def build_prompt(input_data: dict, planner_output: dict, asset_output: dict, run
 
 RUN_DIR:
 {run_dir.resolve()}
-
-저장 규칙:
-- 실제 HTML 파일은 `{run_dir.resolve()}\\output\\index.html`에 저장합니다.
-- HTML 파일 내부에서는 `output/assets/foo.png`가 아니라 `assets/foo.png`처럼 상대 경로를 사용합니다.
-- 출력 JSON에는 run 디렉토리 기준 경로인 `output/index.html`, `output/assets/foo.png` 형태를 사용합니다.
 
 INPUT_JSON:
 {input_json}
