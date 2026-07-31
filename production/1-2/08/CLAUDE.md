@@ -10,6 +10,7 @@ assets/               차시 전용 이미지
 dfbc1027_input.json   파이프라인 입력
 dfbc1027_planner.json 파이프라인 planner 산출물
 todo.md               앞으로 수정할 내용
+complete.md           완료된 항목 보관소(todo.md에서 옮겨온 것)
 ```
 
 ## 작업 지시는 todo.md에 있다
@@ -32,6 +33,16 @@ todo.md               앞으로 수정할 내용
 - **분량은 짧게.** 작업 과정을 서술하지 말고 결과와 근거만 남긴다. 시행착오는 다음 사람에게 필요한 것(왜 그 방법이 아니어야 했는지)만 적는다.
 - 작업 중 새로 알게 된 확인 필요 사항은 `todo.md` 하단 "확인이 필요한 항목 정리"에 추가한다.
 - 다른 항목에 영향을 주는 변경이면 "항목 간 의존 관계"에도 한 줄 추가한다.
+
+### 완료 항목은 complete.md로 옮긴다
+
+**`todo.md`는 "앞으로 할 일"만 담는다.** 완료 기록이 쌓여 파일이 두꺼워지면 `todo.md`를 읽는 비용이 커지고 남은 작업이 묻힌다.
+
+- 항목 상태가 `완료`가 되면, 그 항목 블록(제목 + 상태 + 조치 + 검증/주의)을 **통째로 잘라 `complete.md`로 옮긴다.** 내용을 요약하거나 줄이지 않는다.
+- `complete.md`에서는 완료 날짜 순으로 뒤에 덧붙인다. 항목 번호는 `todo.md`에 있던 번호를 그대로 유지한다(예: `## 7. "수리가 필요해요 1"의 모양 찾기 대폭 변경`). 번호를 다시 매기지 않는다 — 다른 항목이 번호로 참조하고 있다.
+- `todo.md`의 "확인이 필요한 항목 정리"와 "항목 간 의존 관계"는 옮기지 않고 `todo.md`에 남긴다. 아직 유효한 정보다.
+- 옮기는 시점은 **작업 단락이 끝났을 때**다. 작업 중간에 옮기지 않는다.
+- 과거 조치 내용을 찾을 때는 `todo.md`와 `complete.md`를 **둘 다** 검색한다.
 
 ## 1-2/01은 같은 선생님의 스토리보드다
 
@@ -56,10 +67,10 @@ todo.md               앞으로 수정할 내용
 
 | 대상 | 1-2/01 기준 | 8차시 현재 상태 |
 | --- | --- | --- |
-| 상단 헤더(topbar) | `<header class="topbar">` + 햄버거 "목록" 드로어(`installCourseMenu`, 데이터는 `lesson.json`의 `ui.courseMenu`), 나레이션 다시듣기, 스테이지 라벨, 진행/리워드 pill | 자체 마크업으로 유사하게 만들어 둠 → 01 방식으로 맞춰야 함 |
-| 말풍선 | `.speech` — 크림(#fffdf6) 배경 + 4px 갈색(#4c3428) 테두리 + `::before/::after` 꼬리, `speechPop` 애니메이션. 좌/우/하단 변형 있음 | 배경 이미지(`school-speech-bubble-body.png`) 기반 고정 990×190 → 01 방식으로 교체 |
-| 타자 입력기(키패드) | `keypad-panel` / `keypadInput` / `keypadPress` / `keypad-pressing` / `keypadDisplayTick` — 누름 피드백과 표시 틱 포함 | `keypad` + `keypad-wrap`만 있는 축소판 |
-| 화면 전환 | `#app`의 `stage-fade-out` / `stage-fade-in`, `data-transition="slide"`(`stageSlideOutRight` / `stageSlideInRight`) | 전환 효과 없음 |
+| 상단 헤더(topbar) | `<header class="topbar">` + 햄버거 "목록" 드로어(`installCourseMenu`, 데이터는 `lesson.json`의 `ui.courseMenu`), 나레이션 다시듣기, 스테이지 라벨, 진행/리워드 pill | **이식 완료.** 드로어 데이터만 `lesson.json` 대신 index.html 내부 상수 `COURSE_MENU`. 나레이션 다시듣기는 08에 오디오 자산이 없어 미적용 |
+| 말풍선 | `.speech` — 크림(#fffdf6) 배경 + 4px 갈색(#4c3428) 테두리 + `::before/::after` 꼬리, `speechPop` 애니메이션. 좌/우/하단 변형 있음 | **이식 완료.** 값은 01 실측 × 1.4056(테두리 6px, radius 28px). 배경 이미지 방식은 폐기하고 파일도 삭제 |
+| 타자 입력기(키패드) | `keypad-panel` / `keypadInput` / `keypadPress` / `keypad-pressing` / `keypadDisplayTick` — 누름 피드백과 표시 틱 포함 | **이식 완료.** 08의 세 키패드가 `buildKeypad` 하나를 공유하고 `[←] [0] [확인]` 배치·누름 피드백·표시 틱을 갖는다. 키 높이만 78px 유지 |
+| 화면 전환 | `#app`의 `stage-fade-out` / `stage-fade-in`, `data-transition="slide"`(`stageSlideOutRight` / `stageSlideInRight`) | **이식 완료.** 08은 정적 씬 구조라 `#app` 대신 `.scene`에 걸고 `#stage[data-transition="slide"]`로 옵트인 |
 | 타이틀 로고 | `assets/ui/title-logo.webp` (별도 로고 에셋) | `assets/colorful-school-wall-title.png` |
 | 커서 / 힌트 | `assets/ui/mouse-pointer.webp`, `hint-arrow-green.webp`, `coach-face.webp` | `tap-hint-hand.png` |
 

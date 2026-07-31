@@ -52,6 +52,20 @@
 
 <!-- 새 항목은 이 아래에 추가한다. -->
 
+### [blend-tint-bleeds-outside-alpha] background-color + blend-mode로 투명 스프라이트를 색칠해 도형 바깥 사각형까지 색이 새어 나감
+
+- 대상: production/1-2/08/index.html (`.paint-shape`, `.drawn-shape`)
+- 분류 태그: blend-tint-bleeds-outside-alpha
+- 상태: 조치 (2026-07-31 수정 완료, 규칙 승격은 미제안 — 1회)
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: 사용자가 "도형 채우기가 도형 바깥까지 새어 배경까지 색이 칠해진다"고 지적. 원인은 에셋 알파가 아니라 CSS 색칠 기법이다. `.paint-shape`는 `background-image:url('assets/shape-tile-body.png')`(1536×1024 RGBA, 3프레임 스프라이트, 알파 bbox `40,261~1490,730`) 위에 `.green/.blue/.red/.purple/.yellow`가 `background-color:var(--leaf)` + `background-blend-mode:multiply`를 얹는 구조다. **`background-color`는 요소 padding-box 전체를 칠하고, `background-blend-mode`는 그 위에서 이미지와 블렌드할 뿐이라 이미지 알파가 0인 영역에는 블렌드 대상이 없어 배경색이 그대로 남는다.** 스프라이트 세로 알파 점유율이 (730-261)/1024 = 46%뿐이라, `height:150px` 요소에서 도형 위아래로 각각 ~38px의 색칠된 빈 띠가 생긴다. 영향 범위: `#paintIntroVisual`(394행), `#countShapes`, `#arithShapes`(407행), `#randomWorkProgress`(419행), 자유 그리기 `.drawn-shape`(690행)와 완성 벽화 미리보기(686행) — 도형이 등장하는 08의 모든 씬.
+  - 참고: 에셋 자체는 정상이다. `shape-tile-body.png`·`road-sign-body.png` 모두 네 모서리 alpha=0인 투명 PNG임을 실측 확인했다. `production/1-2/08/todo.md` 8번의 "현재 08의 도형은 에셋이 아니라 CSS로 그려져 있다"는 서술도 이 조사에서 오류로 확인되어 정정했다.
+- 조치: **2026-07-31 수정 완료.** 색칠을 `.paint-shape::before`로 옮기고 같은 스프라이트를 `mask-image`(`mask-size:300% 100%` + 도형별 `mask-position`)로 걸어 실루엣 밖을 잘라냈다. `filter`(그림자·글로우)는 요소에 남겨 마스크된 결과 위에 적용되게 했다(요소에 마스크를 직접 걸면 drop-shadow가 잘린다). `.drawn-shape`가 중복으로 깔던 `background-image`는 제거했다. 색상별 에셋 15장(3도형×5색) 생성이나 스프라이트 분리는 불필요했다. 함께 고친 것: `.paint-shape`에 `aspect-ratio:1;justify-self:center`를 넣어 그리드 칸에 눌려 동그라미가 타원으로 보이던 왜곡을 없앴다(`.random-progress`·`.drawing-summary`도 정사각으로). 검증: 수정 전/후를 같은 페이지에서 렌더해 요소 모서리 픽셀 비교 — 수정 전 `triangle red` 네 모서리가 전부 틴트색 `(230,80,67)`, 수정 후 전부 페이지 배경 `(255,255,255)`, 도형 중심 색은 동일 유지.
+- 규칙화 메모: 아직 1회. 반복되면 "투명 raster를 색상 변형해 쓸 때 `background-color`+`background-blend-mode`로 틴트하지 않는다 — 배경색이 알파 0 영역에 그대로 남는다. `mask-image`로 실루엣을 잘라낸 뒤 색을 얹는다"를 `prompts/common_html_contract.md`에 제안 후보. 알파 계열([transparent-asset-alpha-not-validated]·[decorative-asset-background-alpha]·[character-asset-alpha-fringe])과 증상이 닮았으나 **원인 층위가 다르다** — 그쪽은 에셋 생성/후처리 문제라 `보류`지만 이건 순수 CSS라 결정적으로 고칠 수 있다. 같은 태그로 묶지 말 것.
+
 ### [refine-css-drift-no-tokens] refine이 CSS를 통째로 다시 쓸 때 폰트 크기·색이 기준 없이 흔들려 통일성이 깨짐
 
 - 대상: content-harness-pipeline/prompts/design_refine_system.md, prompts/common_html_contract.md, prompts/builder_system.md (관측: runs/2026-07-22_ch8c0719/output/index.html)
@@ -692,9 +706,9 @@
 - 대상: content-harness-pipeline (builder 산출물 전반), 예: runs/2026-07-08_ch802d08/output/index.html
 - 분류 태그: content-scale-too-small
 - 상태: 제안됨
-- 발생 횟수: 11
+- 발생 횟수: 12
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-10
+- 최근 발생일: 2026-07-31
 - 사례:
   - 2026-07-09: 콘텐츠가 초등학생용인데 이미지와 글자가 너무 작다. 지금보다 훨씬 크게 요청. 화면은 full-viewport stage에 clamp(min,vw,max) 기반 스케일이라 큰 화면에서 max 천장에 걸려 작게 보임.
     - 조치: clamp() 상단(vw 계수·max)을 ~1.28배로 올려 큰 화면에서 확대(작은 화면 min은 유지). 표면 박스와 그 안 텍스트를 같은 배율로 키워 art 안에 글자가 유지되도록 함. 튜토리얼 씬 오버플로는 티켓 tray를 한 줄(`flex-wrap:nowrap`)로 고정해 해결.
@@ -718,7 +732,8 @@
     - 조치: font를 1.9rem으로 키웠다가, 2줄 방지 위해 `white-space:nowrap`+한 줄에 들어가는 최대치 clamp(1.05rem,3.2vw,1.7rem)로 재조정. 슬롯 폭 40%→46%(작업대 시계 오른쪽 공간 활용)로 넓혀 데스크톱(≥1280)에서 슬롯 안 1줄. 질문만 위로: 드롭 슬롯(`#tutBlank`)은 두고 `position:relative;top:-.55rem`. 교훈: 텍스트를 키울 때 컨테이너 폭 대비 줄바꿈을 함께 확인(키움과 nowrap/폭 확보는 세트).
   - 2026-07-10: 유형 C 모니터 안 시간대 막대(`.timeline-bar` 이미지)와 라벨("오전 1~12시 · 오후 1~12시", `.timeline-labels`)이 작아 조금씩 키워달라고 요청.
     - 조치: `.timeline-bar` 폭 min(100%,430px)→490px·height clamp(52,8.2vw,72)→clamp(60,9.4vw,82)로 확대, `.timeline-labels` font clamp(.5,1.6vw,.8rem)→clamp(.58,1.9vw,.94rem)로 상향(`.tl-sep`은 1.15em 상대라 자동 확대). 모니터 유리(mon-screen) 안에 유지되도록 "약간" 수준으로만 키움.
-- 규칙화 메모: **발생 11회 → rule 승격 제안.** 초안: "초등(저학년) 대상 콘텐츠는 본문/질문/힌트/**버튼(CTA)** 글자 clamp의 max와 vw 계수를 성인 기준보다 크게 잡는다(예: 본문 max ≥ 1.6rem, 주요 CTA max ≥ 1.8rem). 표면 박스/티켓 asset 위 텍스트도 동일 배율." 반영 위치: content-harness-pipeline/builder_system.md. 사용자 승인 대기.
+  - 2026-07-31: `production/1-2/08/index.html`에서 "대사의 크기와 글자 크기를 전반적으로 키워야 한다"고 지적. 08은 파이프라인 산출물을 손으로 다듬은 차시본인데, 1920×1080 고정 stage로 옮긴 뒤에도 `--fs-*` 토큰 사다리가 파이프라인 기본값 그대로라 대사(`.speech`)와 본문이 초등 저학년 기준으로 작다. (미조치 — `production/1-2/08/todo.md` 16번으로 등록)
+- 규칙화 메모: **발생 12회 → rule 승격 제안.** 초안: "초등(저학년) 대상 콘텐츠는 본문/질문/힌트/**버튼(CTA)** 글자 clamp의 max와 vw 계수를 성인 기준보다 크게 잡는다(예: 본문 max ≥ 1.6rem, 주요 CTA max ≥ 1.8rem). 표면 박스/티켓 asset 위 텍스트도 동일 배율." 반영 위치: content-harness-pipeline/builder_system.md. 사용자 승인 대기.
 
 ### [label-text-wrapping] 짧은 라벨(숫자+한글 토큰)이 좁은 표면에서 글자 단위로 줄바꿈됨
 
@@ -1070,20 +1085,21 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html
 - 분류 태그: content-flow-state-scaffolding-regression
-- 상태: 열림
-- 발생 횟수: 4
+- 상태: 제안됨 (5회 도달, 2026-07-31 rule 승격 제안 — 사용자 판단 대기)
+- 발생 횟수: 5
 - 최초 발생일: 2026-07-31
 - 최근 발생일: 2026-07-31
 - 사례:
   - 2026-07-31: content critique에서 무작위 C·D의 step1/step2가 서로 다른 operands를 생성하고, 도입·모양 찾기 재진입 초기화가 불완전하며, 수리 이야기 도입 질문이 즉시 숨는 문제를 지적했다. 또한 페인트 색·모양 대응 설명의 순서가 세기 문항 뒤로 밀렸고, 산술 도형의 추가·삭제가 최종 상태로만 보이며, 오답·도움말·3회 오답 이후 진행이 학습자의 다음 행동을 충분히 안내하지 못했다. 고정 진행률과 `O` 제출 라벨, 자유 그리기 `버튼` CTA도 현재 상태와 조작 의미를 명확히 전달하지 못했다.
   - 2026-07-31: 후속 content critique에서 다음 차시 대상이 주입되어도 버튼이 항상 disabled인 문제, 대부분 문항의 개념 설명·재시도 안내 부족, ①·② 대사와 페인트 추가·삭제 사건의 합침, 보수 확인과 세 수 계산이 고정 A→D 순회로 분리된 문제, 세 번째 오답 뒤 정답 위치 번호·후속 행동 부족, 목록으로 미완료 단계를 건너뛰는 문제를 지적했다. 키패드 `O`, 자유 그리기 `버튼` 라벨도 조작 의미가 불명확하다고 재차 지적했다.
   - 2026-07-31: 이번 content refine packet에서 독립 실행 환경의 `나가기` 비활성, 문항별 근거·단계형 힌트 부족과 자동 전환, 자유 그리기 완료 CTA의 의미 없는 `버튼` 라벨, 표지판별 예측 질문 단계 축약, 계산 성공과 담장 작업 진행·자유 그리기 해금의 연결 부족을 지적했다.
+  - 2026-07-31: **(실사용 관측)** `production/1-2/08/index.html` 모양 찾기에서 `■모양 2개`를 다 찾았는데 다음 모양(`●`)으로 넘어가지 않고 진행이 멈춘다고 지적. 위 네 사례가 "자동 전환 제거 → 원문 표면을 직접 눌러 진행"으로 여러 번 방향을 튼 결과, `selectHotspot`이 `found.size===2`에서 `showFeedback(..., advanceSearch)`를 부르고 `showFeedback`은 `feedbackSpeech`를 눌러야만 `completeFeedback→advanceSearch`가 돌게 되어 있다(index.html:732·909). 즉 진행 조건이 "보이지 않거나 누를 수 있는지 알 수 없는 말풍선 클릭" 하나에 묶여 있어 실제로는 데드엔드로 보인다. 앞선 조치들이 만든 **수동 진행 게이트가 검증(Playwright hook)에서는 통과하지만 사람 조작에서는 막히는** 형태의 회귀다. (미조치 — `production/1-2/08/todo.md` 17번으로 등록)
   - 2026-07-31: 후속 content refine packet에서 무작위 문제 풀이 뒤 가시적인 다음 조작 부재, 모양 찾기 hotspot 밖 클릭 무반응, 세 번째 오답 자동 공개를 직접 정답처럼 처리하는 상태 혼동, 자유 그리기 최소 참여 조건·완료 장면 결과 보존 부족, 문항별 계산·관찰 근거 피드백 부족을 지적했다. `다음 문제`·`자유 그리기로 이동`·`그림 완성하기` 같은 새 가시 문구 제안은 planner 외 문구 추가 금지와 충돌하므로 기능·상태·기존 원문 표면으로 해결해야 한다.
 - 조치: **2026-07-31 수정·검증 완료.** 무작위 C·D는 문제 묶음별 operand 객체를 만들어 step1/step2가 같은 수를 공유하게 했고, 도입·모양 찾기는 재진입 때 배경·캐릭터 위치/pose·대사 index·숨김 상태·CTA·입력·타이머를 초기화한다. 모양 찾기 뒤 `페인트 색깔마다 모양이 달라요`→`● ■ ▲ 모양`을 먼저 순차 노출한 다음 세기 문항을 시작하도록 storyboard 순서를 복원했다. 산술 튜토리얼은 10개 등장, 7→3 추가, 10→2 추가, 12→2 삭제→3 삭제를 DOM 상태 변화로 순차 실행하고 애니메이션이 끝날 때까지 키패드를 disabled로 둔다. 세기·산술·무작위 문항은 오답 때 현재 도형/operand를 강조하고, 3회 오답 뒤 정답을 표시하되 기존 `O` 조작으로 직접 확인해야 다음 문항으로 넘어가게 했다. 제작자용 생성 규칙 도움말은 현재 operands의 중간식으로 교체했고, 상단 게이지를 문항마다 갱신한다. 자유 그리기는 도형이 1개 이상 놓이기 전 완료 CTA를 disabled로 유지하며, 수리 이야기는 제목·`모양을 길에서 본 적이 있나요?`를 첫 beat로 실제 노출한 뒤 표지판을 연다. 원문 보존 계약 때문에 critique가 제안한 `확인`·`그림 완성하기` 같은 새 라벨은 적용하지 않고 기존 `O`·`버튼` 원문을 유지했다. 검증: planner rendered_text·문항·보기 100개 누락 0, JS 구문·중복 DOM id·asset·QA scene·고정 캔버스 계약 정상. Playwright에서 intro/shape 재진입 reset, 페인트 설명 선행, 산술 입력 잠금·순차 변화, C·D operand 공유, 세 종류 3회 오답→정답 확인, 빈 그리기 완료 차단, 수리 이야기 첫 beat를 확인했고 console/page 오류는 0건이었다. Visual QA 캡처 8장도 broken image·overflow·text clipping·overlap 0건이며, 자동 REJECT 한 건은 공통 계약상 필수인 `#viewport {position:fixed; inset:0}`를 100% fixed overlay로 오인한 기존 휴리스틱 false positive다.
   - 2026-07-31 후속 조치: 다음 차시 버튼은 `nextLessonUrl`·`onNextLesson` 존재를 초기화·완료 진입·호스트 갱신 이벤트·주기 동기화에서 다시 검사해 활성화하고, 종료 수단이 없으면 나가기 버튼을 비활성화한 채 완료 화면을 유지한다. 목록은 실제로 해제된 단계만 이동 가능하게 했다. 도입과 산술의 ①·② 대사, 페인트 추가·담장 이동·삭제 사건을 독립 beat로 분리해 각 확인 뒤에만 도형 모션과 문항을 연다. 무작위 문제는 런타임에서 A→같은 A·B를 쓰는 C 또는 B→같은 C를 쓰는 D 묶음 하나를 선택하고, 정답·세 번째 오답 뒤에는 중간값 10 식을 보여 준 뒤 자동 진행한다. 모양 찾기 세 번째 오답에는 두 정답 위치 번호를 표시하며, 키패드 강제 공개도 자동 진행으로 통일했다. 보이는 `O`·`버튼`은 공통 원문 계약 때문에 그대로 두고 각각 `확인`·`그림 완성하기` 접근성 라벨을 추가했으며, 자유 그리기 도형·색 `aria-pressed`를 상태와 동기화했다. 효과음과 대사·문항·안전 이야기 내레이션은 모두 소리 조절 상태를 따른다. 검증: planner 텍스트 127개(고유 102개) 누락 0, JS 구문·중복 DOM id·asset·8개 QA scene·고정 캔버스 계약 정상. Playwright에서 host route 활성화, 메뉴 잠금, 산술 독립 beat, 모양 정답 번호, 연결된 무작위 A→C operands를 확인했고 page error는 없었다.
   - 2026-07-31 이번 조치: `나가기`는 호스트 callback·부모 frame·opener를 우선 사용하고 독립 실행에서는 차시 시작 화면으로 돌아가는 fallback을 연결해 항상 활성화했다. 모양 찾기는 오답 2회에 정답 윤곽, 3회에 위치 번호와 정답 피드백을 공개하고, 모양 찾기·세기·산술·무작위 문제는 정답/자동 정답 뒤 원문 피드백 또는 중간식을 직접 눌러야 다음 문항으로 진행하도록 자동 전환을 제거했다. 무작위 문제 하단에는 기존 도형 asset 3개로 담장 작업 진행을 표시해 계산 성공과 자유 그리기 해금을 연결했다. 수리 이야기는 원·사각형·삼각형마다 `무슨 표지판일까요?` 예측 beat를 거친 뒤 설명을 공개한다. 자유 그리기 확인에는 사용한 도형·색 조합을 텍스트 추가 없이 asset 표본으로 요약한다. critique의 보이는 `그림 완성하기` 라벨은 planner에 없는 문구를 새로 노출하지 못하는 공통 원문 계약이 우선하므로 기존 `버튼`을 유지하고 이미 있던 `aria-label="그림 완성하기"`를 보존했다. 검증: planner rendered_text·문항·보기·정답·피드백 고유 102개 누락 0, JS 구문·중복 DOM id·asset 34개·8개 QA scene 정상. Playwright에서 대사 표면 진행, 피드백 수동 진행, 무작위 3단계 담장 진행과 수동 전환, 자유 그리기 요약, 표지판 예측 3회, 독립 실행 나가기 fallback을 확인했고 console/page 오류는 0건이었다. Visual QA는 broken image·overflow·text clipping·overlap 0건이며, REJECT는 고정 캔버스 계약의 필수 `#viewport`를 fixed overlay로 오인한 기존 false positive 한 건뿐이다.
   - 2026-07-31 후속 content refine 조치: 모양 찾기 장면 전체를 오답 판정 영역으로 연결하고 hotspot 밖 클릭도 기존 오답 횟수·도장·힌트에 반영했다. 세 번째 오답은 정답으로 완료시키지 않고 정답 위치·숫자 또는 입력값만 공개한 뒤 학습자가 정답 hotspot을 직접 선택하거나 기존 `O`를 눌러 확인해야 진행하도록 모양 찾기·세기·산술·무작위 문항을 통일했다. 무작위 풀이 표면에는 원문 밖 문구를 추가하지 않고 기존 풀이를 유지한 채 진행점을 표시하고 초점을 이동해 다음 조작 affordance를 보강했다. 자유 그리기는 도형 3개 이상·도형 종류 2개 이상·색 2개 이상의 명시적 완료 검사로 바꾸고, 배치 상태를 완료 장면의 담장 위에 그대로 복원했다. planner 밖 가시 문구를 추가할 수 없어 `다음 문제`·`자유 그리기로 이동`·`그림 완성하기` 제안은 적용하지 않았고 기존 `aria-label`과 원문 `버튼`을 유지했다. 검증: planner 원문·문항·보기·정답·피드백 고유 102개 누락 0, JS 구문·중복 DOM id·asset 참조 정상. Playwright에서 배경 오답 3회→정답 직접 선택, 세기·산술·무작위 자동 공개→기존 확인 조작, 자유 그리기 최소 조건과 완료 장면 3개 결과 복원을 확인했고 page error는 없었다.
-- 규칙화 메모: 아직 4회. 반복되면 `content-harness-pipeline/AGENTS.md`에 “다단계 문항은 operands를 문제 묶음 상태로 공유하고, 모든 scene 재진입 시 DOM·배경·캐릭터·입력·타이머를 초기화하며, 원문을 바꾸지 않는 범위에서 오답→힌트→정답 확인→다음 진행 상태를 명시적으로 검증한다”는 rule 승격을 제안한다.
+- 규칙화 메모: **5회 도달 → rule 승격 제안(2026-07-31, 사용자 승인 대기).** 초안: “다단계 문항은 operands를 문제 묶음 상태로 공유하고, 모든 scene 재진입 시 DOM·배경·캐릭터·입력·타이머를 초기화한다. **문항에서 다음 단계로 넘어가는 경로는 항상 하나 이상 사람이 볼 수 있는 표면(가시·활성·포커스 가능)이어야 하며, 자동 전환을 제거할 때는 그 자리를 대신할 표면이 실제로 보이고 눌리는지 사람 조작 기준으로 확인한다.** Playwright hook 통과는 진행 가능의 근거가 아니다.” 반영 위치: `content-harness-pipeline/AGENTS.md`. 5회 중 4회는 파이프라인 critique, 5번째는 실사용 데드엔드 관측이라 **critique 루프가 못 잡는 층위**임이 드러났다.
 
 
 ### [cross-lesson-shell-inconsistency] 같은 학기 차시인데 공통 화면(상단 헤더·타이틀 화면) 양식이 차시마다 달라짐
@@ -1091,15 +1107,16 @@
 - 대상: production/1-2/08/index.html (기준: production/1-2/01/index.html)
 - 분류 태그: cross-lesson-shell-inconsistency
 - 상태: 열림
-- 발생 횟수: 2
+- 발생 횟수: 3
 - 최초 발생일: 2026-07-31
 - 최근 발생일: 2026-07-31
 - 사례:
   - 2026-07-31: 1-2/08의 헤더가 1-2/01과 전혀 다른 양식(이미지 프레임 HUD, 164x68 목록/소리 버튼, 3단계 chip, 전폭 progress track, 146px 높이)이라 1-2/01의 topbar 양식과 똑같이 맞추라고 지적했다. 파이프라인이 차시마다 공통 shell을 새로 설계해 차시 간 UI 연속성이 깨진다.
   - 2026-07-31: 타이틀 화면도 같은 일이 반복됐다. "01을 참고해서" 타이틀 로고를 가운데 이미지로 두라는 요청에 대해, 01의 `#introStartWrap` 구조를 가져오지 않고 08 기존 좌표계로 비슷하게만 만들었다. 사용자가 "css도 그렇고 크기도 그렇고 색감도 그렇고 글꼴도" 다르다고 지적. 실측 차이 — (a) 01은 `#app.title-mode .topbar{opacity:0}`으로 타이틀 화면에서 헤더를 숨기는데 08은 노출, (b) 01은 로고+시작버튼을 `#introStartWrap` 한 덩어리로 `top:50%` 중앙 배치하는데 08은 로고 `top:297px` / 버튼 `bottom:70px`로 분리, (c) 시작 버튼 폭이 01은 화면폭 28.6%(390/1366)·28px인데 08은 21.9%(420/1920)·34px, (d) 버튼 색이 01은 `#fff46d→#ffc72f→#ff8f18` 금색 그라데이션 + `#113d78` 테두리/글자인데 08은 흰/크림 스프라이트(`cta-intro-body.png`), (e) 서체가 01 `Noto Sans KR` vs 08 `Malgun Gothic`, (f) 01의 `titleLogoDrop` 로고 낙하 애니메이션 누락.
+  - 2026-07-31: 세 번째 반복. (a) 08의 말풍선(`.speech`)이 씬마다 고정 좌표·고정 크기라 대사 길이가 달라도 박스가 그대로여서 글자 수에 따라 크기가 늘고 줄어야 한다는 지적, (b) 01에는 음소거 버튼과 다음(진행) 버튼이 공통 UI로 있는데 08에는 없으니 **01에서 가져와 쓰라**는 지시. 앞선 두 사례(헤더·타이틀 화면)와 같은 패턴이 조작 UI 층위에서 또 나왔다 — 차시별로 진행/소리 조작을 각자 만들어 두면 같은 코스인데 조작법이 차시마다 달라진다.
 - 조치(1회차): 1-2/01 topbar의 실제 CSS/DOM 값을 그대로 이식했다. 구조는 `.topbar`(56px, 크림 유리 그라디언트, 하단 보더) > `.topbar-left`(`.btn-home` + `.header-voice-volume-button` + `.step-label`) / 중앙 절대배치 `.lesson-header-title`(금색 밑줄) / 우측 `.lesson-bar-reward`(track+fill+`%`)로 통일했다. 내용은 planner/input에서 가져왔다 — 제목은 `알록달록, 학교 담장 색칠하기`, step-label은 1-2/01의 stageLabels 사다리에 맞춰 `수리력 +`·`수리가 필요해요 1`·`수리가 필요해요 2`·`수리로 해결해요`·`수리 이야기`로 sceneMeta에 매핑, 진행률은 기존 `setProgress()` 호출을 그대로 lesson-bar에 연결했다. 좌상단 버튼은 1-2/01의 실제 런타임 형태인 햄버거 아이콘 + `목록` 라벨(`.course-menu-btn`)로 맞췄고, 글자 서체도 1-2/01과 같은 Noto Sans KR을 `--font-topbar`로 topbar에만 적용했다(로드 실패 시 기존 `--font-body`로 폴백). 1-2/01에 없는 3단계 chip과 `assets/global-hud-frame.png` 프레임은 제거했다(파일은 삭제하지 않고 남겨 둠). 검증: node --check로 inline JS 구문 정상. 1-2/01(title-mode topbar 숨김만 해제한 사본)과 1-2/08을 각각 로컬 HTTP로 띄워 headless Chrome 1920x1080으로 캡처하고 상단 60px를 나란히 비교해 버튼·구분선·중앙 제목·금색 밑줄·우측 진행 pill이 같은 위치·크기·서체로 렌더되는 것을 확인했다.
 - 조치(2회차): 01의 `#introStartWrap` / `.intro-title-copy` / `.intro-start-cta` / `titleLogoDrop` / `ctapulse` / `shimmer` / `title-mode`를 같은 이름으로 이식하고 값은 1920 배율(×1.4056)로 환산했다. **여기서 한 번 더 틀렸다 — 01의 CSS를 소스 순서로 읽어 `#introStartWrap .intro-start-cta`(네이비+금색)를 이식했는데, 이는 뒤쪽 `#app .cta,#app #introStartWrap .intro-start-cta`에 덮인 죽은 규칙이었다.** `getComputedStyle` 실측으로 실제 값(앰버 pill `#fef08a→#ca8a04`, `border-radius:999px`, 글자 `Jua` 27px `#713f12`)을 다시 읽어 교정했다. 서체도 같은 함정 — 01은 Noto Sans KR을 선언한 뒤 아래에서 `html,body,button{font-family:"Jua",...}`로 덮는다. 사용자 승인으로 08도 `--font-body`를 Jua 스택으로 전역 교체했다. 타이틀 이미지 아트 자체(색감·글자 형태)가 01 로고와 다른 건 CSS로 불가 — 사용자가 현재 이미지 유지 결정.
-- 규칙화 메모: 2회. 반복되면 `content-harness-pipeline/AGENTS.md`에 "차시 공통 화면(상단 헤더/타이틀 화면/진행 표시/목록·소리 조작)은 차시마다 새로 설계하지 않고, 기준 차시의 클래스명·수치를 읽어 스테이지 배율만 환산해 그대로 이식한다"는 rule 승격을 제안한다. 2회차 관찰로 범위를 '상단 헤더'에서 '공통 화면 전반'으로 넓혔다 — 근본 패턴은 "기준 차시를 참고하라고 했을 때 실제 값을 읽지 않고 비슷하게 새로 만드는 것"이다.
+- 규칙화 메모: 3회. 반복되면 `content-harness-pipeline/AGENTS.md`에 "차시 공통 화면(상단 헤더/타이틀 화면/진행 표시/목록·소리 조작/대사 진행 버튼)은 차시마다 새로 설계하지 않고, 기준 차시의 클래스명·수치를 `getComputedStyle` 실측으로 읽어 스테이지 배율만 환산해 그대로 이식한다"는 rule 승격을 제안한다. 2회차 관찰로 범위를 '상단 헤더'에서 '공통 화면 전반'으로, 3회차 관찰로 '조작 UI(소리·다음)'까지 넓혔다 — 근본 패턴은 "기준 차시를 참고하라고 했을 때 실제 값을 읽지 않고 비슷하게 새로 만들거나, 아예 안 만드는 것"이다. 연관 [[port-styles-via-computed-style]].
 
 ### [overlay-occludes-bg-subject] 오버레이(타이틀 이미지)가 배경 아트의 핵심 피사체를 가림
 
@@ -1113,3 +1130,69 @@
   - 2026-07-31: 도입 장면 타이틀 이미지가 배경의 학교 담장(무너진 구간 포함) 위에 겹쳐 얹혀 있어, 이 차시의 핵심 피사체인 담장을 가린다고 지적했다. 위로 올려 담장을 가리지 않게 요청.
 - 조치: 배경 `school-wall-damaged.png`(1672x941, cover 배율 1.148)에서 담장 기둥 윗면이 stage 좌표 y≈550인 것을 캡처 픽셀 스캔으로 확인했다. 타이틀 에셋은 알파 bbox가 y 100~758/824라 폭 1068px로 그리면 높이 461px 중 실제 그림이 박스 상단 +56~+424에만 있다. 도입 화면은 작업 도중 01의 `#introStartWrap`(타이틀+시작 버튼 세로 컬럼, `top:50%`+`translate:0 -50%`) 구조로 교체되었고, 그 정중앙 배치에서는 그림이 y 305~673을 차지해 담장을 덮었다. 01 규칙은 그대로 두고 씬 스코프 오버라이드 `#section_intro #introStartWrap{translate:0 calc(-50% - 140px)}`만 더해 그림을 y 165~533으로 올렸다(명시도 id 2개 > id 1개라 `!important` 불필요). 시작 버튼도 컬럼째 올라가 바리케이드·콘과 겹치던 위치에서 담장의 깨끗한 면 위로 옮겨졌다. 검증: headless Chrome 1920x1080에서 도입 장면을 캡처해 담장 전체·무너진 구간·벽돌 더미·콘·바리케이드가 모두 드러나고 타이틀이 상단 헤더와 겹치지 않는 것을 확인했다.
 - 규칙화 메모: 아직 1회. 반복되면 `content-harness-pipeline/AGENTS.md`에 "장면 오버레이(타이틀/배너/패널)는 배경 아트의 학습 주제 피사체 위에 얹지 않고 하늘·여백 등 빈 영역에 배치하며, 배치 전 배경의 피사체 경계를 확인한다"는 rule 승격을 제안한다.
+
+### [speech-bubble-fixed-box-not-content-sized] 말풍선이 고정 좌표·고정 크기라 대사 길이에 맞춰 늘고 줄지 않음
+
+- 대상: production/1-2/08/index.html (`.speech` — `#introSpeech`·`#shapeSpeech`·`#arithSpeech`·`#arithContext`·`#drawingSpeech`·`#feedbackSpeech` 공유)
+- 분류 태그: speech-bubble-fixed-box-not-content-sized
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: "말풍선의 위치가 고정되어 있고 글자 수에 따라 크기를 조정해 주면 좋겠다"고 지적. 대사 길이가 씬마다 크게 다른데(한 줄짜리 피드백 ~ 세 줄짜리 도입 대사) 박스 크기가 같아, 짧은 대사에서는 빈 공간이 남고 긴 대사에서는 빽빽해진다.
+- 조치: (미조치 — `production/1-2/08/todo.md` 15번으로 등록)
+- 규칙화 메모: 아직 1회. `production/1-2/08/todo.md`의 "항목 간 의존 관계"에 이미 "씬별 패딩 보정을 다시 넣으면 높이 자동 조정이 깨진다"고 적혀 있어, **씬별 하드코딩이 자동 크기를 죽이는 구조**가 알려진 상태다. 반복되면 "대사·피드백 표면은 폭/높이를 고정하지 말고 내용 기준(`width:max-content`+`max-width`, 높이 auto)으로 잡고, 위치는 앵커(캐릭터 기준 꼬리)로만 고정한다"를 `prompts/common_html_contract.md`에 제안 후보. 연관 [label-text-wrapping](같은 "텍스트 길이 변화를 표면이 못 따라감" 계열), [cross-lesson-shell-inconsistency](이번 피드백에 함께 온 공통 UI 이식 요구).
+
+### [object-placement-implausible] 찾기·탐색 장면의 사물이 현실에 없을 법한 위치·종류로 배치됨
+
+- 대상: production/1-2/08/index.html (`findObjects` — `classroom-shape-search.png` 위 6종 사물)
+- 분류 태그: object-placement-implausible
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: 모양 찾기에서 "너무 뜬금없는 물건들이 뜬금없는 위치에 나온다"고 지적. 사용자가 제시한 기준은 **사물의 실제 소속 위치** — 공은 바닥에 붙어 있으면 좋다(현재 OK), 삼각자는 칠판 위, 시계는 교실 가운데 상단, 네모는 사물함·창문 말고 책상 위에 있을 법한 다른 에셋을 다시 생각할 것. 더불어 칠판 오른쪽이 비어 있으니 학생을 상시 배치해 교실처럼 보이게 하라고 요청. 현재 좌표는 배경 아트와 무관하게 stage 좌표로만 흩어 놓아(`rect:[830,240,215,215]` 등) 사물이 공중에 떠 있거나 맥락 없는 면에 얹힌다.
+- 조치: (미조치 — `production/1-2/08/todo.md` 18번으로 등록)
+- 규칙화 메모: 아직 1회. 반복되면 "탐색·찾기 장면의 사물은 도형 난이도만 보고 배치하지 말고 그 사물이 실제로 놓이는 표면(바닥/책상/벽/칠판)에 앵커를 두고, 배경 아트의 빈 면은 장면 맥락(인물·소품)으로 채운다"를 `prompts/builder_system.md`에 제안 후보. **[bg-anchor-alignment]와 구분할 것** — 그쪽은 "배경에 그려진 자리에 못 맞춤"(기하 정합), 이쪽은 "자리 자체가 개연성이 없음"(장면 의미). 같은 태그로 묶지 말 것.
+
+### [narration-visual-mismatch] 대사가 말하는 것과 화면에 보이는 것이 다름(색·개수)
+
+- 대상: production/1-2/08/index.html (`section_arithmetic_tutorial` — `#arithSpeech` 대사 vs `.paint-shape` 색, 페인트 통 에셋)
+- 분류 태그: narration-visual-mismatch
+- 상태: 열림
+- 발생 횟수: 2
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: 세 수의 덧셈·뺄셈 튜토리얼에서 대사는 `초록색부터 알려드릴게요`(index.html:452·764)라고 하는데 화면의 도형은 여러 색으로 나온다.
+  - 2026-07-31: 같은 튜토리얼에서 "페인트 통이 하나 더 필요하다"는 대사가 나오는데 화면에는 페인트 통이 한 통만 그려져 있다. 대사가 요구하는 수량 변화가 화면에 반영되지 않는다.
+- 조치: (미조치 — `production/1-2/08/todo.md` 19·21번으로 등록)
+- 규칙화 메모: 아직 2회지만 둘 다 같은 씬에서 나왔다. 반복되면 "대사 원문이 색·개수·방향 같은 관찰 가능한 속성을 말하면 그 속성이 화면 상태와 일치하는지 씬 단위로 대조한다(원문은 못 바꾸므로 화면을 원문에 맞춘다)"를 `prompts/content_refine_system.md`에 제안 후보. 연관 [spec-fx-color-mismatch](스펙 지정 색을 임의로 바꿈 — 그쪽은 구현이 스펙을 어긴 것, 이쪽은 구현이 **원문 대사**와 어긋난 것), [refine-alters-spec-text].
+
+### [arith-operand-not-highlighted] 더하는 대상은 표시가 없고 빼는 대상만 표시돼 연산 방향이 안 읽힘
+
+- 대상: production/1-2/08/index.html (`section_arithmetic_tutorial` — `#arithShapes` 추가/삭제 연출)
+- 분류 태그: arith-operand-not-highlighted
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: "7개에서 3개를 색칠"에서 **빼기는 빼는 표시가 잘 되어 있는데 더하기는 어떤 게 더해지는 것인지 표시가 없다**고 지적. 사용자가 제안한 해법은 네모로 묶어 glow를 주거나 그에 준하는 다른 표시. 짝을 이루는 두 연산에 시각 처리가 비대칭이라 덧셈 쪽만 관찰 근거가 사라진다.
+- 조치: (미조치 — `production/1-2/08/todo.md` 20번으로 등록)
+- 규칙화 메모: 아직 1회. 반복되면 "짝을 이루는 조작(추가/삭제, 정답/오답, 이전/다음)은 시각 처리를 대칭으로 만든다 — 한쪽에만 강조·모션을 주면 다른 쪽은 관찰 근거가 없는 상태가 된다"를 `prompts/builder_system.md`에 제안 후보. 연관 [motion-supporting-narration](나레이션이 말하는 사건에 시각 액션이 없음 — 이쪽은 **한쪽에만 있음**).
+
+### [primitive-shape-raster-instead-of-css] 원·삼각형·사각형 같은 순수 기하 도형을 raster 에셋으로 만들어 낡아 보임
+
+- 대상: production/1-2/08/index.html (`.paint-shape` — `assets/shape-tile-body.png` 3프레임 스프라이트), `road-sign-{circle,square,triangle}.png`
+- 분류 태그: primitive-shape-raster-instead-of-css
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-07-31
+- 최근 발생일: 2026-07-31
+- 사례:
+  - 2026-07-31: "동그라미 세모 네모 에셋이 너무 낡아 보인다, 다시 만들기 — 이건 이미지가 아니어도 될 것 같다, 한번 HTML로 해 보기"라고 지적. 순수 기하 도형이라 raster로 둘 이유가 없는데 스프라이트로 만들어 두어 (a) 아트가 낡아 보이고 (b) 색칠을 위해 `mask-image` 우회가 필요했다([blend-tint-bleeds-outside-alpha] 참조).
+- 조치: (미조치 — `production/1-2/08/todo.md` 22번으로 등록)
+- 규칙화 메모: 아직 1회. 반복되면 "원·삼각형·사각형 등 파라미터로 정의되는 기하 도형과 기능적 입력 컨트롤은 raster 에셋으로 만들지 않고 CSS/SVG로 그린다. 색·크기 변형이 필요한 요소일수록 그렇다"를 `prompts/asset_generator_system.md`+`builder_system.md`에 제안 후보. 연관 [ornate-asset-wrong-function](최종 교훈이 "기능적 입력 컨트롤은 사진 에셋이 아니라 CSS로" — 같은 결론에 도달한 선례), [blend-tint-bleeds-outside-alpha](raster로 둔 탓에 생긴 색칠 우회).

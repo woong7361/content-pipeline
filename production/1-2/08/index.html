@@ -17,14 +17,15 @@
   <link rel="preload" as="image" href="assets/student-volunteer.png">
   <link rel="preload" as="image" href="assets/activity-cta-body.png">
   <link rel="preload" as="image" href="assets/completion-cta-body.png">
-  <link rel="preload" as="image" href="assets/school-speech-bubble-body.png">
   <link rel="preload" as="image" href="assets/tap-hint-hand.png">
   <style>
     :root{
       /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
-      /* 타이포 사다리 (--fs-sm 31px = 본문 기본) */
-      --fs-2xs:24px; --fs-xs:28px; --fs-sm:31px; --fs-md:34px;
-      --fs-lg:38px;  --fs-xl:42px; --fs-2xl:48px; --fs-hero:72px;
+      /* 타이포 사다리 (--fs-sm 37px = 본문 기본)
+         16: 초등 저학년 기준으로 사다리 전체를 ×1.2 올렸다(24/28/31/34/38/42/48/72 → 아래).
+         개별 선택자에 px를 흩뿌리지 말고 항상 이 사다리를 통해 조정한다. */
+      --fs-2xs:29px; --fs-xs:34px; --fs-sm:37px; --fs-md:41px;
+      --fs-lg:46px;  --fs-xl:50px; --fs-2xl:57px; --fs-hero:86px;
       /* z-index 레이어 */
       --z-bg:1; --z-scenery:5; --z-content:10; --z-character:12;
       --z-interactive:20; --z-speech:30; --z-hud:40; --z-effect:60;
@@ -35,10 +36,12 @@
       --ease:cubic-bezier(.2,.8,.2,1);        /* 표준 진입/전환 */
       --ease-out:cubic-bezier(.4,0,.8,.2);    /* 퇴장 */
       --ease-back:cubic-bezier(.2,.9,.3,1.18);/* 살짝 튕기는 등장 */
+      --ease-speech-pop:cubic-bezier(.36,.07,.19,.97);/* 1-2/01 speechPop */
       --dur-fast:.15s; --dur:.45s; --dur-slow:.65s;
+      --dur-hammer:.42s; /* 담장 수리 망치 1회 왕복 */
       --delay-glow:.35s; /* 도입 CTA 글로우 지연 */
-      --dur-scene-out:.26s; /* 장면 퇴장 */
-      --dur-scene-in:.42s; /* 장면 진입 */
+      --dur-scene-out:.42s; /* 장면 퇴장 — 01 #app.stage-fade-out .42s */
+      --dur-scene-in:.45s; /* 장면 진입 — 01 #app.stage-fade-in .45s */
       --delay-speech:.14s; /* 캐릭터 뒤 말풍선 등장 */
       --delay-progress:.30s; /* 말풍선 뒤 진행 표시 */
       --delay-story-sign-1:0s; /* 수리 이야기 원 표지판 */
@@ -73,11 +76,20 @@
       --accent-bright:#fff080;
       --glow:#ffe86a;
       --cream:#fff8df;
+      --bubble-bg:#fffdf6;  /* 말풍선 바탕 — 1-2/01 .speech 실측값 */
+      --bubble-line:#4c3428; /* 말풍선 테두리·꼬리 — 1-2/01 .speech 실측값 */
+      --bubble-ink:#221914;  /* 말풍선 본문 — 1-2/01 .speech 실측값 */
       --danger:#e65043;
       --leaf:#67b941;
       --mint:#5ac8ad;
       --sand:#efd19b;
       --purple:#8c68c7;
+      /* 22: CSS 도형의 외곽선 색. 각 채움색의 어두운 변형이며 art_direction의 "균일한 중간 두께 외곽선"용 */
+      --leaf-line:#3f8a26; --surface-line:#12508f; --danger-line:#a8342a;
+      --purple-line:#5f428f; --accent-line:#c9971a;
+      --shape-stroke:4%; /* 도형 선 두께. 박스 대비 비율이라 96px/112px/150px에서 같은 비율로 보인다 */
+      /* 20: 더해지는 대상 표시. 오답 피드백 빨강(--danger)과 겹치지 않게 파랑 계열로 둔다 */
+      --mark-add:var(--surface); --mark-add-glow:rgba(31,115,201,.45);
       --warm-ink:#7b4626; /* 활동 전환 CTA 참조의 따뜻한 외곽선 */
       --brown-900:#422006; /* topbar 글자 강조 */
       --brown-800:#713f12; /* topbar 기본 글자 */
@@ -100,11 +112,27 @@
     #viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
     #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;isolation:isolate;container-type:size;container-name:stage;background:var(--cream)}
     .scene{position:absolute;inset:0;z-index:var(--z-bg);display:none;opacity:0;overflow:hidden;background:var(--cream)}
-    .scene.active{display:block;opacity:1;animation:sceneIn var(--dur-scene-in) var(--ease) both}
-    .scene.leaving{display:block;animation:sceneOut var(--dur-scene-out) var(--ease-out) both;pointer-events:none}
-    @keyframes sceneIn{from{opacity:0;transform:translateX(36px) scale(.995)}to{opacity:1;transform:translateX(0) scale(1)}}
-    @keyframes sceneOut{from{opacity:1;transform:translateX(0) scale(1)}to{opacity:0;transform:translateX(-28px) scale(.992)}}
+    /* 5: 1-2/01의 전환을 그대로 맞춘다. 01 기본은 페이드(#app.stage-fade-out/.stage-fade-in),
+       data-transition="slide"일 때만 전폭 슬라이드(stageSlideOutRight/stageSlideInRight)다.
+       08은 정적 씬 구조라 #app 대신 .scene에 걸되 키프레임 이름과 지속시간은 01과 같게 둔다. */
+    .scene.active{display:block;opacity:1;animation:stageFadeIn var(--dur-scene-in) ease both}
+    .scene.leaving{display:block;animation:stageFadeOut var(--dur-scene-out) ease both;pointer-events:none}
+    @keyframes stageFadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes stageFadeOut{from{opacity:1}to{opacity:0}}
+    #stage[data-transition="slide"] .scene.active{animation:stageSlideInRight var(--dur-scene-out) ease both}
+    #stage[data-transition="slide"] .scene.leaving{opacity:1;animation:stageSlideOutRight var(--dur-scene-out) ease both}
+    @keyframes stageSlideOutRight{from{transform:translateX(0)}to{transform:translateX(100%)}}
+    @keyframes stageSlideInRight{from{transform:translateX(-100%)}to{transform:translateX(0)}}
     .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-bg)}
+    /* 담장 수리 연출. 무너진 구간은 school-wall-damaged.png에서 실측한 stage x 1160~1550 / y 620~792 구간이다.
+       damaged/repaired 두 배경은 담장 전체 텍스처가 미묘하게 달라 부분 와이프를 하면 이음새가 보인다 → 전체 크로스페이드로 간다. */
+    #introBgRepaired{opacity:0;transition:opacity var(--dur-slow) var(--ease)}
+    .repair-fx{position:absolute;inset:0;z-index:var(--z-content);pointer-events:none}
+    .repair-hammer{position:absolute;left:1250px;top:485px;width:300px;height:300px;object-fit:contain;transform-origin:90% 12%;filter:var(--ds-md);animation:hammerSwing var(--dur-hammer) var(--ease) infinite}
+    @keyframes hammerSwing{0%{transform:rotate(50deg)}42%{transform:rotate(8deg)}56%{transform:rotate(16deg)}100%{transform:rotate(50deg)}}
+    .repair-impact{position:absolute;left:1240px;top:595px;width:120px;height:120px;border-radius:var(--r-circle);background:radial-gradient(circle,var(--accent-bright) 0%,var(--accent) 42%,transparent 70%);opacity:0}
+    .repair-impact.hit{animation:repairImpact var(--dur) var(--ease-back) both}
+    @keyframes repairImpact{0%{opacity:0;transform:scale(.4)}35%{opacity:.92;transform:scale(1.15)}100%{opacity:0;transform:scale(1.55)}}
     .shade{position:absolute;inset:0;background:var(--dim);z-index:var(--z-scenery);opacity:.34}
     .cta,.choice,.key,.tool,.confirm-btn{border:4px solid var(--surface);border-radius:var(--r-pill);background:var(--cream);box-shadow:var(--shadow-press);cursor:pointer;transition:transform var(--dur-fast) var(--ease),filter var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
     .cta:hover,.choice:hover,.key:hover,.tool:hover,.confirm-btn:hover{filter:var(--filter-hover);transform:translateY(-3px)}
@@ -120,6 +148,28 @@
     .course-menu-btn-label{font-weight:1000}
     .course-menu-burger{display:inline-flex;flex-direction:column;justify-content:center;gap:3px;width:17px;height:14px}
     .course-menu-burger i{display:block;height:2.5px;border-radius:2px;background:currentColor}
+    .course-menu-overlay{position:absolute;inset:0;z-index:var(--z-drawer);display:flex;align-items:stretch;justify-content:flex-start;background:rgba(20,12,4,0);visibility:hidden;pointer-events:none;transition:background .24s ease,visibility 0s linear .28s}
+    .course-menu-overlay.is-open{background:rgba(20,12,4,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);visibility:visible;pointer-events:auto;transition:background .24s ease,visibility 0s}
+    .course-menu-panel{display:flex;flex-direction:column;width:562px;height:100%;max-height:100%;overflow:auto;border:0;border-right:4px solid #6a3d16;border-radius:0;background:linear-gradient(180deg,#fff7e6,#f6e4c0);box-shadow:20px 0 51px rgba(20,12,4,.34),inset 0 1px 0 rgba(255,255,255,.7);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+    .course-menu-overlay.is-open .course-menu-panel{transform:translateX(0)}
+    .course-menu-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 28px;border-bottom:3px solid rgba(106,61,22,.24);position:sticky;top:0;background:linear-gradient(180deg,#fff7e6,#fdf0d6)}
+    .course-menu-grade{font-size:28px;font-weight:900;color:#5a3512}
+    .course-menu-close{width:42px;height:42px;flex-shrink:0;border:3px solid rgba(106,61,22,.5);border-radius:13px;background:rgba(255,255,255,.6);color:#5a3512;font-size:28px;line-height:1;font-weight:900;cursor:pointer}
+    .course-menu-close:hover{background:#fff}
+    .course-menu-list{display:flex;flex-direction:column;gap:10px;padding:18px 22px}
+    .course-menu-item{display:flex;align-items:center;gap:21px;width:100%;text-align:left;padding:13px 22px;border:3px solid rgba(106,61,22,.28);border-radius:18px;background:rgba(255,255,255,.55);color:#40260f;font-weight:900;cursor:pointer;transition:transform .14s ease,background .14s ease,border-color .14s ease}
+    .course-menu-item:hover:not(:disabled){background:#fff;border-color:rgba(106,61,22,.55);transform:translateY(-1px)}
+    .course-menu-no{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:48px;height:48px;border-radius:var(--r-circle);background:linear-gradient(180deg,#ffdf8f,#efb14e);border:3px solid #8a5320;color:#4a2b12;font-size:25px;font-weight:900}
+    .course-menu-title{flex:1 1 auto;min-width:0;font-size:25px;line-height:1.22;word-break:keep-all;overflow-wrap:break-word}
+    .course-menu-now{flex-shrink:0;padding:3px 13px;border-radius:var(--r-pill);background:#e5482f;color:#fff;font-size:20px;font-weight:900;box-shadow:0 3px 8px rgba(180,40,20,.4)}
+    .course-menu-soon{flex-shrink:0;padding:3px 13px;border-radius:var(--r-pill);background:rgba(90,53,18,.14);color:#7a5124;border:1px dashed rgba(106,61,22,.5);font-size:20px;font-weight:900}
+    .course-menu-item.is-current{background:linear-gradient(180deg,#fff3d0,#ffe3a6);border-color:#d98a2b;box-shadow:0 0 0 3px rgba(217,138,43,.35),0 6px 14px rgba(120,70,20,.18);cursor:default}
+    .course-menu-item.is-locked{opacity:.72;cursor:default}
+    .course-menu-item.is-locked .course-menu-no{background:rgba(120,95,60,.25);border-color:rgba(106,61,22,.4);color:#7a5124}
+    .course-menu-item.is-locked .course-menu-title{color:#8a6a40}
+    .course-menu-foot{margin-top:auto;position:sticky;bottom:0;padding:18px 22px;border-top:3px solid rgba(106,61,22,.24);background:linear-gradient(180deg,#fdf0d6,#f6e4c0)}
+    .course-menu-home{width:100%;padding:15px 0;border:3px solid rgba(106,61,22,.45);border-radius:17px;background:rgba(255,255,255,.7);color:#5a3512;font-size:24px;font-weight:900;cursor:pointer;transition:background .14s ease,transform .14s ease}
+    .course-menu-home:hover{background:#fff;transform:translateY(-1px)}
     .header-voice-volume-button{position:relative;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;padding:0;border:1px solid rgba(21,158,184,.28);border-radius:var(--r-pill);background:rgba(255,255,255,.5);color:#0b9ec1;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 2px 7px rgba(28,105,122,.1);transition:transform .15s ease,background .15s ease,box-shadow .15s ease}
     .header-voice-volume-button:hover{transform:translateY(-1px);background:rgba(232,250,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px rgba(28,105,122,.14)}
     .header-voice-volume-button:focus-visible{outline:3px solid rgba(14,165,233,.35);outline-offset:3px}
@@ -150,15 +200,6 @@
     .bottom-cta{position:absolute;z-index:var(--z-interactive);left:50%;bottom:70px;transform:translateX(-50%)}
     .bottom-cta:hover{transform:translateX(-50%) translateY(-3px)}
     .bottom-cta:active{transform:translateX(-50%) translateY(7px)}
-    #section_global_ui .hero-title{display:none}
-    #section_global_ui .overview{position:absolute;z-index:var(--z-content);left:140px;top:292px;width:1640px;height:620px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:161px 72px 163px}
-    #section_global_ui .overview-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:var(--z-bg);filter:var(--filter-panel-soften) var(--ds-sm);pointer-events:none}
-    #section_global_ui .overview-card{position:relative;z-index:var(--z-content);min-height:0;padding:22px 42px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-sm);line-height:1.3;font-weight:900;white-space:pre-line}
-    #section_global_ui .overview-card.current{transform:none}
-    #section_global_ui .overview-card:nth-of-type(3){transform:translateX(20px)}
-    #menuDrawer .overview{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-    #menuDrawer .overview-card{min-height:150px;padding:20px;border:4px solid var(--surface);border-radius:var(--r-md);background:var(--cream);font-size:var(--fs-sm);font-weight:900;cursor:pointer}
-    #section_global_ui .bottom-cta{bottom:28px}
     /* ── 타이틀 화면: 1-2/01의 #introStartWrap을 그대로 이식. 1366 기준 값 × (1920/1366 = 1.4056) ── */
     #stage.title-mode .topbar{opacity:0;pointer-events:none} /* 01: #app.title-mode .topbar */
     #introStartWrap{position:absolute;z-index:var(--z-interactive);left:0;right:0;top:50%;width:1068px;margin:0 auto;translate:0 -50%;display:flex;flex-direction:column;align-items:center}
@@ -180,19 +221,40 @@
     @keyframes ctapulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.02);filter:brightness(1.12)}}
     @keyframes shimmer{0%{left:-80%}55%,100%{left:120%}}
     .cta.activity-cta{width:868px;height:140px;min-width:868px;min-height:140px;padding:0 72px;display:grid;place-items:center;border:0;border-radius:var(--r-none);background-color:var(--clear);background-image:url('assets/activity-cta-body.png');background-repeat:no-repeat;background-size:2606px 398px;background-position:0 -130px;box-shadow:var(--shadow-none);color:var(--warm-ink);font-size:var(--fs-xs);overflow:hidden}
-    #goalButton{padding-bottom:12px}
     .cta.activity-cta:hover{background-position:-869px -130px}
     .cta.activity-cta:active{background-position:-1737px -130px;box-shadow:var(--shadow-none)}
     .character{position:absolute;z-index:var(--z-character);object-fit:contain;filter:var(--ds-lg);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
     .character.left{left:62px;bottom:-12px;width:440px;height:720px}
     .character.right{right:52px;bottom:-12px;width:440px;height:720px}
     .character.small{width:340px;height:560px}
-    .speech{position:absolute;z-index:var(--z-speech);width:990px;min-width:990px;max-width:990px;height:190px;min-height:190px;padding:32px 72px 38px;display:flex;align-items:center;justify-content:center;text-align:center;background-color:var(--clear);background-image:url('assets/school-speech-bubble-body.png');background-repeat:no-repeat;background-size:1980px 190px;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);filter:var(--ds-sm);font-size:var(--fs-md);font-weight:900;line-height:1.3;white-space:pre-line;animation:pop var(--dur) var(--ease-back) both}
-    .speech.left-speaker{left:390px;top:220px;background-position:0 0}
-    .speech.right-speaker{right:390px;top:220px;background-position:-990px 0}
+    /* 1-2/01의 .speech를 이식. 값은 01에서 getComputedStyle로 실측한 뒤 1920/1366 = ×1.4056 적용했다(소스 순서로 읽으면 틀린다).
+       15: 폭은 max-content + max-width, 높이는 auto라 대사 길이에 따라 상자가 늘고 줄어든다.
+       씬별로 다른 것은 앵커 좌표(left/right/top)뿐이다. **씬별 폭·패딩 보정을 다시 넣으면 자동 조정이 깨진다.** */
+    .speech{position:absolute;z-index:var(--z-speech);width:max-content;max-width:990px;padding:20px 40px;text-align:left;background:var(--bubble-bg);border:6px solid var(--bubble-line);border-radius:28px;box-shadow:0 10px 0 rgba(0,0,0,.18);color:var(--bubble-ink);font-size:var(--fs-xs);font-weight:400;line-height:1.4;word-break:keep-all;text-wrap:balance;white-space:pre-line;animation:speechPop var(--dur) var(--ease-speech-pop) both}
+    /* 꼬리는 테두리색(::before) 위에 배경색(::after)을 겹쳐 2겹으로 그린다 — 01과 같은 구조. */
+    .speech::before,.speech::after{content:'';position:absolute;top:50%;width:0;height:0;border-style:solid;border-color:transparent}
+    .speech::before{border-width:17px}
+    .speech::after{border-width:14px}
+    .speech.left-speaker{left:390px;top:220px}
+    .speech.left-speaker::before{left:-34px;transform:translateY(-17px);border-right-color:var(--bubble-line)}
+    .speech.left-speaker::after{left:-22px;transform:translateY(-14px);border-right-color:var(--bubble-bg)}
+    .speech.right-speaker{right:390px;top:220px}
+    .speech.right-speaker::before{right:-34px;transform:translateY(-17px);border-left-color:var(--bubble-line)}
+    .speech.right-speaker::after{right:-22px;transform:translateY(-14px);border-left-color:var(--bubble-bg)}
+    @keyframes speechPop{0%{opacity:0;transform:scale(.5)}70%{transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+    /* 15·17: 1-2/01의 말풍선 안 진행 버튼을 클래스명·구조·애니메이션 이름 그대로 이식.
+       01은 cqw/cqh(컨테이너 단위)로 적혀 있고 08의 #stage도 container-type:size라
+       값을 그대로 옮기면 1366→1920 환산(×1.4056)이 자동으로 이뤄진다. 픽셀로 다시 계산하지 말 것.
+       (음소거 버튼은 08 topbar에 .header-voice-volume-button으로 이미 있어 이식 대상이 아니다.
+        01의 .repair-narr-replay는 08에 나레이션 오디오 자산이 없어 제외했다.) */
+    .repair-bubble-nav{display:flex;align-items:center;justify-content:flex-end;gap:.7cqw;margin-top:1cqh;width:100%;pointer-events:auto}
+    .repair-narr-next{display:inline-flex;align-items:center;gap:.25cqw;line-height:1;cursor:pointer;padding:.55cqh 1.15cqw;border-radius:var(--r-pill);border:.18cqw solid #a8690f;background:linear-gradient(#ffe066,#ffb424);color:#5a3505;font-family:var(--font-body);font-size:1.5cqw;font-weight:400;letter-spacing:-.02em;text-shadow:0 .08cqh 0 rgba(255,255,255,.5);box-shadow:0 .3cqh 0 rgba(122,82,34,.42),inset 0 .16cqh 0 rgba(255,255,255,.6);animation:repairNarrNextPulse 1.8s ease-in-out infinite;transition:filter .15s,transform .08s}
+    .repair-narr-next:hover{filter:brightness(1.06);transform:translateY(-.15cqh)}
+    .repair-narr-next:active{transform:translateY(.15cqh)}
+    @keyframes repairNarrNextPulse{0%,100%{box-shadow:0 .3cqh 0 rgba(122,82,34,.42),inset 0 .16cqh 0 rgba(255,255,255,.6),0 0 0 0 rgba(240,180,41,.55)}50%{box-shadow:0 .3cqh 0 rgba(122,82,34,.42),inset 0 .16cqh 0 rgba(255,255,255,.6),0 0 0 .95cqw rgba(240,180,41,0)}}
     @keyframes pop{from{opacity:0;transform:scale(.88) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
     .character.stagger-character{animation:characterEnter var(--dur-scene-in) var(--ease) both}
-    .speech.stagger-speech{animation:pop var(--dur-scene-in) var(--ease-back) both}
+    .speech.stagger-speech{animation:speechPop var(--dur-scene-in) var(--ease-speech-pop) both}
     @keyframes characterEnter{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
     #drawingTeacher.drawing-enter{animation:drawingTeacherEnter var(--dur-scene-in) var(--ease) both}
     @keyframes drawingTeacherEnter{from{opacity:0;transform:translateX(42px)}to{opacity:1;transform:translateX(0)}}
@@ -200,32 +262,73 @@
     .panel{position:absolute;z-index:var(--z-content);background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
     .question-panel{left:150px;top:200px;width:1080px;min-height:720px;padding:42px}
     .question-panel.wide{left:180px;width:1560px}
-    .prompt{font-size:var(--fs-xl);font-weight:900;line-height:1.38;text-align:center;white-space:pre-line;color:var(--ink);margin:0 0 28px}
+    /* 16: 사다리를 올린 뒤 좁은 키패드 패널에서 "3개를 더 색 / 칠하면"처럼 단어 중간이 끊겼다.
+       한국어는 keep-all이 기본이어야 하고, 키패드 안 프롬프트는 사다리에서 한 단계 낮춰 잡는다(개별 px를 쓰지 않는다). */
+    .prompt{font-size:var(--fs-xl);font-weight:900;line-height:1.38;text-align:center;white-space:pre-line;word-break:keep-all;text-wrap:balance;color:var(--ink);margin:0 0 28px}
+    .keypad-wrap .prompt{font-size:var(--fs-md)}
     .question-id{display:none}
+    /* 찾을 도형 사물. 배경에 굳히지 않고 개별 투명 PNG로 얹어 위치·난이도를 좌표로 조정한다. */
+    .find-object{position:absolute;object-fit:contain;filter:var(--ds-sm);pointer-events:none}
     .hotspot{position:absolute;z-index:var(--z-interactive);border:5px solid var(--clear);background:var(--clear);border-radius:var(--r-md);cursor:pointer;transition:border-color var(--dur-fast) var(--ease),filter var(--dur-fast) var(--ease)}
     .hotspot:hover,.hotspot.hint{border-color:var(--accent);filter:var(--filter-glow-sm)}
     .hotspot.current-target{z-index:var(--z-effect)}
     .hotspot.found{border-color:var(--leaf)}
     .hotspot-number{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:72px;height:72px;border-radius:var(--r-circle);background:var(--accent);color:var(--ink);font-size:var(--fs-xl);font-weight:900;filter:var(--ds-sm);pointer-events:none}
-    .search-prompt{position:absolute;left:50%;top:160px;z-index:var(--z-speech);transform:translateX(-50%);min-width:780px;padding:20px 36px;text-align:center;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-pill);box-shadow:var(--shadow);font-size:var(--fs-xl);font-weight:900}
+    .search-prompt{position:absolute;left:50%;top:90px;z-index:var(--z-speech);transform:translateX(-50%);min-width:780px;padding:20px 36px;text-align:center;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-pill);box-shadow:var(--shadow);font-size:var(--fs-xl);font-weight:900}
     #shapeSearch{position:absolute;inset:0;z-index:var(--z-interactive);cursor:crosshair}
     .feedback-mark{position:absolute;left:50%;top:48%;z-index:var(--z-effect);transform:translate(-50%,-50%) scale(0);width:240px;height:240px;object-fit:contain;filter:var(--ds-lg);opacity:0;pointer-events:none}
     .feedback-mark.show{animation:stamp var(--dur-slow) var(--ease-back) both}
     @keyframes stamp{45%{opacity:1;transform:translate(-50%,-50%) scale(1.22) rotate(-8deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
     .work-area{position:absolute;z-index:var(--z-content);left:150px;top:250px;width:1050px;height:570px;display:grid;grid-template-columns:repeat(5,1fr);align-content:center;gap:18px;padding:26px}
-    .paint-shape{position:relative;height:150px;background-image:url('assets/shape-tile-body.png');background-repeat:no-repeat;background-size:300% 100%;filter:var(--ds-sm);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
-    .paint-shape.circle{background-position:left center}.paint-shape.triangle{background-position:center center}.paint-shape.square{background-position:right center}
-    .paint-shape.green{background-color:var(--leaf);background-blend-mode:multiply}.paint-shape.blue{background-color:var(--surface);background-blend-mode:multiply}.paint-shape.red{background-color:var(--danger);background-blend-mode:multiply}.paint-shape.purple{background-color:var(--purple);background-blend-mode:multiply}.paint-shape.yellow{background-color:var(--accent);background-blend-mode:multiply}
+    /* 22: 도형을 raster 스프라이트 대신 HTML/CSS로 그린다. 8번이 넣었던
+       shape-tile-body.png + background-blend-mode + mask-image 우회는 여기서 전부 걷어냈다
+       (색이 도형 밖으로 새는 문제가 raster를 쓸 때만 생기던 것이라 우회 자체가 불필요해졌다).
+       ::before가 외곽선, ::after가 채움이고 ::after만 선 두께(--shape-stroke)만큼 안쪽으로 들어간다.
+       요소 자신은 배경이 없으므로 filter의 drop-shadow·glow가 도형 실루엣을 그대로 따라간다. */
+    .paint-shape{position:relative;height:150px;aspect-ratio:1;justify-self:center;--shape-fill:var(--leaf);--shape-line:var(--leaf-line);filter:var(--ds-sm);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+    .paint-shape::before,.paint-shape::after{content:'';position:absolute;inset:0}
+    .paint-shape::before{background:var(--shape-line)}
+    .paint-shape::after{background:var(--shape-fill);inset:var(--shape-stroke)}
+    .paint-shape.circle::before,.paint-shape.circle::after{border-radius:var(--r-circle)}
+    .paint-shape.square::before,.paint-shape.square::after{border-radius:9%}
+    /* 삼각형은 border가 clip-path에 잘려 선을 만들 수 없다. 안쪽 폴리곤을 내심 기준으로 축소해 선 두께를 낸다.
+       (밑변 100%·높이 100% 이등변삼각형의 내접원 반지름 r=30.9%, 4% 안쪽 → 배율 (30.9-4)/30.9=0.8706) */
+    .paint-shape.triangle::before{clip-path:polygon(50% 0%,100% 100%,0% 100%)}
+    .paint-shape.triangle::after{inset:0;clip-path:polygon(50% 8.94%,93.53% 96%,6.47% 96%)}
+    .paint-shape.green{--shape-fill:var(--leaf);--shape-line:var(--leaf-line)}
+    .paint-shape.blue{--shape-fill:var(--surface);--shape-line:var(--surface-line)}
+    .paint-shape.red{--shape-fill:var(--danger);--shape-line:var(--danger-line)}
+    .paint-shape.purple{--shape-fill:var(--purple);--shape-line:var(--purple-line)}
+    .paint-shape.yellow{--shape-fill:var(--accent);--shape-line:var(--accent-line)}
     .paint-shape.removed{opacity:.18;transform:scale(.78)}
     .paint-shape.pending{opacity:0;transform:scale(.78)}
     .paint-shape.hint-step{filter:var(--filter-glow-lg)}
+    /* 20: 더해지는 대상 표시. .removed(빼기)와 대칭이 되게 "네모로 묶고 glow"를 건다.
+       요소에 배경이 없어 box-shadow가 도형을 감싸는 사각 테두리로 보인다. 색은 오답 빨강과 겹치지 않는 파랑이다. */
+    .paint-shape.added{border-radius:12%;box-shadow:0 0 0 5px var(--mark-add),0 0 22px 8px var(--mark-add-glow);animation:shapeAddIn var(--dur) var(--ease-back) both}
+    @keyframes shapeAddIn{0%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
     .paint-can{position:absolute;z-index:var(--z-content);left:1202px;bottom:80px;width:276px;height:276px;object-fit:contain;filter:var(--ds-md)}
+    /* 21: 대사가 "1통을 다 썼어요 / 1통을 더 준비했어요"라고 말하는 만큼 화면의 통 수도 따라 바뀌어야 한다.
+       통은 줄 컨테이너가 배치하고 개별 통은 흐름에 맡긴다(통이 1개일 때와 2개일 때 좌우 균형이 유지된다). */
+    .paint-can-row{position:absolute;z-index:var(--z-content);left:1150px;bottom:80px;display:flex;align-items:flex-end;gap:26px}
+    .paint-can-row .paint-can{position:relative;left:auto;bottom:auto;width:250px;height:250px}
+    .paint-can.empty{opacity:.5;filter:var(--ds-sm) grayscale(.6) brightness(.94);transform:rotate(-9deg)}
+    .paint-can.arriving{animation:pop var(--dur) var(--ease-back) both}
+    /* 18: 칠판 오른쪽 빈 면을 채우는 상시 배치 학생. 찾기 대상이 아니므로 핫스팟도 alt도 주지 않는다.
+       z는 --z-scenery라 #shapeSearch(--z-interactive)의 찾기 사물·핫스팟보다 뒤에 놓인다. */
+    .classroom-student{position:absolute;z-index:var(--z-scenery);left:1080px;bottom:-12px;width:340px;height:560px;object-fit:contain;filter:var(--ds-lg);pointer-events:none}
     .keypad-wrap{position:absolute;z-index:var(--z-interactive);right:105px;top:245px;width:510px;padding:26px;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
     .answer-display{height:96px;display:grid;place-items:center;margin-bottom:18px;border:4px solid var(--ink);border-radius:var(--r-md);background:var(--white);font-size:var(--fs-2xl);font-weight:900}
-    .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .key{height:78px;font-size:var(--fs-md);font-weight:900;background:var(--cream);border-radius:var(--r-md)}
+    .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
+    /* 1-2/01 .repair-count-key 실측값(1366) × 1.4056. 키 높이만 08의 78px을 유지한다. */
+    .key{height:78px;font-size:var(--fs-md);font-weight:800;color:#12355f;background:rgba(255,255,255,.92);border:3px solid rgba(180,218,255,.95);border-radius:17px;box-shadow:0 4px 0 rgba(143,173,211,.76),0 11px 22px rgba(0,0,0,.15);transition:transform var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+    .key.del{color:#a75f28;background:rgba(255,244,230,.96);border-color:#e7c197;box-shadow:0 4px 0 rgba(198,146,86,.6),0 11px 22px rgba(0,0,0,.15)}
+    .key.enter{color:#fff;background:#e23b3b;border-color:#e23b3b;box-shadow:0 4px 0 rgba(150,26,26,.55),0 11px 22px rgba(0,0,0,.15);font-size:var(--fs-sm)}
+    /* 01: .keypad-pressing:not(:disabled){transform:translateY(3px) scale(.98);box-shadow:0 1px 0 #020810} */
+    .key.keypad-pressing:not(:disabled){transform:translateY(4px) scale(.98);box-shadow:0 1px 0 #020810}
+    .answer-display.keypad-tick{animation:keypadDisplayTick var(--dur-fast) var(--ease) both}
+    @keyframes keypadDisplayTick{0%{transform:scale(.94);filter:brightness(1.85)}100%{transform:scale(1);filter:brightness(1)}}
     .key:disabled{cursor:default;filter:var(--filter-disabled);box-shadow:var(--shadow-flat)}
-    .key.zero{grid-column:2}.key.enter{grid-column:3;background:var(--accent)}
     .choices{display:grid;gap:18px;margin:40px auto 0;max-width:780px}
     .choice{min-height:92px;padding:14px 30px;font-size:var(--fs-lg);font-weight:900}
     .choice.reveal{filter:var(--filter-glow-md);animation:answerReveal var(--dur) var(--ease-back) both}
@@ -245,33 +348,32 @@
     .color-tool{height:58px;border:4px solid var(--ink);border-radius:var(--r-circle);cursor:pointer}
     .color-tool.green{background:var(--leaf)}.color-tool.blue{background:var(--surface)}.color-tool.red{background:var(--danger)}.color-tool.purple{background:var(--purple)}
     #drawingCanvas{position:absolute;z-index:var(--z-interactive);left:390px;top:275px;width:1370px;height:540px;overflow:hidden;cursor:crosshair}
-    .drawn-shape{position:absolute;width:150px;height:150px;transform:translate(-50%,-50%);background-image:url('assets/shape-tile-body.png');background-repeat:no-repeat;background-size:300% 100%;filter:var(--ds-sm)}
+    /* 도형 자체는 .paint-shape가 CSS로 그린다(항상 두 클래스가 함께 붙는다). 여기서는 위치·크기만 준다. */
+    .drawn-shape{position:absolute;width:150px;height:150px;transform:translate(-50%,-50%);filter:var(--ds-sm)}
     .confirmation{position:absolute;inset:0;z-index:var(--z-drawer);display:none;place-items:center;background:var(--dim)}
     .confirmation.open{display:grid}
     .confirm-panel{width:850px;padding:55px;background:var(--cream);border:6px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);text-align:center}
     .confirm-panel p{font-size:var(--fs-xl);font-weight:900;margin:0 0 38px}.confirm-actions{display:flex;justify-content:center;gap:28px}
     .confirm-btn{min-width:260px;height:92px;font-size:var(--fs-lg);font-weight:900}.confirm-btn:first-child{background:var(--surface);color:var(--white)}
     .sign-row{position:absolute;z-index:var(--z-content);left:205px;right:205px;top:275px;height:390px;display:flex;justify-content:center;gap:130px}
-    .sign{position:relative;width:230px;height:390px;overflow:hidden;opacity:.34;filter:var(--ds-md);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+    .sign{position:relative;width:230px;height:390px;opacity:.34;filter:var(--ds-md);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
     .sign.active{opacity:1;transform:scale(1.06)}
     #signRow.revealing .sign{animation:storySignIn var(--dur) var(--ease-back) var(--story-sign-delay) both}
     #signRow.revealing .sign:nth-child(1){--story-sign-delay:var(--delay-story-sign-1)}
     #signRow.revealing .sign:nth-child(2){--story-sign-delay:var(--delay-story-sign-2)}
     #signRow.revealing .sign:nth-child(3){--story-sign-delay:var(--delay-story-sign-3)}
     @keyframes storySignIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1.06)}}
-    .sign img{position:absolute;height:390px;width:710px;max-width:none;object-fit:fill;top:0}
-    .sign.circle img{left:0}.sign.square img{left:-237px}.sign.triangle img{left:-474px}
-    .sign-label{position:absolute;left:50%;top:90px;transform:translateX(-50%);width:180px;text-align:center;font-size:var(--fs-2xs);font-weight:900;color:var(--ink)}
+    .sign img{position:absolute;left:50%;top:0;height:100%;width:auto;max-width:none;transform:translateX(-50%)}
     .story-card{position:absolute;left:310px;bottom:-115px;z-index:var(--z-speech);width:1300px;height:600px;padding:282px 108px 118px;background:var(--clear) url('assets/story-roadside-info-board.png') center center/100% 100% no-repeat;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-sm);font-weight:800;line-height:1.35;text-align:center;white-space:pre-line;cursor:pointer;filter:var(--ds-md)}
-    .sign.circle .sign-label{width:196px;font-size:var(--fs-2xs);line-height:1.2}
     .completion-actions{position:absolute;z-index:var(--z-interactive);left:50%;bottom:85px;transform:translateX(-50%);display:flex;gap:22px;align-items:center}
     .completion-actions .cta{min-width:380px}
     .spark{position:absolute;z-index:var(--z-effect);width:24px;height:24px;background:var(--accent);border-radius:var(--r-circle);filter:var(--filter-glow-md);animation:sparkle var(--dur-slow) var(--ease-back) infinite alternate}
     @keyframes sparkle{to{transform:scale(2.2) rotate(45deg);opacity:.3}}
-    .dialogue-advance{position:absolute;right:40px;bottom:20px;width:22px;height:22px;background:var(--surface);border-radius:var(--r-circle);animation:hintTap var(--dur-slow) var(--ease) infinite}
-    .arith-context{left:145px;top:155px;min-width:780px;max-width:980px;min-height:120px;padding:24px 42px;font-size:var(--fs-sm);border-radius:var(--r-md)}
-    #shapeSpeech{padding:28px 83px 66px 61px}
-    #arithSpeech{top:350px;padding:27px 82px 67px 62px}
+    /* 15·17: 진행 신호였던 .dialogue-advance(깜빡이는 점)는 01의 .repair-narr-next("다음 ▸" 버튼)로 대체됐다.
+       점은 "여기를 눌러라"를 말해 주지 못해 사용자가 진행이 멈춘 것으로 읽었다(17번). */
+    /* 15: 앵커(left/top)와 글자 크기만 남긴다. min-width/min-height를 되돌리면 자동 크기 조정이 깨진다. */
+    .arith-context{left:145px;top:155px;max-width:980px;padding:24px 42px;font-size:var(--fs-sm);border-radius:var(--r-md)}
+    #arithSpeech{top:350px}
     #section_random_problems .shade{opacity:.1}
     #randomPanel{left:245px;top:205px;width:1040px;min-height:700px;padding:0;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none)}
     #randomPanel .random-prompt{position:relative;width:860px;height:165px;margin:0 auto 12px;padding:20px 54px;display:grid;place-items:center;overflow:hidden;font-size:var(--fs-md);line-height:1.2}
@@ -282,16 +384,16 @@
     #randomInput .choice span{position:relative;z-index:var(--z-content);display:inline-block;transform:translateY(-3px)}
     #randomInput .keypad-wrap{padding:0;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none)}
     #randomInput .answer-display{height:100px;margin-bottom:12px;padding:18px 52px;border:0;border-radius:var(--r-none);background:var(--clear) url('assets/wall-choice-plaque-body.png') center/100% 100% no-repeat;box-shadow:var(--shadow-none)}
-    #randomInput .keypad{gap:10px 0;padding:0 22px;background-image:url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png');background-repeat:no-repeat;background-size:100% 78px;background-position:center 0,center 88px,center 176px,center 264px}
-    #randomInput .key{height:78px;border:0;border-radius:var(--r-none);background:var(--clear);box-shadow:var(--shadow-none)}
-    #randomInput .key.zero{grid-column:1/3}
-    #randomInput .key.enter{grid-column:3;background:var(--clear);color:var(--ink)}
+    #randomInput .keypad{gap:17px}
+    /* 13: 식을 내기 전에 도형이 생기고 줄어드는 과정을 먼저 보여 준다. 연출 동안 문제 패널은 감춘다. */
+    #section_random_problems.shape-intro #randomPanel{visibility:hidden}
+    #randomShapes{left:290px;top:250px;width:1340px;height:560px}
+    #randomInput .key{height:78px}
     #randomInput .key:hover{background:var(--veil);transform:translateY(-2px)}
     #randomInput .key:active{transform:translateY(4px);box-shadow:var(--shadow-none)}
     .random-progress{position:absolute;left:360px;bottom:28px;z-index:var(--z-interactive);display:flex;gap:24px;pointer-events:none}
-    .random-progress .paint-shape{width:112px;height:92px;opacity:.24;transform:scale(.88)}
+    .random-progress .paint-shape{width:96px;height:96px;opacity:.24;transform:scale(.88)}
     .random-progress .paint-shape.complete{opacity:1;transform:scale(1);filter:var(--filter-glow-sm) var(--ds-sm)}
-    #drawingSpeech{padding:32px 72px 38px}
     .story-intro-board{position:absolute;left:250px;bottom:35px;z-index:var(--z-speech);width:1420px;height:220px;padding:33px 80px 59px;display:grid;place-items:center;background:var(--clear) url('assets/story-roadside-info-board.png') center/100% 100% no-repeat;font-size:var(--fs-xl);font-weight:900;line-height:1.25;text-align:center;filter:var(--ds-md);pointer-events:none}
     .completion-actions .cta{--completion-cta-x:-29px;--completion-cta-y:-75px;width:380px;height:150px;min-width:380px;min-height:150px;padding:0;border:0;border-radius:var(--r-none);display:grid;place-items:center;background-color:var(--clear);background-image:url('assets/completion-cta-body.png');background-repeat:no-repeat;background-size:1254px 706px;background-position:var(--completion-cta-x) var(--completion-cta-y);box-shadow:var(--shadow-none);color:var(--white);filter:none}
     .completion-actions .cta:hover{--completion-cta-x:-436px;filter:none}
@@ -314,9 +416,12 @@
     @keyframes completionSparkBurst{0%{opacity:0;transform:scale(.35) rotate(0)}55%{opacity:1;transform:scale(2.2) rotate(45deg)}100%{opacity:.65;transform:scale(1) rotate(75deg)}}
     @keyframes completionCtaIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
     .feedback-character{left:80px;bottom:-10px;width:360px;height:590px}
-    .feedback-speech{left:380px;top:245px;min-height:140px;cursor:pointer;color:var(--plate-ink)}
+    /* 17: 이 말풍선만 꼬리도 진행 버튼도 없어 "눌러야 넘어간다"는 신호가 0이었다.
+       이제 .left-speaker 꼬리 + .repair-narr-next를 함께 쓴다. 앵커는 피드백 캐릭터(x 80~440)를 덮지 않는 위치로 옮겼다.
+       min-height는 15번의 자동 크기 조정을 막으므로 두지 않는다. */
+    .speech.feedback-speech{left:500px;top:250px;cursor:pointer;color:var(--plate-ink)}
     .drawing-summary{min-height:130px;margin:-12px 0 28px;display:flex;align-items:center;justify-content:center;gap:18px}
-    .drawing-summary .paint-shape{width:118px;height:108px;flex:0 0 118px}
+    .drawing-summary .paint-shape{width:112px;height:112px;flex:0 0 112px}
     #completedMuralPreview{position:absolute;z-index:var(--z-scenery);left:390px;top:275px;width:1370px;height:540px;overflow:hidden;pointer-events:none}
     /* 상태 유틸리티는 더 구체적인 컴포넌트 display 규칙보다 숨김을 우선해야 한다. */
     .hidden{display:none !important}
@@ -368,15 +473,10 @@
     <div class="lesson-header-title" id="lessonHeaderTitle" aria-label="차시 제목: 알록달록, 학교 담장 색칠하기">알록달록, 학교 담장 색칠하기</div>
   </header>
 
-  <section class="scene active" id="section_global_ui" data-qa-scene="section-global-ui" data-qa-order="1" data-qa-label="공통 UI와 활동 목표">
-    <img class="bg" src="assets/school-wall-wide.png" alt="맑은 하늘 아래 학교 건물과 나무, 벽화를 그릴 수 있도록 비워 둔 긴 학교 담장이 보이는 밝은 전경">
-    <h1 class="hero-title">알록달록, 학교 담장 색칠하기</h1>
-    <div class="overview"><img class="overview-frame" src="assets/overview-mural-triptych-frame.png" alt="빈 크림색 작업 면 세 칸이 가로로 연결되고 첫 칸에 노란 강조 홈이 있는 파란 벽화 작업 계획 프레임"><div class="overview-card current">수리가 필요해요</div><div class="overview-card">와글와글, 운동회를 도와요!</div><div class="overview-card">알록달록, 학교 담장 색칠하기<br><br>모양과 덧셈의 힘으로 담장 색칠하기</div></div>
-    <button class="cta activity-cta bottom-cta glow" id="goalButton" data-interaction-id="interaction_goal_transition">[모양과 덧셈의 힘으로 담장 색칠하기!]</button>
-  </section>
-
-  <section class="scene" id="section_intro" data-qa-scene="section-intro" data-qa-order="2" data-qa-label="도입" data-interaction-id="interaction_intro_sequence">
+  <section class="scene active" id="section_intro" data-qa-scene="section-intro" data-qa-order="1" data-qa-label="도입" data-interaction-id="interaction_intro_sequence">
     <img class="bg" id="introBg" src="assets/school-wall-damaged.png" alt="학교 담장 오른쪽 일부가 낮게 무너지고 벽돌과 안전 표식이 가지런히 놓인 밝은 낮의 학교 외부">
+    <img class="bg" id="introBgRepaired" src="assets/school-wall-repaired.png" alt="" aria-hidden="true">
+    <div class="repair-fx hidden" id="introRepairFx" aria-hidden="true"><img class="repair-hammer" id="introHammer" src="assets/repair-hammer.png" alt=""><span class="repair-impact" id="introRepairImpact"></span></div>
     <div id="introStartWrap" data-qa-title-screen="true">
       <div class="intro-title-copy" id="introTitleSurface"><img class="intro-title-img" src="assets/colorful-school-wall-title.png" alt="알록달록, 학교 담장 색칠하기"></div>
       <button class="cta intro-start-cta" id="introStart">시작하기</button>
@@ -387,10 +487,11 @@
     <div class="tap-layer hidden" id="introTap" tabindex="0" aria-label="대화 진행"></div>
   </section>
 
-  <section class="scene" id="section_shape_find" data-qa-scene="section-shape-find" data-qa-order="3" data-qa-label="모양 찾기와 세기" data-interaction-id="interaction_shape_scene_select interaction_shape_count_keypad interaction_feedback_reveal interaction_stage_transition">
-    <img class="bg" id="shapeBg" src="assets/school-yard-shape-search.png" alt="원형 시계와 학교 표식, 정사각형 창문 두 개, 삼각 지붕과 현관 차양이 서로 떨어져 배치된 밝은 학교 마당">
-    <div id="shapeDialogue"><img class="character left" id="shapeCharacter" src="assets/worker-explaining.png" alt="오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자"><div class="speech left-speaker" id="shapeSpeech">여러 가지 모양으로 그리면 좋겠어요.<span class="dialogue-advance"></span></div><div class="tap-layer" id="shapeDialogueTap" tabindex="0" aria-label="대화 진행"></div></div>
-    <div id="shapeSearch" class="hidden"><div class="search-prompt" id="searchPrompt"></div><div id="hotspots"></div></div>
+  <section class="scene" id="section_shape_find" data-qa-scene="section-shape-find" data-qa-order="2" data-qa-label="모양 찾기와 세기" data-interaction-id="interaction_shape_scene_select interaction_shape_count_keypad interaction_feedback_reveal interaction_stage_transition">
+    <img class="bg" id="shapeBg" src="assets/classroom-shape-search.png" alt="칠판과 책상, 나무 바닥이 보이고 벽면을 넓게 비워 둔 밝은 1학년 교실">
+    <img class="classroom-student" id="shapeSceneStudent" src="assets/student-idle.png" alt="" aria-hidden="true">
+    <div id="shapeDialogue"><img class="character left" id="shapeCharacter" src="assets/worker-explaining.png" alt="오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자"><div class="speech left-speaker" id="shapeSpeech">여러 가지 모양으로 그리면 좋겠어요.</div><div class="tap-layer" id="shapeDialogueTap" tabindex="0" aria-label="대화 진행"></div></div>
+    <div id="shapeSearch" class="hidden"><div id="shapeObjects" aria-hidden="true"></div><div class="search-prompt" id="searchPrompt"></div><div id="hotspots"></div></div>
     <div class="work-area hidden" id="paintIntroVisual" aria-hidden="true"><div class="paint-shape circle green"></div><div class="paint-shape square blue"></div><div class="paint-shape triangle red"></div></div>
     <div id="shapeCount" class="hidden"><div class="work-area" id="countShapes"></div><div class="keypad-wrap"><div class="prompt" id="countPrompt"></div><div class="answer-display" id="countDisplay"></div><div class="keypad" id="countKeypad"></div></div></div>
     <img class="paint-can hidden" id="paintCan" src="assets/paint-can-body.png" alt="색상과 수량 표시를 덧씌울 수 있도록 앞면을 비운 밝은 회청색 금속 페인트통">
@@ -398,23 +499,28 @@
     <img class="feedback-mark" id="shapeMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
   </section>
 
-  <section class="scene" id="section_arithmetic_tutorial" data-qa-scene="section-arithmetic-tutorial" data-qa-order="4" data-qa-label="세 수의 덧셈과 뺄셈 튜토리얼" data-interaction-id="interaction_arithmetic_keypad interaction_shape_add_remove interaction_feedback_reveal interaction_stage_transition">
+  <section class="scene" id="section_arithmetic_tutorial" data-qa-scene="section-arithmetic-tutorial" data-qa-order="3" data-qa-label="세 수의 덧셈과 뺄셈 튜토리얼" data-interaction-id="interaction_arithmetic_keypad interaction_shape_add_remove interaction_feedback_reveal interaction_stage_transition">
     <img class="bg" id="arithBg" src="assets/school-wall-closeup.png" alt="도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장">
     <div class="title-banner arith-title-banner" id="arithTitleSurface"><img src="assets/school-title-banner-body.png" alt="장면 제목을 표시하는 빈 학교 담장 부착형 제목판"><h2 class="hero-title sub-title" id="arithTitle">세 수의 덧셈과 뺄셈</h2></div>
     <img class="character left" id="arithCharacter" src="assets/worker-explaining.png" alt="오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자">
-    <div class="speech left-speaker" id="arithSpeech">①페인트 소개는 저희가 할게요.<br>②이것을 페인트라고 해요.<br>초록색부터 알려드릴게요.<span class="dialogue-advance"></span></div>
+    <div class="speech left-speaker" id="arithSpeech">①페인트 소개는 저희가 할게요.<br>②이것을 페인트라고 해요.<br>초록색부터 알려드릴게요.</div>
     <div class="tap-layer" id="arithIntroTap" tabindex="0" aria-label="대화 진행"></div>
     <div class="work-area hidden" id="arithShapes"></div>
     <div class="speech arith-context hidden" id="arithContext"></div>
-    <img class="paint-can" src="assets/paint-can-body.png" alt="색상과 수량 표시를 덧씌울 수 있도록 앞면을 비운 밝은 회청색 금속 페인트통">
+    <div class="paint-can-row" id="arithPaintCans">
+      <img class="paint-can" id="arithPaintCan1" src="assets/paint-can-body.png" alt="색상과 수량 표시를 덧씌울 수 있도록 앞면을 비운 밝은 회청색 금속 페인트통">
+      <img class="paint-can hidden" id="arithPaintCan2" src="assets/paint-can-body.png" alt="새로 준비한 두 번째 페인트통">
+    </div>
     <div class="keypad-wrap hidden" id="arithKeypadWrap"><div class="prompt" id="arithPrompt"></div><div class="answer-display" id="arithDisplay"></div><div class="keypad" id="arithKeypad"></div></div>
     <button class="cta activity-cta bottom-cta hidden" id="arithNext">덧셈, 뺄셈의 힘으로 담장 색칠하기</button>
     <img class="feedback-mark" id="arithMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
   </section>
 
-  <section class="scene" id="section_random_problems" data-qa-scene="section-random-problems" data-qa-order="5" data-qa-label="무작위 계산 문제" data-interaction-id="interaction_random_problem_engine interaction_choice_problem interaction_arithmetic_keypad interaction_optional_help interaction_feedback_reveal">
+  <section class="scene" id="section_random_problems" data-qa-scene="section-random-problems" data-qa-order="4" data-qa-label="무작위 계산 문제" data-interaction-id="interaction_random_problem_engine interaction_choice_problem interaction_arithmetic_keypad interaction_optional_help interaction_feedback_reveal">
     <img class="bg" src="assets/school-wall-problem-scene.png" alt="가장자리의 낮은 대비 추상 벽화 사이로 문제 카드와 보조 설명을 배치할 중앙 작업 면을 비워 둔 학교 담장">
     <div class="shade"></div>
+    <div class="work-area hidden" id="randomShapes" aria-hidden="true"></div>
+    <div class="tap-layer hidden" id="randomShapeSkip" tabindex="0" aria-label="도형 설명 건너뛰기"></div>
     <div class="panel question-panel" id="randomPanel"><div class="prompt random-prompt" id="randomPrompt"><img src="assets/wall-choice-plaque-body.png" alt="동적 계산식을 올릴 수 있도록 중앙을 비운 파란 테두리의 긴 크림색 담장 작업표"><span id="randomPromptText">덧셈과 뺄셈<br>10이 되는 덧셈식을 찾아 보세요.</span></div><div id="randomInput"></div></div>
     <div class="random-progress" id="randomWorkProgress" aria-hidden="true"><div class="paint-shape circle green"></div><div class="paint-shape triangle red"></div><div class="paint-shape square blue"></div></div>
     <img class="character help-character" id="helpCharacter" src="assets/teacher-explaining.png" alt="민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사">
@@ -423,25 +529,25 @@
     <img class="feedback-mark" id="randomMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
   </section>
 
-  <section class="scene" id="section_free_drawing" data-qa-scene="section-free-drawing" data-qa-order="6" data-qa-label="모양으로 자유 그리기" data-interaction-id="interaction_shape_drawing interaction_drawing_confirmation">
+  <section class="scene" id="section_free_drawing" data-qa-scene="section-free-drawing" data-qa-order="5" data-qa-label="모양으로 자유 그리기" data-interaction-id="interaction_shape_drawing interaction_drawing_confirmation">
     <img class="bg" src="assets/school-wall-drawing.png" alt="맑은 낮의 학교 앞, 중앙이 넓고 깨끗하게 비어 있는 크림색 담장과 오른쪽 아래 보호포·파란 도구 상자">
-    <div id="drawingDialogue"><img class="character right" id="drawingTeacher" src="assets/teacher-praising.png" alt="민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사"><div class="speech right-speaker" id="drawingSpeech">담장 색칠이 끝나가요!<span class="dialogue-advance"></span></div><div class="tap-layer" id="drawingTap" tabindex="0" aria-label="대화 진행"></div></div>
+    <div id="drawingDialogue"><img class="character right" id="drawingTeacher" src="assets/teacher-praising.png" alt="민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사"><div class="speech right-speaker" id="drawingSpeech">담장 색칠이 끝나가요!</div><div class="tap-layer" id="drawingTap" tabindex="0" aria-label="대화 진행"></div></div>
     <div class="paint-tools hidden" id="paintTools"><div class="prompt">그리기 툴</div><button class="tool active" data-shape="circle" aria-pressed="true">원</button><button class="tool" data-shape="triangle" aria-pressed="false">정삼각형</button><button class="tool" data-shape="square" aria-pressed="false">정사각형</button><div class="color-tools"><button class="color-tool green" data-color="green" aria-label="초록" aria-pressed="true"></button><button class="color-tool blue" data-color="blue" aria-label="파랑" aria-pressed="false"></button><button class="color-tool red" data-color="red" aria-label="빨강" aria-pressed="false"></button><button class="color-tool purple" data-color="purple" aria-label="보라" aria-pressed="false"></button></div></div>
     <div id="drawingCanvas" class="hidden" aria-label="빈 담장 그리기 영역"></div>
     <button class="cta activity-cta bottom-cta hidden" id="drawingDone" aria-label="그림 완성하기">버튼</button>
     <div class="confirmation" id="drawingConfirm"><div class="confirm-panel"><p>그림을 완성했나요?</p><div class="drawing-summary" id="drawingSummary" aria-hidden="true"></div><div class="confirm-actions"><button class="confirm-btn" id="drawingYes">예</button><button class="confirm-btn" id="drawingNo">아니오</button></div></div></div>
   </section>
 
-  <section class="scene" id="section_math_story" data-qa-scene="section-math-story" data-qa-order="7" data-qa-label="수리 이야기" data-interaction-id="interaction_sign_story">
+  <section class="scene" id="section_math_story" data-qa-scene="section-math-story" data-qa-order="6" data-qa-label="수리 이야기" data-interaction-id="interaction_sign_story">
     <img class="bg" src="assets/school-road-background.png" alt="학교 담장과 건물 옆의 안전한 인도와 차도, 표지판 세 개를 배치할 중경과 하단 설명 영역이 비어 있는 맑은 낮 배경">
     <div class="title-banner story-title-banner" id="storyTitleSurface"><img src="assets/school-title-banner-body.png" alt="장면 제목을 표시하는 빈 학교 담장 부착형 제목판"><h2 class="hero-title sub-title" id="storyTitle">수리 이야기</h2></div>
     <div class="story-intro-board" id="storyIntroBoard">모양을 길에서 본 적이 있나요?</div>
     <div class="tap-layer" id="storyIntroTap" tabindex="0" aria-label="모양을 길에서 본 적이 있나요?"></div>
-    <div class="sign-row hidden" id="signRow"><div class="sign circle"><img src="assets/road-sign-body.png" alt="내부 교통 표식을 덧씌울 수 있는 빈 원형, 사각형, 삼각형 도로 표지판 세트"><span class="sign-label">자동차 전용<br>도로</span></div><div class="sign square"><img src="assets/road-sign-body.png" alt=""><span class="sign-label">주차</span></div><div class="sign triangle"><img src="assets/road-sign-body.png" alt=""><span class="sign-label">공사</span></div></div>
+    <div class="sign-row hidden" id="signRow"><div class="sign circle"><img src="assets/road-sign-circle.png" alt="흰 자동차 그림과 자동차 전용도로 문구가 새겨진 파란 원형 도로 표지판"></div><div class="sign square"><img src="assets/road-sign-square.png" alt="흰 P 표식과 주차 문구가 새겨진 파란 사각형 도로 표지판"></div><div class="sign triangle"><img src="assets/road-sign-triangle.png" alt="삽을 든 공사 인부 그림과 공사 문구가 새겨진 노란 삼각형 도로 표지판"></div></div>
     <div class="story-card hidden" id="storyCard">● ■ ▲<br><br>무슨 표지판일까요?</div>
   </section>
 
-  <section class="scene" id="section_completion" data-qa-scene="section-completion" data-qa-order="8" data-qa-label="차시 완료" data-interaction-id="interaction_certificate_download interaction_next_lesson interaction_exit">
+  <section class="scene" id="section_completion" data-qa-scene="section-completion" data-qa-order="7" data-qa-label="차시 완료" data-interaction-id="interaction_certificate_download interaction_next_lesson interaction_exit">
     <img class="bg" src="assets/school-wall-completed.png" alt="원·삼각형·사각형 벽화가 좌우에 완성되고 중앙 제목 영역과 하단 버튼 영역이 비어 있는 밝은 학교 담장">
     <div id="completedMuralPreview" aria-hidden="true"></div>
     <div class="spark" style="left:300px;top:250px"></div><div class="spark" style="left:1540px;top:310px"></div><div class="spark" style="left:910px;top:180px"></div><div class="spark" style="left:1260px;top:620px"></div>
@@ -449,9 +555,11 @@
     <div class="completion-actions"><button class="cta" id="certificateButton">인증서 다운로드</button><button class="cta secondary" id="nextLessonButton" disabled>다음 차시 이동</button><button class="cta secondary" id="exitButton">나가기</button></div>
   </section>
 
-  <div class="confirmation" id="menuDrawer"><div class="confirm-panel"><div class="overview"><button class="overview-card" data-go="section_global_ui">수리가 필요해요</button><button class="overview-card" data-go="section_random_problems">수리로 해결해요</button><button class="overview-card" data-go="section_math_story">수리 이야기</button></div></div></div>
+  <div class="course-menu-overlay" id="courseMenu"></div>
   <img class="character feedback-character hidden" id="feedbackCharacter" src="assets/teacher-praising.png" alt="민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사">
-  <button type="button" class="speech feedback-speech hidden" id="feedbackSpeech" aria-label="다음 문제"></button>
+  <!-- 17: <button> 안에 01의 <button class="repair-narr-next">를 넣을 수 없어(중첩 버튼은 브라우저가 DOM을 재배치한다)
+       다른 말풍선과 같은 div + role="button" 구조로 맞췄다. -->
+  <div class="speech feedback-speech left-speaker hidden" id="feedbackSpeech" role="button" tabindex="0" aria-label="다음 문제"></div>
   <template id="staticQuestionContract">
     <span>square_left_window,square_right_window</span>
     <span>circle_school_clock,circle_school_emblem</span>
@@ -485,13 +593,16 @@
 <script>
 (() => {
   const STAGE_W=1920, STAGE_H=1080;
-  const SCENE_OUT_MS=260,SCENE_OVERLAP_MS=80,INTRO_SPEECH_DELAY_MS=140,INTRO_PROGRESS_DELAY_MS=300,ANSWER_STAMP_DELAY_MS=160,STORY_REVEAL_CLEAR_MS=900,HOST_SYNC_MS=500;
+  /* 15·17: 1-2/01의 말풍선 안 진행 버튼. 클래스명·구조를 01 그대로 쓴다(나중에 두 차시를 같은 이름으로 찾을 수 있어야 한다).
+     바깥 표면(말풍선 자체)이 role="button"으로 포커스를 가지므로 안쪽 버튼은 tabindex="-1"로 빼서 탭이 두 번 멈추지 않게 한다.
+     클릭은 바깥 표면의 onclick으로 버블링되므로 버튼에 별도 핸들러를 달지 않는다. */
+  const ADVANCE_NAV_HTML='<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';
+  const RANDOM_SHAPE_LEAD_MS=280,RANDOM_SHAPE_STAGGER_MS=120,RANDOM_SHAPE_STEP_GAP_MS=420,RANDOM_SHAPE_TAIL_MS=520,HAMMER_SWING_MS=420,HAMMER_STRIKES=4,HAMMER_HIT_OFFSET_MS=180,HAMMER_HOLD_MS=1000,SCENE_OUT_MS=420,SCENE_OVERLAP_MS=80,INTRO_SPEECH_DELAY_MS=140,INTRO_PROGRESS_DELAY_MS=300,ANSWER_STAMP_DELAY_MS=160,STORY_REVEAL_CLEAR_MS=900,HOST_SYNC_MS=500;
   const stage=document.getElementById('stage');
   const scenes=[...document.querySelectorAll('.scene')];
   const LESSON_TITLE='알록달록, 학교 담장 색칠하기';
   const sceneMeta={
-    section_global_ui:{stage:'수리력 +',progress:4},
-    section_intro:{stage:'수리력 +',progress:12},
+    section_intro:{stage:'수리력 +',progress:4},
     section_shape_find:{stage:'수리가 필요해요 1',progress:32},
     section_arithmetic_tutorial:{stage:'수리가 필요해요 2',progress:55},
     section_random_problems:{stage:'수리로 해결해요',progress:72},
@@ -499,8 +610,7 @@
     section_math_story:{stage:'수리 이야기',progress:94},
     section_completion:{stage:'수리 이야기',progress:100}
   };
-  let soundOn=true,currentScene='section_global_ui',wrongPoseTimer=0,feedbackHideTimer=0,feedbackContinueAction=null,drawingIntroTimer=0,sceneTransitionTimer=0,introSpeechTimer=0,introProgressTimer=0,storyRevealTimer=0;
-  const unlockedMenuScenes=new Set(['section_global_ui']);
+  let soundOn=true,introRepairing=false,introRepairTimers=[],currentScene='section_intro',wrongPoseTimer=0,feedbackHideTimer=0,feedbackContinueAction=null,drawingIntroTimer=0,sceneTransitionTimer=0,introSpeechTimer=0,introProgressTimer=0,storyRevealTimer=0;
   function resizeStage(){
     const portrait=innerHeight>innerWidth;
     const availableW=portrait?innerHeight:innerWidth, availableH=portrait?innerWidth:innerHeight;
@@ -551,11 +661,50 @@
   }
   window.__contentHarnessShowScene=function(sceneId){const el=document.querySelector(`[data-qa-scene="${sceneId}"]`)||document.getElementById(sceneId);if(el){scenes.forEach(scene=>scene.classList.remove('qa-capture-ready'));showScene(el.id);el.classList.add('qa-capture-ready')}};
   document.getElementById('soundButton').onclick=e=>{soundOn=!soundOn;const b=e.currentTarget;b.setAttribute('aria-pressed',String(soundOn));b.dataset.soundOn=String(soundOn);b.setAttribute('aria-label',soundOn?'소리 끄기':'소리 켜기');b.title=soundOn?'소리 끄기':'소리 켜기';if(!soundOn&&'speechSynthesis' in window)speechSynthesis.cancel()};
-  const menu=document.getElementById('menuDrawer');
-  function refreshMenuAccess(){menu.querySelectorAll('[data-go]').forEach(button=>{button.disabled=!unlockedMenuScenes.has(button.dataset.go);button.setAttribute('aria-disabled',String(button.disabled))})}
-  function unlockMenuScene(id){unlockedMenuScenes.add(id);refreshMenuAccess()}
-  document.getElementById('menuButton').onclick=e=>{refreshMenuAccess();menu.classList.add('open');e.currentTarget.setAttribute('aria-expanded','true')};menu.onclick=e=>{if(e.target===menu){menu.classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false')}};menu.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.disabled)return;menu.classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false');showScene(b.dataset.go)});refreshMenuAccess();
-  document.getElementById('goalButton').onclick=()=>showScene('section_intro');
+  /* 1: 01의 installCourseMenu 드로어를 이식. 08은 lesson.json을 읽는 런타임이 없어 데이터를 파일 내부 상수로 둔다.
+     path/id는 01 lesson.json의 ui.courseMenu 원본 그대로다 — 1-2/01과 1-2/08은 디렉토리 깊이가 같아 상대 경로가 그대로 맞는다. */
+  const COURSE_MENU={gradeLabel:"1학년 차시 목록",current:"08",lessons:[
+    {no:1,path:"../../1-1/01/",title:"어지러운 교실을 수리하라!"},
+    {no:2,path:"../../1-1/02/",title:"복잡한 강당을 수리하라!"},
+    {no:3,path:"../../1-1/03/",title:"위험한 급식실을 안전하게!"},
+    {no:4,path:"../../1-1/04/",title:"어두운 보건실, 환하게 해결해요!"},
+    {no:5,title:"준비 중"},
+    {no:6,id:"01",title:"와글와글, 운동회를 도와요!"},
+    {no:7,title:"준비 중"},
+    {no:8,id:"08",title:"알록달록, 학교 담장 색칠하기"},
+    {no:9,title:"준비 중"},
+    {no:10,title:"준비 중"}
+  ]};
+  const courseMenu=document.getElementById("courseMenu");
+  const ESCAPE_MAP={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
+  function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>ESCAPE_MAP[c])}
+  function buildCourseMenu(){
+    const rows=COURSE_MENU.lessons.map(item=>{
+      const href=item.path?item.path:(item.id?"../"+item.id+"/":"");
+      const available=!!href,isCurrent=available&&item.id&&item.id===COURSE_MENU.current;
+      const cls="course-menu-item"+(isCurrent?" is-current":"")+(available?"":" is-locked");
+      return "<button type=\"button\" class=\""+cls+"\""
+        +(available&&!isCurrent?" data-goto=\""+escapeHtml(href)+"\"":"")
+        +(available?"":" disabled aria-disabled=\"true\"")+">"
+        +"<span class=\"course-menu-no\">"+escapeHtml(item.no)+"</span>"
+        +"<span class=\"course-menu-title\">"+escapeHtml(item.title||"준비 중")+"</span>"
+        +(isCurrent?"<span class=\"course-menu-now\">지금</span>":"")
+        +(available?"":"<span class=\"course-menu-soon\">준비 중</span>")
+        +"</button>"}).join("");
+    courseMenu.innerHTML="<div class=\"course-menu-panel\" role=\"dialog\" aria-modal=\"true\" aria-label=\"차시 목록\">"
+      +"<div class=\"course-menu-head\"><span class=\"course-menu-grade\">"+escapeHtml(COURSE_MENU.gradeLabel)+"</span>"
+      +"<button type=\"button\" class=\"course-menu-close\" aria-label=\"닫기\">×</button></div>"
+      +"<div class=\"course-menu-list\">"+rows+"</div>"
+      +"<div class=\"course-menu-foot\"><button type=\"button\" class=\"course-menu-home\">↺ 처음으로</button></div></div>";
+    courseMenu.querySelector(".course-menu-close").onclick=closeCourseMenu;
+    courseMenu.querySelector(".course-menu-home").onclick=()=>{closeCourseMenu();showScene("section_intro")};
+    courseMenu.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>location.assign(b.dataset.goto));
+  }
+  function openCourseMenu(){courseMenu.classList.add("is-open");document.getElementById("menuButton").setAttribute("aria-expanded","true")}
+  function closeCourseMenu(){courseMenu.classList.remove("is-open");document.getElementById("menuButton").setAttribute("aria-expanded","false")}
+  courseMenu.onclick=e=>{if(e.target===courseMenu)closeCourseMenu()};
+  document.getElementById("menuButton").onclick=()=>courseMenu.classList.contains("is-open")?closeCourseMenu():openCourseMenu();
+  buildCourseMenu();
 
   const introBeats=[
     {text:'공사 중에 실수로 담장을 무너뜨렸어요.<br>죄송합니다!',img:'worker-apologizing.png',alt:'상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자',bg:'school-wall-damaged.png'},
@@ -567,10 +716,34 @@
   function setTitleMode(on){document.getElementById('stage').classList.toggle('title-mode',on)}
   /* 01은 매번 innerHTML로 다시 그려 titleLogoDrop이 재생된다. 08은 정적 노드라 재진입 시 수동 재시작한다 */
   function replayTitleDrop(){const el=document.querySelector('#introStartWrap .intro-title-img');if(!el)return;el.style.animation='none';void el.offsetWidth;el.style.animation=''}
-  function resetIntro(){clearTimeout(introSpeechTimer);clearTimeout(introProgressTimer);introBeat=0;replayTitleDrop();const bg=document.getElementById('introBg'),ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech');bg.src='assets/school-wall-damaged.png';bg.alt='학교 담장 오른쪽 일부가 낮게 무너지고 벽돌과 안전 표식이 가지런히 놓인 밝은 낮의 학교 외부';document.getElementById('introTitleSurface').classList.remove('hidden');document.getElementById('introStart').classList.remove('hidden');document.getElementById('introNext').classList.add('hidden');document.getElementById('introTap').classList.add('hidden');ch.className='character left hidden';ch.src='assets/worker-apologizing.png';ch.alt='상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자';sp.className='speech left-speaker hidden';sp.textContent=''}
-  function renderIntro(){const b=introBeats[introBeat],ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech'),bg=document.getElementById('introBg');ch.src='assets/'+b.img;ch.alt=b.alt;ch.className='character left';sp.className='speech left-speaker';sp.innerHTML=b.text+'<span class="dialogue-advance"></span>';bg.src='assets/'+b.bg;if(introBeat===introBeats.length-1){ch.classList.remove('left');ch.classList.add('right');sp.classList.remove('left-speaker');sp.classList.add('right-speaker')}speak(b.text)}
+  function resetIntro(){clearTimeout(introSpeechTimer);clearTimeout(introProgressTimer);clearIntroRepair();introBeat=0;replayTitleDrop();const bg=document.getElementById('introBg'),ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech');bg.src='assets/school-wall-damaged.png';bg.alt='학교 담장 오른쪽 일부가 낮게 무너지고 벽돌과 안전 표식이 가지런히 놓인 밝은 낮의 학교 외부';document.getElementById('introTitleSurface').classList.remove('hidden');document.getElementById('introStart').classList.remove('hidden');document.getElementById('introNext').classList.add('hidden');document.getElementById('introTap').classList.add('hidden');ch.className='character left hidden';ch.src='assets/worker-apologizing.png';ch.alt='상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자';sp.className='speech left-speaker hidden';sp.textContent=''}
+  function renderIntro(){const b=introBeats[introBeat],ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech'),bg=document.getElementById('introBg');ch.src='assets/'+b.img;ch.alt=b.alt;ch.className='character left';sp.className='speech left-speaker';sp.innerHTML=b.text+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';bg.src='assets/'+b.bg;document.getElementById('introBgRepaired').style.opacity='0';if(introBeat===introBeats.length-1){ch.classList.remove('left');ch.classList.add('right');sp.classList.remove('left-speaker');sp.classList.add('right-speaker')}speak(b.text)}
   document.getElementById('introStart').onclick=()=>{const ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech'),tap=document.getElementById('introTap');setTitleMode(false);document.getElementById('introTitleSurface').classList.add('hidden');document.getElementById('introStart').classList.add('hidden');renderIntro();ch.classList.add('stagger-character');ch.classList.remove('hidden');sp.classList.add('stagger-speech','hidden');tap.classList.add('hidden');introSpeechTimer=setTimeout(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);introProgressTimer=setTimeout(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)};
-  document.getElementById('introTap').onclick=()=>{if(introBeat<introBeats.length-1){introBeat++;renderIntro()}else{document.getElementById('introTap').classList.add('hidden');document.getElementById('introNext').classList.remove('hidden')}};
+  /* 11: 대사 0(무너진 담장) → 대사 1(수리 완료) 사이에 망치 연출을 끼운다.
+     망치는 캐릭터가 들지 않는 독립 아이콘이고, 타격 박자에 맞춰 repaired 배경이 단계적으로 드러난다.
+     연출 중 탭하면 즉시 스킵된다(연출 때문에 진행이 막히지 않게). */
+  function clearIntroRepair(){introRepairTimers.forEach(clearTimeout);introRepairTimers=[];introRepairing=false;document.getElementById('introRepairFx').classList.add('hidden');document.getElementById('introBgRepaired').style.opacity='0'}
+  function startIntroRepair(){
+    introRepairing=true;
+    const fx=document.getElementById('introRepairFx'),impact=document.getElementById('introRepairImpact'),repaired=document.getElementById('introBgRepaired');
+    fx.classList.remove('hidden');
+    for(let i=0;i<HAMMER_STRIKES;i++){
+      introRepairTimers.push(setTimeout(()=>{
+        impact.classList.remove('hit');void impact.offsetWidth;impact.classList.add('hit');
+        tone(true);
+        repaired.style.opacity=String((i+1)/HAMMER_STRIKES);
+      },i*HAMMER_SWING_MS+HAMMER_HIT_OFFSET_MS));
+    }
+    /* 마지막 타격 후 망치를 먼저 치우고, 고쳐진 담장을 HAMMER_HOLD_MS 동안 보여 준 뒤 다음 대사로 넘어간다. */
+    const swingsEnd=HAMMER_STRIKES*HAMMER_SWING_MS+HAMMER_HIT_OFFSET_MS;
+    introRepairTimers.push(setTimeout(()=>fx.classList.add('hidden'),swingsEnd));
+    introRepairTimers.push(setTimeout(finishIntroRepair,swingsEnd+HAMMER_HOLD_MS));
+  }
+  function finishIntroRepair(){clearIntroRepair();introBeat=1;renderIntro()}
+  document.getElementById('introTap').onclick=()=>{
+    if(introRepairing)return; /* 연출 중에는 탭을 무시한다 — 끝까지 보게 한다 */
+    if(introBeat===0){startIntroRepair();return}
+    if(introBeat<introBeats.length-1){introBeat++;renderIntro()}else{document.getElementById('introTap').classList.add('hidden');document.getElementById('introNext').classList.remove('hidden')}};
   document.getElementById('introNext').onclick=()=>showScene('section_shape_find');
 
   const shapeDialogues=[
@@ -580,13 +753,33 @@
     ['네!','student-idle.png','주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이','left']
   ];
   const searchQuestions=[
-    {id:'q_square_find_two',prompt:'■모양 2개를 찾아 봅시다.',answers:['square_left_window','square_right_window']},
-    {id:'q_circle_find_two',prompt:'●모양 2개를 찾아 봅시다.',answers:['circle_school_clock','circle_school_emblem']},
-    {id:'q_triangle_find_two',prompt:'▲모양 2개를 찾아 봅시다.',answers:['triangle_roof_gable','triangle_entrance_canopy']}
+    {id:'q_square_find_two',prompt:'■모양 2개를 찾아 봅시다.',answers:['square_notebook','square_lunchbox']},
+    {id:'q_circle_find_two',prompt:'●모양 2개를 찾아 봅시다.',answers:['circle_wall_clock','circle_ball']},
+    {id:'q_triangle_find_two',prompt:'▲모양 2개를 찾아 봅시다.',answers:['triangle_ruler','triangle_pennant']}
   ];
-  const hotspotDefs={
-    square_left_window:[272,366,112,122],square_right_window:[1320,366,112,122],circle_school_clock:[773,197,142,145],circle_school_emblem:[1083,387,134,134],triangle_roof_gable:[590,105,505,270],triangle_entrance_canopy:[645,405,395,160]
+  /* 교실 배경 위에 얹는 도형 사물. rect는 stage(1920x1080) 좌표 [left,top,w,h]이고 핫스팟도 같은 rect를 쓴다.
+     배경(classroom-shape-search.png)에는 이 6종을 그리지 않았으므로 여기 좌표만 바꾸면 난이도·배치를 조정할 수 있다.
+     18: 배경 실측 기준 — 칠판 x 80~768 / y 240~660, 벽·바닥 경계 y≈818, 화분 x 1720~1900 / y 570~850,
+     책상 상판 y 900~975(왼쪽 x 0~390 · 가운데 x 528~1065 · 오른쪽 x 1240~1680 · 끝 x 1710~1920).
+     사물은 실제로 놓일 법한 면에만 둔다: 삼각자는 칠판 면, 시계·깃발은 벽, 공책·도시락은 책상 상판, 공은 바닥. */
+  const findObjects={
+    triangle_ruler:{src:'classroom-triangle-ruler.png',alt:'눈금이 그려진 나무 삼각자',rect:[500,395,210,210]},
+    circle_wall_clock:{src:'classroom-wall-clock.png',alt:'파란 테두리의 둥근 교실 벽시계',rect:[880,215,190,190]},
+    triangle_pennant:{src:'classroom-pennant-flag.png',alt:'짧은 막대에 달린 파란 삼각 깃발',rect:[1490,220,180,180]},
+    square_notebook:{src:'classroom-notebook.png',alt:'책상 위에 놓인 청록색 표지의 공책',rect:[860,790,185,185]},
+    square_lunchbox:{src:'classroom-lunchbox.png',alt:'책상 위에 놓인 빨간 뚜껑의 사각 도시락통',rect:[1480,790,185,185]},
+    circle_ball:{src:'classroom-ball.png',alt:'파란색과 노란색 띠가 있는 둥근 공',rect:[470,690,180,180]}
   };
+  const hotspotDefs=Object.fromEntries(Object.entries(findObjects).map(([id,o])=>[id,o.rect]));
+  function renderFindObjects(){
+    const host=document.getElementById('shapeObjects');host.innerHTML='';
+    Object.entries(findObjects).forEach(([id,o])=>{
+      const img=document.createElement('img');img.className='find-object';img.dataset.object=id;
+      img.src='assets/'+o.src;img.alt=o.alt;
+      Object.assign(img.style,{left:o.rect[0]+'px',top:o.rect[1]+'px',width:o.rect[2]+'px',height:o.rect[3]+'px'});
+      host.appendChild(img);
+    });
+  }
   const countQuestions=[
     {id:'q_count_circle',prompt:'●모양은 몇 개 인가요?',answer:'3',shape:'circle',count:3,color:'green'},
     {id:'q_count_triangle',prompt:'▲모양은 몇 개 인가요?',answer:'2',shape:'triangle',count:2,color:'red'},
@@ -595,29 +788,29 @@
   let shapePhase='opening',shapeDialogueIndex=0,searchIndex=0,searchWrong=0,found=new Set(),countIndex=0,countWrong=0,countValue='',countAssisted=false,shapeTimers=[];
   function clearShapeTimers(){shapeTimers.forEach(clearTimeout);shapeTimers=[]}
   function scheduleShape(fn,delay){const timer=setTimeout(fn,delay);shapeTimers.push(timer)}
-  function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/school-yard-shape-search.png';bg.alt='원형 시계와 학교 표식, 정사각형 창문 두 개, 삼각 지붕과 현관 차양이 서로 떨어져 배치된 밝은 학교 마당';document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
-  function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="dialogue-advance"></span>';speak(b[0])}
-  document.getElementById('shapeDialogueTap').onclick=()=>{if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='● ■ ▲ 모양<span class="dialogue-advance"></span>';speak('● ■ ▲ 모양')}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='② 페인트 소개를 부탁해요!<span class="dialogue-advance"></span>';speak('② 페인트 소개를 부탁해요!')}else{document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
+  function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/classroom-shape-search.png';bg.alt='칠판과 책상, 나무 바닥이 보이고 벽면을 넓게 비워 둔 밝은 1학년 교실';document.getElementById('shapeSceneStudent').classList.remove('hidden');renderFindObjects();document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
+  function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b[0])}
+  document.getElementById('shapeDialogueTap').onclick=()=>{if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='● ■ ▲ 모양<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('● ■ ▲ 모양')}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='② 페인트 소개를 부탁해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('② 페인트 소개를 부탁해요!')}else{document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
   function renderSearch(){const q=searchQuestions[searchIndex],searchArea=document.getElementById('shapeSearch');searchWrong=0;found=new Set();setProgress(18+searchIndex*4);document.getElementById('searchPrompt').textContent=q.prompt;speak(q.prompt);const host=document.getElementById('hotspots');host.innerHTML='';searchArea.onclick=e=>{if(e.target.closest('.hotspot')||e.target.closest('.search-prompt'))return;registerSearchWrong(q,searchArea)};Object.entries(hotspotDefs).forEach(([id,v])=>{const b=document.createElement('button');b.className='hotspot'+(q.answers.includes(id)?' current-target':'');b.dataset.target=id;b.setAttribute('aria-label',id);Object.assign(b.style,{left:v[0]+'px',top:v[1]+'px',width:v[2]+'px',height:v[3]+'px'});b.onclick=e=>{e.stopPropagation();selectHotspot(b,q)};host.appendChild(b)})}
   function advanceSearch(){if(searchIndex<searchQuestions.length-1){searchIndex++;renderSearch()}else startPaintIntro()}
   function revealSearchAnswers(q,withNumbers){document.querySelectorAll('.hotspot').forEach(h=>{const answerIndex=q.answers.indexOf(h.dataset.target);h.classList.toggle('hint',answerIndex>=0);if(answerIndex>=0&&withNumbers&&!h.querySelector('.hotspot-number')){const number=document.createElement('span');number.className='hotspot-number';number.textContent=String(answerIndex+1);number.setAttribute('aria-hidden','true');h.appendChild(number)}})}
   function registerSearchWrong(q,target){tone(false);showWrongFeedback();searchWrong++;shake(target===document.getElementById('shapeSearch')?document.getElementById('searchPrompt'):target);if(searchWrong===2)revealSearchAnswers(q,false);if(searchWrong>=3){revealSearchAnswers(q,true);document.querySelectorAll('.hotspot:not(.current-target)').forEach(h=>h.disabled=true)}}
   function selectHotspot(btn,q){const id=btn.dataset.target;if(q.answers.includes(id)){if(found.has(id))return;found.add(id);btn.classList.add('found');tone(true);if(found.size===2){setHotspotsEnabled(false);showFeedback(document.getElementById('shapeMark'),q.id==='q_triangle_find_two'?'잘 찾았어요!':'정답입니다.',advanceSearch)}}else registerSearchWrong(q,btn)}
   function setHotspotsEnabled(enabled){document.querySelectorAll('.hotspot').forEach(h=>h.disabled=!enabled)}
-  function startPaintIntro(){shapePhase='paint-intro';shapeDialogueIndex=0;document.getElementById('shapeSearch').classList.add('hidden');const bg=document.getElementById('shapeBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');document.getElementById('paintIntroVisual').classList.remove('hidden');document.getElementById('paintCan').classList.remove('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/teacher-explaining.png';ch.alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='페인트 색깔마다 모양이 달라요<span class="dialogue-advance"></span>';speak('페인트 색깔마다 모양이 달라요');setProgress(30)}
+  function startPaintIntro(){shapePhase='paint-intro';shapeDialogueIndex=0;document.getElementById('shapeSearch').classList.add('hidden');const bg=document.getElementById('shapeBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';/* 18: 배경이 교실에서 담장으로 바뀌므로 교실 학생도 함께 내린다 */document.getElementById('shapeSceneStudent').classList.add('hidden');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');document.getElementById('paintIntroVisual').classList.remove('hidden');document.getElementById('paintCan').classList.remove('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/teacher-explaining.png';ch.alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='페인트 색깔마다 모양이 달라요<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('페인트 색깔마다 모양이 달라요');setProgress(30)}
   function startCount(){shapePhase='count';countIndex=0;document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('shapeCount').classList.remove('hidden');renderCount()}
   function hintCountShapes(){document.querySelectorAll('#countShapes .paint-shape').forEach((shape,index)=>scheduleShape(()=>{shape.classList.add('hint-step');scheduleShape(()=>shape.classList.remove('hint-step'),450)},index*120))}
   function advanceCount(){if(countIndex<countQuestions.length-1){countIndex++;renderCount()}else finishShape()}
-  function renderCount(){const q=countQuestions[countIndex],display=document.getElementById('countDisplay');countWrong=0;countValue='';countAssisted=false;setProgress(32+countIndex*5);document.getElementById('countPrompt').textContent=q.prompt;display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('countShapes').innerHTML=Array.from({length:q.count},()=>`<div class="paint-shape ${q.shape} ${q.color}"></div>`).join('');speak(q.prompt);buildKeypad('countKeypad',n=>{if(n==='enter'){if(countValue===q.answer){setKeypadEnabled('countKeypad',false);tone(true);display.toggleAttribute('data-assisted',countAssisted);showFeedback(document.getElementById('shapeMark'),'정답입니다.',advanceCount)}else{tone(false);showWrongFeedback();countWrong++;shake(display);hintCountShapes();countValue='';display.textContent='';if(countWrong>=3){countAssisted=true;countValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');setKeypadConfirmOnly('countKeypad')}}}else if(!countAssisted){countValue=(countValue+n).slice(-2);display.textContent=countValue}})}
-  function finishShape(){shapePhase='outro';shapeDialogueIndex=0;setProgress(47);document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='① 잘했어요.<br>이제 벽화를 색칠해봐요!<span class="dialogue-advance"></span>';speak('① 잘했어요. 이제 벽화를 색칠해봐요!')}
+  function renderCount(){const q=countQuestions[countIndex],display=document.getElementById('countDisplay');countWrong=0;countValue='';countAssisted=false;setProgress(32+countIndex*5);document.getElementById('countPrompt').textContent=q.prompt;display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('countShapes').innerHTML=Array.from({length:q.count},()=>`<div class="paint-shape ${q.shape} ${q.color}"></div>`).join('');speak(q.prompt);buildKeypad('countKeypad',n=>{if(n==='enter'){if(countValue===q.answer){setKeypadEnabled('countKeypad',false);tone(true);display.toggleAttribute('data-assisted',countAssisted);showFeedback(document.getElementById('shapeMark'),'정답입니다.',advanceCount)}else{tone(false);showWrongFeedback();countWrong++;shake(display);hintCountShapes();countValue='';display.textContent='';if(countWrong>=3){countAssisted=true;countValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');setKeypadConfirmOnly('countKeypad')}}}else if(n==='del'){if(!countAssisted){countValue=countValue.slice(0,-1);display.textContent=countValue;keypadDisplayTick(display)}}else if(!countAssisted){countValue=(countValue+n).slice(-2);display.textContent=countValue;keypadDisplayTick(display)}})}
+  function finishShape(){shapePhase='outro';shapeDialogueIndex=0;setProgress(47);document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='① 잘했어요.<br>이제 벽화를 색칠해봐요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('① 잘했어요. 이제 벽화를 색칠해봐요!')}
   document.getElementById('shapeNext').onclick=()=>showScene('section_arithmetic_tutorial');
 
   const arithmeticQuestions=[
     {id:'q_total_shapes_ten',prompt:'모양은 모두 몇 개인가요?',answer:'10',count:10,remove:0,bg:'school-wall-closeup.png',preBeats:[]},
     {id:'q_add_7_3',prompt:'7개에서 3개를 더 색칠하면 몇 개일까요?\n7 + 3 = (   )',answer:'10',count:10,remove:0,bg:'school-wall-closeup.png',preBeats:[]},
     {id:'q_add_10_2',prompt:'10 + 2 = (   )',answer:'12',count:12,remove:0,bg:'school-wall-closeup.png',preBeats:[
-      {text:'페인트 1통을 다 썼어요',img:'student-thinking.png',alt:'한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이',side:'left'},
-      {text:'1통을 더 준비했어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
+      {text:'페인트 1통을 다 썼어요',img:'student-thinking.png',alt:'한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이',side:'left',cans:'first-empty'},
+      {text:'1통을 더 준비했어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left',cans:'two'},
       {text:'2개를 더 색칠해주세요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
       {text:'네',img:'student-idle.png',alt:'주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이',side:'right'}
     ]},
@@ -640,20 +833,30 @@
   let arithPhase='intro',arithIndex=0,arithValue='',arithIntroBeat=0,arithQuestionBeat=0,arithFinishBeat=0,arithWrong=0,arithAssisted=false,arithAnimationTimers=[];
   function clearArithmeticTimers(){arithAnimationTimers.forEach(clearTimeout);arithAnimationTimers=[]}
   function scheduleArithmetic(fn,delay){const timer=setTimeout(fn,delay);arithAnimationTimers.push(timer)}
-  function resetArithmetic(){clearArithmeticTimers();arithPhase='intro';arithIndex=0;arithIntroBeat=0;arithQuestionBeat=0;arithFinishBeat=0;arithWrong=0;arithAssisted=false;arithValue='';const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech'),tap=document.getElementById('arithIntroTap'),bg=document.getElementById('arithBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';ch.className='character left stagger-character';ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker hidden stagger-speech';document.getElementById('arithTitleSurface').classList.remove('hidden');ch.classList.remove('hidden');tap.classList.add('hidden');document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithShapes').innerHTML='';document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');document.getElementById('arithDisplay').textContent='';document.getElementById('arithNext').classList.add('hidden');document.getElementById('arithMark').classList.remove('show');sp.innerHTML=arithmeticIntroBeats[0]+'<span class="dialogue-advance"></span>';setProgress(49);scheduleArithmetic(()=>{sp.classList.remove('hidden');speak(arithmeticIntroBeats[0])},INTRO_SPEECH_DELAY_MS);scheduleArithmetic(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
-  function renderArithmeticBeat(q){const beat=q.preBeats[arithQuestionBeat],ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/'+beat.img;ch.alt=beat.alt;ch.className='character '+beat.side;sp.className='speech '+(beat.side==='left'?'left-speaker':'right-speaker');sp.innerHTML=beat.text+'<span class="dialogue-advance"></span>';speak(beat.text)}
-  document.getElementById('arithIntroTap').onclick=()=>{if(arithPhase==='intro'){if(arithIntroBeat<arithmeticIntroBeats.length-1){arithIntroBeat++;document.getElementById('arithSpeech').innerHTML=arithmeticIntroBeats[arithIntroBeat]+'<span class="dialogue-advance"></span>';speak(arithmeticIntroBeats[arithIntroBeat])}else{document.getElementById('arithTitleSurface').classList.add('hidden');document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');renderArithmetic()}}else if(arithPhase==='question-beats'){const q=arithmeticQuestions[arithIndex];if(arithQuestionBeat<q.preBeats.length-1){arithQuestionBeat++;renderArithmeticBeat(q)}else{document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');startArithmeticQuestion(q)}}else if(arithPhase==='outro'){if(arithFinishBeat===0){arithFinishBeat=1;const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/student-volunteer.png';ch.alt='활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='네!<span class="dialogue-advance"></span>';speak('네!')}else{document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithNext').classList.remove('hidden')}}};
+  function resetArithmetic(){clearArithmeticTimers();arithPhase='intro';arithIndex=0;arithIntroBeat=0;arithQuestionBeat=0;arithFinishBeat=0;arithWrong=0;arithAssisted=false;arithValue='';const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech'),tap=document.getElementById('arithIntroTap'),bg=document.getElementById('arithBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';ch.className='character left stagger-character';ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker hidden stagger-speech';document.getElementById('arithTitleSurface').classList.remove('hidden');ch.classList.remove('hidden');tap.classList.add('hidden');document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithShapes').innerHTML='';document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');document.getElementById('arithDisplay').textContent='';document.getElementById('arithNext').classList.add('hidden');document.getElementById('arithMark').classList.remove('show');setPaintCans('one');sp.innerHTML=arithmeticIntroBeats[0]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';setProgress(49);scheduleArithmetic(()=>{sp.classList.remove('hidden');speak(arithmeticIntroBeats[0])},INTRO_SPEECH_DELAY_MS);scheduleArithmetic(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
+  /* 21: 대사가 "1통을 다 썼어요 / 1통을 더 준비했어요"라고 말하는데 화면에는 통이 하나뿐이었다.
+     대사가 요구하는 수량 변화를 화면에 반영한다. 원문 대사는 그대로 두고 화면만 맞춘다. */
+  function setPaintCans(state){const first=document.getElementById('arithPaintCan1'),second=document.getElementById('arithPaintCan2');if(!first||!second)return;
+    first.classList.toggle('empty',state!=='one');
+    second.classList.toggle('hidden',state!=='two');
+    if(state==='two'){second.classList.remove('arriving');void second.offsetWidth;second.classList.add('arriving')}else second.classList.remove('arriving')}
+  function renderArithmeticBeat(q){const beat=q.preBeats[arithQuestionBeat],ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');if(beat.cans)setPaintCans(beat.cans);ch.src='assets/'+beat.img;ch.alt=beat.alt;ch.className='character '+beat.side;sp.className='speech '+(beat.side==='left'?'left-speaker':'right-speaker');sp.innerHTML=beat.text+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(beat.text)}
+  document.getElementById('arithIntroTap').onclick=()=>{if(arithPhase==='intro'){if(arithIntroBeat<arithmeticIntroBeats.length-1){arithIntroBeat++;document.getElementById('arithSpeech').innerHTML=arithmeticIntroBeats[arithIntroBeat]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(arithmeticIntroBeats[arithIntroBeat])}else{document.getElementById('arithTitleSurface').classList.add('hidden');document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');renderArithmetic()}}else if(arithPhase==='question-beats'){const q=arithmeticQuestions[arithIndex];if(arithQuestionBeat<q.preBeats.length-1){arithQuestionBeat++;renderArithmeticBeat(q)}else{document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');startArithmeticQuestion(q)}}else if(arithPhase==='outro'){if(arithFinishBeat===0){arithFinishBeat=1;const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/student-volunteer.png';ch.alt='활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='네!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('네!')}else{document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithNext').classList.remove('hidden')}}};
   function arithmeticInitialClass(q,index){if(q.id==='q_total_shapes_ten')return' pending';if(q.id==='q_add_7_3'&&index>=7)return' pending';if(q.id==='q_add_10_2'&&index>=10)return' pending';if(q.id==='q_add_7_3_2'&&index>=7)return' pending';return''}
-  function animateArithmetic(q){const shapes=[...document.querySelectorAll('#arithShapes .paint-shape')];let delay=0;const reveal=index=>scheduleArithmetic(()=>shapes[index]?.classList.remove('pending'),delay+=140);const remove=index=>scheduleArithmetic(()=>shapes[index]?.classList.add('removed'),delay+=180);if(q.id==='q_total_shapes_ten')shapes.forEach((_,i)=>reveal(i));if(q.id==='q_add_7_3')[7,8,9].forEach(reveal);if(q.id==='q_add_10_2')[10,11].forEach(reveal);if(q.id==='q_add_7_3_2'){[7,8,9].forEach(reveal);delay+=520;[10,11].forEach(reveal)}if(q.id==='q_subtract_12_2')[10,11].forEach(remove);if(q.id==='q_subtract_10_3')[7,8,9].forEach(remove);if(q.id==='q_subtract_12_2_3'){[10,11].forEach(remove);delay+=520;[7,8,9].forEach(remove)}scheduleArithmetic(()=>setKeypadEnabled('arithKeypad',true),delay+180)}
+  /* 20: 빼는 쪽은 .removed로 표시되는데 더하는 쪽은 표시가 없어 무엇이 더해졌는지 알 수 없었다.
+     더해지는 도형에는 .added(사각 테두리 + glow)를 남긴다. 처음부터 다 있는 q_total_shapes_ten은 "더하기"가 아니므로 표시하지 않는다. */
+  function animateArithmetic(q){const shapes=[...document.querySelectorAll('#arithShapes .paint-shape')];let delay=0;const reveal=(index,mark)=>scheduleArithmetic(()=>{const shape=shapes[index];if(!shape)return;shape.classList.remove('pending');if(mark)shape.classList.add('added')},delay+=140);const revealAdded=index=>reveal(index,true);const remove=index=>scheduleArithmetic(()=>shapes[index]?.classList.add('removed'),delay+=180);if(q.id==='q_total_shapes_ten')shapes.forEach((_,i)=>reveal(i));if(q.id==='q_add_7_3')[7,8,9].forEach(revealAdded);if(q.id==='q_add_10_2')[10,11].forEach(revealAdded);if(q.id==='q_add_7_3_2'){[7,8,9].forEach(revealAdded);delay+=520;[10,11].forEach(revealAdded)}if(q.id==='q_subtract_12_2')[10,11].forEach(remove);if(q.id==='q_subtract_10_3')[7,8,9].forEach(remove);if(q.id==='q_subtract_12_2_3'){[10,11].forEach(remove);delay+=520;[7,8,9].forEach(remove)}scheduleArithmetic(()=>setKeypadEnabled('arithKeypad',true),delay+180)}
   function hintArithmetic(q){const shapes=[...document.querySelectorAll('#arithShapes .paint-shape')];const start=q.id==='q_add_7_3'?7:q.id==='q_add_10_2'?10:q.id==='q_add_7_3_2'?7:q.remove?q.count-q.remove:0;const targets=q.id==='q_total_shapes_ten'?shapes:shapes.slice(start);targets.forEach((shape,index)=>scheduleArithmetic(()=>{shape.classList.add('hint-step');scheduleArithmetic(()=>shape.classList.remove('hint-step'),420)},index*110))}
   function renderArithmetic(){clearArithmeticTimers();const q=arithmeticQuestions[arithIndex];arithWrong=0;arithAssisted=false;arithValue='';arithQuestionBeat=0;setProgress(51+arithIndex*4);document.getElementById('arithBg').src='assets/'+q.bg;document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');if(q.preBeats.length){arithPhase='question-beats';const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.classList.remove('hidden');sp.classList.remove('hidden');document.getElementById('arithIntroTap').classList.remove('hidden');renderArithmeticBeat(q)}else startArithmeticQuestion(q)}
   function showArithmeticReason(q){if(!q.strategy)return;const context=document.getElementById('arithContext');context.textContent=q.strategy;context.classList.remove('hidden');speak(q.strategy)}
-  function startArithmeticQuestion(q){arithPhase='quiz';arithAssisted=false;document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithShapes').classList.remove('hidden');document.getElementById('arithKeypadWrap').classList.remove('hidden');document.getElementById('arithPrompt').textContent=q.prompt;const display=document.getElementById('arithDisplay');display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,i)=>`<div class="paint-shape ${i%3===0?'circle':i%3===1?'triangle':'square'} ${i%3===0?'green':i%3===1?'red':'blue'}${arithmeticInitialClass(q,i)}"></div>`).join('');speak(q.prompt);buildKeypad('arithKeypad',n=>{if(n==='enter'){if(arithValue===q.answer){setKeypadEnabled('arithKeypad',false);tone(true);display.toggleAttribute('data-assisted',arithAssisted);showArithmeticReason(q);showFeedback(document.getElementById('arithMark'),'정답입니다.',advanceArithmetic)}else{tone(false);showWrongFeedback();arithWrong++;shake(display);hintArithmetic(q);arithValue='';display.textContent='';if(arithWrong===2)showArithmeticReason(q);if(arithWrong>=3){arithAssisted=true;arithValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');showArithmeticReason(q);setKeypadConfirmOnly('arithKeypad')}}}else if(!arithAssisted){arithValue=(arithValue+n).slice(-2);display.textContent=arithValue}});setKeypadEnabled('arithKeypad',false);animateArithmetic(q)}
+  function startArithmeticQuestion(q){arithPhase='quiz';arithAssisted=false;document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithShapes').classList.remove('hidden');document.getElementById('arithKeypadWrap').classList.remove('hidden');document.getElementById('arithPrompt').textContent=q.prompt;const display=document.getElementById('arithDisplay');display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('arithContext').classList.add('hidden');/* 19: 이 씬의 대사는 "초록색부터 알려드릴게요"까지만 색을 소개한다. 대사가 다른 색을 말한 적이 없으므로
+   화면도 초록 하나로 둔다(앞 씬 #paintIntroVisual이 세운 초록=● 매핑도 함께 지킨다). 원문 대사는 건드리지 않는다. */
+document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,i)=>`<div class="paint-shape circle green${arithmeticInitialClass(q,i)}"></div>`).join('');speak(q.prompt);buildKeypad('arithKeypad',n=>{if(n==='enter'){if(arithValue===q.answer){setKeypadEnabled('arithKeypad',false);tone(true);display.toggleAttribute('data-assisted',arithAssisted);showArithmeticReason(q);showFeedback(document.getElementById('arithMark'),'정답입니다.',advanceArithmetic)}else{tone(false);showWrongFeedback();arithWrong++;shake(display);hintArithmetic(q);arithValue='';display.textContent='';if(arithWrong===2)showArithmeticReason(q);if(arithWrong>=3){arithAssisted=true;arithValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');showArithmeticReason(q);setKeypadConfirmOnly('arithKeypad')}}}else if(n==='del'){if(!arithAssisted){arithValue=arithValue.slice(0,-1);display.textContent=arithValue;keypadDisplayTick(display)}}else if(!arithAssisted){arithValue=(arithValue+n).slice(-2);display.textContent=arithValue;keypadDisplayTick(display)}});setKeypadEnabled('arithKeypad',false);animateArithmetic(q)}
   function advanceArithmetic(){if(arithIndex<arithmeticQuestions.length-1){arithIndex++;renderArithmetic()}else finishArithmetic()}
-  function finishArithmetic(){clearArithmeticTimers();arithPhase='outro';arithFinishBeat=0;setProgress(70);document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.className='character left';ch.classList.remove('hidden');ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker';sp.classList.remove('hidden');sp.innerHTML='잘했어요!<br>더 많은 담장을<br>색칠해야해요!<span class="dialogue-advance"></span>';speak('잘했어요! 더 많은 담장을 색칠해야해요!');document.getElementById('arithIntroTap').classList.remove('hidden')}
-  document.getElementById('arithNext').onclick=()=>{unlockMenuScene('section_random_problems');showScene('section_random_problems')};
+  function finishArithmetic(){clearArithmeticTimers();arithPhase='outro';arithFinishBeat=0;setProgress(70);document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.className='character left';ch.classList.remove('hidden');ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker';sp.classList.remove('hidden');sp.innerHTML='잘했어요!<br>더 많은 담장을<br>색칠해야해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('잘했어요! 더 많은 담장을 색칠해야해요!');document.getElementById('arithIntroTap').classList.remove('hidden')}
+  document.getElementById('arithNext').onclick=()=>{showScene('section_random_problems')};
 
-  let randomType=0,randomSequenceIndex=0,randomSequence=[],randomWrong=0,randomAnswer='',randomValue='',randomHint='',randomSolution='',randomAnswerRevealed=false,randomAssisted=false,randomAwaitingContinue=false,randomCompletedCount=0,randomBundle={add:null,subtract:null};
+  let randomType=0,randomSequenceIndex=0,randomSequence=[],randomWrong=0,randomAnswer='',randomValue='',randomHint='',randomSolution='',randomAnswerRevealed=false,randomAssisted=false,randomAwaitingContinue=false,randomCompletedCount=0,randomBundle={add:null,subtract:null},randomShapeSteps=null,randomShapeTimers=[],randomShapeDone=null;
   const staticExamples=[
     {id:'q_random_a',prompt:'덧셈과 뺄셈\n10이 되는 덧셈식을 찾아 보세요.',type:'choice'},
     {id:'q_random_b',prompt:'덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - 4=(   )',type:'keypad',answer:'6'},
@@ -663,18 +866,58 @@
     {id:'q_random_d_step2',prompt:'세 수의 뺄셈을 해 보세요\n13 - 3 - 6=(   )',type:'keypad',answer:'4'}
   ];
   function updateRandomWorkProgress(){document.querySelectorAll('#randomWorkProgress .paint-shape').forEach((shape,index)=>shape.classList.toggle('complete',index<randomCompletedCount))}
+  /* 13: section_arithmetic_tutorial의 interaction_shape_add_remove와 같은 표현(.paint-shape + pending/removed 스태거)을
+     무작위 문제에도 쓴다. 무작위로 생성된 수에 맞춰 개수를 동적으로 그린다(고정 3개가 아니다).
+     2026-07-31 사용자 결정: 매 문제마다 재생한다. 재생 중 탭하면 건너뛸 수 있다. */
+  function clearRandomShapeIntro(){randomShapeTimers.forEach(clearTimeout);randomShapeTimers=[];randomShapeDone=null;
+    document.getElementById('section_random_problems').classList.remove('shape-intro');
+    document.getElementById('randomShapes').classList.add('hidden');
+    document.getElementById('randomShapeSkip').classList.add('hidden')}
+  function shapeStepsFor(type){
+    if(!randomBundle.add||!randomBundle.subtract)return null;
+    const A=randomBundle.add,S=randomBundle.subtract;
+    if(type===1)return{base:10,steps:[{op:'remove',n:S.c}]};
+    if(type===2)return{base:A.a,steps:[{op:'add',n:A.b}]};
+    if(type===3)return{base:A.a,steps:[{op:'add',n:A.b},{op:'add',n:A.c}]};
+    if(type===4)return{base:S.a,steps:[{op:'remove',n:S.b}]};
+    if(type===5)return{base:S.a,steps:[{op:'remove',n:S.b},{op:'remove',n:S.c}]};
+    return null; /* type 0은 보기 선택 문제라 식 연출 대상이 아니다 */
+  }
+  function playRandomShapeIntro(script,done){
+    const host=document.getElementById('randomShapes'),scene=document.getElementById('section_random_problems'),skip=document.getElementById('randomShapeSkip');
+    const total=script.base+script.steps.filter(s=>s.op==='add').reduce((a,s)=>a+s.n,0);
+    host.innerHTML=Array.from({length:total},(_,i)=>`<div class="paint-shape ${i%3===0?'circle':i%3===1?'triangle':'square'} ${i%3===0?'green':i%3===1?'red':'blue'}${i<script.base?'':' pending'}"></div>`).join('');
+    host.classList.remove('hidden');scene.classList.add('shape-intro');skip.classList.remove('hidden');
+    randomShapeDone=done;
+    const shapes=[...host.querySelectorAll('.paint-shape')];
+    let delay=RANDOM_SHAPE_LEAD_MS,cursorAdd=script.base,cursorRemove=script.base;
+    script.steps.forEach(step=>{
+      for(let i=0;i<step.n;i++){
+        const target=step.op==='add'?shapes[cursorAdd++]:shapes[--cursorRemove];
+        delay+=RANDOM_SHAPE_STAGGER_MS;
+        randomShapeTimers.push(setTimeout(()=>{if(!target)return;if(step.op==='add')target.classList.remove('pending');else target.classList.add('removed')},delay));
+      }
+      delay+=RANDOM_SHAPE_STEP_GAP_MS;
+    });
+    randomShapeTimers.push(setTimeout(finishRandomShapeIntro,delay+RANDOM_SHAPE_TAIL_MS));
+  }
+  function finishRandomShapeIntro(){const done=randomShapeDone;clearRandomShapeIntro();if(done)done()}
+  document.getElementById('randomShapeSkip').onclick=()=>finishRandomShapeIntro();
   function startRandomEngine(){const addA=1+Math.floor(Math.random()*9),subtractB=1+Math.floor(Math.random()*9);randomBundle={add:{a:addA,b:10-addA,c:1+Math.floor(Math.random()*9)},subtract:{a:subtractB+10,b:subtractB,c:1+Math.floor(Math.random()*8)}};randomSequence=Math.random()<.5?[0,2,3]:[1,4,5];randomSequenceIndex=0;randomCompletedCount=0;randomType=randomSequence[0];document.getElementById('helpCard').classList.remove('open','continue-ready');document.getElementById('fingerHint').classList.remove('hidden');updateRandomWorkProgress();renderRandom()}
-  function renderRandom(){randomWrong=0;randomValue='';randomHint='';randomSolution='';randomAnswerRevealed=false;randomAssisted=false;randomAwaitingContinue=false;document.getElementById('randomPanel').removeAttribute('data-assisted');setProgress(72+randomCompletedCount*4);const input=document.getElementById('randomInput'),prompt=document.getElementById('randomPromptText'),help=document.getElementById('helpCard');help.classList.remove('open','continue-ready');help.removeAttribute('role');help.removeAttribute('tabindex');help.removeAttribute('aria-label');help.onclick=null;help.onkeydown=null;const ex=staticExamples[randomType];
+  function renderRandom(){clearRandomShapeIntro();randomWrong=0;randomValue='';randomHint='';randomSolution='';randomAnswerRevealed=false;randomAssisted=false;randomAwaitingContinue=false;document.getElementById('randomPanel').removeAttribute('data-assisted');setProgress(72+randomCompletedCount*4);const input=document.getElementById('randomInput'),prompt=document.getElementById('randomPromptText'),help=document.getElementById('helpCard');help.classList.remove('open','continue-ready');help.removeAttribute('role');help.removeAttribute('tabindex');help.removeAttribute('aria-label');help.onclick=null;help.onkeydown=null;const ex=staticExamples[randomType];
     if(randomType===0){const {a,b}=randomBundle.add;let wrongs=[];while(wrongs.length<2){const n=1+Math.floor(Math.random()*9);if(n!==b&&!wrongs.includes(n))wrongs.push(n)}const vals=[b,...wrongs].sort(()=>Math.random()-.5);randomAnswer=`${a} + ${b} = 10`;randomHint=`${a} + (   ) = 10`;randomSolution=randomAnswer;prompt.textContent=ex.prompt;input.innerHTML='<div class="choices">'+vals.map(n=>`<button class="choice"><span>${a} + ${n} = 10</span></button>`).join('')+'</div>';input.querySelectorAll('.choice').forEach(but=>but.onclick=()=>judgeRandomChoice(but));speak(ex.prompt)}
-    else{let text=ex.prompt,answer=ex.answer;if(randomType===1){const {c}=randomBundle.subtract;text=`덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - ${c}=(   )`;answer=String(10-c);randomHint=`10 - ${c} = (   )`;randomSolution=`10 - ${c} = ${answer}`}else if(randomType===2||randomType===3){const {a,b,c}=randomBundle.add;text=randomType===2?`덧셈과 뺄셈\n${a} + ${b} = (  )\n얼마일까요?`:`세 수의 덧셈을 해 보세요\n${a} + ${b} + ${c}=(   )`;answer=String(randomType===2?10:10+c);randomHint=randomType===2?`${a} + ${b} = 10`:`${a} + ${b} = 10\n10 + ${c} = (   )`;randomSolution=randomType===2?randomHint:`${a} + ${b} = 10\n10 + ${c} = ${answer}`}else{const {a,b,c}=randomBundle.subtract;text=randomType===4?`덧셈과 뺄셈\n${a} - ${b} = (  )\n얼마일까요?`:`세 수의 뺄셈을 해 보세요\n${a} - ${b} - ${c}=(   )`;answer=String(randomType===4?10:10-c);randomHint=randomType===4?`${a} - ${b} = 10`:`${a} - ${b} = 10\n10 - ${c} = (   )`;randomSolution=randomType===4?randomHint:`${a} - ${b} = 10\n10 - ${c} = ${answer}`}randomAnswer=answer;prompt.textContent=text;input.innerHTML='<div class="keypad-wrap" style="position:relative;right:auto;top:auto;margin:20px auto 0"><div class="answer-display" id="randomDisplay"></div><div class="keypad" id="randomKeypad"></div></div>';buildKeypad('randomKeypad',judgeRandomKey);speak(text)}
+    else{let text=ex.prompt,answer=ex.answer;if(randomType===1){const {c}=randomBundle.subtract;text=`덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - ${c}=(   )`;answer=String(10-c);randomHint=`10 - ${c} = (   )`;randomSolution=`10 - ${c} = ${answer}`}else if(randomType===2||randomType===3){const {a,b,c}=randomBundle.add;text=randomType===2?`덧셈과 뺄셈\n${a} + ${b} = (  )\n얼마일까요?`:`세 수의 덧셈을 해 보세요\n${a} + ${b} + ${c}=(   )`;answer=String(randomType===2?10:10+c);randomHint=randomType===2?`${a} + ${b} = 10`:`${a} + ${b} = 10\n10 + ${c} = (   )`;randomSolution=randomType===2?randomHint:`${a} + ${b} = 10\n10 + ${c} = ${answer}`}else{const {a,b,c}=randomBundle.subtract;text=randomType===4?`덧셈과 뺄셈\n${a} - ${b} = (  )\n얼마일까요?`:`세 수의 뺄셈을 해 보세요\n${a} - ${b} - ${c}=(   )`;answer=String(randomType===4?10:10-c);randomHint=randomType===4?`${a} - ${b} = 10`:`${a} - ${b} = 10\n10 - ${c} = (   )`;randomSolution=randomType===4?randomHint:`${a} - ${b} = 10\n10 - ${c} = ${answer}`}randomAnswer=answer;
+      const revealQuestion=()=>{prompt.textContent=text;input.innerHTML='<div class="keypad-wrap" style="position:relative;right:auto;top:auto;margin:20px auto 0"><div class="answer-display" id="randomDisplay"></div><div class="keypad" id="randomKeypad"></div></div>';buildKeypad('randomKeypad',judgeRandomKey);speak(text)};
+      const script=shapeStepsFor(randomType); /* 매 문제 재생 */
+      if(script)playRandomShapeIntro(script,revealQuestion);else revealQuestion()}
     help.textContent=randomHint;
   }
   function revealRandomAnswer(target){target.classList.remove('reveal','answer-reveal');void target.offsetWidth;target.classList.add(target.classList.contains('answer-display')?'answer-reveal':'reveal');setTimeout(()=>showStamp(document.getElementById('randomMark'),'correct'),ANSWER_STAMP_DELAY_MS)}
   function showRandomSolution(){const help=document.getElementById('helpCard');help.textContent=randomSolution;help.classList.add('open');speak(randomSolution)}
-  function armRandomContinue(){randomCompletedCount=randomSequenceIndex+1;updateRandomWorkProgress();setProgress(72+randomCompletedCount*4);randomAwaitingContinue=true;const help=document.getElementById('helpCard'),advance=document.createElement('span');advance.className='dialogue-advance';advance.setAttribute('aria-hidden','true');help.appendChild(advance);help.classList.add('continue-ready');help.setAttribute('role','button');help.setAttribute('tabindex','0');help.setAttribute('aria-label',randomSequenceIndex===randomSequence.length-1?'모양으로 자유 그리기':'다음 문제');help.onclick=nextRandom;help.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextRandom()}};help.focus()}
+  function armRandomContinue(){randomCompletedCount=randomSequenceIndex+1;updateRandomWorkProgress();setProgress(72+randomCompletedCount*4);randomAwaitingContinue=true;const help=document.getElementById('helpCard');help.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML);help.classList.add('continue-ready');help.setAttribute('role','button');help.setAttribute('tabindex','0');help.setAttribute('aria-label',randomSequenceIndex===randomSequence.length-1?'모양으로 자유 그리기':'다음 문제');help.onclick=nextRandom;help.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextRandom()}};help.focus()}
   function completeRandomProblem(){document.getElementById('randomPanel').toggleAttribute('data-assisted',randomAssisted);showRandomSolution();armRandomContinue()}
   function judgeRandomChoice(btn){if(randomAwaitingContinue)return;if(btn.textContent===randomAnswer){document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);tone(true);showFeedback(document.getElementById('randomMark'),'');completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;document.getElementById('helpCard').classList.add('open');shake(btn);if(randomWrong>=3){const answerButton=[...document.querySelectorAll('#randomInput .choice')].find(b=>b.textContent===randomAnswer);randomAnswerRevealed=true;randomAssisted=true;document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);answerButton.disabled=false;revealRandomAnswer(answerButton)}}}
-  function judgeRandomKey(n){if(randomAwaitingContinue)return;const d=document.getElementById('randomDisplay');if(n==='enter'){if(randomValue===randomAnswer){setKeypadEnabled('randomKeypad',false);tone(true);showFeedback(document.getElementById('randomMark'),'');completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;document.getElementById('helpCard').classList.add('open');shake(d);randomValue='';d.textContent='';if(randomWrong>=3){randomAnswerRevealed=true;randomAssisted=true;randomValue=randomAnswer;d.textContent=randomAnswer;d.setAttribute('data-assisted','true');revealRandomAnswer(d);setKeypadConfirmOnly('randomKeypad')}}}else if(!randomAnswerRevealed){randomValue=(randomValue+n).slice(-2);d.textContent=randomValue}}
+  function judgeRandomKey(n){if(randomAwaitingContinue)return;const d=document.getElementById('randomDisplay');if(n==='enter'){if(randomValue===randomAnswer){setKeypadEnabled('randomKeypad',false);tone(true);showFeedback(document.getElementById('randomMark'),'');completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;document.getElementById('helpCard').classList.add('open');shake(d);randomValue='';d.textContent='';if(randomWrong>=3){randomAnswerRevealed=true;randomAssisted=true;randomValue=randomAnswer;d.textContent=randomAnswer;d.setAttribute('data-assisted','true');revealRandomAnswer(d);setKeypadConfirmOnly('randomKeypad')}}}else if(n==='del'){if(!randomAnswerRevealed){randomValue=randomValue.slice(0,-1);d.textContent=randomValue;keypadDisplayTick(d)}}else if(!randomAnswerRevealed){randomValue=(randomValue+n).slice(-2);d.textContent=randomValue;keypadDisplayTick(d)}}
   function nextRandom(){if(randomSequenceIndex<randomSequence.length-1){randomSequenceIndex++;randomType=randomSequence[randomSequenceIndex];renderRandom()}else showScene('section_free_drawing')}
   document.getElementById('helpCharacter').onclick=()=>{if(randomAwaitingContinue)return;document.getElementById('helpCard').classList.toggle('open');document.getElementById('fingerHint').classList.add('hidden')};
 
@@ -684,12 +927,12 @@
   function drawingRequirementsMet(items=drawingState()){return items.length>=DRAWING_MIN_SHAPES&&new Set(items.map(item=>item.shape)).size>=DRAWING_MIN_SHAPE_TYPES&&new Set(items.map(item=>item.color)).size>=DRAWING_MIN_COLORS}
   function updateDrawingCompletionState(){const done=document.getElementById('drawingDone'),items=drawingState(),ready=drawingRequirementsMet(items);done.disabled=!ready;done.setAttribute('aria-disabled',String(!ready));done.dataset.shapeCount=String(items.length);done.dataset.requirementsMet=String(ready)}
   function renderCompletedMural(){const preview=document.getElementById('completedMuralPreview');preview.innerHTML='';savedDrawing.forEach(item=>{const shape=document.createElement('div');shape.className=`drawn-shape paint-shape ${item.shape} ${item.color}`;shape.style.left=item.left;shape.style.top=item.top;preview.appendChild(shape)})}
-  function resetDrawingIntro(){clearTimeout(drawingIntroTimer);drawingBeat=0;drawShape='circle';drawColor='green';savedDrawing=[];renderCompletedMural();setProgress(84);const dialogue=document.getElementById('drawingDialogue'),teacher=document.getElementById('drawingTeacher'),speech=document.getElementById('drawingSpeech'),canvas=document.getElementById('drawingCanvas'),done=document.getElementById('drawingDone');dialogue.classList.remove('hidden');teacher.src='assets/teacher-praising.png';teacher.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';teacher.classList.remove('drawing-enter');void teacher.offsetWidth;teacher.classList.add('drawing-enter');speech.innerHTML='담장 색칠이 끝나가요!<span class="dialogue-advance"></span>';speech.classList.add('hidden','stagger-speech');drawingIntroTimer=setTimeout(()=>{speech.classList.remove('hidden');speak('담장 색칠이 끝나가요!')},INTRO_SPEECH_DELAY_MS);document.querySelectorAll('.tool').forEach(button=>{const active=button.dataset.shape===drawShape;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});document.querySelectorAll('.color-tool').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.color===drawColor)));document.getElementById('paintTools').classList.add('hidden');canvas.classList.add('hidden');canvas.innerHTML='';canvas.removeAttribute('data-completed');done.classList.add('hidden');document.getElementById('drawingSummary').innerHTML='';document.getElementById('drawingConfirm').classList.remove('open');updateDrawingCompletionState()}
-  document.getElementById('drawingTap').onclick=()=>{if(drawingBeat===0){drawingBeat++;document.getElementById('drawingTeacher').src='assets/teacher-explaining.png';document.getElementById('drawingTeacher').alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';document.getElementById('drawingSpeech').innerHTML='마지막 담장은 자유롭게 그려주세요.<span class="dialogue-advance"></span>';speak('마지막 담장은 자유롭게 그려주세요.')}else{document.getElementById('drawingDialogue').classList.add('hidden');document.getElementById('paintTools').classList.remove('hidden');document.getElementById('drawingCanvas').classList.remove('hidden');document.getElementById('drawingDone').classList.remove('hidden')}};
+  function resetDrawingIntro(){clearTimeout(drawingIntroTimer);drawingBeat=0;drawShape='circle';drawColor='green';savedDrawing=[];renderCompletedMural();setProgress(84);const dialogue=document.getElementById('drawingDialogue'),teacher=document.getElementById('drawingTeacher'),speech=document.getElementById('drawingSpeech'),canvas=document.getElementById('drawingCanvas'),done=document.getElementById('drawingDone');dialogue.classList.remove('hidden');teacher.src='assets/teacher-praising.png';teacher.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';teacher.classList.remove('drawing-enter');void teacher.offsetWidth;teacher.classList.add('drawing-enter');speech.innerHTML='담장 색칠이 끝나가요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speech.classList.add('hidden','stagger-speech');drawingIntroTimer=setTimeout(()=>{speech.classList.remove('hidden');speak('담장 색칠이 끝나가요!')},INTRO_SPEECH_DELAY_MS);document.querySelectorAll('.tool').forEach(button=>{const active=button.dataset.shape===drawShape;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});document.querySelectorAll('.color-tool').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.color===drawColor)));document.getElementById('paintTools').classList.add('hidden');canvas.classList.add('hidden');canvas.innerHTML='';canvas.removeAttribute('data-completed');done.classList.add('hidden');document.getElementById('drawingSummary').innerHTML='';document.getElementById('drawingConfirm').classList.remove('open');updateDrawingCompletionState()}
+  document.getElementById('drawingTap').onclick=()=>{if(drawingBeat===0){drawingBeat++;document.getElementById('drawingTeacher').src='assets/teacher-explaining.png';document.getElementById('drawingTeacher').alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';document.getElementById('drawingSpeech').innerHTML='마지막 담장은 자유롭게 그려주세요.<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('마지막 담장은 자유롭게 그려주세요.')}else{document.getElementById('drawingDialogue').classList.add('hidden');document.getElementById('paintTools').classList.remove('hidden');document.getElementById('drawingCanvas').classList.remove('hidden');document.getElementById('drawingDone').classList.remove('hidden')}};
   document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tool').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');drawShape=b.dataset.shape});document.querySelectorAll('.color-tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.color-tool').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');drawColor=b.dataset.color});
   document.getElementById('drawingCanvas').onclick=e=>{const r=e.currentTarget.getBoundingClientRect(),el=document.createElement('div');el.className=`drawn-shape paint-shape ${drawShape} ${drawColor}`;el.style.left=((e.clientX-r.left)/r.width*100)+'%';el.style.top=((e.clientY-r.top)/r.height*100)+'%';e.currentTarget.appendChild(el);updateDrawingCompletionState()};
   function renderDrawingSummary(){const summary=document.getElementById('drawingSummary'),seen=new Set();summary.innerHTML='';document.querySelectorAll('#drawingCanvas .drawn-shape').forEach(shape=>{const shapeName=['circle','triangle','square'].find(name=>shape.classList.contains(name)),colorName=['green','blue','red','purple'].find(name=>shape.classList.contains(name)),key=`${shapeName}-${colorName}`;if(!shapeName||!colorName||seen.has(key))return;seen.add(key);const sample=document.createElement('div');sample.className=`paint-shape ${shapeName} ${colorName}`;summary.appendChild(sample)})}
-  document.getElementById('drawingDone').onclick=()=>{const items=drawingState();if(drawingRequirementsMet(items)){renderDrawingSummary();document.getElementById('drawingConfirm').classList.add('open')}};document.getElementById('drawingNo').onclick=()=>document.getElementById('drawingConfirm').classList.remove('open');document.getElementById('drawingYes').onclick=()=>{savedDrawing=drawingState();document.getElementById('drawingCanvas').setAttribute('data-completed','true');setProgress(90);unlockMenuScene('section_math_story');showScene('section_math_story')};
+  document.getElementById('drawingDone').onclick=()=>{const items=drawingState();if(drawingRequirementsMet(items)){renderDrawingSummary();document.getElementById('drawingConfirm').classList.add('open')}};document.getElementById('drawingNo').onclick=()=>document.getElementById('drawingConfirm').classList.remove('open');document.getElementById('drawingYes').onclick=()=>{savedDrawing=drawingState();document.getElementById('drawingCanvas').setAttribute('data-completed','true');setProgress(90);showScene('section_math_story')};
 
   const storyBeats=[
     {text:'● ■ ▲',sign:-1,question:false},
@@ -702,7 +945,7 @@
   ];let storyIndex=0;
   function resetStory(){clearTimeout(storyRevealTimer);storyIndex=0;setProgress(94);document.getElementById('storyTitleSurface').classList.remove('hidden');document.getElementById('storyIntroBoard').classList.remove('hidden');document.getElementById('storyIntroTap').classList.remove('hidden');const signRow=document.getElementById('signRow');signRow.classList.add('hidden');signRow.classList.remove('revealing');document.getElementById('storyCard').classList.add('hidden');document.querySelectorAll('.sign').forEach(s=>s.classList.remove('active'));speak('모양을 길에서 본 적이 있나요?')}
   function openStorySigns(){document.getElementById('storyTitleSurface').classList.add('hidden');document.getElementById('storyIntroBoard').classList.add('hidden');document.getElementById('storyIntroTap').classList.add('hidden');const signRow=document.getElementById('signRow');signRow.classList.remove('hidden');signRow.classList.add('revealing');document.getElementById('storyCard').classList.remove('hidden');renderStory();clearTimeout(storyRevealTimer);storyRevealTimer=setTimeout(()=>signRow.classList.remove('revealing'),STORY_REVEAL_CLEAR_MS)}
-  function renderStory(){const beat=storyBeats[storyIndex],card=document.getElementById('storyCard');card.textContent=beat.text;const advance=document.createElement('span');advance.className='dialogue-advance';advance.setAttribute('aria-hidden','true');card.appendChild(advance);card.setAttribute('role','button');card.setAttribute('tabindex','0');card.setAttribute('aria-label',beat.question?'설명 보기':beat.text);document.querySelectorAll('.sign').forEach((s,i)=>s.classList.toggle('active',beat.sign<0||i===beat.sign));speak(beat.text)}
+  function renderStory(){const beat=storyBeats[storyIndex],card=document.getElementById('storyCard');card.textContent=beat.text;card.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML);card.setAttribute('role','button');card.setAttribute('tabindex','0');card.setAttribute('aria-label',beat.question?'설명 보기':beat.text);document.querySelectorAll('.sign').forEach((s,i)=>s.classList.toggle('active',beat.sign<0||i===beat.sign));speak(beat.text)}
   document.getElementById('storyIntroTap').onclick=openStorySigns;
   document.getElementById('storyCard').onclick=()=>{if(storyIndex<storyBeats.length-1){storyIndex++;setProgress(94+storyIndex);renderStory()}else showScene('section_completion')};
   document.getElementById('storyCard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('storyCard').click()}};
@@ -716,19 +959,35 @@
   addEventListener('content-harness-config-updated',window.__contentHarnessRefreshRoutes);addEventListener('message',window.__contentHarnessRefreshRoutes);
   setInterval(window.__contentHarnessRefreshRoutes,HOST_SYNC_MS);
   document.getElementById('nextLessonButton').onclick=()=>{const target=resolveNextLessonTarget();if(target.callback)target.callback();else if(target.url)location.assign(target.url);refreshNextLessonButton()};
-  document.getElementById('exitButton').onclick=()=>{if(typeof window.onContentExit==='function'){window.onContentExit();return}if(window.parent!==window){window.parent.postMessage({type:'content-harness-exit'},'*');return}if(window.opener){window.close();return}showScene('section_global_ui')};
+  document.getElementById('exitButton').onclick=()=>{if(typeof window.onContentExit==='function'){window.onContentExit();return}if(window.parent!==window){window.parent.postMessage({type:'content-harness-exit'},'*');return}if(window.opener){window.close();return}showScene('section_intro')};
 
-  function buildKeypad(id,handler){const root=document.getElementById(id);root.innerHTML='';[1,2,3,4,5,6,7,8,9,0,'enter'].forEach(v=>{const b=document.createElement('button');b.className='key '+(v===0?'zero ':'')+(v==='enter'?'enter':'');b.textContent=v==='enter'?'O':v;if(v==='enter')b.setAttribute('aria-label','확인');b.onclick=()=>handler(v==='enter'?'enter':String(v));root.appendChild(b)})}
+  /* 12: 01의 keypadControlsHtml 배치를 그대로 쓴다 — 1~9 다음 줄이 [←][0][확인]이다.
+     08에는 지우기 키가 없어 오입력하면 확인을 눌러 오답 처리되기를 기다려야 했다. */
+  const KEYPAD_KEYS=[1,2,3,4,5,6,7,8,9,'del',0,'enter'];
+  function keypadPress(button){button.classList.add('keypad-pressing');const off=()=>button.classList.remove('keypad-pressing');
+    button.addEventListener('pointerup',off,{once:true});button.addEventListener('pointerleave',off,{once:true});button.addEventListener('pointercancel',off,{once:true})}
+  function keypadDisplayTick(display){if(!display)return;display.classList.remove('keypad-tick');void display.offsetWidth;display.classList.add('keypad-tick')}
+  function buildKeypad(id,handler){const root=document.getElementById(id);root.innerHTML='';
+    KEYPAD_KEYS.forEach(v=>{const b=document.createElement('button');
+      b.className='key'+(v==='enter'?' enter':v==='del'?' del':'');
+      b.textContent=v==='enter'?'확인':v==='del'?'←':v;
+      if(v==='enter')b.setAttribute('aria-label','확인');
+      if(v==='del')b.setAttribute('aria-label','지우기');
+      b.addEventListener('pointerdown',()=>keypadPress(b));
+      b.onclick=()=>handler(typeof v==='number'?String(v):v);
+      root.appendChild(b)})}
   function setKeypadEnabled(id,enabled){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!enabled)}
   function setKeypadConfirmOnly(id){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!key.classList.contains('enter'))}
   function currentFeedbackMark(){return currentScene==='section_shape_find'?document.getElementById('shapeMark'):currentScene==='section_arithmetic_tutorial'?document.getElementById('arithMark'):currentScene==='section_random_problems'?document.getElementById('randomMark'):null}
   function showStamp(el,type){if(!el)return;const correct=type==='correct';el.src=correct?'assets/feedback-stamp-correct.png':'assets/feedback-stamp-wrong.png';el.alt=correct?'정답 O 도장':'오답 X 도장';el.classList.remove('show');void el.offsetWidth;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),700)}
-  function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null}}
+  function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null;sp.onkeydown=null}}
   function completeFeedback(){const action=feedbackContinueAction;if(!action)return;feedbackContinueAction=null;resetFeedbackOverlay();action()}
-  function showFeedback(el,text='정답입니다.',onContinue=null){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.toggle('hidden',!text);showStamp(el,'correct');if(onContinue&&text){feedbackContinueAction=onContinue;sp.setAttribute('aria-label','다음 문제');sp.onclick=completeFeedback}else{feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700)}}
+  function showFeedback(el,text='정답입니다.',onContinue=null){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.toggle('hidden',!text);showStamp(el,'correct');if(onContinue&&text){feedbackContinueAction=onContinue;sp.setAttribute('aria-label','다음 문제');/* 17: 눌러야 넘어간다는 신호를 사람이 볼 수 있는 표면으로 보장한다 */ensureAdvanceNav(sp);sp.onclick=completeFeedback;sp.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();completeFeedback()}}}else{feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700)}}
   function showWrongFeedback(){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.png';ch.alt='한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');showStamp(currentFeedbackMark(),'wrong');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),700)}
   function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),450)}
-  function bindDialogueSurface(surfaceId,tapId){const surface=document.getElementById(surfaceId),tap=document.getElementById(tapId);surface.setAttribute('role','button');surface.setAttribute('tabindex','0');surface.setAttribute('aria-label','다음');surface.onclick=e=>{e.stopPropagation();tap.click()};surface.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tap.click()}}}
+  /* 정적 마크업으로 들어 있는 첫 대사에는 진행 버튼이 붙어 있지 않다(이후 대사는 render*가 innerHTML로 다시 그린다). 여기서 한 번 붙인다. */
+  function ensureAdvanceNav(el){if(el&&!el.querySelector('.repair-bubble-nav'))el.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML)}
+  function bindDialogueSurface(surfaceId,tapId){const surface=document.getElementById(surfaceId),tap=document.getElementById(tapId);surface.setAttribute('role','button');surface.setAttribute('tabindex','0');surface.setAttribute('aria-label','다음');ensureAdvanceNav(surface);surface.onclick=e=>{e.stopPropagation();tap.click()};surface.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tap.click()}}}
   bindDialogueSurface('introSpeech','introTap');bindDialogueSurface('shapeSpeech','shapeDialogueTap');bindDialogueSurface('arithSpeech','arithIntroTap');bindDialogueSurface('drawingSpeech','drawingTap');
   document.querySelector('#menuButton .course-menu-btn-label').textContent='목록';
   document.getElementById('soundButton').dataset.soundOn='true';
@@ -752,7 +1011,6 @@
   }
   function debugGoScene(id){
     /* 뒤 씬으로 건너뛴 뒤에도 상단 "목록" 드로어가 잠기지 않도록 전부 해제한다 */
-    scenes.forEach(scene=>unlockedMenuScenes.add(scene.id));refreshMenuAccess();
     showScene(id);
   }
   function syncDebugPanel(){
@@ -775,7 +1033,7 @@
   });
   buildDebugScenes();
 
-  updateHud(currentScene);
+  showScene(currentScene);
 })();
 </script>
 </body>
