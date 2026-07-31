@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from stages.scripts.codex_client import CodexClient
+from stages.scripts.style_references import build_style_reference_prompt
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -57,10 +58,14 @@ def resolve_markdown_path(input_data: dict, input_path: Path) -> Path:
 def build_prompt(input_data: dict, markdown: str) -> str:
     system_prompt = PLANNER_SYSTEM_PROMPT.read_text(encoding="utf-8")
     input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
+    style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}
 
 INPUT_JSON:
 {input_json}
+
+STYLE_REFERENCE_SET_JSON:
+{style_reference_json}
 
 STORY_BOARD_MARKDOWN:
 {markdown}

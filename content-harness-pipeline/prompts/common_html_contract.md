@@ -56,6 +56,66 @@ HTML을 다시 쓰다 보면 문구를 다듬고 싶은 충동이 생깁니다. 
 - 반대로 asset이 **빈 표면**으로 만들어졌으면 그 자리에 HTML 텍스트를 얹습니다. 어느 쪽인지는 asset의 `alt_text`와 planner의 `prompt_brief`로 판단합니다.
 - 카드 프레임, 버튼 몸체, 제목 배너/판, 나무·금속·종이·유리 질감 같은 정적 표면·재질은 CSS로 흉내내지 않습니다. 재질감은 asset의 일이고, CSS/JS는 기하·레이아웃·모션과 asset 표면 위 텍스트 배치를 담당합니다.
 
+### 외부 화풍 참조
+
+- `STYLE_REFERENCE_SET_JSON.enabled=true`이면 관련 참조 경로를 실제 이미지로 열어 확인합니다. 이 파일들은 검사 전용이며 output에 복사하거나 `<img>`/CSS 배경으로 직접 연결하지 않습니다.
+- `must_follow=true`이면 생성 asset과 HTML UI가 실제 참조의 선·색·명암·형태 언어를 따라야 합니다. 참조 설명문보다 보이는 증거를 우선합니다.
+- `ctas` 참조는 버튼의 크기, 모서리, 테두리, 그림자, 위계, hover/press 상태를 맞추는 기준입니다. 라벨 문구나 참조 화면의 학습 내용을 복사하지 않습니다.
+- Builder는 `backgrounds`·`characters`·`props`를 생성 asset 배치와 전체 팔레트의 교차 검사에 사용합니다. Content/Design Refiner는 기존 준수 상태를 보존하고 참조와 다른 새 스타일을 추가하지 않습니다.
+- 참조 속 기존 캐릭터 정체성, 배경 주제, 문구를 복제하지 않습니다. `usage_policy`와 항목별 `use`·`avoid`를 지킵니다.
+
+## 디자인 토큰 계약
+
+CSS의 타이포·색·간격·모서리·z-index·모션·그림자는 **아래 `:root` 디자인 토큰으로만** 표현합니다. 개별 선택자에 raw 값(예: `font-size:33px`, `#ffe15f`, `z-index:18`)을 흩뿌리지 않습니다. 이 계약의 목적은 refine이 HTML을 다시 쓸 때 값이 기준 없이 흔들려(폰트 크기가 제각각, 육안 구분 안 되는 노랑이 수십 종) 통일성이 깨지는 것을 막는 것입니다.
+
+`:root`에 아래 토큰 블록을 **그대로 선언**하고, 컴포넌트는 `var(--토큰)`으로 참조합니다.
+
+```css
+:root{
+  /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
+  /* 타이포 사다리 (--fs-sm 31px = 본문 기본) */
+  --fs-2xs:24px; --fs-xs:28px; --fs-sm:31px; --fs-md:34px;
+  --fs-lg:38px;  --fs-xl:42px; --fs-2xl:48px; --fs-hero:72px;
+  /* z-index 레이어 */
+  --z-bg:1; --z-scenery:5; --z-content:10; --z-character:12;
+  --z-interactive:20; --z-speech:30; --z-hud:40; --z-effect:60;
+  --z-drawer:70; --z-flash:90;
+  /* 모서리 */
+  --r-none:0; --r-sm:8px; --r-md:22px; --r-pill:999px; --r-circle:50%;
+  /* 모션 */
+  --ease:cubic-bezier(.2,.8,.2,1);        /* 표준 진입/전환 */
+  --ease-out:cubic-bezier(.4,0,.8,.2);    /* 퇴장 */
+  --ease-back:cubic-bezier(.2,.9,.3,1.18);/* 살짝 튕기는 등장 */
+  --dur-fast:.15s; --dur:.45s; --dur-slow:.65s;
+  /* 그림자 (고도 3단) */
+  --shadow:0 18px 44px rgba(3,29,39,.36);
+  --ds-sm:drop-shadow(0 6px 8px rgba(0,0,0,.25));
+  --ds-md:drop-shadow(0 12px 16px rgba(0,0,0,.3));
+  --ds-lg:drop-shadow(0 18px 26px rgba(0,0,0,.38));
+
+  /* ── 팔레트 토큰: 이름·역할은 고정, 값은 콘텐츠 art_direction에서 채운다 ──
+     아래 값은 예시(도서관 톤)일 뿐이다. 콘텐츠 분위기에 맞춰 값만 바꾼다. */
+  --bg:#062c3c;           /* 배경 기저 */
+  --surface:#0b5364;      /* 무대·판 표면 */
+  --ink:#073547;          /* 어두운 잉크(스트로크 등) */
+  --plate-ink:#173f49;    /* 대사판·티켓 위 텍스트 */
+  --accent:#ffd75a;       /* 주강조 */
+  --accent-bright:#ffe45f;/* 강한 글로우 하이라이트 */
+  --glow:#ffe66c;         /* 글로우 */
+  --cream:#fff6d7;        /* 밝은 표면 텍스트 */
+  --danger:#e65043;       /* 오답/경고 — 역할 고정(오답 신호는 빨강 계열 유지) */
+}
+```
+
+지키는 규칙:
+
+- **참조만** — 색·font-size·radius·z-index·그림자·이징은 위 토큰만 `var()`로 씁니다. 컴포넌트에 새 raw 값을 만들지 않습니다.
+- **수정은 토큰 값으로** — 크기·색을 조정할 때 개별 선택자를 고치지 말고 토큰 값을 바꿉니다(한 곳 수정 → 전역 일관).
+- **확장은 named 토큰으로** — 사다리로 표현 안 되는 값이 정말 필요하면, raw 값을 박지 말고 `:root`에 `--fs-<이름>` 같은 **새 토큰을 추가하고 주석으로 용도를 남깁니다.**
+- **한 화면만 예외** — 특정 scene만 달라야 하면 전역 토큰을 건드리지 말고 그 scope에서 재정의합니다: `.certificate{--fs-sm:36px}`.
+- **팔레트 값은 art_direction에서** — `--bg`·`--accent`·`--plate-ink`·`--glow` 등의 값은 planner `art_direction`의 분위기·팔레트에서 가져옵니다. CSS 색을 임의의 hex로 새로 만들지 않습니다. 이렇게 하면 CSS 색과 생성된 asset 이미지 색이 같은 출처라 어긋나지 않습니다.
+- 구조 토큰(타이포·z·radius·모션·그림자)은 콘텐츠와 무관하게 고정이며 값을 바꾸지 않습니다.
+
 ## channel 렌더링 계약
 
 planner가 `elements[].channel`로 각 줄의 역할을 이미 구분해 두었습니다. channel마다 아래 표면으로 렌더하고, 임의로 다른 표면에 넣지 않습니다.

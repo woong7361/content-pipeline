@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 5,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 1,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 5
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 4.02
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 0개. grep -cF 전수 대조 결과 rendered_text 41개, 문항 prompt 14개, 보기 24개, answer 14개, 비어 있지 않은 feedback 14개 등 체크리스트 107개가 모두 HTML에 원문 그대로 존재했다. 14개 문항의 정답 매핑과 장면·문항 순서도 planner와 일치한다.",
+    "learning_goal_alignment": "튜토리얼과 13개 본 문항이 정각 읽기, ‘몇 분 전’ 시각, 걸린 시간과 끝나는 시각, 오전·오후 및 1일·24시간 관계를 직접 다룬다. 선택, 숫자 입력, 드래그 조작과 실생활 갤러리도 각 학습 개념의 확인과 적용에 연결된다.",
+    "feedback_scaffolding": "피드백이 완전히 없는 문항은 0개이나, 14개 중 13개는 정답 값·성공 표시 또는 ‘다시 생각해보세요’와 흔들림 같은 결과 통보에 머문다. 왜 맞거나 틀렸는지 설명하는 개념 피드백은 q13의 ‘24시간은 1일과 같지!’ 정도이며, 오답 원인이나 풀이 단서는 제공되지 않는다.",
+    "interaction_flow_clarity": "시작, 튜토리얼, 세 문제 유형, 복구, 갤러리, 마무리 퀴즈, 인증서의 진행 순서와 전환은 명확하다. 다만 현재 문항 번호가 표시되지 않고, 튜토리얼과 q10의 드래그 방법을 설명하는 화면 문구가 없어 일부 조작을 화면 배치로 추론해야 한다.",
+    "functional_integrity": "깨진 필수 기능 0개. 1920×1080 데스크톱 실행에서 시작, 튜토리얼 드래그, 객관식, 키패드, q10 숫자 입력과 자동 판정, 진행도, 복구 전환, 갤러리, 최종 퀴즈, 인증서 저장, 9차시 이동 및 차시 메뉴를 포함한 전체 흐름이 완료됐다. blocking runtime error와 콘솔 오류도 발견되지 않았다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "interaction_flow_clarity"
+  ],
+  "calibration_note": "content_fidelity와 필수 기능에는 결함이 없지만 feedback_scaffolding 1점이 min_axis 4.0에 미달하고 weighted_total 4.02가 min_total 4.2에 미달하여 REJECT로 판정했다. 데스크톱 학습 흐름만 평가했으며 디자인과 asset 품질은 반영하지 않았다."
+}

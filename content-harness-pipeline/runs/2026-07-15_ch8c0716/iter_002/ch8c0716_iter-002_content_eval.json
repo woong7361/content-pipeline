@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.64
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 총 6개: activity2 유형 A의 question_display 원문(\"전광판에 [8시 15분 전]이라고 적혀 있어요. 알맞은 시계를 찾아주세요!\")과 interaction_instruction(\"3개의 시계 중 하나를 직접 터치하여 선택.\"), 유형 B의 question_display 원문(\"독서 교실이 11시 30분에 시작해서 30분 동안 진행돼요. 끝나는 시각은 언제일까요?\")과 키패드 조작 안내 원문, 유형 C의 question_display 원문(\"하루는 오전 [?] 시간과 오후 [?] 시간으로 이루어져 있어요. 빈칸을 채워 시스템을 켜주세요!\")과 숫자 블록 드래그 안내 원문이 HTML에 그대로 노출되지 않는다. 14개 문항의 prompt·보기·정답 데이터와 주요 대사·CTA·인증 문구는 보존되었지만, 누락 4개 이상이므로 결정적 scale에 따라 1점이다.",
+    "learning_goal_alignment": "튜토리얼과 12개 본 활동, 마무리 퀴즈가 시각 읽기, 몇 분 전, 걸린 시간과 끝나는 시각, 오전·오후 및 1일·24시간 관계를 직접 다룬다. 시계 선택, 숫자 입력, 시간 블록 조작도 각 목표 개념을 적용하는 행동으로 연결된다.",
+    "feedback_scaffolding": "피드백이 전혀 없는 문항은 0개이며 모든 문항에 정답·오답 반응이 있다. 다만 대부분이 \"딩동댕!\", \"띠익\", \"다시 생각해보세요\", \"시스템 재부팅 완료\"처럼 결과만 통보하며 계산 근거, 오개념 설명, 구체적인 재시도 단서를 제공하지 않아 3점이다.",
+    "interaction_flow_clarity": "장면과 문항 순서, 진행 게이지, 주요 전환 CTA는 파악할 수 있다. 그러나 문제 발생 장면의 탭·자동 전환 안내가 없고, 튜토리얼과 유형 A·B·C의 저작된 조작 안내가 화면에 노출되지 않으며, 유형 C는 planner의 자동 정답 처리와 달리 별도의 확인 버튼을 요구해 일부 시행착오가 필요하다.",
+    "functional_integrity": "깨진 필수 기능 2개: 유형 C는 알맞은 블록을 모두 넣어도 자동 정답 처리되지 않고 확인하기를 추가로 눌러야 하며, interaction_next_lesson은 9차시 웹페이지로 라우팅하지 않고 처리 대상이 없는 URL hash만 변경한다. 필수 기능 2개 이상 결함에 해당해 결정적 scale에 따라 1점이다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "content_fidelity는 사용자 노출용 question_display와 interaction_instruction의 원문 대조 결과 6개 불일치를 집계했고, functional_integrity는 필수 기능 결함 2개를 집계했다. weighted_total 2.64가 4.2 미만이며 네 축이 min_axis 미만이고 필수 콘텐츠 누락 하드 게이트에도 해당해 REJECT로 판정했다."
+}

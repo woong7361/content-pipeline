@@ -5,6 +5,7 @@ from pathlib import Path
 
 from stages.scripts.codex_client import CodexClient
 from stages.scripts.prompt_parts import ASSET_EXAMPLES_DIR, load_asset_examples
+from stages.scripts.style_references import build_style_reference_prompt
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ def build_prompt(input_data: dict, planner_output: dict, run_dir: Path) -> str:
     system_prompt = ASSET_GENERATOR_SYSTEM_PROMPT.read_text(encoding="utf-8")
     input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
     planner_json = json.dumps(planner_output, ensure_ascii=False, indent=2)
+    style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}
 
 {load_asset_examples()}
@@ -58,6 +60,9 @@ ASSET_EXAMPLES_DIR:
 
 INPUT_JSON:
 {input_json}
+
+STYLE_REFERENCE_SET_JSON:
+{style_reference_json}
 
 PLANNER_OUTPUT_JSON:
 {planner_json}

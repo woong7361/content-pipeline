@@ -1,0 +1,1343 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-31T12:28:46+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_section_intro",
+      "path": "iter_001/design_review/desktop__01_section_intro.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__01_section_intro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_section_shape_find",
+      "path": "iter_001/design_review/desktop__02_section_shape_find.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__02_section_shape_find.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_section_arithmetic_tutorial",
+      "path": "iter_001/design_review/desktop__03_section_arithmetic_tutorial.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__03_section_arithmetic_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_section_random_problems",
+      "path": "iter_001/design_review/desktop__04_section_random_problems.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__04_section_random_problems.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_section_free_drawing",
+      "path": "iter_001/design_review/desktop__05_section_free_drawing.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__05_section_free_drawing.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_section_math_story",
+      "path": "iter_001/design_review/desktop__06_section_math_story.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__06_section_math_story.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_section_completion",
+      "path": "iter_001/design_review/desktop__07_section_completion.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__07_section_completion.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "8개 desktop screenshot과 style2 참조 12개를 직접 비교했다. 배경·도로 표지판·페인트 소품은 밝은 낮 팔레트, 선명한 셀 명암, 장면 충전 면에서 계약에 잘 맞는다. 그러나 initial의 흰 개요 카드, 무작위 문제의 거대 흰 패널, 수리 이야기의 흰 설명판이 배경 asset의 담장·도로 safe zone을 가리고 일반 웹 UI로 분리되어 high severity이다. 채점 화면의 O 표시는 재질 asset 없이 CSS 원으로 그려졌고 오답 도장 asset은 없어 필수 통합 컴포넌트 계약도 위반한다. 완료 화면은 disabled CTA가 일반 secondary CTA와 시각적으로 같아 must_follow CTA 상태 언어를 충족하지 못한다. 따라서 디자인 권고는 REJECT이다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop.png",
+      "scene_purpose": "차시 주제와 세 단계 개요를 제시하고 첫 활동으로 진입시킨다.",
+      "overall_assessment": "배경은 화면을 충분히 채우고 참조의 밝은 학교 팔레트와 잘 맞지만, 제목과 세 개 개요 카드가 담장 세계에 흡수되지 않은 웹 대시보드처럼 보인다. 세 번째 카드에는 한 글자만 남는 줄바꿈도 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 벽화 작업 허가판",
+        "rationale": "개요 카드와 제목을 담장에 부착된 작업 계획표로 통합하면 학습 순서를 유지하면서 장면형 시작 화면으로 바뀐다.",
+        "core_metaphor": "빈 학교 담장에 오늘의 세 작업 구역을 먼저 표시하는 벽화 작업 계획",
+        "visual_language": "크림색 도장면, 파란 금속 테두리, 짧은 셀 그림자, 페인트 얼룩과 고정 볼트가 있는 style2 작업 표면",
+        "layout_strategy": "배경의 중앙 담장 면을 세 구역 작업판으로 사용하고 제목은 담장 상단의 긴 고정 간판에 배치한다. CTA는 하단 보도 위의 물리 버튼 또는 작업 허가표로 둔다.",
+        "interaction_surfaces": [
+          "담장 상단 제목 간판",
+          "담장 중앙 3칸 작업 계획표",
+          "하단 작업 시작 CTA"
+        ],
+        "implementation_notes": [
+          "원문 문구와 순서를 유지한다.",
+          "세 번째 카드의 단독 한 글자 줄바꿈은 폭 또는 폰트 크기 조정으로 해소한다.",
+          "HUD는 배경과 분리된 흰 웹 바가 아니라 전역 장면 프레임 asset에 얹는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#section_global_ui .hero-title; screenshot x=482..1438 y=268..344",
+            "issue": "큰 제목이 장면 속 간판이나 담장 표면이 아니라 하늘 위에 직접 떠 있다.",
+            "evidence": "1920×1080 screenshot에서 제목이 구름과 학교 지붕을 가로지르며 별도 재질 표면 없이 드롭섀도만 가진다.",
+            "suggested_fix": "제목 원문을 유지하고 담장 상단에 새 제목 간판 asset을 배치한 뒤 그 safe zone 중앙에 텍스트를 올려라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#section_global_ui .overview-card:nth-child(3)",
+            "issue": "세 번째 개요 카드 제목이 마지막 한 글자만 다음 줄로 떨어져 표면 안의 타이포그래피 실루엣이 불안정하다.",
+            "evidence": "약 511×292px 카드에서 첫 문장이 '색칠하' 뒤에 단독 '기'로 줄바꿈된다. 텍스트 그룹 중심은 표면 중심 대비 약 (0px, +1px)이다.",
+            "suggested_fix": "문구는 바꾸지 말고 카드 내부 유효 폭을 28px 이상 늘리거나 해당 카드 font-size를 30px 전후로 낮추고 line-height를 1.3으로 맞춰 단독 글자 줄을 없애라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 1,
+              "surface_w": 511,
+              "surface_h": 292
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "#goalButton",
+            "issue": "CTA 문구는 중앙 정렬되지만 버튼이 담장 장면과 무관한 파란 웹 pill로 떠 있다.",
+            "evidence": "CTA 표면은 약 716×99px이며 텍스트 중심은 표면 중심 대비 약 (0px, -1px)로 정렬되어 있다. 문제는 정렬이 아니라 장면 재질과의 분리이다.",
+            "suggested_fix": "원문 라벨을 유지한 채 asset_cta_state_bodies의 primary 몸체 위에 오버레이하고 하단 보도에 놓인 작업 승인 버튼처럼 접지시켜라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -1,
+              "surface_w": 716,
+              "surface_h": 99
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#section_global_ui .overview; asset_school_wall_wide central wall safe zone",
+            "issue": "배경의 넓은 빈 담장 작업 면을 사용하지 않고 반투명 흰 카드 세 장을 그 위에 띄웠다.",
+            "evidence": "카드가 x=165..1754, y=372..677 영역을 차지하며 뒤의 담장·학교를 가린다. 담장 자체가 충분한 interaction surface인데 별도 패널을 사용한 구조다.",
+            "suggested_fix": "세 카드 DOM은 유지하되 asset_overview_mural_triptych_frame의 세 칸에 맞춰 배치하고 각 텍스트를 대응 safe zone 중앙에 얹어라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".overview-card, .hud",
+            "issue": "개요 카드와 전역 HUD가 흰색 반투명 rounded rectangle 중심의 일반 웹 UI로 보인다.",
+            "evidence": "참조 CTA의 명확한 눌림 깊이는 일부 버튼에 반영됐지만, 큰 카드와 HUD는 동일한 흰 veil·파란 border·일반 box-shadow 조합으로 장면 소품의 물성이 없다.",
+            "suggested_fix": "HUD에는 asset_global_hud_frame을, 개요에는 asset_overview_mural_triptych_frame을 사용하고 CSS는 위치·그림자·상태 전환만 담당하게 하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#section_global_ui .overview; asset_school_wall_wide central wall safe zone",
+          "issue": "빈 담장 표면 대신 흰 웹 카드 세 장을 사용했다.",
+          "evidence": "카드가 중앙 담장과 학교 배경을 넓게 가려 장면보다 웹 메뉴가 먼저 읽힌다.",
+          "suggested_fix": "세 개요 문구를 새 담장 작업 계획표 asset의 세 safe zone에 통합하라."
+        },
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#section_global_ui .hero-title",
+          "issue": "주제 제목이 장면 속 표면 없이 하늘에 떠 있다.",
+          "evidence": "제목이 구름과 지붕 위에 직접 렌더된다.",
+          "suggested_fix": "담장 상단 제목 간판 표면으로 이동하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`.overview`를 asset_overview_mural_triptych_frame의 세 칸 좌표에 맞춰 재배치하고 카드의 흰 배경·독립 그림자를 제거하라.",
+        "세 번째 `.overview-card`의 유효 폭 또는 폰트 크기를 조정해 단독 한 글자 줄을 제거하라.",
+        "`.hud`의 콘텐츠를 asset_global_hud_frame 내부 safe zone에 배치하라."
+      ]
+    },
+    {
+      "scene_id": "01_section_intro",
+      "capture_label": "01_section_intro",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__01_section_intro.png",
+      "scene_purpose": "무너진 담장 문제를 보여 주고 도입 대화를 시작한다.",
+      "overall_assessment": "파손 담장은 안전하고 명료하며 화면 전체를 채운다. 다만 제목이 하늘 위에 떠 있고 시작 CTA가 공사 현장의 물건으로 통합되지 않아 시작 상태가 웹 랜딩 화면처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 보수 현장 브리핑",
+        "rationale": "파손 부위와 안전 가림막이 이미 강한 장면 단서를 제공하므로 제목과 시작 조작을 공사 현장 표면에 연결하면 몰입도가 크게 오른다.",
+        "core_metaphor": "안전 가림막 앞에서 작업 브리핑을 시작하는 현장",
+        "visual_language": "파란 작업 표지판, 노란 안전 포인트, 크림색 인쇄면, 짧고 단단한 셀 그림자",
+        "layout_strategy": "제목을 왼쪽 온전한 담장 면의 긴 작업 표지판으로 옮기고 시작 CTA는 중앙 안전 가림막 앞의 물리 버튼으로 접지한다.",
+        "interaction_surfaces": [
+          "담장 부착 제목 표지판",
+          "안전 가림막 앞 시작 조작물"
+        ],
+        "implementation_notes": [
+          "무너진 오른쪽 부분과 학교 건물은 가리지 않는다.",
+          "원문 제목과 CTA 라벨은 그대로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#introTitle; asset_school_wall_damaged left intact wall safe zone",
+            "issue": "도입 제목이 장면 속 표면 없이 하늘과 학교 건물 위에 떠 있다.",
+            "evidence": "제목은 x≈485..1435, y≈282..352에 있으며 구름과 건물 상단을 직접 덮는다.",
+            "suggested_fix": "왼쪽의 온전한 담장 상단에 제목 간판 asset을 배치하고 동일 문구를 그 내부에 올려라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "#introStart",
+            "issue": "시작 CTA가 파손 현장의 소품과 연결되지 않은 파란 웹 버튼이다.",
+            "evidence": "약 420×96px 버튼에서 텍스트 중심은 표면 중심 대비 약 (0px, -1px)로 정확하지만, 보도 위에 접지 그림자나 현장 소품 연결 없이 떠 있다.",
+            "suggested_fix": "asset_cta_state_bodies의 primary 몸체를 사용해 안전 가림막 앞 바닥에 접지하고 hover·pressed 시 깊이를 유지하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -1,
+              "surface_w": 420,
+              "surface_h": 96
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#introStart, #introTitle",
+            "issue": "제목과 CTA가 배경 asset과 별개의 웹 레이어로 읽힌다.",
+            "evidence": "두 요소 모두 현장 표지판·가림막·담장 면을 사용하지 않는다.",
+            "suggested_fix": "제목은 간판 표면, CTA는 물리 버튼 몸체로 통합하고 현재 hover·press 모션은 유지하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_section_intro",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#introTitle",
+          "issue": "도입 제목이 하늘 위 텍스트로 남아 있다.",
+          "evidence": "장면 속 간판이나 담장 표면이 없다.",
+          "suggested_fix": "왼쪽 담장 면의 제목 간판으로 이동하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#introTitle`을 담장 상단 작업 표지판 safe zone으로 이동하라.",
+        "`#introStart`에 asset_cta_state_bodies의 primary 상태를 적용하고 보도에 접지시켜라."
+      ]
+    },
+    {
+      "scene_id": "02_section_shape_find",
+      "capture_label": "02_section_shape_find",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__02_section_shape_find.png",
+      "scene_purpose": "학교 장면에서 모양을 찾기 전 작업자 대화를 제시한다.",
+      "overall_assessment": "학교 배경과 작업자 asset은 style2의 밝은 색, 깨끗한 외곽선, 표정 가독성에 잘 맞는다. 말풍선의 텍스트가 약간 위로 치우치고 꼬리 없는 CSS pill이라 캐릭터 발화 표면으로서의 결합이 약하다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "학교 모양 탐정 브리핑",
+        "rationale": "배경과 캐릭터는 충분히 강하므로 말풍선 표면과 시선 연결만 보정하면 된다.",
+        "core_metaphor": "작업자가 학교 건물의 모양 단서를 가리키는 탐정 브리핑",
+        "visual_language": "크림색 말풍선, 파란 이중 테두리, 화자 방향 꼬리, 작은 셀 하이라이트",
+        "layout_strategy": "말풍선을 현재 상단 위치에 유지하되 작업자의 열린 손에서 이어지는 꼬리를 추가하고 내부 텍스트를 14px 아래로 내린다.",
+        "interaction_surfaces": [
+          "화자 연결 말풍선",
+          "학교 건물 속 모양 hotspot"
+        ],
+        "implementation_notes": [
+          "모양 후보가 있는 지붕·시계·창문을 말풍선이 추가로 가리지 않게 한다.",
+          "대화 종료 뒤 말풍선을 퇴장시키고 hotspot을 순차 강조한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#shapeSpeech",
+            "issue": "말풍선 내부 문장이 시각 중심보다 위에 놓여 하단이 비어 보인다.",
+            "evidence": "말풍선은 약 696×170px이고 텍스트 중심은 표면 중심 대비 약 (0px, -14px)이다.",
+            "suggested_fix": "상하 padding을 40px/32px 수준으로 재조정하거나 텍스트 wrapper를 14px 아래로 이동하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -14,
+              "surface_w": 696,
+              "surface_h": 170
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#shapeSpeech, #shapeCharacter",
+            "issue": "말풍선에 화자 방향 꼬리가 없어 캐릭터와 분리된 상단 패널처럼 보인다.",
+            "evidence": "작업자의 손과 시선은 오른쪽을 향하지만 말풍선은 타원형 CSS 표면으로만 떠 있다.",
+            "suggested_fix": "asset_speech_bubble_body의 left-speaker crop을 사용하고 꼬리를 작업자 머리·손 사이 방향에 맞춰라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": ".speech.left-speaker",
+            "issue": "말풍선이 단색 CSS pill이라 배경과 캐릭터의 셀 재질보다 평면적이다.",
+            "evidence": "참조와 생성 캐릭터에는 2~3단계 명암과 하이라이트가 있지만 말풍선은 단일 cream 면과 border로 구성된다.",
+            "suggested_fix": "재질과 꼬리를 포함한 speech bubble asset을 배경으로 사용하고 CSS는 크기·위치만 제어하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_section_shape_find",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": "#shapeSpeech",
+          "issue": "대화 표면이 화자와 연결되지 않고 텍스트가 14px 위로 치우쳤다.",
+          "evidence": "꼬리 없는 pill과 상단 편향이 함께 보인다.",
+          "suggested_fix": "left-speaker 말풍선 asset을 적용하고 텍스트를 14px 아래로 조정하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#shapeSpeech`에 asset_speech_bubble_body의 left-speaker 상태를 적용하라.",
+        "`#shapeSpeech` 내부 텍스트 중심을 14px 아래로 이동하라."
+      ]
+    },
+    {
+      "scene_id": "03_section_arithmetic_tutorial",
+      "capture_label": "03_section_arithmetic_tutorial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__03_section_arithmetic_tutorial.png",
+      "scene_purpose": "페인트와 세 수 계산 활동을 소개한다.",
+      "overall_assessment": "빈 담장, 작업자, 페인트통이 하나의 작업 현장으로 잘 연결되고 asset 해상도와 조명도 일관적이다. 말풍선과 제목만 재질 면에서 다소 웹 UI처럼 떠 있다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "벽화 작업대 계산 브리핑",
+        "rationale": "담장과 페인트통이 이미 훌륭한 무대를 제공하므로 계산 설명을 벽화 작업 절차처럼 배치하면 된다.",
+        "core_metaphor": "담장에 작업 순서를 표시하고 페인트 수량을 계산하는 현장 브리핑",
+        "visual_language": "담장 부착 절차표, 화자 꼬리 말풍선, 파란 프레임과 크림색 작업 면",
+        "layout_strategy": "제목은 담장 상단 마감 아래에 부착하고 말풍선은 작업자의 열린 손과 페인트통 사이를 연결한다.",
+        "interaction_surfaces": [
+          "담장 상단 계산 제목판",
+          "작업자 말풍선",
+          "페인트통 라벨 safe zone"
+        ],
+        "implementation_notes": [
+          "페인트통은 현재 크기와 위치를 유지한다.",
+          "후속 계산식과 키패드는 담장 작업 면을 가리지 않도록 오른쪽 console asset 안에 통합한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#arithTitle",
+            "issue": "계산 제목이 담장 프레임에 부착되지 않고 하늘과 담장 경계에 떠 있다.",
+            "evidence": "제목 중심은 상단 담장 마감선과 겹치며 별도 표면이 없다.",
+            "suggested_fix": "원문을 유지하고 담장 상단의 얕은 작업 제목판 safe zone으로 옮겨라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#arithSpeech",
+            "issue": "다행 텍스트의 시각 중심이 말풍선 중심보다 약간 왼쪽에 있다.",
+            "evidence": "약 618×244px 말풍선에서 텍스트 중심은 표면 중심 대비 약 (-20px, -3px)이다.",
+            "suggested_fix": "왼쪽 정렬은 유지하되 좌우 padding을 각각 64px와 44px로 조정해 전체 텍스트 블록을 20px 오른쪽으로 옮겨라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -20,
+              "dy_px": -3,
+              "surface_w": 618,
+              "surface_h": 244
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#arithSpeech, #arithCharacter",
+            "issue": "설명 말풍선이 작업자의 열린 손과 시선에 연결되지 않는다.",
+            "evidence": "말풍선은 꼬리 없는 CSS 타원이고 작업자 손은 말풍선 아래를 가리킨다.",
+            "suggested_fix": "asset_speech_bubble_body의 left-speaker 상태를 적용해 꼬리가 작업자 쪽을 향하게 하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#arithSpeech, #arithKeypadWrap",
+            "issue": "말풍선과 이후 키패드가 배경의 재질과 다른 CSS 패널 언어를 사용한다.",
+            "evidence": "말풍선은 단색 cream pill이며 코드상 `.keypad-wrap`도 흰 veil 사각 패널로 정의되어 있다.",
+            "suggested_fix": "말풍선에는 speech asset, 키패드에는 asset_keypad_console_body를 적용하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_section_arithmetic_tutorial",
+          "severity": "medium",
+          "axis": "card_button_panel_style",
+          "target": "#arithSpeech, #arithKeypadWrap",
+          "issue": "설명·입력 표면이 담장 작업 장치가 아닌 CSS 패널로 남아 있다.",
+          "evidence": "생성 asset과 다른 단색 표면·테두리 언어를 사용한다.",
+          "suggested_fix": "말풍선과 키패드 console asset을 적용하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#arithSpeech`의 텍스트 wrapper를 20px 오른쪽으로 이동하라.",
+        "`#arithKeypadWrap`을 asset_keypad_console_body의 화면·키 슬롯에 맞춰 분해 배치하라."
+      ]
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "capture_label": "04_section_random_problems",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__04_section_random_problems.png",
+      "scene_purpose": "담장 색칠 임무로 무작위 덧셈·뺄셈 문제를 해결하게 한다.",
+      "overall_assessment": "배경과 교사 asset은 선명하고 일관되지만, 배경이 제공한 중앙 담장 interaction surface를 거대한 흰 웹 패널이 완전히 덮는다. 선택지도 일반 pill 버튼이라 이 장면이 담장 작업이 아닌 웹 퀴즈로 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 계산 도색 관제판",
+        "rationale": "빈 담장 자체를 문제판으로 사용하면 기존 배경을 유지하면서 계산과 벽화 임무가 직접 연결된다.",
+        "core_metaphor": "담장에 표시된 세 가지 페인트 배합식 중 올바른 작업식을 고르는 현장",
+        "visual_language": "담장에 부착된 작은 금속 문제 헤더, 개별 페인트 작업표, 파란 프레임, 노란 선택 하이라이트",
+        "layout_strategy": "`#randomPanel`의 큰 흰 몸체를 제거하고 프롬프트를 담장 상단 중앙에, 세 선택지를 담장 중앙 세로 레일에 배치한다. 교사는 오른쪽에 유지한다.",
+        "interaction_surfaces": [
+          "담장 상단 문제 헤더",
+          "담장 중앙 선택 작업표 3개",
+          "교사 옆 도움 클립보드"
+        ],
+        "implementation_notes": [
+          "선택식 원문과 무작위 값은 HTML 오버레이로 유지한다.",
+          "배경의 중앙 담장 벽돌과 주변 벽화를 가리지 않는 inset을 사용한다.",
+          "정답·오답 도장은 선택 작업표 위에 별도 asset으로 찍는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#randomInput .choice:nth-child(1)",
+            "issue": "선택지 텍스트 정렬은 양호하지만 표면 몸체가 배경 asset과 분리된 CSS pill이다.",
+            "evidence": "첫 선택지 표면은 약 780×100px이며 텍스트 중심은 표면 중심 대비 약 (-2px, -3px)이다. 다른 두 선택지도 유사하게 중앙 정렬되어 있다.",
+            "suggested_fix": "정렬은 유지하고 각 `.choice` 배경을 asset_wall_choice_plaque_body로 교체하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -2,
+              "dy_px": -3,
+              "surface_w": 780,
+              "surface_h": 100
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#randomMark.feedback-mark, showFeedback(), showWrongFeedback()",
+            "issue": "필수 채점 도장이 asset 없이 CSS 원과 O 문자로 그려지며 오답 도장 표면은 존재하지 않는다.",
+            "evidence": "`.feedback-mark`는 `border:14px solid`, `border-radius:50%`, `background:var(--veil)`로 구성되고 HTML에는 O 텍스트만 있다. `showWrongFeedback()`는 학생 asset만 노출한다.",
+            "suggested_fix": "asset_feedback_stamp_correct와 asset_feedback_stamp_wrong을 별도 생성해 각 판정 상태에 사용하고, 동적 문구가 있으면 도장 옆 별도 HTML 말풍선에 유지하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#randomPanel; asset_school_wall_problem_scene central wall safe zone",
+            "issue": "배경의 중앙 담장 interaction surface를 비워 둔 채 별도 거대 패널로 가렸다.",
+            "evidence": "흰 패널이 x≈153..1231, y≈201..920을 차지해 담장 면 대부분을 덮고, 화면 하단에는 사용되지 않은 큰 흰 여백도 남는다.",
+            "suggested_fix": "`#randomPanel`의 흰 배경과 큰 고정 높이를 제거하고 프롬프트·선택지를 담장 safe zone에 직접 배치하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#randomPanel, #randomInput .choice",
+            "issue": "문제와 선택지가 담장 임무 표면에 통합되지 않았다.",
+            "evidence": "배경에는 문제용 중앙 작업 면이 있지만 UI는 독립된 흰 panel과 동일한 CSS pill 세 개로 구성된다.",
+            "suggested_fix": "프롬프트는 담장 상단 헤더에, 각 선택지는 asset_wall_choice_plaque_body의 safe zone에 배치하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".question-panel, .choice, .help-card",
+            "issue": "흰 rounded panel과 반복 pill 버튼이 화면의 주된 구조라 일반 웹 퀴즈처럼 보인다.",
+            "evidence": "장면의 가장 큰 시각 면적이 asset이 아니라 `background:var(--veil)` CSS 패널이다.",
+            "suggested_fix": "큰 panel 몸체를 제거하고 선택 작업표·키패드 console·도움 클립보드처럼 기능별 물리 표면으로 분해하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_section_random_problems",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "#randomPanel; asset_school_wall_problem_scene central wall safe zone",
+          "issue": "기존 담장 interaction surface를 거대한 흰 패널이 가린다.",
+          "evidence": "x≈153..1231, y≈201..920의 패널이 중앙 담장을 대부분 덮는다.",
+          "suggested_fix": "패널 몸체를 제거하고 담장 면에 프롬프트와 선택 작업표를 직접 배치하라."
+        },
+        {
+          "scene_id": "04_section_random_problems",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#randomMark.feedback-mark, showFeedback(), showWrongFeedback()",
+          "issue": "정오답 피드백 도장이 재질 asset으로 구현되지 않았다.",
+          "evidence": "정답은 CSS 원+O이고 오답은 도장 표면이 없다.",
+          "suggested_fix": "정답·오답 도장 asset을 각각 생성해 판정별로 사용하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#randomPanel`의 배경·border·shadow·고정 720px 높이를 제거하고 담장 중앙 safe zone에 내용만 배치하라.",
+        "세 `.choice`를 asset_wall_choice_plaque_body의 동일한 safe zone과 18px 간격으로 정렬하라.",
+        "`.feedback-mark` CSS 원을 제거하고 판정별 stamp image element로 교체하라."
+      ]
+    },
+    {
+      "scene_id": "05_section_free_drawing",
+      "capture_label": "05_section_free_drawing",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__05_section_free_drawing.png",
+      "scene_purpose": "빈 담장에 도형과 색을 자유롭게 배치하는 활동을 안내한다.",
+      "overall_assessment": "넓은 빈 담장, 보호포, 도구 상자가 활동 목적을 즉시 전달하며 화면도 충분히 채운다. 교사와 배경의 스타일도 일관적이다. 말풍선만 약간 위로 치우치고 재질이 평면적이다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "마지막 벽화 작업장",
+        "rationale": "이미 빈 담장이 훌륭한 canvas 역할을 하므로 안내 말풍선과 도구 팔레트의 물성만 통일하면 된다.",
+        "core_metaphor": "교사의 마지막 안내 후 실제 담장에 도형을 찍는 벽화 작업",
+        "visual_language": "보호포 위 도구 팔레트, 크림색 화자 말풍선, 페인트 타일의 짧은 접지 그림자",
+        "layout_strategy": "교사는 오른쪽 보호포 위에 유지하고 말풍선 꼬리를 교사 쪽으로 연결한다. 도구는 왼쪽 작업 카트, 완료 CTA는 하단 작업표로 배치한다.",
+        "interaction_surfaces": [
+          "오른쪽 화자 말풍선",
+          "왼쪽 작업 도구 팔레트",
+          "중앙 빈 담장 canvas",
+          "하단 완료 CTA"
+        ],
+        "implementation_notes": [
+          "빈 담장 중앙 75%는 계속 비운다.",
+          "말풍선은 canvas 상단을 침범하지 않게 현재 높이를 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#drawingSpeech",
+            "issue": "말풍선 문구가 표면 중심보다 위에 놓여 하단 여백이 크게 보인다.",
+            "evidence": "약 479×170px 말풍선에서 텍스트 중심은 표면 중심 대비 약 (0px, -14px)이다.",
+            "suggested_fix": "텍스트 wrapper를 14px 아래로 내리거나 상하 padding을 재조정하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -14,
+              "surface_w": 479,
+              "surface_h": 170
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#drawingSpeech, #drawingTeacher",
+            "issue": "말풍선이 교사와 연결되는 꼬리가 없어 별도 패널처럼 보인다.",
+            "evidence": "교사는 왼쪽을 바라보지만 말풍선은 방향 정보가 없는 CSS pill이다.",
+            "suggested_fix": "asset_speech_bubble_body의 right-speaker 상태를 적용하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#drawingSpeech, #paintTools, #drawingDone",
+            "issue": "안내 말풍선과 코드상 후속 도구 패널이 단색 CSS 표면에 의존한다.",
+            "evidence": "`.paint-tools`와 `.tool`은 흰 veil 사각 패널과 일반 버튼으로 정의되어 배경의 도구 상자·보호포 물성과 연결되지 않는다.",
+            "suggested_fix": "말풍선 asset을 적용하고 도구 DOM은 배경 오른쪽 도구 상자와 겹치지 않는 왼쪽 작업 팔레트 표면으로 묶어라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_section_free_drawing",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": "#drawingSpeech",
+          "issue": "교사 말풍선이 화자와 연결되지 않고 텍스트가 14px 위로 치우쳤다.",
+          "evidence": "꼬리 없는 표면과 하단 과잉 여백이 보인다.",
+          "suggested_fix": "right-speaker 말풍선 asset을 적용하고 텍스트를 14px 아래로 조정하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#drawingSpeech`에 right-speaker 말풍선 asset을 적용하고 텍스트를 14px 아래로 이동하라.",
+        "후속 `#paintTools`를 단순 흰 패널 대신 작업 팔레트형 구조로 배치하라."
+      ]
+    },
+    {
+      "scene_id": "06_section_math_story",
+      "capture_label": "06_section_math_story",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__06_section_math_story.png",
+      "scene_purpose": "원·사각형·삼각형 도로 표지판의 의미를 순서대로 소개한다.",
+      "overall_assessment": "세 표지판 asset은 동일한 높이·테두리·조명을 유지하고 배경에 자연스럽게 접지되어 있다. 그러나 원형 표지판 문구가 어색하게 한 글자 단위로 줄바꿈되고, 하단 설명은 도로를 가리는 거대한 흰 웹 패널이다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "학교 앞 안전 안내소",
+        "rationale": "표지판은 이미 강한 물리 표면이므로 하단 설명도 도로변 안전 안내판으로 바꾸면 생활 맥락이 완성된다.",
+        "core_metaphor": "세 표지판을 차례로 켜고 아래 안전 안내판에서 의미를 읽는 길가 학습소",
+        "visual_language": "파란 금속 프레임, 크림색 인쇄면, 짧은 금속 하이라이트, 도로에 접지된 안내판 받침",
+        "layout_strategy": "표지판 행은 유지하고 하단 흰 panel을 낮은 도로변 안내판 asset으로 교체해 횡단보도와 차도를 덜 가린다.",
+        "interaction_surfaces": [
+          "원·사각형·삼각형 표지판 면",
+          "하단 도로변 안전 안내판"
+        ],
+        "implementation_notes": [
+          "표지판 라벨 원문은 유지한다.",
+          "원형 표지판 라벨은 폭과 폰트 크기로 줄바꿈만 수정한다.",
+          "안내판 클릭 영역은 전체 표면으로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "medium",
+            "target": "#signRow .sign.circle .sign-label",
+            "issue": "원형 표지판의 '자동차 전용 도로'가 마지막 '로' 한 글자만 다음 줄로 떨어진다.",
+            "evidence": "약 204×191px 표지판 면에서 텍스트 중심은 표면 중심 대비 약 (+1px, +10px)이며, 180px text box가 문구를 안정적으로 수용하지 못한다.",
+            "suggested_fix": "문구는 유지하고 label width를 190px 전후로 늘리거나 font-size를 22px로 낮춰 두 줄을 균형 있게 구성하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 10,
+              "surface_w": 204,
+              "surface_h": 191
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#storyCard",
+            "issue": "이야기 안내가 장면 소품이 아닌 거대한 흰 웹 패널로 도로 위에 떠 있다.",
+            "evidence": "약 1428×256px 표면이 x≈248..1676, y≈768..1024를 차지하며 도로와 차선을 넓게 가린다. 콘텐츠 그룹 중심은 표면 중심 대비 약 (0px, -14px)이다.",
+            "suggested_fix": "asset_story_roadside_info_board로 교체하고 동일 문구를 빈 표시 면에 오버레이하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -14,
+              "surface_w": 1428,
+              "surface_h": 256
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#signRow .sign-label",
+            "issue": "표지판 몸체는 훌륭하지만 원형 라벨의 줄바꿈이 표면 크기와 맞지 않는다.",
+            "evidence": "사각형·삼각형 라벨은 안정적이지만 원형만 단독 글자 줄이 생긴다.",
+            "suggested_fix": "원형 라벨만 폭·font-size·line-height를 조정하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 10,
+              "surface_w": 204,
+              "surface_h": 191
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#storyCard",
+            "issue": "하단 이야기 표면이 단색 흰 rounded rectangle과 일반 box-shadow로 구성된다.",
+            "evidence": "표지판의 금속 재질과 달리 `.story-card`는 `background:var(--veil)` CSS panel이며 도로변 물건으로 읽히지 않는다.",
+            "suggested_fix": "도로변 안내판 asset으로 교체하고 CSS는 위치·클릭·전환만 담당하게 하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_section_math_story",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#storyCard",
+          "issue": "하단 설명이 도로를 가리는 흰 웹 패널이다.",
+          "evidence": "약 1428×256px 패널이 차도와 차선을 덮는다.",
+          "suggested_fix": "낮은 도로변 안전 안내판 asset으로 교체하라."
+        },
+        {
+          "scene_id": "06_section_math_story",
+          "severity": "medium",
+          "axis": "text_surface_fit",
+          "target": "#signRow .sign.circle .sign-label",
+          "issue": "원형 표지판 문구에 단독 한 글자 줄이 생긴다.",
+          "evidence": "표면 중심 대비 (+1px, +10px)이며 text box 폭이 부족하다.",
+          "suggested_fix": "font-size 또는 label width를 조정하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#storyCard`를 asset_story_roadside_info_board의 표시 면에 맞춰 배치하라.",
+        "원형 `.sign-label`의 font-size를 22px 전후로 낮추고 width를 190px로 조정하라."
+      ]
+    },
+    {
+      "scene_id": "07_section_completion",
+      "capture_label": "07_section_completion",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_001\\design_review\\desktop__07_section_completion.png",
+      "scene_purpose": "완료 성취를 축하하고 인증서·다음 차시·종료 선택을 제공한다.",
+      "overall_assessment": "완성 벽화가 좌우를 채우고 중앙 제목 safe zone과 세 CTA의 위계도 명확하다. 버튼 형태는 CTA 참조와 유사하지만 disabled인 다음 차시 버튼이 나가기 버튼과 동일하게 보여 must_follow 상태 언어를 위반한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "벽화 완공 기념식",
+        "rationale": "배경과 CTA 배치는 이미 안정적이므로 상태 구분과 물리적 보상 표면만 강화하면 된다.",
+        "core_metaphor": "완성된 벽화 앞에서 인증서 티켓을 받고 다음 행동을 선택하는 기념식",
+        "visual_language": "파란 primary 티켓, 크림 secondary 티켓, 저채도·낮은 깊이의 disabled 티켓, 작은 별빛",
+        "layout_strategy": "현재 3열 CTA 배치를 유지하고 세 상태의 몸체와 그림자 깊이를 명확히 분리한다.",
+        "interaction_surfaces": [
+          "중앙 완료 제목 safe zone",
+          "인증서 primary 티켓",
+          "다음 차시 disabled 티켓",
+          "나가기 secondary 티켓"
+        ],
+        "implementation_notes": [
+          "버튼 라벨과 순서는 유지한다.",
+          "disabled 상태는 색뿐 아니라 깊이·채도·cursor·광택을 함께 줄인다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#nextLessonButton[disabled], #exitButton",
+            "issue": "disabled CTA와 활성 secondary CTA의 상태가 시각적으로 구분되지 않는다.",
+            "evidence": "두 버튼 모두 약 380×97px의 동일한 크림색 몸체, 파란 테두리, 진한 하단 그림자를 가진다. 다음 차시 텍스트 중심은 표면 중심 대비 약 (0px, -2px)로 정렬은 양호하지만 disabled 상태 언어가 없다.",
+            "suggested_fix": "asset_cta_state_bodies의 disabled 몸체를 적용하고 opacity만 낮추지 말고 채도·하단 깊이·하이라이트를 줄이며 cursor를 default로 바꿔라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -2,
+              "surface_w": 380,
+              "surface_h": 97
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#nextLessonButton[disabled]",
+            "issue": "CTA 참조가 요구하는 상태 위계가 disabled 버튼에 반영되지 않았다.",
+            "evidence": "HTML에는 `disabled`가 있으나 대응 CSS selector가 없고 screenshot에서도 `#exitButton`과 같은 활성 표면으로 보인다.",
+            "suggested_fix": "disabled 전용 asset 상태와 CSS를 추가해 눌릴 수 없는 표면임을 즉시 알게 하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "07_section_completion",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#nextLessonButton[disabled]",
+          "issue": "disabled CTA가 활성 secondary CTA와 동일하게 보인다.",
+          "evidence": "must_follow CTA 상태 언어와 불일치한다.",
+          "suggested_fix": "disabled 전용 몸체·채도·그림자·cursor 상태를 적용하라."
+        }
+      ],
+      "refine_suggestions": [
+        "`#nextLessonButton[disabled]`에 asset_cta_state_bodies의 disabled 상태를 적용하라.",
+        "현재 CTA의 중심 정렬과 3열 간격은 유지하라."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "장면 진입에는 `sceneIn`, 말풍선에는 `pop`, 버튼에는 hover·press, 정답에는 `stamp`, 오답에는 `shake`와 캐릭터 교체가 있어 기본 반응은 갖췄다. 그러나 이전 scene을 즉시 `display:none` 처리해 퇴장 전환이 없고, 도입 요소는 같은 프레임에 함께 나타나며, 세 번째 오답 뒤 정답 공개는 정적 색 변경 또는 텍스트 대입뿐이다. 정적 웹 퀴즈 수준을 완전히 벗어나려면 퇴장·stagger·정답 reveal 타이밍을 보강해야 한다.",
+    "findings": [
+      {
+        "aspect": "scene_transition",
+        "scene_id": "global",
+        "severity": "medium",
+        "target": "showScene(), .scene.active, @keyframes sceneIn",
+        "issue": "새 scene에는 진입 애니메이션이 있지만 이전 scene은 즉시 사라져 전환이 한쪽짜리다.",
+        "evidence": "`showScene()`은 `scenes.forEach(s=>{s.classList.remove('active');s.style.display='none'})`로 이전 화면을 즉시 숨긴 뒤 target에 `sceneIn`만 적용한다.",
+        "suggested_fix": "이전 scene에 260ms `sceneOut`을 먼저 적용하고 완료 후 `display:none` 처리하라. 새 scene은 80ms overlap 뒤 420ms `sceneIn`으로 진입시키고 ease는 기존 `--ease`를 사용하라."
+      },
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "01_section_intro",
+        "severity": "medium",
+        "target": "#introStart.onclick, #introCharacter, #introSpeech, #introTap",
+        "issue": "도입 캐릭터·말풍선·진행 layer가 같은 이벤트에서 동시에 나타난다.",
+        "evidence": "`introStart.onclick`이 세 요소의 `hidden` 클래스를 연속으로 제거하며 stagger delay가 없다. `.speech`만 독립 `pop`을 실행한다.",
+        "suggested_fix": "캐릭터를 0ms에 420ms slide-up/fade로, 말풍선을 140ms 뒤 pop으로, 진행 점을 300ms 뒤 pulse로 등장시키라."
+      },
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "05_section_free_drawing",
+        "severity": "medium",
+        "target": "resetDrawingIntro(), #drawingTeacher, #drawingSpeech",
+        "issue": "교사와 말풍선이 scene 진입 시 동시에 정적으로 나타난다.",
+        "evidence": "`resetDrawingIntro()`는 dialogue를 보이게 하고 이미지와 문구를 즉시 설정하며 별도 character delay가 없다.",
+        "suggested_fix": "교사는 오른쪽에서 360ms slide-in, 말풍선은 140ms 뒤 420ms pop, dialogue advance는 320ms 뒤 pulse하도록 stagger를 추가하라."
+      },
+      {
+        "aspect": "answer_reveal",
+        "scene_id": "04_section_random_problems",
+        "severity": "medium",
+        "target": "judgeRandomChoice(), judgeRandomKey(), .choice.reveal",
+        "issue": "세 번째 오답 뒤 정답 공개가 정적 배경색 변경 또는 즉시 텍스트 대입으로 끝난다.",
+        "evidence": "choice는 `.classList.add('reveal')`만 실행하고 keypad는 `d.textContent=randomAnswer`만 수행한다. `.choice.reveal`에는 background와 filter만 있고 animation이 없다.",
+        "suggested_fix": "정답 표면에 480ms `answerReveal` keyframe을 적용해 0.96→1.04→1 scale, 노란 테두리 sweep, 짧은 glow를 실행하고 정답 도장 asset을 160ms 뒤 찍어라."
+      }
+    ]
+  },
+  "asset_review": {
+    "overall_asset_fit": "학교·담장 배경 10종과 캐릭터·페인트통·도형 타일·도로 표지판은 선명도, 팔레트, 셀 명암, line style이 style2 계약에 대체로 맞으므로 유지한다. 핵심 부족분은 기존 asset의 품질이 아니라 UI 표면과 정오답 피드백 asset의 부재다. 신규 요청 9개로 ASSET_BUDGET 9를 모두 사용한다.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_school_wall_wide",
+        "reason": "밝은 하늘, 학교, 나무, 넓은 담장 safe zone이 참조의 공간감과 팔레트에 잘 맞는다.",
+        "suggested_action": "배경은 유지하고 중앙 담장 위의 웹 카드를 작업 계획표 표면으로 교체한다."
+      },
+      {
+        "asset_id": "asset_school_wall_damaged",
+        "reason": "파손 상황이 안전하고 즉시 읽히며 배경이 화면을 충분히 채운다.",
+        "suggested_action": "현재 crop과 scale을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_yard_shape_search",
+        "reason": "모양 후보가 큰 실루엣과 충분한 간격으로 배치되었고 style2 배경과 일치한다.",
+        "suggested_action": "현재 asset을 유지하고 hotspot 정렬만 보존한다."
+      },
+      {
+        "asset_id": "asset_school_wall_closeup",
+        "reason": "계산·그리기 오버레이를 위한 넓은 담장 면과 낮은 대비가 적절하다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_wall_drawing",
+        "reason": "중앙 담장 75%가 비어 있고 보호포·도구 상자가 활동 맥락을 강화한다.",
+        "suggested_action": "현재 crop과 teacher placement를 유지한다."
+      },
+      {
+        "asset_id": "asset_school_road_background",
+        "reason": "표지판 세 개가 접지될 공간과 학교 앞 도로 맥락이 명확하다.",
+        "suggested_action": "현재 배경을 유지하고 하단 설명판 높이만 줄인다."
+      },
+      {
+        "asset_id": "asset_school_wall_completed",
+        "reason": "좌우 벽화와 중앙 완료 safe zone이 균형 잡혀 있고 성취감이 충분하다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "asset_worker_explaining",
+        "reason": "깨끗한 외곽선, 밝은 셀 명암, 손과 시선 방향이 설명 장면에 적합하다.",
+        "suggested_action": "유지하고 말풍선 꼬리를 손짓 방향에 연결한다."
+      },
+      {
+        "asset_id": "asset_teacher_explaining",
+        "reason": "반복 장면 간 정체성과 표정·포즈가 일관적이다.",
+        "suggested_action": "유지한다."
+      },
+      {
+        "asset_id": "asset_paint_can_body",
+        "reason": "금속 하이라이트와 3/4 시점이 명확하고 화면 크기에서도 선명하다.",
+        "suggested_action": "유지하고 동적 색상·수량 오버레이 safe zone으로 사용한다."
+      },
+      {
+        "asset_id": "asset_shape_tile_body",
+        "reason": "세 도형의 면적과 테두리·재질이 통일되어 있다.",
+        "suggested_action": "유지하고 색상·삭제 상태는 HTML/CSS로 바꾼다."
+      },
+      {
+        "asset_id": "asset_road_sign_body",
+        "reason": "세 몸체의 높이·파란 테두리·금속 명암이 일관되고 텍스트 safe zone이 분명하다.",
+        "suggested_action": "유지하고 원형 라벨의 font-size와 width만 조정한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_school_wall_problem_scene",
+        "reason": "배경 자체는 적합하지만 중앙 담장 safe zone이 흰 패널에 가려져 있다.",
+        "suggested_action": "배경은 유지하고 `.shade` opacity를 낮추며 `#randomPanel` 몸체를 제거해 중앙 담장을 노출한다."
+      },
+      {
+        "asset_id": "asset_teacher_explaining",
+        "reason": "무작위 문제 장면에서 오른쪽 배치는 적절하지만 큰 panel 때문에 학습 대상과 분리되어 있다.",
+        "suggested_action": "현재 오른쪽 위치를 유지하고 왼손이 담장 선택 작업표를 가리키도록 문제 UI를 왼쪽·중앙에 배치한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [
+      {
+        "suggested_id": "asset_feedback_stamp_correct",
+        "character_id": "",
+        "priority": 1,
+        "impact": "모든 채점 화면의 필수 통합 컴포넌트를 해결하며 CSS 원형 O 표시를 즉시 대체한다.",
+        "kind": "image",
+        "intended_path": "output/assets/feedback-stamp-correct.png",
+        "usage_section_ids": [
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems"
+        ],
+        "purpose": "정답 판정 순간에 찍히는 재질 있는 O 도장",
+        "prompt_brief": "고정 문구 O가 아트와 한 덩어리로 구워진 정답 도장. 둥근 스탬프 자국과 손에 잡히는 작은 도장 몸체를 함께 표현한다. alt에는 '정답 O 도장'을 사용한다.",
+        "visual_role": "정답 판정을 촉각적 보상으로 바꾸는 공통 피드백 소품",
+        "style_constraints": "style2의 깨끗한 중간 굵기 외곽선, 밝은 초록과 크림색, 2~3단계 셀 명암, 작은 흰색 하이라이트와 짧은 접지 그림자",
+        "composition_notes": "투명 배경, 1:1, 중앙 O가 190px 표시에서도 또렷하도록 큰 실루엣, 회전 여백 12%, 작은 도장 몸체는 오른쪽 아래에 배치",
+        "negative_prompt": "변하는 문구, 캐릭터, 배경, CSS circle, flat vector UI, SVG icon, 흐린 가장자리, 긴 문장",
+        "why_needed": "현재 `.feedback-mark`는 background-image 없이 CSS 원과 O 문자로 그려져 필수 피드백 표면 계약을 위반한다."
+      },
+      {
+        "suggested_id": "asset_feedback_stamp_wrong",
+        "character_id": "",
+        "priority": 2,
+        "impact": "정답과 분리된 오답용 물리 피드백을 제공해 모든 채점 장면의 상태 언어를 완성한다.",
+        "kind": "image",
+        "intended_path": "output/assets/feedback-stamp-wrong.png",
+        "usage_section_ids": [
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems"
+        ],
+        "purpose": "오답 판정 순간에 찍히는 재질 있는 X 도장",
+        "prompt_brief": "고정 기호 X가 아트와 한 덩어리로 구워진 오답 도장. 위협적이지 않은 둥근 스탬프 자국과 작은 도장 몸체를 함께 표현한다. alt에는 '오답 X 도장'을 사용한다.",
+        "visual_role": "오답을 명확하지만 부드럽게 전달하는 공통 피드백 소품",
+        "style_constraints": "style2의 깨끗한 중간 굵기 외곽선, 따뜻한 산호색과 크림색, 2~3단계 셀 명암, 부드러운 모서리와 짧은 그림자",
+        "composition_notes": "투명 배경, 1:1, 중앙 X가 190px 표시에서 명확하도록 큰 실루엣, 회전 여백 12%",
+        "negative_prompt": "긴 문구, 무서운 경고, 캐릭터, 배경, CSS shape, flat vector UI, SVG icon, 날카로운 위험 표식",
+        "why_needed": "현재 오답은 학생 캐릭터가 잠깐 나타날 뿐 채점 표면이 없어 정답 도장과 대응되는 피드백 언어가 없다."
+      },
+      {
+        "suggested_id": "asset_global_hud_frame",
+        "character_id": "",
+        "priority": 3,
+        "impact": "8개 장면에 반복되는 가장 큰 공통 웹 UI를 장면형 프레임으로 바꾸므로 전역 디자인 인상이 개선된다.",
+        "kind": "image",
+        "intended_path": "output/assets/global-hud-frame.png",
+        "usage_section_ids": [
+          "section_global_ui",
+          "section_intro",
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems",
+          "section_free_drawing",
+          "section_math_story",
+          "section_completion"
+        ],
+        "purpose": "목록·소리·제목·3단계 진행 상태를 담는 전역 학교 작업 현황판 몸체",
+        "prompt_brief": "긴 학교 작업 현황판 프레임. 왼쪽 버튼 2칸, 중앙 제목 safe zone, 오른쪽 단계 3칸과 하단 진행 track safe zone을 비워 둔다. 모든 텍스트와 진행 값은 HTML 오버레이용이다.",
+        "visual_role": "웹 HUD를 학교 담장 세계의 일관된 장치로 통합하는 상단 프레임",
+        "style_constraints": "파란 금속 또는 코팅 목재 프레임, 크림색 표시 면, 둥근 모서리, 볼트 장식, style2 셀 명암과 짧은 하단 그림자",
+        "composition_notes": "1920×150 비율, 투명 배경, 좌우 28px 여백, 각 safe zone 사이 충분한 간격, 텍스트 없음",
+        "negative_prompt": "텍스트, 숫자, 진행률, 캐릭터, flat vector UI, CSS panel, SVG style, 과도한 3D",
+        "why_needed": "현재 HUD는 모든 장면에 반복되는 흰 veil rounded rectangle이며 장면 asset과 분리되어 보인다."
+      },
+      {
+        "suggested_id": "asset_overview_mural_triptych_frame",
+        "character_id": "",
+        "priority": 4,
+        "impact": "initial 화면의 세 거대 흰 카드를 제거하고 배경 담장을 실제 학습 계획 표면으로 사용하게 한다.",
+        "kind": "image",
+        "intended_path": "output/assets/overview-mural-triptych-frame.png",
+        "usage_section_ids": [
+          "section_global_ui"
+        ],
+        "purpose": "세 단계 원문을 각각 올릴 수 있는 담장 부착형 3칸 작업 계획표",
+        "prompt_brief": "가로로 연결된 세 개의 벽화 작업 계획 프레임. 각 칸 중앙은 가변 HTML 문구를 위한 넓은 빈 크림색 면으로 남기고 첫 칸 current 상태용 노란 강조 홈을 제공한다.",
+        "visual_role": "도입 개요를 웹 카드에서 담장 작업 계획으로 전환하는 핵심 표면",
+        "style_constraints": "파란 테두리, 따뜻한 크림 작업 면, 작은 페인트 자국과 고정 볼트, 둥근 모서리, style2 셀 명암",
+        "composition_notes": "투명 배경, 약 1590×300 비율, 동일 크기 3칸, 각 칸 내부 44px 이상 여백, 텍스트 없음",
+        "negative_prompt": "문구, 숫자, 캐릭터, 학교 배경, flat vector UI, CSS card, 과도한 장식",
+        "why_needed": "기존 asset에는 세 단계 원문을 담을 물리 표면이 없고 현재 `.overview-card`는 일반 흰 웹 카드다."
+      },
+      {
+        "suggested_id": "asset_wall_choice_plaque_body",
+        "character_id": "",
+        "priority": 5,
+        "impact": "무작위 문제의 반복 pill 버튼을 담장 작업표로 바꾸어 가장 심각한 웹 퀴즈 인상을 줄인다.",
+        "kind": "image",
+        "intended_path": "output/assets/wall-choice-plaque-body.png",
+        "usage_section_ids": [
+          "section_random_problems"
+        ],
+        "purpose": "동적 덧셈·뺄셈 식을 올리는 담장 부착 선택 작업표 몸체",
+        "prompt_brief": "가로형 담장 작업표 한 개. 중앙 전체를 동적 수식 safe zone으로 비우고 기본·선택·정답 상태를 CSS tint와 glow로 표현할 수 있는 중립 크림색 면을 제공한다.",
+        "visual_role": "계산 선택지를 실제 벽화 작업 명령표로 보이게 하는 반복 표면",
+        "style_constraints": "파란 코팅 금속 테두리, 크림 인쇄면, 네 모서리 볼트, 얕은 셀 베벨과 짧은 아래 그림자",
+        "composition_notes": "투명 배경, 약 780×100 비율, 내부 좌우 48px·상하 18px safe zone, 텍스트 없음",
+        "negative_prompt": "수식, 숫자, 정답 표시, O 또는 X, 캐릭터, flat vector UI, CSS pill, SVG icon",
+        "why_needed": "기존 asset에는 동적 수식을 담을 가로형 선택 표면이 없으며 현재 `.choice`는 일반 웹 pill이다."
+      },
+      {
+        "suggested_id": "asset_story_roadside_info_board",
+        "character_id": "",
+        "priority": 6,
+        "impact": "수리 이야기의 1428×256px 흰 패널을 도로변 물건으로 바꾸고 차도 가림을 줄인다.",
+        "kind": "image",
+        "intended_path": "output/assets/story-roadside-info-board.png",
+        "usage_section_ids": [
+          "section_math_story"
+        ],
+        "purpose": "표지판 질문과 안전 설명을 순차 표시하는 낮은 도로변 안내판 몸체",
+        "prompt_brief": "학교 앞 보도에 놓이는 낮고 넓은 안전 안내판. 중앙은 여러 줄 동적 HTML 문구 safe zone으로 비우고 양끝에 짧은 받침과 작은 반사판을 둔다.",
+        "visual_role": "하단 이야기 텍스트를 도로 장면에 흡수하는 설명 표면",
+        "style_constraints": "파란 금속 프레임, 크림색 표시 면, 2~3단계 셀 명암, 둥근 모서리, 짧은 접지 그림자",
+        "composition_notes": "투명 배경, 약 1420×220 비율, 내부 좌우 70px·상하 30px safe zone, 텍스트 없음",
+        "negative_prompt": "문구, 도로 표지 기호, 캐릭터, 배경, flat vector UI, CSS card, 높은 기둥",
+        "why_needed": "기존 road sign body는 개별 표지판용이며 긴 이야기 원문을 담을 장면형 표면이 없다."
+      },
+      {
+        "suggested_id": "asset_speech_bubble_body",
+        "character_id": "",
+        "priority": 7,
+        "impact": "intro·모양 찾기·계산·자유 그리기에 반복되는 평면 CSS 말풍선을 공통 재질 표면으로 통일한다.",
+        "kind": "image",
+        "intended_path": "output/assets/speech-bubble-body.png",
+        "usage_section_ids": [
+          "section_intro",
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_free_drawing"
+        ],
+        "purpose": "좌우 화자 상태로 재사용하는 빈 말풍선 몸체 sprite",
+        "prompt_brief": "왼쪽 화자 꼬리와 오른쪽 화자 꼬리를 가진 빈 말풍선 두 개를 한 sprite에 배치한다. 내부는 가변 HTML 대사를 위한 넓은 크림색 safe zone으로 남긴다.",
+        "visual_role": "대사와 캐릭터를 연결하는 공통 장면 표면",
+        "style_constraints": "파란 이중 테두리, 크림색 면, 작은 흰색 하이라이트, 부드러운 셀 그림자, 둥글지만 과도한 pill이 아닌 말풍선 실루엣",
+        "composition_notes": "투명 배경, 좌우 두 상태 수평 배치, 각 상태 내부 최소 480×170 비율의 safe zone, 텍스트 없음",
+        "negative_prompt": "문구, 캐릭터, 배경, flat vector UI, CSS bubble, 날카로운 꼬리, 과도한 3D",
+        "why_needed": "현재 `.speech`는 꼬리 없는 단색 CSS pill이라 화자와 연결되지 않고 배경 asset의 재질과 다르다."
+      },
+      {
+        "suggested_id": "asset_cta_state_bodies",
+        "character_id": "",
+        "priority": 8,
+        "impact": "도입·활동 전환·완료 CTA의 primary·secondary·disabled 상태를 must_follow 참조와 일관되게 만든다.",
+        "kind": "image",
+        "intended_path": "output/assets/cta-state-bodies.png",
+        "usage_section_ids": [
+          "section_global_ui",
+          "section_intro",
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_free_drawing",
+          "section_completion"
+        ],
+        "purpose": "동적 CTA 라벨을 올릴 primary·secondary·disabled 버튼 몸체 sprite",
+        "prompt_brief": "동일한 둥근 실루엣의 primary 파랑, secondary 크림, disabled 저채도 크림 버튼 몸체 세 개. 텍스트는 모두 비우고 hover·pressed는 CSS translate와 brightness가 작동하도록 명확한 기본 깊이를 제공한다.",
+        "visual_role": "CTA 위계와 disabled 상태를 일관되게 표현하는 공통 조작 표면",
+        "style_constraints": "참조 CTA의 파란 테두리, 둥근 실루엣, 분명한 하단 눌림 깊이, 부드러운 셀 하이라이트. disabled는 채도와 깊이를 줄인다.",
+        "composition_notes": "투명 배경, 세 상태 수평 sprite, 각 몸체 약 420×96 비율, 내부 좌우 36px safe zone, 텍스트 없음",
+        "negative_prompt": "버튼 라벨, 캐릭터, 배경, flat one-color rectangle, CSS screenshot, SVG icon, 과도한 광택",
+        "why_needed": "현재 CTA는 CSS로만 구성되고 특히 disabled와 secondary가 구분되지 않는다."
+      },
+      {
+        "suggested_id": "asset_keypad_console_body",
+        "character_id": "",
+        "priority": 9,
+        "impact": "세기·계산·무작위 입력에 반복되는 흰 웹 키패드를 담장 작업 장치로 통일한다.",
+        "kind": "image",
+        "intended_path": "output/assets/keypad-console-body.png",
+        "usage_section_ids": [
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems"
+        ],
+        "purpose": "동적 문제·입력값·숫자 키를 올리는 빈 페인트 배합 console 몸체",
+        "prompt_brief": "벽화 작업용 페인트 배합 console. 상단 질문 표시 safe zone, 중앙 답 표시창, 하단 3열 숫자 키 슬롯과 확인 키 슬롯을 비워 둔다. 숫자와 문구는 HTML 오버레이로 유지한다.",
+        "visual_role": "일반 웹 keypad를 학교 담장 작업 장치로 바꾸는 반복 입력 표면",
+        "style_constraints": "파란 코팅 금속 몸체, 크림·유리 표시창, 둥근 모서리, 작은 볼트와 셀 하이라이트, 짧은 접지 그림자",
+        "composition_notes": "투명 배경, 약 510×620 비율, 표시창과 3×4 키 슬롯 중심 좌표가 명확해야 함, 텍스트·숫자 없음",
+        "negative_prompt": "숫자, 글자, 정답, 캐릭터, flat vector UI, CSS keypad, SVG icon, 복잡한 기계 세부",
+        "why_needed": "현재 `.keypad-wrap`, `.answer-display`, `.key`는 흰 CSS 패널과 일반 버튼으로 구성되어 장면 재질과 분리된다."
+      }
+    ],
+    "deferred_asset_candidates": [
+      {
+        "target": "#helpCard 도움 클립보드 표면",
+        "why_beneficial": "교사 도움말을 담장 옆 실제 클립보드나 작업 지시서로 보이게 할 수 있다.",
+        "why_deferred": "필수 정오답 도장과 전역·주요 문제 표면보다 시급성이 낮아 ASSET_BUDGET 9 밖으로 미뤘다."
+      },
+      {
+        "target": "#paintTools 벽화 도구 팔레트 몸체",
+        "why_beneficial": "도형·색 선택 버튼을 실제 페인트 작업 팔레트로 통합할 수 있다.",
+        "why_deferred": "현재 screenshot의 빈 담장 무대는 이미 강하며, 채점·무작위 문제·전역 HUD 개선을 우선했다."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "scene_id": "02_section_shape_find",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".feedback-mark, #shapeMark, #arithMark, #randomMark, showFeedback(), showWrongFeedback()",
+      "issue": "필수 정오답 도장 컴포넌트가 재질 asset으로 구현되지 않았다.",
+      "evidence": "세 채점 scene의 O는 CSS 원과 텍스트이며 오답 도장 asset은 없다.",
+      "suggested_fix": "정답·오답 도장 asset을 각각 생성하고 모든 채점 scene에서 공통 컴포넌트로 사용하라."
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "#randomPanel; asset_school_wall_problem_scene central wall safe zone",
+      "issue": "배경의 interaction surface를 거대한 흰 패널이 가린다.",
+      "evidence": "패널이 중앙 담장 대부분을 덮어 웹 퀴즈가 장면보다 앞선다.",
+      "suggested_fix": "패널 몸체를 제거하고 담장 면에 문제 헤더와 선택 작업표를 배치하라."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": ".overview-card, .hud",
+      "issue": "시작 화면이 흰 웹 카드와 웹 HUD 중심으로 구성된다.",
+      "evidence": "배경 담장 위에 반투명 사각 카드 세 장과 긴 흰 HUD가 독립적으로 떠 있다.",
+      "suggested_fix": "담장 작업 계획표와 전역 HUD frame asset으로 교체하라."
+    },
+    {
+      "scene_id": "07_section_completion",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "#nextLessonButton[disabled]",
+      "issue": "disabled CTA가 활성 secondary CTA와 시각적으로 동일하다.",
+      "evidence": "disabled 전용 CSS나 asset 상태가 없고 screenshot에서 `#exitButton`과 같은 몸체로 보인다.",
+      "suggested_fix": "disabled 전용 몸체·채도·깊이·cursor 상태를 적용하라."
+    },
+    {
+      "scene_id": "06_section_math_story",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "#storyCard",
+      "issue": "도로 이야기 안내가 거대한 흰 웹 패널이다.",
+      "evidence": "1428×256px 패널이 도로와 차선을 넓게 가린다.",
+      "suggested_fix": "도로변 안전 안내판 asset으로 교체하라."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#section_global_ui .hero-title, #introTitle",
+      "issue": "큰 제목이 장면 속 표면 없이 하늘 위에 떠 있다.",
+      "evidence": "initial과 intro 모두 제목이 구름·학교 지붕을 직접 덮는다.",
+      "suggested_fix": "담장 상단 제목 간판 safe zone으로 이동하라."
+    },
+    {
+      "scene_id": "01_section_intro",
+      "severity": "medium",
+      "axis": "motion",
+      "target": "showScene(), #introStart.onclick, @keyframes sceneIn",
+      "issue": "퇴장 전환과 도입 stagger가 부족하다.",
+      "evidence": "이전 scene은 즉시 `display:none` 처리되고 캐릭터·말풍선은 같은 이벤트에서 함께 나타난다.",
+      "suggested_fix": "260ms 퇴장 전환과 140~300ms 요소 stagger를 추가하라."
+    },
+    {
+      "scene_id": "02_section_shape_find",
+      "severity": "medium",
+      "axis": "asset_component_fit",
+      "target": ".speech, #shapeSpeech, #arithSpeech, #drawingSpeech",
+      "issue": "반복 말풍선이 화자 방향 꼬리와 재질 없이 CSS pill로 구현됐다.",
+      "evidence": "세 장면에서 동일한 단색 cream 표면이 캐릭터와 분리되어 보인다.",
+      "suggested_fix": "left/right 화자 상태를 가진 공통 speech bubble asset을 적용하라."
+    }
+  ],
+  "refine_suggestions": [
+    "`.feedback-mark`의 CSS 원과 O 텍스트를 제거하고 정답·오답 stamp image를 판정별로 사용하라.",
+    "`#randomPanel`의 흰 몸체를 제거하고 `asset_school_wall_problem_scene` 중앙 담장에 프롬프트와 선택 작업표를 직접 배치하라.",
+    "initial의 `.overview-card` 세 개를 담장 작업 계획표 asset의 세 safe zone에 맞춰 재배치하라.",
+    "`#storyCard`를 낮은 도로변 안내판 asset으로 교체하고 기존 원문을 표시 면에 오버레이하라.",
+    "`#nextLessonButton[disabled]`에 secondary와 확실히 다른 disabled 몸체·채도·그림자·cursor 상태를 적용하라.",
+    "`#introTitle`과 initial `.hero-title`을 담장 상단 제목 간판 표면으로 이동하라.",
+    "`showScene()`에 260ms 퇴장 전환을 추가한 뒤 새 scene을 80ms 겹쳐 진입시켜라.",
+    "intro와 free drawing에서 캐릭터→말풍선→진행 표시를 140~300ms 간격으로 stagger하라.",
+    "세 번째 오답 정답 공개에 480ms scale·glow reveal과 160ms 지연 도장 연출을 추가하라.",
+    "말풍선 내부 텍스트는 원문을 유지하고 shape/drawing 장면에서 14px 아래, arithmetic 장면에서 20px 오른쪽으로 보정하라."
+  ]
+}

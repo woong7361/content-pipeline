@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from stages.scripts.codex_client import CodexClient
+from stages.scripts.style_references import build_style_reference_prompt
 from stages.visual_qa import run_visual_qa
 
 
@@ -138,6 +139,7 @@ def build_prompt(
     asset_output = load_asset_output(asset_generator_path)
     builder_output = load_json(builder_path)
     html = html_path.read_text(encoding="utf-8")
+    style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     screenshot_paths = [
         str((run_dir / screenshot["path"]).resolve())
         for screenshot in visual_qa_output.get("screenshots", [])
@@ -157,6 +159,9 @@ SCREENSHOT_FILES:
 
 INPUT_JSON:
 {json.dumps(input_data, ensure_ascii=False, indent=2)}
+
+STYLE_REFERENCE_SET_JSON:
+{style_reference_json}
 
 PLANNER_DESIGN_CONTEXT_JSON:
 {json.dumps(compact_planner_context(planner_output), ensure_ascii=False, indent=2)}

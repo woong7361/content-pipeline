@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.82
+  },
+  "axis_rationales": {
+    "content_fidelity": "grep -cF로 140개 체크리스트 문자열을 대조한 결과 누락·불일치 12개가 확인됐다: q1 prompt의 **[3시 5분 전]**, q2의 **[11시 50분]**, q3의 **[8시 15분 전]**, q4의 **[4시 55분]**, q5의 **8시**·**9시**, q6의 **11시 30분**·**30분**, q7의 **1시간**, q8의 **4시 30분**·**5시**, q9의 **24시간**, q10의 `[?]` 백틱 표기, q11의 **3시**, q12의 **1일**을 포함한 planner prompt 원문이 HTML에 그대로 존재하지 않는다. 나머지 128개 문자열은 1회 이상 존재했고, 브라우저 실행에서는 q1~q13의 정답 처리와 장면 순서가 planner와 일치했다.",
+    "learning_goal_alignment": "유형 A는 ‘몇 분 전’과 아날로그 시각을 연결하고, 유형 B는 걸린 시간과 끝나는 시각을 계산하며, 유형 C와 마무리 퀴즈는 1일·24시간 및 오전·오후 관계를 직접 적용한다. 튜토리얼, 수리 진행, 실생활 갤러리도 같은 시간 개념을 단계적으로 확인하므로 모든 핵심 활동이 학습 목표에 직접 연결된다.",
+    "feedback_scaffolding": "q1~q13 모두 정답과 오답 분기를 제공해 피드백 부재 문항은 0개다. 다만 정답 피드백 대부분은 문항과 정답을 반복하거나 완료 메시지를 표시하는 수준이고, 오답도 ‘다시 생각해보세요’, 문항 반복, 정답 노출에 머문다. 왜 맞거나 틀렸는지 설명하는 개념적 단서가 상당수 문항에서 약해 rubric의 3점 기술에 해당한다.",
+    "interaction_flow_clarity": "도입 대사, 활성 입력 강조, 튜토리얼의 카드·도킹 슬롯 안내, 문항별 순차 전환, 진행 게이지와 완료 인증서가 현재 단계와 다음 행동을 대체로 명확히 보여준다. 다만 최종 다음 차시 버튼과 다수 차시 메뉴 항목이 이유 안내 없이 비활성화되어 마지막 이동 행동은 명확하게 닫히지 않는다.",
+    "functional_integrity": "깨진 필수 기능 2개가 실제 데스크톱 브라우저 실행에서 확인됐다. 첫째, [내 사진첩에 저장하기] 클릭 시 tainted canvas의 toDataURL 예외가 발생해 다운로드가 생성되지 않았다. 둘째, 최종 다음 차시 버튼은 ready 상태에서도 disabled=true, aria-disabled=true, routeMissing=true여서 9차시로 이동할 수 없다. 그 외 q1~q13 정답 경로는 오류 없이 완료되어 completedCount 13, userCorrectCount 13에 도달했다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "결정적 대조 결과는 content_fidelity 누락·불일치 12개로 1점, 기능 실행 결과는 깨진 필수 기능 2개로 1점이다. 가중 합계는 1×0.28 + 5×0.22 + 3×0.20 + 4×0.18 + 1×0.12 = 2.82이며, min_total 4.2와 content_fidelity·feedback_scaffolding·functional_integrity의 min_axis를 충족하지 못한다. 필수 저장 및 다음 차시 이동 기능도 완료 흐름에서 동작하지 않아 REJECT다."
+}

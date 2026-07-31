@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.64
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 5개: activity1_success의 주변 학생 물음표가 웃는 얼굴로 바뀌는 상태가 없음, 전환 라벨 '[STEP 2. 수리로 해결해요]'가 없음, activity2_type_a 오답 피드백의 👆 아이콘이 없음, activity2_type_c의 모든 빈칸 입력 후 자동 정답 처리가 확인하기 버튼 방식으로 변경됨, activity2_outro의 전광판 글자가 올바른 시간으로 복구되는 사건이 없음. 문항 13개의 프롬프트·보기·정답과 주요 대사는 대체로 보존되었으나 결정적 누락이 4개 이상이며 필수 학습 장면 내용 누락 하드 게이트에도 해당한다.",
+    "learning_goal_alignment": "튜토리얼의 정각 읽기, 유형 A의 '몇 분 전', 유형 B의 걸린 시간과 끝나는 시각, 유형 C와 마무리 퀴즈의 1일·24시간 관계가 모두 학습 목표를 직접 다룬다. 시계 선택, 숫자 입력, 숫자 블록 배치도 각 개념을 적용하는 조작으로 연결되고 실생활 이야기 역시 핵심 시간 개념을 재맥락화한다.",
+    "feedback_scaffolding": "모든 문항에서 실제 정답·오답 반응은 제공되지만 대부분 '딩동댕!', '다시 생각해보세요', '띠익', '[시스템 재부팅 완료!]'처럼 결과만 통보한다. 왜 정답인지, 어떤 시간 관계를 다시 살펴야 하는지에 대한 설명이 거의 없고 다음 행동 안내도 일반적인 재시도 수준이다.",
+    "interaction_flow_clarity": "문제 순서, 진행 게이지, 보기와 입력 영역, 활동 2·3 전환 버튼은 대체로 명확하다. 다만 문제 발생 장면은 진행 방법을 표시하지 않은 채 화면 클릭 또는 6초 자동 전환에 의존하고, 튜토리얼 입력은 안내 없이 잠시 비활성화된다. 유형 C도 기획의 자동 판정과 달리 별도 확인하기가 필요해 일부 단계에서 시행착오가 요구된다.",
+    "functional_integrity": "깨진 필수 기능 2개: interaction_type_c_drag는 모든 칸이 채워지면 자동 판정해야 하지만 확인하기 버튼을 눌러야 하며, interaction_next_lesson은 9차시 웹페이지로 라우팅하지 않고 현재 문서의 URL hash만 변경한다. 현재 학습의 최종 인증서까지는 도달할 수 있으나 필수 기능 2개가 계약대로 동작하지 않는다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "desktop 기준 HTML 원문과 planner 계약을 대조했으며 반응형, 시각 스타일, asset 경로·통합 품질은 제외했다. content_fidelity는 누락·불일치 5개로 결정적 척도 1점, functional_integrity는 깨진 필수 기능 2개로 1점을 적용했다. weighted_total 2.64가 4.2 미만이고 여러 축이 min_axis 미만이며 필수 내용 누락 하드 게이트가 성립한다."
+}

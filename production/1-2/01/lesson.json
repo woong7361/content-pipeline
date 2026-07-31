@@ -1,0 +1,1690 @@
+{
+  "id": "01",
+  "title": "와글와글, 운동회를 도와요!",
+  "subject": "수학",
+  "grade": "1",
+  "lessonNo": "1-06",
+  "domain": "수와 연산",
+  "duration": 15,
+  "ui": {
+    "introFlow": "default",
+    "cursorRef": "assets/ui/mouse-pointer.webp",
+    "hintArrowRef": "assets/ui/hint-arrow-green.webp",
+    "coachFaceRef": "assets/ui/coach-face.webp",
+    "topicBannerRef": "assets/ui/topic-jelly-count.webp",
+    "topicText": "100까지의 수",
+    "topicBanners": {
+      "count": {
+        "text": "100까지의 수",
+        "ref": "assets/ui/topic-jelly-count.webp"
+      },
+      "sizeCompare": {
+        "text": "수의 크기 비교하기",
+        "ref": "assets/ui/topic-jelly-size-compare.webp"
+      },
+      "inequality": {
+        "text": "부등호로 수 비교하기",
+        "ref": "assets/ui/topic-jelly-inequality.webp"
+      },
+      "numberTable": {
+        "text": "수배열표 완성하기",
+        "ref": "assets/ui/topic-jelly-number-table.webp"
+      }
+    },
+    "speechBubble": {
+      "position": "bottom-left"
+    },
+    "courseMenu": {
+      "gradeLabel": "1학년 차시 목록",
+      "current": "01",
+      "lessons": [
+        {
+          "no": 1,
+          "path": "../../1-1/01/",
+          "title": "어지러운 교실을 수리하라!"
+        },
+        {
+          "no": 2,
+          "path": "../../1-1/02/",
+          "title": "복잡한 강당을 수리하라!"
+        },
+        {
+          "no": 3,
+          "path": "../../1-1/03/",
+          "title": "위험한 급식실을 안전하게!"
+        },
+        {
+          "no": 4,
+          "path": "../../1-1/04/",
+          "title": "어두운 보건실, 환하게 해결해요!"
+        },
+        {
+          "no": 5,
+          "title": "준비 중"
+        },
+        {
+          "no": 6,
+          "id": "01",
+          "title": "와글와글, 운동회를 도와요!"
+        },
+        {
+          "no": 7,
+          "title": "준비 중"
+        },
+        {
+          "no": 8,
+          "title": "준비 중"
+        },
+        {
+          "no": 9,
+          "title": "준비 중"
+        },
+        {
+          "no": 10,
+          "title": "준비 중"
+        }
+      ]
+    },
+    "topBar": {
+      "stageLabels": [
+        "수리력+",
+        "수리가 필요해요1",
+        "수리가 필요해요2",
+        "수리로 해결해요",
+        "수리 이야기"
+      ],
+      "title": "와글와글, 운동회를 도와요!",
+      "progressDots": {
+        "total": 5,
+        "current": 1
+      },
+      "note": "상단 UI는 모든 화면 상단에 반복 적용. 활동이 바뀔 때 좌측 stageLabel만 교체."
+    }
+  },
+  "world": {
+    "setting": "학교 운동장(운동회)",
+    "locations": [
+      "운동장 중앙",
+      "판 뒤집기 경기장",
+      "공 던지기 경기장",
+      "학교 주변(실생활)"
+    ],
+    "concept": "운동회를 준비하기 위해 망가진 판을 수학 힘(수리력)으로 수리하고, 100까지의 수를 세고 수의 크기를 비교해 운동회 경기를 돕는 모험"
+  },
+  "artDirection": {
+    "styleRef": "assets/style/style-sheet.png",
+    "medium": "2D 벡터 일러스트레이션",
+    "look": "초등 저학년 교과서·동화풍. 굵고 깔끔한 외곽선, 플랫 셰이딩(약한 그라데이션까지 허용)",
+    "palette": "따뜻한 파스텔 — 하늘색, 잔디 초록, 흙 갈색, 크림 화이트 / 포인트 청·홍(청백전)",
+    "lighting": "맑은 한낮, 부드러운 그림자. 고대비·드라마틱 조명 금지",
+    "lineWeight": "균일한 중간 두께 외곽선",
+    "rendering": "납작하고 깔끔하게. 사진실사·3D렌더·과한 텍스처·노이즈 금지",
+    "consistencyRule": "모든 assetPrompt는 이 artDirection을 상속한다. Codex는 매 이미지 생성 시 artDirection.styleRef를 레퍼런스(img2img/스타일 참조)로 함께 입력하고, 한 차시 및 1~5차시 시리즈 전체에서 동일 모델·시드 계열·스타일 파라미터를 고정한다. 개별 프롬프트가 화풍을 새로 정의하지 않는다."
+  },
+  "character": {
+    "name": "선생님",
+    "role": "주인공 안내 캐릭터",
+    "styleRef": "style-reference.png",
+    "description": "베이지색 정장을 입고 안경을 쓴 친근한 여자 선생님. 치비 스타일.",
+    "assetRef": "assets/character/",
+    "emotions": {
+      "idle": "assets/character/idle.webp",
+      "happy": "assets/character/happy.webp",
+      "surprised": "assets/character/surprised.webp",
+      "thinking": "assets/character/thinking.webp",
+      "praising": "assets/character/praising.webp",
+      "encouraging": "assets/character/encouraging.webp"
+    }
+  },
+  "reward": {
+    "id": "repair-stamp",
+    "name": "수리 완료 도장",
+    "totalCount": 5,
+    "thisLesson": 1,
+    "assetRef": "assets/ui/repair-stamp.webp",
+    "ui": {
+      "position": "top-right",
+      "alwaysVisible": true,
+      "variant": "lessonBar",
+      "showAsset": false
+    },
+    "certificate": {
+      "title": "수리 인증서",
+      "subtitle": "운동회 편",
+      "heading": "수리 인증서를 받아요!",
+      "subtext": "이름을 적으면 나만의 인증서가 완성돼요.",
+      "defaultName": "수리 친구",
+      "body": [
+        "위 친구는 끝까지 포기하지 않고",
+        "운동회 곳곳의 수를 척척 수리하였기에",
+        "이 인증서를 드립니다."
+      ],
+      "footer": "수리력 웹콘텐츠 · 와글와글, 운동회를 도와요!",
+      "buttonText": "인증서 저장하기",
+      "completeButtonText": "인증서 다운로드"
+    }
+  },
+  "audioMap": {
+    "bgm": {
+      "playground-festival": "assets/audio/bgm/valleyball_women2.mp3"
+    },
+    "sfx": {
+      "whistle": "assets/audio/sfx/whistle.mp3",
+      "clap": "assets/audio/sfx/clap.mp3",
+      "correct": "assets/audio/sfx/correct.mp3",
+      "wrong": "assets/audio/sfx/wrong.mp3",
+      "keypad": "assets/audio/sfx/keypad.mp3",
+      "clearFanfare": "assets/audio/sfx/clearFanfare.mp3",
+      "incorrect": "assets/audio/sfx/incorrect.mp3",
+      "button-select": "assets/audio/sfx/button-select.mp3",
+      "fade-transition": "assets/audio/sfx/fade-transition.mp3",
+      "next-level": "assets/audio/sfx/next-level.mp3",
+      "stamp-slam": "assets/audio/sfx/stamp-slam.mp3",
+      "clear-fanfare": "assets/audio/sfx/clear-fanfare.mp3",
+      "kids-cheer": "assets/audio/narration/028_예~YEAH!.mp3"
+    },
+    "narration": {
+      "intro-broken-board": "assets/audio/narration/Take1-12_아이고, 판이 망가졌어ㅜ... 어쩌지_2026-07-08.mp3",
+      "intro-sports-day": "assets/audio/narration/Take1-2_오늘은 체육대회를 하는 날입니다~~_2026-07-22.mp3",
+      "intro-need-boards": "assets/audio/narration/Take2-1_경기에 판이 필요해요. 그런데, 판들이 흐트러져 있어서 정리가 필요해요! 낱개를 10개씩_2026-07-22.mp3",
+      "thanks-now-play": "assets/audio/narration/Take2-1_정말 고마워! 이제 경기를 할 수 있어!_2026-07-06.mp3",
+      "board-rule-blue": "assets/audio/narration/Take7-4_첫 번째 경기는 판 뒤집기 입니다. 그런데~ 파란색 판이 많으면 파란색 팀이 이겨요~~_2026-07-22.mp3",
+      "board-rule-white": "assets/audio/narration/Take8-1_흰색 판이 많으면 흰색 팀이 이겨요~_2026-07-22.mp3",
+      "board-game-start": "assets/audio/narration/Take6-3_더 많이 뒤집으면 이기는 경기입니다_2026-07-06.mp3",
+      "board-which-color-more": "assets/audio/narration/Take9-1_첫번째 경기는 무슨 색 판이 더 많을까요_2026-07-22.mp3",
+      "compare-tap-larger": "assets/audio/narration/Take11-1_더 큰 수를 누르세요_2026-07-22.mp3",
+      "compare-tens-bundles": "assets/audio/narration/Take12-1_10개씩 묶음을 비교해요_2026-07-22.mp3",
+      "compare-ones-singles": "assets/audio/narration/Take14-1_낱개를 비교해요_2026-07-22.mp3",
+      "start": "assets/audio/narration/Take5-3_시~~작~~!_2026-07-06.mp3",
+      "blue-team-win": "assets/audio/narration/Take3-1_파란색 팀 승!_2026-07-06.mp3",
+      "white-team-win": "assets/audio/narration/Take4-1_흰색 팀 승!_2026-07-06.mp3",
+      "ball-throw": "assets/audio/narration/Take7-1_공 던지기를 할게요!_2026-07-06.mp3",
+      "ball-throw-count-rule": "assets/audio/narration/Take15-1_이번 경기는 공을 많이 넣는 팀이 이기는 경기입니다~ 넣은 공의 수를 비교해 봅시다~_2026-07-22.mp3",
+      "ball-count-question": "assets/audio/narration/Take8-1_공은 몇 개가 들어갔을까요_2026-07-06.mp3",
+      "all-win": "assets/audio/narration/Take9-1_모두 승리!_2026-07-06.mp3",
+      "outro-thanks": "assets/audio/narration/Take10-1_고마워. 덕분에 운동회를 잘 할 수 있었어_2026-07-06.mp3",
+      "where-seen-68-72": "assets/audio/narration/Take1-5_68, 72를 주변에서 본 적이 있나요_2026-07-06.mp3",
+      "find-71-72-73": "assets/audio/narration/Take2-2_칠십일, 칠십이, 칠십삼을 주변에서 찾아봐요_2026-07-06.mp3",
+      "building-number-plate": "assets/audio/narration/Take3-1_건물 번호판에 있어요_2026-07-06.mp3",
+      "address-71-72-73": "assets/audio/narration/Take4-1_칠십일 다음은 칠십이, 그 다음은 칠십삼을 주소로 써요_2026-07-06.mp3",
+      "traffic-signal-68": "assets/audio/narration/Take7-1_신호등에서 볼 수 있어요_2026-07-06.mp3",
+      "numbers-count-down": "assets/audio/narration/Take8-2_숫자가 일씩 작아져요_2026-07-08.mp3",
+      "hundred-read": "assets/audio/narration/Take13-1_100이라고 쓰고 백이라고 읽어요_2026-07-08.mp3",
+      "crosswalk-safety": "assets/audio/narration/Take11-1_길을 건널 때는손을 들고 안전한지 주위를 봐요_2026-07-06.mp3",
+      "green-blink-safety": "assets/audio/narration/Take12-1_그리고 초록불이라도 깜빡이면 건너지 말아요!_2026-07-06.mp3",
+      "children-help-teacher": "assets/audio/narration/Take11-1_선생님!! 저희가 도와드릴게요!_2026-07-06.mp3",
+      "answer-correct": "assets/audio/narration/Take5-4_정답입니다~~!_2026-07-22.mp3",
+      "answer-retry": "assets/audio/narration/Take19-2_다시생각해봐요_2026-07-28.mp3",
+      "thanks-organizing": "assets/audio/narration/Take6-2_정리해줘서 고마워요! 덕분에 경기를 할 수 있어요~! 고마워요~~_2026-07-22.mp3",
+      "board-tidy-start": "assets/audio/narration/Take3-1_선생님을 도와 판을 정리해 봅시다!_2026-07-22.mp3",
+      "count-how-many": "assets/audio/narration/Take4-2_몇개인가요_2026-07-22.mp3",
+      "count-blue-boards": "assets/audio/narration/Take10-1_파란색 판은 몇 개 인가요_2026-07-22.mp3",
+      "count-white-boards": "assets/audio/narration/Take13-1_흰색 판은 몇 개 인가요_2026-07-22.mp3",
+      "fill-blank-number": "assets/audio/narration/Take16-1_빈 칸에 알맞은 수를 써요_2026-07-22.mp3",
+      "cheer-score-rule": "assets/audio/narration/Take17-1_마지막 경기는 응원 점수입니다~! 열심히 응원하면 점수를 줘요~_2026-07-22.mp3",
+      "ball-throw-which-won": "assets/audio/narration/Take18-1_어느 팀이 이겼나요_2026-07-28.mp3",
+      "inequality-open-larger": "assets/audio/narration/Take19-1_부등호는 큰 수 쪽으로 벌어져요_2026-07-28.mp3"
+    }
+  },
+  "achievementStandard": "[2수01-01] 수의 필요성을 인식하면서 0과 100까지의 수 개념을 이해하고, 수를 세고 읽고 쓸 수 있다. / [2수01-03] 네 자리 이하의 수의 범위에서 수의 계열을 이해하고, 수의 크기를 비교할 수 있다.",
+  "achievementLevels": {
+    "A": "네 자리 이하의 수의 범위에서 수의 계열을 이해하고 여러 가지 방법으로 수를 세며, 수의 크기를 비교하고 그 방법을 설명할 수 있다.",
+    "B": "네 자리 이하의 수의 범위에서 수의 계열을 이해하여 뛰어 세기를 하고, 수의 크기를 비교할 수 있다.",
+    "C": "네 자리 이하의 수의 범위에서 수를 순서대로 말하고, 구체적인 조작 활동을 통하여 수의 크기를 비교할 수 있다."
+  },
+  "achievementLevelsSecondary": {
+    "standard": "[2수01-01]",
+    "A": "수가 사용되는 여러 가지 실생활 상황에서 수의 필요성을 말하고, 0과 50까지 또는 100까지의 수를 10개씩 묶음과 낱개로 나타내며, 수를 읽고 쓸 수 있다.",
+    "B": "실생활에서 수가 사용되는 상황을 말하고, 10개씩 묶음과 낱개를 이용하여 0과 50까지 또는 100까지의 수 개념을 이해하며, 수를 읽고 쓸 수 있다.",
+    "C": "실생활에서 수가 사용됨을 알고, 구체물을 세어 0과 50까지 또는 100까지의 수 개념을 이해하며, 수를 읽고 쓸 수 있다."
+  },
+  "learningContent": "네 자리 이하의 수 · 100까지의 수 세기(10씩 뛰어 세기, 100의 도입) · 수의 크기 비교",
+  "steps": [
+    {
+      "id": "step-1",
+      "index": 1,
+      "type": "intro",
+      "title": "수리가 필요해요 (도입)",
+      "duration": 2,
+      "location": "운동장 중앙",
+      "concept": "문제 상황 제시 - 흐트러진 판을 100까지의 수로 정리하여 운동회를 도와야 함",
+      "backgroundRef": "assets/backgrounds/playground-board-help-intro-style2-no-blur.webp",
+      "startBackgroundRef": "assets/backgrounds/school-front-title.webp",
+      "startButtonText": "시작하기",
+      "introSequence": [
+        {
+          "scene": "A",
+          "bg": "assets/backgrounds/playground-sports-day-announce-style2.webp",
+          "fallbackBg": "assets/backgrounds/playground-peaceful.webp",
+          "speaker": "teacher",
+          "text": "오늘은 체육대회를 하는 날입니다.",
+          "audio": "intro-sports-day",
+          "assetTodo": "장면A 배경: 판이 아직 없고 선생님이 운동장에서 아이들에게 체육대회 시작을 알리는 상황(교사+아이들 포함, 판 미배치)."
+        },
+        {
+          "scene": "A",
+          "speaker": "students",
+          "text": "와~~",
+          "audio": "kids-cheer"
+        },
+        {
+          "scene": "B",
+          "bg": "assets/backgrounds/playground-board-help-intro-style2-no-blur.webp",
+          "speaker": "teacher",
+          "text": "경기에 판이 필요해요. 그런데, 판들이 흐트러져 있어서 정리가 필요해요. 낱개를 10개씩 묶어주세요.",
+          "audio": "intro-need-boards",
+          "assetTodo": "장면B 배경(재생성 필요): 깨진/부서진 판이 아니라 흐트러진(온전한) 판들로 교체(주제: 수리→운동회 돕기)."
+        },
+        {
+          "scene": "B",
+          "speaker": "students",
+          "text": "저희가 도와드릴게요",
+          "audio": "children-help-teacher"
+        }
+      ],
+      "stageDirections": [
+        {
+          "no": 0,
+          "source": "p4 활동1 구분 슬라이드",
+          "timing": "step 진입 전 전환",
+          "layer": "transition",
+          "action": "활동1 진입에 맞춰 상단 UI 좌측 라벨을 '수리가 필요해요'로 변경하여 이후 모든 화면에 적용. 별도 개발 화면 아님(구분/UI 전환용).",
+          "mustShow": false
+        },
+        {
+          "no": 1,
+          "source": "p5-1",
+          "timing": "타이틀 화면",
+          "layer": "ui",
+          "action": "차시 이동 UI 버튼. 운동장 위에 5개 차시 안내 말풍선 노출",
+          "speechText": "와글와글! 운동회를 도와요! / 뒤죽박죽! 학교 시계를 수리해요! / 알록달록! 담장을 수리해요! / 엉망진창! 화단을 수리해요! / 반짝반짝! 학교를 수리해요!",
+          "mustShow": true
+        },
+        {
+          "no": 2,
+          "source": "p5-2",
+          "timing": "타이틀 화면",
+          "layer": "ui",
+          "action": "타이틀 글씨 등장",
+          "captionText": "와글와글, 운동회를 도와요!",
+          "motion": "titleAppear",
+          "mustShow": true
+        },
+        {
+          "no": 3,
+          "source": "p5-3",
+          "timing": "타이틀 화면",
+          "layer": "ui",
+          "action": "차시 문제로 이동하는 버튼",
+          "ctaText": "시작하기",
+          "mustShow": true
+        },
+        {
+          "no": 4,
+          "source": "p5-4",
+          "timing": "상황 제시",
+          "layer": "audio",
+          "action": "교사 대사 오디오 + 캐릭터 'surprised' 표정",
+          "speechText": "판이 망가졌어. 어쩌지",
+          "sound": "voice-teacher",
+          "mustShow": true
+        },
+        {
+          "no": 5,
+          "source": "p5-5",
+          "timing": "상황 제시",
+          "layer": "ui",
+          "action": "소재 등장: 부서진 흰색 판(왼쪽)이 보인 후, 화살표와 멀쩡한 흰색 판(오른쪽)이 순차적으로 등장",
+          "motion": "sequentialAppear",
+          "mustShow": true
+        },
+        {
+          "no": 6,
+          "source": "p5-6",
+          "timing": "도입 종료/학습 진입",
+          "layer": "cta",
+          "action": "학습 문제 화면으로 이동하는 목표 버튼. 활성화 시 반짝이는 글로우(Glow) 이펙트, 터치/클릭 시 부드럽게 트랜지션",
+          "ctaText": "100까지의 수로 판 정리하기",
+          "motion": "glowPulse",
+          "mustShow": true
+        }
+      ],
+      "uiElements": [
+        {
+          "no": 1,
+          "type": "ctaButton",
+          "position": "lesson-select",
+          "description": "5개 차시 안내 말풍선 + 차시 이동 UI",
+          "speechBubble": true
+        },
+        {
+          "no": 2,
+          "type": "background",
+          "position": "full",
+          "description": "타이틀 글씨 '와글와글, 운동회를 도와요!' 등장",
+          "animation": "titleAppear"
+        },
+        {
+          "no": 4,
+          "type": "characterAnimation",
+          "description": "교사 'surprised' 표정 + 오디오 대사",
+          "dialogue": "판이 망가졌어. 어쩌지",
+          "sound": "voice-teacher",
+          "audio": "intro-broken-board"
+        },
+        {
+          "no": 5,
+          "type": "crowd",
+          "description": "학생들이 선생님을 돕겠다고 말하는 말풍선",
+          "speechBubbles": [
+            "저희가 도와드릴게요"
+          ],
+          "speechBubble": true,
+          "audio": "children-help-teacher",
+          "dialogue": "저희가 도와드릴게요"
+        },
+        {
+          "no": 6,
+          "type": "ctaButton",
+          "description": "학습 문제로 이동, 글로우 이펙트",
+          "dialogue": "100까지의 수로 판 정리하기",
+          "transitionTo": "step-2"
+        }
+      ],
+      "introAAssetPrompt": {
+        "sceneType": "composed-scene-background",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-sports-day-announce-style2.webp",
+        "mustInclude": [
+          "학교 운동장 전경 — 운동회 천막, 만국기 배너, 밝고 활기찬 아침 분위기",
+          "운동장 중앙에 선생님이 초등학생들에게 체육대회 시작을 알리는 장면",
+          "선생님은 흰색 체육복 상의/파란색 계열 체육복 바지/호루라기 목걸이 차림으로 말하는 표정과 안내 제스처",
+          "학생들은 선생님을 바라보며 반원 형태로 모여 듣거나 환호하는 모습",
+          "운동장 바닥(흙 트랙, 흰색 라인)이 판 없이 깨끗하게 비어 있는 상태 (뒤집기 판이 아직 하나도 깔려 있지 않음)"
+        ],
+        "reservedUiZones": [
+          "상단 바(활동 라벨/진행 점 5개)",
+          "상단 나레이션 말풍선 영역",
+          "하단 CTA 버튼 영역"
+        ],
+        "forbidden": [
+          "운동장 바닥에 뒤집기 판(파란/흰 판)을 그리지 말 것 — 이 장면은 판이 아직 없는 상태",
+          "말풍선/자막/CTA 버튼 텍스트를 배경에 박지 말 것",
+          "캐릭터가 빠진 빈 운동장 배경만 생성하지 말 것",
+          "전환/글로우/모션 효과를 배경에 굽지 말 것"
+        ],
+        "devNote": "도입 장면A: 판이 아직 없고 선생님이 운동장에서 아이들에게 체육대회 시작을 알리는 상황. 배경 PNG 자체에 교사+학생이 포함되어야 하며, 판/부서진 판이 있는 no-blur 배경과 구분되는 별도 플레이트."
+      },
+      "assetPrompt": {
+        "sceneType": "base-background",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-board-help-intro-style2-no-blur.webp",
+        "mustInclude": [
+          "학교 건물과 운동장 전경(운동회 천막, 만국기 분위기)",
+          "운동장 바닥(흙 트랙, 흰색 라인)",
+          "왼쪽에 부서진 흰색 판, 오른쪽에 정리된 멀쩡한 흰색 판이 놓일 빈 공간",
+          "캐릭터(선생님)와 학생 스프라이트가 올라갈 중앙 빈 공간"
+        ],
+        "reservedUiZones": [
+          "상단 바(활동 라벨/타이틀/진행 점 5개)",
+          "화면 중앙 타이틀 글씨 영역",
+          "하단 중앙 CTA 버튼 영역"
+        ],
+        "forbidden": [
+          "말풍선/자막/CTA 버튼 텍스트를 배경에 박지 말 것",
+          "전경 학생 줄·군중 스프라이트를 배경에 합성하지 말 것",
+          "전환/글로우/모션 효과를 배경에 굽지 말 것"
+        ],
+        "devNote": "기획서 '배경으로 사용하되 투명도 올려주세요' 요청 반영 → 런타임에서 살짝 반투명 배경 플레이트로 사용"
+      },
+      "acceptanceCriteria": [
+        "학교 운동장 전경과 운동회 분위기(천막/만국기)가 보인다",
+        "망가진 판과 멀쩡한 판을 놓을 빈 공간이 확보되어 있다",
+        "상단 바/타이틀/하단 CTA 영역이 비어 있어 런타임 UI와 겹치지 않는다",
+        "말풍선·자막·CTA 문구가 배경 이미지에 박혀 있지 않다"
+      ],
+      "exitCondition": {
+        "type": "buttonClick",
+        "buttonText": "100까지의 수로 판 정리하기",
+        "buttonStyle": "glowPulse",
+        "transitionTo": "step-2",
+        "transitionType": "smoothFade"
+      }
+    },
+    {
+      "id": "step-2",
+      "index": 2,
+      "type": "tutorial",
+      "title": "수리가 필요해요 (개념 발견 - 10씩 뛰어 세기와 100의 도입)",
+      "duration": 4,
+      "location": "운동장 중앙",
+      "concept": "낱개를 10개씩 묶어 10씩 뛰어 세고(10~90), 99 다음 100을 도입",
+      "backgroundRef": "assets/backgrounds/playground-board-flip-action-style2.webp",
+      "entryAnimation": {
+        "type": "fadeIn",
+        "target": "board-sorting-area",
+        "description": "판을 정리하는 작업 영역으로 전환"
+      },
+      "stageDirections": [
+        {
+          "no": 1,
+          "source": "p6-1",
+          "timing": "세기 시작",
+          "layer": "interactive",
+          "action": "낱개 판 1→10장이 순차 등장. 10장이 되면 10개 묶음판으로 그림 변화",
+          "captionText": "선생님을 도와 판을 정리해 봅시다! / 1, 2, 3, 4, 5, 6, 7, 8, 9",
+          "motion": "boardsAppearThenBundle",
+          "mustShow": true
+        },
+        {
+          "no": 2,
+          "source": "p6-2",
+          "timing": "세기 시작",
+          "layer": "interactive",
+          "action": "문제/입력창(키패드) 등장. '몇 개인가요?'에 10 입력",
+          "captionText": "몇 개 인가요?",
+          "mustShow": true
+        },
+        {
+          "no": 3,
+          "source": "p6-3",
+          "timing": "10씩 세기 진행",
+          "layer": "interactive",
+          "action": "낱개 판이 1개씩 등장할 때 51~59 숫자가 순차적으로 나오고 지워지기 반복",
+          "captionText": "51, 52, 53, 54, 55, 56, 57, 58, 59",
+          "motion": "loopAppearErase",
+          "mustShow": true
+        },
+        {
+          "no": 4,
+          "source": "p6-4",
+          "timing": "10씩 세기 진행",
+          "layer": "interactive",
+          "action": "10개 묶음판이 1개씩 등장할 때마다 드래그앤드랍으로 숫자를 칸에 입력. 10, 20, 30, 40, 50 (5번 실시)",
+          "captionText": "10  20  30  40  50",
+          "mustShow": true
+        },
+        {
+          "no": 5,
+          "source": "p6-5",
+          "timing": "10씩 세기 진행",
+          "layer": "interactive",
+          "action": "낱개 판이 1개씩 등장할 때 51~59 숫자가 나오고 지워짐",
+          "motion": "loopAppearErase",
+          "mustShow": true
+        },
+        {
+          "no": 6,
+          "source": "p6-6",
+          "timing": "60 만들기",
+          "layer": "interactive",
+          "action": "입력창에 60 키패드 입력. 입력하면 낱개 10개가 10개 묶음 1개로 바뀜(10개 묶음 6개로 그림 변경)",
+          "mustShow": true
+        },
+        {
+          "no": 7,
+          "source": "p6-7",
+          "timing": "10씩 세기 진행",
+          "layer": "interactive",
+          "action": "10개 묶음판이 1개씩 등장할 때마다 드래그앤드랍으로 숫자를 칸에 입력. 60, 70, 80, 90 (4번 실시)",
+          "captionText": "60  70  80  90",
+          "mustShow": true
+        },
+        {
+          "no": 8,
+          "source": "p7-1",
+          "timing": "90→99",
+          "layer": "interactive",
+          "action": "낱개 판이 1개씩 등장하며 91~99 숫자가 나오고 지워짐",
+          "captionText": "91, 92, 93, 94, 95, 96, 97, 98, 99",
+          "motion": "loopAppearErase",
+          "mustShow": true
+        },
+        {
+          "no": 9,
+          "source": "p7-2",
+          "timing": "100 도입",
+          "layer": "interactive",
+          "action": "10개 묶음판이 1개 더 등장(이전 낱개 9개가 10개가 되며 10개 묶음판으로 그림 변화)",
+          "motion": "bundleGrow",
+          "mustShow": true
+        },
+        {
+          "no": 10,
+          "source": "p7-3",
+          "timing": "100 도입",
+          "layer": "interactive",
+          "action": "내레이션에 맞춰 입력창 등장. 100을 순차적으로 키패드 입력. 빈 칸의 한글 '백'은 자동 입력되고 내레이션",
+          "captionText": "99보다 1이 더 크면 100이라고 해요 / 100 이라고 쓰고 백 이라고 읽어요",
+          "speechText": "99보다 1이 더 크면 100이라고 해요. 100이라고 쓰고 백이라고 읽어요.",
+          "sound": "narration",
+          "mustShow": true
+        },
+        {
+          "no": 11,
+          "source": "p7-4",
+          "timing": "활동1 마무리",
+          "layer": "audio",
+          "action": "대화창이 오디오로 등장. 캐릭터 'happy' 표정",
+          "speechText": "정말 고마워! 이제 경기를 할 수 있어.",
+          "captionText": "정말 수고했어! 완벽해!",
+          "sound": "narration",
+          "mustShow": true
+        },
+        {
+          "no": 12,
+          "source": "p7-5",
+          "timing": "활동2 도입",
+          "layer": "audio",
+          "action": "내레이션 + 호루라기 효과음. 판 뒤집기 게임 시작 안내",
+          "speechText": "더 많이 뒤집으면 이기는 경기입니다. 시작!",
+          "sound": "whistle",
+          "mustShow": true
+        },
+        {
+          "no": 13,
+          "source": "p7-6",
+          "timing": "활동2 도입",
+          "layer": "ui",
+          "action": "타이틀 글씨 등장",
+          "captionText": "큰 수가 이긴다! 판 뒤집기",
+          "motion": "titleAppear",
+          "mustShow": true
+        }
+      ],
+      "missions": [
+        {
+          "id": "m2-01",
+          "missionNo": 1,
+          "interactionType": "keypadInput",
+          "display": {
+            "sequence": "낱개 1~9 → 10개 묶음",
+            "blinkTarget": true
+          },
+          "hint": {
+            "character": "선생님",
+            "position": "left",
+            "missionLabel": "미션 1",
+            "text": "낱개 10개를 묶으면 몇 개인가요?"
+          },
+          "answer": "10",
+          "feedback": {
+            "correct": {
+              "sound": "correct",
+              "animation": "bundleSnap",
+              "characterEmotion": "praising"
+            },
+            "wrong": {
+              "sound": "wrong",
+              "animation": "bounceBack",
+              "characterEmotion": "encouraging"
+            }
+          }
+        },
+        {
+          "id": "m2-02",
+          "missionNo": 2,
+          "interactionType": "dragAndDrop",
+          "display": {
+            "sequence": "10개 묶음 1~5개 → [10][20][30][40][50]",
+            "blinkTarget": true
+          },
+          "hint": {
+            "character": "선생님",
+            "position": "left",
+            "missionLabel": "미션 2",
+            "text": "10씩 뛰어 세어 칸에 넣어 볼까?"
+          },
+          "options": [
+            "10",
+            "20",
+            "30",
+            "40",
+            "50"
+          ],
+          "answer": "10,20,30,40,50",
+          "feedback": {
+            "correct": {
+              "sound": "correct",
+              "animation": "snapToSlot",
+              "characterEmotion": "praising"
+            },
+            "wrong": {
+              "sound": "wrong",
+              "animation": "bounceBack",
+              "characterEmotion": "encouraging"
+            }
+          }
+        },
+        {
+          "id": "m2-03",
+          "missionNo": 3,
+          "interactionType": "keypadInput",
+          "display": {
+            "sequence": "낱개 51~59 → 60",
+            "blinkTarget": true
+          },
+          "hint": {
+            "character": "선생님",
+            "position": "left",
+            "missionLabel": "미션 3",
+            "text": "59 다음 낱개를 묶으면 몇이 될까?"
+          },
+          "answer": "60",
+          "feedback": {
+            "correct": {
+              "sound": "correct",
+              "animation": "bundleSnap",
+              "characterEmotion": "praising",
+              "characterDialogue": "낱개 10개가 한 묶음이 됐어!"
+            },
+            "wrong": {
+              "sound": "wrong",
+              "animation": "bounceBack",
+              "characterEmotion": "encouraging"
+            }
+          }
+        },
+        {
+          "id": "m2-04",
+          "missionNo": 4,
+          "interactionType": "dragAndDrop",
+          "display": {
+            "sequence": "10개 묶음 6~9개 → [60][70][80][90]",
+            "blinkTarget": true
+          },
+          "hint": {
+            "character": "선생님",
+            "position": "left",
+            "missionLabel": "미션 4",
+            "text": "이어서 10씩 뛰어 세어 볼까?"
+          },
+          "options": [
+            "60",
+            "70",
+            "80",
+            "90"
+          ],
+          "answer": "60,70,80,90",
+          "feedback": {
+            "correct": {
+              "sound": "correct",
+              "animation": "snapToSlot",
+              "characterEmotion": "praising"
+            },
+            "wrong": {
+              "sound": "wrong",
+              "animation": "bounceBack",
+              "characterEmotion": "encouraging"
+            }
+          }
+        },
+        {
+          "id": "m2-05",
+          "missionNo": 5,
+          "interactionType": "keypadInput",
+          "display": {
+            "sequence": "99 → [ ? ]",
+            "blinkTarget": true
+          },
+          "hint": {
+            "character": "선생님",
+            "position": "left",
+            "missionLabel": "미션 5",
+            "text": "99보다 1이 더 큰 수는 무엇일까? 어떻게 읽을까?"
+          },
+          "answer": "100",
+          "readAs": "백",
+          "feedback": {
+            "correct": {
+              "sound": "correct",
+              "animation": "hundredReveal",
+              "characterEmotion": "happy",
+              "characterDialogue": "99보다 1이 더 크면 100이야. '백'이라고 읽어!",
+              "narrationAudio": "hundred-read"
+            },
+            "wrong": {
+              "sound": "wrong",
+              "animation": "bounceBack",
+              "characterEmotion": "encouraging"
+            }
+          }
+        }
+      ],
+      "assetPrompt": {
+        "sceneType": "base-background",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-board-flip-action-style2.webp",
+        "mustInclude": [
+          "운동장 배경(흙 트랙, 학교 건물 일부) 위 정리 작업 영역",
+          "낱개 판과 10개 묶음판을 올려 정렬할 빈 격자/칸 영역",
+          "키패드와 입력창, 숫자 칸이 올라갈 빈 하단 공간"
+        ],
+        "reservedUiZones": [
+          "상단 바",
+          "낱개판/묶음판 정렬 격자 영역",
+          "하단 키패드·입력창 영역",
+          "좌측 힌트(선생님) 영역"
+        ],
+        "forbidden": [
+          "판 위 숫자(10,20,…)를 배경에 박지 말 것 - 런타임 텍스트",
+          "키패드·입력창·말풍선을 배경에 합성하지 말 것"
+        ]
+      },
+      "acceptanceCriteria": [
+        "낱개판과 10개 묶음판을 정렬할 빈 칸이 보인다",
+        "키패드/입력창이 들어갈 하단 공간이 비어 있다",
+        "수 텍스트(10·20·…·100)와 한글 '백'이 배경에 박혀 있지 않다",
+        "좌측 선생님 힌트 공간과 본문이 겹치지 않는다"
+      ],
+      "completionScene": {
+        "backgroundRef": "assets/backgrounds/playground-cleanup-complete.webp",
+        "characterEmotion": "happy",
+        "dialogue": "정리해줘서 고마워요! 덕분에 경기를 할 수 있어요. 고마워요.",
+        "audio": "thanks-organizing",
+        "assetTodo": "정리 완료(신규) 배경: 100까지 세어 판을 다 정리한 뒤, 파랑/흰색 묶음판이 운동장 바닥에 가지런히 쌓여 정렬된 장면. 이 차시의 기존 캐릭터와 동일하게 '친근한 남자 체육 선생님'(흰색 카라 폴로 셔츠에 파란 트림, 목에 호루라기 lanyard, 남색 트랙바지, 흰 운동화, 짧은 머리)이 가운데에서 흐뭇하게 감사 인사. 파랑/흰색 체육복을 입은 아이들이 양옆에 둘러서서 박수. 참조 배경(운동회 장면)과 캐릭터·화풍 일치. 생성 전까지 playground-board-flip-complete-style2.png로 폴백."
+      },
+      "exitCondition": {
+        "type": "allMissionsComplete",
+        "characterDialogue": "정리해줘서 고마워요! 덕분에 경기를 할 수 있어요. 고마워요.",
+        "buttonText": "큰 수가 이긴다! 판 뒤집기 시작!",
+        "transitionTo": "step-3",
+        "transitionType": "smoothFade"
+      }
+    },
+    {
+      "id": "step-3",
+      "index": 3,
+      "type": "problemBank",
+      "title": "수리로 해결해요 (수의 크기 비교 게임)",
+      "duration": 6,
+      "background": {
+        "ref": "assets/backgrounds/playground-board-flip-action-style2.webp",
+        "startRef": "assets/backgrounds/playground-board-flip-start-style2.webp",
+        "progressRef": "assets/backgrounds/playground-board-flip-progress-style2.webp",
+        "returnRef": "assets/backgrounds/playground-board-flip-return-style2.webp",
+        "whiteWinRef": "assets/backgrounds/playground-board-flip-white-win-style2.webp",
+        "blueWinRef": "assets/backgrounds/playground-board-flip-blue-win-style2.webp",
+        "endRef": "assets/backgrounds/playground-board-flip-complete-style2.webp",
+        "altRef": "assets/backgrounds/playground-ball-throw-court-style2.webp",
+        "actionRef": "assets/backgrounds/playground-ball-throw-action-style2.webp",
+        "finishRef": "assets/backgrounds/playground-ball-throw-finish-style2.webp",
+        "ballThrowBlueWinRef": "assets/backgrounds/playground-ball-throw-blue-win-style2.webp",
+        "ballThrowWhiteWinRef": "assets/backgrounds/playground-ball-throw-white-win-style2.webp",
+        "cheerScoreRef": "assets/backgrounds/playground-cheer-score-style2.webp",
+        "victoryRef": "assets/backgrounds/playground-ball-throw-victory-style2.webp",
+        "animation": "none",
+        "devNote": "경기 배경음(경기하는 소리)은 자동 시작하지 않고, 각 경기 '시작!' 안내 뒤 player-ext에서 재생한다. 문제·결과 화면에서는 정지."
+      },
+      "entryAnimation": {
+        "type": "gameStart",
+        "text": "큰 수가 이긴다! 판 뒤집기",
+        "sound": "whistle"
+      },
+      "ruleIntro": [
+        {
+          "scene": "rule-blue",
+          "bg": "assets/backgrounds/playground-board-flip-rule-blue-style2.webp",
+          "fallbackBg": "assets/backgrounds/playground-board-flip-blue-win-style2.webp",
+          "speaker": "teacher",
+          "text": "첫 번째 경기는 판 뒤집기입니다. 그런데, 파란색 판이 많으면 파란색 팀이 이겨요.",
+          "audio": "board-rule-blue",
+          "assetTodo": "판 뒤집기 규칙 안내(파랑) 배경: 운동장 판 뒤집기 코트에 파란색 판이 흰색 판보다 눈에 띄게 더 많이 깔려 있고, 파란색 체육복(흰 상의+파란 조끼, 남색 반바지) 학생들이 두 팔을 번쩍 들고 만세하며 환호. 친근한 남자 체육 선생님이 함께 있음. 흰색 팀은 옆에서 아쉬워함. blue-win 배경과 동일 화풍·구도."
+        },
+        {
+          "scene": "rule-white",
+          "bg": "assets/backgrounds/playground-board-flip-rule-white-style2.webp",
+          "fallbackBg": "assets/backgrounds/playground-board-flip-white-win-style2.webp",
+          "speaker": "teacher",
+          "text": "흰색 판이 많으면 흰색 팀이 이겨요.",
+          "audio": "board-rule-white",
+          "assetTodo": "판 뒤집기 규칙 안내(흰색) 배경: 같은 코트에 이번엔 흰색 판이 파란색 판보다 눈에 띄게 더 많이 깔려 있고, 흰색 체육복(흰 상의, 남색 반바지) 학생들이 두 팔을 번쩍 들고 만세하며 환호. 친근한 남자 체육 선생님이 함께 있음. 파란색 팀은 옆에서 아쉬워함. white-win 배경과 동일 화풍·구도."
+        }
+      ],
+      "firstGamePrompt": {
+        "text": "첫 번째 경기는 무슨 색 판이 더 많을까요?",
+        "audio": "board-which-color-more",
+        "sfx": "whistle"
+      },
+      "progressUI": {
+        "type": "progressBar",
+        "position": "top-center",
+        "label": "운동회 경기 ({current}/4)"
+      },
+      "totalProblems": 4,
+      "algorithm": "fixed-then-random",
+      "stageDirections": [
+        {
+          "no": 1,
+          "source": "p8-1",
+          "timing": "1경기(판뒤집기) 진입",
+          "layer": "audio",
+          "action": "학생들이 경기하는 소리 효과음",
+          "sound": "game-ambience",
+          "mustShow": true
+        },
+        {
+          "no": 2,
+          "source": "p8-2",
+          "timing": "1경기 진입",
+          "layer": "ui",
+          "action": "누르면 다른 장면으로 이동하는 버튼",
+          "mustShow": true
+        },
+        {
+          "no": 3,
+          "source": "p8-3",
+          "timing": "1경기 종료/세기",
+          "layer": "audio",
+          "action": "호각 소리",
+          "speechText": "삐~",
+          "sound": "whistle",
+          "mustShow": true
+        },
+        {
+          "no": 4,
+          "source": "p8-4",
+          "timing": "1경기 세기(파란색)",
+          "layer": "interactive",
+          "action": "숫자 키패드 입력창에 80 입력",
+          "captionText": "파란색 판은 몇 개인가요?",
+          "answerValue": "80",
+          "mustShow": true
+        },
+        {
+          "no": 5,
+          "source": "p8-5",
+          "timing": "1경기 세기(흰색)",
+          "layer": "interactive",
+          "action": "숫자 키패드 입력창에 70 입력",
+          "captionText": "흰색 판은 몇 개인가요?",
+          "answerValue": "70",
+          "mustShow": true
+        },
+        {
+          "no": 6,
+          "source": "p9-1",
+          "timing": "1경기 비교",
+          "layer": "interactive",
+          "action": "손가락 모양 반짝임 효과 + '누르기' 대화창. 누르지 않아도 해결 가능, 오답을 누르면 보조 설명창이 자동으로 뜸",
+          "speechText": "누르기",
+          "captionText": "더 큰 수를 누르세요.",
+          "motion": "fingerBlink",
+          "mustShow": true
+        },
+        {
+          "no": 7,
+          "source": "p9-2",
+          "timing": "1경기 비교 힌트",
+          "layer": "interactive",
+          "action": "보조 설명창 등장 + 동시에 80의 8과 70의 7 색이 빨간색으로 바뀜",
+          "captionText": "80은 70보다 10개 묶음의 수가 더 커요",
+          "motion": "highlightTensDigitRed",
+          "mustShow": true
+        },
+        {
+          "no": 8,
+          "source": "p9-3",
+          "timing": "1경기 채점",
+          "layer": "interactive",
+          "action": "정답 '80' 누르면 정답 효과음, 오답 '70' 누르면 오답 효과음(오답 시 보조 설명창 자동, 진행 끝나고 정답 다시 누르기 가능)",
+          "sound": "correct|wrong",
+          "mustShow": true
+        },
+        {
+          "no": 9,
+          "source": "p9-4",
+          "timing": "1경기 결과",
+          "layer": "audio",
+          "action": "교사 오디오로 승리 선언",
+          "speechText": "파란색 팀 승!",
+          "sound": "voice-teacher",
+          "mustShow": true
+        },
+        {
+          "no": 10,
+          "source": "p9-5",
+          "timing": "1경기 결과",
+          "layer": "audio",
+          "action": "함성 소리 '와' + 박수 소리 '짝짝짝' 동시 오디오",
+          "sound": "cheer+clap",
+          "mustShow": true
+        },
+        {
+          "no": 11,
+          "source": "p9-6",
+          "timing": "2경기 진입",
+          "layer": "audio",
+          "action": "'시작!' 소리와 함께 호루라기 효과음",
+          "speechText": "시작!",
+          "sound": "whistle",
+          "captionText": "두 번째 경기",
+          "mustShow": true
+        },
+        {
+          "no": 12,
+          "source": "p9-7 / p10-1",
+          "timing": "2경기 진입",
+          "layer": "audio",
+          "action": "학생들이 경기하는 소리 효과음 → 호각 소리 '삐~'",
+          "sound": "game-ambience, whistle",
+          "mustShow": true
+        },
+        {
+          "no": 13,
+          "source": "p10-2",
+          "timing": "2경기 세기(파란색)",
+          "layer": "interactive",
+          "action": "숫자 입력창에 키패드로 72 입력",
+          "captionText": "파란색 판은 몇 개인가요?",
+          "answerValue": "72",
+          "mustShow": true
+        },
+        {
+          "no": 14,
+          "source": "p10-3",
+          "timing": "2경기 세기(흰색)",
+          "layer": "interactive",
+          "action": "숫자 입력창에 키패드로 74 입력",
+          "captionText": "흰색 판은 몇 개인가요?",
+          "answerValue": "74",
+          "mustShow": true
+        },
+        {
+          "no": 15,
+          "source": "p10-4",
+          "timing": "2경기 비교",
+          "layer": "interactive",
+          "action": "손가락 모양 반짝임 효과 + '누르기' 대화창(누르지 않아도 해결 가능, 오답 시 보조 설명창 자동)",
+          "speechText": "누르기",
+          "captionText": "더 큰 수를 누르세요.",
+          "motion": "fingerBlink",
+          "mustShow": true
+        },
+        {
+          "no": 16,
+          "source": "p10-5",
+          "timing": "2경기 비교 힌트",
+          "layer": "interactive",
+          "action": "보조 설명창 등장 + 동시에 72의 2와 74의 4 색이 파란색으로 바뀜",
+          "captionText": "72는 74보다 낱개의 수가 작아요",
+          "motion": "highlightOnesDigitBlue",
+          "mustShow": true
+        },
+        {
+          "no": 17,
+          "source": "p10-6",
+          "timing": "2경기 채점",
+          "layer": "interactive",
+          "action": "오답 '72' 누르면 오답 효과음, 정답 '74' 누르면 정답 효과음(오답 시 보조 설명창 자동, 끝나고 다시 누르기 가능)",
+          "sound": "correct|wrong",
+          "mustShow": true
+        },
+        {
+          "no": 18,
+          "source": "p11-1",
+          "timing": "2경기 결과",
+          "layer": "audio",
+          "action": "교사 오디오로 승리 선언",
+          "speechText": "흰색 팀 승!",
+          "sound": "voice-teacher",
+          "mustShow": true
+        },
+        {
+          "no": 19,
+          "source": "p11-2,3,4,5",
+          "timing": "3경기 진입",
+          "layer": "audio",
+          "action": "함성+박수 → '시작!'+호루라기 → 학생 경기 소리 → 호각 '삐~'. 화면 '마지막 경기' 타이틀",
+          "sound": "cheer+clap, whistle, game-ambience",
+          "captionText": "마지막 경기",
+          "mustShow": true
+        },
+        {
+          "no": 20,
+          "source": "p12-1",
+          "timing": "3경기 세기",
+          "layer": "interactive",
+          "action": "숫자 입력창에 91 입력",
+          "captionText": "흰색 판은 몇 개인가요?",
+          "answerValue": "91",
+          "mustShow": true,
+          "issue": "⚠️ p12 세기 화면은 흰색=91/파란색=68로 라벨링되었으나, 비교 화면(p12 보조설명·정답)과 p13 결과는 색-팀 매핑이 어긋남. 부록 이슈 참조."
+        },
+        {
+          "no": 21,
+          "source": "p12-2",
+          "timing": "3경기 세기",
+          "layer": "interactive",
+          "action": "숫자 입력창에 68 입력",
+          "captionText": "파란색 판은 몇 개인가요?",
+          "answerValue": "68",
+          "mustShow": true
+        },
+        {
+          "no": 22,
+          "source": "p12-3",
+          "timing": "3경기 비교",
+          "layer": "interactive",
+          "action": "손가락 모양 반짝임 효과 + '누르기' 대화창",
+          "speechText": "누르기",
+          "captionText": "어느 수가 더 큰가요?",
+          "motion": "fingerBlink",
+          "mustShow": true
+        },
+        {
+          "no": 23,
+          "source": "p12-4",
+          "timing": "3경기 비교 힌트",
+          "layer": "interactive",
+          "action": "보조 설명창 등장 + 동시에 91의 9와 68의 6 색이 빨간색으로 바뀜",
+          "captionText": "10개 묶음이 더 많으면 커요!",
+          "motion": "highlightTensDigitRed",
+          "mustShow": true
+        },
+        {
+          "no": 24,
+          "source": "p12-5",
+          "timing": "3경기 채점",
+          "layer": "interactive",
+          "action": "정답 '91' 누르면 정답 효과음, 오답 '68' 누르면 오답 효과음(오답 시 보조 설명창 자동, 끝나고 다시 누르기 가능)",
+          "sound": "correct|wrong",
+          "mustShow": true
+        },
+        {
+          "no": 25,
+          "source": "p12-6 / p13-1,2",
+          "timing": "3경기 결과",
+          "layer": "audio",
+          "action": "호각 '삐~' → 교사 오디오 승리 선언 → 함성+박수",
+          "speechText": "흰색 팀 승!",
+          "sound": "whistle, voice-teacher, cheer+clap",
+          "mustShow": true,
+          "issue": "⚠️ 91이 정답인데 p13 결과는 '흰색 팀 승!'. p12 비교 화면 라벨(파란색 91/흰색 68)과 모순. 부록 이슈 참조."
+        },
+        {
+          "no": 26,
+          "source": "p14 활동2 구분 슬라이드",
+          "timing": "공던지기 진입 전 전환",
+          "layer": "transition",
+          "action": "활동2 진입에 맞춰 상단 UI 좌측 라벨을 '수리로 해결해요'로 변경. 별도 개발 화면 아님.",
+          "mustShow": false,
+          "issue": "⚠️ p14 상단바 라벨이 '수리가 필요해요'로 표기됨(활동2이므로 '수리로 해결해요'가 맞음). 부록 이슈 참조."
+        },
+        {
+          "no": 27,
+          "source": "p15-1",
+          "timing": "공던지기 도입",
+          "layer": "audio",
+          "action": "공 던지기 문제 화면 전 설명 슬라이드. 밝은 배경에서 경기 규칙 대사와 음성을 먼저 송출",
+          "speechText": "이번 경기는 공을 많이 넣는 팀이 이기는 경기입니다. 넣은 공의 수를 비교해 봅시다.",
+          "audio": "ball-throw-count-rule",
+          "sound": "whistle",
+          "mustShow": true
+        },
+        {
+          "no": 28,
+          "source": "p15-2",
+          "timing": "공던지기 도입",
+          "layer": "ui",
+          "action": "대사와 음성이 끝나면 배경을 어둡게 전환하고 타이틀 버튼을 등장",
+          "captionText": "큰 수가 이긴다! 공 던지기",
+          "motion": "titleAppear",
+          "mustShow": true
+        },
+        {
+          "no": 29,
+          "source": "p15-3",
+          "timing": "공던지기 도입",
+          "layer": "cta",
+          "action": "누르면 다른 장면으로 이동하는 버튼",
+          "ctaText": "수의 크기 비교로 선생님 돕기",
+          "mustShow": true
+        },
+        {
+          "no": 30,
+          "source": "p15-4,5",
+          "timing": "공던지기 경기/세기",
+          "layer": "audio",
+          "action": "경기 효과음(함성, 와~ 등) → 호각 '삐~' + 교사 오디오",
+          "speechText": "공은 몇 개가 들어갔을까요?",
+          "sound": "cheer, whistle, voice-teacher",
+          "mustShow": true
+        },
+        {
+          "no": 34,
+          "source": "p16-4",
+          "timing": "공던지기 비교",
+          "layer": "interactive",
+          "action": "손가락 모양 반짝임 효과 + '누르기' 대화창",
+          "speechText": "누르기",
+          "captionText": "어느 팀이 이겼나요?",
+          "motion": "fingerBlink",
+          "mustShow": true
+        },
+        {
+          "no": 35,
+          "source": "p16-5",
+          "timing": "공던지기 부등호 힌트",
+          "layer": "interactive",
+          "action": "보조 설명창 등장 → '>' 등장 → 빨간색 동그라미 등장 → 교사 오디오 → 빨간색 동그라미 삭제",
+          "speechText": "두 수 중 더 큰 수 쪽으로 벌어져요.",
+          "captionText": "더 큰 수   더 작은 수",
+          "sound": "voice-teacher",
+          "mustShow": true
+        },
+        {
+          "no": 36,
+          "source": "p16-6",
+          "timing": "공던지기 부등호 입력",
+          "layer": "interactive",
+          "action": "51~99 사이의 서로 다른 두 수를 무작위 생성하고, 두 수 사이에 알맞은 부등호를 클릭 또는 드래그앤드랍으로 입력",
+          "captionText": "파란색 팀 □□ ( ? ) 흰색 팀 □□",
+          "mustShow": true
+        },
+        {
+          "no": 37,
+          "source": "p17-1",
+          "timing": "공던지기 무작위 반복",
+          "layer": "interactive",
+          "action": "선생님 캐릭터를 클릭하면 보조 설명창 등장(클릭하지 않아도 문제 해결 가능)",
+          "mustShow": true
+        },
+        {
+          "no": 38,
+          "source": "p17-2",
+          "timing": "공던지기 무작위 반복",
+          "layer": "interactive",
+          "action": "무작위 문제 방식으로 부등호 비교 문제를 3문제 출제. 십의 자리와 일의 자리는 서로 다른 색으로 표시하고, 두 수는 같지 않게 생성",
+          "mustShow": true
+        },
+        {
+          "no": 39,
+          "source": "p17-3",
+          "timing": "공던지기 수배열표(유형 B: 응원 점수)",
+          "layer": "interactive",
+          "action": "51~100 수배열표를 최대 크기로 확장. 무작위 빈칸 4개(51~99) + 고정 빈칸 1개(100)를 비움. 지금 풀 빈칸만 반짝임/색 변경으로 눈에 띄게 표시하고, 작은 수 → 큰 수 순서로 순차 진행",
+          "captionText": "수의 순서에 알맞게 쓰세요 (51~100 배열표, 빈칸 5개=무작위 4+고정 100)",
+          "mustShow": true
+        },
+        {
+          "no": 40,
+          "source": "p17-4",
+          "timing": "공던지기 표 채점(응원 점수)",
+          "layer": "interactive",
+          "action": "빈 칸에 키패드로 입력. 정답/오답 효과음. 정답마다 입력한 수만큼 팀 응원 점수를 크게 띄우고 함성·박수로 응원(무작위 4칸: 청→백→청→백, 고정 100칸: 청팀 100점→백팀 100점). 같은 문제를 3번 틀리면 자동으로 결과값 나옴",
+          "sound": "correct|wrong|cheer|clap",
+          "mustShow": true
+        },
+        {
+          "no": 41,
+          "source": "p17-5",
+          "timing": "활동2 마무리",
+          "layer": "audio",
+          "action": "교사 내레이션 + 함성 효과음",
+          "speechText": "이긴 점수와 응원 점수를 더하여, 파란색 팀, 흰색 팀 모두 승리!",
+          "sound": "cheer",
+          "captionText": "모두 승리!",
+          "mustShow": true
+        },
+        {
+          "no": 42,
+          "source": "p17-6",
+          "timing": "활동2 마무리",
+          "layer": "ui",
+          "action": "타이틀 글씨 등장(5번 효과와 동시)",
+          "captionText": "모두 승리!",
+          "motion": "titleAppear",
+          "mustShow": true
+        },
+        {
+          "no": 43,
+          "source": "p17-7",
+          "timing": "활동2 마무리",
+          "layer": "audio",
+          "action": "교사 내레이션",
+          "speechText": "고마워. 덕분에 운동회를 잘할 수 있었어.",
+          "sound": "narration",
+          "mustShow": true
+        }
+      ],
+      "rounds": [
+        {
+          "no": 1,
+          "label": "수의 크기 비교하기",
+          "type": "sizeComparison",
+          "blue": 80,
+          "white": 70,
+          "answer": 80,
+          "winner": "파란색 팀",
+          "hint": "80은 70보다 10개 묶음의 수가 더 커요",
+          "highlight": {
+            "digit": "tens",
+            "color": "red"
+          },
+          "interactionType": "tapLarger",
+          "resultNarrationAudio": "blue-team-win"
+        },
+        {
+          "no": 2,
+          "label": "수의 크기 비교하기",
+          "type": "sizeComparison",
+          "blue": 72,
+          "white": 74,
+          "answer": 74,
+          "winner": "흰색 팀",
+          "hint": "72는 74보다 낱개의 수가 작아요",
+          "highlight": {
+            "digit": "ones",
+            "color": "blue"
+          },
+          "interactionType": "tapLarger",
+          "resultNarrationAudio": "white-team-win"
+        },
+        {
+          "no": 3,
+          "label": "수의 크기 비교하기",
+          "type": "sizeComparison",
+          "blue": 68,
+          "white": 91,
+          "answer": 91,
+          "winner": "흰색 팀",
+          "hint": "10개 묶음이 더 많으면 커요!",
+          "highlight": {
+            "digit": "tens",
+            "color": "red"
+          },
+          "interactionType": "tapLarger",
+          "issue": "⚠️ 원본 p12 세기/비교 화면의 색-팀 라벨이 서로 어긋남. blue/white 매핑은 p13 결과('흰색 팀 승!')에 맞춰 91=흰색으로 보정함. 기획 검수 필요.",
+          "resultNarrationAudio": "white-team-win"
+        }
+      ],
+      "starCriteria": {
+        "3stars": {
+          "minCorrect": 4
+        },
+        "2stars": {
+          "minCorrect": 2
+        },
+        "1star": {
+          "minCorrect": 0
+        }
+      },
+      "ruleBlueAssetPrompt": {
+        "sceneType": "composed-scene",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-board-flip-rule-blue-style2.webp",
+        "mustInclude": [
+          "운동장 판 뒤집기 코트(흰 라인 흙 코트)에 격자로 깔린 판들",
+          "파란색 판이 흰색 판보다 확연히 더 많이(약 2:1) 깔린 상태 — 규칙 학습의 핵심",
+          "파란색 체육복(흰 상의+파란 조끼, 남색 반바지) 학생들이 두 팔을 번쩍 들고 만세하며 환호",
+          "친근한 남자 체육 선생님(흰 카라 폴로+파란 트림, 호루라기 lanyard, 남색 트랙바지)이 함께 서 있음",
+          "흰색 팀 학생들은 옆에서 아쉬워하는 표정",
+          "기존 blue-win 배경과 동일한 화풍·구도·색감"
+        ],
+        "reservedUiZones": [
+          "상단 나레이션 말풍선이 올라갈 상단 여백"
+        ],
+        "forbidden": [
+          "판 위 숫자·정답 보기·부등호·자막·말풍선·버튼을 배경에 박지 말 것",
+          "기차역 등 다른 차시 배경 요소"
+        ]
+      },
+      "ruleWhiteAssetPrompt": {
+        "sceneType": "composed-scene",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-board-flip-rule-white-style2.webp",
+        "mustInclude": [
+          "운동장 판 뒤집기 코트(흰 라인 흙 코트)에 격자로 깔린 판들",
+          "흰색 판이 파란색 판보다 확연히 더 많이(약 2:1) 깔린 상태 — 규칙 학습의 핵심",
+          "흰색 체육복(흰 상의, 남색 반바지) 학생들이 두 팔을 번쩍 들고 만세하며 환호",
+          "친근한 남자 체육 선생님(흰 카라 폴로+파란 트림, 호루라기 lanyard, 남색 트랙바지)이 함께 서 있음",
+          "파란색 팀 학생들은 옆에서 아쉬워하는 표정",
+          "기존 white-win 배경과 동일한 화풍·구도·색감"
+        ],
+        "reservedUiZones": [
+          "상단 나레이션 말풍선이 올라갈 상단 여백"
+        ],
+        "forbidden": [
+          "판 위 숫자·정답 보기·부등호·자막·말풍선·버튼을 배경에 박지 말 것",
+          "기차역 등 다른 차시 배경 요소"
+        ]
+      },
+      "cheerScoreAssetPrompt": {
+        "sceneType": "composed-scene",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-cheer-score-style2.webp",
+        "mustInclude": [
+          "학교 운동장(운동회) — 마지막 경기 '응원 점수'를 안내하는 장면, 밝고 활기찬 축제 분위기",
+          "파란색 체육복(흰 상의+파란 조끼, 남색 반바지) 학생들과 흰색 체육복(흰 상의, 남색 반바지) 학생들이 두 팔을 번쩍 들고 만세하며 열심히 응원하는 모습 — 양 팀이 함께 환호",
+          "만국기 배너·현수막·풍선 등 운동회 응원 분위기 소품",
+          "화면 중앙~좌측에 안내하는 선생님 캐릭터 스프라이트가 올라갈 넓은 빈 공간(선생님은 배경에 그리지 말 것)",
+          "기존 공 던지기(playground-ball-throw) 배경과 동일한 화풍·구도·색감"
+        ],
+        "reservedUiZones": [
+          "상단 나레이션 말풍선이 올라갈 상단 여백",
+          "중앙~좌측 선생님 스프라이트 자리",
+          "하단 중앙 '응원 점수 채우러 가기!' CTA 버튼 영역"
+        ],
+        "forbidden": [
+          "말풍선·자막·CTA 버튼 텍스트를 배경에 박지 말 것",
+          "전경 선생님(안내 캐릭터) 스프라이트를 배경에 합성하지 말 것 — 런타임 레이어임",
+          "수배열표·숫자판·점수판을 배경에 박지 말 것",
+          "기차역 등 다른 차시 배경 요소"
+        ]
+      },
+      "assetPrompt": {
+        "sceneType": "base-background",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-board-flip-action-style2.webp",
+        "mustInclude": [
+          "운동장 경기장 배경(흰색 라인으로 구획된 흙 코트)",
+          "판 뒤집기용 파란/흰색 판이 깔릴 격자 코트 영역",
+          "좌우 청군/백군 응원석과 '청백전' 분위기(고정 배경 요소)",
+          "캐릭터(선생님)·학생 스프라이트와 입력 UI가 올라갈 빈 공간"
+        ],
+        "reservedUiZones": [
+          "상단 바",
+          "중앙 문제/숫자 입력창 영역",
+          "좌측 보조 설명창 영역",
+          "하단 부등호/선택 버튼 영역"
+        ],
+        "forbidden": [
+          "판 위 숫자·정답 보기·부등호를 배경에 박지 말 것",
+          "전경 학생 줄/군중 스프라이트, 말풍선, 자막을 배경에 합성하지 말 것",
+          "공 던지기 경기장은 altRef로 별도 배경(바구니/공 포함 코트)을 사용"
+        ],
+        "devNote": "공 던지기 라운드는 assets/backgrounds/playground-ball-throw-court-style2.webp(바구니 2개, 알록달록 공 더미가 놓일 빈 코트)를 별도 배경으로 사용"
+      },
+      "acceptanceCriteria": [
+        "판 뒤집기 코트(격자)와 공 던지기 코트(바구니)가 각각 보인다",
+        "청군/백군 응원석 분위기가 배경에 있다",
+        "숫자 입력창·보조 설명창·부등호 버튼이 들어갈 빈 영역이 확보되어 있다",
+        "숫자·보기·부등호·말풍선·자막이 배경 이미지에 박혀 있지 않다"
+      ],
+      "completionReward": {
+        "type": "repairStamp",
+        "animation": "stampBounce",
+        "text": "운동회 경기 도움 완료!"
+      },
+      "exitCondition": {
+        "type": "allProblemsComplete",
+        "transitionTo": "step-4",
+        "transitionType": "smoothFade"
+      }
+    },
+    {
+      "id": "step-4",
+      "index": 4,
+      "type": "outro",
+      "title": "수리 이야기 (실생활 연계 및 완료)",
+      "duration": 3,
+      "stageDirections": [
+        {
+          "no": 0,
+          "source": "p18 활동3 구분 슬라이드",
+          "timing": "step 진입 전 전환",
+          "layer": "transition",
+          "action": "활동3 진입에 맞춰 상단 UI 좌측 라벨을 '수리 이야기'로 변경. 깨끗한 운동장 배경. 별도 개발 화면 아님.",
+          "mustShow": false
+        },
+        {
+          "no": 1,
+          "source": "p19-1,2",
+          "timing": "실생활 연계 순차 진행",
+          "layer": "interactive",
+          "action": "내레이션 오디오 후 선택창 없이 학교 정문 72 찾기 → 신호등 68 찾기 순서로 이어서 진행",
+          "speechText": "수리 이야기. 68, 72을 주변에서 본 적이 있나요?",
+          "captionText": "학교 정문에서 72 찾기 → 신호등에서 68 찾기",
+          "mustShow": true
+        },
+        {
+          "no": 2,
+          "source": "p19-3,4",
+          "timing": "건물번호 연계",
+          "layer": "interactive",
+          "action": "내레이션 + 숫자 71,72,73 순차 등장(수리 초등학교 정문, 건물 번호판 '수리길9번길 72', 주택 A=71 B=72 C=73)",
+          "speechText": "71, 72, 73을 주변에서 찾아봐요. 건물 번호판에 있어요. 71 다음은 72, 그 다음은 73을 주소로 써요.",
+          "captionText": "71  72  73",
+          "mustShow": true
+        },
+        {
+          "no": 3,
+          "source": "p20-1,2,3",
+          "timing": "신호등 연계",
+          "layer": "interactive",
+          "action": "내레이션 + 신호등 숫자 68→67→66 순으로 1씩 줄어듦(건물번호판 '수리길9번길 72', 횡단보도 신호등)",
+          "speechText": "오늘 학교나 집의 건물번호판과 옆 건물의 번호판을 찾아 봅시다. 68은 어디서 봤을까요? 신호등에서 볼 수 있어요. 숫자가 1씩 작아져요.",
+          "captionText": "68 → 67 → 66",
+          "motion": "countdownByOne",
+          "mustShow": true
+        },
+        {
+          "no": 4,
+          "source": "p21-1",
+          "timing": "신호등 안전 연계",
+          "layer": "interactive",
+          "action": "신호등 숫자 66→61 카운트다운. '빨간색 숫자가 1보다 작으면?' → 초록불(10)로 전환 → 안전 지도",
+          "speechText": "숫자가 1씩 작아져요. 빨간색 숫자가 1보다 작으면 어떻게 될까요? 초록불로 바껴요. 길을 건널 때는 손을 들고 안전한지 주위를 봐요.",
+          "motion": "countdownThenGreen",
+          "mustShow": true
+        },
+        {
+          "no": 5,
+          "source": "p22-1,2,3",
+          "timing": "신호등 안전 연계",
+          "layer": "interactive",
+          "action": "이전 화면에서 캐릭터 얼굴만 방향 변경. 내레이션 + 초록불 깜빡임 효과(사람 그림 깜빡, 초록 10→9)",
+          "speechText": "길을 건널 때는 손을 들고 안전한지 주위를 봐요. 그리고 초록불이라도 깜빡이면 건너지 말아요!",
+          "motion": "greenBlink",
+          "mustShow": true
+        },
+        {
+          "no": 6,
+          "source": "p23-1,2",
+          "timing": "차시 완료",
+          "layer": "ui",
+          "action": "수리 완료 효과 + 경쾌한 효과음 + 반짝임('1차시 수리 완료!' 스탬프). 수리 완료 인증 내용 자동 저장",
+          "captionText": "1차시 수리 완료!",
+          "motion": "stampBounce",
+          "sound": "clearFanfare",
+          "mustShow": true
+        }
+      ],
+      "scenes": [
+        {
+          "id": "s4-01",
+          "type": "conceptConnection",
+          "backgroundRef": "assets/backgrounds/playground-peaceful.webp",
+          "characterEmotion": "happy",
+          "characterDialogue": "고마워. 덕분에 운동회를 잘할 수 있었어.",
+          "narration": {
+            "text": "68, 72을 주변에서 본 적이 있나요? 우리 주변에서 100까지의 수를 찾아볼까요?",
+            "audio": "where-seen-68-72",
+            "audioEnabled": true
+          },
+          "sequence": {
+            "type": "orderedScenes",
+            "note": "선택 없이 두 이야기를 이어서 진행.",
+            "sceneRefs": [
+              "s4-02",
+              "s4-03"
+            ]
+          }
+        },
+        {
+          "id": "s4-02",
+          "type": "realLifeScene",
+          "backgroundRef": "assets/backgrounds/school-gate-address.webp",
+          "numberOverlay": [
+            "71",
+            "72",
+            "73"
+          ],
+          "caption": "71 다음은 72, 그 다음은 73을 주소로 써요",
+          "narration": {
+            "text": "71, 72, 73을 주변에서 찾아봐요. 건물 번호판에 있어요.",
+            "audio": "find-71-72-73",
+            "audioEnabled": true
+          },
+          "devNote": "건물 번호판 숫자(71/72/73)는 런타임 오버레이. 배경에는 정문·번호판 틀·주택 A/B/C만 포함."
+        },
+        {
+          "id": "s4-03",
+          "type": "realLifeScene",
+          "backgroundRef": "assets/backgrounds/story-signal-68.webp",
+          "numberOverlay": [
+            "68",
+            "67",
+            "66",
+            "...",
+            "61",
+            "초록 10",
+            "초록 9"
+          ],
+          "caption": "신호등 숫자가 1씩 작아져요 / 초록불이라도 깜빡이면 건너지 말아요!",
+          "narration": {
+            "text": "68은 신호등에서 볼 수 있어요. 숫자가 1씩 작아져요. 길을 건널 때는 손을 들고 안전한지 주위를 봐요. 초록불이라도 깜빡이면 건너지 말아요!",
+            "audio": "traffic-signal-68",
+            "audioEnabled": true
+          },
+          "devNote": "신호등 카운트다운 숫자와 초록불 깜빡임은 런타임 효과. 배경에는 신호등 기둥·횡단보도·거리만 포함."
+        }
+      ],
+      "clearSequence": [
+        {
+          "no": 1,
+          "type": "stamp",
+          "text": "1차시 수리 완료!",
+          "animation": "stampBounce",
+          "sound": "clearFanfare"
+        },
+        {
+          "no": 2,
+          "type": "certificate",
+          "description": "완료 화면에서 [인증서 다운로드]로 이름을 적은 수리 인증서 PNG를 저장",
+          "sound": "clearFanfare"
+        },
+        {
+          "no": 3,
+          "type": "rewardHighlight",
+          "description": "우측 상단 수리 완료 도장 반짝이며 1/5 고정"
+        }
+      ],
+      "assetPrompt": {
+        "sceneType": "base-background",
+        "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+        "styleRef": "assets/style/style-sheet.png",
+        "targetAsset": "assets/backgrounds/playground-peaceful.webp",
+        "mustInclude": [
+          "깨끗하게 정리된 학교 운동장(흙 트랙, 흰색 라인, 학교 건물)",
+          "스탬프/완료 연출과 인증서 다운로드 버튼이 올라갈 빈 중앙 공간"
+        ],
+        "reservedUiZones": [
+          "상단 바",
+          "중앙 완료 스탬프 영역",
+          "하단 인증서 다운로드 버튼 영역"
+        ],
+        "forbidden": [
+          "'1차시 수리 완료!' 스탬프 텍스트를 배경에 박지 말 것",
+          "인증서 다운로드 버튼을 배경에 합성하지 말 것"
+        ],
+        "extraAssets": [
+          {
+            "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+            "styleRef": "assets/style/style-sheet.png",
+            "targetAsset": "assets/backgrounds/school-gate-address.webp",
+            "mustInclude": [
+              "실제 초등학교와 유사한 수리 초등학교 정문(사각 기둥, 철제 교문, 낮은 담장)",
+              "운동장과 3~4층 학교 건물",
+              "벚꽃/거리 분위기",
+              "건물 번호판 틀(숫자 비움)"
+            ],
+            "forbidden": [
+              "71/72/73 숫자를 배경에 박지 말 것 - 런타임 오버레이",
+              "큰 아치형 대문이나 사립학교풍 장식 정문을 만들지 말 것"
+            ]
+          },
+          {
+            "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+            "styleRef": "assets/style/style-sheet.png",
+            "targetAsset": "assets/backgrounds/story-school-gate-72.webp",
+            "mustInclude": [
+              "실제 초등학교와 유사한 정문(사각 기둥, 철제 교문, 낮은 담장)",
+              "운동장과 학교 건물",
+              "오른쪽 정문 기둥 또는 담장에 파란 번호판과 흰색 숫자 72",
+              "벚꽃과 등교하는 학생들"
+            ],
+            "forbidden": [
+              "상단 타이틀/버튼/자막/말풍선을 배경에 박지 말 것",
+              "71/73 숫자를 배경에 박지 말 것",
+              "큰 아치형 대문이나 사립학교풍 장식 정문을 만들지 말 것"
+            ]
+          },
+          {
+            "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+            "styleRef": "assets/style/style-sheet.png",
+            "targetAsset": "assets/backgrounds/story-signal-68.webp",
+            "mustInclude": [
+              "학교 앞 보행자 신호등 클로즈업",
+              "빨간 정지 사람 표시",
+              "빨간 LED 숫자 68",
+              "중간 렌즈는 꺼진 상태"
+            ],
+            "forbidden": [
+              "초록 보행자 표시를 넣지 말 것",
+              "67/66/25/10 숫자를 배경에 박지 말 것",
+              "상단 타이틀/버튼/자막/말풍선을 배경에 박지 말 것"
+            ]
+          },
+          {
+            "style": "@artDirection 상속 — 2D 벡터, 초등 교과서풍, 따뜻한 파스텔, 플랫 셰이딩, 균일 외곽선",
+            "styleRef": "assets/style/style-sheet.png",
+            "targetAsset": "assets/backgrounds/story-signal-green-10.webp",
+            "mustInclude": [
+              "학교 앞 보행자 신호등 클로즈업",
+              "초록 보행자 표시",
+              "초록 LED 숫자 10",
+              "위쪽 렌즈는 꺼진 상태"
+            ],
+            "forbidden": [
+              "25 숫자를 배경에 박지 말 것",
+              "68/67/66/9 숫자를 배경에 박지 말 것",
+              "빨간 정지 사람 표시를 넣지 말 것",
+              "상단 타이틀/버튼/자막/말풍선을 배경에 박지 말 것"
+            ]
+          }
+        ]
+      },
+      "acceptanceCriteria": [
+        "정리된 운동장과 완료 스탬프 공간이 보인다",
+        "학교 정문/건물 번호판 틀과 신호등 틀이 숫자 없이 비어 있다(숫자는 런타임)",
+        "완료 스탬프·인증서 다운로드 버튼이 배경에 박혀 있지 않다"
+      ]
+    }
+  ],
+  "trophyCriteria": {
+    "gold": {
+      "minPercent": 80,
+      "message": "완벽한 수리력이에요! 🏆",
+      "emoji": "🏆"
+    },
+    "silver": {
+      "minPercent": 50,
+      "message": "정말 잘 해냈어요! 🥈",
+      "emoji": "🥈"
+    },
+    "bronze": {
+      "minPercent": 0,
+      "message": "멋지게 해냈어요! 🥉",
+      "emoji": "🥉"
+    }
+  }
+}

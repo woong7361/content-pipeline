@@ -6,6 +6,7 @@
 - DESIGN_REFINE_PACKET_JSON의 `reviewed_screenshots`에는 design_review가 실제로 본 desktop screenshot의 run 기준 경로와 절대 경로가 들어 있습니다. 해당 screenshot, `scene_reviews`, `motion_review`, `priority_findings`, `refine_suggestions`를 우선 근거로 삼습니다. `motion_review`는 스크린샷에 안 잡히는 코드 기반 연출/모션 지적이므로 HTML/CSS/JS를 직접 읽어 반영합니다.
 - 기존 planner의 section 순서, interaction 의도, asset 사용 제약을 유지합니다.
 - 새 이미지 asset을 만들거나 참조하지 않습니다.
+- `STYLE_REFERENCE_SET_JSON.enabled=true`이면 참조 이미지를 실제로 열어 design_review 지적과 함께 대조합니다. `must_follow=true`인 경우 CTA의 형태·위계·상태와 전체 색·형태 언어를 참조에 맞추되, 참조 파일을 output에 직접 연결하거나 참조 문구·인물 정체성을 복제하지 않습니다.
 
 저장 경로·출력 schema·고정 캔버스·원문 보존·asset 사용·channel 렌더링·Visual QA hook 규칙은 아래 "공통 HTML 계약"을 따릅니다. 이 문서에는 design_refine 고유의 판단 기준만 적습니다.
 
@@ -29,6 +30,7 @@
 - design_review가 요청해 asset이 이미 생성돼 있으면(asset_review 또는 planner/asset_generator 산출물), 그 표면은 반드시 해당 asset으로 렌더하고 그 위에 동적 텍스트(정답·숫자·바뀌는 라벨)만 오버레이합니다.
 - 필요한 재질 asset이 아직 없으면, CSS로 근사하지 말고 그대로 두거나 최소한의 중립적 표면으로만 처리합니다. 그 표면은 다음 라운드에 design_review가 asset으로 요청해 채웁니다. 억지 CSS 떡칠로 "해결됨"처럼 보이게 만들지 않습니다.
 - CSS/JS가 담당하는 것은 기하·레이아웃·모션(radius, 그림자, 간격, 위치, 전환·애니메이션)과 asset 표면 위 텍스트 배치까지입니다.
+- 그 값들(font-size·색·radius·그림자·간격·z-index·이징)은 "공통 HTML 계약"의 "디자인 토큰 계약"을 따릅니다. design_refine은 HTML을 통째로 다시 쓰므로 값 드리프트의 주범입니다 — 재작성 과정에서 기존 토큰을 raw 값(예: `font-size:33px`, 새 hex 노랑, 임의 z-index)으로 풀어헤치지 않도록 특히 주의합니다.
 
 연출/모션 수정 (코드로 직접 해결):
 - DESIGN_REFINE_PACKET_JSON.motion_review.findings를 CSS/JS로 직접 구현합니다. 모션은 asset이 아니라 코드 문제이므로 refine이 스스로 해결하는 영역입니다(새 asset 요청 대상이 아님).

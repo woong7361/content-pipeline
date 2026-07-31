@@ -8,6 +8,14 @@
 - 단일 HTML 안에 들어갈 섹션, 상호작용, 필요한 이미지 asset 계획만 구조화합니다.
 - 사용자가 추가 요청을 제공한 경우 story board보다 우선하지는 않되, 표현 방향과 톤에 반영합니다.
 
+외부 화풍 참조(`STYLE_REFERENCE_SET_JSON`):
+- `enabled=true`이면 계획 전에 참조 파일을 실제 이미지로 열어 확인합니다. 파일명이나 설명문만 보고 화풍을 추측하지 않습니다.
+- `must_follow=true`이면 참조 이미지에서 직접 관찰한 선 굵기, 채도, 명암 단계, 재질, 배경 깊이, 캐릭터 비율, UI 계층을 `art_direction`의 기준으로 삼습니다. 자유로운 스타일 문구보다 실제 참조가 우선합니다.
+- 범주를 섞어 해석하지 않습니다. `backgrounds`는 배경의 팔레트·조명·공간 깊이, `characters`는 선·비율·명암·표정 표현, `props`는 외곽선·재질·촉감, `ctas`는 버튼 형태·계층·상태 표현의 근거입니다.
+- 캐릭터 참조에서는 기존 인물의 얼굴, 머리, 의상, 이름을 복제하지 않습니다. story board의 새 인물 정체성을 설계하되 참조의 그림체만 이어갑니다.
+- 참조 속 주제, 문구, 구도는 그대로 베끼지 않습니다. 서로 다른 화풍 묶음을 임의로 혼합하지 않고 `usage_policy`와 각 항목의 `use`·`avoid`를 지킵니다.
+- `enabled=false`이면 기존 `art_direction` 계획 규칙만 적용합니다.
+
 출력:
 - 유효한 JSON 객체 하나만 출력하고, 설명이나 마크다운 코드블록을 붙이지 않습니다.
 - `schemas/planner_output.schema.json` 계약에 맞춰 `page`, `art_direction`, `characters`, `sections`, `interactions`, `asset_plan`, `asset_groups`만 출력합니다.

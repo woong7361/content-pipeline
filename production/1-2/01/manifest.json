@@ -1,0 +1,959 @@
+{
+  "id": "01",
+  "title": "와글와글, 운동회를 도와요!",
+  "version": "1.0.0",
+  "created": "2026-07-31",
+  "optimized": true,
+  "assets": [
+    {
+      "path": "assets/audio/bgm/valleyball_women2.mp3",
+      "type": "mp3",
+      "role": "bgm",
+      "size": 120730,
+      "originalSize": 201214,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/028_예~YEAH!.mp3",
+      "type": "mp3",
+      "role": "narration",
+      "size": 27630,
+      "originalSize": 54587,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take1-12_아이고, 판이 망가졌어ㅜ... 어쩌지_2026-07-08.mp3",
+      "sourcePath": "assets/audio/narration/Take1-12_아이고, 판이 망가졌어ㅜ... 어쩌지_2026-07-08.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 41109,
+      "originalSize": 296396,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take1-2_오늘은 체육대회를 하는 날입니다~~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take1-2_오늘은 체육대회를 하는 날입니다~~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 27630,
+      "originalSize": 197612,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take1-5_68, 72를 주변에서 본 적이 있나요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take1-5_68, 72를 주변에서 본 적이 있나요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 48005,
+      "originalSize": 345788,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take10-1_고마워. 덕분에 운동회를 잘 할 수 있었어_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take10-1_고마워. 덕분에 운동회를 잘 할 수 있었어_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 42049,
+      "originalSize": 303452,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take10-1_파란색 판은 몇 개 인가요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take10-1_파란색 판은 몇 개 인가요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 26689,
+      "originalSize": 190556,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take11-1_길을 건널 때는손을 들고 안전한지 주위를 봐요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take11-1_길을 건널 때는손을 들고 안전한지 주위를 봐요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 46125,
+      "originalSize": 332558,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take11-1_더 큰 수를 누르세요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take11-1_더 큰 수를 누르세요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 20107,
+      "originalSize": 141164,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take11-1_선생님!! 저희가 도와드릴게요!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take11-1_선생님!! 저희가 도와드릴게요!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 40169,
+      "originalSize": 289340,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take12-1_10개씩 묶음을 비교해요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take12-1_10개씩 묶음을 비교해요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 21987,
+      "originalSize": 155276,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take12-1_그리고 초록불이라도 깜빡이면 건너지 말아요!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take12-1_그리고 초록불이라도 깜빡이면 건너지 말아요!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 40796,
+      "originalSize": 292868,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take13-1_100이라고 쓰고 백이라고 읽어요_2026-07-08.mp3",
+      "sourcePath": "assets/audio/narration/Take13-1_100이라고 쓰고 백이라고 읽어요_2026-07-08.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 29824,
+      "originalSize": 212606,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take13-1_흰색 판은 몇 개 인가요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take13-1_흰색 판은 몇 개 인가요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 22928,
+      "originalSize": 162332,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take14-1_낱개를 비교해요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take14-1_낱개를 비교해요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 17285,
+      "originalSize": 119996,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take15-1_이번 경기는 공을 많이 넣는 팀이 이기는 경기입니다~ 넣은 공의 수를 비교해 봅시다~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take15-1_이번 경기는 공을 많이 넣는 팀이 이기는 경기입니다~ 넣은 공의 수를 비교해 봅시다~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 76531,
+      "originalSize": 557468,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take16-1_빈 칸에 알맞은 수를 써요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take16-1_빈 칸에 알맞은 수를 써요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 24809,
+      "originalSize": 176444,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take17-1_마지막 경기는 응원 점수입니다~! 열심히 응원하면 점수를 줘요~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take17-1_마지막 경기는 응원 점수입니다~! 열심히 응원하면 점수를 줘요~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 61171,
+      "originalSize": 444572,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take18-1_어느 팀이 이겼나요_2026-07-28.mp3",
+      "sourcePath": "assets/audio/narration/Take18-1_어느 팀이 이겼나요_2026-07-28.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 20107,
+      "originalSize": 141164,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take19-1_부등호는 큰 수 쪽으로 벌어져요_2026-07-28.mp3",
+      "sourcePath": "assets/audio/narration/Take19-1_부등호는 큰 수 쪽으로 벌어져요_2026-07-28.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 26689,
+      "originalSize": 190556,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take19-2_다시생각해봐요_2026-07-28.mp3",
+      "sourcePath": "assets/audio/narration/Take19-2_다시생각해봐요_2026-07-28.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 17285,
+      "originalSize": 119996,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take2-1_경기에 판이 필요해요. 그런데, 판들이 흐트러져 있어서 정리가 필요해요! 낱개를 10개씩_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take2-1_경기에 판이 필요해요. 그런데, 판들이 흐트러져 있어서 정리가 필요해요! 낱개를 10개씩_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 90951,
+      "originalSize": 663308,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take2-1_정말 고마워! 이제 경기를 할 수 있어!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take2-1_정말 고마워! 이제 경기를 할 수 있어!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 42990,
+      "originalSize": 310508,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take2-2_칠십일, 칠십이, 칠십삼을 주변에서 찾아봐요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take2-2_칠십일, 칠십이, 칠십삼을 주변에서 찾아봐요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 44244,
+      "originalSize": 319328,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take3-1_건물 번호판에 있어요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take3-1_건물 번호판에 있어요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 26063,
+      "originalSize": 186146,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take3-1_선생님을 도와 판을 정리해 봅시다!_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take3-1_선생님을 도와 판을 정리해 봅시다!_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 29511,
+      "originalSize": 211724,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take3-1_파란색 팀 승!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take3-1_파란색 팀 승!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 19166,
+      "originalSize": 134108,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take4-1_칠십일 다음은 칠십이, 그 다음은 칠십삼을 주소로 써요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take4-1_칠십일 다음은 칠십이, 그 다음은 칠십삼을 주소로 써요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 49573,
+      "originalSize": 359018,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take4-1_흰색 팀 승!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take4-1_흰색 팀 승!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 18226,
+      "originalSize": 127052,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take4-2_몇개인가요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take4-2_몇개인가요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 14151,
+      "originalSize": 98828,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take5-3_시~~작~~!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take5-3_시~~작~~!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 16031,
+      "originalSize": 112940,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take5-4_정답입니다~~!_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take5-4_정답입니다~~!_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 15091,
+      "originalSize": 105884,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take6-2_정리해줘서 고마워요! 덕분에 경기를 할 수 있어요~! 고마워요~~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take6-2_정리해줘서 고마워요! 덕분에 경기를 할 수 있어요~! 고마워요~~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 57409,
+      "originalSize": 416348,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take6-3_더 많이 뒤집으면 이기는 경기입니다_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take6-3_더 많이 뒤집으면 이기는 경기입니다_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 31391,
+      "originalSize": 225836,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take7-1_공 던지기를 할게요!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take7-1_공 던지기를 할게요!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 22928,
+      "originalSize": 162332,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take7-1_신호등에서 볼 수 있어요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take7-1_신호등에서 볼 수 있어요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 21674,
+      "originalSize": 152630,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take7-4_첫 번째 경기는 판 뒤집기 입니다. 그런데~ 파란색 판이 많으면 파란색 팀이 이겨요~~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take7-4_첫 번째 경기는 판 뒤집기 입니다. 그런데~ 파란색 판이 많으면 파란색 팀이 이겨요~~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 80606,
+      "originalSize": 585692,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take8-1_공은 몇 개가 들어갔을까요_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take8-1_공은 몇 개가 들어갔을까요_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 26689,
+      "originalSize": 190556,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take8-1_흰색 판이 많으면 흰색 팀이 이겨요~_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take8-1_흰색 판이 많으면 흰색 팀이 이겨요~_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 29511,
+      "originalSize": 211724,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take8-2_숫자가 일씩 작아져요_2026-07-08.mp3",
+      "sourcePath": "assets/audio/narration/Take8-2_숫자가 일씩 작아져요_2026-07-08.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 25122,
+      "originalSize": 179090,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take9-1_모두 승리!_2026-07-06.mp3",
+      "sourcePath": "assets/audio/narration/Take9-1_모두 승리!_2026-07-06.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 13210,
+      "originalSize": 91772,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/narration/Take9-1_첫번째 경기는 무슨 색 판이 더 많을까요_2026-07-22.mp3",
+      "sourcePath": "assets/audio/narration/Take9-1_첫번째 경기는 무슨 색 판이 더 많을까요_2026-07-22.wav",
+      "type": "mp3",
+      "role": "narration",
+      "size": 34526,
+      "originalSize": 247004,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/button-select.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 24495,
+      "originalSize": 62976,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/clap.mp3",
+      "sourcePath": "assets/audio/sfx/clap.wav",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 24809,
+      "originalSize": 176478,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/clear-fanfare.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 41736,
+      "originalSize": 68160,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/clearFanfare.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 41736,
+      "originalSize": 68160,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/correct.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 25436,
+      "originalSize": 65280,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/fade-transition.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 13210,
+      "originalSize": 33024,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/incorrect.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 12897,
+      "originalSize": 32600,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/keypad.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 24495,
+      "originalSize": 62976,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/next-level.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 25436,
+      "originalSize": 65280,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/stamp-slam.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 27630,
+      "originalSize": 71424,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/whistle.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 38288,
+      "originalSize": 77696,
+      "optimized": true
+    },
+    {
+      "path": "assets/audio/sfx/wrong.mp3",
+      "type": "mp3",
+      "role": "sfx",
+      "size": 12897,
+      "originalSize": 32600,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-action-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-action-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 250692,
+      "originalSize": 3274648,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-blue-win-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-blue-win-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 228366,
+      "originalSize": 2572015,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-court-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-court-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 218146,
+      "originalSize": 3051619,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-finish-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-finish-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 229432,
+      "originalSize": 3385472,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-victory-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-victory-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 252278,
+      "originalSize": 3564970,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-ball-throw-white-win-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-ball-throw-white-win-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 209994,
+      "originalSize": 2506822,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-action-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-action-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 240960,
+      "originalSize": 3448801,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-blue-win-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-blue-win-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 254484,
+      "originalSize": 2510740,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-complete-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-complete-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 242028,
+      "originalSize": 3447931,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-progress-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-progress-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 206174,
+      "originalSize": 3291122,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-return-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-return-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 207536,
+      "originalSize": 3256206,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-rule-blue-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-rule-blue-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 258218,
+      "originalSize": 2562833,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-rule-white-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-rule-white-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 236282,
+      "originalSize": 2492099,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-start-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-start-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 248936,
+      "originalSize": 2471023,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-flip-white-win-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-board-flip-white-win-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 218662,
+      "originalSize": 3300235,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-board-help-intro-style2-no-blur.webp",
+      "sourcePath": "assets/backgrounds/playground-board-help-intro-style2-no-blur.png",
+      "type": "webp",
+      "role": "background",
+      "size": 263756,
+      "originalSize": 2624345,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-cheer-score-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-cheer-score-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 244604,
+      "originalSize": 2687020,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-cleanup-complete.webp",
+      "sourcePath": "assets/backgrounds/playground-cleanup-complete.png",
+      "type": "webp",
+      "role": "background",
+      "size": 250322,
+      "originalSize": 2494306,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-peaceful.webp",
+      "sourcePath": "assets/backgrounds/playground-peaceful.png",
+      "type": "webp",
+      "role": "background",
+      "size": 237186,
+      "originalSize": 3004839,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/playground-sports-day-announce-style2.webp",
+      "sourcePath": "assets/backgrounds/playground-sports-day-announce-style2.png",
+      "type": "webp",
+      "role": "background",
+      "size": 222834,
+      "originalSize": 2348478,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/school-front-title.webp",
+      "sourcePath": "assets/backgrounds/school-front-title.png",
+      "type": "webp",
+      "role": "background",
+      "size": 175038,
+      "originalSize": 3790119,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/school-gate-address.webp",
+      "sourcePath": "assets/backgrounds/school-gate-address.png",
+      "type": "webp",
+      "role": "background",
+      "size": 176250,
+      "originalSize": 3092359,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-address-plate-72.webp",
+      "sourcePath": "assets/backgrounds/story-address-plate-72.png",
+      "type": "webp",
+      "role": "background",
+      "size": 66080,
+      "originalSize": 2485202,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-houses-71-72-73.webp",
+      "sourcePath": "assets/backgrounds/story-houses-71-72-73.png",
+      "type": "webp",
+      "role": "background",
+      "size": 176520,
+      "originalSize": 2915819,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-school-gate-72.webp",
+      "sourcePath": "assets/backgrounds/story-school-gate-72.png",
+      "type": "webp",
+      "role": "background",
+      "size": 253446,
+      "originalSize": 2614563,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-signal-68-67-66.webp",
+      "sourcePath": "assets/backgrounds/story-signal-68-67-66.png",
+      "type": "webp",
+      "role": "background",
+      "size": 219578,
+      "originalSize": 3368421,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-signal-68.webp",
+      "sourcePath": "assets/backgrounds/story-signal-68.png",
+      "type": "webp",
+      "role": "background",
+      "size": 143554,
+      "originalSize": 2058407,
+      "optimized": true
+    },
+    {
+      "path": "assets/backgrounds/story-signal-green-10.webp",
+      "sourcePath": "assets/backgrounds/story-signal-green-10.png",
+      "type": "webp",
+      "role": "background",
+      "size": 167882,
+      "originalSize": 2253725,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/encouraging.webp",
+      "sourcePath": "assets/character/encouraging.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 40414,
+      "originalSize": 1594371,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/happy.webp",
+      "sourcePath": "assets/character/happy.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 42362,
+      "originalSize": 1578739,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/idle.webp",
+      "sourcePath": "assets/character/idle.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 40836,
+      "originalSize": 1584635,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/praising.webp",
+      "sourcePath": "assets/character/praising.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 40888,
+      "originalSize": 1569912,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/surprised.webp",
+      "sourcePath": "assets/character/surprised.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 39444,
+      "originalSize": 1577976,
+      "optimized": true
+    },
+    {
+      "path": "assets/character/thinking.webp",
+      "sourcePath": "assets/character/thinking.png",
+      "type": "webp",
+      "role": "character-emotion",
+      "size": 38182,
+      "originalSize": 1566017,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/coach-face.webp",
+      "sourcePath": "assets/ui/coach-face.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 77162,
+      "originalSize": 2216562,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/hint-arrow-green.webp",
+      "sourcePath": "assets/ui/hint-arrow-green.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 37504,
+      "originalSize": 1164066,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/mouse-pointer.webp",
+      "sourcePath": "assets/ui/mouse-pointer.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 123832,
+      "originalSize": 1282321,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/number-rod-ten-white.webp",
+      "sourcePath": "assets/ui/number-rod-ten-white.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 8754,
+      "originalSize": 40664,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/number-rod-ten.webp",
+      "sourcePath": "assets/ui/number-rod-ten.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 5580,
+      "originalSize": 51592,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/number-unit-blue.webp",
+      "sourcePath": "assets/ui/number-unit-blue.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 6856,
+      "originalSize": 57903,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/number-unit-white.webp",
+      "sourcePath": "assets/ui/number-unit-white.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 6512,
+      "originalSize": 46546,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-blue-broken.webp",
+      "sourcePath": "assets/ui/repair-board-blue-broken.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 44084,
+      "originalSize": 669980,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-blue-stack-ten.webp",
+      "sourcePath": "assets/ui/repair-board-blue-stack-ten.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 38686,
+      "originalSize": 1087878,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-blue.webp",
+      "sourcePath": "assets/ui/repair-board-blue.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 11758,
+      "originalSize": 218015,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-white-broken.webp",
+      "sourcePath": "assets/ui/repair-board-white-broken.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 53320,
+      "originalSize": 1285618,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-white-stack-ten.webp",
+      "sourcePath": "assets/ui/repair-board-white-stack-ten.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 41790,
+      "originalSize": 1616273,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-board-white.webp",
+      "sourcePath": "assets/ui/repair-board-white.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 10184,
+      "originalSize": 153322,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/repair-stamp.webp",
+      "sourcePath": "assets/ui/repair-stamp.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 104176,
+      "originalSize": 1242277,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/title-logo.webp",
+      "sourcePath": "assets/ui/title-logo.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 74740,
+      "originalSize": 1207247,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/topic-jelly-count.webp",
+      "sourcePath": "assets/ui/topic-jelly-count.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 36512,
+      "originalSize": 983723,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/topic-jelly-inequality.webp",
+      "sourcePath": "assets/ui/topic-jelly-inequality.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 37126,
+      "originalSize": 947151,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/topic-jelly-number-table.webp",
+      "sourcePath": "assets/ui/topic-jelly-number-table.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 39874,
+      "originalSize": 1111444,
+      "optimized": true
+    },
+    {
+      "path": "assets/ui/topic-jelly-size-compare.webp",
+      "sourcePath": "assets/ui/topic-jelly-size-compare.png",
+      "type": "webp",
+      "role": "ui-component",
+      "size": 38058,
+      "originalSize": 1021979,
+      "optimized": true
+    }
+  ]
+}

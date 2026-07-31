@@ -16,3 +16,4 @@ planner의 설계와 준비된 이미지 asset을 바탕으로, 실행 가능한
 - 교육용 콘텐츠답게 정보 구조, 피드백, 진행감이 분명해야 합니다.
 - section에 `staging_notes`가 있으면 그 연출 의도를 CSS/JS로 구현합니다. 순차 등장은 animation-delay/stagger로, 화면 전환은 duration+easing이 있는 전환으로, 정답/오답 반응은 서로 구분되는 리액션으로 만듭니다. staging_notes는 요소 간 연출 힌트일 뿐이므로 elements/questions의 필수 내용을 대체하지 않습니다.
 - planner와 asset_generator가 의도한 bitmap image asset의 품질과 디테일을 유지합니다. CSS/SVG로 다시 그린 낮은 품질의 대체 이미지를 만들지 않습니다.
+- 디자인 토큰 규칙은 "공통 HTML 계약"의 "디자인 토큰 계약"을 따릅니다. builder는 그 토큰 블록을 `:root`에 **최초로 선언하고**, 팔레트 토큰(`--bg`·`--accent`·`--plate-ink`·`--glow` 등)의 값을 planner `art_direction`의 분위기·팔레트에서 정해 채우는 원천입니다.

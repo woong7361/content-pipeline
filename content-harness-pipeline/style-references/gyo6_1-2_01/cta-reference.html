@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>gyo6 1-2-01 CTA style reference</title>
+  <style>
+    :root {
+      --blue: #2877d8;
+      --blue-dark: #1558a8;
+      --cream: #fff8e8;
+      --brown: #9a6339;
+      --ink: #17375c;
+      --shadow: 0 12px 0 rgba(17, 72, 130, .24), 0 20px 34px rgba(26, 56, 87, .2);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      font-family: "Arial Rounded MT Bold", "Noto Sans KR", sans-serif;
+      color: var(--ink);
+      background: #dff2ff url("./backgrounds/playground-peaceful.png") center / cover no-repeat;
+    }
+
+    .wash {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(220,244,255,.52));
+    }
+
+    .stage {
+      position: relative;
+      width: 1600px;
+      height: 900px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 80px;
+    }
+
+    body[data-scene="intro"] .stage-intro,
+    body[data-scene="activity"] .stage-activity,
+    body[data-scene="final"] .stage-final { display: flex; }
+
+    .sample-board {
+      width: 1180px;
+      min-height: 430px;
+      padding: 56px 70px 64px;
+      border: 8px solid rgba(255,255,255,.88);
+      border-radius: 44px;
+      background: rgba(247, 252, 255, .9);
+      box-shadow: 0 22px 52px rgba(31, 71, 112, .25);
+      text-align: center;
+    }
+
+    h1 { margin: 0 0 18px; font-size: 48px; letter-spacing: -.02em; }
+    p { margin: 0 0 50px; font-size: 27px; color: #55728c; }
+    .cta-row { display: flex; gap: 34px; align-items: center; justify-content: center; }
+
+    button {
+      min-width: 310px;
+      min-height: 98px;
+      padding: 20px 48px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -.02em;
+      cursor: default;
+    }
+
+    .intro-cta {
+      color: var(--blue-dark);
+      border: 6px solid var(--blue);
+      background: linear-gradient(180deg, #fff 0%, #eef8ff 100%);
+      box-shadow: var(--shadow);
+    }
+    .intro-cta.state-hover { transform: translateY(-5px); filter: saturate(1.12); }
+    .intro-cta.state-pressed { transform: translateY(7px); box-shadow: 0 5px 0 rgba(17,72,130,.24); }
+
+    .activity-cta {
+      color: #6f4327;
+      border: 5px solid var(--brown);
+      background: linear-gradient(180deg, #fffdf6, var(--cream));
+      box-shadow: 0 10px 0 rgba(111, 67, 39, .22), 0 17px 28px rgba(86, 56, 33, .16);
+    }
+    .activity-cta::before { content: "✦"; margin-right: 14px; color: #ef9f2d; }
+    .activity-cta.state-hover { transform: translateY(-4px) scale(1.02); background: #fff; }
+    .activity-cta.state-pressed { transform: translateY(6px); box-shadow: 0 4px 0 rgba(111,67,39,.22); }
+
+    .primary {
+      color: #fff;
+      border: 5px solid #1558a8;
+      background: linear-gradient(180deg, #4096ef, #246fc7);
+      box-shadow: 0 10px 0 #1558a8, 0 18px 30px rgba(21,88,168,.24);
+    }
+    .secondary {
+      color: #704628;
+      border: 5px solid var(--brown);
+      background: #fffdf7;
+      box-shadow: 0 10px 0 rgba(111,67,39,.24), 0 18px 30px rgba(86,56,33,.15);
+    }
+    .primary.state-pressed, .secondary.state-pressed { transform: translateY(7px); box-shadow: 0 3px 0 rgba(21,88,168,.3); }
+
+    .state-label {
+      display: block;
+      margin-bottom: 15px;
+      font-size: 21px;
+      font-weight: 800;
+      color: #66839f;
+    }
+  </style>
+</head>
+<body>
+  <div class="wash"></div>
+  <section class="stage stage-intro">
+    <div class="sample-board">
+      <h1>도입 CTA</h1>
+      <p>밝은 흰색 몸체, 파란 테두리, 둥근 실루엣과 눌림 깊이</p>
+      <div class="cta-row">
+        <div><span class="state-label">기본</span><button class="intro-cta">시작하기</button></div>
+        <div><span class="state-label">hover</span><button class="intro-cta state-hover">시작하기</button></div>
+        <div><span class="state-label">pressed</span><button class="intro-cta state-pressed">시작하기</button></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage stage-activity">
+    <div class="sample-board">
+      <h1>활동 전환 CTA</h1>
+      <p>크림색 몸체, 갈색 테두리, 따뜻한 강조와 손으로 누르는 반응</p>
+      <div class="cta-row">
+        <div><span class="state-label">기본</span><button class="activity-cta">다음 활동</button></div>
+        <div><span class="state-label">hover</span><button class="activity-cta state-hover">다음 활동</button></div>
+        <div><span class="state-label">pressed</span><button class="activity-cta state-pressed">다음 활동</button></div>
+      </div>
+    </div>
+  </section>
+  <section class="stage stage-final">
+    <div class="sample-board">
+      <h1>선택·완료 CTA 위계</h1>
+      <p>파란 primary와 밝은 secondary를 형태는 통일하고 색 대비로 구분</p>
+      <div class="cta-row">
+        <div><span class="state-label">primary</span><button class="primary">확인</button></div>
+        <div><span class="state-label">secondary</span><button class="secondary">다시 보기</button></div>
+        <div><span class="state-label">pressed</span><button class="primary state-pressed">확인</button></div>
+      </div>
+    </div>
+  </section>
+  <script>
+    const scene = new URLSearchParams(location.search).get("scene");
+    document.body.dataset.scene = ["intro", "activity", "final"].includes(scene) ? scene : "intro";
+  </script>
+</body>
+</html>

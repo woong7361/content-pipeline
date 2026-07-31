@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 5,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 5
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 4.24
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 0개(목록: 없음). planner의 비어 있지 않은 rendered_text와 문항 prompt·choices·answer·feedback으로 구성한 체크리스트 127개를 각각 grep -cF로 대조했으며 모두 HTML에서 1회 이상 확인됐다. 도입→모양 찾기·세기→덧셈·뺄셈 튜토리얼→무작위 문제→자유 그리기→표지판 이야기→완료 순서와 문항별 정답 처리가 보존됐다. 무작위 문제도 정적 예시를 계약용으로 포함하면서 런타임 피연산자·보기·정답을 같은 값으로 생성한다.",
+    "learning_goal_alignment": "학교 주변의 원·삼각형·사각형 찾기와 개수 세기, 도형 추가·삭제를 통한 10 만들기와 세 수 계산, 같은 원리를 적용하는 무작위 문제, 도형과 색을 이용한 담장 완성 활동이 학습 목표를 직접 다룬다. 표지판 이야기도 기본 도형을 생활 속 안전 의미와 연결하며 벽화 임무가 문제·조작·완료 흐름에 일관되게 결합되어 있다.",
+    "feedback_scaffolding": "피드백이 전혀 없는 문항은 0개다. 모든 문항에 O/X 판정이 있고 세 번째 오답 뒤에는 정답 위치·보기·값이 공개된다. 모양 세기에는 순차 강조, 세 수 계산에는 일부 중간식, 무작위 문제에는 10을 만드는 풀이 단서가 제공된다. 다만 상당수 정답 피드백이 O 또는 '정답입니다.'라는 결과 통보에 머물고, 모양 찾기·세기 및 튜토리얼 오답도 이유 설명보다 대상 강조와 정답 공개에 의존하므로 3점이다.",
+    "interaction_flow_clarity": "상단 단계와 진행 상태, 장면별 CTA, 한 화면 한 문항, 키패드 확인, 오답 누적 후 정답 공개, 그리기 완료 확인으로 기본 순서는 파악할 수 있다. 그러나 여러 대화와 표지판 이야기는 설명 없는 넓은 탭 영역과 작은 진행점에 의존한다. 자유 그리기 완료 CTA의 표시 문구가 실제로 '버튼'이고, 무작위 문제 완료 뒤 풀이 카드 자체가 다음 진행 조작으로 바뀌지만 별도의 다음 문구가 없어 일부 행동을 추측해야 한다.",
+    "functional_integrity": "깨진 필수 기능은 0개다. desktop 브라우저에서 도입, 모양 찾기·세기, 덧셈·뺄셈 튜토리얼, 무작위 문제의 3회 오답 후 정답 공개, 자유 그리기의 예/아니오 확인, 표지판 이야기, 완료 화면까지 도달했다. 인증서 다운로드와 다음 차시·나가기 콜백도 동작했으며 blocking runtime error는 없었다. 다음 차시 대상이 없는 상태의 비활성 처리도 planner 계약과 일치한다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "interaction_flow_clarity"
+  ],
+  "calibration_note": "고정 문자열 체크리스트 127개의 누락·불일치는 0개이며 hard gate 위반도 확인되지 않았다. weighted_total은 4.24로 min_total 4.2 이상이지만 feedback_scaffolding과 interaction_flow_clarity가 각각 3점으로 min_axis 4.0에 미달해 REJECT다. 디자인, asset 적합성, 외부 의존성, tablet/mobile 반응형 문제는 평가에서 제외했다."
+}

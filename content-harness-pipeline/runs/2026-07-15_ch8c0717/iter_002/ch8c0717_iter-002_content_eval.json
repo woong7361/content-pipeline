@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 3,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.38
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 2개: activity1_success의 전환 라벨 '[STEP 2. 수리로 해결해요]'가 HTML에 없고, activity2_type_b의 버튼 라벨 '[확인하기]'가 괄호 없는 '확인하기'로 표시된다. 그 외 저작된 14개 문항의 프롬프트, 객관식 보기, 정답 대응과 주요 대사·완료·보상 텍스트는 원래 순서대로 확인된다.",
+    "learning_goal_alignment": "유형 A는 ‘몇 분 전’ 시각 변환, 유형 B는 걸린 시간과 끝나는 시각 계산, 유형 C와 마무리 퀴즈는 1일·24시간 관계를 직접 다룬다. 시계 선택, 숫자 입력 및 블록 배치도 각 개념의 확인과 적용에 직접 연결된다.",
+    "feedback_scaffolding": "정답 또는 오답 피드백이 없는 문항은 0개다. 다만 대부분의 피드백이 '딩동댕!', '띠익', '다시 생각해보세요', '[시스템 재부팅 완료!]'처럼 결과만 통보하며, 계산 근거나 왜 틀렸는지에 대한 개념적 설명은 제공하지 않는다.",
+    "interaction_flow_clarity": "문항 프롬프트, 보기, 입력칸, 확인 버튼, 진행 게이지와 주요 단계 이동 버튼은 전반적으로 명확하다. 다만 문제 발생 장면은 별도 진행 안내 없이 화면의 임의 지점을 누르거나 6초를 기다려야 튜토리얼로 넘어가므로 전환 행동을 일부 추측해야 한다.",
+    "functional_integrity": "정상 동작하지 않는 필수 기능 2개: 유형 C는 모든 빈칸이 채워지면 자동 판정되어야 하지만 별도의 '확인하기' 선택이 필요하고, 다음 차시 버튼은 9차시 웹페이지 이동 대신 현재 문서의 URL 해시만 변경한다. 주요 학습 문제와 최종 인증서까지의 진행 자체는 가능하다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "desktop 기준 HTML 원문과 planner 계약을 대조했다. 디자인·asset 적합성·반응형 문제는 제외했다. weighted_total 3.38이 최소 4.2보다 낮고 content_fidelity, feedback_scaffolding, functional_integrity가 각각의 min_axis에 미달하여 REJECT다."
+}

@@ -12,6 +12,14 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 - runner가 batch 실행을 위해 일부 asset만 전달할 수 있습니다. 이 경우에도 전달받은 asset만 처리하되, 전체 콘텐츠의 `art_direction`과 `asset_groups` 맥락을 유지합니다.
 - 캐릭터의 정체성은 `characters`가 소유합니다. `asset_plan[].character_id`가 가리키는 `characters[].identity`의 얼굴·헤어·의상·팔레트·비율을 그대로 따르고, 같은 `character_id`의 asset은 포즈가 달라도 반드시 같은 인물로 그립니다.
 
+외부 화풍 참조(`STYLE_REFERENCE_SET_JSON`):
+- `enabled=true`이면 생성 전에 해당 범주의 참조 경로를 실제 이미지로 열어 확인합니다. 설명문만 읽고 처리하지 않습니다.
+- `must_follow=true`이면 실제 참조 이미지의 그림체가 자유로운 스타일 해석보다 우선합니다. 다만 같은 캐릭터의 `identity_context[].reference_image_path`는 인물 정체성에 한해 최우선입니다.
+- 생성 자산마다 가장 관련 있는 작은 묶음만 이미지 생성 참조로 전달합니다. 배경은 `backgrounds` 2~3개, 캐릭터는 `characters` 2~3개와 필요할 때 팔레트용 배경 1개, 소품·타이틀은 `props` 2~3개와 필요할 때 배경 1개를 사용합니다. 관련 없는 범주의 전체 참조를 한 호출에 몰아넣지 않습니다.
+- `ctas`는 HTML 버튼의 모양·계층·상태를 보여 주는 Builder/Design Review 기준입니다. planner가 CTA 자체를 raster asset으로 계획한 경우에만 이미지 생성 참조로 사용합니다.
+- 캐릭터 참조는 선, 비율, 명암, 표정 언어에만 사용합니다. 참조 인물의 얼굴·헤어·의상·이름은 새 캐릭터에 복제하지 않습니다.
+- 참조 속 주제·문구·구도를 복제하지 않고 `usage_policy`와 각 항목의 `use`·`avoid`를 지킵니다. 참조 파일은 읽기 전용이며 생성하거나 덮어쓰지 않습니다.
+
 출력:
 - 유효한 JSON 객체 하나만 출력하고, 설명이나 마크다운 코드블록을 붙이지 않습니다.
 - `schemas/asset_generator_output.schema.json` 계약에 맞춰 `assets`만 출력합니다.
@@ -46,6 +54,7 @@ planner가 정의한 asset plan을 바탕으로, 단일 HTML 화면에서 사용
 금지:
 - planner에 없는 asset을 새로 만들지 않습니다.
 - `identity_context`에 있는 asset을 생성하거나 덮어쓰지 않습니다. 그것들은 참고용이며 이미 존재하는 asset입니다.
+- `STYLE_REFERENCE_SET_JSON`에 있는 파일을 생성 대상에 넣거나 수정·덮어쓰지 않습니다.
 - 같은 `character_id`를 가진 asset을 포즈마다 다른 인물(다른 얼굴형, 다른 머리색, 다른 의상, 다른 피부톤)로 그리지 않습니다.
 - 파일 경로를 `output/assets/` 밖으로 바꾸지 않습니다.
 - 이미지 확장자는 `.png`, `.jpg`, `.jpeg`, `.webp`만 사용합니다.

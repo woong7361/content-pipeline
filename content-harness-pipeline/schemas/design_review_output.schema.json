@@ -311,7 +311,7 @@
     },
     "designFinding": {
       "type": "object",
-      "required": ["severity", "target", "issue", "evidence", "suggested_fix"],
+      "required": ["severity", "target", "issue", "evidence", "suggested_fix", "alignment_offset"],
       "properties": {
         "severity": { "$ref": "#/$defs/severity" },
         "target": {
@@ -321,7 +321,20 @@
         },
         "issue": { "type": "string", "minLength": 1 },
         "evidence": { "type": "string", "minLength": 1 },
-        "suggested_fix": { "type": "string", "minLength": 1 }
+        "suggested_fix": { "type": "string", "minLength": 1 },
+        "alignment_offset": {
+          "type": "object",
+          "description": "표면 정렬 측정. 상호작용 표면 안 텍스트·기호 중심이 표면 시각중심에서 얼마나 벗어났는지 STEP1에서 픽셀로 측정한 값. 정렬과 무관한 finding은 measured=false, 나머지 0.",
+          "required": ["measured", "dx_px", "dy_px", "surface_w", "surface_h"],
+          "properties": {
+            "measured": { "type": "boolean" },
+            "dx_px": { "type": "number" },
+            "dy_px": { "type": "number" },
+            "surface_w": { "type": "number" },
+            "surface_h": { "type": "number" }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     },

@@ -5,6 +5,49 @@ content-harness-pipeline의 버전별 변경 이력이다. 버전은 커밋 메�
 
 ---
 
+## version 0.32 — design_review 픽셀 우선 검수 · 정렬 오프셋 계량 (2026-07-22)
+
+ch8c0718 튜토리얼 화면에서 시계 에셋이 트레이 홈을 일부만 덮고 `[?]`·티켓 글자가 표면 중심에서 어긋났는데
+design_review가 그 씬을 "정확히 결합/중앙 정렬됨"으로 **칭찬하며 통과**시킨 것에서 출발했다.
+
+### 진단 (정정 포함)
+
+- 처음엔 "codex가 스크린샷 경로만 받아 픽셀을 못 본다(blind)"로 단정했으나 **직접 프로브 테스트로 반증**됐다.
+  codex는 `-i` 첨부 없이 경로만으로도 파일을 열어 픽셀을 정확히 읽는다(말풍선 원문·시계 시각·소품·색 전부 정답).
+- 실제 원인은 capability가 아니라 **11씬 136KB 일괄 리뷰의 per-scene satisficing** — 더 눈에 띄는 결함(도장 CSS,
+  잘린 트레이)에 주의를 몰고 tutorial의 ~12px 미세 오프셋은 "정렬됨"으로 러버스탬프. 프롬프트의 면죄부 조항
+  (*"이미지 못 보면 HTML/CSS로 판단"*)이 CSS `place-items:center`에 기대게 해 이를 부추겼다.
+- 교훈: **능력을 코드 경로·출력 스타일로 단정하지 말고 직접 실측한다.** (problem.md `[design-review-no-image-input]`)
+
+### 변경
+
+- **픽셀 우선 검수 절차** (`design_review_system.md`) — 16행 면죄부 조항 제거 → "반드시 각 screenshot을 직접 열어
+  픽셀로 판정, CSS 선언만으로 정렬·덮음 결론 금지". "리뷰 순서"에 STEP 1(씬별 픽셀 전수 검사, 네 축) → STEP 2(소스 보조,
+  픽셀 판정 확정 뒤에만 코드 확인) 절차 삽입. 축3 정렬 항목에 표면 중심 대비 오프셋 px 측정 지시 추가.
+- **정렬 오프셋 계량 필드** (`design_review_model_output.schema.json` + `design_review_output.schema.json`) —
+  `designFinding`에 `alignment_offset{measured, dx_px, dy_px, surface_w, surface_h}` 추가(두 스키마 거울로 일치).
+  모델은 표면별 오프셋을 이 필드에 숫자로 채우고, severity는 그 수치에서 파생하는 방향으로 설계했다.
+- **프롬프트 중복 정리** — 픽셀-우선 원칙(16행/STEP1/STEP2)·`alignment_offset` 지시(STEP1/축3/출력절)·텍스트 경계이탈
+  판정(축3/Asset-internal text/REJECT)의 삼중 반복을 각 1곳+포인터로 통합(지시 내용은 보존).
+
+### 검증 (격리 프롬프트 테스트, scratchpad `test_vision*.py`)
+
+- 원본 프롬프트(cell5)는 tutorial을 findings 0으로 칭찬 → STEP1 지시(cell6·cell8)는 오프셋을 px 좌표로 잡음.
+- `alignment_offset` 반영본(cell9): 전 씬 34개 finding이 `measured=true`로 px 채움. tutorial `[?]` = (-13,-18)px on
+  394×280 → 코드 파생 **6.4% → HIGH**(모델은 medium), 티켓 3개 3.6~3.9% → **MEDIUM**(모델은 low), CSS 도장은
+  `measured=false`로 코드가 건너뜀. **cell7에서 모델이 -14px 재고도 "괜찮다"로 0건 내던 severity 흔들림이 코드 임계값으로 제거됨.**
+- 폐기한 방향: 이미지 `-i` 첨부(효과 없음), HTML 경로화(효과 없음), 코드의 크림-centroid 슬롯 검출(검색창을 박스에
+  앵커해 편향 — 오버레이로 확인).
+
+### 미완 / 미검증
+
+- **B의 px→severity 재계산이 `stages/design_review.py`에 아직 미배선.** 현재 모델 severity가 그대로 나간다
+  (테스트에선 하네스가 대행). 켜기 전 임계값을 과잉플래그 완화(예: 3% mid / 6% high)로 조정하고 재검증할 것.
+- **full run 미검증** — 격리 프롬프트 테스트만 했다. 파이프라인 최종 validation은 스키마 일치로 통과 확인(`verify_pipeline.py`).
+- **비용**: `alignment_offset` 필수화로 리뷰 생성이 ~1.7~2배 느려짐(cell9 642초, design_review timeout 2400초 내라 무방).
+
+---
+
 ## version 0.31 — 원문 보존 · channel 계약 · 텍스트 정책 (2026-07-15)
 
 0.3의 full run 검증에서 드러난 문제들을 잡고, 누적된 피드백 3건을 규칙으로 승격했다.

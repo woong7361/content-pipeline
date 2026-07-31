@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 1,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.24
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 6개: (1) activity1_success의 주변 학생 물음표가 웃는 얼굴로 바뀌는 내용이 없음, (2) 전환 라벨 '[STEP 2. 수리로 해결해요]'가 없음, (3) 유형 A 오답 피드백의 '👆(손가락) 아이콘 2초간 팝업'이 없음, (4) 유형 C 숫자 블록 문항은 모든 칸이 채워지면 자동 판정되어야 하나 별도 '확인하기' 선택을 요구함, (5) activity2_outro 복구 연출 중 전광판 글자가 올바른 시간으로 맞춰지는 내용이 없음, (6) activity3_story의 요리 타이머가 30분을 가리키는 상태가 구현되지 않음. 또한 복구 완료 뒤 등장해야 할 성공 포즈가 장면 시작부터 노출되어 저작 순서와 다르지만, 위 6개 외에 별도 항목으로 중복 계산하지 않았다. 문항 13개의 프롬프트·보기·정답 판정과 주요 대사는 대체로 원문과 일치한다.",
+    "learning_goal_alignment": "튜토리얼의 정각 읽기, 유형 A의 '몇 분 전', 유형 B의 걸린 시간과 끝나는 시각, 유형 C와 마무리 퀴즈의 1일·24시간 관계가 학습 목표를 직접 다룬다. 시계 선택, 숫자 입력과 블록 조작도 해당 개념의 확인과 적용에 연결되어 있다.",
+    "feedback_scaffolding": "13개 문항 모두 정답과 오답에 화면 반응은 존재하지만, 대부분 '딩동댕!', '띠익', '다시 생각해보세요', '[시스템 재부팅 완료!]'처럼 결과만 통보한다. 왜 맞거나 틀렸는지 설명하는 개념 피드백이 사실상 마무리 퀴즈의 '24시간은 1일과 같지!'에만 있으며, 오답 뒤 사고 방법이나 구체적인 다음 행동을 안내하는 발판도 부족하다.",
+    "interaction_flow_clarity": "전체 장면과 문항 순서는 따라갈 수 있고 진행 게이지, 문제 문구, 보기와 입력 영역도 기본 행동을 드러낸다. 다만 문제 발생 장면은 화면 아무 곳이나 선택하거나 자동 대기해야 다음으로 넘어가면서 그 행동이 안내되지 않고, 유형 C는 저작된 자동 판정 흐름과 달리 별도 확인 행동을 추측해야 한다.",
+    "functional_integrity": "정상 동작하지 않는 필수 기능 2개: (1) interaction_type_c_drag는 모든 입력칸이 채워지면 자동 판정해야 하지만 실제로는 '확인하기' 버튼이 필수이고, (2) interaction_next_lesson은 9차시 웹페이지로 라우팅해야 하지만 실제로는 현재 문서의 URL fragment를 '#lesson-9-length'로 변경할 뿐이다. 시작, 주요 문항 입력, 진행도 갱신, 완료 화면과 인증서 저장 흐름 자체에는 도달할 수 있다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "desktop 기준 HTML 원문과 실행 로직을 planner 체크리스트 및 content-html:v4 척도에 대조했다. asset 경로·화풍·배치·palette·반응형 문제는 채점에서 제외했다. content_fidelity 필수 기준 5.0을 충족하지 못하고 세 개의 다른 축도 min_axis 미만이며 weighted_total 2.24가 4.2 미만이므로 REJECT이다."
+}

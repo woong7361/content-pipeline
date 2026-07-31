@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 5,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 1,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.6
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 0개. planner의 문항·보기·정답·비어 있지 않은 feedback·rendered_text로 구성한 140개 체크리스트를 `grep -cF`로 대조한 결과 모두 1회 이상 존재했다. q1~q13의 문항 순서와 정답 판정도 planner와 일치하며, 튜토리얼 성공부터 12문제 수리, 복구, 갤러리, 마무리 퀴즈, 인증서 보상까지 완료 흐름이 보존되었다.",
+    "learning_goal_alignment": "정각 읽기 튜토리얼, ‘몇 분 전’ 시각 변환, 걸린 시간과 끝나는 시각 계산, 오전·오후 및 1일·24시간 관계가 각각 시계 선택, 키패드 입력, 숫자 블록 조작과 직접 연결된다. 편의점·해시계·요리 시간 갤러리와 마지막 회상 문항도 핵심 개념을 실생활에 연결한다.",
+    "feedback_scaffolding": "정오답 반응은 모든 문항에 있으나 대부분 개념적 설명이 없는 결과 신호다. q1~q4 오답은 ‘다시 생각해보세요’, q5~q8과 q9~q12 오답은 문항 반복·흔들림·입력 초기화 중심이고, 정답도 대체로 문항과 답 또는 공통 완료 문구를 제시하는 수준이다. 왜 맞거나 틀렸는지 설명하는 피드백은 사실상 q13의 ‘24시간은 1일’ 관계 확인에 한정되어 대부분 결과 통보 수준이다.",
+    "interaction_flow_clarity": "전체 장면과 문항 순서, 선택·키패드·숫자 블록 조작, 진행 게이지 및 단계 전환은 일관적이다. 다만 여러 장면에서 대사판·정답 피드백·완료 메시지 자체를 클릭해야 계속 진행되지만 화면에 ‘다음’이나 클릭 안내가 없어 사용자가 다음 행동을 추측해야 한다. 숫자 블록의 자동 판정 시점과 두 자리 수 입력 방식도 명시적 화면 안내가 제한적이다.",
+    "functional_integrity": "깨진 필수 기능 1개. 데스크톱 전체 흐름 실행에서 q1~q13 완료, 13/13 기록, 인증서 다운로드와 최종 장면 도달이 확인되었고 blocking runtime error는 0개였다. 그러나 9차시 URL·호스트 콜백·부모 프레임이 없는 독립 실행에서는 `interaction_next_lesson` 버튼이 비활성화되어 planner가 요구한 9차시 웹페이지 즉시 이동을 수행할 수 없다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total은 5×0.28+5×0.22+1×0.20+3×0.18+3×0.12=3.60이다. 총점이 4.2 미만이고 feedback_scaffolding, interaction_flow_clarity, functional_integrity가 각각 min_axis 4.0에 미달한다. 독립 실행에서 필수 다음 차시 interaction에도 도달할 수 없어 REJECT이다."
+}

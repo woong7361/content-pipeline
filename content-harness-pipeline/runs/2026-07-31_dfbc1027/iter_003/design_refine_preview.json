@@ -1,0 +1,122 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-31T14:22:39+09:00",
+  "html_path": "output/index.html",
+  "viewports": [
+    "desktop"
+  ],
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_003/design_refine_preview/desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_section_intro",
+      "path": "iter_003/design_refine_preview/desktop__01_section_intro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_section_shape_find",
+      "path": "iter_003/design_refine_preview/desktop__02_section_shape_find.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_section_arithmetic_tutorial",
+      "path": "iter_003/design_refine_preview/desktop__03_section_arithmetic_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_section_random_problems",
+      "path": "iter_003/design_refine_preview/desktop__04_section_random_problems.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_section_free_drawing",
+      "path": "iter_003/design_refine_preview/desktop__05_section_free_drawing.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_section_math_story",
+      "path": "iter_003/design_refine_preview/desktop__06_section_math_story.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_section_completion",
+      "path": "iter_003/design_refine_preview/desktop__07_section_completion.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "render_checks": {
+    "console_errors": [],
+    "page_errors": [],
+    "request_failures": [],
+    "broken_images": [],
+    "horizontal_overflow": [],
+    "text_clipping": [],
+    "small_touch_targets": [],
+    "overlaps": [],
+    "fixed_overlay_risks": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "div#viewport",
+        "evidence": "Fixed or sticky element covers about 100% of the viewport.",
+        "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+      }
+    ]
+  },
+  "design_review": {
+    "status": "REJECT",
+    "summary": "Visual QA found high-priority design risks.",
+    "card_template_risk": "low",
+    "asset_integration_risk": "low",
+    "interface_affordance_risk": "low",
+    "composition_risk": "high",
+    "evidence": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "composition",
+        "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+        "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "fixed_overlay",
+      "evidence": "div#viewport: Fixed or sticky element covers about 100% of the viewport.",
+      "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "composition",
+      "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+      "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+    }
+  ],
+  "refine_suggestions": [
+    "[desktop] Reduce this persistent UI or make it part of the scrollable scene.",
+    "[desktop] Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+  ]
+}

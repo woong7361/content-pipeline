@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.82
+  },
+  "axis_rationales": {
+    "content_fidelity": "grep -cF로 140개 필수 체크리스트 문자열을 대조한 결과 누락·불일치 12개가 확인됐다: q1~q9와 q11~q12는 prompt의 ** 강조 표기를 포함한 planner 원문이 없고, q10은 `[?]`의 백틱을 포함한 prompt 원문이 없다. 해당 12개 문항의 화면용 일반 텍스트, 모든 보기와 정답, 비어 있지 않은 rendered_text는 존재하며 장면·문항 순서도 일치하지만, deterministic_count 기준에서는 원문 불일치 4개 이상이므로 1점이다.",
+    "learning_goal_alignment": "튜토리얼의 정각 읽기, q1~q4의 ‘몇 분 전’, q5~q8의 걸린 시간과 끝나는 시각, q9~q13의 1일·24시간 관계가 학습 목표를 직접 다룬다. 시계 선택, 키패드 계산, 숫자 블록 입력과 실생활 회상 활동도 해당 개념의 확인과 적용에 연결된다.",
+    "feedback_scaffolding": "13개 문항 모두 정답과 오답에 반응하며 재선택 또는 다음 진행이 가능하다. 그러나 대부분의 피드백은 문항과 정답을 함께 표시하거나 ‘다시 생각해보세요’, ‘시스템 재부팅 완료’를 보여주는 수준으로, 계산 과정이나 왜 해당 답인지에 대한 개념 설명이 부족하다. 모든 문항에 피드백은 있으나 상당수가 결과 중심인 scale 3에 해당한다.",
+    "interaction_flow_clarity": "시작, 도입 대사, 튜토리얼, 세 문제 유형, 복구, 실생활 갤러리, 마무리 퀴즈, 인증서 순서가 명확하다. 활성 입력 표시, 키패드 확인, 오답 재시도, 진행 게이지와 단계별 CTA도 다음 행동을 드러낸다. 다만 별도 계속 버튼 문구가 없는 대화판 클릭과 자동 타이머가 병행되어 일부 장면 전환 방식은 즉시 예측하기 어렵다.",
+    "functional_integrity": "깨진 필수 기능 2개가 확인된다. 첫째, 다음 차시 버튼에는 고정된 9차시 URL이 없고 외부 콜백·부모 프레임·메타데이터·쿼리 경로도 없으면 route-missing으로 종료되어 planner의 즉시 이동이 실행되지 않는다. 둘째, 인증서의 ‘맞힌 문제 수’는 userCorrectCount가 아니라 assisted 문항까지 포함하는 completedCount를 표시하므로, 강제 전환된 오답이 있어도 13/13으로 기록될 수 있다. 그 밖의 필수 학습 입력과 완료 흐름은 코드상 연결되어 있다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "content_fidelity는 화면상 의미의 유사성이 아니라 지정된 grep -cF 원문 대조 결과를 적용했다. 12개 불일치로 content_fidelity가 필수 5.0에 미달하고, feedback_scaffolding과 functional_integrity도 각각 min_axis 4.0 미만이다. weighted_total 2.82도 min_total 4.2에 미달하므로 REJECT다."
+}

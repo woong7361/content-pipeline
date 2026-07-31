@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 1,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.24
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 6개: q5 정답 '[1]시간', q6 정답 '[12]시 [0]분', q8 정답 '[30]분', q9 정답 '[1]일', q10 정답 '[12], [12]', q12 정답 '[24]시간'. 각 문자열의 `grep -cF` 결과는 0이다. 정답 판정 값은 분리된 숫자·단위 형태로 구현되어 의미상 일치하지만, planner 체크리스트 문자열이 HTML 원문에 그대로 존재해야 한다는 결정적 기준에는 미달한다. 나머지 문항·보기·비어 있지 않은 rendered_text와 장면 순서는 확인되었다.",
+    "learning_goal_alignment": "정각 읽기 튜토리얼, ‘몇 분 전’ 시각 변환, 걸린 시간과 끝나는 시각 계산, 오전·오후 및 1일·24시간 관계가 각각 시계 선택, 키패드 입력, 숫자 블록 조작과 직접 연결된다. 갤러리와 마무리 퀴즈도 편의점 운영과 요리 시간 등 실생활 맥락에서 핵심 개념을 다시 적용한다.",
+    "feedback_scaffolding": "정오답 반응 자체가 전혀 없는 문항은 0개지만, 대부분 결과 신호에 머문다. q1~q4의 오답은 '다시 생각해보세요', q5~q8은 흔들림·점프, q9~q12는 입력 초기화·공통 완료 메시지만 제공한다. q13의 정답 피드백만 24시간과 1일의 관계를 설명하며, 나머지는 왜 맞거나 틀렸는지 또는 어떤 개념을 다시 확인해야 하는지 알려주지 않는다.",
+    "interaction_flow_clarity": "장면 순서, 도입 대사, 한 문항씩 진행되는 구조, 조작 유형과 완료 전환은 대체로 이해할 수 있다. 그러나 q5·q6·q8 키패드에는 삭제·초기화 조작이 없고 오답 후 상태 안내도 없어 잘못 입력한 사용자의 다음 행동이 불명확하다. 숫자 블록 문항도 자동 판정 시점과 두 자리 수 입력 방식에 대한 화면 안내가 제한적이다.",
+    "functional_integrity": "깨진 필수 기능 2개: 첫째, q5·q6·q8 키패드는 입력값을 삭제하거나 초기화할 수 없고 오답 판정 후에도 값을 유지하므로 잘못된 숫자를 입력하면 문항 완료가 차단된다. 둘째, 다음 차시 버튼은 9차시 웹페이지로 라우팅하지 않고 현재 문서의 `location.hash`만 `lesson-9`로 변경한다. 따라서 필수 입력 복구와 다음 차시 이동이 의도한 흐름대로 동작하지 않는다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total 2.24로 최소 총점 4.2에 미달하고 content_fidelity, feedback_scaffolding, interaction_flow_clarity, functional_integrity가 각 최소 축 점수에 미달한다. 정답 체크리스트 문자열 6개 누락과 키패드 진행 차단으로 no_missing_required_content 및 required_interactions_reachable 하드 게이트도 충족하지 못한다."
+}

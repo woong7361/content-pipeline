@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>알록달록, 학교 담장 색칠하기</title>
+  <!-- 1-2/01과 동일한 웹폰트(Jua + Noto Sans KR). 실패해도 --font-body로 폴백된다 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="preload" as="image" href="assets/colorful-school-wall-title.png">
+  <link rel="preload" as="image" href="assets/school-wall-repaired.png">
+  <link rel="preload" as="image" href="assets/school-wall-second.png">
+  <link rel="preload" as="image" href="assets/worker-idle.png">
+  <link rel="preload" as="image" href="assets/teacher-idle.png">
+  <link rel="preload" as="image" href="assets/student-idle.png">
+  <link rel="preload" as="image" href="assets/student-volunteer.png">
+  <link rel="preload" as="image" href="assets/activity-cta-body.png">
+  <link rel="preload" as="image" href="assets/completion-cta-body.png">
+  <link rel="preload" as="image" href="assets/school-speech-bubble-body.png">
+  <link rel="preload" as="image" href="assets/tap-hint-hand.png">
+  <style>
+    :root{
+      /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
+      /* 타이포 사다리 (--fs-sm 31px = 본문 기본) */
+      --fs-2xs:24px; --fs-xs:28px; --fs-sm:31px; --fs-md:34px;
+      --fs-lg:38px;  --fs-xl:42px; --fs-2xl:48px; --fs-hero:72px;
+      /* z-index 레이어 */
+      --z-bg:1; --z-scenery:5; --z-content:10; --z-character:12;
+      --z-interactive:20; --z-speech:30; --z-hud:40; --z-effect:60;
+      --z-drawer:70; --z-flash:90;
+      /* 모서리 */
+      --r-none:0; --r-sm:8px; --r-md:22px; --r-pill:999px; --r-circle:50%;
+      /* 모션 */
+      --ease:cubic-bezier(.2,.8,.2,1);        /* 표준 진입/전환 */
+      --ease-out:cubic-bezier(.4,0,.8,.2);    /* 퇴장 */
+      --ease-back:cubic-bezier(.2,.9,.3,1.18);/* 살짝 튕기는 등장 */
+      --dur-fast:.15s; --dur:.45s; --dur-slow:.65s;
+      --delay-glow:.35s; /* 도입 CTA 글로우 지연 */
+      --dur-scene-out:.26s; /* 장면 퇴장 */
+      --dur-scene-in:.42s; /* 장면 진입 */
+      --delay-speech:.14s; /* 캐릭터 뒤 말풍선 등장 */
+      --delay-progress:.30s; /* 말풍선 뒤 진행 표시 */
+      --delay-story-sign-1:0s; /* 수리 이야기 원 표지판 */
+      --delay-story-sign-2:.12s; /* 수리 이야기 사각형 표지판 */
+      --delay-story-sign-3:.24s; /* 수리 이야기 삼각형 표지판 */
+      --delay-completion-title:0s; /* 완료 제목판 공개 */
+      --delay-completion-spark:.18s; /* 완료 반짝임 공개 */
+      --delay-completion-cta-1:.42s; /* 완료 CTA 순차 공개 1 */
+      --delay-completion-cta-2:.54s; /* 완료 CTA 순차 공개 2 */
+      --delay-completion-cta-3:.66s; /* 완료 CTA 순차 공개 3 */
+      /* 그림자 (고도 3단) */
+      --shadow:0 18px 44px rgba(3,29,39,.36);
+      --shadow-press:0 8px 0 var(--ink);
+      --shadow-flat:0 1px 0 var(--ink);
+      --shadow-none:none;
+      --ds-sm:drop-shadow(0 6px 8px rgba(0,0,0,.25));
+      --ds-md:drop-shadow(0 12px 16px rgba(0,0,0,.3));
+      --ds-lg:drop-shadow(0 18px 26px rgba(0,0,0,.38));
+      --filter-hover:brightness(1.06);
+      --filter-glow-sm:drop-shadow(0 0 12px var(--glow));
+      --filter-glow-md:drop-shadow(0 0 18px var(--glow));
+      --filter-glow-lg:drop-shadow(0 0 22px var(--glow)) drop-shadow(0 0 38px var(--accent-bright));
+      --filter-disabled:grayscale(.78) saturate(.2) brightness(.94);
+      --filter-panel-soften:saturate(.82) brightness(1.06); /* 유광 패널을 배경 셀 명암에 가깝게 낮춤 */
+
+      /* ── 팔레트 토큰: art_direction의 맑은 학교 낮 팔레트 ───────── */
+      --bg:#49b9ed;
+      --surface:#1f73c9;
+      --ink:#153f6b;
+      --plate-ink:#173f62;
+      --accent:#ffd84d;
+      --accent-bright:#fff080;
+      --glow:#ffe86a;
+      --cream:#fff8df;
+      --danger:#e65043;
+      --leaf:#67b941;
+      --mint:#5ac8ad;
+      --sand:#efd19b;
+      --purple:#8c68c7;
+      --warm-ink:#7b4626; /* 활동 전환 CTA 참조의 따뜻한 외곽선 */
+      --brown-900:#422006; /* topbar 글자 강조 */
+      --brown-800:#713f12; /* topbar 기본 글자 */
+      /* 1-2/01 시작하기 CTA 실측 색 (getComputedStyle 기준) */
+      --cta-amber-1:#fef08a; --cta-amber-2:#facc15; --cta-amber-3:#eab308; --cta-amber-4:#ca8a04;
+      --cta-amber-edge:rgba(161,98,7,.52);
+      --white:#ffffff;
+      --veil:rgba(255,255,255,.92);
+      --dim:rgba(21,63,107,.45);
+      --clear:rgba(255,255,255,0);
+      /* 1-2/01과 동일한 서체. 01은 html,body,button에 Jua를 걸고 Noto Sans KR은 폴백으로만 쓴다
+         (13번째 줄 style의 Noto Sans KR 선언은 15번째 줄 Jua 선언에 덮여 죽어 있다 — 실측 확인) */
+      --font-body:"Jua","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+      --font-topbar:var(--font-body); /* 01 topbar도 Jua다 */
+      --font-title:var(--font-body);
+    }
+    *{box-sizing:border-box}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:var(--font-body);color:var(--plate-ink);background:var(--bg)}
+    button,input,textarea,select{font:inherit;color:inherit} /* 01과 동일: 폼 요소도 Jua 상속 */
+    #viewport{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+    #stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;overflow:hidden;isolation:isolate;container-type:size;container-name:stage;background:var(--cream)}
+    .scene{position:absolute;inset:0;z-index:var(--z-bg);display:none;opacity:0;overflow:hidden;background:var(--cream)}
+    .scene.active{display:block;opacity:1;animation:sceneIn var(--dur-scene-in) var(--ease) both}
+    .scene.leaving{display:block;animation:sceneOut var(--dur-scene-out) var(--ease-out) both;pointer-events:none}
+    @keyframes sceneIn{from{opacity:0;transform:translateX(36px) scale(.995)}to{opacity:1;transform:translateX(0) scale(1)}}
+    @keyframes sceneOut{from{opacity:1;transform:translateX(0) scale(1)}to{opacity:0;transform:translateX(-28px) scale(.992)}}
+    .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:var(--z-bg)}
+    .shade{position:absolute;inset:0;background:var(--dim);z-index:var(--z-scenery);opacity:.34}
+    .cta,.choice,.key,.tool,.confirm-btn{border:4px solid var(--surface);border-radius:var(--r-pill);background:var(--cream);box-shadow:var(--shadow-press);cursor:pointer;transition:transform var(--dur-fast) var(--ease),filter var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+    .cta:hover,.choice:hover,.key:hover,.tool:hover,.confirm-btn:hover{filter:var(--filter-hover);transform:translateY(-3px)}
+    .cta:active,.choice:active,.key:active,.tool:active,.confirm-btn:active{transform:translateY(7px);box-shadow:var(--shadow-flat)}
+    /* ── 상단 헤더(topbar): 1-2/01과 동일 양식 ───────── */
+    .topbar{font-family:var(--font-topbar);position:absolute;left:0;right:0;top:0;height:56px;z-index:var(--z-hud);display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,1.4cqw,18px);padding:0 clamp(18px,2cqw,26px);background:linear-gradient(180deg,rgba(255,253,244,.94),rgba(255,250,232,.82));backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid rgba(113,63,18,.16);box-shadow:0 4px 14px rgba(66,32,6,.08)}
+    .topbar-left{position:relative;z-index:2;display:flex;align-items:center;gap:clamp(9px,1cqw,14px);min-width:0}
+    .btn-home{height:34px;min-width:98px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 14px 1px 12px;border:1px solid rgba(146,64,14,.22);border-radius:var(--r-pill);background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(255,247,214,.78));color:var(--brown-800);font-size:14px;font-weight:900;line-height:1;text-shadow:0 1px 0 rgba(255,253,230,.9);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 2px 7px rgba(66,32,6,.08);cursor:pointer;transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease,color .15s ease}
+    .btn-home:hover{transform:translateY(-1px);border-color:rgba(146,64,14,.34);background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(254,240,138,.9));color:var(--brown-900);box-shadow:inset 0 1px 0 rgba(255,255,255,.98),0 4px 10px rgba(66,32,6,.12)}
+    .btn-home:active{transform:translateY(0);box-shadow:inset 0 2px 4px rgba(66,32,6,.12)}
+    .btn-home:focus-visible{outline:3px solid rgba(14,165,233,.35);outline-offset:3px}
+    .course-menu-btn{display:inline-flex;align-items:center;gap:8px}
+    .course-menu-btn-label{font-weight:1000}
+    .course-menu-burger{display:inline-flex;flex-direction:column;justify-content:center;gap:3px;width:17px;height:14px}
+    .course-menu-burger i{display:block;height:2.5px;border-radius:2px;background:currentColor}
+    .header-voice-volume-button{position:relative;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;padding:0;border:1px solid rgba(21,158,184,.28);border-radius:var(--r-pill);background:rgba(255,255,255,.5);color:#0b9ec1;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 2px 7px rgba(28,105,122,.1);transition:transform .15s ease,background .15s ease,box-shadow .15s ease}
+    .header-voice-volume-button:hover{transform:translateY(-1px);background:rgba(232,250,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px rgba(28,105,122,.14)}
+    .header-voice-volume-button:focus-visible{outline:3px solid rgba(14,165,233,.35);outline-offset:3px}
+    .header-voice-volume-button[aria-pressed="false"]{color:#9aa7ad;background:rgba(255,255,255,.34)}
+    .header-voice-volume-button[aria-pressed="false"] .volume-wave{opacity:.24}
+    .voice-volume-icon{width:23px;height:23px}
+    .volume-speaker{fill:currentColor}
+    .volume-wave{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round}
+    .step-label{display:inline-flex;align-items:center;flex:0 1 auto;height:34px;max-width:clamp(140px,20cqw,260px);padding:0 0 0 12px;border-left:2px solid rgba(202,138,4,.42);color:var(--brown-800);font-size:14px;font-weight:400;line-height:1;text-shadow:0 1px 0 rgba(255,253,230,.86);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .step-label[hidden]{display:none}
+    .lesson-header-title{position:absolute;left:50%;top:50%;z-index:1;transform:translate(-50%,-50%);display:block;width:max-content;max-width:min(560px,44cqw);padding:0 0 4px;color:var(--brown-800);font-size:clamp(17px,1.5cqw,22px);font-weight:1000;line-height:1.1;text-align:center;text-shadow:0 1px 0 rgba(255,253,230,.9);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+    .lesson-header-title::after{content:"";position:absolute;left:10%;right:10%;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--clear),rgba(234,179,8,.72),var(--clear))}
+    .lesson-bar-reward{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center;width:176px;height:34px;padding:0 12px;border:2px solid rgba(103,201,239,.5);border-radius:var(--r-pill);background:rgba(255,255,255,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 3px 8px rgba(24,39,86,.08);color:#20407a}
+    .lesson-bar{display:flex;align-items:center;gap:8px;width:100%;height:22px}
+    .lesson-bar-track{position:relative;flex:1;height:12px;border-radius:var(--r-pill);background:rgba(24,39,86,.16);overflow:hidden;box-shadow:inset 0 1px 2px rgba(24,39,86,.18)}
+    .lesson-bar-fill{position:absolute;left:0;top:0;height:100%;width:0;border-radius:var(--r-pill);background:linear-gradient(90deg,#5ec1ef,#4c8bff 70%,#4caf6a);transition:width .5s cubic-bezier(.3,.9,.3,1)}
+    .lesson-bar-pct{min-width:32px;text-align:right;font-size:14px;font-weight:1000;font-variant-numeric:tabular-nums;color:#20407a}
+    .hero-title{position:absolute;z-index:var(--z-content);left:230px;right:230px;top:210px;text-align:center;font-size:var(--fs-hero);font-weight:900;color:var(--ink);filter:var(--ds-sm);white-space:pre-line}
+    .sub-title{font-size:var(--fs-2xl)}
+    .title-banner{position:absolute;z-index:var(--z-content);width:980px;height:150px;filter:var(--ds-sm)}
+    .title-banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
+    .title-banner .hero-title{position:relative;left:auto;right:auto;top:auto;width:100%;height:100%;margin:0;padding:28px 64px;display:grid;place-items:center;font-size:var(--fs-2xl);line-height:1.2;filter:none}
+    .cta{min-width:420px;max-width:1120px;min-height:86px;padding:18px 44px;background:var(--surface);color:var(--white);font-size:var(--fs-md);font-weight:900;border-color:var(--ink)}
+    .cta.secondary{background:var(--cream);color:var(--ink)}
+    .cta:disabled{cursor:default;pointer-events:none;filter:var(--filter-disabled);box-shadow:var(--shadow-flat);transform:translateY(7px);opacity:.58;background:var(--sand);color:var(--dim)}
+    .cta.glow{animation:glowOnce var(--dur-slow) var(--ease-back) var(--delay-glow) 2 alternate}
+    @keyframes glowOnce{to{filter:var(--filter-glow-lg);transform:translateX(-50%) scale(1.035)}}
+    .bottom-cta{position:absolute;z-index:var(--z-interactive);left:50%;bottom:70px;transform:translateX(-50%)}
+    .bottom-cta:hover{transform:translateX(-50%) translateY(-3px)}
+    .bottom-cta:active{transform:translateX(-50%) translateY(7px)}
+    #section_global_ui .hero-title{display:none}
+    #section_global_ui .overview{position:absolute;z-index:var(--z-content);left:140px;top:292px;width:1640px;height:620px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:161px 72px 163px}
+    #section_global_ui .overview-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:var(--z-bg);filter:var(--filter-panel-soften) var(--ds-sm);pointer-events:none}
+    #section_global_ui .overview-card{position:relative;z-index:var(--z-content);min-height:0;padding:22px 42px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-sm);line-height:1.3;font-weight:900;white-space:pre-line}
+    #section_global_ui .overview-card.current{transform:none}
+    #section_global_ui .overview-card:nth-of-type(3){transform:translateX(20px)}
+    #menuDrawer .overview{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    #menuDrawer .overview-card{min-height:150px;padding:20px;border:4px solid var(--surface);border-radius:var(--r-md);background:var(--cream);font-size:var(--fs-sm);font-weight:900;cursor:pointer}
+    #section_global_ui .bottom-cta{bottom:28px}
+    /* ── 타이틀 화면: 1-2/01의 #introStartWrap을 그대로 이식. 1366 기준 값 × (1920/1366 = 1.4056) ── */
+    #stage.title-mode .topbar{opacity:0;pointer-events:none} /* 01: #app.title-mode .topbar */
+    #introStartWrap{position:absolute;z-index:var(--z-interactive);left:0;right:0;top:50%;width:1068px;margin:0 auto;translate:0 -50%;display:flex;flex-direction:column;align-items:center}
+    /* 08 배경(school-wall-damaged)은 담장 윗면이 y≈550이라 01의 정중앙 배치로는 타이틀이 담장을 덮는다.
+       01의 구조(top:50% + translate -50%)는 그대로 두고 배경에 맞춘 상향 오프셋만 더한다. */
+    #section_intro #introStartWrap{translate:0 calc(-50% - 140px)}
+    .intro-title-copy{width:100%;margin:0;text-align:center;pointer-events:none}
+    .intro-title-img{display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 11px 17px rgba(34,23,14,.22));animation:titleLogoDrop .92s cubic-bezier(.2,.86,.22,1.08) .12s both}
+    @keyframes titleLogoDrop{0%{opacity:0;transform:translateY(-72cqh) scale(.96)}58%{opacity:1;transform:translateY(17px) scale(1.015)}76%{transform:translateY(-8px) scale(.995)}90%{transform:translateY(4px) scale(1.002)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    .arith-title-banner{left:470px;top:180px}
+    .story-title-banner{left:470px;top:205px}
+    .completion-title-banner{left:470px;top:220px}
+    /* 01 시작하기 CTA 실측값(1366 기준 547×64, 27px/31.86) × 1.4056 이식. 서체는 01과 같은 Jua */
+    #introStart{position:relative;overflow:hidden;width:769px;min-width:0;min-height:82px;margin-top:19px;padding:18px 48px 21px;display:flex;align-items:center;justify-content:center;border:3px solid var(--cta-amber-edge);border-radius:var(--r-pill);background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.14) 34%,rgba(255,255,255,0) 52%),linear-gradient(180deg,var(--cta-amber-1) 0%,var(--cta-amber-2) 36%,var(--cta-amber-3) 72%,var(--cta-amber-4) 100%);font-family:var(--font-title);font-size:38px;line-height:1.18;color:var(--brown-800);text-shadow:0 1px 0 rgba(255,253,230,.95);box-shadow:inset 0 4px 0 rgba(255,255,255,.56),inset 0 -6px 0 rgba(120,53,15,.12),0 6px 0 rgba(120,53,15,.28),0 11px 31px rgba(66,32,6,.18);animation:ctapulse 2s ease-in-out infinite}
+    #introStart::before{content:"";display:block;position:absolute;left:20px;right:20px;top:10px;height:30%;border-radius:var(--r-pill);background:linear-gradient(180deg,rgba(255,255,255,.48),rgba(255,255,255,0));pointer-events:none}
+    #introStart::after{content:"";position:absolute;top:0;left:-80%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.26),transparent);animation:shimmer 2.8s ease-in-out infinite;pointer-events:none}
+    #introStart:hover{filter:brightness(1.05) saturate(1.06);transform:none}
+    #introStart:active{transform:translateY(3px);box-shadow:inset 0 3px 0 rgba(255,255,255,.52),inset 0 -3px 0 rgba(120,53,15,.1),0 3px 0 rgba(120,53,15,.26),0 6px 20px rgba(66,32,6,.15)}
+    @keyframes ctapulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.02);filter:brightness(1.12)}}
+    @keyframes shimmer{0%{left:-80%}55%,100%{left:120%}}
+    .cta.activity-cta{width:868px;height:140px;min-width:868px;min-height:140px;padding:0 72px;display:grid;place-items:center;border:0;border-radius:var(--r-none);background-color:var(--clear);background-image:url('assets/activity-cta-body.png');background-repeat:no-repeat;background-size:2606px 398px;background-position:0 -130px;box-shadow:var(--shadow-none);color:var(--warm-ink);font-size:var(--fs-xs);overflow:hidden}
+    #goalButton{padding-bottom:12px}
+    .cta.activity-cta:hover{background-position:-869px -130px}
+    .cta.activity-cta:active{background-position:-1737px -130px;box-shadow:var(--shadow-none)}
+    .character{position:absolute;z-index:var(--z-character);object-fit:contain;filter:var(--ds-lg);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+    .character.left{left:62px;bottom:-12px;width:440px;height:720px}
+    .character.right{right:52px;bottom:-12px;width:440px;height:720px}
+    .character.small{width:340px;height:560px}
+    .speech{position:absolute;z-index:var(--z-speech);width:990px;min-width:990px;max-width:990px;height:190px;min-height:190px;padding:32px 72px 38px;display:flex;align-items:center;justify-content:center;text-align:center;background-color:var(--clear);background-image:url('assets/school-speech-bubble-body.png');background-repeat:no-repeat;background-size:1980px 190px;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);filter:var(--ds-sm);font-size:var(--fs-md);font-weight:900;line-height:1.3;white-space:pre-line;animation:pop var(--dur) var(--ease-back) both}
+    .speech.left-speaker{left:390px;top:220px;background-position:0 0}
+    .speech.right-speaker{right:390px;top:220px;background-position:-990px 0}
+    @keyframes pop{from{opacity:0;transform:scale(.88) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .character.stagger-character{animation:characterEnter var(--dur-scene-in) var(--ease) both}
+    .speech.stagger-speech{animation:pop var(--dur-scene-in) var(--ease-back) both}
+    @keyframes characterEnter{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:translateY(0)}}
+    #drawingTeacher.drawing-enter{animation:drawingTeacherEnter var(--dur-scene-in) var(--ease) both}
+    @keyframes drawingTeacherEnter{from{opacity:0;transform:translateX(42px)}to{opacity:1;transform:translateX(0)}}
+    .tap-layer{position:absolute;inset:142px 0 0;z-index:var(--z-interactive);cursor:pointer}
+    .panel{position:absolute;z-index:var(--z-content);background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
+    .question-panel{left:150px;top:200px;width:1080px;min-height:720px;padding:42px}
+    .question-panel.wide{left:180px;width:1560px}
+    .prompt{font-size:var(--fs-xl);font-weight:900;line-height:1.38;text-align:center;white-space:pre-line;color:var(--ink);margin:0 0 28px}
+    .question-id{display:none}
+    .hotspot{position:absolute;z-index:var(--z-interactive);border:5px solid var(--clear);background:var(--clear);border-radius:var(--r-md);cursor:pointer;transition:border-color var(--dur-fast) var(--ease),filter var(--dur-fast) var(--ease)}
+    .hotspot:hover,.hotspot.hint{border-color:var(--accent);filter:var(--filter-glow-sm)}
+    .hotspot.current-target{z-index:var(--z-effect)}
+    .hotspot.found{border-color:var(--leaf)}
+    .hotspot-number{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:72px;height:72px;border-radius:var(--r-circle);background:var(--accent);color:var(--ink);font-size:var(--fs-xl);font-weight:900;filter:var(--ds-sm);pointer-events:none}
+    .search-prompt{position:absolute;left:50%;top:160px;z-index:var(--z-speech);transform:translateX(-50%);min-width:780px;padding:20px 36px;text-align:center;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-pill);box-shadow:var(--shadow);font-size:var(--fs-xl);font-weight:900}
+    #shapeSearch{position:absolute;inset:0;z-index:var(--z-interactive);cursor:crosshair}
+    .feedback-mark{position:absolute;left:50%;top:48%;z-index:var(--z-effect);transform:translate(-50%,-50%) scale(0);width:240px;height:240px;object-fit:contain;filter:var(--ds-lg);opacity:0;pointer-events:none}
+    .feedback-mark.show{animation:stamp var(--dur-slow) var(--ease-back) both}
+    @keyframes stamp{45%{opacity:1;transform:translate(-50%,-50%) scale(1.22) rotate(-8deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
+    .work-area{position:absolute;z-index:var(--z-content);left:150px;top:250px;width:1050px;height:570px;display:grid;grid-template-columns:repeat(5,1fr);align-content:center;gap:18px;padding:26px}
+    .paint-shape{position:relative;height:150px;background-image:url('assets/shape-tile-body.png');background-repeat:no-repeat;background-size:300% 100%;filter:var(--ds-sm);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+    .paint-shape.circle{background-position:left center}.paint-shape.triangle{background-position:center center}.paint-shape.square{background-position:right center}
+    .paint-shape.green{background-color:var(--leaf);background-blend-mode:multiply}.paint-shape.blue{background-color:var(--surface);background-blend-mode:multiply}.paint-shape.red{background-color:var(--danger);background-blend-mode:multiply}.paint-shape.purple{background-color:var(--purple);background-blend-mode:multiply}.paint-shape.yellow{background-color:var(--accent);background-blend-mode:multiply}
+    .paint-shape.removed{opacity:.18;transform:scale(.78)}
+    .paint-shape.pending{opacity:0;transform:scale(.78)}
+    .paint-shape.hint-step{filter:var(--filter-glow-lg)}
+    .paint-can{position:absolute;z-index:var(--z-content);left:1202px;bottom:80px;width:276px;height:276px;object-fit:contain;filter:var(--ds-md)}
+    .keypad-wrap{position:absolute;z-index:var(--z-interactive);right:105px;top:245px;width:510px;padding:26px;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
+    .answer-display{height:96px;display:grid;place-items:center;margin-bottom:18px;border:4px solid var(--ink);border-radius:var(--r-md);background:var(--white);font-size:var(--fs-2xl);font-weight:900}
+    .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .key{height:78px;font-size:var(--fs-md);font-weight:900;background:var(--cream);border-radius:var(--r-md)}
+    .key:disabled{cursor:default;filter:var(--filter-disabled);box-shadow:var(--shadow-flat)}
+    .key.zero{grid-column:2}.key.enter{grid-column:3;background:var(--accent)}
+    .choices{display:grid;gap:18px;margin:40px auto 0;max-width:780px}
+    .choice{min-height:92px;padding:14px 30px;font-size:var(--fs-lg);font-weight:900}
+    .choice.reveal{filter:var(--filter-glow-md);animation:answerReveal var(--dur) var(--ease-back) both}
+    .answer-display.answer-reveal{animation:answerReveal var(--dur) var(--ease-back) both;filter:var(--filter-glow-md)}
+    @keyframes answerReveal{0%{transform:scale(.96)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+    .help-character{right:10px;bottom:-20px;width:500px;height:650px;cursor:pointer}
+    .help-card{position:absolute;right:430px;top:180px;z-index:var(--z-speech);width:500px;padding:30px;background:var(--cream);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);font-size:var(--fs-2xs);font-weight:800;line-height:1.35;white-space:pre-line;opacity:0;visibility:hidden;transform:translateX(80px);transition:transform var(--dur-slow) var(--ease),opacity var(--dur) var(--ease)}
+    .help-card.open{opacity:1;visibility:visible;transform:translateX(0)}
+    .help-card.continue-ready{cursor:pointer;filter:var(--filter-glow-sm)}
+    .finger-hint{position:absolute;right:330px;bottom:300px;z-index:var(--z-effect);width:180px;height:180px;object-fit:contain;border:0;border-radius:var(--r-none);filter:var(--ds-sm) var(--filter-glow-md);animation:fingerHintTap var(--dur-slow) var(--ease) 3;pointer-events:none}
+    @keyframes fingerHintTap{0%,100%{transform:rotate(70deg) scale(1)}50%{transform:rotate(70deg) scale(.7);opacity:.35}}
+    @keyframes hintTap{50%{transform:scale(.7);opacity:.35}}
+    .paint-tools{position:absolute;z-index:var(--z-interactive);left:38px;top:180px;width:310px;display:grid;gap:16px;padding:22px;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
+    .tool{height:82px;background:var(--cream);font-size:var(--fs-sm);font-weight:900;border-radius:var(--r-md)}
+    .tool.active{background:var(--accent)}
+    .color-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .color-tool{height:58px;border:4px solid var(--ink);border-radius:var(--r-circle);cursor:pointer}
+    .color-tool.green{background:var(--leaf)}.color-tool.blue{background:var(--surface)}.color-tool.red{background:var(--danger)}.color-tool.purple{background:var(--purple)}
+    #drawingCanvas{position:absolute;z-index:var(--z-interactive);left:390px;top:275px;width:1370px;height:540px;overflow:hidden;cursor:crosshair}
+    .drawn-shape{position:absolute;width:150px;height:150px;transform:translate(-50%,-50%);background-image:url('assets/shape-tile-body.png');background-repeat:no-repeat;background-size:300% 100%;filter:var(--ds-sm)}
+    .confirmation{position:absolute;inset:0;z-index:var(--z-drawer);display:none;place-items:center;background:var(--dim)}
+    .confirmation.open{display:grid}
+    .confirm-panel{width:850px;padding:55px;background:var(--cream);border:6px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow);text-align:center}
+    .confirm-panel p{font-size:var(--fs-xl);font-weight:900;margin:0 0 38px}.confirm-actions{display:flex;justify-content:center;gap:28px}
+    .confirm-btn{min-width:260px;height:92px;font-size:var(--fs-lg);font-weight:900}.confirm-btn:first-child{background:var(--surface);color:var(--white)}
+    .sign-row{position:absolute;z-index:var(--z-content);left:205px;right:205px;top:275px;height:390px;display:flex;justify-content:center;gap:130px}
+    .sign{position:relative;width:230px;height:390px;overflow:hidden;opacity:.34;filter:var(--ds-md);transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease)}
+    .sign.active{opacity:1;transform:scale(1.06)}
+    #signRow.revealing .sign{animation:storySignIn var(--dur) var(--ease-back) var(--story-sign-delay) both}
+    #signRow.revealing .sign:nth-child(1){--story-sign-delay:var(--delay-story-sign-1)}
+    #signRow.revealing .sign:nth-child(2){--story-sign-delay:var(--delay-story-sign-2)}
+    #signRow.revealing .sign:nth-child(3){--story-sign-delay:var(--delay-story-sign-3)}
+    @keyframes storySignIn{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1.06)}}
+    .sign img{position:absolute;height:390px;width:710px;max-width:none;object-fit:fill;top:0}
+    .sign.circle img{left:0}.sign.square img{left:-237px}.sign.triangle img{left:-474px}
+    .sign-label{position:absolute;left:50%;top:90px;transform:translateX(-50%);width:180px;text-align:center;font-size:var(--fs-2xs);font-weight:900;color:var(--ink)}
+    .story-card{position:absolute;left:310px;bottom:-115px;z-index:var(--z-speech);width:1300px;height:600px;padding:282px 108px 118px;background:var(--clear) url('assets/story-roadside-info-board.png') center center/100% 100% no-repeat;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-sm);font-weight:800;line-height:1.35;text-align:center;white-space:pre-line;cursor:pointer;filter:var(--ds-md)}
+    .sign.circle .sign-label{width:196px;font-size:var(--fs-2xs);line-height:1.2}
+    .completion-actions{position:absolute;z-index:var(--z-interactive);left:50%;bottom:85px;transform:translateX(-50%);display:flex;gap:22px;align-items:center}
+    .completion-actions .cta{min-width:380px}
+    .spark{position:absolute;z-index:var(--z-effect);width:24px;height:24px;background:var(--accent);border-radius:var(--r-circle);filter:var(--filter-glow-md);animation:sparkle var(--dur-slow) var(--ease-back) infinite alternate}
+    @keyframes sparkle{to{transform:scale(2.2) rotate(45deg);opacity:.3}}
+    .dialogue-advance{position:absolute;right:40px;bottom:20px;width:22px;height:22px;background:var(--surface);border-radius:var(--r-circle);animation:hintTap var(--dur-slow) var(--ease) infinite}
+    .arith-context{left:145px;top:155px;min-width:780px;max-width:980px;min-height:120px;padding:24px 42px;font-size:var(--fs-sm);border-radius:var(--r-md)}
+    #shapeSpeech{padding:28px 83px 66px 61px}
+    #arithSpeech{top:350px;padding:27px 82px 67px 62px}
+    #section_random_problems .shade{opacity:.1}
+    #randomPanel{left:245px;top:205px;width:1040px;min-height:700px;padding:0;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none)}
+    #randomPanel .random-prompt{position:relative;width:860px;height:165px;margin:0 auto 12px;padding:20px 54px;display:grid;place-items:center;overflow:hidden;font-size:var(--fs-md);line-height:1.2}
+    .random-prompt img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:var(--z-bg);pointer-events:none}
+    .random-prompt span{position:relative;z-index:var(--z-content);display:inline-block;transform:none}
+    #randomInput .choices{margin-top:0;gap:12px}
+    #randomInput .choice{position:relative;width:780px;height:120px;min-height:0;padding:18px 52px;display:grid;place-items:center;overflow:hidden;border:0;border-radius:var(--r-none);background-color:var(--clear);background-image:url('assets/wall-choice-plaque-body.png');background-repeat:no-repeat;background-size:100% 100%;background-position:center;box-shadow:var(--shadow-none);font-size:var(--fs-lg);white-space:normal;line-height:1.2}
+    #randomInput .choice span{position:relative;z-index:var(--z-content);display:inline-block;transform:translateY(-3px)}
+    #randomInput .keypad-wrap{padding:0;background:var(--clear);border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none)}
+    #randomInput .answer-display{height:100px;margin-bottom:12px;padding:18px 52px;border:0;border-radius:var(--r-none);background:var(--clear) url('assets/wall-choice-plaque-body.png') center/100% 100% no-repeat;box-shadow:var(--shadow-none)}
+    #randomInput .keypad{gap:10px 0;padding:0 22px;background-image:url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png'),url('assets/wall-choice-plaque-body.png');background-repeat:no-repeat;background-size:100% 78px;background-position:center 0,center 88px,center 176px,center 264px}
+    #randomInput .key{height:78px;border:0;border-radius:var(--r-none);background:var(--clear);box-shadow:var(--shadow-none)}
+    #randomInput .key.zero{grid-column:1/3}
+    #randomInput .key.enter{grid-column:3;background:var(--clear);color:var(--ink)}
+    #randomInput .key:hover{background:var(--veil);transform:translateY(-2px)}
+    #randomInput .key:active{transform:translateY(4px);box-shadow:var(--shadow-none)}
+    .random-progress{position:absolute;left:360px;bottom:28px;z-index:var(--z-interactive);display:flex;gap:24px;pointer-events:none}
+    .random-progress .paint-shape{width:112px;height:92px;opacity:.24;transform:scale(.88)}
+    .random-progress .paint-shape.complete{opacity:1;transform:scale(1);filter:var(--filter-glow-sm) var(--ds-sm)}
+    #drawingSpeech{padding:32px 72px 38px}
+    .story-intro-board{position:absolute;left:250px;bottom:35px;z-index:var(--z-speech);width:1420px;height:220px;padding:33px 80px 59px;display:grid;place-items:center;background:var(--clear) url('assets/story-roadside-info-board.png') center/100% 100% no-repeat;font-size:var(--fs-xl);font-weight:900;line-height:1.25;text-align:center;filter:var(--ds-md);pointer-events:none}
+    .completion-actions .cta{--completion-cta-x:-29px;--completion-cta-y:-75px;width:380px;height:150px;min-width:380px;min-height:150px;padding:0;border:0;border-radius:var(--r-none);display:grid;place-items:center;background-color:var(--clear);background-image:url('assets/completion-cta-body.png');background-repeat:no-repeat;background-size:1254px 706px;background-position:var(--completion-cta-x) var(--completion-cta-y);box-shadow:var(--shadow-none);color:var(--white);filter:none}
+    .completion-actions .cta:hover{--completion-cta-x:-436px;filter:none}
+    .completion-actions .cta:active{--completion-cta-x:-843px;box-shadow:var(--shadow-none)}
+    .completion-actions .cta.secondary{--completion-cta-y:-255px;background-color:var(--clear);color:var(--ink)}
+    .completion-actions .cta:disabled{--completion-cta-y:-450px;--completion-cta-x:-29px;background-color:var(--clear);color:var(--dim);border:0;box-shadow:var(--shadow-none);filter:none;opacity:1;transform:none}
+    #exitButton{padding-top:10px}
+    #section_completion .completion-title-banner,
+    #section_completion .completion-actions .cta,
+    #section_completion .spark{opacity:0}
+    #section_completion.active .completion-title-banner{animation:completionTitleIn var(--dur) var(--ease-back) var(--delay-completion-title) both}
+    #section_completion.active .spark{animation:completionSparkBurst var(--dur) var(--ease-back) var(--delay-completion-spark) both}
+    #section_completion.active .completion-actions .cta:nth-child(1){animation:completionCtaIn var(--dur) var(--ease-back) var(--delay-completion-cta-1) both}
+    #section_completion.active .completion-actions .cta:nth-child(2){animation:completionCtaIn var(--dur) var(--ease-back) var(--delay-completion-cta-2) both}
+    #section_completion.active .completion-actions .cta:nth-child(3){animation:completionCtaIn var(--dur) var(--ease-back) var(--delay-completion-cta-3) both}
+    #section_completion.active.qa-capture-ready .completion-title-banner,
+    #section_completion.active.qa-capture-ready .spark,
+    #section_completion.active.qa-capture-ready .completion-actions .cta{animation-delay:0s;animation-duration:var(--dur-fast)}
+    @keyframes completionTitleIn{from{opacity:0;transform:scale(.9) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    @keyframes completionSparkBurst{0%{opacity:0;transform:scale(.35) rotate(0)}55%{opacity:1;transform:scale(2.2) rotate(45deg)}100%{opacity:.65;transform:scale(1) rotate(75deg)}}
+    @keyframes completionCtaIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .feedback-character{left:80px;bottom:-10px;width:360px;height:590px}
+    .feedback-speech{left:380px;top:245px;min-height:140px;cursor:pointer;color:var(--plate-ink)}
+    .drawing-summary{min-height:130px;margin:-12px 0 28px;display:flex;align-items:center;justify-content:center;gap:18px}
+    .drawing-summary .paint-shape{width:118px;height:108px;flex:0 0 118px}
+    #completedMuralPreview{position:absolute;z-index:var(--z-scenery);left:390px;top:275px;width:1370px;height:540px;overflow:hidden;pointer-events:none}
+    /* 상태 유틸리티는 더 구체적인 컴포넌트 display 규칙보다 숨김을 우선해야 한다. */
+    .hidden{display:none !important}
+    .shake{animation:shake var(--dur) var(--ease)}
+    @keyframes shake{20%,60%{transform:translateX(-16px)}40%,80%{transform:translateX(16px)}}
+    /* ── 디버그 패널(개발용) ─────────────────────────────────────
+       #stage 밖에 있으므로 스테이지 스케일·회전을 받지 않는다.
+       콘텐츠 토큰과 섞이지 않도록 값도 이 블록 안에서만 쓰는 독립 스타일로 둔다. */
+    .debug-panel{position:fixed;right:0;top:0;z-index:9999;display:flex;flex-direction:column;gap:10px;width:320px;max-height:100vh;padding:14px;overflow-y:auto;background:rgba(16,22,30,.95);color:#e6edf3;font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:13px;line-height:1.4;box-shadow:-10px 0 28px rgba(0,0,0,.4)}
+    /* [hidden]은 .debug-panel의 display:flex보다 명시도가 높아 !important 없이 이긴다 */
+    .debug-panel[hidden]{display:none}
+    .debug-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .debug-title{font-size:14px;font-weight:700;letter-spacing:.08em}
+    .debug-close{width:26px;height:26px;padding:0;display:grid;place-items:center;border:1px solid rgba(230,237,243,.24);border-radius:6px;background:rgba(255,255,255,.06);color:inherit;cursor:pointer}
+    .debug-close:hover{background:rgba(255,255,255,.16)}
+    .debug-current{padding:8px 10px;border-radius:6px;background:rgba(126,231,135,.12);color:#7ee787;word-break:break-all}
+    .debug-scene-list{display:flex;flex-direction:column;gap:6px}
+    .debug-scene{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid rgba(230,237,243,.16);border-radius:8px;background:rgba(255,255,255,.04);color:inherit;text-align:left;cursor:pointer}
+    .debug-scene:hover{background:rgba(255,255,255,.13)}
+    .debug-scene:focus-visible{outline:2px solid #58a6ff;outline-offset:2px}
+    .debug-scene.current{border-color:#7ee787;background:rgba(126,231,135,.14)}
+    .debug-scene-order{flex:0 0 22px;display:grid;place-items:center;height:22px;border-radius:5px;background:rgba(255,255,255,.12);font-size:12px}
+    .debug-scene-text{display:flex;flex-direction:column;min-width:0}
+    .debug-scene-label{font-size:13px}
+    .debug-scene-id{font-size:11px;opacity:.55;word-break:break-all}
+    .debug-hint{opacity:.5;font-size:11px}
+  </style>
+</head>
+<body>
+<div id="viewport"><main id="stage" aria-live="polite">
+  <header class="topbar" data-interaction-id="interaction_global_navigation">
+    <div class="topbar-left">
+      <button class="btn-home course-menu-btn" id="menuButton" type="button" aria-haspopup="true" aria-expanded="false"><span class="course-menu-burger" aria-hidden="true"><i></i><i></i><i></i></span><span class="course-menu-btn-label">목록</span></button>
+      <button class="header-voice-volume-button" id="soundButton" type="button" aria-pressed="true" aria-label="소리 조절" title="소리 조절">
+        <svg class="voice-volume-icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path class="volume-speaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+          <path class="volume-wave volume-wave-1" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+          <path class="volume-wave volume-wave-2" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+        </svg>
+      </button>
+      <span class="step-label" id="stepLabel">수리력 +</span>
+    </div>
+    <span class="lesson-bar-reward" id="pReward">
+      <span class="lesson-bar" role="img" aria-label="학습 진행률 0퍼센트" id="lessonBar">
+        <span class="lesson-bar-track"><span class="lesson-bar-fill" id="lessonBarFill"></span></span>
+        <span class="lesson-bar-pct" id="lessonBarPct">0%</span>
+      </span>
+    </span>
+    <div class="lesson-header-title" id="lessonHeaderTitle" aria-label="차시 제목: 알록달록, 학교 담장 색칠하기">알록달록, 학교 담장 색칠하기</div>
+  </header>
+
+  <section class="scene active" id="section_global_ui" data-qa-scene="section-global-ui" data-qa-order="1" data-qa-label="공통 UI와 활동 목표">
+    <img class="bg" src="assets/school-wall-wide.png" alt="맑은 하늘 아래 학교 건물과 나무, 벽화를 그릴 수 있도록 비워 둔 긴 학교 담장이 보이는 밝은 전경">
+    <h1 class="hero-title">알록달록, 학교 담장 색칠하기</h1>
+    <div class="overview"><img class="overview-frame" src="assets/overview-mural-triptych-frame.png" alt="빈 크림색 작업 면 세 칸이 가로로 연결되고 첫 칸에 노란 강조 홈이 있는 파란 벽화 작업 계획 프레임"><div class="overview-card current">수리가 필요해요</div><div class="overview-card">와글와글, 운동회를 도와요!</div><div class="overview-card">알록달록, 학교 담장 색칠하기<br><br>모양과 덧셈의 힘으로 담장 색칠하기</div></div>
+    <button class="cta activity-cta bottom-cta glow" id="goalButton" data-interaction-id="interaction_goal_transition">[모양과 덧셈의 힘으로 담장 색칠하기!]</button>
+  </section>
+
+  <section class="scene" id="section_intro" data-qa-scene="section-intro" data-qa-order="2" data-qa-label="도입" data-interaction-id="interaction_intro_sequence">
+    <img class="bg" id="introBg" src="assets/school-wall-damaged.png" alt="학교 담장 오른쪽 일부가 낮게 무너지고 벽돌과 안전 표식이 가지런히 놓인 밝은 낮의 학교 외부">
+    <div id="introStartWrap" data-qa-title-screen="true">
+      <div class="intro-title-copy" id="introTitleSurface"><img class="intro-title-img" src="assets/colorful-school-wall-title.png" alt="알록달록, 학교 담장 색칠하기"></div>
+      <button class="cta intro-start-cta" id="introStart">시작하기</button>
+    </div>
+    <img class="character left hidden" id="introCharacter" src="assets/worker-apologizing.png" alt="상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자">
+    <div class="speech left-speaker hidden" id="introSpeech"></div>
+    <button class="cta activity-cta bottom-cta hidden" id="introNext">모양의 힘으로 색칠하기</button>
+    <div class="tap-layer hidden" id="introTap" tabindex="0" aria-label="대화 진행"></div>
+  </section>
+
+  <section class="scene" id="section_shape_find" data-qa-scene="section-shape-find" data-qa-order="3" data-qa-label="모양 찾기와 세기" data-interaction-id="interaction_shape_scene_select interaction_shape_count_keypad interaction_feedback_reveal interaction_stage_transition">
+    <img class="bg" id="shapeBg" src="assets/school-yard-shape-search.png" alt="원형 시계와 학교 표식, 정사각형 창문 두 개, 삼각 지붕과 현관 차양이 서로 떨어져 배치된 밝은 학교 마당">
+    <div id="shapeDialogue"><img class="character left" id="shapeCharacter" src="assets/worker-explaining.png" alt="오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자"><div class="speech left-speaker" id="shapeSpeech">여러 가지 모양으로 그리면 좋겠어요.<span class="dialogue-advance"></span></div><div class="tap-layer" id="shapeDialogueTap" tabindex="0" aria-label="대화 진행"></div></div>
+    <div id="shapeSearch" class="hidden"><div class="search-prompt" id="searchPrompt"></div><div id="hotspots"></div></div>
+    <div class="work-area hidden" id="paintIntroVisual" aria-hidden="true"><div class="paint-shape circle green"></div><div class="paint-shape square blue"></div><div class="paint-shape triangle red"></div></div>
+    <div id="shapeCount" class="hidden"><div class="work-area" id="countShapes"></div><div class="keypad-wrap"><div class="prompt" id="countPrompt"></div><div class="answer-display" id="countDisplay"></div><div class="keypad" id="countKeypad"></div></div></div>
+    <img class="paint-can hidden" id="paintCan" src="assets/paint-can-body.png" alt="색상과 수량 표시를 덧씌울 수 있도록 앞면을 비운 밝은 회청색 금속 페인트통">
+    <button class="cta activity-cta bottom-cta hidden" id="shapeNext">모양으로 세 수의 덧셈과 뺄셈하기</button>
+    <img class="feedback-mark" id="shapeMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
+  </section>
+
+  <section class="scene" id="section_arithmetic_tutorial" data-qa-scene="section-arithmetic-tutorial" data-qa-order="4" data-qa-label="세 수의 덧셈과 뺄셈 튜토리얼" data-interaction-id="interaction_arithmetic_keypad interaction_shape_add_remove interaction_feedback_reveal interaction_stage_transition">
+    <img class="bg" id="arithBg" src="assets/school-wall-closeup.png" alt="도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장">
+    <div class="title-banner arith-title-banner" id="arithTitleSurface"><img src="assets/school-title-banner-body.png" alt="장면 제목을 표시하는 빈 학교 담장 부착형 제목판"><h2 class="hero-title sub-title" id="arithTitle">세 수의 덧셈과 뺄셈</h2></div>
+    <img class="character left" id="arithCharacter" src="assets/worker-explaining.png" alt="오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자">
+    <div class="speech left-speaker" id="arithSpeech">①페인트 소개는 저희가 할게요.<br>②이것을 페인트라고 해요.<br>초록색부터 알려드릴게요.<span class="dialogue-advance"></span></div>
+    <div class="tap-layer" id="arithIntroTap" tabindex="0" aria-label="대화 진행"></div>
+    <div class="work-area hidden" id="arithShapes"></div>
+    <div class="speech arith-context hidden" id="arithContext"></div>
+    <img class="paint-can" src="assets/paint-can-body.png" alt="색상과 수량 표시를 덧씌울 수 있도록 앞면을 비운 밝은 회청색 금속 페인트통">
+    <div class="keypad-wrap hidden" id="arithKeypadWrap"><div class="prompt" id="arithPrompt"></div><div class="answer-display" id="arithDisplay"></div><div class="keypad" id="arithKeypad"></div></div>
+    <button class="cta activity-cta bottom-cta hidden" id="arithNext">덧셈, 뺄셈의 힘으로 담장 색칠하기</button>
+    <img class="feedback-mark" id="arithMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
+  </section>
+
+  <section class="scene" id="section_random_problems" data-qa-scene="section-random-problems" data-qa-order="5" data-qa-label="무작위 계산 문제" data-interaction-id="interaction_random_problem_engine interaction_choice_problem interaction_arithmetic_keypad interaction_optional_help interaction_feedback_reveal">
+    <img class="bg" src="assets/school-wall-problem-scene.png" alt="가장자리의 낮은 대비 추상 벽화 사이로 문제 카드와 보조 설명을 배치할 중앙 작업 면을 비워 둔 학교 담장">
+    <div class="shade"></div>
+    <div class="panel question-panel" id="randomPanel"><div class="prompt random-prompt" id="randomPrompt"><img src="assets/wall-choice-plaque-body.png" alt="동적 계산식을 올릴 수 있도록 중앙을 비운 파란 테두리의 긴 크림색 담장 작업표"><span id="randomPromptText">덧셈과 뺄셈<br>10이 되는 덧셈식을 찾아 보세요.</span></div><div id="randomInput"></div></div>
+    <div class="random-progress" id="randomWorkProgress" aria-hidden="true"><div class="paint-shape circle green"></div><div class="paint-shape triangle red"></div><div class="paint-shape square blue"></div></div>
+    <img class="character help-character" id="helpCharacter" src="assets/teacher-explaining.png" alt="민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사">
+    <img class="finger-hint" id="fingerHint" src="assets/tap-hint-hand.png" alt="노란 접촉 링을 향해 왼쪽 위를 가리키는 손가락 탭 안내">
+    <div class="help-card" id="helpCard">무작위 문제A<br>‘10이 되는 덧셈<br>찾기’<br>문제의 정답 보기는 3개씩 제시<br><br>1. 정답) A + B = 10<br><br>2. 오답) A + 무작위 (B 제외)<br>*생성 규칙: A + B = 10<br>( A: 1~9 무작위 수 / B= 10 – A )<br><br>문제 예시<br>예) 6+3=10, 6+4=10, 6+5=10</div>
+    <img class="feedback-mark" id="randomMark" src="assets/feedback-stamp-correct.png" alt="정답 O 도장">
+  </section>
+
+  <section class="scene" id="section_free_drawing" data-qa-scene="section-free-drawing" data-qa-order="6" data-qa-label="모양으로 자유 그리기" data-interaction-id="interaction_shape_drawing interaction_drawing_confirmation">
+    <img class="bg" src="assets/school-wall-drawing.png" alt="맑은 낮의 학교 앞, 중앙이 넓고 깨끗하게 비어 있는 크림색 담장과 오른쪽 아래 보호포·파란 도구 상자">
+    <div id="drawingDialogue"><img class="character right" id="drawingTeacher" src="assets/teacher-praising.png" alt="민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사"><div class="speech right-speaker" id="drawingSpeech">담장 색칠이 끝나가요!<span class="dialogue-advance"></span></div><div class="tap-layer" id="drawingTap" tabindex="0" aria-label="대화 진행"></div></div>
+    <div class="paint-tools hidden" id="paintTools"><div class="prompt">그리기 툴</div><button class="tool active" data-shape="circle" aria-pressed="true">원</button><button class="tool" data-shape="triangle" aria-pressed="false">정삼각형</button><button class="tool" data-shape="square" aria-pressed="false">정사각형</button><div class="color-tools"><button class="color-tool green" data-color="green" aria-label="초록" aria-pressed="true"></button><button class="color-tool blue" data-color="blue" aria-label="파랑" aria-pressed="false"></button><button class="color-tool red" data-color="red" aria-label="빨강" aria-pressed="false"></button><button class="color-tool purple" data-color="purple" aria-label="보라" aria-pressed="false"></button></div></div>
+    <div id="drawingCanvas" class="hidden" aria-label="빈 담장 그리기 영역"></div>
+    <button class="cta activity-cta bottom-cta hidden" id="drawingDone" aria-label="그림 완성하기">버튼</button>
+    <div class="confirmation" id="drawingConfirm"><div class="confirm-panel"><p>그림을 완성했나요?</p><div class="drawing-summary" id="drawingSummary" aria-hidden="true"></div><div class="confirm-actions"><button class="confirm-btn" id="drawingYes">예</button><button class="confirm-btn" id="drawingNo">아니오</button></div></div></div>
+  </section>
+
+  <section class="scene" id="section_math_story" data-qa-scene="section-math-story" data-qa-order="7" data-qa-label="수리 이야기" data-interaction-id="interaction_sign_story">
+    <img class="bg" src="assets/school-road-background.png" alt="학교 담장과 건물 옆의 안전한 인도와 차도, 표지판 세 개를 배치할 중경과 하단 설명 영역이 비어 있는 맑은 낮 배경">
+    <div class="title-banner story-title-banner" id="storyTitleSurface"><img src="assets/school-title-banner-body.png" alt="장면 제목을 표시하는 빈 학교 담장 부착형 제목판"><h2 class="hero-title sub-title" id="storyTitle">수리 이야기</h2></div>
+    <div class="story-intro-board" id="storyIntroBoard">모양을 길에서 본 적이 있나요?</div>
+    <div class="tap-layer" id="storyIntroTap" tabindex="0" aria-label="모양을 길에서 본 적이 있나요?"></div>
+    <div class="sign-row hidden" id="signRow"><div class="sign circle"><img src="assets/road-sign-body.png" alt="내부 교통 표식을 덧씌울 수 있는 빈 원형, 사각형, 삼각형 도로 표지판 세트"><span class="sign-label">자동차 전용<br>도로</span></div><div class="sign square"><img src="assets/road-sign-body.png" alt=""><span class="sign-label">주차</span></div><div class="sign triangle"><img src="assets/road-sign-body.png" alt=""><span class="sign-label">공사</span></div></div>
+    <div class="story-card hidden" id="storyCard">● ■ ▲<br><br>무슨 표지판일까요?</div>
+  </section>
+
+  <section class="scene" id="section_completion" data-qa-scene="section-completion" data-qa-order="8" data-qa-label="차시 완료" data-interaction-id="interaction_certificate_download interaction_next_lesson interaction_exit">
+    <img class="bg" src="assets/school-wall-completed.png" alt="원·삼각형·사각형 벽화가 좌우에 완성되고 중앙 제목 영역과 하단 버튼 영역이 비어 있는 밝은 학교 담장">
+    <div id="completedMuralPreview" aria-hidden="true"></div>
+    <div class="spark" style="left:300px;top:250px"></div><div class="spark" style="left:1540px;top:310px"></div><div class="spark" style="left:910px;top:180px"></div><div class="spark" style="left:1260px;top:620px"></div>
+    <div class="title-banner completion-title-banner"><img src="assets/school-title-banner-body.png" alt="완료 제목을 표시하는 빈 학교 담장 부착형 제목판"><h2 class="hero-title">3차시 수리 완료!</h2></div>
+    <div class="completion-actions"><button class="cta" id="certificateButton">인증서 다운로드</button><button class="cta secondary" id="nextLessonButton" disabled>다음 차시 이동</button><button class="cta secondary" id="exitButton">나가기</button></div>
+  </section>
+
+  <div class="confirmation" id="menuDrawer"><div class="confirm-panel"><div class="overview"><button class="overview-card" data-go="section_global_ui">수리가 필요해요</button><button class="overview-card" data-go="section_random_problems">수리로 해결해요</button><button class="overview-card" data-go="section_math_story">수리 이야기</button></div></div></div>
+  <img class="character feedback-character hidden" id="feedbackCharacter" src="assets/teacher-praising.png" alt="민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사">
+  <button type="button" class="speech feedback-speech hidden" id="feedbackSpeech" aria-label="다음 문제"></button>
+  <template id="staticQuestionContract">
+    <span>square_left_window,square_right_window</span>
+    <span>circle_school_clock,circle_school_emblem</span>
+    <span>triangle_roof_gable,triangle_entrance_canopy</span>
+    <span>6 + 3 = 10</span><span>6 + 4 = 10</span><span>6 + 5 = 10</span>
+    <span>덧셈과 뺄셈
+10에서 빼어 보세요.
+10 - 4=(   )</span><span>6</span>
+    <span>덧셈과 뺄셈
+6 + 4 = (  )
+얼마일까요?</span><span>10</span>
+    <span>세 수의 덧셈을 해 보세요
+6 + 4 + 3=(   )</span><span>13</span>
+    <span>덧셈과 뺄셈
+13 - 3 = (  )
+얼마일까요?</span><span>10</span>
+    <span>세 수의 뺄셈을 해 보세요
+13 - 3 - 6=(   )</span><span>4</span>
+  </template>
+</main></div>
+<!-- 디버그 패널: 반드시 #viewport/#stage 밖에 둔다. 안에 넣으면 스테이지 scale/rotate를 같이 받는다 -->
+<aside class="debug-panel" id="debugPanel" hidden aria-label="디버그 패널">
+  <div class="debug-head">
+    <span class="debug-title">DEBUG</span>
+    <button type="button" class="debug-close" id="debugClose" aria-label="디버그 패널 닫기">✕</button>
+  </div>
+  <div class="debug-current" id="debugCurrent"></div>
+  <div class="debug-scene-list" id="debugSceneList"></div>
+  <p class="debug-hint">` 키로 열기/닫기 · Esc로 닫기</p>
+</aside>
+<script>
+(() => {
+  const STAGE_W=1920, STAGE_H=1080;
+  const SCENE_OUT_MS=260,SCENE_OVERLAP_MS=80,INTRO_SPEECH_DELAY_MS=140,INTRO_PROGRESS_DELAY_MS=300,ANSWER_STAMP_DELAY_MS=160,STORY_REVEAL_CLEAR_MS=900,HOST_SYNC_MS=500;
+  const stage=document.getElementById('stage');
+  const scenes=[...document.querySelectorAll('.scene')];
+  const LESSON_TITLE='알록달록, 학교 담장 색칠하기';
+  const sceneMeta={
+    section_global_ui:{stage:'수리력 +',progress:4},
+    section_intro:{stage:'수리력 +',progress:12},
+    section_shape_find:{stage:'수리가 필요해요 1',progress:32},
+    section_arithmetic_tutorial:{stage:'수리가 필요해요 2',progress:55},
+    section_random_problems:{stage:'수리로 해결해요',progress:72},
+    section_free_drawing:{stage:'수리로 해결해요',progress:84},
+    section_math_story:{stage:'수리 이야기',progress:94},
+    section_completion:{stage:'수리 이야기',progress:100}
+  };
+  let soundOn=true,currentScene='section_global_ui',wrongPoseTimer=0,feedbackHideTimer=0,feedbackContinueAction=null,drawingIntroTimer=0,sceneTransitionTimer=0,introSpeechTimer=0,introProgressTimer=0,storyRevealTimer=0;
+  const unlockedMenuScenes=new Set(['section_global_ui']);
+  function resizeStage(){
+    const portrait=innerHeight>innerWidth;
+    const availableW=portrait?innerHeight:innerWidth, availableH=portrait?innerWidth:innerHeight;
+    const scale=Math.min(availableW/STAGE_W,availableH/STAGE_H);
+    stage.style.transform=`translate(-50%,-50%) scale(${scale}) rotate(${portrait?90:0}deg)`;
+  }
+  addEventListener('resize',resizeStage);addEventListener('orientationchange',resizeStage);resizeStage();
+  function tone(ok){
+    if(!soundOn)return;
+    const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+    const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=ok?660:180;g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.18);o.start();o.stop(c.currentTime+.2);
+  }
+  function speak(text){
+    if(!soundOn||!('speechSynthesis' in window)||!text)return;
+    speechSynthesis.cancel();
+    const utterance=new SpeechSynthesisUtterance(String(text).replace(/<br\s*\/?\s*>/gi,' ').replace(/[①②“”]/g,''));
+    utterance.lang='ko-KR';utterance.rate=.92;speechSynthesis.speak(utterance);
+  }
+  function setProgress(value){
+    const pct=Math.max(0,Math.min(100,Math.round(Number(value)||0)));
+    document.getElementById('lessonBarFill').style.width=`${pct}%`;
+    document.getElementById('lessonBarPct').textContent=`${pct}%`;
+    document.getElementById('lessonBar').setAttribute('aria-label',`학습 진행률 ${pct}퍼센트`);
+  }
+  function updateHud(id){
+    const m=sceneMeta[id];if(!m)return;
+    const stageLabel=document.getElementById('stepLabel'),title=document.getElementById('lessonHeaderTitle');
+    stageLabel.textContent=m.stage;stageLabel.hidden=!m.stage;
+    if(m.stage)stageLabel.setAttribute('aria-label',`현재 단계: ${m.stage}`);else stageLabel.removeAttribute('aria-label');
+    title.textContent=LESSON_TITLE;title.setAttribute('aria-label',`차시 제목: ${LESSON_TITLE}`);
+    setProgress(m.progress);
+  }
+  function showScene(id){
+    const target=document.getElementById(id)||document.querySelector(`[data-qa-scene="${id}"]`);if(!target)return;
+    clearTimeout(sceneTransitionTimer);resetFeedbackOverlay();const previous=scenes.find(s=>s.classList.contains('active')&&s!==target);
+    scenes.forEach(s=>{if(s!==previous&&s!==target){s.classList.remove('active','leaving');s.style.display='none'}});
+    if(previous){previous.classList.remove('active');previous.classList.add('leaving');setTimeout(()=>{previous.classList.remove('leaving');previous.style.display='none'},SCENE_OUT_MS)}
+    target.classList.remove('leaving','active');target.style.display='block';sceneTransitionTimer=setTimeout(()=>requestAnimationFrame(()=>target.classList.add('active')),previous?SCENE_OVERLAP_MS:0);currentScene=target.id;updateHud(target.id);
+    setTitleMode(target.id==='section_intro'); /* 01: 타이틀 화면에서만 topbar를 숨긴다 */
+    if(target.id==='section_intro')resetIntro();
+    if(target.id==='section_shape_find')resetShapeScene();
+    if(target.id==='section_arithmetic_tutorial')resetArithmetic();
+    if(target.id==='section_random_problems')startRandomEngine();
+    if(target.id==='section_free_drawing')resetDrawingIntro();
+    if(target.id==='section_math_story')resetStory();
+    if(target.id==='section_completion'){renderCompletedMural();refreshNextLessonButton();refreshExitButton()}
+    syncDebugPanel();
+  }
+  window.__contentHarnessShowScene=function(sceneId){const el=document.querySelector(`[data-qa-scene="${sceneId}"]`)||document.getElementById(sceneId);if(el){scenes.forEach(scene=>scene.classList.remove('qa-capture-ready'));showScene(el.id);el.classList.add('qa-capture-ready')}};
+  document.getElementById('soundButton').onclick=e=>{soundOn=!soundOn;const b=e.currentTarget;b.setAttribute('aria-pressed',String(soundOn));b.dataset.soundOn=String(soundOn);b.setAttribute('aria-label',soundOn?'소리 끄기':'소리 켜기');b.title=soundOn?'소리 끄기':'소리 켜기';if(!soundOn&&'speechSynthesis' in window)speechSynthesis.cancel()};
+  const menu=document.getElementById('menuDrawer');
+  function refreshMenuAccess(){menu.querySelectorAll('[data-go]').forEach(button=>{button.disabled=!unlockedMenuScenes.has(button.dataset.go);button.setAttribute('aria-disabled',String(button.disabled))})}
+  function unlockMenuScene(id){unlockedMenuScenes.add(id);refreshMenuAccess()}
+  document.getElementById('menuButton').onclick=e=>{refreshMenuAccess();menu.classList.add('open');e.currentTarget.setAttribute('aria-expanded','true')};menu.onclick=e=>{if(e.target===menu){menu.classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false')}};menu.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(b.disabled)return;menu.classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false');showScene(b.dataset.go)});refreshMenuAccess();
+  document.getElementById('goalButton').onclick=()=>showScene('section_intro');
+
+  const introBeats=[
+    {text:'공사 중에 실수로 담장을 무너뜨렸어요.<br>죄송합니다!',img:'worker-apologizing.png',alt:'상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자',bg:'school-wall-damaged.png'},
+    {text:'① 휴, 담장은 다 고쳤어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
+    {text:'② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
+    {text:'저희가 도와드릴게요!',img:'student-volunteer.png',alt:'활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이',bg:'school-wall-repaired.png'}
+  ];
+  let introBeat=0;
+  function setTitleMode(on){document.getElementById('stage').classList.toggle('title-mode',on)}
+  /* 01은 매번 innerHTML로 다시 그려 titleLogoDrop이 재생된다. 08은 정적 노드라 재진입 시 수동 재시작한다 */
+  function replayTitleDrop(){const el=document.querySelector('#introStartWrap .intro-title-img');if(!el)return;el.style.animation='none';void el.offsetWidth;el.style.animation=''}
+  function resetIntro(){clearTimeout(introSpeechTimer);clearTimeout(introProgressTimer);introBeat=0;replayTitleDrop();const bg=document.getElementById('introBg'),ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech');bg.src='assets/school-wall-damaged.png';bg.alt='학교 담장 오른쪽 일부가 낮게 무너지고 벽돌과 안전 표식이 가지런히 놓인 밝은 낮의 학교 외부';document.getElementById('introTitleSurface').classList.remove('hidden');document.getElementById('introStart').classList.remove('hidden');document.getElementById('introNext').classList.add('hidden');document.getElementById('introTap').classList.add('hidden');ch.className='character left hidden';ch.src='assets/worker-apologizing.png';ch.alt='상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자';sp.className='speech left-speaker hidden';sp.textContent=''}
+  function renderIntro(){const b=introBeats[introBeat],ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech'),bg=document.getElementById('introBg');ch.src='assets/'+b.img;ch.alt=b.alt;ch.className='character left';sp.className='speech left-speaker';sp.innerHTML=b.text+'<span class="dialogue-advance"></span>';bg.src='assets/'+b.bg;if(introBeat===introBeats.length-1){ch.classList.remove('left');ch.classList.add('right');sp.classList.remove('left-speaker');sp.classList.add('right-speaker')}speak(b.text)}
+  document.getElementById('introStart').onclick=()=>{const ch=document.getElementById('introCharacter'),sp=document.getElementById('introSpeech'),tap=document.getElementById('introTap');setTitleMode(false);document.getElementById('introTitleSurface').classList.add('hidden');document.getElementById('introStart').classList.add('hidden');renderIntro();ch.classList.add('stagger-character');ch.classList.remove('hidden');sp.classList.add('stagger-speech','hidden');tap.classList.add('hidden');introSpeechTimer=setTimeout(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);introProgressTimer=setTimeout(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)};
+  document.getElementById('introTap').onclick=()=>{if(introBeat<introBeats.length-1){introBeat++;renderIntro()}else{document.getElementById('introTap').classList.add('hidden');document.getElementById('introNext').classList.remove('hidden')}};
+  document.getElementById('introNext').onclick=()=>showScene('section_shape_find');
+
+  const shapeDialogues=[
+    ['여러 가지 모양으로 그리면 좋겠어요.','worker-explaining.png','오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자','left'],
+    ['벽화를 어떻게 그려야 되지?','student-thinking.png','한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이','left'],
+    ['저와 학교에서 모양을 찾아 보아요.','teacher-explaining.png','민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사','right'],
+    ['네!','student-idle.png','주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이','left']
+  ];
+  const searchQuestions=[
+    {id:'q_square_find_two',prompt:'■모양 2개를 찾아 봅시다.',answers:['square_left_window','square_right_window']},
+    {id:'q_circle_find_two',prompt:'●모양 2개를 찾아 봅시다.',answers:['circle_school_clock','circle_school_emblem']},
+    {id:'q_triangle_find_two',prompt:'▲모양 2개를 찾아 봅시다.',answers:['triangle_roof_gable','triangle_entrance_canopy']}
+  ];
+  const hotspotDefs={
+    square_left_window:[272,366,112,122],square_right_window:[1320,366,112,122],circle_school_clock:[773,197,142,145],circle_school_emblem:[1083,387,134,134],triangle_roof_gable:[590,105,505,270],triangle_entrance_canopy:[645,405,395,160]
+  };
+  const countQuestions=[
+    {id:'q_count_circle',prompt:'●모양은 몇 개 인가요?',answer:'3',shape:'circle',count:3,color:'green'},
+    {id:'q_count_triangle',prompt:'▲모양은 몇 개 인가요?',answer:'2',shape:'triangle',count:2,color:'red'},
+    {id:'q_count_square',prompt:'■모양은 몇 개 인가요?',answer:'4',shape:'square',count:4,color:'blue'}
+  ];
+  let shapePhase='opening',shapeDialogueIndex=0,searchIndex=0,searchWrong=0,found=new Set(),countIndex=0,countWrong=0,countValue='',countAssisted=false,shapeTimers=[];
+  function clearShapeTimers(){shapeTimers.forEach(clearTimeout);shapeTimers=[]}
+  function scheduleShape(fn,delay){const timer=setTimeout(fn,delay);shapeTimers.push(timer)}
+  function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/school-yard-shape-search.png';bg.alt='원형 시계와 학교 표식, 정사각형 창문 두 개, 삼각 지붕과 현관 차양이 서로 떨어져 배치된 밝은 학교 마당';document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
+  function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="dialogue-advance"></span>';speak(b[0])}
+  document.getElementById('shapeDialogueTap').onclick=()=>{if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='● ■ ▲ 모양<span class="dialogue-advance"></span>';speak('● ■ ▲ 모양')}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='② 페인트 소개를 부탁해요!<span class="dialogue-advance"></span>';speak('② 페인트 소개를 부탁해요!')}else{document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
+  function renderSearch(){const q=searchQuestions[searchIndex],searchArea=document.getElementById('shapeSearch');searchWrong=0;found=new Set();setProgress(18+searchIndex*4);document.getElementById('searchPrompt').textContent=q.prompt;speak(q.prompt);const host=document.getElementById('hotspots');host.innerHTML='';searchArea.onclick=e=>{if(e.target.closest('.hotspot')||e.target.closest('.search-prompt'))return;registerSearchWrong(q,searchArea)};Object.entries(hotspotDefs).forEach(([id,v])=>{const b=document.createElement('button');b.className='hotspot'+(q.answers.includes(id)?' current-target':'');b.dataset.target=id;b.setAttribute('aria-label',id);Object.assign(b.style,{left:v[0]+'px',top:v[1]+'px',width:v[2]+'px',height:v[3]+'px'});b.onclick=e=>{e.stopPropagation();selectHotspot(b,q)};host.appendChild(b)})}
+  function advanceSearch(){if(searchIndex<searchQuestions.length-1){searchIndex++;renderSearch()}else startPaintIntro()}
+  function revealSearchAnswers(q,withNumbers){document.querySelectorAll('.hotspot').forEach(h=>{const answerIndex=q.answers.indexOf(h.dataset.target);h.classList.toggle('hint',answerIndex>=0);if(answerIndex>=0&&withNumbers&&!h.querySelector('.hotspot-number')){const number=document.createElement('span');number.className='hotspot-number';number.textContent=String(answerIndex+1);number.setAttribute('aria-hidden','true');h.appendChild(number)}})}
+  function registerSearchWrong(q,target){tone(false);showWrongFeedback();searchWrong++;shake(target===document.getElementById('shapeSearch')?document.getElementById('searchPrompt'):target);if(searchWrong===2)revealSearchAnswers(q,false);if(searchWrong>=3){revealSearchAnswers(q,true);document.querySelectorAll('.hotspot:not(.current-target)').forEach(h=>h.disabled=true)}}
+  function selectHotspot(btn,q){const id=btn.dataset.target;if(q.answers.includes(id)){if(found.has(id))return;found.add(id);btn.classList.add('found');tone(true);if(found.size===2){setHotspotsEnabled(false);showFeedback(document.getElementById('shapeMark'),q.id==='q_triangle_find_two'?'잘 찾았어요!':'정답입니다.',advanceSearch)}}else registerSearchWrong(q,btn)}
+  function setHotspotsEnabled(enabled){document.querySelectorAll('.hotspot').forEach(h=>h.disabled=!enabled)}
+  function startPaintIntro(){shapePhase='paint-intro';shapeDialogueIndex=0;document.getElementById('shapeSearch').classList.add('hidden');const bg=document.getElementById('shapeBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');document.getElementById('paintIntroVisual').classList.remove('hidden');document.getElementById('paintCan').classList.remove('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/teacher-explaining.png';ch.alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='페인트 색깔마다 모양이 달라요<span class="dialogue-advance"></span>';speak('페인트 색깔마다 모양이 달라요');setProgress(30)}
+  function startCount(){shapePhase='count';countIndex=0;document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('shapeCount').classList.remove('hidden');renderCount()}
+  function hintCountShapes(){document.querySelectorAll('#countShapes .paint-shape').forEach((shape,index)=>scheduleShape(()=>{shape.classList.add('hint-step');scheduleShape(()=>shape.classList.remove('hint-step'),450)},index*120))}
+  function advanceCount(){if(countIndex<countQuestions.length-1){countIndex++;renderCount()}else finishShape()}
+  function renderCount(){const q=countQuestions[countIndex],display=document.getElementById('countDisplay');countWrong=0;countValue='';countAssisted=false;setProgress(32+countIndex*5);document.getElementById('countPrompt').textContent=q.prompt;display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('countShapes').innerHTML=Array.from({length:q.count},()=>`<div class="paint-shape ${q.shape} ${q.color}"></div>`).join('');speak(q.prompt);buildKeypad('countKeypad',n=>{if(n==='enter'){if(countValue===q.answer){setKeypadEnabled('countKeypad',false);tone(true);display.toggleAttribute('data-assisted',countAssisted);showFeedback(document.getElementById('shapeMark'),'정답입니다.',advanceCount)}else{tone(false);showWrongFeedback();countWrong++;shake(display);hintCountShapes();countValue='';display.textContent='';if(countWrong>=3){countAssisted=true;countValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');setKeypadConfirmOnly('countKeypad')}}}else if(!countAssisted){countValue=(countValue+n).slice(-2);display.textContent=countValue}})}
+  function finishShape(){shapePhase='outro';shapeDialogueIndex=0;setProgress(47);document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='① 잘했어요.<br>이제 벽화를 색칠해봐요!<span class="dialogue-advance"></span>';speak('① 잘했어요. 이제 벽화를 색칠해봐요!')}
+  document.getElementById('shapeNext').onclick=()=>showScene('section_arithmetic_tutorial');
+
+  const arithmeticQuestions=[
+    {id:'q_total_shapes_ten',prompt:'모양은 모두 몇 개인가요?',answer:'10',count:10,remove:0,bg:'school-wall-closeup.png',preBeats:[]},
+    {id:'q_add_7_3',prompt:'7개에서 3개를 더 색칠하면 몇 개일까요?\n7 + 3 = (   )',answer:'10',count:10,remove:0,bg:'school-wall-closeup.png',preBeats:[]},
+    {id:'q_add_10_2',prompt:'10 + 2 = (   )',answer:'12',count:12,remove:0,bg:'school-wall-closeup.png',preBeats:[
+      {text:'페인트 1통을 다 썼어요',img:'student-thinking.png',alt:'한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이',side:'left'},
+      {text:'1통을 더 준비했어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
+      {text:'2개를 더 색칠해주세요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
+      {text:'네',img:'student-idle.png',alt:'주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이',side:'right'}
+    ]},
+    {id:'q_add_7_3_2',prompt:'7 + 3 + 2 = (   )',answer:'12',count:12,remove:0,bg:'school-wall-closeup.png',preBeats:[],strategy:'7 + 3 = 10\n10 + 2 = 12'},
+    {id:'q_subtract_12_2',prompt:'모양 12개에서 2개를 지우면 몇 개일까요?\n12 - 2 = (   )',answer:'10',count:12,remove:2,bg:'school-wall-second.png',preBeats:[
+      {text:'고마워요!<br>다른 담장으로 가요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
+      {text:'네!',img:'student-idle.png',alt:'주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이',side:'right'},
+      {text:'잘못 그린 2개를 지워주세요!',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'}
+    ]},
+    {id:'q_subtract_10_3',prompt:'모양 10개에서 3개를 더 지우면 몇 개 일까요?\n10 - 3 = (   )',answer:'7',count:10,remove:3,bg:'school-wall-second.png',preBeats:[
+      {text:'3개를 더 지우고 싶어요. 지워주세요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'}
+    ]},
+    {id:'q_subtract_12_2_3',prompt:'12 – 2 – 3 = (   )',answer:'7',count:12,remove:5,bg:'school-wall-second.png',preBeats:[],strategy:'12 – 2 = 10\n10 – 3 = 7'}
+  ];
+  const arithmeticIntroBeats=[
+    '①페인트 소개는 저희가 할게요.',
+    '②이것을 페인트라고 해요.<br>초록색부터 알려드릴게요.',
+    '1통에 모양을 10개씩 그릴 수 있어요!'
+  ];
+  let arithPhase='intro',arithIndex=0,arithValue='',arithIntroBeat=0,arithQuestionBeat=0,arithFinishBeat=0,arithWrong=0,arithAssisted=false,arithAnimationTimers=[];
+  function clearArithmeticTimers(){arithAnimationTimers.forEach(clearTimeout);arithAnimationTimers=[]}
+  function scheduleArithmetic(fn,delay){const timer=setTimeout(fn,delay);arithAnimationTimers.push(timer)}
+  function resetArithmetic(){clearArithmeticTimers();arithPhase='intro';arithIndex=0;arithIntroBeat=0;arithQuestionBeat=0;arithFinishBeat=0;arithWrong=0;arithAssisted=false;arithValue='';const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech'),tap=document.getElementById('arithIntroTap'),bg=document.getElementById('arithBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';ch.className='character left stagger-character';ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker hidden stagger-speech';document.getElementById('arithTitleSurface').classList.remove('hidden');ch.classList.remove('hidden');tap.classList.add('hidden');document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithShapes').innerHTML='';document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');document.getElementById('arithDisplay').textContent='';document.getElementById('arithNext').classList.add('hidden');document.getElementById('arithMark').classList.remove('show');sp.innerHTML=arithmeticIntroBeats[0]+'<span class="dialogue-advance"></span>';setProgress(49);scheduleArithmetic(()=>{sp.classList.remove('hidden');speak(arithmeticIntroBeats[0])},INTRO_SPEECH_DELAY_MS);scheduleArithmetic(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
+  function renderArithmeticBeat(q){const beat=q.preBeats[arithQuestionBeat],ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/'+beat.img;ch.alt=beat.alt;ch.className='character '+beat.side;sp.className='speech '+(beat.side==='left'?'left-speaker':'right-speaker');sp.innerHTML=beat.text+'<span class="dialogue-advance"></span>';speak(beat.text)}
+  document.getElementById('arithIntroTap').onclick=()=>{if(arithPhase==='intro'){if(arithIntroBeat<arithmeticIntroBeats.length-1){arithIntroBeat++;document.getElementById('arithSpeech').innerHTML=arithmeticIntroBeats[arithIntroBeat]+'<span class="dialogue-advance"></span>';speak(arithmeticIntroBeats[arithIntroBeat])}else{document.getElementById('arithTitleSurface').classList.add('hidden');document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');renderArithmetic()}}else if(arithPhase==='question-beats'){const q=arithmeticQuestions[arithIndex];if(arithQuestionBeat<q.preBeats.length-1){arithQuestionBeat++;renderArithmeticBeat(q)}else{document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');startArithmeticQuestion(q)}}else if(arithPhase==='outro'){if(arithFinishBeat===0){arithFinishBeat=1;const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/student-volunteer.png';ch.alt='활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='네!<span class="dialogue-advance"></span>';speak('네!')}else{document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithNext').classList.remove('hidden')}}};
+  function arithmeticInitialClass(q,index){if(q.id==='q_total_shapes_ten')return' pending';if(q.id==='q_add_7_3'&&index>=7)return' pending';if(q.id==='q_add_10_2'&&index>=10)return' pending';if(q.id==='q_add_7_3_2'&&index>=7)return' pending';return''}
+  function animateArithmetic(q){const shapes=[...document.querySelectorAll('#arithShapes .paint-shape')];let delay=0;const reveal=index=>scheduleArithmetic(()=>shapes[index]?.classList.remove('pending'),delay+=140);const remove=index=>scheduleArithmetic(()=>shapes[index]?.classList.add('removed'),delay+=180);if(q.id==='q_total_shapes_ten')shapes.forEach((_,i)=>reveal(i));if(q.id==='q_add_7_3')[7,8,9].forEach(reveal);if(q.id==='q_add_10_2')[10,11].forEach(reveal);if(q.id==='q_add_7_3_2'){[7,8,9].forEach(reveal);delay+=520;[10,11].forEach(reveal)}if(q.id==='q_subtract_12_2')[10,11].forEach(remove);if(q.id==='q_subtract_10_3')[7,8,9].forEach(remove);if(q.id==='q_subtract_12_2_3'){[10,11].forEach(remove);delay+=520;[7,8,9].forEach(remove)}scheduleArithmetic(()=>setKeypadEnabled('arithKeypad',true),delay+180)}
+  function hintArithmetic(q){const shapes=[...document.querySelectorAll('#arithShapes .paint-shape')];const start=q.id==='q_add_7_3'?7:q.id==='q_add_10_2'?10:q.id==='q_add_7_3_2'?7:q.remove?q.count-q.remove:0;const targets=q.id==='q_total_shapes_ten'?shapes:shapes.slice(start);targets.forEach((shape,index)=>scheduleArithmetic(()=>{shape.classList.add('hint-step');scheduleArithmetic(()=>shape.classList.remove('hint-step'),420)},index*110))}
+  function renderArithmetic(){clearArithmeticTimers();const q=arithmeticQuestions[arithIndex];arithWrong=0;arithAssisted=false;arithValue='';arithQuestionBeat=0;setProgress(51+arithIndex*4);document.getElementById('arithBg').src='assets/'+q.bg;document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');if(q.preBeats.length){arithPhase='question-beats';const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.classList.remove('hidden');sp.classList.remove('hidden');document.getElementById('arithIntroTap').classList.remove('hidden');renderArithmeticBeat(q)}else startArithmeticQuestion(q)}
+  function showArithmeticReason(q){if(!q.strategy)return;const context=document.getElementById('arithContext');context.textContent=q.strategy;context.classList.remove('hidden');speak(q.strategy)}
+  function startArithmeticQuestion(q){arithPhase='quiz';arithAssisted=false;document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithShapes').classList.remove('hidden');document.getElementById('arithKeypadWrap').classList.remove('hidden');document.getElementById('arithPrompt').textContent=q.prompt;const display=document.getElementById('arithDisplay');display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,i)=>`<div class="paint-shape ${i%3===0?'circle':i%3===1?'triangle':'square'} ${i%3===0?'green':i%3===1?'red':'blue'}${arithmeticInitialClass(q,i)}"></div>`).join('');speak(q.prompt);buildKeypad('arithKeypad',n=>{if(n==='enter'){if(arithValue===q.answer){setKeypadEnabled('arithKeypad',false);tone(true);display.toggleAttribute('data-assisted',arithAssisted);showArithmeticReason(q);showFeedback(document.getElementById('arithMark'),'정답입니다.',advanceArithmetic)}else{tone(false);showWrongFeedback();arithWrong++;shake(display);hintArithmetic(q);arithValue='';display.textContent='';if(arithWrong===2)showArithmeticReason(q);if(arithWrong>=3){arithAssisted=true;arithValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');showArithmeticReason(q);setKeypadConfirmOnly('arithKeypad')}}}else if(!arithAssisted){arithValue=(arithValue+n).slice(-2);display.textContent=arithValue}});setKeypadEnabled('arithKeypad',false);animateArithmetic(q)}
+  function advanceArithmetic(){if(arithIndex<arithmeticQuestions.length-1){arithIndex++;renderArithmetic()}else finishArithmetic()}
+  function finishArithmetic(){clearArithmeticTimers();arithPhase='outro';arithFinishBeat=0;setProgress(70);document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithContext').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.className='character left';ch.classList.remove('hidden');ch.src='assets/worker-explaining.png';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker';sp.classList.remove('hidden');sp.innerHTML='잘했어요!<br>더 많은 담장을<br>색칠해야해요!<span class="dialogue-advance"></span>';speak('잘했어요! 더 많은 담장을 색칠해야해요!');document.getElementById('arithIntroTap').classList.remove('hidden')}
+  document.getElementById('arithNext').onclick=()=>{unlockMenuScene('section_random_problems');showScene('section_random_problems')};
+
+  let randomType=0,randomSequenceIndex=0,randomSequence=[],randomWrong=0,randomAnswer='',randomValue='',randomHint='',randomSolution='',randomAnswerRevealed=false,randomAssisted=false,randomAwaitingContinue=false,randomCompletedCount=0,randomBundle={add:null,subtract:null};
+  const staticExamples=[
+    {id:'q_random_a',prompt:'덧셈과 뺄셈\n10이 되는 덧셈식을 찾아 보세요.',type:'choice'},
+    {id:'q_random_b',prompt:'덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - 4=(   )',type:'keypad',answer:'6'},
+    {id:'q_random_c_step1',prompt:'덧셈과 뺄셈\n6 + 4 = (  )\n얼마일까요?',type:'keypad',answer:'10'},
+    {id:'q_random_c_step2',prompt:'세 수의 덧셈을 해 보세요\n6 + 4 + 3=(   )',type:'keypad',answer:'13'},
+    {id:'q_random_d_step1',prompt:'덧셈과 뺄셈\n13 - 3 = (  )\n얼마일까요?',type:'keypad',answer:'10'},
+    {id:'q_random_d_step2',prompt:'세 수의 뺄셈을 해 보세요\n13 - 3 - 6=(   )',type:'keypad',answer:'4'}
+  ];
+  function updateRandomWorkProgress(){document.querySelectorAll('#randomWorkProgress .paint-shape').forEach((shape,index)=>shape.classList.toggle('complete',index<randomCompletedCount))}
+  function startRandomEngine(){const addA=1+Math.floor(Math.random()*9),subtractB=1+Math.floor(Math.random()*9);randomBundle={add:{a:addA,b:10-addA,c:1+Math.floor(Math.random()*9)},subtract:{a:subtractB+10,b:subtractB,c:1+Math.floor(Math.random()*8)}};randomSequence=Math.random()<.5?[0,2,3]:[1,4,5];randomSequenceIndex=0;randomCompletedCount=0;randomType=randomSequence[0];document.getElementById('helpCard').classList.remove('open','continue-ready');document.getElementById('fingerHint').classList.remove('hidden');updateRandomWorkProgress();renderRandom()}
+  function renderRandom(){randomWrong=0;randomValue='';randomHint='';randomSolution='';randomAnswerRevealed=false;randomAssisted=false;randomAwaitingContinue=false;document.getElementById('randomPanel').removeAttribute('data-assisted');setProgress(72+randomCompletedCount*4);const input=document.getElementById('randomInput'),prompt=document.getElementById('randomPromptText'),help=document.getElementById('helpCard');help.classList.remove('open','continue-ready');help.removeAttribute('role');help.removeAttribute('tabindex');help.removeAttribute('aria-label');help.onclick=null;help.onkeydown=null;const ex=staticExamples[randomType];
+    if(randomType===0){const {a,b}=randomBundle.add;let wrongs=[];while(wrongs.length<2){const n=1+Math.floor(Math.random()*9);if(n!==b&&!wrongs.includes(n))wrongs.push(n)}const vals=[b,...wrongs].sort(()=>Math.random()-.5);randomAnswer=`${a} + ${b} = 10`;randomHint=`${a} + (   ) = 10`;randomSolution=randomAnswer;prompt.textContent=ex.prompt;input.innerHTML='<div class="choices">'+vals.map(n=>`<button class="choice"><span>${a} + ${n} = 10</span></button>`).join('')+'</div>';input.querySelectorAll('.choice').forEach(but=>but.onclick=()=>judgeRandomChoice(but));speak(ex.prompt)}
+    else{let text=ex.prompt,answer=ex.answer;if(randomType===1){const {c}=randomBundle.subtract;text=`덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - ${c}=(   )`;answer=String(10-c);randomHint=`10 - ${c} = (   )`;randomSolution=`10 - ${c} = ${answer}`}else if(randomType===2||randomType===3){const {a,b,c}=randomBundle.add;text=randomType===2?`덧셈과 뺄셈\n${a} + ${b} = (  )\n얼마일까요?`:`세 수의 덧셈을 해 보세요\n${a} + ${b} + ${c}=(   )`;answer=String(randomType===2?10:10+c);randomHint=randomType===2?`${a} + ${b} = 10`:`${a} + ${b} = 10\n10 + ${c} = (   )`;randomSolution=randomType===2?randomHint:`${a} + ${b} = 10\n10 + ${c} = ${answer}`}else{const {a,b,c}=randomBundle.subtract;text=randomType===4?`덧셈과 뺄셈\n${a} - ${b} = (  )\n얼마일까요?`:`세 수의 뺄셈을 해 보세요\n${a} - ${b} - ${c}=(   )`;answer=String(randomType===4?10:10-c);randomHint=randomType===4?`${a} - ${b} = 10`:`${a} - ${b} = 10\n10 - ${c} = (   )`;randomSolution=randomType===4?randomHint:`${a} - ${b} = 10\n10 - ${c} = ${answer}`}randomAnswer=answer;prompt.textContent=text;input.innerHTML='<div class="keypad-wrap" style="position:relative;right:auto;top:auto;margin:20px auto 0"><div class="answer-display" id="randomDisplay"></div><div class="keypad" id="randomKeypad"></div></div>';buildKeypad('randomKeypad',judgeRandomKey);speak(text)}
+    help.textContent=randomHint;
+  }
+  function revealRandomAnswer(target){target.classList.remove('reveal','answer-reveal');void target.offsetWidth;target.classList.add(target.classList.contains('answer-display')?'answer-reveal':'reveal');setTimeout(()=>showStamp(document.getElementById('randomMark'),'correct'),ANSWER_STAMP_DELAY_MS)}
+  function showRandomSolution(){const help=document.getElementById('helpCard');help.textContent=randomSolution;help.classList.add('open');speak(randomSolution)}
+  function armRandomContinue(){randomCompletedCount=randomSequenceIndex+1;updateRandomWorkProgress();setProgress(72+randomCompletedCount*4);randomAwaitingContinue=true;const help=document.getElementById('helpCard'),advance=document.createElement('span');advance.className='dialogue-advance';advance.setAttribute('aria-hidden','true');help.appendChild(advance);help.classList.add('continue-ready');help.setAttribute('role','button');help.setAttribute('tabindex','0');help.setAttribute('aria-label',randomSequenceIndex===randomSequence.length-1?'모양으로 자유 그리기':'다음 문제');help.onclick=nextRandom;help.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();nextRandom()}};help.focus()}
+  function completeRandomProblem(){document.getElementById('randomPanel').toggleAttribute('data-assisted',randomAssisted);showRandomSolution();armRandomContinue()}
+  function judgeRandomChoice(btn){if(randomAwaitingContinue)return;if(btn.textContent===randomAnswer){document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);tone(true);showFeedback(document.getElementById('randomMark'),'');completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;document.getElementById('helpCard').classList.add('open');shake(btn);if(randomWrong>=3){const answerButton=[...document.querySelectorAll('#randomInput .choice')].find(b=>b.textContent===randomAnswer);randomAnswerRevealed=true;randomAssisted=true;document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);answerButton.disabled=false;revealRandomAnswer(answerButton)}}}
+  function judgeRandomKey(n){if(randomAwaitingContinue)return;const d=document.getElementById('randomDisplay');if(n==='enter'){if(randomValue===randomAnswer){setKeypadEnabled('randomKeypad',false);tone(true);showFeedback(document.getElementById('randomMark'),'');completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;document.getElementById('helpCard').classList.add('open');shake(d);randomValue='';d.textContent='';if(randomWrong>=3){randomAnswerRevealed=true;randomAssisted=true;randomValue=randomAnswer;d.textContent=randomAnswer;d.setAttribute('data-assisted','true');revealRandomAnswer(d);setKeypadConfirmOnly('randomKeypad')}}}else if(!randomAnswerRevealed){randomValue=(randomValue+n).slice(-2);d.textContent=randomValue}}
+  function nextRandom(){if(randomSequenceIndex<randomSequence.length-1){randomSequenceIndex++;randomType=randomSequence[randomSequenceIndex];renderRandom()}else showScene('section_free_drawing')}
+  document.getElementById('helpCharacter').onclick=()=>{if(randomAwaitingContinue)return;document.getElementById('helpCard').classList.toggle('open');document.getElementById('fingerHint').classList.add('hidden')};
+
+  const DRAWING_MIN_SHAPES=3,DRAWING_MIN_SHAPE_TYPES=2,DRAWING_MIN_COLORS=2;
+  let drawingBeat=0,drawShape='circle',drawColor='green',savedDrawing=[];
+  function drawingState(){return [...document.querySelectorAll('#drawingCanvas .drawn-shape')].map(shape=>({shape:['circle','triangle','square'].find(name=>shape.classList.contains(name)),color:['green','blue','red','purple'].find(name=>shape.classList.contains(name)),left:shape.style.left,top:shape.style.top})).filter(item=>item.shape&&item.color)}
+  function drawingRequirementsMet(items=drawingState()){return items.length>=DRAWING_MIN_SHAPES&&new Set(items.map(item=>item.shape)).size>=DRAWING_MIN_SHAPE_TYPES&&new Set(items.map(item=>item.color)).size>=DRAWING_MIN_COLORS}
+  function updateDrawingCompletionState(){const done=document.getElementById('drawingDone'),items=drawingState(),ready=drawingRequirementsMet(items);done.disabled=!ready;done.setAttribute('aria-disabled',String(!ready));done.dataset.shapeCount=String(items.length);done.dataset.requirementsMet=String(ready)}
+  function renderCompletedMural(){const preview=document.getElementById('completedMuralPreview');preview.innerHTML='';savedDrawing.forEach(item=>{const shape=document.createElement('div');shape.className=`drawn-shape paint-shape ${item.shape} ${item.color}`;shape.style.left=item.left;shape.style.top=item.top;preview.appendChild(shape)})}
+  function resetDrawingIntro(){clearTimeout(drawingIntroTimer);drawingBeat=0;drawShape='circle';drawColor='green';savedDrawing=[];renderCompletedMural();setProgress(84);const dialogue=document.getElementById('drawingDialogue'),teacher=document.getElementById('drawingTeacher'),speech=document.getElementById('drawingSpeech'),canvas=document.getElementById('drawingCanvas'),done=document.getElementById('drawingDone');dialogue.classList.remove('hidden');teacher.src='assets/teacher-praising.png';teacher.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';teacher.classList.remove('drawing-enter');void teacher.offsetWidth;teacher.classList.add('drawing-enter');speech.innerHTML='담장 색칠이 끝나가요!<span class="dialogue-advance"></span>';speech.classList.add('hidden','stagger-speech');drawingIntroTimer=setTimeout(()=>{speech.classList.remove('hidden');speak('담장 색칠이 끝나가요!')},INTRO_SPEECH_DELAY_MS);document.querySelectorAll('.tool').forEach(button=>{const active=button.dataset.shape===drawShape;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});document.querySelectorAll('.color-tool').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.color===drawColor)));document.getElementById('paintTools').classList.add('hidden');canvas.classList.add('hidden');canvas.innerHTML='';canvas.removeAttribute('data-completed');done.classList.add('hidden');document.getElementById('drawingSummary').innerHTML='';document.getElementById('drawingConfirm').classList.remove('open');updateDrawingCompletionState()}
+  document.getElementById('drawingTap').onclick=()=>{if(drawingBeat===0){drawingBeat++;document.getElementById('drawingTeacher').src='assets/teacher-explaining.png';document.getElementById('drawingTeacher').alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';document.getElementById('drawingSpeech').innerHTML='마지막 담장은 자유롭게 그려주세요.<span class="dialogue-advance"></span>';speak('마지막 담장은 자유롭게 그려주세요.')}else{document.getElementById('drawingDialogue').classList.add('hidden');document.getElementById('paintTools').classList.remove('hidden');document.getElementById('drawingCanvas').classList.remove('hidden');document.getElementById('drawingDone').classList.remove('hidden')}};
+  document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tool').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');drawShape=b.dataset.shape});document.querySelectorAll('.color-tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.color-tool').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');drawColor=b.dataset.color});
+  document.getElementById('drawingCanvas').onclick=e=>{const r=e.currentTarget.getBoundingClientRect(),el=document.createElement('div');el.className=`drawn-shape paint-shape ${drawShape} ${drawColor}`;el.style.left=((e.clientX-r.left)/r.width*100)+'%';el.style.top=((e.clientY-r.top)/r.height*100)+'%';e.currentTarget.appendChild(el);updateDrawingCompletionState()};
+  function renderDrawingSummary(){const summary=document.getElementById('drawingSummary'),seen=new Set();summary.innerHTML='';document.querySelectorAll('#drawingCanvas .drawn-shape').forEach(shape=>{const shapeName=['circle','triangle','square'].find(name=>shape.classList.contains(name)),colorName=['green','blue','red','purple'].find(name=>shape.classList.contains(name)),key=`${shapeName}-${colorName}`;if(!shapeName||!colorName||seen.has(key))return;seen.add(key);const sample=document.createElement('div');sample.className=`paint-shape ${shapeName} ${colorName}`;summary.appendChild(sample)})}
+  document.getElementById('drawingDone').onclick=()=>{const items=drawingState();if(drawingRequirementsMet(items)){renderDrawingSummary();document.getElementById('drawingConfirm').classList.add('open')}};document.getElementById('drawingNo').onclick=()=>document.getElementById('drawingConfirm').classList.remove('open');document.getElementById('drawingYes').onclick=()=>{savedDrawing=drawingState();document.getElementById('drawingCanvas').setAttribute('data-completed','true');setProgress(90);unlockMenuScene('section_math_story');showScene('section_math_story')};
+
+  const storyBeats=[
+    {text:'● ■ ▲',sign:-1,question:false},
+    {text:'무슨 표지판일까요?',sign:0,question:true},
+    {text:'● 모양 표지판은 어떤 것이 있을까요?\n\n“자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.”',sign:0,question:false},
+    {text:'무슨 표지판일까요?',sign:1,question:true},
+    {text:'■ 모양 표지판은 어떤 것이 있을까요?\n\n“주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요.”',sign:1,question:false},
+    {text:'무슨 표지판일까요?',sign:2,question:true},
+    {text:'▲ 모양 표지판은 어떤 것이 있을까요?\n\n“공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.\n\n앞으로 표지판을 보며 안전하게 다녀요.”',sign:2,question:false}
+  ];let storyIndex=0;
+  function resetStory(){clearTimeout(storyRevealTimer);storyIndex=0;setProgress(94);document.getElementById('storyTitleSurface').classList.remove('hidden');document.getElementById('storyIntroBoard').classList.remove('hidden');document.getElementById('storyIntroTap').classList.remove('hidden');const signRow=document.getElementById('signRow');signRow.classList.add('hidden');signRow.classList.remove('revealing');document.getElementById('storyCard').classList.add('hidden');document.querySelectorAll('.sign').forEach(s=>s.classList.remove('active'));speak('모양을 길에서 본 적이 있나요?')}
+  function openStorySigns(){document.getElementById('storyTitleSurface').classList.add('hidden');document.getElementById('storyIntroBoard').classList.add('hidden');document.getElementById('storyIntroTap').classList.add('hidden');const signRow=document.getElementById('signRow');signRow.classList.remove('hidden');signRow.classList.add('revealing');document.getElementById('storyCard').classList.remove('hidden');renderStory();clearTimeout(storyRevealTimer);storyRevealTimer=setTimeout(()=>signRow.classList.remove('revealing'),STORY_REVEAL_CLEAR_MS)}
+  function renderStory(){const beat=storyBeats[storyIndex],card=document.getElementById('storyCard');card.textContent=beat.text;const advance=document.createElement('span');advance.className='dialogue-advance';advance.setAttribute('aria-hidden','true');card.appendChild(advance);card.setAttribute('role','button');card.setAttribute('tabindex','0');card.setAttribute('aria-label',beat.question?'설명 보기':beat.text);document.querySelectorAll('.sign').forEach((s,i)=>s.classList.toggle('active',beat.sign<0||i===beat.sign));speak(beat.text)}
+  document.getElementById('storyIntroTap').onclick=openStorySigns;
+  document.getElementById('storyCard').onclick=()=>{if(storyIndex<storyBeats.length-1){storyIndex++;setProgress(94+storyIndex);renderStory()}else showScene('section_completion')};
+  document.getElementById('storyCard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('storyCard').click()}};
+
+  document.getElementById('certificateButton').onclick=()=>{const html='<!doctype html><meta charset="utf-8"><title>3차시 수리 완료!</title><h1>3차시 수리 완료!</h1><p>알록달록, 학교 담장 색칠하기</p>',blob=new Blob([html],{type:'text/html'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='3차시-수리-완료.html';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+  function resolveNextLessonTarget(){const url=typeof window.nextLessonUrl==='string'&&window.nextLessonUrl.trim()?window.nextLessonUrl.trim():'';const callback=typeof window.onNextLesson==='function'?window.onNextLesson:null;return{url,callback}}
+  function refreshNextLessonButton(){const button=document.getElementById('nextLessonButton'),target=resolveNextLessonTarget(),enabled=Boolean(target.url||target.callback);button.disabled=!enabled;button.setAttribute('aria-disabled',String(!enabled));button.toggleAttribute('data-route-missing',!enabled)}
+  function refreshExitButton(){const button=document.getElementById('exitButton');button.disabled=false;button.setAttribute('aria-disabled','false');button.setAttribute('aria-label','나가기')}
+  window.__contentHarnessRefreshRoutes=()=>{refreshNextLessonButton();refreshExitButton()};
+  window.__contentHarnessConfigure=config=>{if(config&&Object.prototype.hasOwnProperty.call(config,'nextLessonUrl'))window.nextLessonUrl=config.nextLessonUrl;if(config&&typeof config.onNextLesson==='function')window.onNextLesson=config.onNextLesson;if(config&&typeof config.onContentExit==='function')window.onContentExit=config.onContentExit;window.__contentHarnessRefreshRoutes()};
+  addEventListener('content-harness-config-updated',window.__contentHarnessRefreshRoutes);addEventListener('message',window.__contentHarnessRefreshRoutes);
+  setInterval(window.__contentHarnessRefreshRoutes,HOST_SYNC_MS);
+  document.getElementById('nextLessonButton').onclick=()=>{const target=resolveNextLessonTarget();if(target.callback)target.callback();else if(target.url)location.assign(target.url);refreshNextLessonButton()};
+  document.getElementById('exitButton').onclick=()=>{if(typeof window.onContentExit==='function'){window.onContentExit();return}if(window.parent!==window){window.parent.postMessage({type:'content-harness-exit'},'*');return}if(window.opener){window.close();return}showScene('section_global_ui')};
+
+  function buildKeypad(id,handler){const root=document.getElementById(id);root.innerHTML='';[1,2,3,4,5,6,7,8,9,0,'enter'].forEach(v=>{const b=document.createElement('button');b.className='key '+(v===0?'zero ':'')+(v==='enter'?'enter':'');b.textContent=v==='enter'?'O':v;if(v==='enter')b.setAttribute('aria-label','확인');b.onclick=()=>handler(v==='enter'?'enter':String(v));root.appendChild(b)})}
+  function setKeypadEnabled(id,enabled){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!enabled)}
+  function setKeypadConfirmOnly(id){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!key.classList.contains('enter'))}
+  function currentFeedbackMark(){return currentScene==='section_shape_find'?document.getElementById('shapeMark'):currentScene==='section_arithmetic_tutorial'?document.getElementById('arithMark'):currentScene==='section_random_problems'?document.getElementById('randomMark'):null}
+  function showStamp(el,type){if(!el)return;const correct=type==='correct';el.src=correct?'assets/feedback-stamp-correct.png':'assets/feedback-stamp-wrong.png';el.alt=correct?'정답 O 도장':'오답 X 도장';el.classList.remove('show');void el.offsetWidth;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),700)}
+  function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null}}
+  function completeFeedback(){const action=feedbackContinueAction;if(!action)return;feedbackContinueAction=null;resetFeedbackOverlay();action()}
+  function showFeedback(el,text='정답입니다.',onContinue=null){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.toggle('hidden',!text);showStamp(el,'correct');if(onContinue&&text){feedbackContinueAction=onContinue;sp.setAttribute('aria-label','다음 문제');sp.onclick=completeFeedback}else{feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700)}}
+  function showWrongFeedback(){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.png';ch.alt='한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');showStamp(currentFeedbackMark(),'wrong');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),700)}
+  function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),450)}
+  function bindDialogueSurface(surfaceId,tapId){const surface=document.getElementById(surfaceId),tap=document.getElementById(tapId);surface.setAttribute('role','button');surface.setAttribute('tabindex','0');surface.setAttribute('aria-label','다음');surface.onclick=e=>{e.stopPropagation();tap.click()};surface.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();tap.click()}}}
+  bindDialogueSurface('introSpeech','introTap');bindDialogueSurface('shapeSpeech','shapeDialogueTap');bindDialogueSurface('arithSpeech','arithIntroTap');bindDialogueSurface('drawingSpeech','drawingTap');
+  document.querySelector('#menuButton .course-menu-btn-label').textContent='목록';
+  document.getElementById('soundButton').dataset.soundOn='true';
+  refreshNextLessonButton();refreshExitButton();
+
+  /* ── 디버그 패널 ─────────────────────────────────────────────
+     ` 키로 열고 닫는다. 씬 목록은 하드코딩하지 않고 .scene의
+     data-qa-order / data-qa-label에서 만들므로 씬이 늘면 자동 반영된다.
+     이동은 showScene()을 그대로 쓴다(씬별 reset*() 초기화가 그 안에 있다). */
+  function buildDebugScenes(){
+    const list=document.getElementById('debugSceneList');list.innerHTML='';
+    scenes.forEach((scene,index)=>{
+      const button=document.createElement('button');button.type='button';button.className='debug-scene';button.dataset.go=scene.id;
+      const order=document.createElement('span');order.className='debug-scene-order';order.textContent=scene.dataset.qaOrder||String(index+1);
+      const label=document.createElement('span');label.className='debug-scene-label';label.textContent=scene.dataset.qaLabel||scene.id;
+      const sceneId=document.createElement('span');sceneId.className='debug-scene-id';sceneId.textContent=scene.id;
+      const text=document.createElement('span');text.className='debug-scene-text';text.append(label,sceneId);
+      button.append(order,text);button.onclick=()=>debugGoScene(scene.id);
+      list.appendChild(button);
+    });
+  }
+  function debugGoScene(id){
+    /* 뒤 씬으로 건너뛴 뒤에도 상단 "목록" 드로어가 잠기지 않도록 전부 해제한다 */
+    scenes.forEach(scene=>unlockedMenuScenes.add(scene.id));refreshMenuAccess();
+    showScene(id);
+  }
+  function syncDebugPanel(){
+    const panel=document.getElementById('debugPanel');if(!panel||panel.hidden)return;
+    panel.querySelectorAll('.debug-scene').forEach(button=>button.classList.toggle('current',button.dataset.go===currentScene));
+    const meta=sceneMeta[currentScene];
+    document.getElementById('debugCurrent').textContent=currentScene+(meta?` · ${meta.stage} · ${meta.progress}%`:'');
+  }
+  function toggleDebugPanel(force){
+    const panel=document.getElementById('debugPanel');
+    const open=typeof force==='boolean'?force:panel.hidden;
+    panel.hidden=!open;if(open)syncDebugPanel();
+  }
+  document.getElementById('debugClose').onclick=()=>toggleDebugPanel(false);
+  addEventListener('keydown',e=>{
+    const tag=e.target&&e.target.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA')return;
+    if(!e.altKey&&!e.metaKey&&(e.key==='`'||e.code==='Backquote')){e.preventDefault();toggleDebugPanel();return}
+    if(e.key==='Escape'&&!document.getElementById('debugPanel').hidden)toggleDebugPanel(false);
+  });
+  buildDebugScenes();
+
+  updateHud(currentScene);
+})();
+</script>
+</body>
+</html>

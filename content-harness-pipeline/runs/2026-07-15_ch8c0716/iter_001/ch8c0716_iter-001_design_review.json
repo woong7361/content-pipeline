@@ -1,0 +1,1414 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-15T18:36:06+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_activity1_scene2_problem",
+      "path": "iter_001/design_review/desktop__01_activity1_scene2_problem.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__01_activity1_scene2_problem.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_activity1_scene3_tutorial",
+      "path": "iter_001/design_review/desktop__02_activity1_scene3_tutorial.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__02_activity1_scene3_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_activity1_scene4_success",
+      "path": "iter_001/design_review/desktop__03_activity1_scene4_success.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__03_activity1_scene4_success.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_activity2_scene1_type_a",
+      "path": "iter_001/design_review/desktop__04_activity2_scene1_type_a.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__04_activity2_scene1_type_a.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_activity2_scene2_type_b",
+      "path": "iter_001/design_review/desktop__05_activity2_scene2_type_b.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__05_activity2_scene2_type_b.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_activity2_scene3_type_c",
+      "path": "iter_001/design_review/desktop__06_activity2_scene3_type_c.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__06_activity2_scene3_type_c.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_activity2_scene4_outro",
+      "path": "iter_001/design_review/desktop__07_activity2_scene4_outro.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__07_activity2_scene4_outro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_activity3_scene1_gallery",
+      "path": "iter_001/design_review/desktop__08_activity3_scene1_gallery.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__08_activity3_scene1_gallery.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_activity3_scene2_quiz",
+      "path": "iter_001/design_review/desktop__09_activity3_scene2_quiz.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__09_activity3_scene2_quiz.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_activity3_scene3_certificate",
+      "path": "iter_001/design_review/desktop__10_activity3_scene3_certificate.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_001\\design_review\\desktop__10_activity3_scene3_certificate.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "래스터 배경과 캐릭터는 따뜻한 도서관 세계를 일관되게 형성하지만, 대부분의 학습 UI가 장면 속 전광판·게시판·모니터·책·인증서 표면을 충분히 사용하지 않고 흰 패널과 일반 웹 버튼으로 분리되어 있다. 특히 튜토리얼, 활동 2의 세 유형, 갤러리, 마무리 퀴즈, 인증서에서 핵심 표면 가림·콘텐츠 이탈·중첩 문제가 확인되어 다음 refine이 필요하다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "iter_001/design_review/desktop.png",
+      "scene_purpose": "도서관 시계 수리 미션과 시작 행동을 소개한다.",
+      "overall_assessment": "배경은 화면을 충분히 채우지만 제목과 시작 CTA가 장면 속 사물에 결합되지 않아 게임 타이틀보다 웹 랜딩 화면에 가깝다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "도서관 수리대 접수 현판",
+        "rationale": "중앙 벽의 저밀도 영역을 실제 미션 접수대로 바꾸면 제목, 목표, 시작 행동이 하나의 장면 은유로 연결된다.",
+        "core_metaphor": "도서관에 들어온 학습자가 벽걸이 수리 의뢰 현판에서 임무를 접수한다.",
+        "visual_language": "밝은 목재 현판, 청록색 금속 모서리, 크림색 명패, 제한적인 금빛 시계 문양",
+        "layout_strategy": "제목을 중앙 목재 현판 안에 배치하고 시작 CTA를 현판 하단에 끼워진 금빛 수리 티켓으로 연결한다.",
+        "interaction_surfaces": [
+          "중앙 제목 현판",
+          "하단 금빛 수리 티켓"
+        ],
+        "implementation_notes": [
+          "배경의 중앙 원형 safe zone 아래에 제목 현판을 배치한다.",
+          "제목 원문은 HTML 오버레이로 유지하고 현판 내부 inset을 확보한다.",
+          "#startBtn은 별도 사각 버튼이 아니라 티켓 표면 위에 올린다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#scene-title .main-title; screenshot x=470..1450 y=360..565",
+            "issue": "제목이 배경 위에 직접 떠 있어 장면 속 안내 표면으로 인식되지 않는다.",
+            "evidence": "큰 그림자 글자가 중앙 벽과 책장을 가로지르며 이를 받치는 현판·간판·전광판이 없다.",
+            "suggested_fix": "중앙에 래스터 목재 수리 의뢰 현판을 배치하고 .main-title을 현판 안쪽 약 96px inset에 맞춰 중앙 정렬한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#startBtn; screenshot x=810..1110 y=615..725",
+            "issue": "시작 CTA가 일반 노란 rounded 버튼으로 보여 도서관 수리 모험의 물성을 만들지 못한다.",
+            "evidence": "단색 그라데이션, 둥근 사각형, CSS 그림자로만 구성되어 forbidden_styles의 CSS component 인상이 강하다.",
+            "suggested_fix": "빈 중앙부를 가진 금빛 수리 티켓 래스터 몸체 위에 #startBtn 텍스트를 올리고, 절취선·책/시계 문양은 asset에 포함한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#scene-title .center-stack, #startBtn",
+            "issue": "타이틀과 CTA가 배경과 분리된 웹 UI 스택으로 구성되어 있다.",
+            "evidence": "장면의 목재·금속 재질과 연결되는 프레임 없이 텍스트와 버튼만 중앙에 쌓였다.",
+            "suggested_fix": "center-stack을 수리 의뢰 현판 wrapper로 재구성하고 제목 현판과 티켓 CTA를 하나의 수직 설치물처럼 배치한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "creative_direction",
+          "target": "#scene-title .center-stack, .main-title, #startBtn",
+          "issue": "장면 은유 없이 제목과 일반 버튼만 중앙에 놓인 웹 타이틀 구조다.",
+          "evidence": "1920×1080 배경은 풍부하지만 핵심 콘텐츠가 어떤 도서관 물건에도 결합되지 않는다.",
+          "suggested_fix": "목재 수리 의뢰 현판과 금빛 접수 티켓을 추가해 제목과 시작 CTA를 장면 속 설치물로 통합한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#scene-title 중앙에 래스터 수리 의뢰 현판을 배치하고 제목 원문을 현판 safe zone 안에 맞춘다.",
+        "#startBtn을 공용 금빛 티켓 몸체 위로 옮기고 현재 hover·press 모션은 유지한다."
+      ]
+    },
+    {
+      "scene_id": "01_activity1_scene2_problem",
+      "capture_label": "01_activity1_scene2_problem",
+      "screenshot_path": "iter_001/design_review/desktop__01_activity1_scene2_problem.png",
+      "scene_purpose": "고장 난 대형 시계와 도서관의 위기를 제시한다.",
+      "overall_assessment": "고장 시계와 불안한 캐릭터는 명확하지만 대형 말풍선이 핵심 시계의 절반을 가려 위기 장치의 시인성이 크게 떨어진다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "시계 고장 경보",
+        "rationale": "현재 배경과 자산은 충분히 강하므로 시계와 대사의 시선 순서만 정리하면 된다.",
+        "core_metaphor": "중앙 고장 시계에서 경보가 발생하고 선생님이 옆에서 구조 요청을 보낸다.",
+        "visual_language": "크림색 말풍선, 청록 외곽선, 불규칙한 경보 기호, 밝은 주간광",
+        "layout_strategy": "시계를 중앙 상단에서 완전히 노출하고 말풍선을 우측 하단의 선생님 인접 영역으로 축소 배치한다.",
+        "interaction_surfaces": [
+          "중앙 대형 시계",
+          "선생님 인접 말풍선"
+        ],
+        "implementation_notes": [
+          ".teacher-speech 폭을 약 520px로 줄이고 right 300px, bottom 360px 부근으로 이동한다.",
+          "문장 원문은 유지하되 font-size 25~27px, line-height 1.42와 내부 줄바꿈으로 표면에 맞춘다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#problemSpeech; screenshot x=940..1560 y=295..610",
+            "issue": "위기 설명 말풍선이 핵심 대형 시계의 우측 절반과 바늘을 가린다.",
+            "evidence": "고장 시각과 빠르게 회전하는 바늘을 보여줘야 하는 장면에서 시계 중심축과 우측 숫자가 말풍선 뒤에 숨는다.",
+            "suggested_fix": "#problemSpeech를 우측 하단으로 이동하고 폭을 약 520px로 줄여 대형 시계 외곽과 바늘 전체를 노출한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#problemClock, #problemSpeech, .char.teacher; screenshot central clock and right character zone",
+            "issue": "시계·말풍선·캐릭터의 레이어가 경쟁해 핵심 장치가 보조 대사보다 뒤로 밀린다.",
+            "evidence": "말풍선이 시계보다 높은 z-index로 중앙을 차지하고 꼬리가 캐릭터와 시계 사이를 가로지른다.",
+            "suggested_fix": "#problemClock을 완전히 보이는 중앙 상단에 유지하고 말풍선은 캐릭터 머리 왼쪽의 빈 바닥·데스크 영역으로 재배치한다."
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_activity1_scene2_problem",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#problemSpeech relative to #problemClock",
+          "issue": "설명 말풍선이 학습과 서사의 핵심인 고장 시계를 가린다.",
+          "evidence": "스크린샷에서 시계 중심축과 2~5시 영역이 말풍선 뒤에 숨는다.",
+          "suggested_fix": "말풍선 폭과 위치를 조정해 시계 원 전체에 최소 40px 시각 여백을 확보한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#problemSpeech를 우측 하단 safe zone으로 옮겨 #problemClock의 문자판과 바늘을 모두 노출한다.",
+        "세 개의 .q-bubble은 시계 외곽과 겹치지 않도록 좌우 책장 쪽으로 분산한다."
+      ]
+    },
+    {
+      "scene_id": "02_activity1_scene3_tutorial",
+      "capture_label": "02_activity1_scene3_tutorial",
+      "screenshot_path": "iter_001/design_review/desktop__02_activity1_scene3_tutorial.png",
+      "scene_purpose": "시계 읽기와 드래그 조작을 연습한다.",
+      "overall_assessment": "캐릭터와 시계는 친근하지만 중앙 벽의 시계 safe zone은 비어 있고 실제 조작부는 반투명 흰 패널과 일반 카드 트레이로 분리되어 수리 작업대처럼 보이지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "도서관 시계 수리 작업대",
+        "rationale": "학습자가 카드 UI를 누르는 대신 실제 시계 부품과 시간표 티켓을 작업대에서 맞춘다는 인상을 만들어야 한다.",
+        "core_metaphor": "꼬마 사서가 목재 수리대에서 멈춘 탁상시계에 시간 티켓을 끼운다.",
+        "visual_language": "밝은 나무 작업대, 청록 금속 모서리, 황동 슬롯, 크림색 티켓",
+        "layout_strategy": "중앙 하단에 시계 홈과 정답 슬롯이 결합된 작업대를 놓고 세 선택지는 작업대 전면 티켓 꽂이에 배치한다.",
+        "interaction_surfaces": [
+          "탁상시계 원형 홈",
+          "정답 티켓 슬롯",
+          "세 칸 시간 티켓 꽂이"
+        ],
+        "implementation_notes": [
+          ".workbench와 .card-tray의 흰 배경을 제거하고 신규 작업대 asset을 공통 부모로 사용한다.",
+          "#tutorialClock과 #tutorialDrop을 asset의 고정 홈 중심에 맞춘다.",
+          "세 .card는 공용 티켓 프레임을 사용한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#tutorialTray .tray-prompt; screenshot x=620..1325 y=820..900",
+            "issue": "조작 안내가 비활성 반투명 패널에 놓여 대비와 장면성이 약하다.",
+            "evidence": "캡처 시 tray 전체 opacity가 낮아 초등 2학년 학습자가 읽어야 할 안내와 선택지가 배경에 묻힌다.",
+            "suggested_fix": "안내 원문을 작업대 상단의 크림색 명패 safe zone에 배치하고 비활성 상태에서도 텍스트 대비는 유지한다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#tutorialDrop, #tutorialTray .card; screenshot lower center",
+            "issue": "[?] 슬롯과 시간 선택지가 실제 작업대의 슬롯이 아니라 독립된 웹 카드처럼 보인다.",
+            "evidence": "점선 rounded 사각형과 동일한 CSS 버튼 세 개가 반투명 흰 패널 위에 놓였다.",
+            "suggested_fix": "#tutorialDrop을 작업대 황동 슬롯 안에 맞추고 각 .card를 크림색 시간 티켓 asset 위의 HTML 텍스트로 구성한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "asset_library_lobby_broken central wall safe zone; #scene-tutorial screenshot x=815..1140 y=110..450",
+            "issue": "배경의 큰 원형 시계 safe zone이 비어 있어 장면의 중심이 약하다.",
+            "evidence": "planner가 튜토리얼에 asset_clock_body_large를 지정했지만 화면 중앙 상단에는 빈 원형 벽면만 남는다.",
+            "suggested_fix": "asset_clock_body_large를 중앙 벽에 낮은 대비의 고장 상태로 유지하거나 작업대와 시각적으로 연결되는 수리 대상 표식으로 사용한다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#scene-tutorial .workbench, #tutorialTray",
+            "issue": "시계와 선택지가 배경 속 데스크에 통합되지 않고 두 개의 흰 웹 패널 위에 떠 있다.",
+            "evidence": "workbench와 card-tray 모두 CSS 배경·radius·shadow만 사용하며 도서관 목재 재질과 원근을 공유하지 않는다.",
+            "suggested_fix": "두 DOM을 하나의 .tutorial-repair-bench wrapper로 합치고 래스터 작업대의 홈과 슬롯 좌표에 오버레이한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".workbench, .card-tray, .card",
+            "issue": "튜토리얼의 핵심 조작 표면이 일반 rounded panel과 button으로 구성되어 있다.",
+            "evidence": "흰 반투명 직사각형, 점선 입력칸, 노란 사각 카드가 화면 하단을 차지한다.",
+            "suggested_fix": "목재 수리대와 크림색 절취 티켓 asset으로 교체하고 CSS는 위치·간격·상태 글로우만 담당하게 한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_activity1_scene3_tutorial",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#scene-tutorial .workbench, #tutorialTray, #tutorialDrop",
+          "issue": "튜토리얼 조작부가 장면 속 작업대가 아니라 흰 웹 UI로 분리되어 있다.",
+          "evidence": "배경 데스크와 무관한 두 개의 반투명 패널이 시계·슬롯·선택지를 감싼다.",
+          "suggested_fix": "시계 홈, 정답 슬롯, 티켓 꽂이를 가진 래스터 작업대로 두 패널을 통합한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".workbench와 .card-tray를 하나의 .tutorial-repair-bench로 합친다.",
+        "#tutorialClock, #tutorialDrop, 세 .card를 작업대 asset의 지정된 홈과 티켓 슬롯 중심에 배치한다.",
+        "비활성 상태는 선택지만 채도를 낮추고 안내 텍스트의 대비는 유지한다."
+      ]
+    },
+    {
+      "scene_id": "03_activity1_scene4_success",
+      "capture_label": "03_activity1_scene4_success",
+      "screenshot_path": "iter_001/design_review/desktop__03_activity1_scene4_success.png",
+      "scene_purpose": "튜토리얼 성공을 축하하고 본 활동으로 전환한다.",
+      "overall_assessment": "캐릭터 반응과 시계 글로우는 성공감을 전달하지만 흰 작업대와 일반 노란 CTA가 장면을 웹 성공 화면으로 보이게 한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "첫 시계 수리 승인",
+        "rationale": "현재 성공 포즈와 금빛 글로우는 유지하고 작업대와 CTA의 물성만 보강하면 된다.",
+        "core_metaphor": "수리된 시계 옆 슬롯에 승인 티켓이 꽂히고 다음 수리 구역 티켓이 발급된다.",
+        "visual_language": "금빛 승인 링, 청록 슬롯, 목재 작업대, 금빛 티켓",
+        "layout_strategy": "튜토리얼과 같은 작업대를 유지한 채 성공 슬롯만 점등하고 CTA를 작업대 하단 발급구에 배치한다.",
+        "interaction_surfaces": [
+          "수리 완료 슬롯",
+          "다음 구역 티켓"
+        ],
+        "implementation_notes": [
+          "튜토리얼 작업대 asset을 연속 사용한다.",
+          "#goStep2는 공용 금빛 티켓 몸체에 올린다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#scene-success .teacher-speech; screenshot x=940..1560 y=295..610",
+            "issue": "축하 말풍선이 중앙 작업대와 배경 원형 safe zone 일부를 덮어 시각적 중심이 분산된다.",
+            "evidence": "말풍선이 화면 중앙 절반을 차지하고 시계 작업대보다 더 강한 면적으로 보인다.",
+            "suggested_fix": "말풍선을 우측 캐릭터 인접 영역으로 약 520px 폭으로 축소하고 작업대 위쪽을 비운다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#goStep2; screenshot x=580..1340 y=920..1025",
+            "issue": "다음 단계 CTA가 일반 노란 긴 버튼으로 떠 있다.",
+            "evidence": "작업대나 도서관 장치와 연결되지 않은 CSS rounded button이다.",
+            "suggested_fix": "작업대 하단에서 발급된 금빛 수리 티켓 표면 위에 원문을 2행 이내로 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#scene-success .workbench",
+            "issue": "성공한 시계와 [3시] 슬롯이 흰 반투명 패널에 머물러 실제 수리 완료 장치로 보이지 않는다.",
+            "evidence": "배경 데스크와 재질·원근이 연결되지 않은 직사각형 패널이다.",
+            "suggested_fix": "튜토리얼과 같은 목재 작업대를 유지하고 슬롯 테두리와 시계 글로우만 성공 상태로 전환한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#scene-success .workbench, #goStep2",
+            "issue": "성공 장면의 핵심 표면과 CTA가 모두 CSS 패널·버튼이다.",
+            "evidence": "흰 rounded panel과 노란 rounded CTA가 화면 중앙·하단을 지배한다.",
+            "suggested_fix": "래스터 작업대와 공용 금빛 티켓 몸체로 교체한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_activity1_scene4_success",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#scene-success .workbench, #goStep2",
+          "issue": "성공 상태가 장면 속 수리 승인으로 통합되지 않고 패널과 버튼으로 분리된다.",
+          "evidence": "튜토리얼과 동일한 흰 패널 및 일반 CTA가 그대로 사용된다.",
+          "suggested_fix": "수리 작업대의 성공 점등과 발급 티켓으로 재구성한다."
+        }
+      ],
+      "refine_suggestions": [
+        "튜토리얼 작업대를 재사용해 시계·정답 슬롯의 위치 연속성을 유지한다.",
+        "#goStep2를 작업대 하단 발급구와 연결된 금빛 티켓으로 바꾼다."
+      ]
+    },
+    {
+      "scene_id": "04_activity2_scene1_type_a",
+      "capture_label": "04_activity2_scene1_type_a",
+      "screenshot_path": "iter_001/design_review/desktop__04_activity2_scene1_type_a.png",
+      "scene_purpose": "몇 분 전 표현과 일치하는 아날로그 시계를 선택한다.",
+      "overall_assessment": "문항은 전광판에 잘 들어갔지만 말풍선이 전광판을 가리고 세 시계 선택지가 데스크 표면 대신 거대한 흰 카드 트레이 위에 놓여 있다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "시계 관제 데스크",
+        "rationale": "배경에 이미 전광판과 세 시계 자리라는 강한 interaction surface가 있으므로 이를 직접 사용해야 한다.",
+        "core_metaphor": "전광판의 오류 문장을 읽고 안내 데스크의 세 시계 거치대 중 하나를 점검한다.",
+        "visual_language": "청록 금속 전광판, 밝은 목재 데스크, 황동 시계 거치대, 작은 크림색 명패",
+        "layout_strategy": "문항은 전광판 안에 유지하고 세 시계는 데스크 상판의 세 거치대에 직접 배치하며 라벨은 각 거치대 전면 명패에 넣는다.",
+        "interaction_surfaces": [
+          "상단 전광판",
+          "데스크의 세 시계 거치대",
+          "거치대 전면 라벨"
+        ],
+        "implementation_notes": [
+          "#typeAControls의 흰 배경을 제거한다.",
+          ".clock-options를 데스크 상판 좌표에 맞춘 절대 배치 또는 랙 asset 위 grid로 바꾼다.",
+          "#typeASpeech는 전광판 하단을 침범하지 않도록 우측 캐릭터 근처로 축소한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#typeASpeech relative to #typeAPrompt; screenshot x=940..1560 y=335..610",
+            "issue": "설명 말풍선이 전광판의 중앙과 하단을 가려 문제 표면의 완결성을 훼손한다.",
+            "evidence": "문항은 전광판 상단에 잘 결합됐지만 말풍선이 같은 전광판 위에 겹쳐 검은 화면의 절반 이상을 비운 채 가린다.",
+            "suggested_fix": "#typeASpeech를 우측 캐릭터 가까이 폭 480~520px로 축소하고 전광판 외곽 밖으로 이동한다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#typeAControls .clock-choice; screenshot x=405..1515 y=695..1000",
+            "issue": "세 시계와 라벨이 데스크 거치대가 아닌 민트색 웹 카드 안에 놓인다.",
+            "evidence": "배경에 넓은 목재 데스크가 있지만 그 위를 흰 tray와 동일한 rounded cards가 덮는다.",
+            "suggested_fix": "세 .clock-choice의 카드 배경을 제거하고 래스터 시계 거치대 세 칸의 중심에 시계와 라벨을 각각 맞춘다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_clock_desk_scene desk surface; #typeAControls",
+            "issue": "배경이 제공하는 데스크 interaction surface를 사용하지 않고 별도 패널로 덮었다.",
+            "evidence": "planner가 지정한 하단 세 시계 자리는 존재하지만 control-tray가 상판 전체를 가린다.",
+            "suggested_fix": "#typeAControls를 투명 컨테이너로 만들고 배경 데스크 또는 신규 거치대 asset 좌표에 세 선택지를 직접 배치한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#typeAControls.control-tray, .clock-choice",
+            "issue": "핵심 선택 UI가 흰 패널과 단일색 사각 카드 중심이다.",
+            "evidence": "도서관 안내 데스크보다 control-tray와 민트 카드가 더 강한 시각 면적을 차지한다.",
+            "suggested_fix": "control-tray의 panel 스타일을 제거하고 목재·금속 시계 거치대 asset으로 대체한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_activity2_scene1_type_a",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#typeAControls on asset_clock_desk_scene lower desk surface",
+          "issue": "배경에 준비된 세 시계 자리를 사용하지 않고 별도 웹 카드 패널을 올렸다.",
+          "evidence": "세 시계가 데스크와 분리된 흰 control-tray 안에 들어간다.",
+          "suggested_fix": "데스크용 세 칸 거치대를 추가하고 시계·동적 라벨을 각 거치대 중심에 배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#typeAControls의 배경·테두리·그림자를 제거하고 데스크 상판 좌표에 맞춘다.",
+        "세 .clock-choice를 거치대 중심에 배치하고 라벨은 전면 명패 safe zone에 넣는다.",
+        "#typeASpeech를 전광판 밖 우측 영역으로 옮긴다."
+      ]
+    },
+    {
+      "scene_id": "05_activity2_scene2_type_b",
+      "capture_label": "05_activity2_scene2_type_b",
+      "screenshot_path": "iter_001/design_review/desktop__05_activity2_scene2_type_b.png",
+      "scene_purpose": "시작 시각과 걸린 시간을 이용해 빈칸을 채운다.",
+      "overall_assessment": "코르크 게시판 무대는 적합하지만 문항·시계·키패드가 여러 겹의 흰 패널로 게시판을 덮고, 말풍선까지 겹쳐 학습 정보의 위계가 무너진다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "독서 교실 시간표 복구판",
+        "rationale": "게시판 자체를 문제·시각·입력의 물리적 표면으로 사용하면 학습 흐름이 한눈에 정리된다.",
+        "core_metaphor": "지워진 시간표에 시작 시계와 종료 시각 카드를 다시 꽂고 계산 키패드로 빈칸을 기록한다.",
+        "visual_language": "코르크 게시판, 종이 시간표 카드, 컬러 압정, 목재 계산 키패드",
+        "layout_strategy": "문항은 상단 핀 고정 종이, 시작·종료 시계는 중앙 두 칸 시간표, 입력과 키패드는 우측 하단 고정 장치로 분리한다.",
+        "interaction_surfaces": [
+          "상단 문항 종이",
+          "중앙 두 칸 시간표",
+          "우측 하단 물리 키패드"
+        ],
+        "implementation_notes": [
+          "#typeBPrompt는 코르크 안쪽 상단에 고정한다.",
+          "#typeBVisual은 중앙 보드 안에 놓고 #typeBControls의 거대 흰 배경을 제거한다.",
+          "키패드 몸체 asset의 빈 키 캡 위에 숫자와 확인 문구를 HTML로 얹는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#typeBPrompt, #typeBSpeech; screenshot upper board",
+            "issue": "문항 종이와 설명 말풍선이 겹치는 두 개의 독립 패널로 게시판을 가린다.",
+            "evidence": "#typeBSpeech가 중앙 시계 영역과 문항 아래쪽을 침범하며 정보 표면이 세 겹으로 중첩된다.",
+            "suggested_fix": "#typeBSpeech를 우측 캐릭터 옆의 좁은 안내 표면으로 이동하고 #typeBPrompt는 게시판 상단 핀 종이 하나로 유지한다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#typeBControls .answer-field, .keypad, .key; screenshot x=370..1550 y=520..1020",
+            "issue": "입력값과 키패드가 게시판의 실제 입력 영역이 아니라 거대한 흰 웹 폼 안에 놓인다.",
+            "evidence": "흰 control-tray가 화면 하단 절반을 덮고 일반 사각 키들이 우측에 배열된다.",
+            "suggested_fix": "입력칸은 중앙 시간표의 빈 칸에 맞추고 키패드는 우측 하단 목재 계산 장치 asset의 키 중심에 오버레이한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#typeBControls .confirm-btn",
+            "issue": "확인 CTA가 일반 청록색 웹 버튼으로 보인다.",
+            "evidence": "키패드 아래에 단색 사각 버튼이 별도 배치되어 게시판 물성과 연결되지 않는다.",
+            "suggested_fix": "키패드 asset 하단의 넓은 확인 키 캡에 원문을 오버레이하고 press 시 5~7px 눌림 모션을 적용한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "asset_reading_class_scene corkboard safe zone; #typeBVisual, #typeBControls",
+            "issue": "코르크 게시판의 넓은 interaction surface가 흰 패널에 가려져 거의 사용되지 않는다.",
+            "evidence": "중앙 게시판 위에 visual-aid와 control-tray가 겹치며 배경의 코르크 질감이 가장자리에서만 보인다.",
+            "suggested_fix": "패널 배경을 제거하고 문항, 두 시계, 입력칸을 코르크 표면 안쪽 grid로 직접 배치한다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#typeBVisual and #typeBControls",
+            "issue": "시계·화살표·입력칸·키패드가 서로 다른 떠 있는 표면에 놓여 시간표 복구 과정으로 연결되지 않는다.",
+            "evidence": "시계 일부가 반투명 패널 뒤로 흐려지고 말풍선과 control-tray에 의해 가려진다.",
+            "suggested_fix": "게시판 중앙에 시작 시각→걸린 시간→끝나는 시각의 단일 수평 구조를 만들고 입력칸을 빈 종료 카드에 결합한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#typeBPrompt, .visual-aid, #typeBControls, .key",
+            "issue": "흰 rounded panel과 일반 웹 keypad가 장면 대부분을 차지한다.",
+            "evidence": "정적 코르크 재질보다 CSS 패널의 밝은 면적이 더 크다.",
+            "suggested_fix": "종이 시간표 카드와 목재 키패드 asset으로 표면을 교체한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_activity2_scene2_type_b",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "asset_reading_class_scene corkboard; #typeBPrompt, #typeBVisual, #typeBControls",
+          "issue": "준비된 코르크 게시판을 여러 흰 패널이 덮어 장면형 시간표 수리 경험을 잃었다.",
+          "evidence": "게시판 중앙과 하단 대부분이 control-tray에 가려지고 시계도 부분적으로 묻힌다.",
+          "suggested_fix": "모든 동적 내용을 코르크 보드 grid와 물리 키패드 표면 안으로 재배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#typeBControls의 흰 panel 스타일을 제거한다.",
+        "게시판 안에 문항, 시작 시계, 화살표, 종료 시계·입력칸을 하나의 시간표 행으로 구성한다.",
+        "우측 하단에 래스터 키패드 몸체를 놓고 숫자와 확인 문구만 HTML로 오버레이한다.",
+        "#typeBSpeech가 문항이나 시계를 가리지 않도록 폭과 위치를 줄인다."
+      ]
+    },
+    {
+      "scene_id": "06_activity2_scene3_type_c",
+      "capture_label": "06_activity2_scene3_type_c",
+      "screenshot_path": "iter_001/design_review/desktop__06_activity2_scene3_type_c.png",
+      "scene_purpose": "1일과 24시간의 관계를 이용해 대출 시스템을 재부팅한다.",
+      "overall_assessment": "문항은 모니터 상단에 통합됐지만 낮·밤 타임라인과 입력 블록이 모니터 화면 밖으로 이탈하고, 하단 패널이 타임라인 숫자를 잘라 핵심 학습 구조가 무너진다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "대출 단말 시간 회로 복구",
+        "rationale": "모니터라는 명확한 interaction surface 안에서 문항, 타임라인, 빈칸, 상태를 모두 연결해야 한다.",
+        "core_metaphor": "대출 단말 내부의 낮·밤 시간 회로에 숫자 블록을 장착해 시스템을 재부팅한다.",
+        "visual_language": "청록 단말기, 어두운 유리 화면, 낮·밤 목재 회로 바, 물리 숫자 블록 랙",
+        "layout_strategy": "모니터 내부를 상단 문항, 중앙 타임라인, 하단 빈칸·상태창으로 나누고 숫자 블록과 확인 조작은 데스크 전면 콘솔에 둔다.",
+        "interaction_surfaces": [
+          "모니터 상단 문항창",
+          "모니터 중앙 타임라인",
+          "모니터 하단 입력 슬롯",
+          "데스크 숫자 블록 콘솔"
+        ],
+        "implementation_notes": [
+          ".timeline-aid를 모니터 검은 화면 안쪽 x≈600..1440, y≈320..650 영역에 축소 배치한다.",
+          "#typeCControls는 데스크 하단의 물리 콘솔 asset 위에 맞춘다.",
+          "#typeCSpeech는 모니터를 가리지 않는 우측 외곽으로 이동한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#typeCPrompt, #typeCSpeech; screenshot upper monitor",
+            "issue": "설명 말풍선이 모니터 중앙을 덮어 문항과 타임라인 사이의 시각적 연결을 끊는다.",
+            "evidence": "말풍선 꼬리와 본문이 모니터 우측 절반을 차지한다.",
+            "suggested_fix": "#typeCSpeech를 우측 캐릭터 위쪽의 모니터 외곽으로 축소 배치하고 화면 내부는 학습 정보 전용으로 비운다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".timeline-aid .timeline-scale, #typeCControls .answer-field; screenshot x=490..1550 y=480..1060",
+            "issue": "타임라인 숫자와 입력 슬롯이 모니터 safe zone 안에 들어가지 못하고 하단 패널에 잘린다.",
+            "evidence": "오전·오후 숫자열이 화면 최하단 밖에 노출되고 control-tray 아래로 가려져 읽기 어렵다.",
+            "suggested_fix": "타임라인과 오전·오후 숫자열을 모니터 내부 높이에 맞춰 축소하고 입력 슬롯을 타임라인 중앙축 또는 화면 하단 상태창 안에 배치한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#typeCControls #checkBlocks, #systemComplete",
+            "issue": "확인 CTA와 완료 상태가 단말기 부품이 아니라 별도 웹 버튼·독립 텍스트로 구성된다.",
+            "evidence": "긴 노란 확인 버튼이 흰 panel 하단을 채우고 #systemComplete는 모니터와 떨어진 절대 위치를 사용한다.",
+            "suggested_fix": "확인은 데스크 콘솔의 물리 레버/넓은 키에 올리고 #systemComplete는 모니터 하단 상태창 safe zone에 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "asset_loan_desk_scene monitor screen; .timeline-aid, #typeCControls",
+            "issue": "배경의 대형 모니터 interaction surface가 있음에도 타임라인과 입력 UI가 화면 밖 별도 패널에 놓였다.",
+            "evidence": "문항만 모니터에 있고 핵심 학습 장치인 낮·밤 바와 숫자 블록은 모니터 아래를 가로지른다.",
+            "suggested_fix": "문항·타임라인·빈칸·완료 상태를 모두 모니터 화면 내부 grid에 배치하고 조작 블록만 데스크 콘솔로 분리한다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_day_night_timeline inside asset_loan_desk_scene monitor",
+            "issue": "타임라인 asset이 모니터의 원근과 경계에 맞지 않고 전경으로 크게 돌출된다.",
+            "evidence": "타임라인 목재 프레임이 모니터 하단 프레임을 넘어 말풍선과 control-tray 사이에 끼인다.",
+            "suggested_fix": "타임라인 width를 약 780~860px로 줄이고 모니터 검은 화면 중심에 맞춰 object-position center로 배치한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#typeCControls.control-tray, .number-block, #checkBlocks",
+            "issue": "숫자 블록 조작부가 흰 웹 패널과 일반 버튼으로 구성되어 단말기 재부팅 은유가 약하다.",
+            "evidence": "모니터·스캐너 자산과 무관한 커다란 rounded panel이 화면 하단을 차지한다.",
+            "suggested_fix": "숫자 블록 홈과 확인 조작부가 있는 래스터 대출 단말 콘솔로 교체한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_activity2_scene3_type_c",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "asset_loan_desk_scene monitor screen, .timeline-aid, #typeCControls",
+          "issue": "타임라인·빈칸·완료 상태가 모니터 표면에 통합되지 않아 화면 경계 밖으로 이탈한다.",
+          "evidence": "숫자열이 하단에 잘리고 control-tray가 타임라인을 덮는다.",
+          "suggested_fix": "모니터 내부를 문항·타임라인·입력·상태의 4단 grid로 재구성하고 조작 블록만 별도 물리 콘솔에 둔다."
+        }
+      ],
+      "refine_suggestions": [
+        ".timeline-aid를 모니터 검은 화면 내부에 맞춰 축소·재배치한다.",
+        "#typeCControls의 흰 panel을 제거하고 데스크용 블록 콘솔 asset 위에 숫자와 확인 문구를 배치한다.",
+        "#systemComplete를 모니터 하단 상태창으로 옮긴다.",
+        "#typeCSpeech를 모니터 외곽 우측으로 이동한다."
+      ]
+    },
+    {
+      "scene_id": "07_activity2_scene4_outro",
+      "capture_label": "07_activity2_scene4_outro",
+      "screenshot_path": "iter_001/design_review/desktop__07_activity2_scene4_outro.png",
+      "scene_purpose": "도서관 복구를 축하하고 실생활 연계 단계로 이동한다.",
+      "overall_assessment": "복구된 로비, 대형 시계, 캐릭터의 삼각 구도가 안정적이지만 CTA가 일반 웹 버튼이고 수리 전후의 정돈 차이가 한눈에 강하게 드러나지는 않는다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 재개장 점등식",
+        "rationale": "현재 구도는 좋으므로 CTA의 물성과 복구 상태의 빛만 강화하면 된다.",
+        "core_metaphor": "정상화된 중앙 시계가 점등되고 다음 이야기 티켓이 발급된다.",
+        "visual_language": "따뜻한 주간광, 금빛 시계 링, 정돈된 목재 로비, 금빛 티켓",
+        "layout_strategy": "대형 시계와 캐릭터는 유지하고 CTA를 중앙 데스크에서 발급된 티켓처럼 배치한다.",
+        "interaction_surfaces": [
+          "중앙 대형 시계",
+          "하단 이야기 티켓"
+        ],
+        "implementation_notes": [
+          "#goStep3를 공용 금빛 티켓 몸체로 바꾼다.",
+          "복구 완료 후 배경 노출과 금빛 파티클이 순차적으로 안정되는 시간을 확보한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#goStep3; screenshot x=655..1265 y=920..1025",
+            "issue": "다음 단계 CTA가 복구된 도서관과 분리된 일반 노란 버튼이다.",
+            "evidence": "장면 속 데스크나 티켓 발급구와 연결되지 않은 CSS rounded rectangle이다.",
+            "suggested_fix": "중앙 데스크 앞에서 나온 금빛 이야기 티켓 몸체 위에 원문을 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "asset_library_lobby_restored compared with asset_library_lobby_broken",
+            "issue": "복구 전후의 공간 구조 연속성은 좋지만 바닥 소품 정돈 차이가 멀리서 즉시 읽힐 만큼 강하지 않다.",
+            "evidence": "복구 장면에도 바닥과 데스크 주변 책이 일부 남아 수리 완료의 before/after 대비가 약하다.",
+            "suggested_fix": "기존 restored asset을 유지하되 화면 노출 시 밝기·금빛 광원과 정돈된 중앙 바닥 영역이 더 잘 보이도록 crop과 조명을 조정한다."
+          }
+        ],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#goStep3.cta",
+            "issue": "복구 완료 장면의 유일한 조작물이 일반 웹 CTA다.",
+            "evidence": "금빛 그라데이션과 CSS 그림자만 사용한다.",
+            "suggested_fix": "공용 수리 티켓 asset을 사용한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "07_activity2_scene4_outro",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#goStep3",
+          "issue": "복구 완료 CTA가 장면 속 보상·티켓 표면으로 흡수되지 않았다.",
+          "evidence": "일반 노란 rounded button이 바닥 위에 떠 있다.",
+          "suggested_fix": "중앙 데스크에서 발급된 금빛 이야기 티켓 형태로 교체한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#goStep3를 공용 금빛 티켓 표면 위에 배치한다.",
+        "restoreBg가 나타난 뒤 중앙 바닥과 정돈된 책장이 충분히 보이도록 다른 이펙트의 z-index와 지속시간을 조정한다."
+      ]
+    },
+    {
+      "scene_id": "08_activity3_scene1_gallery",
+      "capture_label": "08_activity3_scene1_gallery",
+      "screenshot_path": "iter_001/design_review/desktop__08_activity3_scene1_gallery.png",
+      "scene_purpose": "24시간·해시계·타이머의 실생활 및 역사 사례를 탐색한다.",
+      "overall_assessment": "팝업북과 사례 이미지는 매우 잘 어울리지만 설명 말풍선이 비어 있는 오른쪽 페이지를 사용하지 않고 그 위를 가려 책의 interaction surface를 낭비한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "살아 움직이는 시간 사례 도감",
+        "rationale": "기존 마법책 자산의 완성도가 높으므로 설명과 내비게이션만 책 표면에 정렬하면 된다.",
+        "core_metaphor": "왼쪽 페이지에서 사례가 솟아오르고 오른쪽 페이지에서 사서의 설명을 읽는다.",
+        "visual_language": "크림색 종이, 청록 책등, 금빛 모서리, 작은 페이지 탭",
+        "layout_strategy": "사례 이미지는 왼쪽 페이지에 유지하고 설명 원문은 오른쪽 페이지 안쪽 여백에 직접 배치한다.",
+        "interaction_surfaces": [
+          "왼쪽 사례 페이지",
+          "오른쪽 설명 페이지",
+          "책 가장자리 페이지 탭"
+        ],
+        "implementation_notes": [
+          "#gallerySpeech의 말풍선 몸체와 꼬리를 제거하고 오른쪽 페이지 내부 텍스트 블록으로 바꾼다.",
+          "book nav는 책 모서리에 끼운 래스터 탭을 사용한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#gallerySpeech, asset_magic_book_surface right page; screenshot x=940..1555 y=335..610",
+            "issue": "설명이 책의 빈 오른쪽 페이지 안에 들어가지 않고 큰 말풍선으로 페이지를 가린다.",
+            "evidence": "planner가 넓은 좌우 page safe zone을 제공했지만 오른쪽 페이지는 비어 있고 말풍선이 책 경계 밖까지 확장된다.",
+            "suggested_fix": "말풍선 배경과 꼬리를 제거하고 #gallerySpeech를 오른쪽 페이지 x≈970..1325, y≈420..760 영역 안에 27~30px 글자로 배치한다."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "#bookPrev, #bookNext",
+            "issue": "페이지 이동 버튼이 책 부품보다 일반 원형 웹 버튼처럼 보인다.",
+            "evidence": "흰 원형 배경과 단순 삼각형 아이콘이 책 가장자리 위에 떠 있다.",
+            "suggested_fix": "책 모서리에 끼운 청록·금빛 페이지 탭 asset 위에 ◀, ▶를 오버레이하고 hover 시 6px 바깥으로 미끄러지게 한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#gallerySpeech on asset_magic_book_surface right page",
+            "issue": "팝업북의 명확한 설명 표면을 사용하지 않아 책과 텍스트가 구조적으로 분리된다.",
+            "evidence": "오른쪽 페이지는 비어 있는데 말풍선이 그 위와 교사 앞을 동시에 덮는다.",
+            "suggested_fix": "설명을 오른쪽 페이지 내부의 종이 인쇄 영역으로 재배치한다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": ".book-nav",
+            "issue": "내비게이션이 물리적 페이지 탭으로 보이지 않는다.",
+            "evidence": "일반 원형 아이콘 버튼 스타일이다.",
+            "suggested_fix": "래스터 페이지 탭 몸체와 작은 press/slide 모션을 사용한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "08_activity3_scene1_gallery",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#gallerySpeech -> asset_magic_book_surface right page",
+          "issue": "비어 있는 책 페이지를 두고 설명 말풍선이 별도 패널로 떠 있다.",
+          "evidence": "오른쪽 페이지 safe zone이 완전히 비어 있고 말풍선이 책·교사를 가린다.",
+          "suggested_fix": "설명 원문을 오른쪽 페이지 내부에 직접 배치하고 말풍선 외형을 제거한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#gallerySpeech를 오른쪽 페이지 내부 텍스트 레이어로 전환한다.",
+        "#bookPrev와 #bookNext를 책 모서리용 래스터 페이지 탭 위에 올린다.",
+        "사례 이미지는 현재 왼쪽 페이지 crop과 크기를 유지한다."
+      ]
+    },
+    {
+      "scene_id": "09_activity3_scene2_quiz",
+      "capture_label": "09_activity3_scene2_quiz",
+      "screenshot_path": "iter_001/design_review/desktop__09_activity3_scene2_quiz.png",
+      "scene_purpose": "24시간과 1일의 관계를 마지막으로 회상한다.",
+      "overall_assessment": "캐릭터는 활기차지만 화면 중앙의 거대한 흰 퀴즈 모달과 일반 선택 버튼이 복구된 도서관을 가려 정적 웹 퀴즈처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "하루 도서관 대출 카드 확인",
+        "rationale": "마무리 문제를 도서관 대출 카드나 마법책 표면에 담으면 앞 장면과 서사가 이어진다.",
+        "core_metaphor": "꼬마 사서가 하루 이용 시간을 적은 대출 카드를 내밀고 세 개의 도장을 선택하게 한다.",
+        "visual_language": "크림색 대출 기록판, 목재 프레임, 청록 슬롯, 금빛 정답 도장",
+        "layout_strategy": "중앙 문제판을 장면 속 대출 기록판으로 바꾸고 세 선택지는 하단 세 도장 슬롯에 배치한다.",
+        "interaction_surfaces": [
+          "중앙 대출 기록판",
+          "세 개의 답안 도장 슬롯"
+        ],
+        "implementation_notes": [
+          "#popupQuiz의 흰 modal 배경을 신규 퀴즈 보드 asset으로 교체한다.",
+          "세 .choice는 공용 선택 티켓 또는 도장 표면 위에 올린다.",
+          "캐릭터가 문제판을 가리키는 시선 흐름을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#popupQuiz .quiz-prompt; screenshot x=420..1500 y=330..510",
+            "issue": "마무리 문항이 장면 속 표면이 아닌 거대한 흰 모달에 놓인다.",
+            "evidence": "복구된 로비 중앙 대부분을 CSS panel이 가리고 도서관 물성과 연결되는 프레임이 없다.",
+            "suggested_fix": "문항 원문을 목재·종이 대출 기록판 asset의 상단 safe zone에 배치한다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#popupQuiz .choice; screenshot x=580..1340 y=520..625",
+            "issue": "세 선택지가 동일한 일반 rounded 버튼이다.",
+            "evidence": "단색 크림 사각형과 CSS 그림자로만 구성되어 도장·티켓·대출 카드로 보이지 않는다.",
+            "suggested_fix": "세 선택지를 기록판의 도장 슬롯 또는 공용 티켓 표면에 각각 중앙 정렬한다."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#popupQuiz.quiz-popup",
+            "issue": "중앙 흰 모달이 복구된 로비의 핵심 공간을 가린다.",
+            "evidence": "화면 중앙 55% 이상이 장면과 무관한 단색 패널로 덮인다.",
+            "suggested_fix": "패널 면적을 줄이고 도서관 대출 기록판이라는 물리적 자산으로 교체한다."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#popupQuiz, .popup-child",
+            "issue": "캐릭터와 퀴즈 표면이 같은 장면의 물건과 행동으로 연결되지 않는다.",
+            "evidence": "캐릭터는 좌측에 서 있고 퀴즈는 중앙 웹 모달로 독립되어 있다.",
+            "suggested_fix": "문제판을 캐릭터가 가리키거나 들고 있는 높이에 배치하고 세 답안 슬롯을 판의 일부로 만든다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".quiz-popup, .quiz-popup .choice",
+            "issue": "흰 카드와 일반 웹 버튼 중심의 화면이다.",
+            "evidence": "기본 rounded panel과 세 개의 동일 사각 버튼이 전체 상호작용을 구성한다.",
+            "suggested_fix": "래스터 대출 기록판과 도장/티켓형 답안 표면으로 교체한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "09_activity3_scene2_quiz",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#popupQuiz.quiz-popup, #popupQuiz .choice",
+          "issue": "마무리 장면이 장면형 도서관 모험이 아니라 일반 웹 퀴즈 모달로 보인다.",
+          "evidence": "중앙을 거대한 흰 패널과 세 사각 버튼이 차지한다.",
+          "suggested_fix": "도서관 대출 기록판과 세 도장 슬롯으로 재구성한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#popupQuiz를 래스터 대출 기록판 표면으로 교체한다.",
+        "세 .choice를 기록판 하단 세 슬롯의 중심에 배치한다.",
+        "문제 원문이 두세 줄로 안정적으로 들어가도록 safe zone 폭, font-size, line-height를 조정한다."
+      ]
+    },
+    {
+      "scene_id": "10_activity3_scene3_certificate",
+      "capture_label": "10_activity3_scene3_certificate",
+      "screenshot_path": "iter_001/design_review/desktop__10_activity3_scene3_certificate.png",
+      "scene_purpose": "학습 완료 기록을 인증서로 제시하고 저장·다음 차시 이동을 제공한다.",
+      "overall_assessment": "인증서 asset 자체는 장면에 잘 맞지만 HTML 본문이 종이 경계 밖으로 크게 이탈하고 두 말풍선이 제목을 가린다. 하단 CTA도 과도하게 크고 줄바꿈이 불안정해 최종 보상 장면의 완성도를 심각하게 떨어뜨린다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "도서관 수리대원 수여식",
+        "rationale": "기존 인증서 asset을 충분히 크게 사용하고 캐릭터와 대사를 양옆으로 분리하면 강한 보상 장면을 만들 수 있다.",
+        "core_metaphor": "복구된 로비 중앙에서 수리대원 인증서를 공식 수여하고 하단에서 보관 티켓과 다음 임무 티켓을 선택한다.",
+        "visual_language": "크림색 인증서, 금빛 장식, 붉은 리본, 청록 보관 티켓, 금빛 다음 임무 티켓",
+        "layout_strategy": "인증서를 중앙에 크게 세우고 모든 인증 문구를 종이 내부에 제한한다. 말풍선은 캐릭터 머리 위 양측으로 분리하며 하단에는 두 장의 티켓을 나란히 둔다.",
+        "interaction_surfaces": [
+          "중앙 인증서 종이",
+          "좌우 캐릭터 말풍선",
+          "하단 보관·다음 임무 티켓"
+        ],
+        "implementation_notes": [
+          ".cert-box와 .cert-inner의 폭 계산을 인증서 실제 비율에 맞게 수정한다.",
+          "두 speech의 폭을 각각 약 430px로 줄이고 인증서 바깥 좌우 상단에 배치한다.",
+          "final-actions는 인증서 아래 한 줄에 맞는 티켓 두 장으로 구성한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": ".cert-inner inside asset_certificate_paper; screenshot x=655..1265 y=215..735",
+            "issue": "인증서 제목·본문·기록이 종이 safe zone을 벗어나 배경 위에 직접 노출된다.",
+            "evidence": "인증서 이미지의 실제 종이 폭보다 .cert-inner가 넓어 제목 일부와 기록 문구가 좌우 테두리 밖으로 튀어나온다.",
+            "suggested_fix": ".cert-box를 약 760×760px로 키우되 .cert-inner는 실제 종이 폭의 58~62%로 제한하고 font-size·line-height·gap을 조정해 모든 원문을 내부에 넣는다."
+          },
+          {
+            "severity": "high",
+            "target": "#scene-final .teacher-speech, #scene-final .child-speech; screenshot x=360..1560 y=235..500",
+            "issue": "두 말풍선이 서로 겹치고 인증서 상단 제목과 장식을 완전히 가린다.",
+            "evidence": "좌우 말풍선이 중앙에서 중첩되며 인증서의 상단 절반을 덮는다.",
+            "suggested_fix": "각 말풍선을 캐릭터 위의 좌우 외곽에 폭 420~450px로 배치하고 중앙 인증서와 최소 32px 간격을 둔다."
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".cert-inner h2, .cert-inner p, .record-line",
+            "issue": "가변 기록과 고정 인증 문구가 인증서 내부 중심·여백에 맞지 않는다.",
+            "evidence": "본문과 기록선이 좌우 금빛 장식 및 리본 영역을 침범한다.",
+            "suggested_fix": "상단 제목, 중앙 본문, 하단 기록을 세 행 grid로 나누고 각 행의 max-width를 인증서 안쪽 장식 경계보다 작게 제한한다."
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#saveCertificate, #nextMission, .final-actions",
+            "issue": "두 CTA가 일반 웹 버튼이며 다음 임무 문구가 좁은 버튼에서 어색하게 여러 줄로 갈라진다.",
+            "evidence": "하단의 청록·노란 rounded rectangles가 인증서보다 강하게 보이고 두 번째 CTA는 세 줄 이상으로 분절된다.",
+            "suggested_fix": "두 CTA를 폭이 다른 물리 티켓으로 교체하고 #nextMission은 원문을 보존한 채 넓은 티켓에서 의도된 2행 줄바꿈, 30~32px 글자, 1.25 line-height로 배치한다."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_certificate_paper, .cert-box, .cert-inner",
+            "issue": "HTML 인증 내용이 asset의 실제 세로 종이 비율과 safe zone에 맞지 않는다.",
+            "evidence": "cert-box는 1000px 폭이지만 세로형 asset이 object-fit:contain으로 좁게 렌더링되는 반면 cert-inner는 부모 폭의 68%를 사용한다.",
+            "suggested_fix": "cert-surface의 렌더링 bounding box를 기준으로 inner 폭을 계산하거나 cert-box 자체를 인증서 aspect-ratio로 고정해 오버레이 좌표를 일치시킨다."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".final-actions .cta",
+            "issue": "최종 보상 장면의 저장·다음 CTA가 일반 rounded 버튼이다.",
+            "evidence": "인증서의 종이·리본 재질과 연결되지 않은 CSS 그라데이션 버튼이다.",
+            "suggested_fix": "청록 보관 티켓과 금빛 다음 임무 티켓 asset을 사용한다."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "10_activity3_scene3_certificate",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "asset_certificate_paper, .cert-box, .cert-inner, #scene-final .speech",
+          "issue": "인증서 텍스트가 종이 밖으로 이탈하고 두 말풍선이 인증서 상단을 가린다.",
+          "evidence": "본문·기록은 장식 경계를 넘고 말풍선 두 개는 중앙에서 중첩된다.",
+          "suggested_fix": "인증서 실제 비율을 기준으로 overlay 폭을 다시 계산하고 말풍선을 좌우 외곽으로 분리한다."
+        },
+        {
+          "scene_id": "10_activity3_scene3_certificate",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": ".final-actions, #saveCertificate, #nextMission",
+          "issue": "최종 CTA가 거대한 일반 웹 버튼이며 긴 문구가 불안정하게 줄바꿈된다.",
+          "evidence": "두 버튼이 인증서 하단보다 강한 시각 무게를 만들고 다음 CTA가 세 줄 이상으로 갈라진다.",
+          "suggested_fix": "폭이 다른 두 장의 물리 티켓으로 교체하고 다음 임무 원문을 의도된 2행으로 배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".cert-box를 인증서 asset 비율에 맞는 고정 aspect-ratio 컨테이너로 바꾼다.",
+        ".cert-inner 폭을 실제 종이 안쪽 장식 경계에 맞춰 줄이고 제목·본문·기록을 세 행으로 나눈다.",
+        "두 말풍선을 인증서 바깥 좌우에 분리하고 중앙과 32px 이상 간격을 둔다.",
+        "저장과 다음 차시 CTA를 공용 티켓 표면으로 바꾸고 다음 차시 문구는 넓은 티켓에서 2행으로 배치한다."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "입장 장면에는 sceneFade, 튜토리얼 대사 시퀀스, 캐릭터 walkIn이 있으며 정답은 캐릭터 pose 교체·stamp·말풍선·파티클, 오답은 confused pose·shake로 구분되어 기본 피드백은 충실하다. 다만 장면 전환에서 이전 화면은 즉시 제거되고 활동 2 문제 화면은 대부분 동시에 등장한다. 유형 B·C의 정답 공개도 중앙 stamp 뒤 곧바로 다음 문항으로 넘어가 장면 속 장치가 복구되는 연출이 약하다.",
+    "findings": [
+      {
+        "aspect": "scene_transition",
+        "scene_id": "global",
+        "severity": "medium",
+        "target": "showScene(), .scene, .scene.active, .scene.fade-in, @keyframes sceneFade",
+        "issue": "새 장면은 페이드 인하지만 이전 장면은 display:none으로 즉시 사라져 전환이 반쪽짜리다.",
+        "evidence": "showScene()은 모든 scene에서 active와 fade-in을 즉시 제거한 뒤 target에 active를 추가한다. CSS의 .scene은 display:none이고 .scene.active만 display:block이라 outgoing transition이 존재하지 않는다.",
+        "suggested_fix": "이전 장면에 320~400ms scene-exit 클래스를 적용해 opacity 1→0, translateX 0→-24px를 실행한 뒤 active를 제거하고 새 장면은 420~520ms 후속 진입시킨다."
+      },
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "04_activity2_scene1_type_a",
+        "severity": "medium",
+        "target": "showScene('scene-type-a'), renderTypeA(), #typeAPrompt, #typeAControls, #typeASpeech",
+        "issue": "활동 2 문제 장면의 배경·캐릭터·말풍선·문항·선택지가 한꺼번에 나타난다.",
+        "evidence": "goStep2 클릭 핸들러는 showScene('scene-type-a') 직후 renderTypeA()를 같은 tick에 호출하며, 해당 요소들에는 sceneFade 외 별도 animation-delay나 stagger가 없다. type B와 type C도 동일 구조다.",
+        "suggested_fix": "각 활동 장면에서 배경 0ms, 전광판/게시판 120ms, 캐릭터 240ms, 설명 420ms, 선택 장치 650ms 순으로 100~180ms 간격의 stagger를 적용한다."
+      },
+      {
+        "aspect": "answer_reveal",
+        "scene_id": "05_activity2_scene2_type_b",
+        "severity": "medium",
+        "target": "bindKeypad(), bindNumberBlocks(), showFeedback(), afterMainCorrect()",
+        "issue": "유형 B·C 정답 처리가 중앙 stamp와 캐릭터 반응에 의존하고 실제 시간표·모니터 슬롯이 복구되는 공개 연출이 없다.",
+        "evidence": "bindKeypad()과 bindNumberBlocks()은 정답 시 showFeedback() 후 afterMainCorrect()를 호출하며, afterMainCorrect()는 1150ms 뒤 다음 문항으로 전환한다. 입력 표면을 잠그거나 정답 글로우·회로 점등을 실행하는 코드가 없다.",
+        "suggested_fix": "유형 B는 채운 시간표 칸에 500ms 금빛 테두리와 압정 점등을, 유형 C는 입력 슬롯→타임라인→상태창 순서의 3단 점등을 실행하고 최소 1500ms 유지한 뒤 다음 문항으로 전환한다."
+      },
+      {
+        "aspect": "micro_interaction",
+        "scene_id": "08_activity3_scene1_gallery",
+        "severity": "low",
+        "target": ".book-nav, #bookPrev, #bookNext",
+        "issue": "페이지 내비게이션에 물리적인 hover·press 반응이 없다.",
+        "evidence": ".book-nav에는 위치·배경·그림자만 정의되어 있고 :hover 또는 :active 규칙이 없다.",
+        "suggested_fix": "hover 시 책 바깥쪽으로 6px 이동하고 밝기를 1.05로 올리며, active 시 scale(.94)와 2px 안쪽 이동을 120ms로 적용한다."
+      }
+    ]
+  },
+  "asset_review": {
+    "overall_asset_fit": "배경, 시계, 팝업북, 인증서, 캐릭터는 전반적으로 따뜻한 크림·목재·청록 팔레트와 부드러운 주간광을 공유하며 래스터 일러스트 품질도 양호하다. 핵심 결함은 기존 asset의 품질보다 동적 UI를 받아 줄 물리적 작업대·거치대·키패드·티켓 표면이 부족해 CSS 패널이 확산된 점이다.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_library_lobby_broken",
+        "reason": "1920×1080을 충분히 채우며 중앙과 좌우에 명확한 배치 safe zone이 있다.",
+        "suggested_action": "유지하고 장면별 foreground 위치만 조정한다."
+      },
+      {
+        "asset_id": "asset_library_lobby_restored",
+        "reason": "수리 전 로비와 구조·시점을 공유하고 따뜻한 금빛 조명이 후반 분위기에 적합하다.",
+        "suggested_action": "유지하되 복구 장면에서 정돈된 영역이 잘 보이도록 crop과 노출을 조정한다."
+      },
+      {
+        "asset_id": "asset_clock_body_large",
+        "reason": "대형·소형 시계 제품군과 재질·숫자 배치가 일관되고 바늘 오버레이 중심축도 정확하다.",
+        "suggested_action": "유지하고 말풍선이 문자판을 가리지 않도록 배치한다."
+      },
+      {
+        "asset_id": "asset_clock_body_small",
+        "reason": "선택지와 튜토리얼에서 반복 사용하기 좋은 정면 시계 몸체다.",
+        "suggested_action": "유지하고 웹 카드가 아닌 물리 거치대 위에 배치한다."
+      },
+      {
+        "asset_id": "asset_magic_book_surface",
+        "reason": "페이지 safe zone, 종이 재질, 청록 책등이 갤러리 은유를 강하게 만든다.",
+        "suggested_action": "유지하고 오른쪽 페이지에 설명 텍스트를 직접 배치한다."
+      },
+      {
+        "asset_id": "asset_certificate_paper",
+        "reason": "금빛 장식과 붉은 리본이 최종 보상 장면에 적합하며 내부도 비어 있다.",
+        "suggested_action": "재생성하지 말고 실제 asset 비율에 맞춰 cert-inner를 재배치한다."
+      },
+      {
+        "asset_id": "asset_day_night_timeline",
+        "reason": "낮과 밤 구간의 길이와 재질이 학습 목표에 적합하다.",
+        "suggested_action": "유지하고 모니터 내부로 축소·이동한다."
+      },
+      {
+        "asset_id": "asset_convenience_store_24h",
+        "reason": "팝업북 사례 이미지로서 읽기 쉽고 같은 그룹의 밝은 렌더링 밀도를 유지한다.",
+        "suggested_action": "현재 왼쪽 페이지 crop을 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_clock_body_large",
+        "reason": "문제 장면에서 말풍선에 가려지고 튜토리얼에서는 배경 원형 safe zone이 비어 있다.",
+        "suggested_action": "문제 장면에서는 문자판 전체를 노출하고 튜토리얼 중앙 벽에도 수리 대상 시계로 배치한다."
+      },
+      {
+        "asset_id": "asset_day_night_timeline",
+        "reason": "유형 C에서 모니터 경계를 넘어 전경으로 돌출된다.",
+        "suggested_action": "폭을 약 780~860px로 줄여 모니터 검은 화면 중앙에 배치한다."
+      },
+      {
+        "asset_id": "asset_magic_book_surface",
+        "reason": "자산은 적합하지만 오른쪽 page safe zone이 사용되지 않는다.",
+        "suggested_action": "책은 현재 크기를 유지하고 #gallerySpeech를 오른쪽 페이지 안으로 옮긴다."
+      },
+      {
+        "asset_id": "asset_certificate_paper",
+        "reason": "자산이 아니라 부모 폭과 overlay 비율 불일치가 텍스트 이탈을 만든다.",
+        "suggested_action": "인증서 실제 렌더 경계를 기준으로 .cert-inner 폭을 58~62% 수준으로 맞춘다."
+      },
+      {
+        "asset_id": "asset_library_lobby_restored",
+        "reason": "복구 장면에서 수리 전후 차이가 다소 약하게 읽힌다.",
+        "suggested_action": "중앙 바닥과 정돈된 책장이 더 잘 보이도록 object-position과 복구 광원 노출을 조정한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [
+      {
+        "suggested_id": "asset_shared_repair_ticket_body",
+        "character_id": "",
+        "priority": 1,
+        "impact": "타이틀, 성공, 복구, 인증 장면에서 반복되는 일반 웹 CTA를 하나의 도서관 물리 조작물로 통일한다.",
+        "kind": "image",
+        "intended_path": "output/assets/shared_repair_ticket_body.png",
+        "usage_section_ids": [
+          "activity1_scene1_title",
+          "activity1_scene4_success",
+          "activity2_scene4_outro",
+          "activity3_scene3_certificate"
+        ],
+        "purpose": "고정·동적 CTA 원문을 올릴 수 있는 재사용 금빛 수리 티켓 몸체를 제공한다.",
+        "prompt_brief": "투명 배경의 가로형 금빛 도서관 수리 티켓. 중앙은 HTML 텍스트를 위한 넓고 비어 있는 크림색 safe zone, 양끝에는 절취선과 작은 책·시계 문양만 배치한다. 글자는 그리지 않는다.",
+        "visual_role": "다음 단계와 저장 행동을 장면 속 발급 티켓으로 보이게 하는 공용 CTA 표면",
+        "style_constraints": "따뜻한 목재 도서관 세계와 어울리는 종이·얕은 금속 테두리 재질, 부드러운 주간광, 둥근 중간 굵기 외곽선",
+        "composition_notes": "정면 수평, 투명 배경, 3:1 안팎 비율. 중앙 텍스트 safe zone은 전체 폭의 72% 이상, 두 줄 원문을 위한 충분한 높이를 확보한다.",
+        "negative_prompt": "문구, 숫자, 버튼 아이콘, flat vector UI, SVG style, CSS component, plain geometric panel, 강한 네온",
+        "why_needed": "여러 장면의 high severity 일반 rounded CTA 문제를 하나의 공용 asset으로 해결할 수 있다."
+      },
+      {
+        "suggested_id": "asset_title_repair_request_board",
+        "character_id": "",
+        "priority": 2,
+        "impact": "첫 화면의 랜딩 페이지 인상을 제거하고 제목과 미션을 즉시 도서관 수리 모험으로 연결한다.",
+        "kind": "image",
+        "intended_path": "output/assets/title_repair_request_board.png",
+        "usage_section_ids": [
+          "activity1_scene1_title"
+        ],
+        "purpose": "타이틀과 부제 원문을 올릴 중앙 수리 의뢰 현판을 제공한다.",
+        "prompt_brief": "밝은 목재와 청록 금속 모서리로 만든 도서관 수리 의뢰 현판. 상단 큰 제목과 하단 부제를 올릴 두 개의 넓은 빈 크림색 safe zone, 작은 고장 시계와 책 문양 장식. 글자는 그리지 않는다.",
+        "visual_role": "타이틀 문구를 배경 위 텍스트가 아닌 장면 속 임무 현판으로 전환",
+        "style_constraints": "기존 로비와 같은 목재색·청록색·부드러운 주간광, 둥근 중간 굵기 외곽선",
+        "composition_notes": "정면 가로형, 투명 배경. 중앙 제목 영역과 하단 부제 영역을 분리하고 #startBtn 티켓이 아래에 연결될 여백을 둔다.",
+        "negative_prompt": "문구, 로고, flat vector UI, SVG style, icon kit, CSS panel, 과도한 금빛",
+        "why_needed": "현재 제목에는 사용할 장면 속 interaction surface가 전혀 없어 CSS 조정만으로 물성을 만들기 어렵다."
+      },
+      {
+        "suggested_id": "asset_tutorial_repair_workbench",
+        "character_id": "",
+        "priority": 3,
+        "impact": "튜토리얼과 성공 장면의 흰 패널 두 개를 실제 수리 작업대로 통합한다.",
+        "kind": "image",
+        "intended_path": "output/assets/tutorial_repair_workbench.png",
+        "usage_section_ids": [
+          "activity1_scene3_tutorial",
+          "activity1_scene4_success"
+        ],
+        "purpose": "소형 시계, 정답 슬롯, 시간 티켓 세 장을 하나의 물리적 작업대에 배치할 표면을 제공한다.",
+        "prompt_brief": "정면의 밝은 목재 도서관 시계 수리 작업대. 왼쪽에는 소형 시계 원형 홈, 오른쪽에는 정답 티켓 슬롯 한 칸, 전면에는 시간 티켓 세 장을 꽂을 동일 크기 홈. 모든 내용과 글자는 비워 둔다.",
+        "visual_role": "튜토리얼 드래그 앤 드롭을 장면 속 시계 수리 행동으로 만드는 핵심 작업대",
+        "style_constraints": "기존 시계의 청록 테두리와 어울리는 금속 모서리, 크림색 삽입면, 부드러운 주간광",
+        "composition_notes": "정면 가로형, 투명 배경. 각 홈 사이 충분한 간격과 HTML 오버레이 inset을 확보한다.",
+        "negative_prompt": "시계 몸체, 시곗바늘, 숫자, 시간 문구, 카드 글자, flat vector UI, SVG style, CSS component",
+        "why_needed": "현재 흰 workbench와 card-tray는 재질 자체가 부족해 CSS 위치 조정만으로 장면 통합이 불가능하다."
+      },
+      {
+        "suggested_id": "asset_clock_choice_rack",
+        "character_id": "",
+        "priority": 4,
+        "impact": "유형 A의 세 시계 선택지를 안내 데스크와 결합해 가장 반복되는 문제 화면의 완성도를 높인다.",
+        "kind": "image",
+        "intended_path": "output/assets/clock_choice_rack.png",
+        "usage_section_ids": [
+          "activity2_scene1_type_a"
+        ],
+        "purpose": "세 소형 시계와 가변 라벨을 올릴 안내 데스크용 거치대를 제공한다.",
+        "prompt_brief": "밝은 목재와 청록 금속으로 만든 정면 시계 점검 랙. 같은 크기의 원형 시계 홈 세 개와 각 홈 아래 빈 크림색 라벨 명패 세 개. 시계와 글자는 포함하지 않는다.",
+        "visual_role": "세 clock-choice를 웹 카드가 아닌 실제 점검 거치대로 통합",
+        "style_constraints": "asset_clock_desk_scene의 데스크 재질·원근·조명과 자연스럽게 이어지는 형태",
+        "composition_notes": "가로형 투명 배경, 세 홈의 중심 간격을 동일하게 하고 각 라벨 safe zone에 긴 시각 이름도 들어갈 여백을 둔다.",
+        "negative_prompt": "시계, 시곗바늘, 숫자, 보기 문구, 버튼, flat vector UI, SVG style, CSS card",
+        "why_needed": "배경의 데스크는 있으나 시계와 라벨을 안정적으로 결합할 물리적 슬롯이 없다."
+      },
+      {
+        "suggested_id": "asset_reading_class_keypad_console",
+        "character_id": "",
+        "priority": 5,
+        "impact": "유형 B 하단의 거대한 흰 폼과 일반 키패드를 제거하고 시간표 복구 조작을 게시판 장치로 통합한다.",
+        "kind": "image",
+        "intended_path": "output/assets/reading_class_keypad_console.png",
+        "usage_section_ids": [
+          "activity2_scene2_type_b"
+        ],
+        "purpose": "가변 숫자와 확인 문구를 올릴 독서 교실용 물리 키패드 몸체를 제공한다.",
+        "prompt_brief": "밝은 목재와 청록 금속의 벽걸이 계산 키패드. 3열 숫자 키용 빈 키 캡, 지우기용 빈 키 캡, 하단 넓은 확인 키 한 개. 글자와 숫자는 그리지 않는다.",
+        "visual_role": "시간 계산 입력을 게시판에 부착된 실제 수리 장치로 보이게 한다.",
+        "style_constraints": "코르크 게시판과 같은 따뜻한 조명, 얕은 입체 키 캡, 둥근 중간 굵기 외곽선",
+        "composition_notes": "정면 투명 배경. 각 키의 HTML 숫자 중심 배치를 위한 동일 inset과 하단 확인 키의 2행 safe zone을 확보한다.",
+        "negative_prompt": "숫자, 확인 문구, 전자 계산기 로고, flat vector UI, SVG style, CSS component",
+        "why_needed": "키패드 재질과 몸체는 CSS로 근사하지 말아야 하며 현재 화면의 주요 high severity 원인이다."
+      },
+      {
+        "suggested_id": "asset_loan_terminal_block_console",
+        "character_id": "",
+        "priority": 6,
+        "impact": "유형 C 숫자 블록과 확인 CTA를 대출 데스크의 실제 재부팅 콘솔로 바꾼다.",
+        "kind": "image",
+        "intended_path": "output/assets/loan_terminal_block_console.png",
+        "usage_section_ids": [
+          "activity2_scene3_type_c"
+        ],
+        "purpose": "0~9 숫자 블록, 지우기, 확인 조작을 담을 물리 콘솔을 제공한다.",
+        "prompt_brief": "도서관 대출 단말과 연결되는 청록 금속·밝은 목재 콘솔. 숫자 블록 열한 칸과 하단 넓은 확인 레버 또는 키 한 칸, 모든 표면은 글자 없이 비워 둔다.",
+        "visual_role": "시간 규칙 입력을 모니터와 연결된 실제 재부팅 장치로 표현",
+        "style_constraints": "asset_loan_desk_scene 모니터·스캐너의 청록 재질과 동일한 조명 및 외곽선",
+        "composition_notes": "정면 가로형 투명 배경. 0~9와 지우기 블록이 초등 학습자에게 충분히 큰 11개 홈으로 보이게 한다.",
+        "negative_prompt": "숫자, 문구, 성공 표시, 네온 사이버펑크, flat vector UI, SVG style, CSS component",
+        "why_needed": "현재 control-tray가 모니터와 타임라인을 덮으며 일반 웹 조작부로 보인다."
+      },
+      {
+        "suggested_id": "asset_final_quiz_library_board",
+        "character_id": "",
+        "priority": 7,
+        "impact": "마무리 퀴즈의 거대한 흰 모달을 도서관 세계의 보상 직전 장면으로 전환한다.",
+        "kind": "image",
+        "intended_path": "output/assets/final_quiz_library_board.png",
+        "usage_section_ids": [
+          "activity3_scene2_quiz"
+        ],
+        "purpose": "마무리 문항과 세 답안을 담을 대출 기록판을 제공한다.",
+        "prompt_brief": "복구된 도서관에 놓이는 밝은 목재 대출 기록판. 상단에는 긴 문제 문장을 위한 넓은 빈 크림색 종이 safe zone, 하단에는 세 개의 동일한 답안 도장 또는 티켓 슬롯. 글자는 그리지 않는다.",
+        "visual_role": "최종 퀴즈를 일반 모달이 아닌 장면 속 대출 기록 확인으로 표현",
+        "style_constraints": "복구된 로비의 따뜻한 금빛 조명, 청록 포인트, 얕은 종이·목재 입체감",
+        "composition_notes": "정면 가로형 투명 배경. 문제는 3행, 각 답안은 1행 HTML 텍스트가 들어갈 충분한 inset을 둔다.",
+        "negative_prompt": "문구, 숫자, 정답 표시, flat vector UI, SVG style, CSS modal, plain geometric panel",
+        "why_needed": "현재 장면에는 문항과 선택지를 받을 물리 표면이 없어 흰 modal을 제거하기 어렵다."
+      },
+      {
+        "suggested_id": "asset_magic_book_page_tabs",
+        "character_id": "",
+        "priority": 8,
+        "impact": "완성도가 높은 갤러리에서 유일하게 웹 아이콘처럼 보이는 이전·다음 버튼을 책 부품으로 통일한다.",
+        "kind": "image",
+        "intended_path": "output/assets/magic_book_page_tabs.png",
+        "usage_section_ids": [
+          "activity3_scene1_gallery"
+        ],
+        "purpose": "팝업북 가장자리에 부착할 이전·다음 페이지 탭 한 쌍을 제공한다.",
+        "prompt_brief": "청록 가죽과 작은 금빛 모서리 장식으로 만든 마법책 페이지 탭 두 개. 중앙 아이콘 영역은 비워 두고 투명 배경으로 제작한다.",
+        "visual_role": "갤러리 내비게이션을 책의 물리적 부품으로 표현",
+        "style_constraints": "asset_magic_book_surface의 청록 표지와 금빛 장식 재질을 정확히 따른다.",
+        "composition_notes": "좌우 대칭 한 쌍, 정면에 가까운 시점, ◀와 ▶ HTML 문자를 올릴 원형 또는 방패형 safe zone을 둔다.",
+        "negative_prompt": "화살표 문자, 페이지 번호, flat vector UI, SVG style, icon kit, CSS button",
+        "why_needed": "현재 원형 버튼은 작은 문제지만 주요 갤러리 장면의 표면 통일성을 완성하는 고가치 보정이다."
+      }
+    ],
+    "deferred_asset_candidates": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "10_activity3_scene3_certificate",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "asset_certificate_paper, .cert-box, .cert-inner, #scene-final .speech",
+      "issue": "인증서 본문과 기록이 종이 경계를 벗어나고 두 말풍선이 상단을 가린다.",
+      "evidence": "세로형 asset의 실제 렌더 폭보다 cert-inner가 넓고 말풍선 두 개가 중앙에서 중첩된다.",
+      "suggested_fix": "인증서 aspect-ratio 기준으로 overlay를 다시 맞추고 말풍선을 좌우 외곽으로 분리한다."
+    },
+    {
+      "scene_id": "06_activity2_scene3_type_c",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "asset_loan_desk_scene monitor, .timeline-aid, #typeCControls",
+      "issue": "타임라인과 입력 장치가 모니터 경계 밖으로 이탈하고 서로 가린다.",
+      "evidence": "오전·오후 숫자열이 화면 하단에서 잘리고 흰 control-tray가 타임라인을 덮는다.",
+      "suggested_fix": "모니터 내부를 문항·타임라인·입력·상태 영역으로 재구성하고 조작 블록만 물리 콘솔에 둔다."
+    },
+    {
+      "scene_id": "05_activity2_scene2_type_b",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "asset_reading_class_scene corkboard; #typeBPrompt, #typeBVisual, #typeBControls",
+      "issue": "게시판 interaction surface를 흰 패널들이 덮어 시간표 복구 장면이 사라진다.",
+      "evidence": "코르크 질감은 가장자리에만 남고 시계·입력·키패드가 별도 패널에 놓인다.",
+      "suggested_fix": "동적 내용을 게시판 grid와 물리 키패드 표면 안으로 직접 배치한다."
+    },
+    {
+      "scene_id": "04_activity2_scene1_type_a",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "asset_clock_desk_scene desk, #typeAControls",
+      "issue": "배경의 세 시계 자리를 사용하지 않고 흰 패널과 민트 카드로 덮었다.",
+      "evidence": "시계 선택지가 안내 데스크와 분리된 control-tray 안에 있다.",
+      "suggested_fix": "세 칸 시계 거치대를 데스크에 결합하고 시계·동적 라벨을 각 홈에 배치한다."
+    },
+    {
+      "scene_id": "08_activity3_scene1_gallery",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#gallerySpeech -> asset_magic_book_surface right page",
+      "issue": "책의 빈 오른쪽 페이지를 두고 설명이 별도 말풍선으로 페이지를 가린다.",
+      "evidence": "오른쪽 page safe zone은 비어 있고 말풍선은 책 경계 밖까지 확장된다.",
+      "suggested_fix": "설명 원문을 오른쪽 페이지 내부 텍스트 레이어로 옮긴다."
+    },
+    {
+      "scene_id": "09_activity3_scene2_quiz",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "#popupQuiz.quiz-popup, #popupQuiz .choice",
+      "issue": "마무리 장면이 거대한 흰 모달과 일반 버튼으로 구성된다.",
+      "evidence": "복구된 로비 중앙 대부분을 단색 패널과 세 사각 버튼이 가린다.",
+      "suggested_fix": "도서관 대출 기록판과 세 도장·티켓 슬롯으로 재구성한다."
+    },
+    {
+      "scene_id": "02_activity1_scene3_tutorial",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "#scene-tutorial .workbench, #tutorialTray, #tutorialDrop",
+      "issue": "튜토리얼 조작부가 도서관 수리 작업대가 아닌 두 개의 흰 웹 패널이다.",
+      "evidence": "시계·빈칸·선택지가 배경 데스크와 원근·재질을 공유하지 않는다.",
+      "suggested_fix": "시계 홈과 티켓 슬롯을 가진 하나의 래스터 작업대로 통합한다."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "creative_direction",
+      "target": "#scene-title .center-stack, .main-title, #startBtn",
+      "issue": "타이틀과 시작 버튼이 장면 속 표면 없이 배경 위에 직접 떠 있다.",
+      "evidence": "제목 현판이나 접수 장치가 없어 일반 랜딩 화면처럼 보인다.",
+      "suggested_fix": "중앙 수리 의뢰 현판과 금빛 접수 티켓으로 통합한다."
+    },
+    {
+      "scene_id": "global",
+      "severity": "medium",
+      "axis": "motion",
+      "target": "showScene(), .scene.active, .scene.fade-in",
+      "issue": "이전 장면이 즉시 사라지고 새 장면만 페이드 인한다.",
+      "evidence": "showScene()이 outgoing scene의 active를 즉시 제거하며 .scene은 display:none이다.",
+      "suggested_fix": "320~400ms outgoing exit 후 active를 제거하고 다음 장면을 교차 진입시킨다."
+    }
+  ],
+  "refine_suggestions": [
+    "모든 장면에서 기존 전광판·게시판·모니터·책·인증서 safe zone을 먼저 사용하고 별도 흰 panel 배경을 제거한다.",
+    "#problemSpeech, #typeASpeech, #typeBSpeech, #typeCSpeech를 핵심 시계·전광판·모니터 밖으로 재배치한다.",
+    "튜토리얼과 성공 장면의 .workbench 및 .card-tray를 하나의 래스터 수리 작업대로 통합한다.",
+    "유형 A의 세 시계는 안내 데스크 거치대에, 유형 B의 시계·입력은 코르크 시간표에, 유형 C의 타임라인·상태는 모니터 안에 배치한다.",
+    "일반 CTA는 공용 금빛 수리 티켓으로, 숫자 키패드와 블록 조작부는 각 장면 전용 래스터 콘솔로 교체한다.",
+    "#gallerySpeech를 마법책 오른쪽 페이지 내부로 옮기고 말풍선 몸체와 꼬리를 제거한다.",
+    "#popupQuiz를 도서관 대출 기록판과 세 답안 슬롯으로 재구성한다.",
+    "인증서의 실제 렌더 비율을 기준으로 .cert-inner 폭을 다시 계산하고 모든 문구와 기록을 종이 내부에 제한한다.",
+    "최종 장면의 두 말풍선을 인증서 바깥 좌우로 분리하고 하단 CTA를 두 장의 물리 티켓으로 바꾼다.",
+    "showScene()에 outgoing exit 애니메이션을 추가하고 활동 2의 전광판·캐릭터·설명·조작부를 순차 등장시킨다."
+  ]
+}

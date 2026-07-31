@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.06
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 총 6개: activity2_scene1_type_a의 question_display 원문과 interaction_instruction 원문, activity2_scene2_type_b의 question_display 원문과 interaction_instruction 원문, activity2_scene3_type_c의 question_display 원문과 interaction_instruction 원문이 HTML에 그대로 노출되지 않는다. 세 question_display는 관련 개별 문항으로 대체됐지만 문구가 원문과 다르며, 세 조작 안내는 UI만 제공되고 저작된 안내 문장이 없다. 그 밖의 13개 문항·보기·정답·핵심 대사·완료 및 인증 흐름은 대체로 원문과 일치한다.",
+    "learning_goal_alignment": "튜토리얼의 시계 읽기부터 몇 분 전 시각, 걸린 시간과 끝나는 시각, 1일과 24시간, 실생활 사례까지 모든 문항과 활동이 학습 목표를 직접 다룬다. 시계 선택, 숫자 입력, 숫자 블록 배치도 해당 개념을 적용하는 조작으로 연결된다.",
+    "feedback_scaffolding": "13개 문항 모두 정답과 오답 피드백이 있으며 오답 뒤 재시도도 가능하다. 다만 대부분의 피드백이 '딩동댕!', '띠익', '다시 생각해보세요', '[시스템 재부팅 완료!]'처럼 결과와 재시도만 알리고, 계산 근거나 개념적 힌트는 제공하지 않는다.",
+    "interaction_flow_clarity": "문제 문구, 보기, 입력칸, 확인 버튼, 진행도와 자동 장면 전환을 통해 전체 순서는 대체로 명확하다. 다만 유형 A·B·C의 저작된 조작 안내가 화면에 없고, 문제 발생 장면은 명시적인 다음 행동 없이 클릭 또는 6초 자동 전환에 의존해 일부 시행착오 가능성이 있다.",
+    "functional_integrity": "깨진 필수 기능 1개: interaction_next_lesson은 9차시 웹페이지로 라우팅해야 하지만 두 관련 버튼 모두 현재 문서의 location.hash만 'lesson-9-length'로 변경하며 실제 9차시 콘텐츠나 페이지로 이동하지 않는다. 나머지 시작, 퀴즈 입력, 진행도, 갤러리, 완료 및 인증서 저장 기능은 코드상 도달 가능하게 연결되어 있다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "functional_integrity"
+  ],
+  "calibration_note": "desktop 학습 흐름과 제공된 HTML 원문만 대조했으며 asset 경로·배치·시각 디자인은 제외했다. content_fidelity는 확인된 6개 누락·불일치로 1점, functional_integrity는 깨진 필수 기능 1개로 3점을 적용했다. 총점 3.06으로 4.2 미만이며 content_fidelity, feedback_scaffolding, functional_integrity도 각각 최소 축 기준에 미달한다."
+}

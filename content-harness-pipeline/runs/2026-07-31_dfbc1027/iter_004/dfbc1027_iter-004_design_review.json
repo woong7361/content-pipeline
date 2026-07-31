@@ -1,0 +1,1234 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-31T14:41:48+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_004/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_section_intro",
+      "path": "iter_004/design_review/desktop__01_section_intro.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__01_section_intro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_section_shape_find",
+      "path": "iter_004/design_review/desktop__02_section_shape_find.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__02_section_shape_find.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_section_arithmetic_tutorial",
+      "path": "iter_004/design_review/desktop__03_section_arithmetic_tutorial.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__03_section_arithmetic_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_section_random_problems",
+      "path": "iter_004/design_review/desktop__04_section_random_problems.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__04_section_random_problems.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_section_free_drawing",
+      "path": "iter_004/design_review/desktop__05_section_free_drawing.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__05_section_free_drawing.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_section_math_story",
+      "path": "iter_004/design_review/desktop__06_section_math_story.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__06_section_math_story.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_section_completion",
+      "path": "iter_004/design_review/desktop__07_section_completion.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__07_section_completion.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "배경·제목판·말풍선·CTA는 must_follow 참조의 밝은 학교 애니메이션 화풍과 대체로 잘 맞고 화면도 1920×1080 무대를 충분히 채운다. 그러나 전 씬의 상단 HUD가 clip-path와 그리드 좌표 불일치로 좌우 표면이 잘리고 3단계 라벨이 해당 칸에서 크게 벗어나며, 무작위 문제의 키패드는 재질 asset 없이 일반 웹 입력·버튼으로 구성되어 있다. 또한 교사와 작업자 asset은 planner의 5등신·4.5등신 계약 및 참조의 둥근 저학년용 비율보다 지나치게 길고 외곽선이 얇다. high severity 문제가 있으므로 디자인 관점에서 REJECT한다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop.png",
+      "scene_purpose": "학교 담장 세계관과 세 단계 활동 개요를 제시하고 첫 활동으로 진입시킨다.",
+      "overall_assessment": "배경과 3칸 작업 계획표가 장면을 충분히 채우며 CTA도 참조의 활동 전환 형태를 잘 따른다. 상단 HUD의 양끝이 잘리고 단계 라벨이 오른쪽 칸일수록 왼쪽으로 밀리는 문제가 완성도를 크게 해친다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "담장 벽화 준공 계획표",
+        "rationale": "기존 배경과 3칸 asset만으로 이미 주제 연결이 명확하므로 구조 변경보다 HUD 좌표와 마지막 칸의 텍스트 배치만 보정하면 된다.",
+        "core_metaphor": "학습 순서를 담장에 부착한 공사 계획표로 확인한다.",
+        "visual_language": "크림색 작업 면, 청색 코팅 프레임, 짧은 셀 그림자와 노란 현재 단계 홈",
+        "layout_strategy": "3칸 프레임과 하단 CTA를 유지하고 상단 HUD를 asset의 여섯 safe zone에 다시 맞춘다.",
+        "interaction_surfaces": [
+          "asset_overview_mural_triptych_frame의 세 작업 면",
+          "asset_activity_cta_body",
+          "asset_global_hud_frame의 목록·소리·제목·단계 칸"
+        ],
+        "implementation_notes": [
+          ".hud-frame의 clip-path를 제거한다.",
+          "HUD 텍스트의 중심을 asset 내부 safe zone 중심 좌표에 맞춘다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#section_global_ui .overview-card:nth-of-type(3)",
+            "issue": "세 번째 계획 문구가 작업 면 시각중심보다 약간 왼쪽에 있다.",
+            "evidence": "세 번째 표면 약 493×452px에서 문구 중심이 표면중심 대비 (-20px,+2px) 치우쳤다.",
+            "suggested_fix": "세 번째 카드에만 translateX(20px)을 적용하거나 세 칸의 실제 asset safe zone 폭을 기준으로 grid-template-columns를 다시 맞춘다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -20,
+              "dy_px": 2,
+              "surface_w": 493,
+              "surface_h": 452
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#goalButton",
+            "issue": "CTA 문구는 거의 중앙이지만 세로로 약간 아래에 있다.",
+            "evidence": "CTA 표면 약 803×117px에서 문구 중심이 표면중심 대비 (-2px,+6px)이다.",
+            "suggested_fix": "CTA 텍스트 오버레이를 6px 위로 이동한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -2,
+              "dy_px": 6,
+              "surface_w": 803,
+              "surface_h": 117
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".hud, .hud-frame, .hud-progress, .stage-chip:nth-child(3)",
+            "issue": "HUD asset의 좌우 interaction surface가 잘리고 단계 라벨이 asset 칸 중심을 따르지 않는다.",
+            "evidence": "스크린샷에서 HUD asset은 대략 x=158..1762에서 잘려 첫 칸 왼쪽과 세 번째 단계 칸 오른쪽이 사라진다. 세 번째 단계 문구는 원래 약 190×58px 칸 중심보다 약 (-38px,+1px) 치우쳐 오른쪽 내부 여백이 없다. CSS의 `.hud-frame{clip-path:inset(0 130px)}`와 `.hud-progress{transform:translate(30px,-2px)}`가 근거다.",
+            "suggested_fix": "`.hud-frame`의 clip-path를 제거하고, HUD grid를 asset의 실제 safe zone 중심에 맞춘다. `.hud-actions` 첫 버튼은 약 34px 왼쪽으로, 단계 묶음은 오른쪽 칸으로 재정렬하되 각 `.stage-chip`을 asset 칸과 1:1로 대응시킨다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -38,
+              "dy_px": 1,
+              "surface_w": 190,
+              "surface_h": 58
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".hud-frame, .hud-actions, .hud-progress, .stage-chip",
+          "issue": "전역 HUD의 표면과 오버레이 좌표가 불일치한다.",
+          "evidence": "첫 칸과 마지막 칸이 clip-path에 의해 절단되고 세 번째 단계 라벨은 칸 중심보다 약 38px 왼쪽에 있다.",
+          "suggested_fix": "clip-path를 제거하고 asset safe zone 좌표를 기준으로 HUD grid와 텍스트 중심을 다시 지정한다."
+        }
+      ],
+      "refine_suggestions": [
+        "`.hud-frame{clip-path:none}`로 바꾸고 1920×150 asset 전체를 표시하라.",
+        "세 overview 문구는 각각의 실제 크림색 면 중심에 맞추고 세 번째 카드만 약 20px 오른쪽으로 보정하라.",
+        "#goalButton 텍스트를 6px 위로 이동하라."
+      ]
+    },
+    {
+      "scene_id": "01_section_intro",
+      "capture_label": "01_section_intro",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__01_section_intro.png",
+      "scene_purpose": "무너진 담장 문제를 제시하고 도입 대화로 진입시킨다.",
+      "overall_assessment": "파손 담장 배경, 제목판, 도입 CTA의 재질과 위계는 참조에 잘 맞는다. 장면 본체는 완성도가 높지만 전역 HUD 절단이 상단에서 즉시 보인다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "밝은 담장 보수 현장",
+        "rationale": "배경이 사건과 조작 순서를 이미 명확히 설명하므로 컨셉 변경이 필요하지 않다.",
+        "core_metaphor": "학교 담장 보수 현장의 작업 시작판",
+        "visual_language": "밝은 낮빛, 안전한 공사 소품, 청색 제목판과 흰색 도입 버튼",
+        "layout_strategy": "현재 중앙 제목판과 하단 CTA 구도를 유지하고 HUD만 수정한다.",
+        "interaction_surfaces": [
+          "asset_school_title_banner_body",
+          "asset_cta_intro_body",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "제목판과 CTA 좌표는 유지한다.",
+          "전역 HUD 수정 사항을 동일하게 적용한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#introTitleSurface #introTitle",
+            "issue": "제목이 제목판 중심에 정확히 가깝게 배치되어 있다.",
+            "evidence": "약 965×134px 제목판에서 텍스트 중심은 표면중심 대비 (-1px,+3px)이다.",
+            "suggested_fix": "현재 가로 배치는 유지하고 line-height나 padding 변경 시 이 중심값을 보존한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": 3,
+              "surface_w": 965,
+              "surface_h": 134
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#introStart",
+            "issue": "도입 CTA 문구가 약간 오른쪽에 있으나 허용 범위다.",
+            "evidence": "약 378×73px 버튼에서 문구 중심이 표면중심 대비 (+7px,+2px)이다.",
+            "suggested_fix": "텍스트 오버레이를 7px 왼쪽으로 미세 조정한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 7,
+              "dy_px": 2,
+              "surface_w": 378,
+              "surface_h": 73
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#section_intro + .hud, .hud-frame, .hud-progress",
+            "issue": "도입 씬에서도 HUD의 좌우 프레임과 단계 표면이 절단된다.",
+            "evidence": "HUD asset이 x=158..1762 부근만 남고 원래 좌우 끝과 마지막 단계 칸 일부가 보이지 않는다.",
+            "suggested_fix": "전역 HUD clip-path를 제거하고 asset safe zone에 맞춘 공통 grid를 사용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_section_intro",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".hud-frame",
+          "issue": "상단 현황판이 완전한 물체로 보이지 않는다.",
+          "evidence": "양끝 프레임과 마지막 단계 칸이 CSS clip-path로 잘렸다.",
+          "suggested_fix": "HUD asset 전체 폭을 표시하고 좌우 28px 여백 안에서 완결된 프레임으로 보이게 하라."
+        }
+      ],
+      "refine_suggestions": [
+        "도입 제목판과 CTA의 현 위치·크기는 유지하라.",
+        "#introStart 문구를 7px 왼쪽으로 미세 조정하라.",
+        "전역 HUD 수정 사항을 적용하라."
+      ]
+    },
+    {
+      "scene_id": "02_section_shape_find",
+      "capture_label": "02_section_shape_find",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__02_section_shape_find.png",
+      "scene_purpose": "학교 주변에서 생활 속 도형을 찾는 활동을 안내한다.",
+      "overall_assessment": "학교 배경은 참조와 매우 잘 맞고 도형 후보가 큰 실루엣으로 분리된다. 말풍선도 장면 속 표면으로 통합되었으나 작업자 비율과 선이 캐릭터 계약보다 성인 실사형에 가까우며 HUD가 잘린다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "학교 외벽 모양 탐정",
+        "rationale": "배경 자체가 훌륭하므로 기존 물체를 탐색 대상으로 사용하는 의도를 강화하면 된다.",
+        "core_metaphor": "학교 건물에서 모양 단서를 찾는 현장 탐사",
+        "visual_language": "맑은 하늘, 큰 학교 실루엣, 크림색 말풍선과 청색 선택 표시",
+        "layout_strategy": "말풍선은 지붕과 표식 관찰을 방해하지 않도록 18px 위로 보정하고 캐릭터는 왼쪽 하단에 유지한다.",
+        "interaction_surfaces": [
+          "asset_school_speech_bubble_body",
+          "학교 건물의 여섯 hotspot",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "말풍선 텍스트만 위로 이동하고 원문은 유지한다.",
+          "작업자 asset은 캐릭터 계약을 기준으로 같은 세 포즈를 한 batch에서 재생성한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "medium",
+            "target": "#shapeSpeech",
+            "issue": "대사 문구가 말풍선 시각중심보다 아래에 놓였다.",
+            "evidence": "약 953×178px 말풍선에서 텍스트 중심이 표면중심 대비 (+11px,+19px) 치우쳤다.",
+            "suggested_fix": "#shapeSpeech의 세로 padding을 재배분하거나 내부 텍스트 wrapper를 19px 위, 11px 왼쪽으로 이동한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 11,
+              "dy_px": 19,
+              "surface_w": 953,
+              "surface_h": 178
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_worker_idle, asset_worker_apologizing, asset_worker_explaining; screenshot left character",
+            "issue": "작업자 캐릭터가 planner의 4.5등신 및 must_follow 참조의 둥근 저학년용 비율보다 길고 외곽선이 얇다.",
+            "evidence": "스크린샷 작업자는 머리가 작고 약 6등신 이상으로 읽히며, 참조 캐릭터의 큰 눈·둥근 몸통·중간 굵기 외곽선보다 사실적인 성인 비율이다. 같은 group_worker_poses 세 asset 모두 동일한 방향이다.",
+            "suggested_fix": "char_worker identity 계약과 must_follow 캐릭터 참조를 기준으로 세 포즈를 같은 batch에서 재생성하되 기존 포즈·시선·소품 지시는 유지한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-progress",
+            "issue": "모양 찾기 씬에서도 HUD의 첫 칸과 마지막 단계 칸이 절단된다.",
+            "evidence": "HUD가 화면 상단의 완결된 현황판이 아니라 중앙 일부만 잘라 붙인 띠처럼 보인다.",
+            "suggested_fix": "clip-path를 제거하고 HUD asset의 전체 외곽과 모든 칸을 노출한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_section_shape_find",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_worker_idle, asset_worker_apologizing, asset_worker_explaining",
+          "issue": "작업자 포즈 묶음이 캐릭터 비율·선 계약을 위반한다.",
+          "evidence": "4.5등신 계약과 달리 화면에서 6등신 이상으로 보이며 참조보다 선이 얇다.",
+          "suggested_fix": "세 작업자 포즈를 동일 batch로 재생성하고 char_worker identity를 잠근다."
+        },
+        {
+          "scene_id": "02_section_shape_find",
+          "severity": "medium",
+          "axis": "text_surface_fit",
+          "target": "#shapeSpeech",
+          "issue": "말풍선 텍스트가 아래로 19px 치우쳤다.",
+          "evidence": "953×178px 표면중심 대비 (+11px,+19px)이다.",
+          "suggested_fix": "텍스트 wrapper를 11px 왼쪽, 19px 위로 이동한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#shapeSpeech 내부 텍스트를 11px 왼쪽·19px 위로 이동하라.",
+        "작업자 세 포즈를 char_worker identity와 must_follow 비율에 맞춰 함께 재생성하라.",
+        "HUD 전체 프레임을 복원하라."
+      ]
+    },
+    {
+      "scene_id": "03_section_arithmetic_tutorial",
+      "capture_label": "03_section_arithmetic_tutorial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__03_section_arithmetic_tutorial.png",
+      "scene_purpose": "담장 작업 면에서 세 수의 덧셈과 뺄셈 원리를 단계적으로 안내한다.",
+      "overall_assessment": "빈 담장 작업 면, 제목판, 말풍선과 페인트통은 하나의 학교 보수 장면으로 잘 묶인다. 작업자 비율 불일치, 말풍선 텍스트의 하향 정렬, HUD 절단을 고쳐야 한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "벽화 수량 작업대",
+        "rationale": "빈 담장과 페인트통이 이미 계산을 실제 작업으로 연결하므로 오버레이 정렬과 캐릭터만 개선하면 된다.",
+        "core_metaphor": "담장에 칠할 모양 수를 현장 작업자가 계산한다.",
+        "visual_language": "크림 벽돌 작업 면, 청색 제목판, 실제 페인트통과 말풍선",
+        "layout_strategy": "현재 중앙 작업 면을 유지하고 말풍선 텍스트를 위로 올리며 페인트통 표시 크기를 소폭 확대한다.",
+        "interaction_surfaces": [
+          "asset_school_title_banner_body",
+          "asset_school_speech_bubble_body",
+          "asset_paint_can_body",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "페인트통은 asset을 유지하고 표시 박스 안에서 12~15% 확대한다.",
+          "작업자 재생성 요청을 이 씬에도 적용한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#arithTitleSurface #arithTitle",
+            "issue": "제목은 제목판 중심에 정확히 들어간다.",
+            "evidence": "약 964×138px 제목판에서 중심 오프셋이 (0px,+1px)이다.",
+            "suggested_fix": "현재 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 1,
+              "surface_w": 964,
+              "surface_h": 138
+            }
+          },
+          {
+            "severity": "medium",
+            "target": "#arithSpeech",
+            "issue": "대사가 말풍선 시각중심보다 아래에 있다.",
+            "evidence": "약 951×173px 말풍선에서 텍스트 중심이 표면중심 대비 (+10px,+20px)이다.",
+            "suggested_fix": "#arithSpeech의 특수 padding `48px 72px 16px`을 재조정하여 텍스트를 약 20px 위, 10px 왼쪽으로 이동한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 10,
+              "dy_px": 20,
+              "surface_w": 951,
+              "surface_h": 173
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_worker_explaining",
+            "issue": "작업자 asset이 4.5등신 캐릭터 계약과 참조 비율을 따르지 않는다.",
+            "evidence": "화면 왼쪽 캐릭터는 머리가 작고 팔다리가 길어 밝은 저학년 애니메이션 조력자보다 성인 일러스트 컷처럼 보인다.",
+            "suggested_fix": "char_worker의 정체성과 기존 설명 포즈·오른쪽 시선을 유지한 채 비율과 선 굵기를 참조에 맞춰 재생성한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#section_arithmetic_tutorial .paint-can",
+            "issue": "페인트통이 240×240 배치 홈에서 일부만 차지해 핵심 작업 소품으로서 작게 보인다.",
+            "evidence": "표시 홈 약 240×240px 중 실제 불투명 실루엣은 약 158×195px로 폭의 66%만 채운다.",
+            "suggested_fix": "asset은 유지하고 .paint-can을 약 1.15배 확대하며 바닥 접지점은 현재 위치에 고정한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-progress",
+            "issue": "HUD 좌우 칸이 잘리고 단계 표면과 라벨이 분리된다.",
+            "evidence": "상단 프레임이 x=158..1762 부근에서 절단되며 오른쪽 단계 칸이 완결되지 않는다.",
+            "suggested_fix": "전역 HUD clip-path와 grid 좌표를 함께 수정한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_section_arithmetic_tutorial",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_worker_explaining",
+          "issue": "작업자 비율이 캐릭터 계약과 다르다.",
+          "evidence": "4.5등신 계약보다 긴 성인 비율로 보인다.",
+          "suggested_fix": "group_worker_poses와 함께 재생성한다."
+        },
+        {
+          "scene_id": "03_section_arithmetic_tutorial",
+          "severity": "medium",
+          "axis": "text_surface_fit",
+          "target": "#arithSpeech",
+          "issue": "말풍선 대사가 아래로 20px 치우쳤다.",
+          "evidence": "951×173px 표면중심 대비 (+10px,+20px)이다.",
+          "suggested_fix": "특수 padding을 제거하고 wrapper를 중앙 정렬한 뒤 10px 왼쪽, 20px 위로 미세 조정한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#arithSpeech의 `padding:48px 72px 16px`을 수정해 텍스트를 20px 위로 올려라.",
+        ".paint-can의 접지점을 고정한 채 표시 크기를 약 1.15배 확대하라.",
+        "작업자와 HUD의 전역 수정 사항을 적용하라."
+      ]
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "capture_label": "04_section_random_problems",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__04_section_random_problems.png",
+      "scene_purpose": "무작위 덧셈·뺄셈 문제를 담장 색칠 임무로 해결하게 한다.",
+      "overall_assessment": "문제판은 담장 표면에 잘 통합되어 있지만 키패드가 CSS 테두리·흰 입력창·rounded button으로 구성되어 정적 웹 퀴즈처럼 보인다. 교사는 참조와 planner보다 지나치게 긴 비율이며 탭 힌트 손은 캐릭터 손과 겹쳐 별도 신체처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "벽화 배합 관제 키패드",
+        "rationale": "핵심 조작부가 일반 웹 폼이라 장면 은유를 끊는다. 학습 로직을 유지하면서 키패드를 담장에 고정된 페인트 수량 조절기로 전환해야 한다.",
+        "core_metaphor": "정답 숫자를 입력해 벽화 페인트 배합기를 작동한다.",
+        "visual_language": "파란 코팅 금속 프레임, 크림색 숫자창, 눌리는 둥근 물리 키와 노란 확인 키",
+        "layout_strategy": "현재 510px 폭 키패드 영역을 유지하되 전체 프레임과 키 몸체를 raster asset으로 교체하고 숫자·O만 HTML 오버레이로 남긴다.",
+        "interaction_surfaces": [
+          "asset_wall_choice_plaque_body",
+          "신규 asset_numeric_keypad_panel_body",
+          "신규 asset_numeric_key_body",
+          "asset_tap_hint_hand"
+        ],
+        "implementation_notes": [
+          "키패드 프레임과 키 몸체를 별도 asset으로 생성한다.",
+          "기존 #randomKeypad 이벤트와 동적 값은 유지한다.",
+          "탭 힌트는 교사의 어깨 바깥쪽으로 분리 배치한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#randomPromptText",
+            "issue": "문제 문구는 작업표 중심에 정확히 가깝게 배치되어 있다.",
+            "evidence": "약 835×147px 작업표에서 문구 중심이 표면중심 대비 (-6px,-1px)이다.",
+            "suggested_fix": "현재 정렬을 유지하고 문구 길이에 따라 패널을 바꾸지 않는다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -6,
+              "dy_px": -1,
+              "surface_w": 835,
+              "surface_h": 147
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#randomKeypad .key",
+            "issue": "각 숫자·O의 DOM 정렬 자체는 균일하지만 표면 재질이 웹 버튼이다.",
+            "evidence": "표본 키 약 140×79px에서 내부 기호 중심은 평균 (0px,+2px)이며 1~9·0·O 모두 경계 안에 있다.",
+            "suggested_fix": "신규 키 body asset 위에서도 현재 중심 좌표를 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 2,
+              "surface_w": 140,
+              "surface_h": 79
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_teacher_idle, asset_teacher_explaining, asset_teacher_praising; #helpCharacter",
+            "issue": "교사 포즈 묶음이 planner의 5등신과 must_follow 참조의 둥근 비율을 크게 벗어난다.",
+            "evidence": "스크린샷의 교사는 약 7등신의 작은 머리와 긴 다리로 보이며 중간 굵기 외곽선보다 얇고 섬세한 성인 일러스트 선을 사용한다.",
+            "suggested_fix": "char_teacher identity를 유지하면서 세 포즈를 동일 batch에서 5등신, 큰 표정 가독성, 중간 굵기 외곽선과 2~3단계 셀 명암으로 재생성한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#fingerHint, #helpCharacter",
+            "issue": "탭 힌트 손이 교사의 제스처 손과 겹쳐 떠 있는 추가 손처럼 보인다.",
+            "evidence": "힌트가 대략 x=1539..1636 y=649..760에 있고 교사의 왼손 실루엣과 시각적으로 맞물린다.",
+            "suggested_fix": "#fingerHint를 교사 오른쪽 어깨 바깥으로 90px 이동하고 손가락 끝이 캐릭터 몸통 hit target을 향하게 회전한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-progress",
+            "issue": "상단 HUD의 마지막 단계 칸이 절단되고 라벨 중심이 틀어진다.",
+            "evidence": "오른쪽 `수리 이야기` 표면의 오른쪽 프레임이 clip-path에 의해 사라진다.",
+            "suggested_fix": "전역 HUD 수정 사항을 적용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "#randomInput .keypad-wrap, #randomDisplay, #randomKeypad .key",
+            "issue": "핵심 키패드가 raster interaction surface 없이 일반 웹 입력창과 rounded button으로 보인다.",
+            "evidence": "스크린샷 중앙의 흰 사각 answer display, 파란 CSS outline, 동일한 크림색 둥근 버튼이 배경 담장의 물성과 분리된다. 코드도 `.keypad-wrap{border:5px solid...}`, `.answer-display{background:var(--white)}`, `.key{background:var(--cream)}`로만 그린다.",
+            "suggested_fix": "담장 부착형 키패드 프레임 asset과 기본·hover·pressed·enter 키 body sprite를 생성하고, 숫자와 동적 입력값만 HTML 오버레이로 유지한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_section_random_problems",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": "#randomInput .keypad-wrap, #randomDisplay, #randomKeypad .key",
+          "issue": "핵심 조작부가 일반 웹 폼이다.",
+          "evidence": "재질 asset 없이 CSS 흰 입력창과 rounded button으로 구성된다.",
+          "suggested_fix": "담장 부착형 키패드 panel asset과 키 상태 sprite로 교체하고 숫자·입력값만 오버레이하라."
+        },
+        {
+          "scene_id": "04_section_random_problems",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_teacher_idle, asset_teacher_explaining, asset_teacher_praising",
+          "issue": "교사 캐릭터 비율과 선이 must_follow 계약과 다르다.",
+          "evidence": "5등신 계약과 달리 약 7등신이며 참조보다 선이 얇다.",
+          "suggested_fix": "세 교사 포즈를 동일 batch로 재생성하라."
+        },
+        {
+          "scene_id": "04_section_random_problems",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": "#fingerHint",
+          "issue": "탭 손이 캐릭터 손과 겹친다.",
+          "evidence": "힌트 손과 교사 제스처가 같은 영역을 점유해 추가 손처럼 보인다.",
+          "suggested_fix": "힌트를 캐릭터 외곽으로 90px 이동하고 손끝을 hit target 중심으로 회전하라."
+        }
+      ],
+      "refine_suggestions": [
+        "#randomInput의 키패드 이벤트 구조는 유지하되 외형을 신규 panel·key asset으로 교체하라.",
+        "숫자와 O는 key asset에 굽지 말고 현재 HTML 오버레이를 유지하라.",
+        "#fingerHint를 교사 실루엣 밖으로 이동하라.",
+        "교사 세 포즈를 char_teacher identity와 must_follow 비율로 함께 재생성하라."
+      ]
+    },
+    {
+      "scene_id": "05_section_free_drawing",
+      "capture_label": "05_section_free_drawing",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__05_section_free_drawing.png",
+      "scene_purpose": "빈 담장에 도형과 색을 자유롭게 배치하기 전 활동을 안내한다.",
+      "overall_assessment": "넓은 담장 캔버스와 우측 작업 소품은 자유 그리기 무대를 명확히 만든다. 말풍선 정렬도 좋지만 교사가 화면 규모와 참조 비율에 비해 지나치게 가늘고 작게 읽히며 HUD가 잘린다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "마지막 벽화 작업 구역",
+        "rationale": "빈 작업 면이 충분히 넓고 주제 연결도 명확하므로 캐릭터 비율과 크기만 바로잡으면 된다.",
+        "core_metaphor": "교사의 격려를 받고 마지막 담장을 직접 칠한다.",
+        "visual_language": "낮은 질감의 크림 담장, 우측 보호포와 도구 상자, 큰 크림 말풍선",
+        "layout_strategy": "교사를 우측에 유지하되 재생성 후 얼굴이 최소 약 70px 높이로 읽히도록 표시 폭을 확대한다.",
+        "interaction_surfaces": [
+          "asset_school_speech_bubble_body",
+          "빈 담장 drawingCanvas",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "교사 재생성 후 .character.right 표시 폭을 재조정한다.",
+          "말풍선과 배경은 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#drawingSpeech",
+            "issue": "대사는 말풍선 시각중심에 거의 정확히 배치되어 있다.",
+            "evidence": "약 947×177px 표면에서 문구 중심이 표면중심 대비 (-8px,-3px)이다.",
+            "suggested_fix": "현재 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -8,
+              "dy_px": -3,
+              "surface_w": 947,
+              "surface_h": 177
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_teacher_explaining, asset_teacher_praising, #drawingTeacher",
+            "issue": "교사가 5등신 계약보다 길고 가늘어 저학년 애니메이션 조력자보다 성인 일러스트처럼 보인다.",
+            "evidence": "화면에서 얼굴은 작고 다리가 매우 길며 must_follow 참조의 둥근 얼굴·큰 표정·중간 굵기 선과 명백히 다르다.",
+            "suggested_fix": "교사 포즈 묶음을 재생성하고, 재생성 asset은 화면에서 얼굴과 손동작이 즉시 읽히도록 표시 폭을 확대한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-progress",
+            "issue": "상단 HUD의 좌우 asset 표면이 잘린다.",
+            "evidence": "프레임이 화면 폭을 채우지 못한 것이 아니라 CSS clip-path로 인위적으로 절단된 모습이다.",
+            "suggested_fix": "전역 HUD 수정 사항을 적용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_section_free_drawing",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_teacher_explaining, asset_teacher_praising",
+          "issue": "교사 포즈가 캐릭터 비율 및 참조 화풍 계약을 위반한다.",
+          "evidence": "약 7등신의 긴 체형과 얇은 선으로 나타난다.",
+          "suggested_fix": "group_teacher_poses 전체를 5등신 계약으로 재생성하고 화면 표시 폭을 확대하라."
+        }
+      ],
+      "refine_suggestions": [
+        "배경과 말풍선 위치는 유지하라.",
+        "재생성한 교사가 오른쪽 작업 도구를 가리지 않는 범위에서 얼굴이 더 크게 읽히도록 표시 폭을 확대하라.",
+        "전역 HUD 수정 사항을 적용하라."
+      ]
+    },
+    {
+      "scene_id": "06_section_math_story",
+      "capture_label": "06_section_math_story",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__06_section_math_story.png",
+      "scene_purpose": "학교 앞 도로에서 도형 표지판과 안전 의미를 연결한다.",
+      "overall_assessment": "도로 배경, 제목판, 하단 안내판이 하나의 생활 장면으로 매우 잘 통합되어 있다. 텍스트 정렬도 정확하다. 전역 HUD 절단만 해결하면 이 씬은 높은 완성도를 유지할 수 있다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "학교 앞 안전 표지 관찰대",
+        "rationale": "배경과 안내판이 학습 목표와 직접 연결되고 웹 카드처럼 보이는 요소가 없다.",
+        "core_metaphor": "도로변 안내판을 따라 생활 속 모양을 관찰한다.",
+        "visual_language": "맑은 학교 앞 도로, 청색 금속 안내판, 크림 표시 면",
+        "layout_strategy": "현재 상·하단 표면과 넓은 중경 구도를 유지한다.",
+        "interaction_surfaces": [
+          "asset_school_title_banner_body",
+          "asset_story_roadside_info_board",
+          "asset_road_sign_body",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "제목판과 안내판은 유지한다.",
+          "HUD만 전역 수정한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#storyTitleSurface #storyTitle",
+            "issue": "제목이 제목판 중심에 정확히 배치되어 있다.",
+            "evidence": "약 964×138px 표면에서 텍스트 중심 오프셋은 (-1px,+1px)이다.",
+            "suggested_fix": "현재 배치를 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": 1,
+              "surface_w": 964,
+              "surface_h": 138
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#storyIntroBoard",
+            "issue": "도입 질문이 안내판 표시 면 중심에 정확히 가깝게 배치되어 있다.",
+            "evidence": "안쪽 표시 면 약 1298×131px에서 문구 중심은 표면중심 대비 (0px,-4px)이다.",
+            "suggested_fix": "현재 정렬과 글자 크기를 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -4,
+              "surface_w": 1298,
+              "surface_h": 131
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-progress, .stage-chip:nth-child(3)",
+            "issue": "현재 단계인 수리 이야기 칸의 오른쪽 프레임과 내부 여백이 잘린다.",
+            "evidence": "가장 중요한 현재 단계 표면이 HUD clip-path 경계에 직접 걸린다.",
+            "suggested_fix": "HUD 전체 asset을 노출하고 세 번째 chip을 실제 세 번째 칸 중심으로 이동한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_section_math_story",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".hud-frame, .stage-chip:nth-child(3)",
+          "issue": "현재 단계 표면이 절단되어 있다.",
+          "evidence": "수리 이야기 칸 오른쪽이 clip-path에 걸리고 텍스트 내부 여백이 사라진다.",
+          "suggested_fix": "clip-path를 제거하고 세 번째 chip을 해당 칸 중심에 배치하라."
+        }
+      ],
+      "refine_suggestions": [
+        "도로 배경·제목판·하단 안내판은 그대로 유지하라.",
+        "현재 단계인 세 번째 HUD chip을 asset 칸 중심으로 이동하고 프레임 전체를 표시하라."
+      ]
+    },
+    {
+      "scene_id": "07_section_completion",
+      "capture_label": "07_section_completion",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-31_dfbc1027\\iter_004\\design_review\\desktop__07_section_completion.png",
+      "scene_purpose": "완성된 벽화를 보여 주고 인증서·다음 차시·종료 선택을 제공한다.",
+      "overall_assessment": "완료 벽화, 제목판, primary·disabled·secondary CTA의 위계와 정렬은 참조 계약을 잘 따른다. 상단 HUD가 심하게 절단되어 완료 장면의 마감 품질을 떨어뜨린다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "벽화 준공 확인식",
+        "rationale": "완성 벽화와 세 CTA가 성취감을 충분히 전달하며 새로운 은유가 필요하지 않다.",
+        "core_metaphor": "완성된 담장 앞에서 준공 결과와 다음 행동을 선택한다.",
+        "visual_language": "알록달록한 도형 벽화, 파란 완료 제목판, primary·disabled·secondary 버튼 위계",
+        "layout_strategy": "현재 중앙 제목과 하단 세 버튼 구도를 유지하고 HUD만 복원한다.",
+        "interaction_surfaces": [
+          "asset_school_title_banner_body",
+          "asset_completion_cta_body의 세 역할 표면",
+          "asset_global_hud_frame"
+        ],
+        "implementation_notes": [
+          "CTA sprite 좌표와 텍스트 중심은 유지한다.",
+          "HUD 전체 외곽을 복원한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#section_completion .completion-title-banner .hero-title",
+            "issue": "완료 제목이 제목판 중심에 정확히 배치되어 있다.",
+            "evidence": "약 964×136px 표면에서 텍스트 중심 오프셋은 (+1px,+2px)이다.",
+            "suggested_fix": "현재 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 2,
+              "surface_w": 964,
+              "surface_h": 136
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#certificateButton, #nextLessonButton, #exitButton",
+            "issue": "세 CTA 문구가 각 표면 중심에 안정적으로 배치되어 있다.",
+            "evidence": "약 368×135px 표면 기준 primary는 (0px,-1px), disabled는 (-2px,-2px), secondary는 (-1px,-6px)이며 모두 경계 안에 충분한 여백이 있다.",
+            "suggested_fix": "secondary 텍스트만 5px 아래로 미세 조정하고 나머지는 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": -6,
+              "surface_w": 368,
+              "surface_h": 135
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".hud-frame, .hud-actions, .hud-progress",
+            "issue": "완료 씬 상단 현황판이 여러 조각으로 잘린 것처럼 보인다.",
+            "evidence": "왼쪽 버튼 칸과 오른쪽 단계 칸이 사라지고 중앙 제목 영역만 부분적으로 남아 완료 화면의 프레임 완결성이 무너진다.",
+            "suggested_fix": "HUD clip-path를 제거하고 전체 asset을 28px 좌우 여백 안에 표시한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "07_section_completion",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".hud-frame, .hud-actions, .hud-progress",
+          "issue": "완료 화면 HUD가 절단되어 최종 장면의 완결성을 해친다.",
+          "evidence": "완료 제목·CTA는 정돈됐지만 상단 프레임은 좌우 표면이 누락된 채 보인다.",
+          "suggested_fix": "HUD asset 전체를 복원하고 모든 오버레이를 safe zone 중심에 맞춰라."
+        }
+      ],
+      "refine_suggestions": [
+        "완료 제목판과 CTA sprite는 유지하라.",
+        "#exitButton 텍스트를 약 5px 아래로 미세 조정하라.",
+        "HUD 전체 프레임과 단계 칸을 복원하라."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "코드상 장면 전환, 순차 등장, 정오답 반응, 정답 공개와 조작 상태는 모두 구현되어 있다. `showScene()`은 `leaving`과 `active`를 겹쳐 사용하고 `@keyframes sceneOut/sceneIn`을 실행한다. 도입·모양·산술·그리기는 `INTRO_SPEECH_DELAY_MS`와 `INTRO_PROGRESS_DELAY_MS`로 캐릭터→말풍선→진행 surface를 순차 공개하며, 수리 이야기는 `--delay-story-sign-*`, 완료 화면은 `--delay-completion-*`으로 stagger된다. `showFeedback()`과 `showWrongFeedback()`은 각각 교사 칭찬+O 도장, 학생 생각 포즈+X 도장·shake를 사용하고, `answerReveal`, `stamp`, CTA hover/active sprite 상태도 있어 정적 웹 퀴즈 수준을 벗어난다.",
+    "findings": []
+  },
+  "asset_review": {
+    "overall_asset_fit": "학교·담장 배경, 제목판, 말풍선, 이야기 안내판, CTA와 피드백 도장은 참조 화풍과 장면 역할에 잘 맞는다. HUD asset 자체는 유지 가능하며 CSS 배치만 고치면 된다. 캐릭터 중 학생은 참조의 둥근 비율과 선을 잘 따르지만 교사 3종과 작업자 3종은 planner 비율 계약을 벗어나 재생성이 필요하다. 일반 웹 키패드를 장면 속 조작 장치로 바꾸기 위한 신규 asset 2종을 포함해 총 8건을 요청하며 ASSET_BUDGET 9 이내다.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_school_wall_wide",
+        "reason": "밝은 낮, 전경·중경·원경 분리와 넓은 담장 작업 면이 참조 및 planner 계약에 잘 맞는다.",
+        "suggested_action": "현재 crop과 색감을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_yard_shape_search",
+        "reason": "도형 후보가 큰 실루엣과 충분한 간격으로 배치되어 탐색 활동에 적합하다.",
+        "suggested_action": "현재 asset과 object-fit을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_wall_closeup",
+        "reason": "계산·도형 오버레이를 위한 중앙 작업 면이 넓고 대비가 낮다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_road_background",
+        "reason": "표지판 학습을 실제 학교 앞 생활 공간과 자연스럽게 연결한다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_wall_completed",
+        "reason": "완료 벽화와 중앙·하단 safe zone의 균형이 좋다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "asset_global_hud_frame",
+        "reason": "asset 원본에는 여섯 safe zone과 전체 외곽이 정상적으로 존재하며 문제는 CSS clip·grid 배치다.",
+        "suggested_action": "재생성하지 말고 전체 폭을 노출하도록 CSS만 수정한다."
+      },
+      {
+        "asset_id": "asset_school_title_banner_body",
+        "reason": "제목 텍스트가 안정적으로 들어가고 배경 재질과 일치한다.",
+        "suggested_action": "현재 크기와 재질을 유지한다."
+      },
+      {
+        "asset_id": "asset_school_speech_bubble_body",
+        "reason": "대사를 장면 속 표면으로 통합하고 좌우 화자 꼬리도 명확하다.",
+        "suggested_action": "asset은 유지하고 텍스트 padding만 보정한다."
+      },
+      {
+        "asset_id": "asset_activity_cta_body",
+        "reason": "must_follow 활동 CTA의 크림색 몸체·갈색 테두리·눌림 상태를 잘 따른다.",
+        "suggested_action": "현재 sprite를 유지한다."
+      },
+      {
+        "asset_id": "asset_completion_cta_body",
+        "reason": "primary·secondary·disabled 위계와 상태 언어가 참조와 일치한다.",
+        "suggested_action": "현재 sprite를 유지한다."
+      },
+      {
+        "asset_id": "asset_feedback_stamp_correct",
+        "reason": "필수 정답 피드백이 재질 있는 별도 asset으로 구현되어 있다.",
+        "suggested_action": "현재 asset과 stamp 모션을 유지한다."
+      },
+      {
+        "asset_id": "asset_feedback_stamp_wrong",
+        "reason": "오답 피드백이 정답 도장과 구분되는 별도 재질 asset이다.",
+        "suggested_action": "현재 asset과 색·형태를 유지한다."
+      },
+      {
+        "asset_id": "asset_student_idle",
+        "reason": "큰 눈, 둥근 3.5등신 비율, 선명한 셀 명암이 planner와 참조에 잘 맞는다.",
+        "suggested_action": "학생 포즈 묶음의 기준 asset으로 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_global_hud_frame",
+        "reason": "원본 asset은 정상이지만 `.hud-frame{clip-path:inset(0 130px)}` 때문에 양끝이 잘린다.",
+        "suggested_action": "clip-path를 제거하고 header의 28px 좌우 여백 안에 전체 asset을 표시한다."
+      },
+      {
+        "asset_id": "asset_paint_can_body",
+        "reason": "산술 씬의 240×240 표시 홈에서 실제 실루엣 폭이 약 66%만 차지한다.",
+        "suggested_action": "접지점은 유지하고 표시 크기를 약 1.15배 확대한다."
+      },
+      {
+        "asset_id": "asset_tap_hint_hand",
+        "reason": "교사의 제스처 손과 겹쳐 추가 손처럼 보인다.",
+        "suggested_action": "교사 외곽으로 약 90px 이동하고 손끝을 캐릭터 hit target으로 향하게 한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [
+      {
+        "asset_id": "asset_teacher_idle",
+        "priority": 3,
+        "impact": "교사 모든 포즈의 기준 비율과 must_follow 화풍을 바로잡아 무작위 문제와 자유 그리기 씬의 캐릭터 이질감을 해결한다.",
+        "reason": "planner의 5등신 계약과 달리 약 7등신이며 참조보다 외곽선이 얇다.",
+        "suggested_action": "group_teacher_poses의 기준 포즈로 먼저 재생성하고 이후 포즈가 이 asset의 정체성과 비율을 참조하게 한다.",
+        "revised_prompt_brief": "characters의 char_teacher identity 계약을 그대로 잠그고, must_follow 캐릭터 참조의 둥근 저학년용 비율·중간 굵기 외곽선·명확한 2~3단계 셀 명암을 우선하여 다시 생성한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "asset_teacher_explaining",
+        "priority": 4,
+        "impact": "무작위 문제와 자유 그리기의 핵심 안내 캐릭터를 배경 및 학생 asset과 같은 세계로 통합한다.",
+        "reason": "5등신 계약보다 긴 비율과 얇은 선 때문에 성인 일러스트 컷처럼 보인다.",
+        "suggested_action": "재생성된 asset_teacher_idle을 기준 포즈로 사용하고 기존 왼쪽 안내 시선·손동작을 유지한다.",
+        "revised_prompt_brief": "재생성된 asset_teacher_idle을 reference_asset_id 기준으로 삼고 char_teacher identity와 must_follow 캐릭터 비율·선·셀 명암을 동일하게 유지한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "asset_teacher_praising",
+        "priority": 5,
+        "impact": "자유 그리기와 정답 피드백의 성취 연출에서 표정과 박수 동작을 더 크게 읽히게 한다.",
+        "reason": "긴 체형과 작은 얼굴로 인해 저학년용 칭찬 표정의 가독성이 약하다.",
+        "suggested_action": "재생성된 asset_teacher_idle을 기준으로 기존 박수 포즈와 왼쪽 시선을 유지해 재생성한다.",
+        "revised_prompt_brief": "재생성된 asset_teacher_idle을 기준으로 char_teacher identity와 must_follow 캐릭터 비율·선·셀 명암을 유지하고 칭찬 표정과 박수 동작이 축소 표시에서도 즉시 읽히게 한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "asset_worker_idle",
+        "priority": 6,
+        "impact": "도입·모양 찾기·산술 씬에 반복되는 작업자 묶음의 비율과 스타일 기준을 바로잡는다.",
+        "reason": "planner의 4.5등신 계약보다 길고 참조의 둥근 성인 조력자 비율보다 사실적이다.",
+        "suggested_action": "group_worker_poses의 새 기준 포즈로 먼저 재생성한다.",
+        "revised_prompt_brief": "characters의 char_worker identity 계약을 그대로 잠그고, must_follow 캐릭터 참조의 둥근 4.5등신 인상·중간 굵기 외곽선·2~3단계 셀 명암을 우선하여 다시 생성한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "asset_worker_apologizing",
+        "priority": 7,
+        "impact": "도입 사건의 감정 가독성을 높이고 기준 포즈와 같은 인물·비율로 통일한다.",
+        "reason": "현재 포즈는 기준 asset과 일관되지만 전체 묶음이 planner 비율 계약을 위반한다.",
+        "suggested_action": "재생성된 asset_worker_idle을 기준으로 기존 숙인 상체·모은 손·오른쪽 시선을 유지한다.",
+        "revised_prompt_brief": "재생성된 asset_worker_idle을 기준으로 char_worker identity와 must_follow 캐릭터 비율·선·셀 명암을 동일하게 유지한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "asset_worker_explaining",
+        "priority": 8,
+        "impact": "모양 찾기와 산술 씬에서 가장 오래 노출되는 조력자를 배경·학생과 같은 화풍으로 통합한다.",
+        "reason": "화면에서 약 6등신 이상으로 보여 4.5등신 계약과 맞지 않고 선이 얇다.",
+        "suggested_action": "재생성된 asset_worker_idle을 기준으로 기존 오른쪽 안내 손과 시선을 유지한다.",
+        "revised_prompt_brief": "재생성된 asset_worker_idle을 기준으로 char_worker identity와 must_follow 캐릭터 비율·선·셀 명암을 동일하게 유지한다.",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      }
+    ],
+    "new_asset_requests": [
+      {
+        "suggested_id": "asset_numeric_keypad_panel_body",
+        "character_id": "",
+        "priority": 1,
+        "impact": "세 계산 섹션의 일반 웹 입력·버튼 구조를 실제 담장 작업 장치로 바꾸는 가장 큰 몰입 개선이다.",
+        "kind": "image",
+        "intended_path": "output/assets/numeric-keypad-panel-body.png",
+        "usage_section_ids": [
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems"
+        ],
+        "purpose": "동적 답과 숫자 키를 올릴 담장 부착형 숫자 키패드 프레임과 빈 표시창을 제공한다.",
+        "prompt_brief": "학교 담장에 고정된 저학년용 페인트 수량 조절 키패드 몸체. 상단에는 동적 답을 올릴 넓은 빈 크림색 표시창, 하단에는 1~9·0·확인 키를 놓을 11개 빈 홈을 배치한다. 텍스트와 숫자는 그리지 않는다.",
+        "visual_role": "계산 입력을 일반 웹 폼이 아니라 벽화 작업 현장의 실제 조작 장치로 통합하는 핵심 표면",
+        "style_constraints": "must_follow props 참조처럼 짙은 청색의 깨끗한 중간 굵기 외곽선, 둥근 실루엣, 2~3단계 셀 명암, 작은 흰색 하이라이트와 짧은 접지 그림자를 사용한다.",
+        "composition_notes": "투명 배경, 약 510×530 표시 비율. 상단 answer safe zone 약 420×90, 하단은 3열 키 홈과 마지막 0·확인 홈을 균일하게 배치한다. 모든 홈은 HTML 텍스트 중심 좌표를 맞출 수 있는 정면 시점이어야 한다.",
+        "negative_prompt": "텍스트, 숫자, O, 정답, 캐릭터, 배경, flat vector UI, SVG style, CSS form screenshot, 흰 웹 입력창, 검은 다중 인셋, 크롬 광택, 과도한 3D",
+        "why_needed": "현재 `.keypad-wrap`, `.answer-display`, `.key`가 CSS 도형뿐이어서 핵심 상호작용이 일반 웹 폼처럼 보이며 기존 asset만으로 재질 있는 장치 표면을 만들 수 없다."
+      },
+      {
+        "suggested_id": "asset_numeric_key_body",
+        "character_id": "",
+        "priority": 2,
+        "impact": "키의 hover·pressed·확인 상태를 참조 CTA와 같은 촉각 언어로 통일하고 숫자 입력의 게임성을 높인다.",
+        "kind": "image",
+        "intended_path": "output/assets/numeric-key-body.png",
+        "usage_section_ids": [
+          "section_shape_find",
+          "section_arithmetic_tutorial",
+          "section_random_problems"
+        ],
+        "purpose": "숫자와 확인 문자를 HTML로 올릴 기본·hover·pressed·enter 키 몸체 sprite를 제공한다.",
+        "prompt_brief": "담장 키패드에 끼워지는 빈 물리 키 몸체. 기본·hover·pressed 상태와 노란 확인 키 상태를 규칙적인 가로 sprite로 구성한다. 어떤 숫자나 문구도 포함하지 않는다.",
+        "visual_role": "일반 rounded button을 눌리는 페인트 작업 장치 키로 교체하는 반복 상호작용 표면",
+        "style_constraints": "크림색 기본 몸체, 청색 중간 굵기 테두리, 짧은 아래 그림자, 눌림 깊이 차이, 확인 키는 따뜻한 노랑 포인트를 사용한다. must_follow CTA의 상태 위계를 따른다.",
+        "composition_notes": "투명 배경, 각 키 약 140×79 표시 비율, 내부 30px 이상 텍스트 safe zone. 기본·hover·pressed·enter 상태의 중심과 외곽 크기를 동일하게 맞춘다.",
+        "negative_prompt": "텍스트, 숫자, O, 아이콘, 캐릭터, 배경, flat CSS button, SVG icon, 검은 다중 인셋, 고광택 플라스틱, 과도한 3D",
+        "why_needed": "panel asset만으로는 개별 키의 hover·press 상태를 표현할 수 없으며 현재 CSS 키는 장면 재질과 분리된다."
+      }
+    ],
+    "deferred_asset_candidates": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".hud-frame, .hud-actions, .hud-progress, .stage-chip",
+      "issue": "전 씬 HUD의 좌우 표면이 절단되고 오버레이가 asset safe zone에서 벗어난다.",
+      "evidence": "`.hud-frame{clip-path:inset(0 130px)}`가 asset 양끝을 자르며 단계 chip은 오른쪽 칸일수록 왼쪽으로 밀린다. initial의 세 번째 단계는 약 190×58px 칸 중심 대비 (-38px,+1px)이다.",
+      "suggested_fix": "clip-path를 제거하고 목록·소리·제목·세 단계 텍스트를 asset의 실제 여섯 safe zone 중심에 1:1로 배치하라."
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": "#randomInput .keypad-wrap, #randomDisplay, #randomKeypad .key",
+      "issue": "핵심 키패드가 일반 웹 입력과 CSS rounded button으로 보인다.",
+      "evidence": "재질 asset 없이 border·white background·border-radius로만 구성되어 담장 배경과 분리된다.",
+      "suggested_fix": "담장 부착형 키패드 panel asset과 키 상태 sprite를 생성하고 숫자·O·동적 입력값만 HTML 오버레이로 유지하라."
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_teacher_idle, asset_teacher_explaining, asset_teacher_praising",
+      "issue": "교사 포즈 묶음이 5등신 및 must_follow 캐릭터 비율 계약을 위반한다.",
+      "evidence": "화면에서 약 7등신으로 보이며 참조보다 머리가 작고 선이 얇다.",
+      "suggested_fix": "char_teacher identity를 유지한 채 세 포즈를 동일 batch에서 재생성하라."
+    },
+    {
+      "scene_id": "02_section_shape_find",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_worker_idle, asset_worker_apologizing, asset_worker_explaining",
+      "issue": "작업자 포즈 묶음이 4.5등신 및 must_follow 캐릭터 선 계약을 위반한다.",
+      "evidence": "약 6등신 이상의 긴 성인 비율과 얇은 외곽선으로 보인다.",
+      "suggested_fix": "char_worker identity를 유지한 채 세 포즈를 동일 batch에서 재생성하라."
+    },
+    {
+      "scene_id": "03_section_arithmetic_tutorial",
+      "severity": "medium",
+      "axis": "text_surface_fit",
+      "target": "#shapeSpeech, #arithSpeech",
+      "issue": "작업자 화자의 말풍선 텍스트가 반복적으로 아래에 치우친다.",
+      "evidence": "shape는 (+11px,+19px), arithmetic은 (+10px,+20px)으로 측정됐다.",
+      "suggested_fix": "두 말풍선의 텍스트 wrapper를 약 10px 왼쪽, 20px 위로 이동하라."
+    },
+    {
+      "scene_id": "04_section_random_problems",
+      "severity": "medium",
+      "axis": "asset_component_fit",
+      "target": "#fingerHint, #helpCharacter",
+      "issue": "탭 힌트 손이 교사 손과 겹쳐 추가 신체처럼 보인다.",
+      "evidence": "힌트 실루엣과 교사의 왼손이 같은 시각 영역을 점유한다.",
+      "suggested_fix": "힌트를 캐릭터 외곽으로 약 90px 이동하고 손끝을 캐릭터 hit target 중심으로 향하게 하라."
+    }
+  ],
+  "refine_suggestions": [
+    "`.hud-frame{clip-path:none}`로 바꾸고 목록·소리·제목·세 단계 오버레이를 asset의 실제 여섯 safe zone 중심에 재배치하라.",
+    "#randomInput의 이벤트와 동적 값은 유지하면서 `.keypad-wrap`, `.answer-display`, `.key`의 시각 표면을 신규 keypad panel·key asset으로 교체하라.",
+    "group_teacher_poses 세 asset을 char_teacher identity와 must_follow 5등신·선·셀 명암 기준으로 같은 batch에서 재생성하라.",
+    "group_worker_poses 세 asset을 char_worker identity와 must_follow 4.5등신·선·셀 명암 기준으로 같은 batch에서 재생성하라.",
+    "#shapeSpeech와 #arithSpeech의 텍스트 wrapper를 약 10px 왼쪽, 20px 위로 이동하라.",
+    "#fingerHint를 교사 실루엣 바깥으로 약 90px 옮기고 손끝을 #helpCharacter hit target 중심으로 향하게 하라.",
+    ".paint-can은 접지점을 유지한 채 표시 크기를 약 1.15배 확대하라.",
+    "배경, 제목판, 말풍선 body, 활동·완료 CTA, 정오답 도장과 학생 포즈는 유지하라."
+  ]
+}

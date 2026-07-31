@@ -1,0 +1,996 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-07-15T20:53:42+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_005/design_review/desktop.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_activity1_scene2_problem",
+      "path": "iter_005/design_review/desktop__01_activity1_scene2_problem.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__01_activity1_scene2_problem.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_activity1_scene3_tutorial",
+      "path": "iter_005/design_review/desktop__02_activity1_scene3_tutorial.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__02_activity1_scene3_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_activity1_scene4_success",
+      "path": "iter_005/design_review/desktop__03_activity1_scene4_success.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__03_activity1_scene4_success.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_activity2_scene1_type_a",
+      "path": "iter_005/design_review/desktop__04_activity2_scene1_type_a.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__04_activity2_scene1_type_a.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_activity2_scene2_type_b",
+      "path": "iter_005/design_review/desktop__05_activity2_scene2_type_b.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__05_activity2_scene2_type_b.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_activity2_scene3_type_c",
+      "path": "iter_005/design_review/desktop__06_activity2_scene3_type_c.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__06_activity2_scene3_type_c.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_activity2_scene4_outro",
+      "path": "iter_005/design_review/desktop__07_activity2_scene4_outro.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__07_activity2_scene4_outro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_activity3_scene1_gallery",
+      "path": "iter_005/design_review/desktop__08_activity3_scene1_gallery.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__08_activity3_scene1_gallery.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_activity3_scene2_quiz",
+      "path": "iter_005/design_review/desktop__09_activity3_scene2_quiz.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__09_activity3_scene2_quiz.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_activity3_scene3_certificate",
+      "path": "iter_005/design_review/desktop__10_activity3_scene3_certificate.png",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__10_activity3_scene3_certificate.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "래스터 무대와 수리 장치의 통합 수준은 높고 초등 2학년용 크기·색채도 적절하다. 그러나 튜토리얼·갤러리·인증 장면의 불투명 검은 영역, 유형 C 타임라인 숫자 충돌, 활동 2 에너지 계기 표시 소실, 튜토리얼 표찰 경계 침범처럼 장면을 훼손하는 high severity 문제가 남아 있어 다음 refine이 필요하다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop.png",
+      "scene_purpose": "도서관 시계 수리 미션과 시작 행동을 제시한다.",
+      "overall_assessment": "수리 의뢰 현판과 금빛 티켓이 배경에 자연스럽게 통합됐고 제목·부제·CTA의 위계와 가독성도 안정적이다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "도서관 수리 의뢰 접수대",
+        "rationale": "현판과 티켓만으로 미션 접수라는 장면 은유가 이미 명확하다.",
+        "core_metaphor": "도서관에서 발급받는 시계 수리 의뢰서",
+        "visual_language": "따뜻한 목재, 청록 금속, 크림 종이, 제한된 금빛",
+        "layout_strategy": "중앙 현판과 하단 발급 티켓의 단일 진입축을 유지한다.",
+        "interaction_surfaces": [
+          "asset_title_repair_request_board의 제목·부제 면",
+          "asset_shared_repair_ticket_body의 CTA 면"
+        ],
+        "implementation_notes": [
+          "현재 현판과 티켓의 크기 및 중앙 정렬을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "현재 제목 현판과 시작 티켓의 배치 및 재질 통합을 유지하라."
+      ]
+    },
+    {
+      "scene_id": "01_activity1_scene2_problem",
+      "capture_label": "01_activity1_scene2_problem",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__01_activity1_scene2_problem.png",
+      "scene_purpose": "고장 난 시계와 도서관의 혼란을 제시한다.",
+      "overall_assessment": "대형 시계, 위기 효과, 걱정하는 선생님의 시선이 연결돼 상황이 즉시 읽힌다. 다만 좌측 위기 표찰이 지나치게 커서 시계보다 먼저 보이고, 메뉴 버튼은 장면 밖의 일반 웹 버튼처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "밝은 시계 고장 진단실",
+        "rationale": "현재 위기 은유는 유효하므로 효과의 비중과 상단 조작물만 정돈하면 된다.",
+        "core_metaphor": "고장 난 중앙 시계를 둘러싼 도서관 진단 경보",
+        "visual_language": "목재 경고 표찰과 하늘색 땀방울을 시계 주변 보조 효과로 사용",
+        "layout_strategy": "대형 시계를 최우선 초점으로 두고 위기 효과는 좌측 외곽을 따라 작게 분산한다.",
+        "interaction_surfaces": [
+          "중앙 대형 시계",
+          "사서 선생님 말풍선",
+          "좌측 상단 차시 목록 조작물"
+        ],
+        "implementation_notes": [
+          "asset_clock_crisis_effects를 약 82%로 축소하고 좌측 바깥쪽으로 이동한다.",
+          "메뉴 버튼을 도서관 카드 서랍 손잡이형 표면으로 교체한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "medium",
+            "target": "asset_clock_crisis_effects; screenshot x=170..700 y=60..1020",
+            "issue": "세 개의 물음표 표찰이 대형 시계와 비슷한 시각 비중을 가져 핵심 위기 대상보다 먼저 보인다.",
+            "evidence": "왼쪽 표찰이 화면 높이 대부분에 걸쳐 반복되고 중앙 시계보다 큰 합산 면적을 차지한다.",
+            "suggested_fix": "효과 레이어를 약 82%로 축소하고 object-position을 left 35% center로 옮겨 시계 외곽을 보조하게 하라."
+          }
+        ],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": ".icon-btn#hamburger",
+            "issue": "흰색 rounded square 메뉴가 도서관 장면과 분리된 일반 웹 아이콘처럼 보인다.",
+            "evidence": "목재·청록 금속 래스터 표면 사이에 흰 CSS 사각형과 선 아이콘이 독립적으로 떠 있다.",
+            "suggested_fix": "빈 카드 목록 서랍 손잡이 asset 위에 햄버거 선만 오버레이하는 구조로 교체하라."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_activity1_scene2_problem",
+          "severity": "medium",
+          "axis": "background_stage",
+          "target": "asset_clock_crisis_effects",
+          "issue": "위기 표찰이 핵심 시계보다 과도하게 우세하다.",
+          "evidence": "좌측 표찰 세 개의 합산 크기가 중앙 대형 시계보다 크다.",
+          "suggested_fix": "레이어를 약 82%로 축소하고 좌측 외곽으로 이동하라."
+        }
+      ],
+      "refine_suggestions": [
+        "asset_clock_crisis_effects를 축소해 중앙 시계가 첫 시선이 되게 하라.",
+        "#hamburger를 도서관 카드 서랍 손잡이형 래스터 표면 위 동적 아이콘으로 교체하라."
+      ]
+    },
+    {
+      "scene_id": "02_activity1_scene3_tutorial",
+      "capture_label": "02_activity1_scene3_tutorial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__02_activity1_scene3_tutorial.png",
+      "scene_purpose": "시계 읽기와 드래그 조작을 연습한다.",
+      "overall_assessment": "수리 작업대의 시계·정답 슬롯·시간 티켓 구조는 매우 명확하다. 하지만 왼쪽 검은 띠와 반투명 캐릭터가 무대를 끊고, 미션 문장이 표찰 안쪽 여백을 침범한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "시계 수리 작업대 첫 점검",
+        "rationale": "핵심 장면 은유와 조작 표면이 이미 잘 마련돼 있어 배경 연속성과 표찰 inset만 수정하면 된다.",
+        "core_metaphor": "시계를 검사하고 시간 티켓을 끼우는 실제 수리대",
+        "visual_language": "목재 작업대, 청록 금속 모서리, 크림색 진단표",
+        "layout_strategy": "작업대를 중앙에 유지하고 좌우 캐릭터를 완전 불투명 상태로 프레이밍한다.",
+        "interaction_surfaces": [
+          "asset_tutorial_prompt_plate",
+          "작업대의 시계 홈",
+          "정답 슬롯",
+          "세 시간 티켓 홈"
+        ],
+        "implementation_notes": [
+          ".bench-prompt의 좌우 inset을 11% 이상 확보하고 font-size를 27px 전후로 낮춘다.",
+          "캡처 시점에도 배경과 캐릭터가 완전 불투명하도록 진입 애니메이션의 fill 상태를 정리한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "#tutorialPrompt inside .bench-prompt-plate; screenshot x=678..1242 y=344..431",
+            "issue": "첫 줄 문장이 진단 표찰의 왼쪽 프레임에 걸쳐 표면 안쪽 여백이 사라진다.",
+            "evidence": "‘지금’의 시작점이 표찰 내부 크림 면이 아니라 목재 테두리와 거의 맞닿고 첫 줄 폭도 우측 끝까지 차 있다.",
+            "suggested_fix": ".bench-prompt를 left/right 11%, font-size 27px, line-height 1.28로 조정하고 두 줄을 표찰 중앙에 정렬하라."
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#scene-tutorial .bg and screenshot x=0..128 y=0..1080",
+            "issue": "화면 왼쪽에 불투명한 검은 세로 영역이 생겨 1920×1080 도서관 무대가 연속적으로 보이지 않는다.",
+            "evidence": "다른 장면과 달리 전체 높이의 검은 띠가 창문과 카펫을 잘라낸다.",
+            "suggested_fix": "#scene-tutorial에서 모든 전경 레이어의 투명 배경을 보장하고 .bg가 inset:0 전체를 계속 덮도록 stacking context와 transform/filter 적용을 정리하라."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#tutorialChild.char.child.enter-right; screenshot x=135..340 y=530..1015",
+            "issue": "꼬마 사서가 반투명 유령처럼 보여 반복 캐릭터의 존재감과 정체성이 무너진다.",
+            "evidence": "배경의 소파와 바닥이 캐릭터 몸 전체를 통해 보인다.",
+            "suggested_fix": "진입 후 opacity:1을 확정하고 캡처 가능한 안정 상태에서는 .enter-right 애니메이션 클래스를 제거하라."
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_activity1_scene3_tutorial",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "#scene-tutorial .bg; screenshot x=0..128",
+          "issue": "검은 세로 영역이 도서관 무대를 잘라낸다.",
+          "evidence": "전체 화면 높이에 걸쳐 배경 대신 검은색이 노출된다.",
+          "suggested_fix": "배경을 전체 캔버스에 유지하고 투명 전경 레이어의 stacking context를 정리하라."
+        },
+        {
+          "scene_id": "02_activity1_scene3_tutorial",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#tutorialPrompt",
+          "issue": "미션 문장이 표찰 프레임에 걸친다.",
+          "evidence": "첫 줄의 시작과 끝이 표찰 안쪽 safe zone을 벗어난다.",
+          "suggested_fix": "좌우 inset을 11% 이상 확보하고 글자 크기를 27px 전후로 낮춰 두 줄 중앙 정렬하라."
+        }
+      ],
+      "refine_suggestions": [
+        "#tutorialPrompt의 font-size와 inset을 조정해 모든 글자가 진단 표찰 크림 면 안에 들어가게 하라.",
+        "#tutorialChild가 진입 완료 후 opacity:1을 유지하게 하라.",
+        "#scene-tutorial 왼쪽의 검은 영역을 제거하고 도서관 배경을 캔버스 끝까지 복원하라."
+      ]
+    },
+    {
+      "scene_id": "03_activity1_scene4_success",
+      "capture_label": "03_activity1_scene4_success",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__03_activity1_scene4_success.png",
+      "scene_purpose": "튜토리얼 성공을 축하하고 본 수리 활동으로 전환한다.",
+      "overall_assessment": "빛나는 시계, 결과 슬롯, 성공 캐릭터와 티켓 CTA가 성취 장면을 잘 만든다. 다만 말풍선이 사서 선생님의 얼굴 위로 내려와 표정을 가린다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "첫 수리 검수 완료",
+        "rationale": "성공 은유는 충분하므로 대사 표면만 캐릭터의 얼굴과 분리하면 된다.",
+        "core_metaphor": "완료된 수리대를 검수하고 다음 작업 티켓을 발급받는 장면",
+        "visual_language": "금빛 시계 글로우와 수리 티켓",
+        "layout_strategy": "결과 작업대는 중앙, 두 캐릭터는 좌우, 대사 표면은 교사 머리 위가 아닌 작업대 우측 상단 빈 벽에 둔다.",
+        "interaction_surfaces": [
+          "완료 슬롯",
+          "검수 대사 표면",
+          "다음 단계 수리 티켓"
+        ],
+        "implementation_notes": [
+          "#scene-success .teacher-speech를 right:250px, bottom:610px 부근으로 이동하고 폭을 430px 이하로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#scene-success .speech.teacher-speech.compact.visible; screenshot x=1380..1848 y=271..539",
+            "issue": "성공 대사 표면이 사서 선생님의 이마와 눈 일부를 가려 핵심 축하 표정이 읽히지 않는다.",
+            "evidence": "말풍선 하단과 꼬리가 캐릭터 머리 위에 직접 겹친다.",
+            "suggested_fix": "말풍선을 right:250px, bottom:610px 부근의 빈 벽으로 옮기고 꼬리만 캐릭터 방향으로 짧게 연결하라."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#scene-success .speech.teacher-speech.compact.visible and .char.teacher",
+            "issue": "전경 대사 표면이 축하 캐릭터의 얼굴을 침범한다.",
+            "evidence": "교사의 머리와 말풍선 하단이 중첩되어 표정의 일부가 가려진다.",
+            "suggested_fix": "대사 표면과 교사 캐릭터 사이에 최소 36px의 시각 간격을 확보하라."
+          }
+        ],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_activity1_scene4_success",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "#scene-success .speech.teacher-speech.compact.visible",
+          "issue": "성공 대사가 교사의 얼굴을 가린다.",
+          "evidence": "말풍선 하단과 꼬리가 교사 머리 위에 겹친다.",
+          "suggested_fix": "대사 표면을 중앙 우측의 빈 벽으로 옮겨 얼굴과 최소 36px 분리하라."
+        }
+      ],
+      "refine_suggestions": [
+        "성공 말풍선을 작업대 우측 상단 빈 벽으로 옮겨 사서 선생님의 얼굴을 완전히 노출하라."
+      ]
+    },
+    {
+      "scene_id": "04_activity2_scene1_type_a",
+      "capture_label": "04_activity2_scene1_type_a",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__04_activity2_scene1_type_a.png",
+      "scene_purpose": "몇 분 전 표현과 아날로그 시각을 연결한다.",
+      "overall_assessment": "문항은 대형 전광판, 선택지는 실제 시계 점검 랙에 통합되어 학습 목표가 명확하다. 그러나 상단 에너지 계기의 동적 표시 면이 검게 비어 진행 정보가 사라진다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "도서관 시계 점검대",
+        "rationale": "전광판과 세 시계 랙의 관계가 이미 완성도 높은 장면형 퀴즈를 만든다.",
+        "core_metaphor": "깨진 전광판과 실제 시계를 대조하는 점검 작업",
+        "visual_language": "짙은 유리 전광판, 목재·청록 금속 시계 랙",
+        "layout_strategy": "전광판-시계 랙의 수직 비교 구조를 유지한다.",
+        "interaction_surfaces": [
+          "대형 전광판",
+          "asset_clock_choice_rack의 세 시계 홈",
+          "에너지 계기"
+        ],
+        "implementation_notes": [
+          "에너지 계기의 라벨·퍼센트·fill을 asset 표면보다 높은 동일 stacking context에 고정한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".energy-wrap; .energy-caption, .energy-percent, .energy-shell; screenshot x=1530..1870 y=58..150",
+            "issue": "에너지 계기 내부가 검은 면으로 표시되고 라벨·퍼센트·충전 트랙이 보이지 않는다.",
+            "evidence": "문제 장면에서는 정상적으로 보이던 ‘수리 에너지 0%’와 크림색 표시 면이 유형 A 캡처에서 전부 사라진다.",
+            "suggested_fix": ".energy-wrap의 내부 레이어를 하나의 투명 stacking context로 묶고 .energy-surface z-index:0, 동적 텍스트와 fill z-index:2 이상을 안정적으로 유지하라."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".energy-wrap",
+            "issue": "래스터 계기 몸체와 동적 진행 정보의 합성이 깨져 빈 검은 장치처럼 보인다.",
+            "evidence": "외곽 프레임만 남고 내부 표시 정보가 모두 보이지 않는다.",
+            "suggested_fix": "계기 내부의 불투명 검은 레이어를 제거하고 label, percent, fill을 각 safe zone 중앙에 복원하라."
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_activity2_scene1_type_a",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".energy-wrap",
+          "issue": "에너지 계기의 동적 표시가 사라져 검은 빈 면으로 보인다.",
+          "evidence": "유형 A·B·C와 갤러리 캡처에서 같은 현상이 반복된다.",
+          "suggested_fix": "계기 asset과 동적 label/percent/fill의 레이어 순서를 고정하고 내부 검은 면을 제거하라."
+        }
+      ],
+      "refine_suggestions": [
+        "유형 A·B·C 및 갤러리의 .energy-wrap에서 라벨, 퍼센트, fill이 항상 계기 표면 위에 보이게 하라."
+      ]
+    },
+    {
+      "scene_id": "05_activity2_scene2_type_b",
+      "capture_label": "05_activity2_scene2_type_b",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__05_activity2_scene2_type_b.png",
+      "scene_purpose": "시작 시각과 걸린 시간으로 시간 또는 끝나는 시각을 계산한다.",
+      "overall_assessment": "종이 문항, 시계, 키패드가 코르크 게시판 안에 잘 통합됐다. 다만 정답 입력칸은 일반 CSS 입력 상자처럼 떠 있고 에너지 계기 표시도 소실됐다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "독서 교실 시간표 복구판",
+        "rationale": "게시판 수리 장면은 강하므로 정답 입력만 키패드에 연결된 물리 슬롯으로 바꾸면 된다.",
+        "core_metaphor": "지워진 시간표를 수리 장치로 다시 입력하는 게시판",
+        "visual_language": "핀 고정 종이, 코르크, 목재·청록 키패드",
+        "layout_strategy": "문항-시각 관계-정답 슬롯-키패드의 왼쪽에서 오른쪽 흐름을 유지한다.",
+        "interaction_surfaces": [
+          "asset_reading_class_prompt_note",
+          "두 시계 영역",
+          "신규 정답 슬롯 스트립",
+          "asset_reading_class_keypad_console"
+        ],
+        "implementation_notes": [
+          ".answer-line의 답 필드를 신규 물리 슬롯 asset 위에 오버레이하고 현재 CSS 배경·dashed border를 제거한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".energy-wrap; screenshot x=1530..1870 y=58..150",
+            "issue": "상단 계기의 진행 정보가 검은 면에 가려 보이지 않는다.",
+            "evidence": "라벨, 퍼센트, 충전 트랙이 모두 소실됐다.",
+            "suggested_fix": "유형 A와 같은 계기 레이어 수정 사항을 공통 적용하라."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".answer-line .answer-field; screenshot x=665..776 y=633..715",
+            "issue": "정답 입력칸이 게시판이나 키패드의 물리 표면에 속하지 않은 일반 웹 입력 상자처럼 떠 있다.",
+            "evidence": "크림색 종이와 입체 키패드 사이에 청록 테두리의 단순 rounded rectangle이 독립적으로 놓여 있다.",
+            "suggested_fix": "키패드와 연결되는 빈 수리 기록 슬롯 asset을 추가하고 .answer-field의 동적 값만 그 표면 중앙에 오버레이하라."
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".answer-field",
+            "issue": "gradient 배경과 dashed border로 만든 일반 form 스타일이 래스터 장치 중심의 무대와 충돌한다.",
+            "evidence": "CSS의 `.answer-field { background: linear-gradient(...); border: 3px dashed ...; border-radius:12px; }`가 물리 재질 없이 입력칸을 구성한다.",
+            "suggested_fix": "CSS 배경과 테두리를 제거하고 신규 정답 슬롯 asset의 inset 안에서 상태 glow와 정렬만 CSS로 처리하라."
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_activity2_scene2_type_b",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": ".answer-line .answer-field",
+          "issue": "정답 입력칸이 일반 웹 form처럼 보인다.",
+          "evidence": "게시판의 종이·목재·금속 재질과 달리 단순 CSS 사각형으로 구성됐다.",
+          "suggested_fix": "키패드 연결형 빈 정답 슬롯 asset 위에 동적 숫자를 오버레이하라."
+        }
+      ],
+      "refine_suggestions": [
+        ".answer-field의 CSS 재질 표현을 제거하고 신규 물리 슬롯 표면 안에 배치하라.",
+        "공통 에너지 계기의 검은 내부 면을 제거하라."
+      ]
+    },
+    {
+      "scene_id": "06_activity2_scene3_type_c",
+      "capture_label": "06_activity2_scene3_type_c",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__06_activity2_scene3_type_c.png",
+      "scene_purpose": "1일과 24시간의 관계를 대출 시스템에 입력한다.",
+      "overall_assessment": "모니터·낮밤 타임라인·숫자 블록 콘솔의 장면 통합은 강하다. 그러나 24개 숫자가 타임라인 중앙과 양끝에서 충돌하며, 캐릭터 주변 검은 블록과 상단 계기 소실도 장면을 크게 훼손한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "24시간 대출 단말 재부팅",
+        "rationale": "기존 대출 단말 은유가 학습 목표와 직접 연결되므로 타임라인 계측 정밀도와 투명 레이어만 고치면 된다.",
+        "core_metaphor": "낮과 밤의 24시간 암호를 입력하는 재부팅 콘솔",
+        "visual_language": "청록 단말, 목재 시간 장치, 낮·밤 대비",
+        "layout_strategy": "모니터 안에서 문항-타임라인-정답 슬롯을 수직 정렬하고 콘솔은 하단에 유지한다.",
+        "interaction_surfaces": [
+          "모니터 화면",
+          "asset_day_night_timeline의 두 숫자 구간",
+          "정답 슬롯",
+          "숫자 블록 콘솔"
+        ],
+        "implementation_notes": [
+          "두 .timeline-half 사이에 최소 22px 간격을 주고 숫자 영역을 각 safe zone 안쪽으로 줄인다.",
+          "10·11·12의 가독성을 위해 숫자 폰트를 16~17px로 낮추고 각 셀 폭을 동일하게 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".timeline-scale .tl-nums; screenshot x=726..1239 y=424..447",
+            "issue": "각 구간의 9·10·11·12와 중앙의 12·1이 붙어 하나의 숫자열처럼 보인다.",
+            "evidence": "화면에서 ‘9101112’와 중앙의 ‘12 1’이 프레임 및 반대 구간 숫자와 충돌한다.",
+            "suggested_fix": ".timeline-scale의 left/right를 12% 이상으로 늘리고 두 .timeline-half 사이에 22px gap을 추가하며 숫자 font-size를 16~17px로 조정하라."
+          },
+          {
+            "severity": "high",
+            "target": ".energy-wrap; screenshot x=1530..1870 y=58..150",
+            "issue": "에너지 계기의 동적 라벨과 충전 정보가 검은 내부 면에 가려진다.",
+            "evidence": "외곽 프레임만 보이고 내부 정보가 모두 사라졌다.",
+            "suggested_fix": "공통 .energy-wrap 레이어 순서 수정 사항을 적용하라."
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#scene-type-c .char.child, #scene-type-c .char.teacher and surrounding transparent regions; screenshot x=0..94 y=472..866, x=1780..1920 y=468..934",
+            "issue": "캐릭터 주변에 불투명 검은 직사각형이 생겨 배경과 신체 일부를 가린다.",
+            "evidence": "꼬마 사서 왼쪽과 교사 오른쪽·하단에 배경과 무관한 검은 블록이 명확히 보인다.",
+            "suggested_fix": "캐릭터 컨테이너와 투명 PNG에 적용된 transform/filter stacking context를 분리하고 모든 래퍼 배경을 transparent로 확정하라."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".timeline-scale .timeline-half",
+            "issue": "동적 숫자가 asset_day_night_timeline의 두 safe zone 안에 정확히 들어가지 않는다.",
+            "evidence": "두 구간 경계와 우측 프레임에서 숫자가 서로 겹친다.",
+            "suggested_fix": "각 숫자 행을 좌우 프레임에서 12% inset하고 구간 사이 물리 중앙축을 비우도록 grid를 재구성하라."
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_activity2_scene3_type_c",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".timeline-scale .tl-nums",
+          "issue": "24개 숫자가 중앙축과 프레임에서 충돌한다.",
+          "evidence": "9~12가 연결돼 읽히고 두 구간의 12와 1이 중앙에서 붙는다.",
+          "suggested_fix": "숫자 safe zone inset, 구간 gap, font-size를 재조정하라."
+        },
+        {
+          "scene_id": "06_activity2_scene3_type_c",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "#scene-type-c .char and transparent regions",
+          "issue": "검은 직사각형이 캐릭터와 배경을 가린다.",
+          "evidence": "좌우 캐릭터 주변에 배경과 무관한 불투명 블록이 노출된다.",
+          "suggested_fix": "투명 레이어의 배경과 stacking context를 정리해 도서관 배경을 복원하라."
+        }
+      ],
+      "refine_suggestions": [
+        "타임라인의 두 12칸 grid를 중앙축에서 분리하고 10·11·12까지 독립적으로 읽히게 하라.",
+        "캐릭터 주변의 검은 블록을 제거하고 투명 PNG 가장자리를 배경과 정상 합성하라.",
+        "공통 에너지 계기 표시를 복원하라."
+      ]
+    },
+    {
+      "scene_id": "07_activity2_scene4_outro",
+      "capture_label": "07_activity2_scene4_outro",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__07_activity2_scene4_outro.png",
+      "scene_purpose": "도서관 복구를 축하하고 실생활 연계 단계로 이동한다.",
+      "overall_assessment": "정돈된 로비, 정상 시계의 금빛 글로우, 두 성공 캐릭터와 하단 수리 티켓이 명료한 완료 장면을 만든다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "복구된 도서관 개관식",
+        "rationale": "수리 전후 연속성과 성공 상태가 충분히 명확하다.",
+        "core_metaphor": "정상화된 중앙 시계 아래에서 받는 다음 임무 티켓",
+        "visual_language": "정돈된 목재 로비와 제한된 금빛 글로우",
+        "layout_strategy": "시계-캐릭터-CTA의 삼각 구도를 유지한다.",
+        "interaction_surfaces": [
+          "정상화된 대형 시계",
+          "다음 단계 수리 티켓"
+        ],
+        "implementation_notes": [
+          "현재 중앙 시계와 하단 티켓의 크기 및 여백을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "현재 복구 완료 구도와 금빛 강조를 유지하라."
+      ]
+    },
+    {
+      "scene_id": "08_activity3_scene1_gallery",
+      "capture_label": "08_activity3_scene1_gallery",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__08_activity3_scene1_gallery.png",
+      "scene_purpose": "24시간, 해시계, 걸린 시간의 실생활 사례를 팝업북으로 탐색한다.",
+      "overall_assessment": "팝업북의 이미지·설명·페이지 탭 통합은 매우 좋지만, 화면 상단과 좌우의 거대한 검은 영역이 배경과 책 일부를 가려 장면으로 사용할 수 없는 상태다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "복구된 도서관의 시간 마법책",
+        "rationale": "책 자체의 은유와 지면 구성은 충분히 강하므로 배경 합성만 복구하면 된다.",
+        "core_metaphor": "도서관에서 펼쳐보는 시간 사례 팝업북",
+        "visual_language": "크림 종이, 청록 표지, 금빛 모서리, 따뜻한 사례 삽화",
+        "layout_strategy": "책을 중앙 대형 무대로 유지하고 교사는 우측에서 페이지를 가리킨다.",
+        "interaction_surfaces": [
+          "왼쪽 사례 지면",
+          "오른쪽 설명 지면",
+          "좌우 페이지 탭"
+        ],
+        "implementation_notes": [
+          ".book-wrap과 .book-nav의 transform/filter를 배경 레이어와 분리하고 투명 영역이 검게 합성되지 않게 한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#scene-gallery background and transparent overlay regions; screenshot upper band and x=0..383, x=1545..1919",
+            "issue": "불투명 검은 영역이 화면 상단과 좌우를 크게 덮어 복구된 도서관 무대를 파괴한다.",
+            "evidence": "창문·책장·바닥이 여러 개의 검은 직사각형으로 잘리고 상단 계기 역시 검은 면만 남는다.",
+            "suggested_fix": "#scene-gallery의 배경은 단일 최하단 레이어로 고정하고 book, nav, teacher, topbar의 투명 래퍼 배경을 transparent로 확정해 검은 합성 영역을 제거하라."
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".energy-wrap in #scene-gallery",
+            "issue": "갤러리에서도 에너지 계기 내부 정보가 검은 면에 가려진다.",
+            "evidence": "계기 외곽 일부만 보이고 라벨·퍼센트·fill은 보이지 않는다.",
+            "suggested_fix": "공통 .energy-wrap 레이어 수정 사항을 갤러리에도 적용하라."
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "08_activity3_scene1_gallery",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "#scene-gallery background and transparent overlays",
+          "issue": "거대한 검은 영역이 도서관과 팝업북 주변을 가린다.",
+          "evidence": "화면 상단 및 좌우 수백 픽셀 영역이 불투명 검정으로 대체됐다.",
+          "suggested_fix": "배경과 투명 전경 레이어의 stacking context를 분리해 1920×1080 전체 도서관 무대를 복원하라."
+        }
+      ],
+      "refine_suggestions": [
+        "갤러리의 상단·좌우 검은 영역을 제거하고 복구된 로비가 캔버스 전체에 이어지게 하라.",
+        "팝업북과 교사 asset의 투명 영역이 배경을 정상 노출하게 하라."
+      ]
+    },
+    {
+      "scene_id": "09_activity3_scene2_quiz",
+      "capture_label": "09_activity3_scene2_quiz",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__09_activity3_scene2_quiz.png",
+      "scene_purpose": "1일과 24시간의 관계를 마지막으로 회상한다.",
+      "overall_assessment": "문항과 세 선택지가 하나의 봉인 장치에 정확히 들어가며 캐릭터와의 크기 대비도 초등 저학년에게 적절하다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "마지막 시간 규칙 봉인대",
+        "rationale": "웹 퀴즈가 아니라 장치 조작으로 느껴질 만큼 표면 통합이 잘 되어 있다.",
+        "core_metaphor": "마지막 시간 규칙을 선택해 봉인을 완성하는 장치",
+        "visual_language": "목재 프레임, 청록 금속, 크림 선택 표찰",
+        "layout_strategy": "중앙 장치와 좌측 캐릭터의 현재 구도를 유지한다.",
+        "interaction_surfaces": [
+          "asset_final_quiz_console의 문항 면",
+          "세 선택 홈"
+        ],
+        "implementation_notes": [
+          "현재 텍스트 inset과 선택지 간격을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "현재 봉인대의 문항·선택지 정렬과 크기를 유지하라."
+      ]
+    },
+    {
+      "scene_id": "10_activity3_scene3_certificate",
+      "capture_label": "10_activity3_scene3_certificate",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-15_ch8c0716\\iter_005\\design_review\\desktop__10_activity3_scene3_certificate.png",
+      "scene_purpose": "학습 기록을 인증서로 제공하고 저장·다음 차시 이동을 지원한다.",
+      "overall_assessment": "인증서의 기록 텍스트와 두 티켓 CTA는 각 래스터 표면 안에 잘 맞는다. 그러나 화면 상단과 캐릭터·말풍선 주변의 거대한 검은 블록이 최종 보상 장면을 심각하게 훼손한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 수리대원 임명식",
+        "rationale": "인증서와 축하 캐릭터라는 보상 은유는 명확하므로 무대 합성 복구와 대사 표면 재질 통일만 필요하다.",
+        "core_metaphor": "복구된 도서관에서 받는 공식 수리대원 임명장",
+        "visual_language": "크림 인증서, 금빛 장식, 수리 티켓, 따뜻한 로비",
+        "layout_strategy": "인증서를 중앙에 유지하고 캐릭터·대사는 좌우 축하 프레임으로 배치한다.",
+        "interaction_surfaces": [
+          "asset_certificate_paper",
+          "저장 티켓",
+          "다음 차시 티켓",
+          "좌우 축하 대사 표면"
+        ],
+        "implementation_notes": [
+          "최종 장면 전경의 투명 래퍼를 정리해 검은 블록을 제거한다.",
+          "좌우 대사 표면을 공용 도서관 안내 카드 asset으로 교체할 수 있다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "medium",
+            "target": "#scene-final .speech.child-speech, #scene-final .speech.teacher-speech",
+            "issue": "좌우 대사가 흰색 CSS 말풍선으로 보여 정교한 인증서·티켓 재질보다 웹 컴포넌트에 가깝다.",
+            "evidence": "`.speech`가 단색 `#fffdf4`, 5px border, 34px radius로 구성되어 래스터 인증서와 물성 차이가 난다.",
+            "suggested_fix": "빈 도서관 안내 카드 asset 위에 대사를 오버레이하고 캐릭터 방향은 카드의 작은 포인터 장식으로 표시하라."
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "#scene-final background and transparent overlay regions; screenshot upper band and large side blocks",
+            "issue": "여러 불투명 검은 직사각형이 복구된 도서관과 축하 캐릭터 주변을 덮는다.",
+            "evidence": "상단 전체와 인증서 좌우의 넓은 영역이 검정으로 대체되어 최종 보상 장면의 밝은 톤이 무너진다.",
+            "suggested_fix": "#scene-final의 배경을 최하단에 고정하고 .cert-box, .speech, .char, .final-actions의 투명 영역과 filter/transform stacking context를 분리해 검은 블록을 제거하라."
+          }
+        ],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "10_activity3_scene3_certificate",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "#scene-final background and transparent overlays",
+          "issue": "검은 블록이 최종 인증 무대를 광범위하게 가린다.",
+          "evidence": "상단 전체 및 인증서 좌우의 도서관 배경이 불투명 검정으로 대체됐다.",
+          "suggested_fix": "전경 투명 레이어의 합성을 정리해 복구된 로비를 전체 캔버스에 복원하라."
+        }
+      ],
+      "refine_suggestions": [
+        "최종 장면의 모든 검은 블록을 제거하고 복구된 로비를 인증서 뒤와 좌우에 연속적으로 노출하라.",
+        "좌우 CSS 말풍선을 빈 도서관 안내 카드 래스터 표면으로 교체하고 원문은 HTML 오버레이로 유지하라."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "코드상 장면 전환은 sceneFade와 sceneExit로 양방향 duration/easing을 갖추고, 활동 2는 beats-in stagger, 튜토리얼은 시간차 대화, 최종 인증은 final-in 순차 등장으로 구성된다. 정답은 캐릭터 성공 pose·도장·파티클·대상 glow, 오답은 confused pose·shake로 분리되며 3회 오답 후 answerGuideGlow도 제공된다. CTA와 페이지 탭에는 hover·press·pulse가 있어 게임형 장면의 시간 축 완성도는 통과 수준이다.",
+    "findings": []
+  },
+  "asset_review": {
+    "overall_asset_fit": "핵심 배경, 캐릭터, 시계, 작업대, 랙, 콘솔, 팝업북, 인증서는 동일한 목재·청록·크림 팔레트와 부드러운 주간광을 유지해 전반적 asset 품질이 높다. 주요 결함은 기존 asset의 재생성보다 CSS 합성·배치와 누락된 소형 interaction surface 보강으로 해결하는 편이 적절하다.",
+    "keep_assets": [
+      {
+        "asset_id": "asset_library_lobby_broken",
+        "reason": "수리 전 로비가 밝은 위기 톤과 중앙 safe zone을 안정적으로 제공한다.",
+        "suggested_action": "유지하고 튜토리얼의 검은 배경 노출만 코드에서 수정한다."
+      },
+      {
+        "asset_id": "asset_library_lobby_restored",
+        "reason": "수리 전 로비와 공간 구조가 이어지고 정돈도·금빛 조명 변화가 명확하다.",
+        "suggested_action": "유지하고 갤러리·인증 장면의 검은 합성 영역을 제거한다."
+      },
+      {
+        "asset_id": "asset_tutorial_repair_workbench",
+        "reason": "시계, 정답 슬롯, 세 시간 티켓을 하나의 물리적 수리 행동으로 잘 통합한다.",
+        "suggested_action": "유지하고 prompt와 오버레이 inset만 조정한다."
+      },
+      {
+        "asset_id": "asset_clock_choice_rack",
+        "reason": "세 시계 선택지를 실제 점검 장치로 보이게 하며 시계 간 간격도 충분하다.",
+        "suggested_action": "현재 크기와 배치를 유지한다."
+      },
+      {
+        "asset_id": "asset_loan_terminal_block_console",
+        "reason": "숫자 블록과 확인 조작이 대출 단말의 부품으로 자연스럽게 통합된다.",
+        "suggested_action": "현재 asset을 유지하고 타임라인 텍스트만 조정한다."
+      },
+      {
+        "asset_id": "asset_magic_book_surface",
+        "reason": "사례 이미지와 설명을 좌우 지면에 명확히 분리하는 강한 장면 은유를 제공한다.",
+        "suggested_action": "현재 asset을 유지하고 주변 투명 합성만 수정한다."
+      },
+      {
+        "asset_id": "asset_final_quiz_console",
+        "reason": "문항과 선택지가 모두 장치 내부 safe zone에 안정적으로 들어간다.",
+        "suggested_action": "현재 asset과 오버레이 좌표를 유지한다."
+      },
+      {
+        "asset_id": "asset_certificate_paper",
+        "reason": "가변 기록과 인증 문구가 장식 경계를 침범하지 않고 최종 보상감을 제공한다.",
+        "suggested_action": "현재 asset을 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "asset_clock_crisis_effects",
+        "reason": "asset 자체의 화풍은 적합하지만 좌측 표찰 합산 크기가 중앙 시계보다 우세하다.",
+        "suggested_action": "약 82%로 축소하고 좌측 외곽으로 이동해 시계를 보조하게 한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [
+      {
+        "suggested_id": "asset_reading_class_answer_slot_strip",
+        "character_id": "",
+        "priority": 1,
+        "impact": "유형 B의 핵심 입력칸을 일반 웹 form에서 실제 시간표 수리 장치로 전환해 high severity 스타일 결함을 해결한다.",
+        "kind": "image",
+        "intended_path": "output/assets/reading_class_answer_slot_strip.png",
+        "usage_section_ids": [
+          "activity2_scene2_type_b"
+        ],
+        "purpose": "가변 시간·분 숫자를 올릴 게시판 부착형 빈 정답 슬롯을 제공한다.",
+        "prompt_brief": "독서 교실 코르크 게시판과 키패드 사이에 부착하는 가로형 빈 수리 기록 슬롯. 밝은 목재 프레임, 청록 금속 연결부, 크림색 숫자 표시 홈 두 개를 포함하고 모든 문구와 숫자는 비운다.",
+        "visual_role": "정답 입력값을 게시판과 키패드에 물리적으로 연결하는 시간표 복구 슬롯",
+        "style_constraints": "asset_reading_class_scene과 asset_reading_class_keypad_console의 조명·외곽선·목재·청록 금속 재질을 따른다.",
+        "composition_notes": "정면 투명 배경. 한 자리 또는 두 자리 숫자와 시간·분 단위를 HTML로 올릴 넓은 중앙 safe zone을 두고 좌우 12% 이상 inset을 확보한다.",
+        "negative_prompt": "숫자, 시간 문구, 정답, 버튼, flat vector UI, SVG style, CSS component, plain geometric panel",
+        "why_needed": "현재 .answer-field는 CSS 사각형뿐이며 기존 asset에는 가변 정답을 담을 별도 물리 표면이 없다."
+      },
+      {
+        "suggested_id": "asset_library_catalog_menu_handle",
+        "character_id": "",
+        "priority": 2,
+        "impact": "대부분의 학습 장면에 반복되는 흰 웹 메뉴 버튼을 도서관 세계의 실제 조작물로 바꾼다.",
+        "kind": "image",
+        "intended_path": "output/assets/library_catalog_menu_handle.png",
+        "usage_section_ids": [
+          "activity1_scene2_problem",
+          "activity1_scene3_tutorial",
+          "activity1_scene4_success",
+          "activity2_global",
+          "activity3_scene1_gallery",
+          "activity3_scene2_quiz",
+          "activity3_scene3_certificate"
+        ],
+        "purpose": "차시 목록 아이콘을 올릴 도서관 카드 서랍 손잡이형 빈 버튼 몸체를 제공한다.",
+        "prompt_brief": "도서관 카드 목록 서랍의 작은 정면 손잡이처럼 보이는 빈 메뉴 조작물. 밝은 목재 몸체와 청록 금속 테두리, 얕은 금빛 나사를 사용하고 중앙 아이콘 면은 비운다.",
+        "visual_role": "좌측 상단 차시 목록 버튼을 장면 속 도서관 설비로 통합",
+        "style_constraints": "부드러운 주간광, 둥근 중간 굵기 외곽선, 기존 수리 장치와 동일한 목재·청록 재질",
+        "composition_notes": "정면 투명 배경, 정사각형에 가까운 비율. 중앙 햄버거 아이콘용 48% safe zone과 press 이동 여백을 둔다.",
+        "negative_prompt": "햄버거 선, 문자, 숫자, 로고, flat vector UI, SVG style, CSS button",
+        "why_needed": "현재 .icon-btn은 흰색 rounded square CSS 버튼으로 장면의 물성과 분리된다."
+      },
+      {
+        "suggested_id": "asset_shared_library_dialogue_notice_body",
+        "character_id": "",
+        "priority": 3,
+        "impact": "반복되는 흰 CSS 말풍선을 도서관 안내 표면으로 통일하고 성공·인증 장면의 캐릭터 얼굴 간섭도 줄인다.",
+        "kind": "image",
+        "intended_path": "output/assets/shared_library_dialogue_notice_body.png",
+        "usage_section_ids": [
+          "activity1_scene2_problem",
+          "activity1_scene4_success",
+          "activity2_scene1_type_a",
+          "activity2_scene2_type_b",
+          "activity2_scene3_type_c",
+          "activity3_scene3_certificate"
+        ],
+        "purpose": "가변 화자명과 대사를 올릴 공용 도서관 안내 카드 몸체를 제공한다.",
+        "prompt_brief": "캐릭터 옆에 걸거나 세울 수 있는 빈 도서관 안내 카드. 크림색 종이 면, 얕은 목재 프레임, 청록 금속 클립과 작은 방향 포인터 장식을 사용하며 모든 문구는 비운다.",
+        "visual_role": "대사를 일반 웹 말풍선이 아닌 도서관 내부 안내물로 흡수",
+        "style_constraints": "기존 목재·청록·크림 팔레트, 부드러운 주간광, 둥근 중간 굵기 외곽선을 따른다.",
+        "composition_notes": "정면 투명 배경, 약 2.5:1 비율. 화자명과 4~6줄 원문을 위한 중앙 78% safe zone을 확보하고 좌우 반전 사용이 가능하게 한다.",
+        "negative_prompt": "문구, 화자명, 캐릭터, flat vector UI, SVG style, CSS component, plain geometric panel",
+        "why_needed": "현재 .speech는 단색 배경·테두리·radius로 만든 CSS 컴포넌트이며 성공 장면에서는 캐릭터 얼굴까지 침범한다."
+      }
+    ],
+    "deferred_asset_candidates": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "08_activity3_scene1_gallery",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "#scene-gallery background and transparent overlays",
+      "issue": "상단과 좌우의 거대한 검은 영역이 갤러리 무대를 가린다.",
+      "evidence": "desktop__08 캡처에서 화면 상단과 좌우 수백 픽셀이 불투명 검정으로 대체됐다.",
+      "suggested_fix": "배경과 book/nav/teacher/topbar 투명 레이어의 stacking context를 분리해 전체 로비를 복원하라."
+    },
+    {
+      "scene_id": "10_activity3_scene3_certificate",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "#scene-final background and transparent overlays",
+      "issue": "검은 블록이 최종 인증 무대를 광범위하게 훼손한다.",
+      "evidence": "desktop__10 캡처에서 상단 전체와 인증서 좌우 배경이 검정으로 가려진다.",
+      "suggested_fix": "cert-box, speech, char, final-actions의 투명 합성을 정리하고 배경을 최하단에 고정하라."
+    },
+    {
+      "scene_id": "02_activity1_scene3_tutorial",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "#scene-tutorial .bg and #tutorialChild",
+      "issue": "왼쪽 검은 띠와 반투명 캐릭터가 튜토리얼 장면을 깨뜨린다.",
+      "evidence": "desktop__02에서 x=0..128 검은 띠가 전체 높이에 나타나고 꼬마 사서를 통해 배경이 보인다.",
+      "suggested_fix": "배경을 전체 캔버스에 유지하고 진입 완료 후 캐릭터 opacity를 1로 확정하라."
+    },
+    {
+      "scene_id": "06_activity2_scene3_type_c",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": ".timeline-scale .tl-nums",
+      "issue": "24개 숫자가 중앙축과 프레임에서 충돌한다.",
+      "evidence": "각 구간의 9·10·11·12가 붙고 중앙의 12와 1도 분리되지 않는다.",
+      "suggested_fix": "좌우 inset, 구간 사이 gap, 숫자 font-size를 재조정해 각 숫자를 독립 셀에 넣어라."
+    },
+    {
+      "scene_id": "04_activity2_scene1_type_a",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".energy-wrap",
+      "issue": "활동 2와 갤러리의 에너지 계기 내부가 검게 비어 동적 진행 정보가 사라진다.",
+      "evidence": "desktop__04, __05, __06, __08에서 외곽 프레임만 남고 라벨·퍼센트·fill이 보이지 않는다.",
+      "suggested_fix": "계기 표면과 동적 overlay의 z-index 및 투명 stacking context를 공통 수정하라."
+    },
+    {
+      "scene_id": "03_activity1_scene4_success",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#scene-success .speech.teacher-speech.compact.visible",
+      "issue": "성공 말풍선이 사서 선생님의 얼굴을 가린다.",
+      "evidence": "말풍선 하단과 꼬리가 교사의 이마와 눈 위에 겹친다.",
+      "suggested_fix": "대사 표면을 우측 상단 빈 벽으로 옮겨 얼굴과 최소 36px 분리하라."
+    },
+    {
+      "scene_id": "02_activity1_scene3_tutorial",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#tutorialPrompt",
+      "issue": "튜토리얼 문장이 진단 표찰 프레임에 걸친다.",
+      "evidence": "첫 줄의 좌우 끝이 크림색 safe zone을 벗어나 목재 테두리에 닿는다.",
+      "suggested_fix": "좌우 inset 11%, font-size 약 27px, line-height 1.28로 재배치하라."
+    },
+    {
+      "scene_id": "05_activity2_scene2_type_b",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": ".answer-line .answer-field",
+      "issue": "정답 입력칸이 일반 웹 form처럼 떠 있다.",
+      "evidence": "단순 gradient·dashed border CSS 상자가 코르크와 래스터 키패드 사이에 독립 배치됐다.",
+      "suggested_fix": "빈 물리 정답 슬롯 asset 위에 동적 숫자만 오버레이하라."
+    }
+  ],
+  "refine_suggestions": [
+    "#scene-gallery와 #scene-final의 불투명 검은 영역을 제거하고 restored lobby가 1920×1080 전체에 연속되게 하라.",
+    "#scene-tutorial의 왼쪽 검은 띠를 제거하고 #tutorialChild의 진입 완료 opacity를 1로 확정하라.",
+    ".timeline-scale의 두 12칸 grid 사이에 최소 22px 간격을 만들고 좌우 inset과 숫자 크기를 조정하라.",
+    ".energy-wrap의 label, percent, fill을 asset 표면 위 동일 stacking context에 고정해 유형 A·B·C와 갤러리에 복원하라.",
+    "#tutorialPrompt의 좌우 inset을 11% 이상으로 늘리고 font-size를 약 27px로 낮춰 표찰 경계 안에 넣어라.",
+    "#scene-success의 교사 대사 표면을 우측 상단 빈 벽으로 이동해 얼굴과 최소 36px 분리하라.",
+    ".answer-field의 CSS 배경과 dashed border를 제거하고 신규 정답 슬롯 asset 위에 동적 값을 배치하라.",
+    "#hamburger를 카드 서랍 손잡이형 래스터 표면으로 교체하고 중앙 아이콘과 hover·press 이동만 CSS로 처리하라."
+  ]
+}

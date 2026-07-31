@@ -1,0 +1,50 @@
+{
+  "brief_hash": "ch8c0720",
+  "run_id": "2026-07-22_ch8c0720",
+  "failed_at": "2026-07-22T15:19:07+09:00",
+  "stage": "builder",
+  "error_type": "RuntimeError",
+  "message": "Claude Code CLI failed\ncommand: ['C:\\\\Users\\\\PC-220627-03\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\\\\@anthropic-ai\\\\claude-code\\\\bin\\\\claude.exe', '--model', 'opus', '-p', 'Execute the complete task described in stdin and return only the requested structured output.', '--output-format', 'json', '--json-schema', '{\\n  \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\\n  \"title\": \"Builder Direct Output\",\\n  \"type\": \"object\",\\n  \"required\": [\"html_path\", \"asset_paths\", \"implemented_sections\", \"implemented_interactions\"],\\n  \"properties\": {\\n    \"html_path\": {\\n      \"type\": \"string\",\\n      \"const\": \"output/index.html\",\\n      \"description\": \"run 디렉토리 기준 단일 HTML 저장 경로\"\\n    },\\n    \"asset_paths\": {\\n      \"type\": \"array\",\\n      \"description\": \"index.html에서 참조한 asset 경로 목록. asset을 쓰지 않으면 빈 배열을 사용한다\",\\n      \"items\": {\\n        \"type\": \"string\",\\n        \"pattern\": \"^output/assets/[^/\\\\\\\\\\\\\\\\]+\\\\\\\\.(png|jpg|jpeg|webp)$\"\\n      }\\n    },\\n    \"implemented_sections\": {\\n      \"type\": \"array\",\\n      \"minItems\": 1,\\n      \"description\": \"index.html에 구현한 planner section id 목록\",\\n      \"items\": {\\n        \"type\": \"string\",\\n        \"pattern\": \"^[a-z][a-z0-9_-]*$\"\\n      }\\n    },\\n    \"implemented_interactions\": {\\n      \"type\": \"array\",\\n      \"description\": \"index.html에 구현한 planner interaction id 목록. 없으면 빈 배열을 사용한다\",\\n      \"items\": {\\n        \"type\": \"string\",\\n        \"pattern\": \"^[a-z][a-z0-9_-]*$\"\\n      }\\n    }\\n  },\\n  \"additionalProperties\": false\\n}\\n', '--permission-mode', 'acceptEdits']\nstdout: \nstderr: Error: --json-schema is not a valid JSON Schema: no schema with key or ref \"https://json-schema.org/draft/2020-12/schema\"\n",
+  "config": {
+    "codex_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\codex.CMD",
+    "claude_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+    "codex_access": "dangerously-bypass-approvals-and-sandbox",
+    "agent_models": {
+      "planner": "gpt-5.6-sol",
+      "asset_generator": "gpt-5.6-sol",
+      "builder": "opus",
+      "design_review": "gpt-5.6-sol",
+      "design_refine": "opus",
+      "content_critique": "gpt-5.6-sol",
+      "content_eval": "gpt-5.6-sol",
+      "content_refine": "opus",
+      "gen": "gpt-5.6-sol",
+      "critique": "gpt-5.6-sol",
+      "eval": "gpt-5.6-sol",
+      "refine": "gpt-5.6-sol"
+    },
+    "agent_providers": {
+      "planner": "codex",
+      "asset_generator": "codex",
+      "builder": "claude",
+      "design_review": "codex",
+      "design_refine": "claude",
+      "content_critique": "codex",
+      "content_eval": "codex",
+      "content_refine": "claude",
+      "gen": "codex",
+      "critique": "codex",
+      "eval": "codex",
+      "refine": "codex"
+    },
+    "timeout_seconds": 2400,
+    "mode": "builder_only"
+  },
+  "lineage": {
+    "input": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-22_ch8c0720\\ch8c0720_input.json",
+    "planner": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-22_ch8c0720\\ch8c0720_planner.json",
+    "asset_generator": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-22_ch8c0720\\ch8c0720_asset_generator.json",
+    "builder": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-22_ch8c0720\\ch8c0720_builder.json",
+    "html": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-07-22_ch8c0720\\output\\index.html"
+  }
+}

@@ -6,6 +6,7 @@ from pathlib import Path
 
 from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
 from stages.scripts.prompt_parts import with_common_html_contract
+from stages.scripts.style_references import build_style_reference_prompt
 
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -109,6 +110,7 @@ def build_prompt(
     target_html_path: str,
 ) -> str:
     system_prompt = with_common_html_contract(DESIGN_REFINE_SYSTEM_PROMPT.read_text(encoding="utf-8"))
+    style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}
 
 RUN_DIR:
@@ -126,6 +128,9 @@ OUTPUT_CONTRACT:
 
 INPUT_JSON:
 {json.dumps(input_data, ensure_ascii=False, indent=2)}
+
+STYLE_REFERENCE_SET_JSON:
+{style_reference_json}
 
 PLANNER_OUTPUT_JSON:
 {json.dumps(planner_output, ensure_ascii=False, indent=2)}
