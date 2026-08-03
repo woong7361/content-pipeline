@@ -15,6 +15,8 @@
   <link rel="preload" as="image" href="assets/teacher-idle.png">
   <link rel="preload" as="image" href="assets/student-idle.png">
   <link rel="preload" as="image" href="assets/student-volunteer.png">
+  <!-- 23: 서 있는 학생의 피드백 포즈 교체용. 미리 받아 두지 않으면 첫 오답에서 한 프레임 빈다 -->
+  <link rel="preload" as="image" href="assets/student-thinking.png">
   <link rel="preload" as="image" href="assets/activity-cta-body.png">
   <link rel="preload" as="image" href="assets/completion-cta-body.png">
   <link rel="preload" as="image" href="assets/tap-hint-hand.png">
@@ -315,8 +317,14 @@
     .paint-can.empty{opacity:.5;filter:var(--ds-sm) grayscale(.6) brightness(.94);transform:rotate(-9deg)}
     .paint-can.arriving{animation:pop var(--dur) var(--ease-back) both}
     /* 18: 칠판 오른쪽 빈 면을 채우는 상시 배치 학생. 찾기 대상이 아니므로 핫스팟도 alt도 주지 않는다.
-       z는 --z-scenery라 #shapeSearch(--z-interactive)의 찾기 사물·핫스팟보다 뒤에 놓인다. */
-    .classroom-student{position:absolute;z-index:var(--z-scenery);left:1080px;bottom:-12px;width:340px;height:560px;object-fit:contain;filter:var(--ds-lg);pointer-events:none}
+       z는 --z-scenery라 #shapeSearch(--z-interactive)의 찾기 사물·핫스팟보다 뒤에 놓인다.
+       23: 발을 배경의 마루바닥에 앵커한다. student-*.png는 셋 다 1024x1536이고 알파 bbox 하단이 y≈1370이라
+       object-fit:contain(300x494 → 렌더 300x450, 상하 여백 22px)에서 발끝이 요소 하단에서 71px 위다.
+       bottom:129px → 발끝 stage y≈880 = 벽·바닥 경계(818)와 책상 상판(900) 사이의 마루면.
+       크기 340x560 → 300x494는 그 깊이의 원근 축소분이다(화분 기준 1m≈310px, 1학년 ≈1.2m). */
+    .classroom-student{position:absolute;z-index:var(--z-scenery);left:1080px;bottom:129px;width:300px;height:494px;object-fit:contain;filter:var(--ds-lg);pointer-events:none}
+    /* 23: 대사가 끝난 뒤 등장하므로 다른 캐릭터와 같은 진입 모션을 준다 */
+    .classroom-student.student-enter{animation:characterEnter var(--dur-scene-in) var(--ease) both}
     .keypad-wrap{position:absolute;z-index:var(--z-interactive);right:105px;top:245px;width:510px;padding:26px;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
     .answer-display{height:96px;display:grid;place-items:center;margin-bottom:18px;border:4px solid var(--ink);border-radius:var(--r-md);background:var(--white);font-size:var(--fs-2xl);font-weight:900}
     .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
@@ -708,8 +716,8 @@
 
   const introBeats=[
     {text:'공사 중에 실수로 담장을 무너뜨렸어요.<br>죄송합니다!',img:'worker-apologizing.png',alt:'상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자',bg:'school-wall-damaged.png'},
-    {text:'① 휴, 담장은 다 고쳤어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
-    {text:'② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
+    {text:'휴, 담장은 다 고쳤어요.',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
+    {text:'그런데, 벽화는 못 그리겠어요. 누가 도와줘요!',img:'worker-explaining.png',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.png'},
     {text:'저희가 도와드릴게요!',img:'student-volunteer.png',alt:'활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이',bg:'school-wall-repaired.png'}
   ];
   let introBeat=0;
@@ -755,22 +763,34 @@
   const searchQuestions=[
     {id:'q_square_find_two',prompt:'■모양 2개를 찾아 봅시다.',answers:['square_notebook','square_lunchbox']},
     {id:'q_circle_find_two',prompt:'●모양 2개를 찾아 봅시다.',answers:['circle_wall_clock','circle_ball']},
-    {id:'q_triangle_find_two',prompt:'▲모양 2개를 찾아 봅시다.',answers:['triangle_ruler','triangle_pennant']}
+    {id:'q_triangle_find_two',prompt:'▲모양 2개를 찾아 봅시다.',answers:['triangle_ruler','triangle_party_hat']}
   ];
+  /* 25: 고깔모자(triangle_party_hat)는 벽이 아니라 #shapeSceneStudent의 머리 위에 얹힌다.
+     학생 에셋 3종은 머리 위치가 서로 달라(가장 큰 머리카락 연결 성분 실측, stage 환산 배율 0.293 =
+     .classroom-student 300x494 + object-fit:contain + 원본 1024x1536):
+       idle      머리 중심 x 1231 / 머리 꼭대기 y 529 / 머리 폭 129
+       thinking  머리 중심 x 1200 / y 526 / 폭 117
+       volunteer 머리 중심 x 1240 / y 530 / 폭 118
+     가로로 40px(머리 폭의 1/3) 움직이므로 모자를 한 자리에 고정하면 thinking에서 눈에 띄게 미끄러진다.
+     rect는 1254 정사각 에셋 기준이고 그 안에서 모자 실물은 좌 23.6 / 상 17.2 / 폭 124 / 바닥 152.6 지점에 있다.
+     **학생 좌표(.classroom-student left/bottom/width/height)를 바꾸면 이 세 값을 다시 재야 한다.** */
+  const HAT_POSE_RECT={idle:[1145,400,171,171],thinking:[1114,397,171,171],volunteer:[1154,401,171,171]};
   /* 교실 배경 위에 얹는 도형 사물. rect는 stage(1920x1080) 좌표 [left,top,w,h]이고 핫스팟도 같은 rect를 쓴다.
      배경(classroom-shape-search.png)에는 이 6종을 그리지 않았으므로 여기 좌표만 바꾸면 난이도·배치를 조정할 수 있다.
      18: 배경 실측 기준 — 칠판 x 80~768 / y 240~660, 벽·바닥 경계 y≈818, 화분 x 1720~1900 / y 570~850,
      책상 상판 y 900~975(왼쪽 x 0~390 · 가운데 x 528~1065 · 오른쪽 x 1240~1680 · 끝 x 1710~1920).
-     사물은 실제로 놓일 법한 면에만 둔다: 삼각자는 칠판 면, 시계·깃발은 벽, 공책·도시락은 책상 상판, 공은 바닥. */
+     사물은 실제로 놓일 법한 면에만 둔다: 삼각자는 칠판 면, 시계는 벽, 공책·도시락은 책상 상판, 공은 바닥,
+     고깔모자는 #shapeSceneStudent의 머리 위(25: 벽에 건 삼각 깃발이 사물이 아니라 도형 스티커로 보여 교체).
+     hotspotRect가 있으면 핫스팟은 rect 대신 그 값을 쓴다 — 그림은 움직여도 클릭 영역은 고정할 때 쓴다. */
   const findObjects={
     triangle_ruler:{src:'classroom-triangle-ruler.png',alt:'눈금이 그려진 나무 삼각자',rect:[500,395,210,210]},
     circle_wall_clock:{src:'classroom-wall-clock.png',alt:'파란 테두리의 둥근 교실 벽시계',rect:[880,215,190,190]},
-    triangle_pennant:{src:'classroom-pennant-flag.png',alt:'짧은 막대에 달린 파란 삼각 깃발',rect:[1490,220,180,180]},
+    triangle_party_hat:{src:'classroom-party-hat.png',alt:'교실 아이가 머리에 쓴 하늘색 줄무늬 고깔모자',rect:HAT_POSE_RECT.idle,hotspotRect:[1136,405,170,178]},
     square_notebook:{src:'classroom-notebook.png',alt:'책상 위에 놓인 청록색 표지의 공책',rect:[860,790,185,185]},
     square_lunchbox:{src:'classroom-lunchbox.png',alt:'책상 위에 놓인 빨간 뚜껑의 사각 도시락통',rect:[1480,790,185,185]},
     circle_ball:{src:'classroom-ball.png',alt:'파란색과 노란색 띠가 있는 둥근 공',rect:[470,690,180,180]}
   };
-  const hotspotDefs=Object.fromEntries(Object.entries(findObjects).map(([id,o])=>[id,o.rect]));
+  const hotspotDefs=Object.fromEntries(Object.entries(findObjects).map(([id,o])=>[id,o.hotspotRect||o.rect]));
   function renderFindObjects(){
     const host=document.getElementById('shapeObjects');host.innerHTML='';
     Object.entries(findObjects).forEach(([id,o])=>{
@@ -779,6 +799,7 @@
       Object.assign(img.style,{left:o.rect[0]+'px',top:o.rect[1]+'px',width:o.rect[2]+'px',height:o.rect[3]+'px'});
       host.appendChild(img);
     });
+    positionPartyHat(sceneStudentPose);
   }
   const countQuestions=[
     {id:'q_count_circle',prompt:'●모양은 몇 개 인가요?',answer:'3',shape:'circle',count:3,color:'green'},
@@ -786,18 +807,33 @@
     {id:'q_count_square',prompt:'■모양은 몇 개 인가요?',answer:'4',shape:'square',count:4,color:'blue'}
   ];
   let shapePhase='opening',shapeDialogueIndex=0,searchIndex=0,searchWrong=0,found=new Set(),countIndex=0,countWrong=0,countValue='',countAssisted=false,shapeTimers=[];
+  /* 23: 교실에 상시 배치된 학생(#shapeSceneStudent)의 등장·포즈를 한곳에서 다룬다.
+     - 오프닝 대사 중에는 #shapeCharacter가 같은 아이(student-*)로 말하므로 숨긴다(같은 인물이 둘 보인다).
+     - 찾기 단계부터 등장하고, 배경이 담장으로 바뀌는 paint-intro에서 다시 내려간다.
+     - 피드백 포즈는 이 요소의 src 교체로 낸다. 무대에 이 아이가 있는데 #feedbackCharacter를 또 띄우면 인물이 중복된다. */
+  const SCENE_STUDENT_POSE_SRC={idle:'student-idle.png',thinking:'student-thinking.png',volunteer:'student-volunteer.png'};
+  const SCENE_STUDENT_POSE_MS=700; /* showStamp·wrongPoseTimer와 같은 유지 시간 */
+  let sceneStudentPoseTimer=0,sceneStudentPose='idle';
+  function sceneStudentEl(){return document.getElementById('shapeSceneStudent')}
+  function sceneStudentVisible(){const el=sceneStudentEl();return !!el&&!el.classList.contains('hidden')}
+  /* 25: 포즈마다 머리가 옮겨가므로 모자 그림도 같이 옮긴다. 핫스팟(hotspotRect)은 세 포즈의 머리를
+     모두 덮는 고정 박스라 여기서 건드리지 않는다 — renderSearch가 다시 만들어도 어긋나지 않는다. */
+  function positionPartyHat(pose){const img=document.querySelector('.find-object[data-object="triangle_party_hat"]');if(!img)return;const r=HAT_POSE_RECT[pose]||HAT_POSE_RECT.idle;Object.assign(img.style,{left:r[0]+'px',top:r[1]+'px',width:r[2]+'px',height:r[3]+'px'})}
+  function setSceneStudentPose(pose,holdMs){const el=sceneStudentEl();if(!el)return;clearTimeout(sceneStudentPoseTimer);sceneStudentPose=SCENE_STUDENT_POSE_SRC[pose]?pose:'idle';el.src='assets/'+SCENE_STUDENT_POSE_SRC[sceneStudentPose];positionPartyHat(sceneStudentPose);if(holdMs)sceneStudentPoseTimer=setTimeout(()=>setSceneStudentPose('idle'),holdMs)}
+  function showSceneStudent(){const el=sceneStudentEl();if(!el)return;setSceneStudentPose('idle');el.classList.remove('hidden','student-enter');void el.offsetWidth;el.classList.add('student-enter')}
+  function hideSceneStudent(){const el=sceneStudentEl();if(!el)return;setSceneStudentPose('idle');el.classList.add('hidden');el.classList.remove('student-enter')}
   function clearShapeTimers(){shapeTimers.forEach(clearTimeout);shapeTimers=[]}
   function scheduleShape(fn,delay){const timer=setTimeout(fn,delay);shapeTimers.push(timer)}
-  function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/classroom-shape-search.png';bg.alt='칠판과 책상, 나무 바닥이 보이고 벽면을 넓게 비워 둔 밝은 1학년 교실';document.getElementById('shapeSceneStudent').classList.remove('hidden');renderFindObjects();document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
+  function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/classroom-shape-search.png';bg.alt='칠판과 책상, 나무 바닥이 보이고 벽면을 넓게 비워 둔 밝은 1학년 교실';hideSceneStudent();renderFindObjects();document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
   function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b[0])}
-  document.getElementById('shapeDialogueTap').onclick=()=>{if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='● ■ ▲ 모양<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('● ■ ▲ 모양')}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='② 페인트 소개를 부탁해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('② 페인트 소개를 부탁해요!')}else{document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
+  document.getElementById('shapeDialogueTap').onclick=()=>{if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');/* 23: 대사가 끝난 뒤에야 교실 학생이 등장한다 */showSceneStudent();renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='● ■ ▲ 모양<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('● ■ ▲ 모양')}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='② 페인트 소개를 부탁해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('② 페인트 소개를 부탁해요!')}else{document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
   function renderSearch(){const q=searchQuestions[searchIndex],searchArea=document.getElementById('shapeSearch');searchWrong=0;found=new Set();setProgress(18+searchIndex*4);document.getElementById('searchPrompt').textContent=q.prompt;speak(q.prompt);const host=document.getElementById('hotspots');host.innerHTML='';searchArea.onclick=e=>{if(e.target.closest('.hotspot')||e.target.closest('.search-prompt'))return;registerSearchWrong(q,searchArea)};Object.entries(hotspotDefs).forEach(([id,v])=>{const b=document.createElement('button');b.className='hotspot'+(q.answers.includes(id)?' current-target':'');b.dataset.target=id;b.setAttribute('aria-label',id);Object.assign(b.style,{left:v[0]+'px',top:v[1]+'px',width:v[2]+'px',height:v[3]+'px'});b.onclick=e=>{e.stopPropagation();selectHotspot(b,q)};host.appendChild(b)})}
   function advanceSearch(){if(searchIndex<searchQuestions.length-1){searchIndex++;renderSearch()}else startPaintIntro()}
   function revealSearchAnswers(q,withNumbers){document.querySelectorAll('.hotspot').forEach(h=>{const answerIndex=q.answers.indexOf(h.dataset.target);h.classList.toggle('hint',answerIndex>=0);if(answerIndex>=0&&withNumbers&&!h.querySelector('.hotspot-number')){const number=document.createElement('span');number.className='hotspot-number';number.textContent=String(answerIndex+1);number.setAttribute('aria-hidden','true');h.appendChild(number)}})}
   function registerSearchWrong(q,target){tone(false);showWrongFeedback();searchWrong++;shake(target===document.getElementById('shapeSearch')?document.getElementById('searchPrompt'):target);if(searchWrong===2)revealSearchAnswers(q,false);if(searchWrong>=3){revealSearchAnswers(q,true);document.querySelectorAll('.hotspot:not(.current-target)').forEach(h=>h.disabled=true)}}
   function selectHotspot(btn,q){const id=btn.dataset.target;if(q.answers.includes(id)){if(found.has(id))return;found.add(id);btn.classList.add('found');tone(true);if(found.size===2){setHotspotsEnabled(false);showFeedback(document.getElementById('shapeMark'),q.id==='q_triangle_find_two'?'잘 찾았어요!':'정답입니다.',advanceSearch)}}else registerSearchWrong(q,btn)}
   function setHotspotsEnabled(enabled){document.querySelectorAll('.hotspot').forEach(h=>h.disabled=!enabled)}
-  function startPaintIntro(){shapePhase='paint-intro';shapeDialogueIndex=0;document.getElementById('shapeSearch').classList.add('hidden');const bg=document.getElementById('shapeBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';/* 18: 배경이 교실에서 담장으로 바뀌므로 교실 학생도 함께 내린다 */document.getElementById('shapeSceneStudent').classList.add('hidden');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');document.getElementById('paintIntroVisual').classList.remove('hidden');document.getElementById('paintCan').classList.remove('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/teacher-explaining.png';ch.alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='페인트 색깔마다 모양이 달라요<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('페인트 색깔마다 모양이 달라요');setProgress(30)}
+  function startPaintIntro(){shapePhase='paint-intro';shapeDialogueIndex=0;document.getElementById('shapeSearch').classList.add('hidden');const bg=document.getElementById('shapeBg');bg.src='assets/school-wall-closeup.png';bg.alt='도형과 계산식을 올릴 중앙 작업 면을 넓게 비운 따뜻한 햇빛 아래의 학교 담장';/* 18: 배경이 교실에서 담장으로 바뀌므로 교실 학생도 함께 내린다 */hideSceneStudent();document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');document.getElementById('paintIntroVisual').classList.remove('hidden');document.getElementById('paintCan').classList.remove('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/teacher-explaining.png';ch.alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='페인트 색깔마다 모양이 달라요<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('페인트 색깔마다 모양이 달라요');setProgress(30)}
   function startCount(){shapePhase='count';countIndex=0;document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('shapeCount').classList.remove('hidden');renderCount()}
   function hintCountShapes(){document.querySelectorAll('#countShapes .paint-shape').forEach((shape,index)=>scheduleShape(()=>{shape.classList.add('hint-step');scheduleShape(()=>shape.classList.remove('hint-step'),450)},index*120))}
   function advanceCount(){if(countIndex<countQuestions.length-1){countIndex++;renderCount()}else finishShape()}
@@ -982,8 +1018,10 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
   function showStamp(el,type){if(!el)return;const correct=type==='correct';el.src=correct?'assets/feedback-stamp-correct.png':'assets/feedback-stamp-wrong.png';el.alt=correct?'정답 O 도장':'오답 X 도장';el.classList.remove('show');void el.offsetWidth;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),700)}
   function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null;sp.onkeydown=null}}
   function completeFeedback(){const action=feedbackContinueAction;if(!action)return;feedbackContinueAction=null;resetFeedbackOverlay();action()}
-  function showFeedback(el,text='정답입니다.',onContinue=null){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.toggle('hidden',!text);showStamp(el,'correct');if(onContinue&&text){feedbackContinueAction=onContinue;sp.setAttribute('aria-label','다음 문제');/* 17: 눌러야 넘어간다는 신호를 사람이 볼 수 있는 표면으로 보장한다 */ensureAdvanceNav(sp);sp.onclick=completeFeedback;sp.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();completeFeedback()}}}else{feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700)}}
-  function showWrongFeedback(){resetFeedbackOverlay();const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.png';ch.alt='한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');showStamp(currentFeedbackMark(),'wrong');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),700)}
+  function showFeedback(el,text='정답입니다.',onContinue=null){resetFeedbackOverlay();/* 23: 오답과 대칭이 되게 정답 포즈도 무대의 학생에게서 낸다(칭찬 말풍선은 선생님 몫으로 둔다) */if(sceneStudentVisible())setSceneStudentPose('volunteer',SCENE_STUDENT_POSE_MS);const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/teacher-praising.png';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.toggle('hidden',!text);showStamp(el,'correct');if(onContinue&&text){feedbackContinueAction=onContinue;sp.setAttribute('aria-label','다음 문제');/* 17: 눌러야 넘어간다는 신호를 사람이 볼 수 있는 표면으로 보장한다 */ensureAdvanceNav(sp);sp.onclick=completeFeedback;sp.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();completeFeedback()}}}else{feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700)}}
+  /* 23: 무대에 학생이 서 있으면 오답 포즈는 그 아이의 src 교체로 낸다.
+     서 있지 않은 씬(계산 단계·씬3·씬4)에서만 종전처럼 #feedbackCharacter 오버레이를 띄운다. */
+  function showWrongFeedback(){resetFeedbackOverlay();showStamp(currentFeedbackMark(),'wrong');if(sceneStudentVisible()){setSceneStudentPose('thinking',SCENE_STUDENT_POSE_MS);return}const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.png';ch.alt='한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),SCENE_STUDENT_POSE_MS)}
   function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),450)}
   /* 정적 마크업으로 들어 있는 첫 대사에는 진행 버튼이 붙어 있지 않다(이후 대사는 render*가 innerHTML로 다시 그린다). 여기서 한 번 붙인다. */
   function ensureAdvanceNav(el){if(el&&!el.querySelector('.repair-bubble-nav'))el.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML)}

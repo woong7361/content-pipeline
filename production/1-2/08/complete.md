@@ -248,3 +248,21 @@
 - 요소 자신에는 배경이 없으므로 `filter`의 `drop-shadow`·glow가 **도형 실루엣을 그대로 따라간다**(과거에 요소에 마스크를 직접 걸어 그림자가 잘린 전례를 피했다). `.hint-step`의 `--filter-glow-lg`도 유지된다.
 - 검증: 영향 범위 전수 확인 — `#paintIntroVisual`(3색 3모양) · `#countShapes` · `#arithShapes` · `#randomShapes` · `#randomWorkProgress` · `.drawn-shape`(자유 그리기 4개 실제 클릭 배치) · `.drawing-summary`(확인 팝업). 전부 외곽선·채움·그림자 정상, 런타임 오류 0.
 - **주의**: `shape-tile-body.png`는 참조가 없어졌다(삭제 여부 미확정 — todo.md 확인 항목 참조).
+
+## 23. `section_shape_find` 상시 배치 학생 — 등장 시점 · 발 위치 · 피드백 주체
+
+- 상태: 완료 (2026-08-03)
+- 대상: `index.html` `#shapeSceneStudent` / `.classroom-student` / `showWrongFeedback` / `showFeedback`
+- 사용자 지적:
+  1. 오프닝 대사 중에도 오른쪽 학생이 서 있어 **같은 아이가 2명**으로 보인다. 대사가 끝난 뒤에 나와야 한다.
+  2. 그 학생이 **책상 위에 서 있는 것처럼** 보인다. 위로 올려 마루바닥에 서게 한다.
+  3. **피드백의 pose 변화가 서 있는 그 아이에게서** 나와야 한다.
+- 조치:
+  - `#shapeSceneStudent` 제어를 `showSceneStudent()` / `hideSceneStudent()` / `setSceneStudentPose(pose, holdMs)` 세 함수로 모았다(`SCENE_STUDENT_POSE_SRC`, `SCENE_STUDENT_POSE_MS=700`). `resetShapeScene`·`startPaintIntro`가 직접 `classList`를 만지던 것을 이 함수 호출로 바꿨다.
+  - 등장 시점: `resetShapeScene`에서 숨기고, `shapeDialogueTap`의 `opening` → 찾기 전환 지점에서 `showSceneStudent()`로 등장시킨다. 진입 모션은 `.classroom-student.student-enter`(기존 `characterEnter` 키프레임 재사용).
+  - 발 위치: `.classroom-student`를 `bottom:-12px / 340x560` → `bottom:129px / 300x494`. `student-*.png`는 셋 다 1024x1536이고 알파 bbox 하단이 y≈1370이라 `object-fit:contain`에서 발끝이 요소 하단 71px 위 → 발끝 stage y≈880으로 벽·바닥 경계(818)와 책상 상판(900) 사이 마루면에 앉는다. 크기 축소는 그 깊이의 원근 보정이다(배경 화분 기준 1m≈310px).
+  - 피드백 주체: `showWrongFeedback()`은 `sceneStudentVisible()`이면 `#feedbackCharacter` 오버레이를 띄우지 않고 서 있는 아이를 `student-thinking`으로 700ms 교체한다. 대칭으로 `showFeedback()`도 `student-volunteer`로 700ms 교체한다(칭찬 말풍선은 종전대로 선생님 `teacher-praising`). 무대에 학생이 없는 계산 단계·씬3·씬4는 기존 오버레이 경로를 그대로 탄다.
+  - `student-thinking.png`를 `<link rel="preload">`에 추가했다(첫 오답에서 src 교체 시 한 프레임 비는 것 방지).
+- 검증: Playwright 1920x1080 실주행. 대사 중 `hidden:true` → 찾기 진입 `hidden:false, bottom:951px`(= 1080-129) → 오답 직후 `student-thinking` → 700ms 후 `student-idle` 복귀 → paint-intro `hidden:true` → 세기 단계 오답은 오버레이 경로. 스크린샷으로 발이 마루면에 닿고 아이가 한 명만 보이는 것을 확인.
+- 주의: 이 학생의 좌표·크기를 다시 만지면 `findObjects`(특히 `square_lunchbox` x1480~, `circle_wall_clock` x880~1070)와 `.search-prompt`(y 90~190) 겹침을 다시 본다. 현재 학생 실루엣은 stage x 1165~1296 / y 509~880으로 어느 것과도 겹치지 않는다.
+- 미해결 아님(참고): 대사용 `#shapeCharacter`와 `#feedbackCharacter`는 여전히 `bottom:-12px`로 책상 앞에 선다. 이건 전 씬 공통의 "전경 화자" 규약이라 이번 범위에서 건드리지 않았다.

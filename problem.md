@@ -119,12 +119,12 @@
 
 ### [content-refine-learning-flow-integrity] 문항 상태·피드백·수리 보상 순서가 학습 수행과 일치하지 않음
 
-- 대상: content-harness-pipeline/runs/2026-07-21_ch8c0718/output/index.html, content-harness-pipeline/runs/2026-07-22_ch8c0719/output/index.html
+- 대상: content-harness-pipeline/runs/2026-07-21_ch8c0718/output/index.html, content-harness-pipeline/runs/2026-07-22_ch8c0719/output/index.html, production/1-2/08/index.html
 - 분류 태그: content-refine-learning-flow-integrity
 - 상태: 열림
-- 발생 횟수: 9
+- 발생 횟수: 10
 - 최초 발생일: 2026-07-21
-- 최근 발생일: 2026-07-22
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-21: content critique에서 (1) 수리 완료 장면의 대사→전광판→시계→책→복구 배경→CTA 순서 누락, (2) 3회 오답 강제 진행을 정답으로 집계하고 인증서에 13/13을 고정 표시, (3) q_b6·q_b7의 끝 시계가 판정 전에 정답 시각을 노출, (4) 유형 C·마무리 퀴즈를 포함한 문항별 정답 설명·오답 힌트 부족, (5) 유형 C가 개별 빈칸 대신 전체 영역의 입력 순서로 숫자를 채움, (6) 유형 C 완료 피드백이 끝나기 전에 다음 문항이 렌더되는 문제를 지적함. 문제 발생 장면의 수동 다음 진행과 인증서 대사·버튼의 planner 순서 활성화도 함께 요구함.
   - 2026-07-21: 후속 content critique에서 키패드 삭제·전체 지우기와 오답 후 재입력 복구, q1~q13의 계산 근거·구체적 힌트, 유형 A 세 번째 오답 분기, q10 두 슬롯 자동 판정, 오전·오후 1~12 타임라인, q6 끝 시각 상태, 드래그 완료 조건 안내, 검증 가능한 9차시 라우팅, 현재 차시가 드러나는 메뉴 동작을 요구함.
@@ -142,6 +142,7 @@
   - 2026-07-22 후속 조치(ch8c0719): planner에 없는 진행 문구를 추가하지 않고 모든 dialogue beat와 정답 피드백에 자동 진행·화면 탭 스킵을 적용해 말풍선 클릭을 몰라도 흐름이 이어지게 했다. 유형 A는 정답 피드백·게이지 갱신 뒤 자동으로 다음 문항으로 넘어가며, 오답은 `다시 생각해보세요`→원문 문항→원문 문항+정답 순으로 기존 텍스트만 단계화하고 세 번째에는 정답 시계를 강조한 뒤 assisted 완료로 자동 전환한다. 유형 B·C·q13도 반복 오답 시 원문 문항과 정답을 함께 보여 주고 입력을 초기화하며, 캐릭터 고민 pose는 피드백 종료 뒤 idle로 복귀한다. 인증서 `맞힌 문제 수`는 도움 여부와 무관한 완료 문항 수로 집계해 완료 상태와 13/13 보상이 일치하도록 했다. 차시 메뉴에는 planner의 1~10 목록 숫자를 노출하고 모든 항목을 호스트 라우팅 요청으로 활성화했으며, 실제 URL·콜백이 없는 독립 실행에서는 비활성화 대신 `content-harness-navigation-missing` 이벤트와 `data-route-missing` 상태를 남긴다. 검증: JS 구문 정상, asset 29개 누락 0, QA scene 12개·고정 캔버스 계약 정상. Playwright에서 12개 QA hook, 대사 자동 전환, 유형 A 3회 오답 assisted 자동 전환, 유형 A/B/C·q13 정답 자동 전환, 메뉴 숫자, route-missing 이벤트를 확인했고 예기치 않은 콘솔·페이지 오류는 0건이었다.
   - 2026-07-22 iter_003 조치(ch8c0719): 인증서 화면과 저장 이미지가 공유하는 `scoreRecord`를 `completedCount`가 아니라 `userCorrectCount`로 갱신해 assisted 완료를 정답 수에서 제외했다. q6은 시 입력 길이가 채워지는 즉시 분 입력칸을 자동 선택하고 정답 뒤 빈 도착 시계에 12시 바늘을 표시한다. q10 입력을 원문에 있는 `오전 [12]시간`·`오후 [12]시간` 구조로 직접 묶고 두 슬롯 완료 시 오전·오후 타임라인을 함께 강조한다. 확인 가능한 9차시 파일은 프로젝트에 없으므로 경로를 지어내지 않고, runtime route map/meta/link/query 또는 확인 가능한 호스트 콜백이 있을 때만 최종 CTA와 메뉴를 활성화하도록 수정했다. 새 계산 설명·힌트 문장은 공통 원문 보존 계약 때문에 추가하지 않고 기존 문항·정답·`다시 생각해보세요`·시계·타임라인으로 단계형 피드백을 유지했다. 검증: planner 원문/문항/보기/정답/피드백 140개 누락 0, JS 구문 정상, asset 30개 누락 0, Playwright에서 q6 자동 슬롯 이동·12시 시계 공개, q10 오전/오후 슬롯·자동 완료, route 부재 시 disabled 및 route 주입 후 활성화, 런타임 오류 0건을 확인했다.
   - 2026-07-22 후속 조치(ch8c0719): 대사·정답·오답 피드백의 시간 기반 자동 진행과 화면 전체 탭 스킵을 제거하고, 현재 보이는 원문 말풍선·피드백판·완료판 자체에서만 다음 상태로 진행하게 했다. q6 오답 초기화에서는 잠금을 먼저 해제한 뒤 값을 지우고 첫 번째 `시` 입력칸으로 active 상태를 되돌렸으며, 입력이 모두 채워지기 전 `[확인하기]`를 disabled로 유지한다. q5·q8에는 원문에 이미 있는 시작 시각·끝 시각을 잇는 HTML 시간 간격 표시를 추가하고 정답 판정 뒤에만 `[1]시간`·`[30]분` 관계를 공개한다. 튜토리얼 오답은 시침·분침을 순차 강조하고, 유형 C 모든 정답은 오전·오후 타임라인을 함께 강조해 `24시간=1일` 관계를 비언어적으로 보강했다. 보이지 않는 말풍선이 조작을 가로막지 않도록 `pointer-events`를 차단했다. 실제 9차시 파일/URL은 저장소에 없어 임의 경로를 만들지 않고, 임베드 호스트에서 `content-harness-navigate-lesson` postMessage를 수신하는 라우팅 계약을 추가해 최종 CTA를 활성화했다. 검증: JS 구문 정상, planner 필수 텍스트 140개 누락 0, asset 30개 누락 0, QA scene 12개·고정 캔버스 계약 정상. Playwright에서 q6 오답 피드백이 3초 뒤에도 유지됨·피드백 확인 후 첫 입력칸 복귀·빈 입력 `[확인하기]` 비활성, 배경 클릭이 대사를 진행하지 않음, q10 완료가 명시적 완료판 확인 전 유지됨, iframe 호스트가 9차시 postMessage를 수신함, 런타임 오류 0건을 확인했다.
+  - 2026-08-03: **(실사용 관측)** `production/1-2/08/index.html` `section_random_problems`에서 "초등학생이 알 수 있도록 그림이 같이 보여져야 하는데 그림이 보여지고 사라진다"고 지적. `playRandomShapeIntro()`가 도형 연출을 재생한 뒤 `finishRandomShapeIntro()→clearRandomShapeIntro()`로 `#randomShapes`를 숨기고 나서야 `revealQuestion()`이 식·키패드를 연다. 즉 **계산의 근거가 되는 그림과 문제가 한 화면에 절대 공존하지 않는다.** 구조적 원인은 `#randomShapes`(left 290/top 250/1340×560)와 `#randomPanel`(left 245/top 205/1040×700)이 완전히 겹쳐 있어 `.shape-intro` 동안 `#randomPanel{visibility:hidden}`으로 가릴 수밖에 없는 배치다. (미조치 — `production/1-2/08/todo.md` 29번)
 - 규칙화 메모: 8회 도달로 rule 승격 제안 대상. 초안: "학습 문항은 판정 전 정답 단서를 노출하지 않고 문항별 수행 상태·재시작 초기화·피드백 수명·강제 보충 완료를 명시적으로 관리하며, 대사·문항·보상 장면은 planner의 사건·대사·CTA 순서를 사용자 제어 가능한 상태 머신으로 보존한다." 반영 후보: `content-harness-pipeline/AGENTS.md`의 AI 행동 원칙 아래. 사용자 승인 전이므로 아직 미반영.
 
 ### [certificate-paper-transparency-safe-zone] 인증서 종이와 동적 기록 영역이 비쳐 보이고 기록 safe zone이 불명확함
@@ -417,17 +418,18 @@
 
 ### [overlay-plane-perspective-mismatch] 아트 면 위에 얹은 오버레이가 그려진 면의 원근/기울기와 안 맞음
 
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-story` `.book-page img.ill` vs `.book` 아트)
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-story` `.book-page img.ill` vs `.book` 아트) / production/1-2/08/index.html (`section_shape_find`의 `.find-object`)
 - 분류 태그: overlay-plane-perspective-mismatch
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-13
-- 최근 발생일: 2026-07-13
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-13: 이야기 씬에서 책 아트(`storybook_base.png`)는 살짝 눕혀진 원근으로 그려져 있는데, 그 위에 얹은 삽화 사진(`.book-page img.ill`)이 정면으로 반듯이 선 사각형이라 책 지면 위에 붕 떠 보임("책은 눕혀져 있는데 사진은 서 있어서 안 맞아"). 사진을 눕히거나 책을 세우는 두 방향 중 어느 쪽이 나은지 문의.
   - 2026-07-13: (후속) 적용한 `rotate(-1.5deg)`(왼쪽 기울기) 때문에 사진 좌상단이 지면 금색 테두리 밖으로 나감. 오른쪽(시계방향)으로 3도 정도 기울여 달라고 요청 → `rotate(-1.5deg)`→`rotate(3deg)`로 변경해 좌상단을 지면 안으로 들임.
+  - 2026-08-03: `production/1-2/08` `section_shape_find`에서 "책과 도시락이 책상 위에 놓여진 분위기가 안 산다, 살짝 눕혀 달라"는 지적. 실측 결과 원인이 둘이었다. (1) **원근 불일치** — 배경 `classroom-shape-search.png`의 책상 상판은 하이앵글로 그려져 깊이 압축비가 약 0.18(폭 470 : 깊이 84, stage 좌표)인데 `classroom-notebook.png`는 완전 정면 정투영이라 "책상 위에 선 책"으로 읽힘. (2) **좌표 이탈** — `findObjects`의 `square_notebook` `[860,790,185,185]`·`square_lunchbox` `[1480,790,185,185]`가 상판(back edge y≈901, front edge y≈979~985) 위쪽 허공에서 시작하고, 도시락은 오른쪽 끝 x=1665가 책상 back-right corner x≈1636을 넘어간다. 접지 그림자도 없어(`.find-object{filter:var(--ds-sm)}` 균일 드롭섀도만) 부유감이 강화된다. 07-13 사례와 달리 이번은 오버레이가 raster 캐릭터/사물이라 CSS `rotateX`만으로는 두께·측면이 뭉개진다.
 - 조치: 책은 raster 아트 에셋이라 세우려면 재생성+연쇄 재정렬 비용이 큼 → 대신 사진+오버레이를 함께 감싼 `#s-story .bp-left .ill-wrap`에 `transform:perspective(900px) rotateX(8deg) rotate(-1.5deg);transform-origin:center 68%`를 얹어 지면 면에 눕히고, `img.ill` 드롭섀도를 `0 6px 14px`→`0 3px 7px`로 줄여 '떠 있는 카드' 인상 제거. Playwright로 3페이지 렌더 검증(오버레이 `24`/`30분`도 사진과 함께 눕음, 오른쪽 지면 텍스트는 그대로 유지). 각도는 아트 지면 원근 실측 기반 시작값이라 ±3° 미세조정 여지 있음.
-- 규칙화 메모: 아직 1회. [bg-anchor-alignment]와 같은 '아트에 요소 맞추기' 계열이나 remedy가 다름(위치 정렬이 아니라 오버레이 면의 원근/기울기 정합). 반복되면 "아트 표면(책 지면·모니터 유리 등) 위에 얹는 raster 오버레이는 그 표면이 그려진 원근/기울기에 맞춰 CSS transform으로 눕힌다. 아트 에셋 자체를 바꾸기보다 오버레이를 아트에 맞춘다" 규칙을 builder_system.md에 제안 후보.
+- 규칙화 메모: 2회. [bg-anchor-alignment]와 같은 '아트에 요소 맞추기' 계열이나 remedy가 다름(위치 정렬이 아니라 오버레이 면의 원근/기울기 정합). 반복되면 "아트 표면(책 지면·모니터 유리·책상 상판 등) 위에 얹는 오버레이는 그 표면이 그려진 원근/기울기에 맞춘다. **얇은 판(사진·종이)은 CSS transform으로 눕히고, 두께가 있는 사물(공책·상자)은 에셋을 그 시점으로 생성한다** — 정면 정투영 raster에 `rotateX`를 걸면 측면이 사라져 종이 한 장이 된다. 함께 표면의 실제 폴리곤 좌표(back/front edge, 좌우 corner)를 실측해 배치 rect가 그 안에 들어가는지 확인한다" 규칙을 builder_system.md에 제안 후보.
 
 ### [numeric-answer-leading-zero-rejected] 숫자 정답의 선행 0 표기를 오답 처리함
 
@@ -586,12 +588,12 @@
 
 ### [bg-anchor-alignment] 배경 아트에 그려진 자리(거치대/프레임)에 요소가 안 맞고 다른 곳에 배치됨
 
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#bigClock`, `#s-tut .wb-clock`, `#repairClock`)
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#bigClock`, `#s-tut .wb-clock`, `#repairClock`), production/1-2/08/index.html (`.work-area`, `#drawingCanvas`, `.story-card`)
 - 분류 태그: bg-anchor-alignment
-- 상태: 제안됨
-- 발생 횟수: 6
+- 상태: 제안됨(재검토 — 9회)
+- 발생 횟수: 9
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-13
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-09: 배경(bg_library_messy_lobby.png)에 시계가 들어갈 원형 거치대가 그려져 있는데, 벽시계가 그 원 밖 다른 위치에 정적 %로 배치되어 있었음. 원의 중심·크기에 맞춰 시계를 앉혀야 함. `background-size:cover`라 뷰포트 종횡비마다 원의 화면 좌표가 달라져 정적 %로는 정렬 불가.
     - 조치: 배경 아트에서 원의 중심선(중심 (862,292), 반지름 155)을 픽셀 측정 → 런타임에서 cover 스케일·크롭을 계산해 시계 중심/지름을 원에 맞추는 JS(`__placeBigClock`, resize 대응) 추가. 시계 PNG의 외곽 rim 채움비(0.859)까지 반영해 rim이 원과 일치하도록 크기 산정.
@@ -604,7 +606,11 @@
   - 2026-07-10: 복구(`#s-repair`) 씬 배경(bg_library_clean_lobby.png)에도 시계용 원형 거치대가 그려져 있는데, `#repairClock`이 intro처럼 원에 앉지 않고 정적 %(`.wall-clock` left:41%/top:15%)로 벽 원 밖에 떠 있었음. 사용자가 "intro처럼 가운데 동그라미에 넣어라" 지적.
     - 조치: clean lobby bg의 원을 Hough식 밴드 탐색으로 측정(중심 (850,281), 반지름 146, IMG 1672×941), intro와 동일한 cover-scale 배치 JS(`__placeRepairClock`, resize 대응) 추가. 시계 PNG rim 채움비(0.859) 반영해 box=2R/0.859로 산정. 배경에 시계 PNG 합성해 원 안에 정확히 안착 시각 검증(임시 검증 파일은 삭제). (후속: 시계가 회전→감속하며 정상 복귀하는 효과는 다음 단계)
   - 2026-07-13: 이야기 3페이지 오븐 이미지 위 `30분` 오버레이(`.timer-30`)가 이미지 중앙(left50/top50)에 있어 오븐 위에 떠 있음. 이미지 오른쪽에 그려진 둥근 타이머(시계) 면 안에 넣어야 한다고 지적. → 타이머 크림색 면 중심을 이미지 기준 픽셀 측정(약 left71/top66%)해 `.timer-30`을 그 위치로 이동. (`.timer-30`은 `.ill-wrap`(contain, 안정 좌표) 안이라 정적 %로 충분하고 사진 tilt도 함께 따라감)
-- 규칙화 메모: **6회 → rule 승격 제안.** 교훈: **asset을 얹는 컨테이너는 `aspect-ratio`를 asset 원본 비율에 맞춰라 — 안 맞으면 `object-fit:contain`이 레터박스를 만들어 %좌표 오버레이가 어긋난다. 또 `background-size:cover` 배경의 앵커(원형 거치대 등)는 정적 %로 못 맞추므로, 원 지오메트리를 픽셀 측정해 런타임에서 cover 스케일·크롭을 계산하는 JS로 앉히고 resize에 재적용한다(intro의 `__placeBigClock`/복구의 `__placeRepairClock` 패턴 재사용).** 반영 위치: builder_system.md. 사용자 승인 대기.
+  - 2026-08-03: `production/1-2/08` `section_arithmetic_tutorial`에서 "모양이 3줄이 되면 담장 바깥으로 모양이 삐져나온다"고 지적. `.work-area`(top:250 / height:570 / `align-content:center`)는 12개일 때 5열×3행 = 292~778(stage)로 자라는데, 배경 `school-wall-closeup.png`의 벽돌 면은 실측 stage y **367~878**이라 1행이 담장 위 캡·하늘로 **75px** 올라간다. 10개(2행)일 때만 우연히 면 안에 들어와 있어 그동안 안 보였다. (미조치 — todo 28번)
+  - 2026-08-03: 같은 차시 `section_free_drawing`에서 "담장 바깥에 이미지가 짤리기도 한다"고 지적. `#drawingCanvas`(390,275,1370×540 → x 390~1760 / y 275~815)가 배경 `school-wall-drawing.png`의 담장 면(실측 stage x **172~1776** / y **308~877**)보다 위로 33px 튀어나와 있고, `.drawn-shape`는 150px를 `translate(-50%,-50%)`로 클릭점에 놓으므로 가장자리에서 최대 75px가 캔버스 밖으로 나가 `overflow:hidden`에 잘린다. (미조치 — todo 30번)
+  - 2026-08-03: 같은 차시 `section_math_story`에서 "표지판 설명이 그림 가운데 정렬이 아니라 아래로 치우쳐져 잘린다"고 지적. `.story-card`는 안내판 에셋(`story-roadside-info-board.png`, 원본 1420×220)을 1300×600으로 늘려 쓰면서 패딩을 `282px 108px 118px`로 손으로 맞춰 놨는데, 에셋의 크림 면은 비율 y **0.168~0.736**이라 카드 기준 y 101~442(stage 696~1037)다. 현재 글 영역은 stage 877~1077로 크림 면 하단에 걸쳐 있고, 카드 자체가 `bottom:-115px`로 무대 밖에 걸쳐 있어 긴 대사의 마지막 줄과 `다음 ▸` 버튼이 화면 아래로 잘린다. (미조치 — todo 33번)
+- 규칙화 메모: **9회 → rule 재검토 제안(2026-08-03).** 08차시 3건은 "asset 비율/레터박스" 문제가 아니라 **배경 아트가 정한 작업 면(담장·크림 패널)의 stage 좌표를 재지 않고 요소 박스를 눈대중으로 잡은** 경우다. 초안에 다음을 추가 제안: "배경 위에 콘텐츠 박스를 놓기 전에 그 면의 stage 좌표를 픽셀로 실측해 주석으로 남기고, 박스 크기가 콘텐츠 개수에 따라 자라면 **최대 개수 기준으로** 면 안에 들어가는지 확인한다." 실측값은 `production/1-2/08/todo.md`의 "배경 담장 면 실측값" 표에 모아 둔다.
+- 규칙화 메모(기존): **6회 → rule 승격 제안.** 교훈: **asset을 얹는 컨테이너는 `aspect-ratio`를 asset 원본 비율에 맞춰라 — 안 맞으면 `object-fit:contain`이 레터박스를 만들어 %좌표 오버레이가 어긋난다. 또 `background-size:cover` 배경의 앵커(원형 거치대 등)는 정적 %로 못 맞추므로, 원 지오메트리를 픽셀 측정해 런타임에서 cover 스케일·크롭을 계산하는 JS로 앉히고 resize에 재적용한다(intro의 `__placeBigClock`/복구의 `__placeRepairClock` 패턴 재사용).** 반영 위치: builder_system.md. 사용자 승인 대기.
 
 ### [motion-supporting-narration] 나레이션이 말하는 상황을 뒷받침하는 시각 액션이 없고 등장 애니메이션이 밋밋함
 
@@ -706,9 +712,9 @@
 - 대상: content-harness-pipeline (builder 산출물 전반), 예: runs/2026-07-08_ch802d08/output/index.html
 - 분류 태그: content-scale-too-small
 - 상태: 제안됨
-- 발생 횟수: 12
+- 발생 횟수: 13
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-07-31
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-09: 콘텐츠가 초등학생용인데 이미지와 글자가 너무 작다. 지금보다 훨씬 크게 요청. 화면은 full-viewport stage에 clamp(min,vw,max) 기반 스케일이라 큰 화면에서 max 천장에 걸려 작게 보임.
     - 조치: clamp() 상단(vw 계수·max)을 ~1.28배로 올려 큰 화면에서 확대(작은 화면 min은 유지). 표면 박스와 그 안 텍스트를 같은 배율로 키워 art 안에 글자가 유지되도록 함. 튜토리얼 씬 오버플로는 티켓 tray를 한 줄(`flex-wrap:nowrap`)로 고정해 해결.
@@ -733,7 +739,8 @@
   - 2026-07-10: 유형 C 모니터 안 시간대 막대(`.timeline-bar` 이미지)와 라벨("오전 1~12시 · 오후 1~12시", `.timeline-labels`)이 작아 조금씩 키워달라고 요청.
     - 조치: `.timeline-bar` 폭 min(100%,430px)→490px·height clamp(52,8.2vw,72)→clamp(60,9.4vw,82)로 확대, `.timeline-labels` font clamp(.5,1.6vw,.8rem)→clamp(.58,1.9vw,.94rem)로 상향(`.tl-sep`은 1.15em 상대라 자동 확대). 모니터 유리(mon-screen) 안에 유지되도록 "약간" 수준으로만 키움.
   - 2026-07-31: `production/1-2/08/index.html`에서 "대사의 크기와 글자 크기를 전반적으로 키워야 한다"고 지적. 08은 파이프라인 산출물을 손으로 다듬은 차시본인데, 1920×1080 고정 stage로 옮긴 뒤에도 `--fs-*` 토큰 사다리가 파이프라인 기본값 그대로라 대사(`.speech`)와 본문이 초등 저학년 기준으로 작다. (미조치 — `production/1-2/08/todo.md` 16번으로 등록)
-- 규칙화 메모: **발생 12회 → rule 승격 제안.** 초안: "초등(저학년) 대상 콘텐츠는 본문/질문/힌트/**버튼(CTA)** 글자 clamp의 max와 vw 계수를 성인 기준보다 크게 잡는다(예: 본문 max ≥ 1.6rem, 주요 CTA max ≥ 1.8rem). 표면 박스/티켓 asset 위 텍스트도 동일 배율." 반영 위치: content-harness-pipeline/builder_system.md. 사용자 승인 대기.
+  - 2026-08-03: `production/1-2/08` `section_math_story`의 표지판 설명(`.story-card`) 글자 크기를 "더 키우면 좋겠다"고 지적. 16번에서 사다리 전체를 ×1.2 올렸지만 `.story-card`는 본문 기본인 `--fs-sm`(37px)에 머물러 있고, 카드가 1300×600으로 큰 탓에 상대적으로 더 작아 보인다. **글자를 키우면 안 그래도 잘리는 텍스트(위 bg-anchor-alignment 사례)가 더 넘치므로 카드 높이·표지판 행 좌표와 함께 봐야 한다.** (미조치 — todo 33번)
+- 규칙화 메모: **발생 13회 → rule 승격 제안.** 초안: "초등(저학년) 대상 콘텐츠는 본문/질문/힌트/**버튼(CTA)** 글자 clamp의 max와 vw 계수를 성인 기준보다 크게 잡는다(예: 본문 max ≥ 1.6rem, 주요 CTA max ≥ 1.8rem). 표면 박스/티켓 asset 위 텍스트도 동일 배율." 반영 위치: content-harness-pipeline/builder_system.md. 사용자 승인 대기.
 
 ### [label-text-wrapping] 짧은 라벨(숫자+한글 토큰)이 좁은 표면에서 글자 단위로 줄바꿈됨
 
@@ -994,14 +1001,16 @@
 
 ### [spec-interaction-flow-mismatch] 원본 기획의 화면 흐름/상호작용을 임의로 다르게 구현
 
-- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-story` 마무리 퀴즈 흐름)
+- 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-story` 마무리 퀴즈 흐름), production/1-2/08/index.html (`randomSequence`, `#storyIntroBoard`)
 - 분류 태그: spec-interaction-flow-mismatch
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 3
 - 최초 발생일: 2026-07-10
-- 최근 발생일: 2026-07-10
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-10: 원본 기획(`2학년_8차시(시간)_임상현_no_img.md` 활동3 Scene2)의 마무리 퀴즈는 "갤러리를 **모두 넘겨보면** 꼬마 사서가 톡 튀어나오며 **돌발 팝업 퀴즈**를 그 자리에 띄우고, 맞히면 게이지 100%+인증서 유도" 구조인데, 구현본은 `[마무리 퀴즈 풀러 가기]` 버튼으로 **별도 s-quiz 씬 이동**이었음. 사용자가 원본대로 책 위 팝업 퀴즈(이미지 겹침 허용)로 바꾸고 맞히면 `[인증서 받으러 가기]`가 나오도록 요청.
+  - 2026-08-03: `production/1-2/08` `section_random_problems`에서 "A: 10이 되는 덧셈, B: 10에서 뺄셈, C: 세 수의 덧셈, D: 세 수의 뺄셈 이렇게 4개가 나와야 하는데 3개가 나오고 있다. 생성 규칙은 원문(input.json)을 참조해야 한다"고 지적. 원문 md(`수리력 1차_1학년 2학기 8차시 (백승용) 723 요청.md` 325~394행)는 4유형을 모두 요구하는데, 구현은 `randomSequence=Math.random()<.5?[0,2,3]:[1,4,5]`로 **A+C 묶음 또는 B+D 묶음 중 하나만** 골라 3문항만 낸다. 이건 실수가 아니라 2026-07-31 조치(`content-flow-state-scaffolding-regression`)에서 "A→같은 operand를 쓰는 C 또는 B→D 묶음 하나를 선택"하도록 의도적으로 넣은 것이라, **파이프라인이 스스로 스펙 범위를 좁혔다는 점**이 이 태그의 재발이다. (미조치 — todo 29번)
+  - 2026-08-03: 같은 차시 `section_math_story`에서 "`모양을 길에서 본 적 있나요?` 위에 동그라미·세모·네모가 필요한데 아무 모양도 안 나온다. 그 다음 화면에 나오는 게 아니다"라고 지적. 원문 md 449~451행의 예시화면 문구는 `수리 이야기 / 모양을 길에서 본 적이 있나요?` → `● ■ ▲` → `무슨 표지판일까요?` 순인데, 구현은 `● ■ ▲`를 인트로 판(`#storyIntroBoard`)이 아니라 **다음 화면의 `storyBeats[0]`(`.story-card`)** 으로 미뤄 놨다. (미조치 — todo 32번)
 - 조치: (1차) `#s-story`에 책 위 겹침 팝업 퀴즈를 인라인 구현했으나, 사용자가 "그게 아니라 기존 s-quiz 화면(플라크 문제판+티켓 보기)처럼 보여달라. 퀴즈를 별도 단계로 만들지 말고 이야기→(내부에서)퀴즈→인증서로 흐르게"라고 재지적. (2차·최종) 책 위 겹침 팝업(`storyQuiz`/`.sq-op`/`storyKidSay`/`btnStoryCert`)과 CSS(`.story-quiz`) 전부 제거. 이야기 마지막 페이지에서 `❯` → `showSceneById('s-quiz')`로 원본 기획의 팝업 퀴즈 화면(꼬마 사서 등장+플라크 문제판+보기 티켓, SCENE_INTRO가 take14 재생)으로 전환 → 정답 시 `[인증서 받으러 가기]`(기존 btnToCert)→s-cert. `[마무리 퀴즈 풀러 가기]` 버튼은 제거되어 별도 클릭 단계 없음. `#s-quiz`는 이제 이야기 흐름에서만 도달(메뉴 항목은 존치). (3차·최종) 사용자가 "화면(씬)을 바꾸지 말고 해당 화면에서 띄우라"고 재지적 → 씬 전환(`showSceneById('s-quiz')`) 제거. 대신 `#s-story` 안에 s-quiz와 동일한 **플라크 문제판+티켓 팝업**(`.story-quiz-pop`, `.plaque`+`.row .choice-ticket .sq-op`)을 인라인 추가하고, 책 다 넘기면 `startStoryQuiz()`로 그 화면에서 팝업을 띄운다(`#s-story.story-quizzing .center-col{display:none}`로 책만 숨기고 배경·캐릭터 유지 → 보내준 이미지와 동일). 정답→게이지 100%·take15·`#btnStoryCert`→s-cert. (4차) 팝업이 책을 숨기고 티켓이 줄바꿈돼 흩어짐 → 사용자가 "화면 바꾸지 말고 위로 겹쳐라(올리라는 게 아님)"고 지적. 책 숨김 제거하고 `.story-quiz-pop`을 `inset:0` 전체 오버레이+flex 중앙정렬(z-30), `.row{flex-wrap:nowrap}`로 티켓 한 줄 고정. 인증서 버튼은 오버레이(z-30) 뒤에 깔려 안 보여 `.sqp-cert` 래퍼로 오버레이 내부 하단에 이동(클릭 가능).
 - 규칙화 메모: 아직 1회. 반복되면 "구현 전 원본 기획 md의 씬별 상호작용/흐름(팝업·자동전환·트리거)을 그대로 반영하고 별도 화면 이동으로 대체하지 않는다" 규칙을 builder_system.md에 제안 후보.
 
@@ -1085,16 +1094,18 @@
 
 - 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html
 - 분류 태그: content-flow-state-scaffolding-regression
-- 상태: 제안됨 (5회 도달, 2026-07-31 rule 승격 제안 — 사용자 판단 대기)
-- 발생 횟수: 5
+- 상태: 제안됨 (5회 도달, 2026-07-31 rule 승격 제안 — 사용자 판단 대기 / 2026-08-03 7회로 재발)
+- 발생 횟수: 7
 - 최초 발생일: 2026-07-31
-- 최근 발생일: 2026-07-31
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-31: content critique에서 무작위 C·D의 step1/step2가 서로 다른 operands를 생성하고, 도입·모양 찾기 재진입 초기화가 불완전하며, 수리 이야기 도입 질문이 즉시 숨는 문제를 지적했다. 또한 페인트 색·모양 대응 설명의 순서가 세기 문항 뒤로 밀렸고, 산술 도형의 추가·삭제가 최종 상태로만 보이며, 오답·도움말·3회 오답 이후 진행이 학습자의 다음 행동을 충분히 안내하지 못했다. 고정 진행률과 `O` 제출 라벨, 자유 그리기 `버튼` CTA도 현재 상태와 조작 의미를 명확히 전달하지 못했다.
   - 2026-07-31: 후속 content critique에서 다음 차시 대상이 주입되어도 버튼이 항상 disabled인 문제, 대부분 문항의 개념 설명·재시도 안내 부족, ①·② 대사와 페인트 추가·삭제 사건의 합침, 보수 확인과 세 수 계산이 고정 A→D 순회로 분리된 문제, 세 번째 오답 뒤 정답 위치 번호·후속 행동 부족, 목록으로 미완료 단계를 건너뛰는 문제를 지적했다. 키패드 `O`, 자유 그리기 `버튼` 라벨도 조작 의미가 불명확하다고 재차 지적했다.
   - 2026-07-31: 이번 content refine packet에서 독립 실행 환경의 `나가기` 비활성, 문항별 근거·단계형 힌트 부족과 자동 전환, 자유 그리기 완료 CTA의 의미 없는 `버튼` 라벨, 표지판별 예측 질문 단계 축약, 계산 성공과 담장 작업 진행·자유 그리기 해금의 연결 부족을 지적했다.
   - 2026-07-31: **(실사용 관측)** `production/1-2/08/index.html` 모양 찾기에서 `■모양 2개`를 다 찾았는데 다음 모양(`●`)으로 넘어가지 않고 진행이 멈춘다고 지적. 위 네 사례가 "자동 전환 제거 → 원문 표면을 직접 눌러 진행"으로 여러 번 방향을 튼 결과, `selectHotspot`이 `found.size===2`에서 `showFeedback(..., advanceSearch)`를 부르고 `showFeedback`은 `feedbackSpeech`를 눌러야만 `completeFeedback→advanceSearch`가 돌게 되어 있다(index.html:732·909). 즉 진행 조건이 "보이지 않거나 누를 수 있는지 알 수 없는 말풍선 클릭" 하나에 묶여 있어 실제로는 데드엔드로 보인다. 앞선 조치들이 만든 **수동 진행 게이트가 검증(Playwright hook)에서는 통과하지만 사람 조작에서는 막히는** 형태의 회귀다. (미조치 — `production/1-2/08/todo.md` 17번으로 등록)
   - 2026-07-31: 후속 content refine packet에서 무작위 문제 풀이 뒤 가시적인 다음 조작 부재, 모양 찾기 hotspot 밖 클릭 무반응, 세 번째 오답 자동 공개를 직접 정답처럼 처리하는 상태 혼동, 자유 그리기 최소 참여 조건·완료 장면 결과 보존 부족, 문항별 계산·관찰 근거 피드백 부족을 지적했다. `다음 문제`·`자유 그리기로 이동`·`그림 완성하기` 같은 새 가시 문구 제안은 planner 외 문구 추가 금지와 충돌하므로 기능·상태·기존 원문 표면으로 해결해야 한다.
+  - 2026-08-03: **(실사용 관측 · 17번과 같은 씬에서 데드엔드 재발)** `production/1-2/08` `section_shape_find`에서 "동그라미 세모 네모 선택이 틀리면 다음으로 못 넘어간다"고 지적. headless Chrome CDP로 재현했다. 정답 2개를 다 찾으면 `selectHotspot`이 `setHotspotsEnabled(false)` 후 `showFeedback(..., advanceSearch)`로 진행 표면을 `#feedbackSpeech` **하나에만** 걸어 둔다. 그런데 `renderSearch`가 건 `searchArea.onclick`(장면 전체 오답 판정, 2026-07-31 후속 조치로 추가된 것)은 정답 이후에도 살아 있어, 사용자가 말풍선이 아닌 아무 데나 한 번 누르면 `registerSearchWrong → showWrongFeedback → resetFeedbackOverlay()`가 `feedbackContinueAction=null`로 만들고 말풍선을 지운다. 이 시점에 hotspot 6개는 전부 `disabled`라 **진행 경로가 0개인 완전한 데드엔드**가 된다(새로고침·디버그 패널 외 탈출 불가). 17번이 만든 "수동 진행 게이트"와 그 뒤 추가된 "장면 전체 오답 판정"이 서로를 무효화하는 구조다. (미조치 — todo 26번)
+  - 2026-08-03: 같은 차시 `section_free_drawing` 완료 CTA 라벨이 아직 `버튼`이라 "글이 `버튼`이 아니라 `완성하기`로 바꿔 달라"고 지적. critique가 2026-07-31에만 네 번 지적했으나 **planner 원문 보존 계약** 때문에 매번 `aria-label`만 붙이고 보이는 문구는 `버튼`으로 유지했다. 이번에 사용자가 직접 변경을 지시했으므로 production 사본에서는 원문 계약보다 사용자 지시가 우선한다. 교훈: **원문 표의 "UI 요소" 칸 값(`버튼`)을 그대로 라벨로 쓰면 원문 보존 계약이 오히려 의미 없는 라벨을 고착시킨다** — 원문의 "문구"와 "UI 요소 이름"을 구분해야 한다. (미조치 — todo 31번)
 - 조치: **2026-07-31 수정·검증 완료.** 무작위 C·D는 문제 묶음별 operand 객체를 만들어 step1/step2가 같은 수를 공유하게 했고, 도입·모양 찾기는 재진입 때 배경·캐릭터 위치/pose·대사 index·숨김 상태·CTA·입력·타이머를 초기화한다. 모양 찾기 뒤 `페인트 색깔마다 모양이 달라요`→`● ■ ▲ 모양`을 먼저 순차 노출한 다음 세기 문항을 시작하도록 storyboard 순서를 복원했다. 산술 튜토리얼은 10개 등장, 7→3 추가, 10→2 추가, 12→2 삭제→3 삭제를 DOM 상태 변화로 순차 실행하고 애니메이션이 끝날 때까지 키패드를 disabled로 둔다. 세기·산술·무작위 문항은 오답 때 현재 도형/operand를 강조하고, 3회 오답 뒤 정답을 표시하되 기존 `O` 조작으로 직접 확인해야 다음 문항으로 넘어가게 했다. 제작자용 생성 규칙 도움말은 현재 operands의 중간식으로 교체했고, 상단 게이지를 문항마다 갱신한다. 자유 그리기는 도형이 1개 이상 놓이기 전 완료 CTA를 disabled로 유지하며, 수리 이야기는 제목·`모양을 길에서 본 적이 있나요?`를 첫 beat로 실제 노출한 뒤 표지판을 연다. 원문 보존 계약 때문에 critique가 제안한 `확인`·`그림 완성하기` 같은 새 라벨은 적용하지 않고 기존 `O`·`버튼` 원문을 유지했다. 검증: planner rendered_text·문항·보기 100개 누락 0, JS 구문·중복 DOM id·asset·QA scene·고정 캔버스 계약 정상. Playwright에서 intro/shape 재진입 reset, 페인트 설명 선행, 산술 입력 잠금·순차 변화, C·D operand 공유, 세 종류 3회 오답→정답 확인, 빈 그리기 완료 차단, 수리 이야기 첫 beat를 확인했고 console/page 오류는 0건이었다. Visual QA 캡처 8장도 broken image·overflow·text clipping·overlap 0건이며, 자동 REJECT 한 건은 공통 계약상 필수인 `#viewport {position:fixed; inset:0}`를 100% fixed overlay로 오인한 기존 휴리스틱 false positive다.
   - 2026-07-31 후속 조치: 다음 차시 버튼은 `nextLessonUrl`·`onNextLesson` 존재를 초기화·완료 진입·호스트 갱신 이벤트·주기 동기화에서 다시 검사해 활성화하고, 종료 수단이 없으면 나가기 버튼을 비활성화한 채 완료 화면을 유지한다. 목록은 실제로 해제된 단계만 이동 가능하게 했다. 도입과 산술의 ①·② 대사, 페인트 추가·담장 이동·삭제 사건을 독립 beat로 분리해 각 확인 뒤에만 도형 모션과 문항을 연다. 무작위 문제는 런타임에서 A→같은 A·B를 쓰는 C 또는 B→같은 C를 쓰는 D 묶음 하나를 선택하고, 정답·세 번째 오답 뒤에는 중간값 10 식을 보여 준 뒤 자동 진행한다. 모양 찾기 세 번째 오답에는 두 정답 위치 번호를 표시하며, 키패드 강제 공개도 자동 진행으로 통일했다. 보이는 `O`·`버튼`은 공통 원문 계약 때문에 그대로 두고 각각 `확인`·`그림 완성하기` 접근성 라벨을 추가했으며, 자유 그리기 도형·색 `aria-pressed`를 상태와 동기화했다. 효과음과 대사·문항·안전 이야기 내레이션은 모두 소리 조절 상태를 따른다. 검증: planner 텍스트 127개(고유 102개) 누락 0, JS 구문·중복 DOM id·asset·8개 QA scene·고정 캔버스 계약 정상. Playwright에서 host route 활성화, 메뉴 잠금, 산술 독립 beat, 모양 정답 번호, 연결된 무작위 A→C operands를 확인했고 page error는 없었다.
   - 2026-07-31 이번 조치: `나가기`는 호스트 callback·부모 frame·opener를 우선 사용하고 독립 실행에서는 차시 시작 화면으로 돌아가는 fallback을 연결해 항상 활성화했다. 모양 찾기는 오답 2회에 정답 윤곽, 3회에 위치 번호와 정답 피드백을 공개하고, 모양 찾기·세기·산술·무작위 문제는 정답/자동 정답 뒤 원문 피드백 또는 중간식을 직접 눌러야 다음 문항으로 진행하도록 자동 전환을 제거했다. 무작위 문제 하단에는 기존 도형 asset 3개로 담장 작업 진행을 표시해 계산 성공과 자유 그리기 해금을 연결했다. 수리 이야기는 원·사각형·삼각형마다 `무슨 표지판일까요?` 예측 beat를 거친 뒤 설명을 공개한다. 자유 그리기 확인에는 사용한 도형·색 조합을 텍스트 추가 없이 asset 표본으로 요약한다. critique의 보이는 `그림 완성하기` 라벨은 planner에 없는 문구를 새로 노출하지 못하는 공통 원문 계약이 우선하므로 기존 `버튼`을 유지하고 이미 있던 `aria-label="그림 완성하기"`를 보존했다. 검증: planner rendered_text·문항·보기·정답·피드백 고유 102개 누락 0, JS 구문·중복 DOM id·asset 34개·8개 QA scene 정상. Playwright에서 대사 표면 진행, 피드백 수동 진행, 무작위 3단계 담장 진행과 수동 전환, 자유 그리기 요약, 표지판 예측 3회, 독립 실행 나가기 fallback을 확인했고 console/page 오류는 0건이었다. Visual QA는 broken image·overflow·text clipping·overlap 0건이며, REJECT는 고정 캔버스 계약의 필수 `#viewport`를 fixed overlay로 오인한 기존 false positive 한 건뿐이다.
@@ -1146,16 +1157,17 @@
 
 ### [object-placement-implausible] 찾기·탐색 장면의 사물이 현실에 없을 법한 위치·종류로 배치됨
 
-- 대상: production/1-2/08/index.html (`findObjects` — `classroom-shape-search.png` 위 6종 사물)
+- 대상: production/1-2/08/index.html (`findObjects` — `classroom-shape-search.png` 위 6종 사물, `.classroom-student`)
 - 분류 태그: object-placement-implausible
 - 상태: 열림
-- 발생 횟수: 1
+- 발생 횟수: 2
 - 최초 발생일: 2026-07-31
-- 최근 발생일: 2026-07-31
+- 최근 발생일: 2026-08-03
 - 사례:
   - 2026-07-31: 모양 찾기에서 "너무 뜬금없는 물건들이 뜬금없는 위치에 나온다"고 지적. 사용자가 제시한 기준은 **사물의 실제 소속 위치** — 공은 바닥에 붙어 있으면 좋다(현재 OK), 삼각자는 칠판 위, 시계는 교실 가운데 상단, 네모는 사물함·창문 말고 책상 위에 있을 법한 다른 에셋을 다시 생각할 것. 더불어 칠판 오른쪽이 비어 있으니 학생을 상시 배치해 교실처럼 보이게 하라고 요청. 현재 좌표는 배경 아트와 무관하게 stage 좌표로만 흩어 놓아(`rect:[830,240,215,215]` 등) 사물이 공중에 떠 있거나 맥락 없는 면에 얹힌다.
-- 조치: (미조치 — `production/1-2/08/todo.md` 18번으로 등록)
-- 규칙화 메모: 아직 1회. 반복되면 "탐색·찾기 장면의 사물은 도형 난이도만 보고 배치하지 말고 그 사물이 실제로 놓이는 표면(바닥/책상/벽/칠판)에 앵커를 두고, 배경 아트의 빈 면은 장면 맥락(인물·소품)으로 채운다"를 `prompts/builder_system.md`에 제안 후보. **[bg-anchor-alignment]와 구분할 것** — 그쪽은 "배경에 그려진 자리에 못 맞춤"(기하 정합), 이쪽은 "자리 자체가 개연성이 없음"(장면 의미). 같은 태그로 묶지 말 것.
+  - 2026-08-03: 위 요청으로 넣은 그 학생(`#shapeSceneStudent`)이 이번엔 **"책상 위에 서 있는 것처럼 보인다, 마루바닥에 서 있게 위로 올려라"**고 지적. `bottom:-12px`로 스테이지 바닥에 붙여 놓아 발이 y≈1004에 닿는데, 배경의 책상 상판은 y 900~975라 학생이 책상보다 앞·아래에 서게 된다. 사물과 똑같이 **인물도 배경에 그려진 바닥면에 발을 앵커**해야 한다는 지적이다.
+- 조치: 1번은 `todo.md` 18번으로 완료. 2번은 `todo.md` 23번 — `.classroom-student`를 `bottom:129px`(발 y≈880, 벽·바닥 경계 818과 책상 상판 900 사이)로 올리고 원근에 맞춰 340×560 → 300×494로 축소.
+- 규칙화 메모: 2회. 반복되면 "탐색·찾기 장면의 사물은 도형 난이도만 보고 배치하지 말고 그 사물이 실제로 놓이는 표면(바닥/책상/벽/칠판)에 앵커를 두고, 배경 아트의 빈 면은 장면 맥락(인물·소품)으로 채운다"를 `prompts/builder_system.md`에 제안 후보. **[bg-anchor-alignment]와 구분할 것** — 그쪽은 "배경에 그려진 자리에 못 맞춤"(기하 정합), 이쪽은 "자리 자체가 개연성이 없음"(장면 의미). 같은 태그로 묶지 말 것.
 
 ### [narration-visual-mismatch] 대사가 말하는 것과 화면에 보이는 것이 다름(색·개수)
 
@@ -1196,3 +1208,58 @@
   - 2026-07-31: "동그라미 세모 네모 에셋이 너무 낡아 보인다, 다시 만들기 — 이건 이미지가 아니어도 될 것 같다, 한번 HTML로 해 보기"라고 지적. 순수 기하 도형이라 raster로 둘 이유가 없는데 스프라이트로 만들어 두어 (a) 아트가 낡아 보이고 (b) 색칠을 위해 `mask-image` 우회가 필요했다([blend-tint-bleeds-outside-alpha] 참조).
 - 조치: (미조치 — `production/1-2/08/todo.md` 22번으로 등록)
 - 규칙화 메모: 아직 1회. 반복되면 "원·삼각형·사각형 등 파라미터로 정의되는 기하 도형과 기능적 입력 컨트롤은 raster 에셋으로 만들지 않고 CSS/SVG로 그린다. 색·크기 변형이 필요한 요소일수록 그렇다"를 `prompts/asset_generator_system.md`+`builder_system.md`에 제안 후보. 연관 [ornate-asset-wrong-function](최종 교훈이 "기능적 입력 컨트롤은 사진 에셋이 아니라 CSS로" — 같은 결론에 도달한 선례), [blend-tint-bleeds-outside-alpha](raster로 둔 탓에 생긴 색칠 우회).
+
+### [same-character-duplicated-on-screen] 상시 배치 인물과 대사·피드백용 인물이 겹쳐 같은 캐릭터가 한 화면에 둘 보임
+
+- 대상: production/1-2/08/index.html (`section_shape_find` — `#shapeSceneStudent` vs `#shapeCharacter` / `#feedbackCharacter`)
+- 분류 태그: same-character-duplicated-on-screen
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-03
+- 최근 발생일: 2026-08-03
+- 사례:
+  - 2026-08-03: "아이가 대화가 끝나고 나와야 해. 지금은 대화 중에도 계속 서 있어서 아이가 2명 보이잖아." 오프닝 대사의 2·4번째 beat가 `student-thinking`/`student-idle`로 말하는 동안 배경 상시 배치 학생(`#shapeSceneStudent`, `student-idle`)이 그대로 서 있어 **같은 인물이 동시에 둘** 나온다.
+  - 2026-08-03: 같은 지적의 연장 — "피드백이 서 있는 아이에게서 나와야 해, pose 변화가." 오답 피드백이 화면 밖에서 `#feedbackCharacter`(`student-thinking`)를 새로 띄우는 방식이라 서 있는 아이 옆에 **또 하나의 같은 아이**가 생긴다. 이미 무대에 있는 인물이 있으면 그 인물의 포즈를 바꿔야 한다.
+- 조치: `todo.md` 23번 — (a) `#shapeSceneStudent`를 오프닝 대사 동안 숨기고 찾기 단계 진입 시 등장, (b) `setSceneStudentPose()`를 만들어 서 있는 학생이 화면에 있을 때는 오답=`student-thinking` / 정답=`student-volunteer`로 **그 인물의 src를 교체**하고 `#feedbackCharacter` 오버레이는 띄우지 않음.
+- 규칙화 메모: 아직 1회. 반복되면 "한 씬에 같은 캐릭터를 두 요소로 두지 않는다. 무대에 상시 배치된 인물이 있으면 대사·피드백은 **그 인물의 src/포즈 교체**로 표현하고, 별도 오버레이 캐릭터는 무대에 그 인물이 없을 때만 띄운다"를 `prompts/builder_system.md`의 "channel 렌더링 계약"에 절로 추가 제안. 연관 [feedback-as-character-bubble](규칙화됨 — 피드백은 캐릭터+말풍선으로. 이 항목은 그 규칙을 지키다 **인물이 중복**되는 후속 실패), [object-placement-implausible](같은 학생 요소의 발 위치 문제 — 그쪽은 좌표, 이쪽은 존재).
+
+### [speech-bubble-anchor-detached] 말풍선이 말하는 캐릭터에서 멀리 떨어져 누가 말하는지 안 붙어 보임
+
+- 대상: production/1-2/08/index.html (`.speech.feedback-speech` ↔ `.feedback-character`)
+- 분류 태그: speech-bubble-anchor-detached
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-03
+- 최근 발생일: 2026-08-03
+- 사례:
+  - 2026-08-03: "피드백 시 캐릭터 옆에 `정답` 말풍선이 너무 멀리 떨어져 있다"고 지적. 실측: `.feedback-character{left:80px;bottom:-10px;width:360px;height:590px}`는 `object-fit:contain`이라 실제 그림은 360×540(y 525~1065)로 들어가고, `teacher-praising.png`의 알파 bbox(1024×1536 중 x 444~786 / y 66~1456)를 적용하면 **눈에 보이는 인물은 stage x 236~356 / y 548~1037**뿐이다. 말풍선은 `.speech.feedback-speech{left:500px;top:250px}`라 꼬리 끝이 (466, ~300) → 인물 오른쪽 끝에서 **110px 밖**, 머리 위로 **약 260px** 떨어진다. 같은 무대의 정상 조합(`.character.left` + `.speech.left-speaker{left:390px;top:220px}`)은 꼬리가 인물의 x 범위 **안**(356 vs 253~400)에 들어가 붙어 보인다.
+- 조치: 미조치 — `production/1-2/08/todo.md` 27번.
+- 규칙화 메모: 아직 1회. 교훈 후보: **말풍선 앵커는 캐릭터 요소의 박스가 아니라 `object-fit:contain` 후의 실제 알파 bbox 기준으로 잡는다.** 박스 폭(360px)과 보이는 폭(120px)이 3배 차이 나면 박스 오른쪽에 붙인 말풍선은 인물에서 떠 보인다. 연관 [speech-bubble-fixed-box-not-content-sized](그쪽은 상자 크기, 이쪽은 앵커 위치), [bg-anchor-alignment](같은 "실측 없이 눈대중 좌표" 계열).
+
+### [content-overflows-fixed-surface] 개수·길이가 가변인 콘텐츠가 고정 크기 표면을 넘쳐 잘림
+
+- 대상: production/1-2/08/index.html (`.drawing-summary`, `.story-card`)
+- 분류 태그: content-overflows-fixed-surface
+- 상태: 열림
+- 발생 횟수: 2
+- 최초 발생일: 2026-08-03
+- 최근 발생일: 2026-08-03
+- 사례:
+  - 2026-08-03: `section_free_drawing`의 `그림을 완성했나요?` 아래 도형 요약이 "6개 이상 나오면 넘친다"고 지적. 실측: `.confirm-panel`(850px, padding 55) 안 `.drawing-summary`의 clientWidth는 **728px**인데 `.drawing-summary .paint-shape{width:112px}` + `gap:18px`이라 5개=632px(들어감) / 6개=**762px(넘침, scrollWidth 745 관측)**. 조합은 3모양×4색 = 최대 **12개**까지 늘 수 있어 상한이 없다.
+  - 2026-08-03: `section_math_story` 표지판 설명(`.story-card`)이 "아래로 치우쳐 잘린다"고 지적. 카드 600px 중 패딩(282/118)을 빼면 글 영역이 **200px**뿐인데 가장 긴 beat(제목 1줄 + 빈 줄 + 본문 2줄 + 빈 줄 + 마무리 1줄 + `다음 ▸` 버튼)는 360px 이상이라 넘치고, 카드가 `bottom:-115px`로 무대 밖에 걸려 있어 넘친 부분이 화면 아래로 사라진다.
+- 조치: 미조치 — `production/1-2/08/todo.md` 31·33번.
+- 규칙화 메모: 아직 2회. 교훈 후보: **개수·길이가 런타임에 정해지는 콘텐츠를 고정 폭·높이 표면에 넣을 때는 "최대 개수/최장 문구"로 맞는지 계산하고, 안 맞으면 표면을 늘리는 대신 표시 상한 + 생략 표기(`…`)를 둔다.** 연관 [clock-hand-overflow], [typeC-question-longer-monitor-overflow], [label-text-wrapping] — 셋 다 같은 계열이라 5회 도달 시 하나로 묶어 승격 검토.
+
+### [dialogue-speaker-misassigned] 원문 음성 스크립트가 화자를 지정했는데 다른 인물에게 배정함
+
+- 대상: production/1-2/08/index.html (`shapeDialogues`, `#shapeCharacter` 정적 마크업)
+- 분류 태그: dialogue-speaker-misassigned
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-03
+- 최근 발생일: 2026-08-03
+- 사례:
+  - 2026-08-03: `section_shape_find` 오프닝의 `여러 가지 모양으로 그리면 좋겠어요.` 대사에 대해 "이 대사는 선생님이 할 거야, 오른쪽에서 나오게 해 달라"고 지적. 구현은 `worker-explaining.png`(공사 작업자)가 **왼쪽에서** 말한다. 원문 `수리력 1차_1학년 2학기 8차시 (백승용) 723 음성 스크립트.md` 씬2는 화자를 번호로 명시한다 — `1. 주인공 / 2. 교사 / 3. 교사 / 4. 주인공`. 요청 md 116~120행의 UI 요소 표도 `1 주인공 오디오 / 2 교사 등장 및 오디오 / 3 교사 오디오 / 4 주인공 오디오`로 같다.
+    - **원인:** 요청 md의 "예시화면 문구"는 화자 없이 문구만 나열한 목록(129~133행)인데, builder가 **화자가 적힌 음성 스크립트 대신 이 목록의 순서를 그대로 대사 배열로 옮겼다.** 그래서 (a) 첫 대사의 화자가 작업자로 잘못 붙었고, (b) 음성 스크립트 기준 1번(주인공 `벽화를 어떻게 그려야 되지?`)과 2번(교사)의 **순서까지 뒤바뀌었다.** 사용자가 지적한 것은 (a)뿐이지만 근본 원인은 같다.
+- 조치: 미조치 — `production/1-2/08/todo.md` 34번.
+- 규칙화 메모: 아직 1회. 교훈 후보: **화자·순서는 "예시화면 문구" 목록이 아니라 화자가 번호로 명시된 음성 스크립트(및 UI 요소 표)를 정본으로 삼는다.** 예시화면 문구는 *문구의 원문*만 보장하고 *누가 언제 말하는지*는 보장하지 않는다. 두 문서가 어긋나면 음성 스크립트가 우선. 반영 후보: `content-harness-pipeline/prompts/planner_system.md`(dialogue beat 생성 시 화자 소스 지정) + `prompts/builder_system.md`의 "channel 렌더링 계약". 연관 [dialogue-as-speech-bubble](규칙화됨 — 그쪽은 대사를 *어떻게* 렌더링할지, 이쪽은 *누가* 말하는지), [spec-interaction-flow-mismatch].
