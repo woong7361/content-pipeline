@@ -52,6 +52,19 @@
 
 <!-- 새 항목은 이 아래에 추가한다. -->
 
+### [debug-panel-missing-from-run-output] run 산출물에서 백틱으로 여는 씬 이동 디버그 패널이 누락됨
+
+- 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html
+- 분류 태그: debug-panel-missing-from-run-output
+- 상태: 조치 (2026-08-04 수정 완료, 규칙 승격은 미제안 — 1회)
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-04
+- 최근 발생일: 2026-08-04
+- 사례:
+  - 2026-08-04: 사용자가 `production/1-2/08`과 똑같이 백틱(`) 키를 누르면 디버그 모드가 열리도록 요청. 기준 파일에는 스테이지 밖 고정 패널, 씬 목록 자동 생성, 현재 씬 동기화, 백틱 토글과 Esc 닫기가 있으나 해당 run 산출물에는 전체 구현이 누락되어 있었다.
+- 조치: **2026-08-04 수정 완료.** `production/1-2/08/index.html`과 같은 구조로 스테이지 밖 고정 디버그 패널을 이식했다. `.scene`의 `data-qa-order`·`data-qa-label`에서 8개 씬 버튼을 자동 생성하고, 버튼 클릭은 기존 `showScene()`을 사용해 씬별 초기화 경로를 유지한다. 씬 전환 때 현재 버튼·씬 정보를 동기화하며, 백틱/Backquote로 열고 닫고 Esc 또는 닫기 버튼으로 닫는다. 입력 필드에서는 백틱 토글을 무시한다. 검증: 인라인 JavaScript 문법 파싱 통과, 8개 씬 및 필수 패널 DOM·키 핸들러 계약 자동 검사 통과. 현재 세션의 인앱 브라우저 목록이 비어 있어 실제 키 입력 화면 검증은 수행하지 못했다.
+- 규칙화 메모: 아직 1회. 반복되면 디버그 패널을 공통 HTML 계약 또는 builder 산출물 필수 개발 도구로 승격하는 규칙을 제안한다.
+
 ### [blend-tint-bleeds-outside-alpha] background-color + blend-mode로 투명 스프라이트를 색칠해 도형 바깥 사각형까지 색이 새어 나감
 
 - 대상: production/1-2/08/index.html (`.paint-shape`, `.drawn-shape`)

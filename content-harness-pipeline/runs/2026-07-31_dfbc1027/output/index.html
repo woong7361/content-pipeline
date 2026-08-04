@@ -279,6 +279,24 @@
     .hidden{display:none !important}
     .shake{animation:shake var(--dur) var(--ease)}
     @keyframes shake{20%,60%{transform:translateX(-16px)}40%,80%{transform:translateX(16px)}}
+    /* 디버그 패널은 스테이지의 scale/rotate 영향을 받지 않도록 #stage 밖에 둔다. */
+    .debug-panel{position:fixed;right:0;top:0;z-index:9999;display:flex;flex-direction:column;gap:10px;width:320px;max-height:100vh;padding:14px;overflow-y:auto;background:rgba(16,22,30,.95);color:#e6edf3;font-family:ui-monospace,Consolas,"D2Coding",monospace;font-size:13px;line-height:1.4;box-shadow:-10px 0 28px rgba(0,0,0,.4)}
+    .debug-panel[hidden]{display:none}
+    .debug-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .debug-title{font-size:14px;font-weight:700;letter-spacing:.08em}
+    .debug-close{width:26px;height:26px;padding:0;display:grid;place-items:center;border:1px solid rgba(230,237,243,.24);border-radius:6px;background:rgba(255,255,255,.06);color:inherit;cursor:pointer}
+    .debug-close:hover{background:rgba(255,255,255,.16)}
+    .debug-current{padding:8px 10px;border-radius:6px;background:rgba(126,231,135,.12);color:#7ee787;word-break:break-all}
+    .debug-scene-list{display:flex;flex-direction:column;gap:6px}
+    .debug-scene{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:1px solid rgba(230,237,243,.16);border-radius:8px;background:rgba(255,255,255,.04);color:inherit;text-align:left;cursor:pointer}
+    .debug-scene:hover{background:rgba(255,255,255,.13)}
+    .debug-scene:focus-visible{outline:2px solid #58a6ff;outline-offset:2px}
+    .debug-scene.current{border-color:#7ee787;background:rgba(126,231,135,.14)}
+    .debug-scene-order{flex:0 0 22px;display:grid;place-items:center;height:22px;border-radius:5px;background:rgba(255,255,255,.12);font-size:12px}
+    .debug-scene-text{display:flex;flex-direction:column;min-width:0}
+    .debug-scene-label{font-size:13px}
+    .debug-scene-id{font-size:11px;opacity:.55;word-break:break-all}
+    .debug-hint{opacity:.5;font-size:11px}
   </style>
 </head>
 <body>
@@ -392,6 +410,15 @@
 13 - 3 - 6=(   )</span><span>4</span>
   </template>
 </main></div>
+<aside class="debug-panel" id="debugPanel" hidden aria-label="디버그 패널">
+  <div class="debug-head">
+    <span class="debug-title">DEBUG</span>
+    <button type="button" class="debug-close" id="debugClose" aria-label="디버그 패널 닫기">✕</button>
+  </div>
+  <div class="debug-current" id="debugCurrent"></div>
+  <div class="debug-scene-list" id="debugSceneList"></div>
+  <p class="debug-hint">` 키로 열기/닫기 · Esc로 닫기</p>
+</aside>
 <script>
 (() => {
   const STAGE_W=1920, STAGE_H=1080;
@@ -443,6 +470,7 @@
     if(target.id==='section_free_drawing')resetDrawingIntro();
     if(target.id==='section_math_story')resetStory();
     if(target.id==='section_completion'){renderCompletedMural();refreshNextLessonButton();refreshExitButton()}
+    syncDebugPanel();
   }
   window.__contentHarnessShowScene=function(sceneId){const el=document.querySelector(`[data-qa-scene="${sceneId}"]`)||document.getElementById(sceneId);if(el){scenes.forEach(scene=>scene.classList.remove('qa-capture-ready'));showScene(el.id);el.classList.add('qa-capture-ready')}};
   document.getElementById('soundButton').onclick=e=>{soundOn=!soundOn;e.currentTarget.setAttribute('aria-pressed',String(soundOn));e.currentTarget.dataset.soundOn=String(soundOn);e.currentTarget.classList.toggle('current',soundOn);if(!soundOn&&'speechSynthesis' in window)speechSynthesis.cancel()};
@@ -624,6 +652,39 @@
   bindDialogueSurface('introSpeech','introTap');bindDialogueSurface('shapeSpeech','shapeDialogueTap');bindDialogueSurface('arithSpeech','arithIntroTap');bindDialogueSurface('drawingSpeech','drawingTap');
   document.getElementById('menuButton').textContent='목록';
   document.getElementById('soundButton').textContent='소리 조절';document.getElementById('soundButton').dataset.soundOn='true';
+
+  function buildDebugScenes(){
+    const list=document.getElementById('debugSceneList');list.innerHTML='';
+    scenes.forEach((scene,index)=>{
+      const button=document.createElement('button');button.type='button';button.className='debug-scene';button.dataset.go=scene.id;
+      const order=document.createElement('span');order.className='debug-scene-order';order.textContent=scene.dataset.qaOrder||String(index+1);
+      const label=document.createElement('span');label.className='debug-scene-label';label.textContent=scene.dataset.qaLabel||scene.id;
+      const sceneId=document.createElement('span');sceneId.className='debug-scene-id';sceneId.textContent=scene.id;
+      const text=document.createElement('span');text.className='debug-scene-text';text.append(label,sceneId);
+      button.append(order,text);button.onclick=()=>showScene(scene.id);
+      list.appendChild(button);
+    });
+  }
+  function syncDebugPanel(){
+    const panel=document.getElementById('debugPanel');if(!panel||panel.hidden)return;
+    panel.querySelectorAll('.debug-scene').forEach(button=>button.classList.toggle('current',button.dataset.go===currentScene));
+    const meta=sceneMeta[currentScene];
+    document.getElementById('debugCurrent').textContent=currentScene+(meta?` · ${meta.title} · ${meta.progress}`:'');
+  }
+  function toggleDebugPanel(force){
+    const panel=document.getElementById('debugPanel');
+    const open=typeof force==='boolean'?force:panel.hidden;
+    panel.hidden=!open;if(open)syncDebugPanel();
+  }
+  document.getElementById('debugClose').onclick=()=>toggleDebugPanel(false);
+  addEventListener('keydown',e=>{
+    const tag=e.target&&e.target.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA')return;
+    if(!e.altKey&&!e.metaKey&&(e.key==='`'||e.code==='Backquote')){e.preventDefault();toggleDebugPanel();return}
+    if(e.key==='Escape'&&!document.getElementById('debugPanel').hidden)toggleDebugPanel(false);
+  });
+  buildDebugScenes();
+
   refreshNextLessonButton();refreshExitButton();
   updateHud(currentScene);
 })();
