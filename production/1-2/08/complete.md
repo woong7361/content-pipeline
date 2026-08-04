@@ -1038,3 +1038,321 @@
   - **`.arriving`과 `.spotlight`를 각각 별도 규칙으로 두면 하나만 재생된다** — 같은 요소의 `animation` 속성을 통째로 덮기 때문이다. `.paint-can.arriving.spotlight`에 두 애니메이션을 한 줄로 쓰고 글로우에 `var(--dur)` 지연을 줘 "등장 → 강조" 순서로 읽히게 했다.
   - **글로우만으로는 크림색 담장 위에서 거의 안 보인다**(정점 프레임을 `Animation.currentTime`으로 고정해 실측). 그래서 같은 박자의 크기 펄스를 얹었다. `transform-origin:bottom center`인 것은 통이 땅에 놓여 있어서다 — 가운데 기준으로 키우면 통이 떠오른다.
 - 검증: headless Chromium 1920×1080. (1) beat0 `display:none` → beat1 `pop + canSpotlight`(계산된 filter가 정점에서 `rgb(255,232,106) 22px` + `scale(1.07)`) → beat2 글로우만 해제 → 문항 중 통 유지 → 씬 재진입 시 다시 숨김을 상태·캡처로 확인. (2) 회귀: q1·q2를 실제로 풀어 `q_add_10_2`의 preBeats까지 진행해 `통 소진`에서 can1 `empty`, `1통을 더 준비했어요`에서 can2 등장(21번 연출)이 그대로임을 확인.
+
+## 84. 모양 찾기와 세기의 오프닝 대화 인물이 책상을 밟고 서 있다
+
+- 상태: 완료 (2026-08-04)
+- 지시(2026-08-04): "모양 찾기와 세기에서 **선생님과 학생 위치 책상 밟지 말고 바닥을 밟고 있을 수 있도록** 해 줘. 다른 곳에 영향 주지 말고 여기서만. **서 있는 학생 말고 대화할 때 나오는 선생님과 학생**을 말하는 것."
+- 원인: 공용 `.character.left/.right{bottom:-12px}`는 **무대 바닥** 기준이라 발끝이 stage y **1022(아이)·1027(교사)** 에 온다. `classroom-shape-search.webp`에서 그 높이는 **책상 상판·의자 구간**(뒷모서리 901 · 앞모서리 979~985)이다. 이 배경에서 사람이 설 수 있는 면은 벽·바닥 경계(818)와 책상 뒷모서리(901) 사이의 통로뿐이고, **같은 씬의 `#shapeSceneStudent`는 23번에서 이미 그 통로(발끝 y≈880)에 앉혀 놨다** — 대화 인물만 공용 규칙에 남아 있었다.
+- 조치:
+  - `#shapeCharacter.on-floor{bottom:129px}` / `#shapeCharacter.on-floor[src*="teacher-"]{bottom:135px}` 두 줄. 값이 두 벌인 것은 알파 bbox 하단 비율이 달라서다(아이 0.892~0.896 / 교사 0.947). 계산은 `contain` 여백을 빼고 발끝 = `1009 - bottom`(아이 박스 308×504) / `1015 - bottom`(교사 박스 440×720)이며, 아이 값 129px은 `.classroom-student`와 우연이 아니라 같은 값이다(같은 에셋·같은 발끝 목표).
+  - `.on-floor`는 `renderShapeDialogue()`가 붙인다(`ch.className='character on-floor '+b[3]`). **이 씬은 `#shapeCharacter` 한 요소가 배경을 갈아 끼우며 세 단계를 다 쓴다** — 오프닝만 교실이고 `startPaintIntro`·`finishShape`는 담장(`school-wall-closeup`)이라 지면이 무대 바닥이다. 그 둘은 `ch.className='character right'`로 클래스를 지우므로 공용 `bottom:-12px`가 그대로 남는다(64번의 제목 `.on-wall`과 같은 짝 구조).
+- 검증: headless Chrome 1920×1080.
+  - 발끝: 씬2를 오프닝 4 beat → 찾기 3문항 → paint-intro → 세기 3문항 → 아웃트로까지 실제 클릭으로 통과시키며 실측(`tmp/verify-83.js` — 파일명은 개명 전 번호다). 오프닝 **880·880·880·882**(목표 880), paint-intro·아웃트로 **1027**(변경 전과 동일).
+  - 말풍선: 오프닝 4 beat에서 말풍선 세로 중심 − 얼굴 중심 = **0·0·0·−1px**(`tmp/verify-84.js`).
+  - 캡처로 네 beat 모두 마루면에 서 있고 담장 단계는 잔디에 그대로 서 있는 것을 확인.
+- 주의:
+  - **공용 `.character`의 `bottom`은 안 건드렸다.** 38번 주석("bottom은 건드리지 않는다 — 발끝이 같은 바닥선에 남아야 크기 차이가 키 차이로 읽힌다")은 무대 바닥을 지면으로 쓰는 씬(1·3·5)에서 유효하고, 지면이 그려진 교실 배경에서만 예외다.
+  - **인물이 올라가면 말풍선도 같은 폭으로 올라가야 한다.** 같은 시각 다른 세션의 83번이 말풍선 세로 앵커를 `--speech-face-y`(얼굴 중심 절대 y — 어른 492 / 아이 707)로 바꿨는데, 그 값은 **`bottom:-12`(무대 바닥)를 전제로 계산된 것**이라 발끝을 옮긴 이 씬에서는 말풍선만 제자리에 남는다. 83번과 같은 공식에 옮긴 bottom을 넣어 다시 재고(교사 345 / 아이 566) `.on-floor`가 붙은 beat에만 걸었다. 이 두 값은 `#shapeCharacter`의 `bottom`과 **한 몸**이다.
+  - 인물 크기는 그대로다. 이 깊이(발끝 880)의 원근 축척은 23번 실측으로 1m ≈ 310px이라 교사(알파 높이 625px ≈ 2m)는 규격보다 크다. **크기는 `--char-scale`이 전 씬 공통(어른 1.0 / 아이 0.7)이라 이 씬만 줄이면 38번 규칙이 깨진다** — 필요해지면 별도 항목으로 연다.
+
+## 83. 대사 말풍선 세로 위치를 캐릭터 얼굴 높이에 맞춘다
+
+- 상태: 완료 (2026-08-04)
+- 지시(2026-08-04): "대사 말풍선 위치의 **y축이 캐릭터의 얼굴 위치**에 올 수 있도록 해 줘. 지금은 너무 높거나 낮아."
+- 원인은 둘이고 **둘 다 57번이 남긴 것**이다.
+  - (a) **기준점이 얼굴이 아니라 머리 꼭대기였다.** 57번은 "꼬리 y − 머리 꼭대기 y"를 어른·아이가 같게 맞췄을 뿐, 그 간격이 얼굴에 오는지는 보지 않았다. 실측하니 어른 beat의 꼬리는 얼굴 중심(y 492)보다 **194px 위**, 머리 꼭대기(433)보다도 위여서 말풍선이 **머리 위 하늘**에 떠 있었다.
+  - (b) **앵커가 상자 윗변(`top`)인데 꼬리는 상자 세로 중심(`::before{top:50%}`)이었다.** 대사 줄 수가 늘면 상자가 아래로만 자라 꼬리가 그만큼 내려간다 → 같은 씬 안에서도 beat마다 높이가 달라진다. 사용자가 "너무 높거나 **낮아**"라고 한 것이 이 둘이 섞인 결과다.
+- 조치:
+  - `.speech`의 세로 앵커를 `--speech-face-y`(**얼굴 중심 y** 절대 좌표) 하나로 바꾸고 `.left-speaker`·`.right-speaker`에 `top:var(--speech-face-y);translate:0 -50%`를 줬다. 상자가 위아래로 **같이** 자라므로 대사 길이와 무관하게 **상자 세로 중심 = 꼬리 = 얼굴**이 유지된다.
+  - **`transform:translateY(-50%)`가 아니라 `translate` 속성을 쓴 것이 핵심이다.** `speechPop`이 `transform:scale()`을 애니메이션하므로 `transform`으로 적으면 등장할 때 보정이 통째로 날아간다(377행 `.narration-advance` 주석이 적어 둔 것과 같은 함정). `translate`는 독립 속성이라 `transform`과 합성된다.
+  - 아이 보정은 `--speech-child-drop:205px`(머리 차이) → `--speech-face-y:707px`(아이 얼굴 절대값)로 바꿨다. 가로(`left:280`/`right:250`)는 38번 실측 그대로다.
+  - 씬 오버라이드 `#arithSpeech{--speech-anchor-top:350px}`·`#drawingSpeech{--speech-anchor-top:270px}`는 **삭제**했다. 상자 윗변 기준값이라 남겨 두면 얼굴 정렬을 이긴다. 씬5는 얼굴 앵커(492)가 제목 아래(250)보다 한참 낮아 56번이 내려 뒀던 이유 자체가 사라졌다(제목 좌표는 그대로).
+  - `.speech.feedback-speech`도 `top:470px` → `--speech-face-y:598px`. 이 슬롯(`.feedback-character` 360×590 / bottom −10)은 인물 크기가 달라 얼굴 y가 따로다.
+- 얼굴 중심 실측(`tmp/measure-face.js`): 에셋 알파의 **행 폭 프로파일**에서 머리 꼭대기 → 목(국소 최소)을 찾고 그 중점을 얼굴 중심으로 잡았다. 원본 1024×1536 높이 대비 비율은 어른 6종 **0.132~0.146**, 아이 3종 **0.212~0.214**로 갈린다(값은 `todo.md`의 "캐릭터 얼굴 중심 비율" 표).
+  - `.character.left/.right`(440×720 / bottom −12) 환산 → **어른 492 / 아이(--char-scale .7) 707**. `.feedback-character` → **598**.
+- 검증: headless Chrome 1920×1080, 애니메이션 정지 후 14개 beat 실측(`tmp/verify-83b.js`). "꼬리 y − 얼굴 중심 y"가 **−6 ~ +1px**(worker-explaining만 −6 — 안전모까지 얼굴로 잡혀 비율이 .146으로 혼자 높다). 상단바(56)·무대(1080) 침범 0. 대사를 4줄로 늘려 상자가 100 → 242px로 커져도 꼬리는 707에 그대로 남는 것을 따로 확인했다. 캡처 8장(`tmp/shots/s83-*.png`) 육안 확인.
+- 주의: **씬별 오버라이드에 `top`을 직접 쓰지 않는다**(57번 주의사항 유지). 이제 줄 수 있는 것은 `--speech-face-y` 하나뿐이고, 그 값은 **인물 발끝(`bottom`)이 바뀌면 같은 폭으로 함께 움직여야 한다** — 84번의 `.on-floor`(씬2 오프닝, 교사 345 / 아이 566)가 그 사례다.
+- 주의: `#helpCard`(`.top-speaker`, `top:auto;bottom:620px`)는 인물 **머리 위** 변형이라 `translate` 대상이 아니다. `.left-speaker`·`.right-speaker`에만 걸었으므로 영향이 없다.
+
+## 85. 말풍선을 인물 바로 옆에 붙이지 않는다 (포즈를 가림)
+
+- 상태: 완료 (2026-08-04)
+- 지시(2026-08-04): "**머리 바로 옆에 붙이지 마.** 인트로에서 보면 꼬마 옆에 바로 붙여서 **꼬마 포즈가 가려졌잖아.**"
+- 원인: 38번이 아이 가로 앵커를 `right:390` → `250`으로 당길 때 기준이 "**꼬리 끝이 전신 알파 bbox 안에 들어오는가**"뿐이었다. **상자 자체가 인물을 덮는지는 보지 않았다.** 실측하니 `student-volunteer`.right는 말풍선 오른쪽 끝 1670이 실루엣 시작 1612를 **58px 파고들어**, 자원하며 든 팔을 그대로 덮고 있었다(`student-thinking`.right 48 · `student-idle`.right 22 · `student-idle`.left 4 · `student-volunteer`.left 7px도 같은 방향).
+- **전신 알파 bbox로는 이 결함이 안 보인다.** 전신 bbox는 들어올린 팔·벌린 발까지 포함한 좌우 끝이라, 말풍선이 실제로 걸리는 **얼굴 높이 밴드**의 실루엣과 다르다. 그래서 밴드(얼굴 중심 ± 말풍선 최대 반높이 **121px** = 4줄 242px의 절반) 안으로 좁혀 다시 쟀다(`tmp/measure-side.js`).
+- 조치:
+  - 가로 앵커를 `--speech-side-x`로 빼고 `.left-speaker{left:var(--speech-side-x)}` / `.right-speaker{right:var(--speech-side-x)}`로 바꿨다. **값 = 밴드 안 실루엣 가장자리 ∓ 60px.** 꼬리가 34px이므로 실루엣까지 26px을 남기고 멈춘다 — 가리키되 덮지 않는다.
+  - **에셋·방향별로 준다.** 밴드 안 실루엣이 에셋마다 최대 75px까지 차이 나기 때문이다(`worker-apologizing` 301 ↔ `worker-explaining` 376). 묶어서 한 값을 주면 좁은 인물에서 꼬리가 100px 넘게 떠 "누가 말하는지" 신호가 끊긴다. 38번이 남긴 `.character[src*="student-"]` 두 줄은 세로(`--speech-face-y`) 전용으로 줄이고 가로는 이 표로 옮겼다.
+
+    | 선택자 | 밴드 안 실루엣 | `--speech-side-x` |
+    | --- | --- | --- |
+    | `worker-apologizing`.left | …301 | 361 |
+    | `worker-explaining`.left | …376 | 436 |
+    | `student-thinking`.left | …259 | 319 |
+    | `student-idle`.left | …284 | 344 |
+    | `teacher-explaining`.right | 1556… | 424 |
+    | `teacher-praising`.right | 1624… | 356 |
+    | `student-volunteer`.right | 1612… | 368 |
+    | `student-idle`.right | 1648… | 332 |
+
+  - `.speech.feedback-speech`도 `left:380px` → `--speech-side-x:416px`. 이 슬롯(360×590 / left 80)에서 `teacher-praising`의 밴드 안 실루엣 오른쪽 끝은 **356**이라 같은 +60 규칙이다(27번이 잡아 둔 380은 꼬리가 인물 안으로 파고드는 값이었다).
+  - `left`/`right`를 직접 쓰지 않고 **변수로 준 것**이 57번 교훈의 적용이다 — 인접 형제 선택자와 ID 선택자 사이에 명시도 싸움이 생기지 않는다.
+- 검증: headless Chrome 1920×1080, 13개 beat 실측(`tmp/verify-85.js`). 말풍선 상자 ↔ 실루엣 여백이 전부 **59~60px**, 꼬리 끝은 실루엣까지 **25~26px**. 세로(83번)는 그대로 −6 ~ +1px. 캡처 8장(`tmp/shots/s83-*.png`)에서 인트로 꼬마의 든 팔·씬2 아이의 턱 괸 손·작업자의 숙인 자세가 모두 안 가리는 것을 확인했다.
+- 주의: **인물 에셋을 교체하거나 `--char-scale`·슬롯 크기를 바꾸면 이 표를 다시 잰다.** 재는 대상은 전신 bbox가 아니라 **말풍선이 걸리는 y 밴드 안의 실루엣**이다(`tmp/measure-side.js`를 다시 돌리면 된다).
+- 주의: 새 인물·새 방향 조합을 추가하면 표에 줄을 더한다. 빠뜨리면 공용 기본값(`--speech-side-x:390px`)으로 떨어지는데, 그 값은 **어떤 인물 기준도 아니다** — 겹치거나 뜬다.
+
+## 86. 페인트 통 하이라이트의 노란 글로우를 뺀다
+
+- 상태: 완료 (2026-08-04)
+- 지시(2026-08-04): "**노란색 하이라이트 너무 촌스럽다.** 어떻게 하는게 좋을까? 그냥 글로우만 뺄까?" → 검토 후 **A안(글로우 제거, 모션만) 사용자 확정.**
+- 대상: 82번이 넣은 `@keyframes canSpotlight`(`section_arithmetic_tutorial`의 `#arithPaintCan1` 지목 연출).
+- 원인: 강조를 `--filter-glow-lg`(= `drop-shadow(0 0 22px #ffe86a) drop-shadow(0 0 38px #fff080)`)로 낸 것. (a) 배경이 크림색 담장(`school-wall-closeup.webp`)이라 노랑은 대비가 거의 없어 **색으로 안 읽히고 뿌연 번짐만 남는다.** (b) 화풍이 "굵고 깔끔한 외곽선 + 플랫 셰이딩"이라 soft bloom이 이질적이다. **82번 검증 메모에 이미 "글로우만으로는 크림색 담장 위에서 거의 안 보인다 → 크기 펄스를 얹었다"고 적혀 있었다 — 실제로 일하던 신호는 처음부터 펄스였고, 글로우는 촌스러움만 얹고 있었다.**
+- 조치:
+  - `@keyframes canSpotlight`를 `{0%,100%{transform:scale(1)}50%{transform:scale(1.10)}}`로 바꿨다. `filter` 선언을 통째로 뺐고, 빠진 글로우 몫은 펄스를 **1.07 → 1.10**으로 키워 메웠다. `.paint-can.spotlight` / `.paint-can.arriving.spotlight`의 타이밍(pop 450ms → 강조 650ms × 3, `transform-origin:bottom center`)은 그대로다.
+  - **`--filter-glow-lg` 토큰 자체는 건드리지 않았다.** 그 토큰은 `@keyframes glowOnce`(201) · `.paint-shape.hint-step`(439) · `.paint-slot.hint-step`(730)이 함께 쓴다 — 토큰 값을 고쳤으면 씬2·씬4 힌트까지 조용히 바뀐다.
+- 검증: headless Chrome 1920×1080 (`tmp/verify-86.js`). `Animation.currentTime`을 정점(delay 450 + 325ms)에 고정해 실측 — 계산된 `filter`가 기본 그림자 `drop-shadow(rgba(0,0,0,.3) 0 12px 16px)` **하나뿐**(노란 drop-shadow 0개), `transform`이 `matrix(1.1,0,0,1.1,0,0)`, `transform-origin` `125px 250px`(= bottom center). 끝(100%)에서 `scale(1)` 복귀. beat0 `display:none` → beat1 `pop`+`canSpotlight` 등장 회귀도 함께 확인. 캡처 `tmp/shots/86-peak.png`.
+- 주의(다음 사람에게 필요한 것):
+  - **keyframe에서 `filter`가 빠진 것은 부수 효과가 아니라 이득이다.** `drop-shadow` 애니메이션은 매 프레임 리페인트를 부르는데 이제 `transform`만 남아 컴포지팅으로 돈다. 예전 0%/50% 양쪽에 있던 `var(--ds-md)`는 keyframe이 `filter`를 건드리는 동안 기본 그림자를 잃지 않으려던 것이라, `filter`를 안 쓰면 필요 없다(`.paint-can`이 상시로 갖고 있다).
+  - **`transform-origin:bottom center`는 유지해야 한다** — 가운데 기준으로 키우면 통이 땅에서 떠오른다. 펄스를 더 키우고 싶어도 이 값을 함께 바꾸지 않는다.
+  - **headless 캡처에서 말풍선이 안 보이면 회귀가 아니다.** 가상시간(`--virtual-time-budget`)에서는 rAF가 굶어 `speechPop` 같은 진입 애니메이션이 첫 프레임(`opacity:0`)에 멈춘다. `tmp/verify-86.js`처럼 캡처 직전 `document.getAnimations().forEach(a=>a.finish())`로 나머지를 끝까지 돌리고, 재고 싶은 애니메이션 하나만 `currentTime`으로 붙들어야 실제 화면과 같은 프레임이 나온다.
+
+## 87. 정답 뒤 `다음 ▸`를 없애고 도장만 보여 준 뒤 자동으로 넘어간다
+
+- 상태: 완료 (2026-08-04)
+- 지시(2026-08-04): "문제를 맞추면 도장에 다음 버튼이 나오는데 이걸 다음버튼이 나오지 않고 **도장만 1초정도 보여주고 바로 넘어가도록**." → 검토 후 **지연은 1.5초(내레이션) / 2.5초(교사 말풍선)로 사용자 확정.**
+- 대상: `showFeedback`(내레이션 도장 경로 + 교사 말풍선 경로), `armRandomContinue`(씬4), `#narrationAdvance`.
+- 조치:
+  - `showFeedback` 꼬리의 진행 표면 배선(`ensureAdvanceNav` + `surface.onclick=completeFeedback` + `nav.classList.remove('hidden')`)을 **타이머 한 줄로 대체**했다 — `feedbackAdvanceTimer=setTimeout(completeFeedback,useCharacter?FEEDBACK_ADVANCE_SPEECH_MS:FEEDBACK_ADVANCE_MS)`.
+  - 상수 `FEEDBACK_ADVANCE_MS=1500` / `FEEDBACK_ADVANCE_SPEECH_MS=2500`를 `showFeedback` 바로 위에 뒀다. 1.5초는 **도장 애니(`--dur-slow` .65s)와 정답 음성이 둘 다 끝나는 시점**이다(`correct-1.mp3`는 64kbps·12KB ≈ 1.51초라 사용자가 말한 1초로는 끝을 못 맺는다). 교사 말풍선만 2.5초인 것은 **도장은 보는 즉시 읽히지만 글자는 읽어야 하기 때문**이다.
+  - `feedbackAdvanceTimer`를 전역 타이머 목록(1033행)에 넣고 `resetFeedbackOverlay`에서 `clearTimeout` 한다. `showScene`이 그 함수를 타므로 씬 이탈 시 함께 걷힌다.
+  - `feedbackContinueAction`은 **계속 세운다.** 26번의 오답 오버레이 가드(`showWrongFeedback` 첫 줄)가 이 값을 본다 — 안 세우면 정답 직후 들어온 오답 판정이 진행 경로를 지운다.
+  - `armRandomContinue`에서 78번이 넣은 진행 버튼 라벨 분기(마지막 문항만 `모양으로 자유 그리기`)와 `nav.focus()`를 지웠다. 누를 것이 없으니 이름 붙일 대상도 포커스 옮길 대상도 없다.
+  - `#narrationAdvance`(요소 + `.narration-advance` CSS)는 **참조 0이 됐지만 남겼다.** 되돌리기 여지도 있고, 그 CSS 주석이 `speechPop`의 `transform:scale()`과 `translateX(-50%)`가 부딪히는 함정을 적어 둔 유일한 자리라 292행이 그 주석을 참조한다.
+- 검증: headless Chrome 1920×1080 (`tmp/verify-87.js` · `tmp/verify-87b.js`). 네 경로 전수 —
+  - 씬2 찾기(내레이션): 정답 직후 도장 · `다음 ▸` 0개 → **+1.5초에 다음 문항**(`■모양…` → `●모양…`).
+  - 씬2 삼각형(교사 `잘 찾았어요!`): 말풍선에 `다음 ▸` 없음, +1.2초 유지 → **+2.5초에 다음 단계**.
+  - 씬3 산술: 도장 0~1200ms 유지 → **+1.6초에 입력칸이 비며 다음 문항**.
+  - 씬4 무작위: 도장 0~1200ms 유지 → **+1.6초에 `#randomPanel[data-solved]`가 걷히며 다음 문항**.
+  - 타이머 누수: 정답 직후 다른 씬으로 이탈시키고 3초를 기다려도 진행이 안 일어난다.
+- 주의(다음 사람에게 필요한 것):
+  - **오답도 도장을 낸다.** 자동화로 정답 순간을 잡을 때 `.feedback-mark.show`로 가르면 오답과 3회 오답 안전망(`setKeypadConfirmOnly`)까지 정답으로 오인한다 — `src`가 `feedback-stamp-correct`인지까지 봐야 한다. 검증 스크립트를 두 번 고친 이유가 이것이다.
+  - **17·26번이 세운 데드엔드 위험은 사라졌지만 위험의 자리가 옮겨갔다.** 이제는 "진행 표면이 없다"가 아니라 **"타이머를 안 걷는다"**가 사고다. 도장을 띄우는 새 경로를 만들면 그 경로가 `resetFeedbackOverlay`를 타는지 반드시 확인한다(60번의 `heldStamp` 메모와 같은 이유).
+  - **스크린리더 알림이 약해졌다.** 예전에는 `nav.focus()`가 `다음 문제` 버튼으로 포커스를 옮겨 정답을 읽어 줬는데 그 경로가 없어졌다. 지금은 정답 음성(`correct-1`)이 그 몫을 대신한다 — 음소거 상태의 스크린리더 사용자에게는 도장 이미지뿐이다. 필요해지면 `#narrationAdvance`를 시각적으로 숨긴 `aria-live` 영역으로 되살리는 것이 가장 싼 길이다.
+
+## 88. 마우스 포인터를 1-2/01의 이미지 커서로 교체
+
+- 상태: 완료 (2026-08-04)
+- 지적: 08은 OS 기본 화살표를 쓰는데 01은 초등학생이 볼 수 있는 큰 이미지 커서를 쓴다. `CLAUDE.md:75` 표에 "커서 = 01의 `mouse-pointer.webp`"로 **기준이 이미 적혀 있었는데도** 이식이 빠져 있었다(problem.md `[cross-lesson-shell-inconsistency]` 4회차).
+- 결정: **새로 그리지 않고 01 에셋을 그대로 복사한다.** 커서는 차시 고유 소재가 아니라 코스 공통 UI라 파일이 갈라지면 안 된다. `01/assets/ui/mouse-pointer.webp` → `08/assets/mouse-pointer.webp`(08은 평면 구조라 `ui/`를 만들지 않았다).
+- 조치:
+  - CSS에 `*{cursor:none !important}` + `#cursor` / `.cursor-image` / `.big` / `.readable-hover`를 **01과 같은 클래스명**으로 넣었다(`</style>` 직전). 08에 `cursor:pointer`가 20곳 넘게 흩어져 있어 명시도로는 못 이기고, "OS 커서는 무조건 숨긴다"는 원자적 강제라 `!important`를 썼다.
+  - 마크업 `<div id="cursor" class="cursor-image">`는 **`#viewport`/`#stage` 밖**(디버그 패널 옆)에 뒀다. 안에 넣으면 transform 걸린 조상 때문에 `position:fixed`가 스테이지 기준으로 잡혀 포인터가 어긋난다(디버그 패널과 같은 이유).
+  - JS는 스크립트 끝 `showScene(currentScene)` 직전 IIFE. `mousemove`로 `left`/`top`을 쓰고, 호버 판정은 `HOT`(누를 수 있는 것 → `.big`)과 `READ`(글 읽는 표면 → `.readable-hover`) 두 목록으로 갈랐다.
+  - `assets/mouse-pointer.webp`에 `<link rel="preload">`를 걸었다. `*{cursor:none}`이 먼저 걸리므로 이미지가 늦으면 첫 마우스 이동에서 커서가 아예 없어 보인다.
+- 값의 출처: **01의 CSS를 소스 순서로 읽지 않았다.** `tmp/probe-cursor-01.js`로 `getComputedStyle` 실측(4번·15번 교훈). 기본 `44×44` / `transform:translate(-5%,-4%)` / `opacity:.96` / 2겹 drop-shadow, `.big` `55×55` + 더 진한 그림자, `.readable-hover` `opacity:.94`.
+- 검증: `tmp/verify-cursor-08.js`(headless Chrome, `getComputedStyle` 대조) — 08의 base/big/hover 세 상태가 01 실측값과 **전부 일치**. 그 외 확인한 것: 이미지 로드 성공, `#cursor`가 스테이지 밖(`insideStage:false`), `mousemove(640,400)` → `rect x638 y398`(translate 보정 반영), 호버 판정 `.cta`→`big` / `.speech`→`big readable-hover` / 배경→해제. 육안은 `tmp/shot-cursor-88.js`로 타이틀 화면 2컷 캡처(`tmp/cp-88/`).
+- 주의:
+  - **스테이지 배율 ×1.4056을 곱하지 않았다.** `#cursor`는 `position:fixed`라 `#stage`가 아니라 뷰포트 px이고, 01·08 모두 스테이지를 화면에 꽉 채우므로 44px 그대로가 화면상 같은 크기다. 15번의 "01 값은 그대로 옮기면 환산이 자동" 규칙과 결론은 같지만 **이유가 다르다**(그쪽은 `cqw`/`cqh`, 이쪽은 스테이지 밖이라서). 여기에 1.4056을 곱하면 01보다 커진다.
+  - **조준선이 사라졌다.** `#drawingCanvas`(자유 그리기)·`#shapeSearch`(모양 찾기)의 `cursor:crosshair`가 `*{cursor:none}`에 덮인다. **2026-08-04 사용자 결정으로 그대로 뒀다.** 되살리려면 `*{cursor:none}`의 예외를 만들지 말고 그 두 곳에서 `#cursor`를 바꿔 끼우는 쪽이 맞다(OS 커서와 이미지 커서가 동시에 보이면 포인터가 두 개가 된다).
+  - **01의 `.cspark`(클릭 반짝이 트레일)는 가져오지 않았다.** 01에서 이미 `.cspark{display:none!important}`로 꺼진 죽은 코드다. "01에 있는데 08에 없다"고 나중에 다시 이식하지 말 것.
+  - `.speech`는 `role="button"`이라 `HOT`·`READ` 양쪽에 걸려 `big readable-hover`가 된다. 두 클래스가 겹치면 `.big` 크기(55px)가 이기므로 **`READ`가 실제로 보이는 곳은 `.prompt`뿐**이다. 01도 같은 구조다.
+  - 터치 기기는 `@media (pointer:coarse){#cursor{display:none !important}}`로 막았다(01과 같은 방어). `*{cursor:none}`은 그대로 두는데, 터치에는 보일 커서가 없어 무해하다.
+
+## 89. 세 수의 뺄셈은 뒤에서부터 지운다 (세모 → 네모)
+
+- 상태: 완료 (2026-08-04)
+- 요청: 씬4 마지막 문항(세 수의 뺄셈)이 화면에 `동그라미 네모 세모` 순으로 놓이는데 흐려지는(`.removed`) 순서가 `네모 → 세모`였다. **뒤에서부터, 즉 `세모 → 네모`** 로 지워야 하고, 힌트도 "세모를 빼서 10을 만들고 그다음에 네모를 빼라"가 되어야 한다.
+- 조치:
+  - `shapeStepsFor(5)`의 `groups`를 `[남는 것(a-b-c) 초록 ● / c 파랑 ■ / b 빨강 ▲]`으로 바꾸고 `steps`를 `[{op:'remove',group:2},{op:'remove',group:1}]`로 뒤집었다. **먼저 빠지는 b를 꼬리에 두는 것**이 핵심이다 — 지우기가 오른쪽 → 왼쪽 한 방향이 된다.
+  - `renderRandom`의 `randomHintSteps`(type 5)를 같은 순서로 맞췄다. 1단계 `뒤의 빨강 ▲를 먼저 빼서\n10을 만들어 봐요.`(`focus:[2]`), 2단계 `이제 10에서 파랑 ■를\n빼 봐요.`(`focus:[1]`).
+  - 49번이 남긴 "`[남는 것 / 빼는 b / 빼는 c]`" 주석을 새 배치로 고치고, 이유는 `shapeStepsFor` 안 89번 주석에 적었다.
+- 검증: `tmp/verify-89-subtract-order.js` — `randomSequence`를 `[5]`로 줄인 사본을 headless Chrome 1920×1080으로 띄워 `.removed`가 붙는 순서를 100ms 폴링으로 기록. `16 - 6 - 1` 인스턴스에서 배치 `●×9 ■×1 ▲×6`, 제거 순서 index `15→14→13→12→11→10`(▲ 6개) 후 `9`(■ 1개)로 **오른쪽 → 왼쪽 단방향** 확인. 1단계 뒤 남는 도형 10개(`●9 + ■1`). 힌트 문구·`hint-step` 대상도 ▲ → ■ 순으로 확인.
+- 주의:
+  - **뺄셈만 그룹 배치가 항 순서와 다르다.** 41-a가 세운 "색·모양 매핑을 항 순서에 얹는다"는 규칙은 덧셈(type 3, 왼→오른쪽으로 쌓임)에서만 항 순서와 화면 방향이 일치한다. 뺄셈은 덜어내는 방향이 반대라 배치를 뒤집어야 방향이 맞는다. 나중에 "덧셈과 뺄셈이 비대칭"으로 보여 되돌리지 말 것 — 대칭인 것은 **배치**가 아니라 **진행 방향**이다.
+  - 힌트 문구가 도형을 색·모양 이름(`빨강 ▲`)으로 부르므로, `groups` 배치를 바꾸면 `randomHintSteps`의 문구와 `focus` 번호를 **같은 자리에서** 함께 고쳐야 한다.
+  - `type 1`·`type 4`(두 수의 뺄셈)는 제거 그룹이 꼬리 하나뿐이라 이미 뒤에서부터였다. 손대지 않았다.
+
+## 90. 씬6 수리 이야기의 `다음 ▸`를 카드 우하단에 고정
+
+- 상태: 완료 (2026-08-04)
+- 요청: 표지판 설명 카드(`.story-card`)에서 `다음 ▸`가 beat마다 자리를 옮긴다. **한쪽에 고정한다 — 우하단으로.**
+- 조치:
+  - `.story-card .repair-bubble-nav`를 그리드 행에서 빼내 카드에 절대배치했다(`right:64px; bottom:153px; width:auto; margin-top:0`). 앵커는 크림 면의 오른쪽·아래 모서리(x 1236 = 1300−64 · y 447 = 600−153)다. 카드에 테두리가 없어 패딩 박스 = 1300×600이라 **아래 패딩을 늘려도 버튼은 안 움직인다.**
+  - `.story-card`의 `padding-bottom`을 153 → **212px**(= 153 + 버튼 47 + 여백 12)로 늘려 버튼 자리만큼 글 영역을 줄였다. 안 줄이면 가장 긴 beat의 글이 버튼 위 22px까지 내려와 붙는다.
+  - `renderStory`의 `insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML)`는 그대로다. JS 변경 없음 — 버튼은 여전히 카드 안에 있어 `tabindex=-1` 클릭이 카드로 버블링된다.
+- 검증: `tmp/measure-story-nav.js` — headless Chrome 1920×1080으로 6개 beat를 순서대로 넘기며 버튼 rect를 측정. 수정 전 버튼 y가 짧은 beat **284~330** ↔ 긴 beat **366~413**으로 82px 튀던 것이, 수정 후 6 beat 전부 **y 400~447 / x 1120~1236**으로 동일. 가장 긴 beat의 글은 y 140~348에 머물러 버튼까지 52px 여유. 캡처는 `tmp/shot-90.js`(`shots/v90-short.png`, `shots/v90-long.png`).
+- 주의:
+  - **`padding-bottom`(212)과 `bottom:153`은 한 쌍이다.** 버튼 크기(`.repair-narr-next`의 cq 단위 폰트·패딩)를 바꾸면 두 값을 함께 다시 잡는다. 33번이 잡아 둔 크림 면 비율(y 0.168~0.745 → 카드 101~447)이 여전히 기준이고, 카드 크기와 `.sign-row`는 이번에도 건드리지 않았다.
+  - 이 절대배치는 `.story-card`에만 걸었다. 다른 씬의 `.repair-bubble-nav`는 말풍선 안 글 아래에 흐름으로 붙는 종전 형태 그대로다 — 말풍선은 글 길이에 따라 상자 자체가 자라 버튼이 글에 붙어 따라오는 것이 맞고, 카드는 상자가 고정이라 안이 흔들린 것이다.
+
+## 91. `section_shape_find` 정답 번호 배지를 삼각형 도형 중앙에, 고깔모자는 포즈를 따라가게
+
+- 상태: 완료 (2026-08-04)
+- 요청: 삼각형 모양에 붙는 번호가 가운데가 아니다. 캐릭터가 움직이면 고깔이 왼쪽으로 살짝 움직이니 번호도 그걸 따라가야 하고, 삼각자는 **자 에셋 중앙**에 숫자를 붙여라.
+- 원인: `.hotspot-number`가 `left:50%;top:50%`로 **핫스팟 박스**(손으로 잡은 사각형)의 중심에 붙어 있었다. 둘이 겹쳤다 — (1) 삼각형은 박스를 절반만 채우므로 박스 중심이 도형 중심이 아니고(삼각자는 배지 중심이 빗변 **밖**이었다), (2) `triangle_party_hat`의 핫스팟은 25번이 **세 포즈의 머리를 모두 덮도록 일부러 고정**한 박스인데 모자 **그림**은 `HAT_POSE_RECT`로 포즈마다 옮겨간다 → 오답 피드백으로 학생이 `thinking`이 되면 모자만 31px 왼쪽으로 가고 배지는 제자리에 남았다.
+- 조치:
+  - `findObjects[].numberAnchor` 도입 — **그 사물 `rect` 안의 비율**이다. 기본값은 `[.5,.5]`(그림 박스 중심)이고 두 삼각형만 값을 준다. `triangle_ruler:[.358,.642]` / `triangle_party_hat:[.501,.674]`.
+  - 값은 **도형 내접원의 중심**이다. 배지가 72px(r 36)이라 삼각형 안에 온전히 들어가는 자리가 사실상 거기뿐이다 — 삼각자 내접원 r 37.9(중심 박스 기준 (60.9,109.1)), 고깔 r 37.4(중심 (85.6,115.2)). **알파 bbox 중심을 쓰면 안 된다**(삼각자에서 빗변까지 30.5px밖에 안 남아 배지가 도형을 넘는다).
+  - `objectRect(id)`가 사물 그림의 **현재** rect를 준다(모자만 `HAT_POSE_RECT[sceneStudentPose]`, 나머지는 `findObjects[].rect`). `positionHotspotNumber(hotspot)`이 그 rect + `numberAnchor`로 stage 좌표를 잡고 핫스팟 원점을 빼서 `left/top`을 px로 쓴다. `revealSearchAnswers`가 배지를 붙인 직후 호출한다.
+  - `positionPartyHat`이 모자를 옮길 때마다 `refreshHotspotNumbers()`를 불러 배지가 함께 간다.
+- 검증: `tmp/shot-91.js` — headless Chrome 1920×1080으로 씬2 찾기 ■ → ● 를 정답 처리하고 ▲ 문항에서 3회 오답으로 번호를 띄운 뒤 배지·그림 rect를 stage 좌표로 측정. 배지 중심 삼각자 **(360.9, 204.1)**, 고깔 **(1230.7, 515.3)** = 계산값과 일치. 배경 클릭으로 오답 피드백을 내 학생이 `student-thinking`이 되자 모자 그림 x 1145 → 1114와 함께 배지 중심도 **1199.7, 512.2**로 −31/−3 이동(고정이었을 때는 핫스팟 중심 1221, 494에 그대로 남았다). 캡처는 `tmp/shots/v91-numbers.png`.
+- 주의:
+  - **`numberAnchor`는 비율이라 `rect`를 옮기면 배지가 자동으로 따라가지만, 에셋을 다시 그리면 값을 다시 재야 한다.** 알파 bbox가 아니라 내접원이므로 재는 법도 다르다 — 도형 세 꼭짓점을 잡고 `r=(a+b−c)/2`(직각삼각형) 또는 `r=넓이/s`로 중심을 낸다.
+  - 배지가 커지면(72px 초과) 두 삼각형 모두 내접원을 넘는다. 크기를 키울 거면 `.hotspot-number`의 `width/height`와 이 두 앵커를 함께 본다.
+  - 25번이 핫스팟을 고정해 둔 결정은 **그대로 옳다**(클릭 영역은 세 포즈를 다 덮어야 한다). 이번 수정은 클릭 영역이 아니라 **표시**만 그림 쪽에 물린 것이다.
+
+## 92. 차시 목록 드로어의 닫기 버튼 × 를 버튼 중앙에
+
+- 상태: 완료 (2026-08-04)
+- 요청: 왼쪽 햄버거 메뉴(차시 목록)를 열면 나오는 **닫기 버튼의 × 가 버튼 중앙에 있지 않다**.
+- 원인: 둘이 겹쳤다. 실측(스테이지 좌표)으로 잉크 중심이 박스 중심에서 **가로 +2.0px(오른쪽) · 세로 −2.5px(위)** 어긋나 있었다.
+  - **가로** — `.course-menu-close`에 `display`·`padding` 지정이 없어 UA 기본 `padding:1px 6px`가 살아 있었다. `box-sizing:border-box`라 42px 박스의 콘텐츠 폭이 `42 − 6(테두리) − 12(패딩) = 24px`인데 `×` 의 advance는 **28px**이다. **글자가 콘텐츠 박스보다 넓으면 `text-align:center`가 음수 오프셋을 못 내고 넘치는 쪽(오른쪽)으로 흘러버린다.**
+  - **세로** — 버튼은 **라인박스**를 중앙에 놓을 뿐이고, Jua의 `×` 는 잉크가 `baseline−20 ~ baseline−1`이라 잉크 중심이 `baseline−10.5`다. 라인박스 중심은 `baseline−8`이므로 잉크가 2.5px 위에 뜬다. 서체가 그린 글리프의 시각 중심이 라인박스 중심이 아니다.
+- 조치: `.course-menu-close`에 `display:grid;place-items:center;padding:5px 0 0` 셋을 넣었다(width/height/색/테두리는 그대로).
+  - `padding` 좌우 0 + grid 중앙 정렬로 가로 압착을 없앤다. 같은 파일 `.debug-close`가 이미 쓰는 방식이라 새 관례가 아니다.
+  - 상단 패딩 5px이 콘텐츠 중심을 `5/2 = 2.5px` 내려 세로 잉크 오프셋을 정확히 상쇄한다.
+- 검증: `node tmp/measure-menu-close.js` — headless Chrome 1920×1080에서 메뉴를 연 뒤 잉크 bbox(canvas `measureText`의 `actualBoundingBox*`)와 박스 중심을 비교. **offsetX 0.00 / offsetY −0.0000009** (수정 전 +2.0 / −2.5). `node tmp/shot-menu-close.js` 로 버튼을 8배 확대하고 박스 중심 십자선을 얹은 캡처(`tmp/menu-close-before.png` ↔ `after.png`)로 눈으로도 확인했다.
+- 주의:
+  - **라인박스 `getBoundingClientRect`로는 글리프가 중앙인지 판정할 수 없다.** 라인박스는 advance 폭·line-height 높이라 잉크와 다르다. 반드시 `actualBoundingBox*`(또는 확대 캡처)로 잰다.
+  - 실측 스크립트를 쓸 때 **`getBoundingClientRect`는 device px(#stage 축소 배율 0.912가 곱해진 값)이고 canvas 폰트 메트릭은 CSS px**이다. 섞어서 계산하면 오프셋이 절반쯤으로 나온다(처음에 −1.3으로 잘못 나왔던 이유다). `tmp/measure-menu-close.js`는 rect를 전부 `br.width/offsetWidth`로 나눠 스테이지 좌표로 되돌린다.
+  - **상단 패딩 5px은 서체(Jua)·박스 크기(42px)·글자 크기(28px)에 묶인 실측값이다.** 셋 중 하나라도 바뀌면 다시 잰다. Jua가 CDN에서 안 오면 대체 서체 메트릭이 달라 이 보정도 어긋난다.
+  - **`production/1-2/01/index.html`의 `.course-menu-close`(30px 박스 / 20px 글자 / 같은 UA 패딩)가 같은 결함을 그대로 갖고 있다.** 08은 01에서 이식한 것이라 원본에 남아 있다. 이번 요청 범위가 08이라 건드리지 않았다 — 01을 손볼 때 함께 고친다(값은 박스·글자 크기가 다르므로 다시 재야 한다).
+
+
+## 93. 주인공 아이를 "벽화 페인터" 캐릭터로 교체
+
+- 상태: 완료 (2026-08-04)
+- 요청: 주인공이 **일반 어린아이**라 차시 주제(학교 담장 벽화 색칠하기)와 겉돈다. 페인트 롤러를 들고 멜빵에 페인트 얼룩이 묻은 모습으로 바꾸되 **포즈·인물·크기는 그대로** 둔다.
+- 조치(에셋): `student-idle.webp` / `student-thinking.webp` / `student-volunteer.webp` 3종을 페인터 버전으로 교체했다(codex 이미지 생성, `assets/preview-painter/`에 시안 보관). 1024×1536 RGBA 투명·발바닥 y 동일이라 파일만 갈아끼우면 되는 형태다. 롤러는 3종 모두 **내린 손에 아래로** 들렸고, 얼룩은 청록 멜빵과 주황 티셔츠에 흩어져 있다.
+- 조치(앵커): 85번 규칙("인물 에셋을 바꾸면 이 표를 다시 잰다")대로 `tmp/measure-face.js` · `tmp/measure-side.js`를 재실행해 `--speech-side-x` 3줄을 고쳤다 — `student-thinking`.left 319 → **318**, `student-idle`.left 344 → **347**, `student-idle`.right 332 → **328**. `student-volunteer`.right는 368 그대로다. 얼굴 중심은 `student-idle`만 .214 → .215(렌더 0.6px)라 `--speech-face-y:707px`은 두었다.
+- 조치(문서·alt): todo.md의 "캐릭터 알파 bbox" · "얼굴 중심 비율" · "밴드 실루엣" 세 표에 페인터 행을 더했고, 아이를 묘사하는 `alt` 9곳(3문구 × 각 2~4회)에 롤러·얼룩을 반영했다.
+- 검증: `tmp/verify-93.js`(85번 스크립트 재실행) — 말풍선·실루엣 여백이 13개 자리 전부 **59~60px**, 꼬리−얼굴 0~−6px. `tmp/shot-93.js`로 씬1 b3(volunteer) · 씬2 대화(thinking) · 씬2 찾기(서 있는 idle + 고깔모자) · 씬3 beat(thinking/volunteer)를 1920×1080 캡처해 육안 확인했다.
+- 주의: **앵커가 1~4px밖에 안 움직인 것은 롤러를 내린 손에 아래로 들렸기 때문이다.** 말풍선 밴드는 얼굴 중심 ±402px(원본 기준)이라 롤러가 그 밖에 있다. 시안 1차처럼 롤러를 어깨 높이로 세우면 밴드 안으로 들어와 이 표가 크게 흔들린다 — 포즈를 다시 손볼 때 이 조건을 유지한다.
+- 주의: 학생에게는 `clip-path` 히트 영역 보정이 걸려 있지 않다(65번의 `clip-path`는 씬4 `.help-character` 하나뿐). 그래서 x 실루엣이 넓어져도 클릭 판정에 영향이 없었다.
+- 미해결 아님(기록): 코덱스가 "주황 티셔츠에 얼룩 없음"을 O로 자가보고했지만 실제로는 티셔츠에도 얼룩이 남아 있다. 육안으로 자연스러워 그대로 채택했다. **코덱스의 자가 QA 보고를 그대로 믿지 말고 산출물을 직접 열어 볼 것.**
+
+## 94. 씬4 오답 피드백에서 캐릭터 오버레이 제거
+
+- 상태: 완료 (2026-08-04)
+- 요청: 무작위 계산 문제(`section_random_problems`)에서 틀렸을 때 캐릭터가 피드백으로 나오지 않게 한다.
+- 조치: `showWrongFeedback()`에 씬 제외 목록 `NO_WRONG_CHARACTER_SCENES=['section_random_problems']`를 두고, 도장(`showStamp(currentFeedbackMark(),'wrong')`)을 찍은 **직후·포즈 분기 앞에서** 빠져나가게 했다. 씬4의 오답 신호는 X 도장 + 오답음(`tone(false)`) + 흔들림(`shake`)만 남는다. 호출부(`judgeRandomChoice`·`judgeRandomKey`)는 건드리지 않았다 — 26번의 `feedbackContinueAction` 가드와 도장 경로를 그대로 타야 한다.
+- 검증: headless Chrome 1920×1080에서 씬4 첫 문항(3지선다)의 오답 보기를 눌러 `#feedbackCharacter`가 `hidden`·`display:none`이고 `#randomMark`는 `feedback-stamp-wrong.webp`로 떠 있음을 확인. 같은 실행에서 씬3(`section_arithmetic_tutorial`) 키패드 오답도 함께 확인해 그쪽 오버레이는 종전대로 `display:block`으로 뜨는 것(회귀 없음)을 대조했다.
+- 주의: 씬 이름은 리스트 한 곳(`NO_WRONG_CHARACTER_SCENES`)에만 있다. 다른 씬에서도 같은 요청이 오면 함수를 고치지 말고 이 배열에 id를 더한다.
+- 주의(검증 스크립트용): `sceneStudentVisible()`은 현재 씬과 무관하게 `#shapeSceneStudent`의 `hidden`만 본다. 씬2를 거치지 않고 씬3·4로 점프하면 이 요소가 마크업 그대로 노출 상태(`resetShapeScene`이 안 돌아 `hidden`이 없다)라 오답이 **오버레이 대신 포즈 교체**로 빠진다. 실사용 흐름에서는 씬2를 반드시 지나므로 화면 문제는 아니지만, 씬을 점프하는 검증 스크립트는 이 요소를 먼저 숨기고 재야 한다.
+
+## 93. 차시 목록 드로어 크기를 01과 동일하게 (×1.4056 환산 철회)
+
+- 상태: 완료 (2026-08-04)
+- 요청: 목록(차시 드로어)이 `production/1-2/01`과 똑같아야 하는데 **너무 크다**. 크기를 똑같이 맞춰 달라.
+- 원인: **이식할 때 배율을 곱하지 말았어야 할 값에 곱했다.** 08은 01의 드로어 수치를 전부 ×1.4056(1920/1366) 해서 넣었는데(패널 400 → 562px, 항목 글자 18 → 25px, 번호 배지 34 → 48px), 01의 드로어는 `width:min(400px,40cqw)`·`font-size:clamp(13px,2.7cqh,20px)`처럼 **절대 px 캡에 걸려 있어 스테이지가 커져도 400px/20px에서 더 자라지 않는다.** 08의 `#stage`는 1920×1080 고정 후 `transform:scale`로 화면에 맞추므로, 곱한 값이 화면에서는 **01의 1.28배**로 그려졌다.
+  - 실측(같은 1904×985 창, device px) — 패널 **400 vs 512.6**, 헤드 높이 51.7 vs 72.1, 항목 높이 51.8 vs 73, 번호 배지 34 vs 43.8, `지금` 배지 40.2×22 vs 52.7×28.3.
+- 조치: `.course-menu-panel` / `-head` / `-grade` / `-close` / `-list` / `-item` / `-no` / `-title` / `-now` / `-soon` / `-foot` / `-home`과 `.is-current` 그림자까지 **01의 선언을 그대로** 되돌렸다. 테두리(3 → 2px)·모서리(18 → 13px 등)·그림자(`20px 0 51px` → `14px 0 36px`)도 함께 01 값이다.
+  - **01의 `clamp()`+컨테이너 단위 식을 그대로 복사했다.** 08의 `#stage`가 `1920px × 1080px` 고정 `container-type:size`라 `cqw`/`cqh`가 상수(19.2 / 10.8)로 풀리고, 01의 설계 해상도(1920×1080)에서와 같은 값이 된다.
+  - **처음에는 clamp를 손으로 풀어 정수 px로 넣었다가 되돌렸다** — `clamp(3px,.7cqh,9px)`=7.56을 8로, `clamp(2px,.55cqh,7px)`=5.94를 6으로 반올림하니 항목 pitch가 01의 59px에서 60px이 되어 10항목에서 10px 밀렸다. 손으로 풀지 말 것.
+  - `.course-menu-close`(92번)의 상단 패딩도 박스가 42 → 30px, 글자 28 → 20px으로 바뀌면서 **5px → 4px**로 다시 쟀다.
+- 검증:
+  - `node tmp/measure-drawer-01-vs-08.js` — 01과 08을 같은 1920×1080 창에서 각각 띄워 드로어 전 요소의 rect·computed font-size를 대조. 폰트 크기(20/20, 18/18, 14/14, 17/17)와 패딩·gap이 전부 일치.
+  - `node tmp/shot-drawer.js` 캡처(`tmp/drawer-01.png` ↔ `drawer-08.png`)를 픽셀로 대조 — **패널 오른쪽 경계 x=397로 동일**, x=360 열의 밝기 전이 y 좌표열(항목 경계)이 동일. 남은 차이는 (a) 현재 차시가 01은 6번·08은 8번이라는 내용 차이, (b) 닫기 × 가 08에서 2px 아래 — **92번으로 중앙에 맞춘 결과라 의도된 것**이다.
+- 주의:
+  - **01의 드로어는 스테이지 배율을 타지 않고 08의 드로어는 탄다.** 두 차시가 픽셀 단위로 같아지는 것은 뷰포트가 1920×1080(08 스테이지 배율 1.0)일 때다. 창이 더 작으면 08의 드로어는 topbar를 포함한 08 화면 전체와 **같은 비율로** 함께 줄어든다(1904×985에서 0.912배). 08 안에서는 일관되므로 이 상태가 맞다.
+  - **다음에 01에서 무언가를 이식할 때 ×1.4056을 반사적으로 곱하지 말 것.** 기준 차시에서 그 값이 (a) 스테이지 비율에 묶였으면 환산하고, (b) 절대 px 캡(`min()`/`clamp()`의 max)이나 `position:fixed`처럼 스테이지와 무관하게 고정이면 **그대로 옮긴다**. 88번(커서)이 (b)를 맞게 판정한 사례고 이 항목이 틀린 사례다. 판정은 두 차시를 같은 창에 띄워 렌더된 px을 재서 한다.
+
+## 95. 01의 키 누름 효과음을 모든 키패드 입력에 적용
+
+- 상태: 완료 (2026-08-04)
+- 요청: 01에서 쓰는 **다이얼(키패드) 누르는 효과음**을 08에도 가져와 **모든 다이얼 입력에서** 나게 해 달라.
+- 조사에서 나온 것: **01은 이 소리를 mp3로 내지 않는다.**
+  - 01의 키 누름은 전부 `playButtonSelectSfx()` = `playSfx('button-select', 0.75)`를 거친다(숫자 키·`DEL`·`OK` 모두).
+  - 01의 `playSfx`는 `playSynthSfx`를 **먼저** 부르고, `SFX_SYNTH_MAP`에 `'button-select':'tick'`이 있어 **Web Audio 합성음**이 나가고 파일 경로에는 도달하지 않는다.
+  - 즉 `01/assets/audio/sfx/button-select.mp3`는 **Web Audio가 없을 때만 쓰이는 폴백**이다. **그 파일을 복사해 왔다면 01에서 실제로 들리는 소리와 다른 소리가 났을 것이다.** 그래서 에셋이 아니라 합성 코드를 옮겼다(새 파일 0개).
+  - 참고: `01/assets/audio/sfx/keypad.mp3`(→ 합성 `blip`)는 이름과 달리 **키 누름 소리가 아니다.** 01에서 `playSfx('keypad')`가 불리는 곳은 세는 수 표시가 바뀔 때(`updateRepairNumber`)와 카드가 모이는 연출 두 곳뿐이다.
+- 조치: 01의 `ensureSynthCtx` / `synthTone` / `SFX_SYNTH.tick` / `playButtonSelectSfx`를 **같은 이름으로** `index.html`의 SFX 구역(`playSfx`·`tone` 아래)에 이식했다.
+  - 소리 정의는 01의 `tick` 프리셋 그대로다 — C5(523.25Hz) 사인파가 90ms 동안 E5(659.25Hz)로 글라이드, `attack .004` / `release .07`, `vol 0.2 × v`.
+  - 음량도 01과 같다. 01은 `playSfx('button-select', 0.75)`로 부르고 내부에서 `v = volume/0.9`(= 0.8333)를 프리셋에 넘기므로, 08은 합성 경로만 쓰기에 `SFX_SYNTH.tick(0.75/0.9)`로 그 계산을 펼쳐 뒀다.
+  - `synthTone`의 vibrato·glide 분기는 `tick`이 쓰지 않지만 **01 원형 그대로** 남겼다(다른 프리셋을 더 옮길 때 재이식하지 않기 위해서다).
+  - 거는 자리는 **`buildKeypad`의 `onclick`** 이다: `b.onclick=()=>{playButtonSelectSfx();handler(...)}`. 세 키패드(`countKeypad`·`arithKeypad`·`randomKeypad`)가 이 함수 하나를 공유하므로 한 곳이면 전부 붙는다. 누름 연출(`keypadPress`, pointerdown)이 아니라 click에 건 이유는 **키보드(Enter/Space)로 눌러도 나야 하기 때문**이고, 01도 onclick에서 낸다.
+  - 음소거는 08의 `playSfx`와 같은 자리에서 막는다(`if(!soundOn)return`). AudioContext는 첫 키 누름(사용자 제스처)에 만들어져 자동재생 정책에 걸리지 않는다.
+- 검증: `node tmp/verify-keypad-sfx.js` — headless Chrome에서 `AudioContext.prototype.createOscillator`를 감싸 주파수 스케줄을 기록하고 씬3을 도입 대사부터 실제 클릭으로 풀어 키패드까지 간 뒤 **12개 키(1~9 · ← · 0 · 확인)를 전부 클릭**했다. 결과 — 무음 키 **0개**, 키당 정확히 **1회**, 모든 톤이 `523.25 → 659.25`(01의 tick), 도입 대사 탭에서는 톤 0회(키패드에만 붙었다는 뜻), 음소거 중 **0회**, 음소거 해제 후 다시 **1회**.
+- 주의:
+  - **`.key` 버튼을 만드는 곳은 `buildKeypad` 하나뿐이다**(파일 전체에서 `className='key'`는 1곳). 새 키패드를 추가할 때 `buildKeypad`를 쓰지 않고 직접 만들면 소리가 빠진다.
+  - 씬2·씬4 키패드는 활동을 끝까지 풀어야 나타나서 클릭 전수 검증은 씬3으로 했다. **셋이 같은 `buildKeypad`를 지나므로 코드 경로는 동일하다** — 검증 스크립트도 이 근거를 주석에 적어 뒀다.
+  - 08에 Web Audio 경로가 생긴 것은 이번이 처음이다. 앞으로 01의 다른 합성 효과음(`correct`/`wrong`/`levelup` 등)을 더 가져오려면 `SFX_SYNTH`에 프리셋만 더하면 된다. **다만 08의 정답·오답은 이미 파일(`answer-correct.mp3`/`answer-wrong.mp3`)로 나가고 있으므로**, 합성으로 바꾸면 59번(효과음 재선정)에서 고른 소리가 바뀐다. 섞기 전에 확인이 필요하다.
+
+## 96. 씬 전환 버튼에 인트로 시작음, 진행(다음 ▸) 표면에 키 누름음
+
+- 상태: 완료 (2026-08-04)
+- 요청: (a) `다음 ▸` 버튼도 누를 때 효과음을 내는 게 좋은지 물었고, (b) **다음 씬으로 넘어가는 버튼에 효과음이 필요하다. 첫 인트로 `시작하기` 버튼과 같은 소리를 쓰자.**
+- (a)에 대한 근거: **01은 이미 그렇게 한다.** `01/index.html`의 `.repair-narr-next` 핸들러가 `playButtonSelectSfx?.()`를 부른다(다시듣기 버튼도 같다). 95번으로 옮겨 온 것과 **같은 소리**라 새 자산도, 새 소리도 필요 없다. 그래서 넣었다.
+- **소리를 역할로 나눴다.** 두 소리가 말하는 것이 다르다.
+  - **`intro-start.mp3`** = "**장면이 바뀐다**". 씬을 넘기는 전환에서만 난다.
+  - **Web Audio `tick`**(95번, `playButtonSelectSfx`) = "**눌렀다**". 대사·beat를 넘기는 진행 표면에서 난다.
+- 조치 1 — 씬 전환: `function goScene(id){playSfx('intro-start');showScene(id)}`를 `showScene` 옆에 두고 앞으로 가는 전환 6곳을 바꿨다.
+  - `#introNext`(씬1→2) · `#shapeNext`(2→3) · `#arithNext`(3→4) · `nextRandom()`의 마지막 분기(4→5) · `#drawingYes`(5→6) · `#storyCard` 마지막 beat(6→7).
+  - **`showScene`이 아니라 래퍼에 걸었다** — `showScene`은 종료 폴백(`#exitButton`)·QA 훅(`__contentHarnessShowScene`)·최초 진입도 타므로 거기서 내면 차시를 진행하는 전환이 아닌 데서도 소리가 난다. **씬을 넘기는 새 버튼을 만들면 `showScene`이 아니라 `goScene`을 부른다.**
+  - 씬4→씬5는 87번으로 **버튼 없이 자동 진행**이 된 자리인데 여기에도 `goScene`을 썼다. 이 소리는 "버튼을 눌렀다"가 아니라 "장면이 바뀐다"는 신호라 사람이 눌렀는지와 무관하게 낸다는 판단이다. **원치 않으면 이 한 곳만 `showScene`으로 되돌리면 된다.**
+- 조치 2 — 진행 표면(`playButtonSelectSfx()` 삽입): `#introTap` · `#shapeDialogueTap` · `#arithIntroTap` · `#drawingTap` · `#storyIntroTap` · `#storyCard`(마지막 beat 제외) · `stepRandomHint`(씬4 힌트의 `다음 ▸`/`닫기`, `#helpCard`·`#helpCharacter`가 부른다).
+  - **`.repair-narr-next` 버튼에는 걸지 않았다.** 08의 그 버튼은 `tabindex="-1"`이고 핸들러가 없어 **클릭이 바깥 표면으로 버블링**되는 구조다(17·80번). 버튼에 따로 걸면 표면 핸들러와 **두 번** 난다.
+  - 소리를 **가드 뒤에** 넣은 곳 둘: `#introTap`은 `if(introRepairing)return`(수리 연출 중 탭 무시) 뒤, `stepRandomHint`는 `if(randomAwaitingContinue)return` 뒤다. 앞에 넣으면 **아무 일도 안 일어나는 클릭에서 소리만 난다.**
+  - `#storyCard`는 한 표면이 beat 진행과 씬 전환을 겸한다. `playButtonSelectSfx()`를 **비-마지막 분기 안에** 넣어 마지막 클릭에서 두 소리가 겹치지 않게 했다.
+- 검증: `node tmp/verify-advance-sfx.js` — `Audio` 생성자와 `AudioContext.prototype.createOscillator`를 감싸 클릭마다 무엇이 났는지 세고, 씬1을 시작하기부터 대사 끝까지 실제 클릭으로 풀어 씬2로 넘기고 씬3 대사·씬6 카드까지 눌렀다.
+
+  | 조작 | intro-start | tick |
+  | --- | --- | --- |
+  | 씬1 `시작하기` | 1 | 0 |
+  | 씬1 대사 탭(각) | 0 | 1 |
+  | 씬1→2 `#introNext` | 1 | 0 |
+  | 씬3 대사 탭 | 0 | 1 |
+  | 씬6 카드 beat | 0 | 1 |
+  | 씬6→7 마지막 카드 | 1 | 0 |
+
+  수리 연출이 도는 동안의 탭은 **둘 다 0**이었다(`introRepairing` 가드가 먹는다는 뜻).
+- 주의:
+  - 클릭 전수 검증은 씬1·3·6으로 했다. `#shapeNext`·`#arithNext`·`#drawingYes`·`nextRandom`은 **같은 `goScene` 한 줄**이라 코드 경로가 같다(치환 시 각 문자열이 파일에 1곳뿐임을 확인했다).
+  - `#exitButton`의 `showScene('section_intro')`는 **일부러 그대로 뒀다** — 앞으로 가는 진행이 아니라 나가기 폴백이다.
+  - 씬7 완료의 `다음 차시` 버튼은 씬 전환이 아니라 **다른 차시로 나가는 것**이라 범위에서 뺐다. 여기에도 소리를 넣을지는 결정이 필요하다.
+
+## 97. 작업자(worker) 대사 10본 재녹음 교체
+
+- 상태: 완료 (2026-08-04)
+- 대상: `assets/audio/script/` 작업자 키 10개 · 원본 `assets/add_audio/Take{1~10}-1_*_2026-08-04.wav`
+- 사용자 지시: "`assets/add_audio`에 worker의 음성을 새로 추가해뒀다. 기존 worker의 음성을 전부 그 음성으로 바꿔라."
+- 조치:
+  - 45번 규칙대로 **같은 키 이름으로 덮어썼다. `index.html`은 한 줄도 건드리지 않았다.** 코드가 쓰는 배역별 키 목록은 `supertone-script-map.md`의 `01-worker.txt` 행이 기준이고, 작업자 대사는 정확히 10개라 새 테이크 10본과 1:1로 맞았다.
+  - 납품이 wav인데 기존 자산은 mp3라 **`libmp3lame -b:a 64k -ac 1 -ar 44100`으로 변환**해 넣었다(기존 59본의 실측 인코딩과 같은 값). 시스템에 `ffmpeg`이 없어 `python -c "import imageio_ffmpeg"`가 주는 번들 바이너리를 썼다.
+  - 원본 테이크 ↔ 키 대조표(2026-08-04 재녹음분):
+
+| Take | 키 | Take | 키 |
+| --- | --- | --- | --- |
+| 1 | `intro-1-apology` | 6 | `arith-beat-thanks` |
+| 2 | `intro-2-wall-fixed` | 7 | `arith-beat-erase-2` |
+| 3 | `intro-3-need-help` | 8 | `arith-beat-erase-3-more` |
+| 4 | `arith-beat-can-ready` | 9 | `arith-outro-1-well-done` |
+| 5 | `arith-beat-paint-2-more` | 10 | `arith-outro-2-more-walls` |
+
+- 검증: `git status`로 **정확히 그 10개만 `M`**임을 확인했다. 10본 모두 44100Hz mono 64kb/s로 다시 열리고 길이는 1.33~3.87초다. `volumedetect`로 새 3본(mean −24.3/−22.9/−20.4dB)과 손대지 않은 다른 배역 6본(−22.5~−24.1dB)을 비교해 **레벨이 같은 대역**임을 확인했다 — 작업자만 튀지 않는다.
+- 주의:
+  - 대사 문구가 화면 텍스트와 **글자만 다르고 읽는 소리는 같은 자리가 3곳**이다. `1통을 더 준비했어요`→녹음 `한통을`, `3개를 더 지우고 싶어요`→녹음 `세개를`, `휴,`→녹음 `휴~,`. 화면 텍스트는 그대로 뒀다(읽으면 같은 소리다).
+  - 옛 mp3는 git에 남아 있다(전부 tracked였다). 되돌리려면 `git checkout -- assets/audio/script/`.
+  - `assets/add_audio/`는 **납품 인박스라 다음 배치가 오면 비워진다.** 이 10본의 wav도 98번 배치가 들어오면서 사라졌다(mp3만 남는다). 원본 대조가 필요하면 이 항목의 대조표를 쓴다.
+
+## 98. 씬3 도입 대사 4본 재녹음 교체
+
+- 상태: 완료 (2026-08-04)
+- 대상: `assets/audio/script/` 4개 키 · 원본 `assets/add_audio/Take{2~5}-1_*_2026-08-04.wav`
+- 사용자 지시: "add_audio에 새로 오디오 추가했다. 이 음성으로 기존 걸 바꿔라."
+- 조치: 97번과 같은 절차 — 같은 키 이름 mp3로 덮어쓰기(`libmp3lame -b:a 64k -ac 1 -ar 44100`), `index.html` 무수정.
+
+| Take | 키 | 배역(스크립트 기준) | 길이 변화 |
+| --- | --- | --- | --- |
+| 2 | `arith-intro-1-we-will` | 주인공 | 2.72 → 2.04초 |
+| 3 | `arith-intro-2-this-is-paint` | 주인공 | 4.55 → 4.36초 |
+| 4 | `arith-intro-3-ten-per-can` | 주인공 | 3.24 → 2.85초 |
+| 5 | `arith-q-add-7-3` | **내레이션** | 3.58 → 3.63초 |
+
+- 검증: `git status`로 그 4개만 새로 `M`이 된 것을 확인(97번의 10개와 합쳐 14개). 4본 모두 44100Hz mono 64kb/s로 다시 열린다.
+- 주의:
+  - **레벨이 다른 배역보다 3dB 높다.** 납품 wav 4본이 전부 `mean_volume −20.0dB`로 **출력 시 라우드니스 정규화된 값**이다(97번 작업자 배치는 −20.4~−24.3으로 제각각이었다). 손대지 않은 다른 배역은 −22.5~−24.1dB다. 지금은 **납품 원본을 그대로 뒀다** — 맞추려면 `volume=-3dB`로 다시 굽는다.
+  - **`Take1`이 배치에 없다.** 씬3 도입 순서상 앞줄인 `shape-outro-2-request`(교사 "페인트 소개를 부탁해요!")가 Take1 자리로 보이는데 오지 않았다. 다음 배치에서 오는지 확인이 필요하다.
+  - **`arith-q-add-7-3`은 스크립트상 내레이션 자리다.** 이 배치가 주인공 목소리면 그 한 문항만 화자가 바뀐다(45번 원본은 Take22 `일곱 개에서…`였고 이번 파일명은 `7개에서…`라 읽기 교정본으로 보인다). 사용자 확인 대상.
+  - 화면 텍스트와 녹음 문구가 글자만 다른 자리 1곳: 화면 `1통에 모양을 10개씩` → 녹음 `한통에`. 읽으면 같은 소리라 화면은 그대로 뒀다.

@@ -72,7 +72,9 @@ complete.md           완료된 항목 보관소(todo.md에서 옮겨온 것)
 | 타자 입력기(키패드) | `keypad-panel` / `keypadInput` / `keypadPress` / `keypad-pressing` / `keypadDisplayTick` — 누름 피드백과 표시 틱 포함 | **이식 완료.** 08의 세 키패드가 `buildKeypad` 하나를 공유하고 `[←] [0] [확인]` 배치·누름 피드백·표시 틱을 갖는다. 키 높이만 78px 유지 |
 | 화면 전환 | `#app`의 `stage-fade-out` / `stage-fade-in`, `data-transition="slide"`(`stageSlideOutRight` / `stageSlideInRight`) | **이식 완료.** 08은 정적 씬 구조라 `#app` 대신 `.scene`에 걸고 `#stage[data-transition="slide"]`로 옵트인 |
 | 타이틀 로고 | `assets/ui/title-logo.webp` (별도 로고 에셋) | `assets/colorful-school-wall-title.png` |
-| 커서 / 힌트 | `assets/ui/mouse-pointer.webp`, `hint-arrow-green.webp`, `coach-face.webp` | `tap-hint-hand.png` |
+| 커서 | `assets/ui/mouse-pointer.webp` + `#cursor`/`.cursor-image` + `*{cursor:none}` | **이식 완료(88번).** 에셋은 01 파일을 그대로 복사(`assets/mouse-pointer.webp`, 08은 평면 구조). 값은 `getComputedStyle` 실측이고 **배율을 곱하지 않았다**(스테이지 밖 `position:fixed`) |
+| 힌트 | `hint-arrow-green.webp`, `coach-face.webp` | `tap-hint-hand.png` |
+| 키 누름 효과음 | `playButtonSelectSfx()` → **Web Audio 합성 `tick`**(C5→E5 90ms). `assets/audio/sfx/button-select.mp3`는 Web Audio가 없을 때만 쓰는 폴백이다 | **이식 완료(95번).** `ensureSynthCtx`/`synthTone`/`SFX_SYNTH.tick`/`playButtonSelectSfx`를 같은 이름으로 옮기고 `buildKeypad`의 onclick에 걸었다. **에셋은 복사하지 않았다** — 파일을 가져오면 01에서 실제로 들리는 소리와 달라진다 |
 
 공통 UI를 옮길 때는 **1-2/01의 구현을 먼저 읽고 그 클래스명·구조·애니메이션 이름을 그대로 가져온다.** 비슷하게 새로 만들지 않는다. 나중에 두 차시를 함께 손볼 때 같은 이름으로 찾을 수 있어야 한다.
 

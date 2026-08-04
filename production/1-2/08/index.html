@@ -20,6 +20,8 @@
   <link rel="preload" as="image" href="assets/activity-cta-body.webp">
   <link rel="preload" as="image" href="assets/completion-cta-body.webp">
   <link rel="preload" as="image" href="assets/tap-hint-hand.webp">
+  <!-- 88: 이미지 커서. 늦게 오면 첫 마우스 이동에서 커서가 사라져 보인다(*{cursor:none}이 이미 걸려 있다) -->
+  <link rel="preload" as="image" href="assets/mouse-pointer.webp">
   <style>
     :root{
       /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
@@ -152,25 +154,31 @@
     .course-menu-burger i{display:block;height:2.5px;border-radius:2px;background:currentColor}
     .course-menu-overlay{position:absolute;inset:0;z-index:var(--z-drawer);display:flex;align-items:stretch;justify-content:flex-start;background:rgba(20,12,4,0);visibility:hidden;pointer-events:none;transition:background .24s ease,visibility 0s linear .28s}
     .course-menu-overlay.is-open{background:rgba(20,12,4,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);visibility:visible;pointer-events:auto;transition:background .24s ease,visibility 0s}
-    .course-menu-panel{display:flex;flex-direction:column;width:562px;height:100%;max-height:100%;overflow:auto;border:0;border-right:4px solid #6a3d16;border-radius:0;background:linear-gradient(180deg,#fff7e6,#f6e4c0);box-shadow:20px 0 51px rgba(20,12,4,.34),inset 0 1px 0 rgba(255,255,255,.7);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+    .course-menu-panel{display:flex;flex-direction:column;width:min(400px,40cqw);height:100%;max-height:100%;overflow:auto;border:0;border-right:3px solid #6a3d16;border-radius:0;background:linear-gradient(180deg,#fff7e6,#f6e4c0);box-shadow:14px 0 36px rgba(20,12,4,.34),inset 0 1px 0 rgba(255,255,255,.7);transform:translateX(-100%);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
     .course-menu-overlay.is-open .course-menu-panel{transform:translateX(0)}
-    .course-menu-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 28px;border-bottom:3px solid rgba(106,61,22,.24);position:sticky;top:0;background:linear-gradient(180deg,#fff7e6,#fdf0d6)}
-    .course-menu-grade{font-size:28px;font-weight:900;color:#5a3512}
-    .course-menu-close{width:42px;height:42px;flex-shrink:0;border:3px solid rgba(106,61,22,.5);border-radius:13px;background:rgba(255,255,255,.6);color:#5a3512;font-size:28px;line-height:1;font-weight:900;cursor:pointer}
+    .course-menu-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:clamp(8px,1cqh,12px) clamp(14px,1.6cqw,20px);border-bottom:2px solid rgba(106,61,22,.24);position:sticky;top:0;background:linear-gradient(180deg,#fff7e6,#fdf0d6)}
+    .course-menu-grade{font-size:clamp(13px,2.7cqh,20px);font-weight:900;color:#5a3512}
+    /* 92: × 를 버튼 중앙에 두려면 `display:grid;place-items:center;padding:4px 0 0`가 셋 다 필요하다(01에서 이식할 때 셋 다 없었다).
+       가로 — UA 기본 `padding:1px 6px` + border-box면 콘텐츠 폭이 30−4−12 = 14px인데 × 의 advance는 20px이다.
+       글자가 콘텐츠 박스보다 넓으면 text-align:center가 음수 오프셋을 못 내고 오른쪽으로 흘러넘친다.
+       세로 — 버튼은 라인박스만 중앙에 놓는데 Jua의 × 는 잉크 중심이 라인박스 중심보다 위에 있다(28px에서 2.5px, 20px에서 1.8px).
+       상단 패딩이 콘텐츠 중심을 그 절반만큼 내려 상쇄한다. **서체·박스·글자 크기 중 하나라도 바꾸면 이 값을 다시 잰다**
+       (`node tmp/measure-menu-close.js` — 잉크 bbox 기준, 라인박스 rect로는 못 잡는다). 93번으로 42px → 01과 같은 30px이 되며 5px → 4px이 됐다. */
+    .course-menu-close{width:30px;height:30px;flex-shrink:0;display:grid;place-items:center;padding:4px 0 0;border:2px solid rgba(106,61,22,.5);border-radius:9px;background:rgba(255,255,255,.6);color:#5a3512;font-size:20px;line-height:1;font-weight:900;cursor:pointer}
     .course-menu-close:hover{background:#fff}
-    .course-menu-list{display:flex;flex-direction:column;gap:10px;padding:18px 22px}
-    .course-menu-item{display:flex;align-items:center;gap:21px;width:100%;text-align:left;padding:13px 22px;border:3px solid rgba(106,61,22,.28);border-radius:18px;background:rgba(255,255,255,.55);color:#40260f;font-weight:900;cursor:pointer;transition:transform .14s ease,background .14s ease,border-color .14s ease}
+    .course-menu-list{display:flex;flex-direction:column;gap:clamp(2px,.55cqh,7px);padding:clamp(6px,1.1cqh,13px) clamp(12px,1.4cqw,16px)}
+    .course-menu-item{display:flex;align-items:center;gap:clamp(10px,1.2cqw,15px);width:100%;text-align:left;padding:clamp(3px,.7cqh,9px) clamp(12px,1.3cqw,16px);border:2px solid rgba(106,61,22,.28);border-radius:13px;background:rgba(255,255,255,.55);color:#40260f;font-weight:900;cursor:pointer;transition:transform .14s ease,background .14s ease,border-color .14s ease}
     .course-menu-item:hover:not(:disabled){background:#fff;border-color:rgba(106,61,22,.55);transform:translateY(-1px)}
-    .course-menu-no{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:48px;height:48px;border-radius:var(--r-circle);background:linear-gradient(180deg,#ffdf8f,#efb14e);border:3px solid #8a5320;color:#4a2b12;font-size:25px;font-weight:900}
-    .course-menu-title{flex:1 1 auto;min-width:0;font-size:25px;line-height:1.22;word-break:keep-all;overflow-wrap:break-word}
-    .course-menu-now{flex-shrink:0;padding:3px 13px;border-radius:var(--r-pill);background:#e5482f;color:#fff;font-size:20px;font-weight:900;box-shadow:0 3px 8px rgba(180,40,20,.4)}
-    .course-menu-soon{flex-shrink:0;padding:3px 13px;border-radius:var(--r-pill);background:rgba(90,53,18,.14);color:#7a5124;border:1px dashed rgba(106,61,22,.5);font-size:20px;font-weight:900}
-    .course-menu-item.is-current{background:linear-gradient(180deg,#fff3d0,#ffe3a6);border-color:#d98a2b;box-shadow:0 0 0 3px rgba(217,138,43,.35),0 6px 14px rgba(120,70,20,.18);cursor:default}
+    .course-menu-no{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:clamp(18px,4.3cqh,34px);height:clamp(18px,4.3cqh,34px);border-radius:var(--r-circle);background:linear-gradient(180deg,#ffdf8f,#efb14e);border:2px solid #8a5320;color:#4a2b12;font-size:clamp(12px,2.4cqh,18px);font-weight:900}
+    .course-menu-title{flex:1 1 auto;min-width:0;font-size:clamp(12px,2.4cqh,18px);line-height:1.22;word-break:keep-all;overflow-wrap:break-word}
+    .course-menu-now{flex-shrink:0;padding:2px 9px;border-radius:var(--r-pill);background:#e5482f;color:#fff;font-size:clamp(10px,2cqh,14px);font-weight:900;box-shadow:0 2px 6px rgba(180,40,20,.4)}
+    .course-menu-soon{flex-shrink:0;padding:2px 9px;border-radius:var(--r-pill);background:rgba(90,53,18,.14);color:#7a5124;border:1px dashed rgba(106,61,22,.5);font-size:clamp(10px,2cqh,14px);font-weight:900}
+    .course-menu-item.is-current{background:linear-gradient(180deg,#fff3d0,#ffe3a6);border-color:#d98a2b;box-shadow:0 0 0 2px rgba(217,138,43,.35),0 4px 10px rgba(120,70,20,.18);cursor:default}
     .course-menu-item.is-locked{opacity:.72;cursor:default}
     .course-menu-item.is-locked .course-menu-no{background:rgba(120,95,60,.25);border-color:rgba(106,61,22,.4);color:#7a5124}
     .course-menu-item.is-locked .course-menu-title{color:#8a6a40}
-    .course-menu-foot{margin-top:auto;position:sticky;bottom:0;padding:18px 22px;border-top:3px solid rgba(106,61,22,.24);background:linear-gradient(180deg,#fdf0d6,#f6e4c0)}
-    .course-menu-home{width:100%;padding:15px 0;border:3px solid rgba(106,61,22,.45);border-radius:17px;background:rgba(255,255,255,.7);color:#5a3512;font-size:24px;font-weight:900;cursor:pointer;transition:background .14s ease,transform .14s ease}
+    .course-menu-foot{margin-top:auto;position:sticky;bottom:0;padding:clamp(8px,1.1cqh,13px) clamp(12px,1.4cqw,16px);border-top:2px solid rgba(106,61,22,.24);background:linear-gradient(180deg,#fdf0d6,#f6e4c0)}
+    .course-menu-home{width:100%;padding:clamp(6px,1cqh,11px) 0;border:2px solid rgba(106,61,22,.45);border-radius:12px;background:rgba(255,255,255,.7);color:#5a3512;font-size:clamp(12px,2.4cqh,17px);font-weight:900;cursor:pointer;transition:background .14s ease,transform .14s ease}
     .course-menu-home:hover{background:#fff;transform:translateY(-1px)}
     .header-voice-volume-button{position:relative;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex:0 0 34px;padding:0;border:1px solid rgba(21,158,184,.28);border-radius:var(--r-pill);background:rgba(255,255,255,.5);color:#0b9ec1;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 2px 7px rgba(28,105,122,.1);transition:transform .15s ease,background .15s ease,box-shadow .15s ease}
     .header-voice-volume-button:hover{transform:translateY(-1px);background:rgba(232,250,255,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px rgba(28,105,122,.14)}
@@ -246,11 +254,11 @@
     /* 56: 씬5 제목도 너무 위에 붙어 있었다(62~202, 상단 바 바로 아래).
        내리는 것을 막던 것은 도입 대사 말풍선(#drawingSpeech, 공용 기본값 top:220)이다 —
        x가 1158~1531이라 제목 오른쪽 끝(1280)과 겹쳐, 제목만 내리면 말풍선이 제목을 덮는다.
-       제목 +48(110~250) · 말풍선 +50(270~427)로 함께 내려 20px 간격을 둔다.
-       말풍선은 **이 씬만** 오버라이드한다(15번 — 씬별로 바꿔도 되는 것은 앵커 좌표뿐이다).
+       제목 +48(110~250) · 말풍선 +50(270~427)로 함께 내려 20px 간격을 뒀었다.
+       83: 말풍선 오버라이드(`--speech-anchor-top:270px`)는 없앴다 — 얼굴 앵커(어른 492)가 제목 아래(250)보다
+       한참 낮아 이 씬만 따로 내릴 이유가 사라졌다. 제목 좌표는 그대로 둔다.
        그리기 단계에는 대사가 내려가므로 캔버스(320~860)와는 애초에 같이 뜨지 않는다. */
     #drawingTitleImage{top:110px;height:140px}
-    #drawingSpeech{--speech-anchor-top:270px}
     .completion-title-banner{left:470px;top:220px}
     /* 01 시작하기 CTA 실측값(1366 기준 547×64, 27px/31.86) × 1.4056 이식. 서체는 01과 같은 Jua */
     #introStart{position:relative;overflow:hidden;width:769px;min-width:0;min-height:82px;margin-top:19px;padding:18px 48px 21px;display:flex;align-items:center;justify-content:center;border:3px solid var(--cta-amber-edge);border-radius:var(--r-pill);background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.14) 34%,rgba(255,255,255,0) 52%),linear-gradient(180deg,var(--cta-amber-1) 0%,var(--cta-amber-2) 36%,var(--cta-amber-3) 72%,var(--cta-amber-4) 100%);font-family:var(--font-title);font-size:38px;line-height:1.18;color:var(--brown-800);text-shadow:0 1px 0 rgba(255,253,230,.95);box-shadow:inset 0 4px 0 rgba(255,255,255,.56),inset 0 -6px 0 rgba(120,53,15,.12),0 6px 0 rgba(120,53,15,.28),0 11px 31px rgba(66,32,6,.18);animation:ctapulse 2s ease-in-out infinite}
@@ -283,32 +291,59 @@
     .speech::before,.speech::after{content:'';position:absolute;top:50%;width:0;height:0;border-style:solid;border-color:transparent}
     .speech::before{border-width:17px}
     .speech::after{border-width:14px}
-    /* 57: 세로 앵커는 **씬 기준값(--speech-anchor-top) + 아이 보정(--speech-child-drop)** 두 항의 합이다.
-       씬별 오버라이드는 기준값만 바꾸고 top을 직접 쓰지 않는다 — 예전처럼 #arithSpeech{top:350px}로 적으면
-       ID 명시도가 아래 인접 형제 선택자를 이겨 그 씬에서만 아이 보정이 통째로 죽는다. */
-    .speech{--speech-anchor-top:220px}
-    .speech.left-speaker{left:390px;top:calc(var(--speech-anchor-top) + var(--speech-child-drop,0px))}
+    /* 83: 세로 앵커는 **얼굴 중심 y(--speech-face-y)** 하나다. `top`으로 상자 윗변을 잡던 57번 방식을 갈아엎었다.
+       57번은 기준점이 "머리 꼭대기"였고 앵커가 **상자 윗변**이었다 — 꼬리는 `::before{top:50%}`(상자 세로 중심)라
+       대사 줄 수가 늘면 상자가 아래로 자라 꼬리가 그만큼 내려간다. 같은 씬 안에서도 beat마다 높이가 달라졌다.
+       지금은 `top:var(--speech-face-y)` + `translate:0 -50%`로 **상자 세로 중심 = 꼬리 = 얼굴**을 고정한다.
+       대사가 길어지면 상자가 위아래로 **같이** 자라므로 꼬리는 그대로 얼굴에 남는다.
+       **`transform:translateY(-50%)`로 적지 않는다** — speechPop이 `transform:scale()`을 애니메이션해서 덮어쓴다
+       (377행 `.narration-advance` 주석이 적어 둔 것과 같은 함정). `translate`는 독립 속성이라 `transform`과 합성된다.
+       얼굴 중심 실측(`tmp/measure-face.js` — 알파 행 폭 프로파일에서 머리 꼭대기 → 목 국소 최소를 잡고 중점):
+         어른 worker-idle .132 / worker-explaining .146 / worker-apologizing .137 / teacher-idle .137 /
+              teacher-explaining .137 / teacher-praising .135   (원본 1024x1536 높이 대비 비율)
+         아이 student-idle .215 / student-thinking .213 / student-volunteer .212   (93번 재실측. idle만 .214 → .215, 렌더 0.6px이라 707 유지)
+       `.character.left/.right`(440x720, bottom −12) 환산 → contain 렌더 y 402~1062 → **어른 얼굴 y 489~498, 대표 492**.
+       아이는 `--char-scale:.7`이라 렌더 y 609~1071 → **얼굴 y 707**. 씬별 오버라이드도 이 변수만 바꾼다. */
+    .speech{--speech-face-y:492px;--speech-side-x:390px}
+    .speech.left-speaker{left:var(--speech-side-x);top:var(--speech-face-y);translate:0 -50%}
     .speech.left-speaker::before{left:-34px;transform:translateY(-17px);border-right-color:var(--bubble-line)}
     .speech.left-speaker::after{left:-22px;transform:translateY(-14px);border-right-color:var(--bubble-bg)}
-    .speech.right-speaker{right:390px;top:calc(var(--speech-anchor-top) + var(--speech-child-drop,0px))}
+    .speech.right-speaker{right:var(--speech-side-x);top:var(--speech-face-y);translate:0 -50%}
     .speech.right-speaker::before{right:-34px;transform:translateY(-17px);border-left-color:var(--bubble-line)}
     .speech.right-speaker::after{right:-22px;transform:translateY(-14px);border-left-color:var(--bubble-bg)}
     /* 42-c: 인물 **위**에서 아래로 꼬리를 내리는 변형. 1-2/01의 하단 변형과 같은 2겹 구조다.
        옆 변형을 쓸 수 없는 자리에서 쓴다 — 씬4는 인물(x 1569~1820) 왼쪽이 전부 문제 패널이라
        얼굴 높이에 옆으로 붙이면 말풍선이 보기 버튼을 덮는다.
        꼬리 오프셋은 옆 변형과 같은 계산이다(::before 테두리 17 → 34, ::after 14 → 22, 가로 중심 보정 +3). */
-    /* 38: 아이가 70%로 줄면 알파 bbox도 줄어 꼬리가 인물 밖(하늘)을 가리킨다 — 27번이 고친 것과 같은 결함이다.
-       대사 말풍선은 전부 캐릭터 <img> **바로 다음 형제**라 인접 형제 선택자로 앵커만 옮길 수 있다(JS 불필요).
-       실측(원본 1024x1536 알파 비율 → object-fit:contain 후 stage 좌표, 폭 440 → 308):
-         .left  student-thinking x 124~268 / student-idle x 149~284  → 꼬리 끝 246이 둘 다 안쪽 (left 390 → 280)
-         .right student-volunteer x 1612~1785 / student-idle x 1647~1785 → 꼬리 끝 1704 (right 390 → 250)
-       15번 규칙대로 **바꾸는 것은 앵커 좌표뿐이다** — 폭·패딩은 건드리지 않는다. */
-    /* 57: 38번은 가로만 보정해 아이 말풍선이 어른 기준 높이에 그대로 떠 있었다.
-       실측(애니메이션 정지 후 알파 bbox) — 머리 꼭대기 어른 worker-explaining 440 · teacher-explaining 434,
-       아이 student-thinking 646 · student-volunteer 643 · student-idle 640 → 차이 200~209px.
-       중간값 205px을 내려 어른 beat와 같은 "머리 ↔ 말풍선" 관계를 만든다. */
-    .character[src*="student-"].left + .speech.left-speaker{left:280px;--speech-child-drop:205px}
-    .character[src*="student-"].right + .speech.right-speaker{right:250px;--speech-child-drop:205px}
+    /* 83(57 대체): 38번은 가로만 보정해 아이 말풍선이 어른 높이에 떠 있었다. 57번은 "머리 꼭대기 차이 205px"로
+       내렸지만 기준점이 머리였다 — 지금은 아이 얼굴 중심 **707px**을 그대로 준다(어른 492 대비 +215). */
+    .character[src*="student-"] + .speech{--speech-face-y:707px}
+    /* 85(38 대체): 가로 앵커는 **말풍선이 실제로 걸리는 y 밴드 안 실루엣 가장자리 + 60px**이다.
+       38번은 "꼬리 끝이 **전신** 알파 bbox 안에 들어오는가"만 봤다. 전신 bbox는 들어올린 팔·벌린 발까지
+       포함한 좌우 끝이라 얼굴 높이의 실루엣과 다르고, 그래서 **상자가 인물 위로 올라타는 것을 못 잡았다** —
+       `student-volunteer`.right는 말풍선 오른쪽 끝 1670이 실루엣 시작 1612를 **58px 파고들어** 든 팔을 덮었다.
+       밴드는 얼굴 중심 ± 말풍선 최대 반높이(121px = 4줄 242px의 절반)이고, 그 안에서 다시 쟀다(`tmp/measure-side.js`).
+       실루엣이 에셋마다 75px까지 차이 나므로(worker-apologizing 301 ↔ worker-explaining 376) **묶어서 한 값을 줄 수 없다** —
+       한 값으로 맞추면 좁은 인물에서 꼬리가 100px 넘게 떠 "누가 말하는지" 신호가 끊긴다. 그래서 에셋·방향별로 준다.
+       `left`/`right`를 직접 쓰지 않고 변수(`--speech-side-x`)로 주는 이유는 57번 교훈이다 — 명시도 싸움이 붙지 않는다.
+         밴드 안 실루엣(stage) → 앵커 = 실루엣 ∓ 60
+         .left  worker-apologizing …301 → 361 / worker-explaining …376 → 436
+                student-thinking …258 → 318 / student-idle …287 → 347
+         .right teacher-explaining 1556… → 424 / teacher-praising 1624… → 356
+                student-volunteer 1612… → 368 / student-idle 1652… → 328
+       꼬리는 34px이라 실루엣까지 26px을 남기고 멈춘다 — 가리키되 덮지 않는다.
+       **인물 에셋을 바꾸거나 `--char-scale`을 건드리면 이 표를 다시 잰다.**
+       93: 아이 3종을 페인터 버전(롤러 + 멜빵 얼룩)으로 교체하고 재실측했다. 값이 1~4px만 움직인 것은
+       **롤러를 내린 손에 아래로 들려 밴드(얼굴 중심 ±402px 원본 기준) 밖에 두었기 때문**이다.
+       1차 시안처럼 롤러를 어깨 높이로 세우면 밴드 안으로 들어와 이 표가 크게 흔들린다. */
+    .character[src*="worker-apologizing"].left + .speech{--speech-side-x:361px}
+    .character[src*="worker-explaining"].left + .speech{--speech-side-x:436px}
+    .character[src*="student-thinking"].left + .speech{--speech-side-x:318px}
+    .character[src*="student-idle"].left + .speech{--speech-side-x:347px}
+    .character[src*="student-idle"].right + .speech{--speech-side-x:328px}
+    .character[src*="student-volunteer"].right + .speech{--speech-side-x:368px}
+    .character[src*="teacher-explaining"].right + .speech{--speech-side-x:424px}
+    .character[src*="teacher-praising"].right + .speech{--speech-side-x:356px}
     .speech.top-speaker::before,.speech.top-speaker::after{top:auto;transform:none}
     .speech.top-speaker::before{right:60px;bottom:-34px;border-top-color:var(--bubble-line)}
     .speech.top-speaker::after{right:63px;bottom:-22px;border-top-color:var(--bubble-bg)}
@@ -364,6 +399,8 @@
        여기에 border-color를 다시 넣으면 사각 테두리가 되살아난다. */
     .hotspot{position:absolute;z-index:var(--z-interactive);border:0;background:var(--clear);border-radius:var(--r-md);cursor:pointer}
     .hotspot.current-target{z-index:var(--z-effect)}
+    /* 91: left/top은 positionHotspotNumber()가 px로 덮는다(핫스팟 박스 중심이 아니라 사물 그림의 도형 중심).
+       여기 50%는 JS가 아직 안 돈 순간의 폴백일 뿐이다 — 자리를 옮기려면 findObjects의 numberAnchor를 고친다. */
     .hotspot-number{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:72px;height:72px;border-radius:var(--r-circle);background:var(--accent);color:var(--ink);font-size:var(--fs-xl);font-weight:900;filter:var(--ds-sm);pointer-events:none}
     .search-prompt{position:absolute;left:50%;top:90px;z-index:var(--z-speech);transform:translateX(-50%);min-width:780px;padding:20px 36px;text-align:center;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-pill);box-shadow:var(--shadow);font-size:var(--fs-xl);font-weight:900}
     #shapeSearch{position:absolute;inset:0;z-index:var(--z-interactive);cursor:crosshair}
@@ -455,14 +492,20 @@
     .paint-can.empty{opacity:.5;filter:var(--ds-sm) grayscale(.6) brightness(.94);transform:rotate(-9deg)}
     .paint-can.arriving{animation:pop var(--dur) var(--ease-back) both}
     /* 82: "이것을 페인트라고 해요"가 말하는 대상을 그 대사 순간에 지목한다.
-       투명 raster라 사각 링(box-shadow)은 통 둘레가 아니라 빈 박스를 그린다 → 알파를 따라가는 drop-shadow 글로우로 낸다.
        등장(pop)과 같은 순간에 켜지면 animation 속성이 통째로 덮여 하나만 남으므로, 둘이 겹칠 때는
-       한 줄에 이어 쓰고 글로우를 pop 길이만큼 미룬다(등장 → 강조 순서로 읽힌다). */
+       한 줄에 이어 쓰고 강조를 pop 길이만큼 미룬다(등장 → 강조 순서로 읽힌다). */
     .paint-can.spotlight{transform-origin:bottom center;animation:canSpotlight var(--dur-slow) var(--ease) 3}
     .paint-can.arriving.spotlight{animation:pop var(--dur) var(--ease-back) both,canSpotlight var(--dur-slow) var(--ease) var(--dur) 3}
-    /* 글로우만으로는 크림색 담장 위에서 약하다(정점 프레임 실측). 같은 박자의 크기 펄스를 얹어 움직임으로 읽히게 한다.
+    /* 86: 노란 글로우(--filter-glow-lg)를 뺐다 — 74번(손가락 힌트)과 같은 판단이다.
+       (a) 크림색 담장 위에서 #ffe86a는 대비가 거의 없어 색으로 안 읽히고 뿌연 번짐만 남는다.
+       (b) "굵고 깔끔한 외곽선 + 플랫 셰이딩" 화풍에 soft bloom은 이질적이다.
+       82번 실측이 이미 "글로우만으로는 안 보여 크기 펄스를 얹었다"였으므로 **일하던 신호는 처음부터 펄스**다.
+       빠진 몫은 펄스를 1.07 → 1.10으로 키워 메운다.
+       keyframe에서 filter를 없앤 것은 부수 효과가 아니라 이득이다 — drop-shadow 애니메이션은 매 프레임 리페인트를
+       부르는데 이제 transform만 남아 컴포지팅으로 돈다. 기본 그림자 --ds-md는 .paint-can이 상시로 갖고 있어
+       여기서 다시 선언할 필요가 없다(예전 0%/50% 양쪽의 var(--ds-md)는 filter를 덮어쓰지 않으려는 것이었다).
        origin이 bottom인 것은 통이 땅에 놓여 있어서다 — 가운데를 기준으로 키우면 통이 떠오른다. */
-    @keyframes canSpotlight{0%,100%{filter:var(--ds-md);transform:scale(1)}50%{filter:var(--ds-md) var(--filter-glow-lg);transform:scale(1.07)}}
+    @keyframes canSpotlight{0%,100%{transform:scale(1)}50%{transform:scale(1.10)}}
     /* 40: "페인트 색깔마다 모양이 달라요"가 말하는 색↔모양 대응을 화면에 만든다.
        도형 3개 가로 배치 + 색 없는 통 하나(오른쪽 #paintCan)에서 **도형 위 / 같은 색 통 아래**의 세로 짝 3벌로 바꾼다.
        28번의 .work-area{top:338px;height:570px}는 #countShapes·#arithShapes와 공유하므로 건드리지 않고
@@ -488,6 +531,30 @@
     .classroom-student{position:absolute;z-index:var(--z-scenery);left:1080px;bottom:129px;width:300px;height:494px;object-fit:contain;filter:var(--ds-lg);pointer-events:none}
     /* 23: 대사가 끝난 뒤 등장하므로 다른 캐릭터와 같은 진입 모션을 준다 */
     .classroom-student.student-enter{animation:characterEnter var(--dur-scene-in) var(--ease) both}
+    /* 84: 오프닝 대사 인물(#shapeCharacter)만 무대 바닥이 아니라 **교실 배경의 마루면**에 앵커한다.
+       `.on-floor`는 renderShapeDialogue()가 붙인다 — 이 씬은 한 인물(#shapeCharacter)이 배경을 갈아 끼우며
+       세 단계(오프닝=교실 / paint-intro·아웃트로=담장)를 다 쓰기 때문에, 교실 배경인 오프닝에만 걸어야 한다.
+       담장 단계의 지면은 씬3과 같은 무대 바닥이므로 공용 bottom:-12px를 그대로 둔다(64번과 같은 짝 구조).
+       공용 .character{bottom:-12px}는 무대 바닥 기준이라 발끝이 stage y 1022(아이)·1027(교사)에 오는데,
+       그 높이는 이 배경에서 책상 상판·의자 구간(뒷모서리 901 · 앞모서리 979~985)이라 책상을 밟고 선 그림이 된다.
+       사람이 설 수 있는 면은 벽·바닥 경계(818)와 책상 뒷모서리(901) 사이의 통로뿐이므로,
+       이미 그 통로에 서 있는 .classroom-student와 같은 **발끝 stage y≈880**에 맞춘다.
+       값이 두 벌인 것은 알파 bbox 하단 비율이 인물마다 다르기 때문이다(아이 0.892~0.896 / 교사 0.947).
+         아이  박스 308x504 → contain 308x462(상하 여백 21) → 발끝 = 1009 - bottom → bottom 129
+         교사  박스 440x720 → contain 440x660(상하 여백 30) → 발끝 = 1015 - bottom → bottom 135
+       **다른 씬은 그대로다** — 38번의 "bottom은 건드리지 않는다(발끝이 같은 바닥선에 남아야 키 차이로 읽힌다)"는
+       무대 바닥을 지면으로 쓰는 씬(1·3·5)에서 유효하고, 지면이 그려진 이 교실 배경에서만 예외다.
+       인물 좌표·크기·에셋을 바꾸면 두 값을 다시 잰다. */
+    #shapeCharacter.on-floor{bottom:129px}
+    #shapeCharacter.on-floor[src*="teacher-"]{bottom:135px}
+    /* 84 ↔ 83: 인물이 141(아이)·147(교사)px 올라간 만큼 **얼굴 중심도 같이 올라간다.**
+       83번의 `--speech-face-y`(어른 492 / 아이 707)는 `bottom:-12`(무대 바닥)를 전제로 계산된 값이라
+       발끝을 옮긴 이 씬 오프닝에서는 그대로 못 쓴다. 같은 공식(박스 top + contain 여백 + 얼굴 비율 × 렌더 높이)에
+       옮긴 bottom을 넣어 다시 잰다 — 교사 225+30+0.137×660 = **345**, 아이 447+21+0.213×462 = **566**.
+       `.on-floor`가 붙은 beat에만 걸리므로 담장 단계(paint-intro·아웃트로)는 공용값 492를 그대로 쓴다.
+       **#shapeCharacter의 bottom을 바꾸면 이 두 값도 같은 폭으로 함께 움직인다.** */
+    #shapeCharacter.on-floor + #shapeSpeech{--speech-face-y:345px}
+    #shapeCharacter.on-floor[src*="student-"] + #shapeSpeech{--speech-face-y:566px}
     .keypad-wrap{position:absolute;z-index:var(--z-interactive);right:105px;top:245px;width:510px;padding:26px;background:var(--veil);border:5px solid var(--surface);border-radius:var(--r-md);box-shadow:var(--shadow)}
     .answer-display{height:96px;display:grid;place-items:center;margin-bottom:18px;border:4px solid var(--ink);border-radius:var(--r-md);background:var(--white);font-size:var(--fs-2xl);font-weight:900}
     .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}
@@ -606,7 +673,15 @@
        가로 패딩을 108 → 64로 줄이면 글 폭이 1172가 되어, 글자를 사다리 한 단계 올려도(--fs-sm 37 → --fs-md 41)
        가장 긴 beat가 334px로 크림 면 346px 안에 들어간다(실측). **카드 크기와 .sign-row는 건드리지 않는다.**
        align-content:center로 짧은 beat도 크림 면 세로 가운데에 온다. */
-    .story-card{position:absolute;left:310px;bottom:-115px;z-index:var(--z-speech);width:1300px;height:600px;padding:101px 64px 153px;display:grid;grid-auto-flow:row;align-content:center;background:var(--clear) url('assets/story-roadside-info-board.webp') center center/100% 100% no-repeat;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-md);font-weight:800;line-height:1.35;text-align:center;white-space:pre-line;cursor:pointer;filter:var(--ds-md)}
+    /* 90: `다음 ▸`는 **글 흐름에서 빼내 크림 면 우하단에 고정**한다.
+       beat가 1줄(`무슨 표지판일까요?`)과 4줄(설명)로 번갈아 나오는데 글+버튼이 한 덩어리로 세로 중앙에 오다 보니
+       버튼 y가 284~330 ↔ 366~413으로 **82px 튀었다**(실측). 진행 컨트롤은 콘텐츠 길이에 따라 움직이면 안 된다.
+       앵커는 크림 면의 오른쪽·아래 모서리(x 1236 = 1300−64 · y 447 = 600−153)이고,
+       `bottom`/`right`는 카드 **패딩 박스**(테두리가 없어 1300x600) 기준이라 아래 padding을 늘려도 버튼은 안 움직인다.
+       padding-bottom을 153 → 212(= 153 + 버튼 47 + 여백 12)로 늘려 **버튼 자리만큼 글 영역을 줄인다** —
+       안 줄이면 가장 긴 beat(글 207px)가 버튼 위 22px까지 내려와 붙는다. 가로 앵커는 종전(flex-end)과 같은 값이다. */
+    .story-card{position:absolute;left:310px;bottom:-115px;z-index:var(--z-speech);width:1300px;height:600px;padding:101px 64px 212px;display:grid;grid-auto-flow:row;align-content:center;background:var(--clear) url('assets/story-roadside-info-board.webp') center center/100% 100% no-repeat;border:0;border-radius:var(--r-none);box-shadow:var(--shadow-none);font-size:var(--fs-md);font-weight:800;line-height:1.35;text-align:center;white-space:pre-line;cursor:pointer;filter:var(--ds-md)}
+    .story-card .repair-bubble-nav{position:absolute;right:64px;bottom:153px;width:auto;margin-top:0}
     .completion-actions{position:absolute;z-index:var(--z-interactive);left:50%;bottom:85px;transform:translateX(-50%);display:flex;gap:22px;align-items:center}
     .completion-actions .cta{min-width:380px}
     .spark{position:absolute;z-index:var(--z-effect);width:24px;height:24px;background:var(--accent);border-radius:var(--r-circle);filter:var(--filter-glow-md);animation:sparkle var(--dur-slow) var(--ease-back) infinite alternate}
@@ -619,7 +694,9 @@
        뺄셈 3문항(school-wall-second)에서만 +62 내려 3행(현행 최대)이 면 한가운데(y 442~912)에 오게 한다.
        **개수로 다시 계산하지 않는다** — 46번대로 앵커는 고정이고, 10개(2행)여도 첫 줄 y는 그대로다. */
     #arithShapes[data-wall="second"]{top:416px}
-    #arithSpeech{--speech-anchor-top:350px}
+    /* 83: 이 씬만 쓰던 `--speech-anchor-top:350px`를 없앴다. 상자 윗변 기준이라 남겨 두면 얼굴 정렬을 이긴다.
+       세로는 공용 얼굴 앵커(어른 492 / 아이 707)를 그대로 쓴다 — 도형 박스(top 354~)와 겹치지만
+       대사 beat와 도형이 동시에 뜨는 자리는 없다(인트로는 #arithShapes hidden, 문항 preBeats는 도형 위 대사가 의도다). */
     #section_random_problems .shade{opacity:.1}
     /* 29-b: 도형과 문제를 한 화면에 같이 둔다. 예전에는 #randomShapes(left 290/top 250/1340x560)와
        #randomPanel(left 245/top 205/1040x700)이 완전히 겹쳐 있어서 연출 동안 패널을 visibility:hidden으로
@@ -724,10 +801,14 @@
        이제 .left-speaker 꼬리 + .repair-narr-next를 함께 쓴다.
        27: 앵커를 요소 박스(x 80~440)가 아니라 **object-fit:contain 후 실제 알파 bbox** 기준으로 다시 잡았다.
        teacher-praising.webp의 보이는 인물은 stage x 236~356 / y 548~1037이다. 박스 오른쪽 84px이 투명이라
-       박스 기준(500)으로 피하면 인물에서 110px 떠 보였다. left 380 → 꼬리 x 346이 인물 x 범위 안에 들어가고,
-       top 470 → 꼬리 y가 머리(548) 높이에 온다.
+       박스 기준(500)으로 피하면 인물에서 110px 떠 보였다.
+       85: `left:380`(꼬리가 인물 안으로 파고드는 값)에서 **416**으로 물렸다. 이 슬롯(360x590/left 80)에서
+       teacher-praising의 밴드 안 실루엣 오른쪽 끝은 x 356이므로 다른 대사 말풍선과 같은 +60 규칙을 따른다.
+       83: 세로는 `top:470`(머리 높이)에서 **얼굴 중심 y 598**로 바꿨다 — 이 슬롯은 360x590/bottom −10이라
+       contain 렌더가 y 525~1065이고 teacher-praising 얼굴 비율 .1348 → 525 + 540×.1348 = 598이다.
+       `.speech.left-speaker`가 주는 `translate:0 -50%`를 그대로 받으므로 여기서는 변수만 준다.
        min-height/폭·패딩은 15번의 자동 크기 조정을 막으므로 두지 않는다. 바꿔도 되는 것은 앵커 좌표뿐이다. */
-    .speech.feedback-speech{left:380px;top:470px;cursor:pointer;color:var(--plate-ink)}
+    .speech.feedback-speech{--speech-side-x:416px;--speech-face-y:598px;cursor:pointer;color:var(--plate-ink)}
     .drawing-summary{min-height:130px;margin:-12px 0 28px;display:flex;align-items:center;justify-content:center;gap:18px}
     .drawing-summary .paint-shape{width:112px;height:112px;flex:0 0 112px}
     /* 31-b: 표시 상한을 넘은 조합을 대신하는 한 칸. 도형이 아니므로 .paint-shape를 붙이지 않는다. */
@@ -781,6 +862,22 @@
     .repair-cert-star{position:absolute;left:50%;top:44%;color:#ffd54a;font-size:84px;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.4)}
     .repair-cert-star.repair-cert-star-go{animation:repairCertStar .9s ease both}
     @keyframes repairCertStar{0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(0deg)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%) scale(1.6) rotate(160deg)}}
+
+    /* ── 88: 1-2/01의 이미지 커서. 클래스명(#cursor / .cursor-image / .big / .readable-hover)은 01 그대로다 ──
+       값은 01 소스를 읽지 않고 `tmp/probe-cursor-01.js`의 getComputedStyle 실측으로 가져왔다(4번·15번 교훈:
+       01의 CSS는 뒤쪽 규칙이 앞 규칙을 덮어 소스 순서로 읽으면 죽은 값을 집는다).
+       **스테이지 배율 ×1.4056을 곱하지 않는다** — #cursor는 position:fixed라 #stage가 아니라 뷰포트 px이고,
+       01·08 모두 스테이지를 화면에 꽉 채우므로 44px 그대로가 화면상 같은 크기다. */
+    /* 08에는 cursor:pointer 선언이 20곳 넘게 흩어져 있어 명시도로는 전부 이길 수 없다.
+       "OS 커서는 무조건 숨긴다"는 원자적 강제라 !important를 쓴다(AGENTS.md의 허용 사례). */
+    *{cursor:none !important}
+    #cursor{position:fixed;left:-100px;top:-100px;z-index:99999;pointer-events:none;transition:width .12s,height .12s,opacity .12s,filter .12s}
+    #cursor.cursor-image{width:44px;height:44px;transform:translate(-5%,-4%);opacity:.96;filter:drop-shadow(0 6px 10px rgba(15,23,42,.28)) drop-shadow(0 0 8px rgba(255,232,144,.42))}
+    #cursor.cursor-image img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+    #cursor.cursor-image.readable-hover{opacity:.94}
+    #cursor.cursor-image.big,#cursor.cursor-image.big.readable-hover{width:55px;height:55px;opacity:.96;filter:drop-shadow(0 8px 14px rgba(15,23,42,.3)) drop-shadow(0 0 14px rgba(255,232,144,.62))}
+    /* 터치 기기에는 따라올 포인터가 없다(01과 같은 방어). */
+    @media (pointer:coarse){#cursor{display:none !important}}
   </style>
 </head>
 <body>
@@ -826,7 +923,7 @@
     <img class="title-image" id="shapeTitleImage" src="assets/title-shape-find.webp" alt="모양 찾기와 세기">
     <img class="classroom-student" id="shapeSceneStudent" src="assets/student-idle.webp" alt="" aria-hidden="true">
     <!-- 34: 첫 beat는 shapeDialogues[0]과 이 정적 마크업이 두 벌로 있다. 한쪽만 고치면 첫 프레임에 이전 인물이 번쩍인다 -->
-    <div id="shapeDialogue"><img class="character left" id="shapeCharacter" src="assets/student-thinking.webp" alt="한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이"><div class="speech left-speaker" id="shapeSpeech">벽화를 어떻게 그려야 되지?</div><div class="tap-layer" id="shapeDialogueTap" tabindex="0" aria-label="대화 진행"></div></div>
+    <div id="shapeDialogue"><img class="character left" id="shapeCharacter" src="assets/student-thinking.webp" alt="페인트 롤러를 든 채 한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이"><div class="speech left-speaker" id="shapeSpeech">벽화를 어떻게 그려야 되지?</div><div class="tap-layer" id="shapeDialogueTap" tabindex="0" aria-label="대화 진행"></div></div>
     <div id="shapeSearch" class="hidden"><div id="shapeObjects" aria-hidden="true"></div><div class="search-prompt" id="searchPrompt"></div><div id="hotspots"></div></div>
     <!-- 40: 도형 3개 가로 배치 → 도형 위 / 같은 색 통 아래의 세로 짝 3벌. 색 매핑은 19번(초록 ● / 파랑 ■ / 빨강 ▲) -->
     <div class="work-area hidden" id="paintIntroVisual" aria-hidden="true">
@@ -918,7 +1015,9 @@
   <!-- 17: <button> 안에 01의 <button class="repair-narr-next">를 넣을 수 없어(중첩 버튼은 브라우저가 DOM을 재배치한다)
        다른 말풍선과 같은 div + role="button" 구조로 맞췄다. -->
   <div class="speech feedback-speech left-speaker hidden" id="feedbackSpeech" role="button" tabindex="0" aria-label="다음 문제"></div>
-  <!-- 60: 내레이션 정답 피드백의 진행 표면. 캐릭터·말풍선 없이 도장 아래에 `다음 ▸`만 띄운다. -->
+  <!-- 60: 내레이션 정답 피드백의 진행 표면. 캐릭터·말풍선 없이 도장 아래에 `다음 ▸`만 띄웠다.
+       87: 정답이 **자동 진행**으로 바뀌어 이 표면을 띄우는 코드가 없어졌다(참조 0). 되돌릴 여지를 두고
+       요소와 CSS는 남긴다 — 되살리려면 showFeedback에서 ensureAdvanceNav + onclick=completeFeedback을 다시 붙인다. -->
   <div class="narration-advance hidden" id="narrationAdvance" role="button" tabindex="0" aria-label="다음 문제"></div>
   <template id="staticQuestionContract">
     <span>square_left_window,square_right_window</span>
@@ -950,6 +1049,9 @@
   <div class="debug-scene-list" id="debugSceneList"></div>
   <p class="debug-hint">` 키로 열기/닫기 · Esc로 닫기</p>
 </aside>
+<!-- 88: 1-2/01의 이미지 커서. 디버그 패널과 같은 이유로 #viewport/#stage 밖에 둔다 —
+     안에 넣으면 transform이 걸린 조상 때문에 position:fixed가 스테이지 기준으로 잡혀 포인터가 어긋난다. -->
+<div id="cursor" class="cursor-image" aria-hidden="true"><img src="assets/mouse-pointer.webp" alt="" draggable="false"></div>
 <script>
 (() => {
   const STAGE_W=1920, STAGE_H=1080;
@@ -970,7 +1072,7 @@
     section_math_story:{stage:'수리 이야기',progress:94},
     section_completion:{stage:'수리 이야기',progress:100}
   };
-  let soundOn=true,hammerAudio=null,introRepairing=false,introRepairTimers=[],currentScene='section_intro',wrongPoseTimer=0,feedbackHideTimer=0,feedbackContinueAction=null,drawingIntroTimer=0,sceneTransitionTimer=0,introSpeechTimer=0,introProgressTimer=0,storyRevealTimer=0;
+  let soundOn=true,hammerAudio=null,introRepairing=false,introRepairTimers=[],currentScene='section_intro',wrongPoseTimer=0,feedbackHideTimer=0,feedbackAdvanceTimer=0,feedbackContinueAction=null,drawingIntroTimer=0,sceneTransitionTimer=0,introSpeechTimer=0,introProgressTimer=0,storyRevealTimer=0;
   function resizeStage(){
     const portrait=innerHeight>innerWidth;
     const availableW=portrait?innerHeight:innerWidth, availableH=portrait?innerWidth:innerHeight;
@@ -1006,6 +1108,62 @@
   }
   /* 정답·오답은 여기 한 곳으로 모인다(호출부 7곳, 인자는 true/false뿐). 새 판정 표면을 만들어도 tone()만 부르면 붙는다. */
   function tone(ok){playSfx(ok?'answer-correct':'answer-wrong')}
+
+  /* 95: 01의 **키 누름 소리**를 가져왔다. 01은 이 소리를 파일로 내지 않는다 —
+     01의 `playSfx`는 `playSynthSfx`를 먼저 부르고 `SFX_SYNTH_MAP`에 `'button-select':'tick'`이 있어
+     Web Audio 합성음이 나간다. `01/assets/audio/sfx/button-select.mp3`는 **Web Audio가 없을 때만 쓰이는 폴백**이라
+     그 파일을 복사해 오면 01에서 실제로 들리는 소리와 다른 소리가 난다. 그래서 에셋이 아니라 합성 코드를 옮겼다.
+     `ensureSynthCtx` / `synthTone` / `SFX_SYNTH.tick` / `playButtonSelectSfx`는 01과 같은 이름이다.
+     `synthTone`의 vibrato·glide 분기는 tick이 안 쓰지만 01 원형 그대로 뒀다(다른 프리셋을 더 옮길 때 쓴다).
+     AudioContext는 첫 키 누름(사용자 제스처)에서 만들어지므로 자동재생 정책에 걸리지 않는다.
+     거는 자리는 `buildKeypad`의 **onclick**이다 — 세 키패드(countKeypad·arithKeypad·randomKeypad)가 이 함수 하나를 공유하므로
+     여기 한 곳이면 모든 다이얼 입력에 붙고, 누름 연출(pointerdown)이 아니라 click이라 키보드(Enter/Space)로 눌러도 난다. 01도 onclick에서 낸다. */
+  let _synthCtx=null,_synthMaster=null;
+  function ensureSynthCtx(){
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return null;
+    if(!_synthCtx){
+      _synthCtx=new AC();
+      _synthMaster=_synthCtx.createGain();
+      _synthMaster.gain.value=0.8;
+      const comp=_synthCtx.createDynamicsCompressor();
+      _synthMaster.connect(comp).connect(_synthCtx.destination);
+    }
+    if(_synthCtx.state==='suspended')_synthCtx.resume();
+    return _synthCtx;
+  }
+  function synthTone(o){
+    const{freq,type='sine',t0=0,dur=0.2,vol=0.3,attack=0.008,release=null,glideTo=null,vibrato=0,vibratoHz=6}=o;
+    const ctx=_synthCtx,start=ctx.currentTime+t0;
+    const osc=ctx.createOscillator();
+    osc.type=type;
+    osc.frequency.setValueAtTime(freq,start);
+    if(glideTo)osc.frequency.exponentialRampToValueAtTime(glideTo,start+dur);
+    const g=ctx.createGain(),rel=release??Math.min(0.12,dur*0.6);
+    g.gain.setValueAtTime(0.0001,start);
+    g.gain.exponentialRampToValueAtTime(vol,start+attack);
+    g.gain.setValueAtTime(vol,Math.max(start+attack+0.001,start+dur-rel));
+    g.gain.exponentialRampToValueAtTime(0.0001,start+dur);
+    osc.connect(g).connect(_synthMaster);
+    if(vibrato){
+      const lfo=ctx.createOscillator(),lfoGain=ctx.createGain();
+      lfo.frequency.value=vibratoHz;lfoGain.gain.value=vibrato;
+      lfo.connect(lfoGain).connect(osc.frequency);
+      lfo.start(start);lfo.stop(start+dur+0.02);
+    }
+    osc.start(start);osc.stop(start+dur+0.02);
+  }
+  const SFX_NOTE={C5:523.25,E5:659.25};
+  const SFX_SYNTH={
+    tick(v=1){synthTone({freq:SFX_NOTE.C5,type:'sine',t0:0,dur:0.09,vol:0.2*v,glideTo:SFX_NOTE.E5,attack:0.004,release:0.07})}
+  };
+  /* 01은 키를 누를 때마다 `playSfx('button-select',0.75)`를 부르고, 그 안에서 `v=volume/0.9`(=0.833)로 프리셋에 넘긴다.
+     08은 합성 경로만 쓰므로 그 계산을 펼쳐 뒀다. 음소거는 `playSfx`와 같은 자리(soundOn)에서 막는다. */
+  function playButtonSelectSfx(){
+    if(!soundOn)return;
+    if(!ensureSynthCtx())return;
+    SFX_SYNTH.tick(0.75/0.9);
+  }
   /* 45: 대사는 녹음 wav(assets/audio/script/)로 낸다. 파일명은 이 코드가 쓰는 키 그대로다 —
      납품 원본은 `Take22-1_일곱 개에서 3개를 더 색칠하면 몇 개일까요_2026-08-03.wav`처럼 녹음일이 박혀 있어
      재녹음 때마다 매핑이 깨진다. 재녹음을 받으면 **같은 키 이름으로 덮어쓴다**(코드는 건드리지 않는다).
@@ -1072,6 +1230,13 @@
     if(target.id==='section_completion'){renderCompletedMural();refreshNextLessonButton();refreshExitButton();setTimeout(()=>playSfx('lesson-complete'),SCENE_OVERLAP_MS)}
     syncDebugPanel();
   }
+  /* 96: 씬을 넘기는 **사용자 조작**은 인트로 `시작하기`와 같은 소리를 낸다(2026-08-04 사용자 지시).
+     `showScene` 자체가 아니라 이 래퍼에 건다 — showScene은 종료 폴백(#exitButton)과 QA 훅(__contentHarnessShowScene),
+     최초 진입도 타므로 거기서 내면 **차시를 진행하는 전환이 아닌 데서도** 소리가 난다.
+     이 소리가 말하는 것은 "버튼을 눌렀다"가 아니라 "**장면이 바뀐다**"이다 — 누름 신호는 tick(playButtonSelectSfx)이 맡는다.
+     그래서 씬4→씬5처럼 버튼 없이 자동으로 넘어가는 전환(87번)에도 이 함수를 쓴다.
+     씬을 넘기는 새 버튼을 만들면 showScene이 아니라 이 함수를 부른다. */
+  function goScene(id){playSfx('intro-start');showScene(id)}
   window.__contentHarnessShowScene=function(sceneId){const el=document.querySelector(`[data-qa-scene="${sceneId}"]`)||document.getElementById(sceneId);if(el){scenes.forEach(scene=>scene.classList.remove('qa-capture-ready'));showScene(el.id);el.classList.add('qa-capture-ready')}};
   document.getElementById('soundButton').onclick=e=>{soundOn=!soundOn;const b=e.currentTarget;b.setAttribute('aria-pressed',String(soundOn));b.dataset.soundOn=String(soundOn);b.setAttribute('aria-label',soundOn?'소리 끄기':'소리 켜기');b.title=soundOn?'소리 끄기':'소리 켜기';if(!soundOn){stopVoice();if(hammerAudio){hammerAudio.pause();hammerAudio=null}}};
   /* 54: 정답·오답·완료 효과음은 1~3초짜리 one-shot이라 끄는 순간 붙잡을 요소를 들고 있지 않다.
@@ -1125,7 +1290,7 @@
     {text:'공사 중에 실수로 담장을 무너뜨렸어요.<br>죄송합니다!',voice:'intro-1-apology',img:'worker-apologizing.webp',alt:'상체를 조금 숙이고 두 손을 모아 오른쪽 상대에게 사과하는 공사 작업자',bg:'school-wall-damaged.webp'},
     {text:'휴, 담장은 다 고쳤어요.',voice:'intro-2-wall-fixed',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.webp'},
     {text:'그런데, 벽화는 못 그리겠어요. 누가 도와줘요!',voice:'intro-3-need-help',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',bg:'school-wall-repaired.webp'},
-    {text:'저희가 도와드릴게요!',voice:'intro-4-volunteer',img:'student-volunteer.webp',alt:'활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이',bg:'school-wall-repaired.webp'}
+    {text:'저희가 도와드릴게요!',voice:'intro-4-volunteer',img:'student-volunteer.webp',alt:'페인트 롤러를 든 채 활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이',bg:'school-wall-repaired.webp'}
   ];
   let introBeat=0;
   function setTitleMode(on){document.getElementById('stage').classList.toggle('title-mode',on)}
@@ -1164,20 +1329,21 @@
   document.getElementById('introTap').onclick=()=>{
     if(introRepairing)return; /* 연출 중에는 탭을 무시한다 — 끝까지 보게 한다 */
     stopVoice(); /* 45: 넘기는 순간 재생 중인 대사를 자른다 */
+    playButtonSelectSfx(); /* 96: 진행 표면도 01처럼 누름 소리를 낸다(01의 .repair-narr-next도 playButtonSelectSfx를 부른다) */
     if(introBeat===0){startIntroRepair();return}
     /* 58: 마지막 beat를 넘기면 대사 묶음(인물 + 말풍선 + 탭 레이어)을 통째로 내리고 다음 섹션 CTA만 남긴다.
        예전에는 말풍선 안 `다음 ▸`만 지워(35번) 끝난 대사가 CTA와 나란히 떠 있었다. 정본은 씬5 drawingTap이다. */
     if(introBeat<introBeats.length-1){introBeat++;renderIntro()}else{document.getElementById('introTap').classList.add('hidden');document.getElementById('introCharacter').classList.add('hidden');document.getElementById('introSpeech').classList.add('hidden');document.getElementById('introNext').classList.remove('hidden')}};
-  document.getElementById('introNext').onclick=()=>showScene('section_shape_find');
+  document.getElementById('introNext').onclick=()=>goScene('section_shape_find');
 
   /* 34: 화자·순서는 원문 `…723 음성 스크립트.md` 씬2(1.주인공 / 2.교사 / 3.교사 / 4.주인공)를 정본으로 삼는다.
      예전 배열은 화자가 없는 "예시화면 문구" 목록의 순서를 그대로 옮겨 (a) 첫 대사가 공사 작업자에게 붙고
      (b) 1·2번이 뒤바뀌어 "교사가 먼저 제안 → 주인공이 그제서야 고민"이 되어 있었다. 문구 자체는 바꾸지 않았다. */
   const shapeDialogues=[
-    ['벽화를 어떻게 그려야 되지?','student-thinking.webp','한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이','left','shape-open-1-how-to-draw'],
+    ['벽화를 어떻게 그려야 되지?','student-thinking.webp','페인트 롤러를 든 채 한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이','left','shape-open-1-how-to-draw'],
     ['여러 가지 모양으로 그리면 좋겠어요.','teacher-explaining.webp','민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사','right','shape-open-2-various-shapes'],
     ['저와 학교에서 모양을 찾아 보아요.','teacher-explaining.webp','민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사','right','shape-open-3-find-together'],
-    ['네!','student-idle.webp','주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이','left','shape-open-4-yes']
+    ['네!','student-idle.webp','페인트 얼룩이 묻은 청록색 멜빵 반바지를 입고 페인트 롤러를 든 채 정면에 편안히 서 있는 주인공 어린이','left','shape-open-4-yes']
   ];
   const searchQuestions=[
     {id:'q_square_find_two',prompt:'■모양 2개를 찾아 봅시다.',voice:'search-square',answers:['square_notebook','square_lunchbox']},
@@ -1200,7 +1366,13 @@
      책상 상판 y 900~975(왼쪽 x 0~390 · 가운데 x 528~1065 · 오른쪽 x 1240~1680 · 끝 x 1710~1920).
      사물은 실제로 놓일 법한 면에만 둔다: 삼각자는 칠판 면, 시계는 벽, 공책·도시락은 책상 상판, 공은 바닥,
      고깔모자는 #shapeSceneStudent의 머리 위(25: 벽에 건 삼각 깃발이 사물이 아니라 도형 스티커로 보여 교체).
-     hotspotRect가 있으면 핫스팟은 rect 대신 그 값을 쓴다 — 그림은 움직여도 클릭 영역은 고정할 때 쓴다. */
+     hotspotRect가 있으면 핫스팟은 rect 대신 그 값을 쓴다 — 그림은 움직여도 클릭 영역은 고정할 때 쓴다.
+     91: numberAnchor는 3회 오답 뒤 뜨는 번호 배지(.hotspot-number)의 자리를 **그 사물 rect 안의 비율**로 준다.
+     기본값 [.5,.5](= 그림 박스 중심)로는 삼각형에서 배지가 도형 바깥 빈 곳에 걸린다(위로 갈수록 좁아지므로).
+     값은 **도형 내접원의 중심**이다 — 배지가 72px이라 삼각형 안에 들어가는 자리가 사실상 거기뿐이다.
+       · triangle_ruler(직각이 왼쪽 아래): 170 박스 안 알파 x +23~+154 / y +19~+147 → 내접원 r 37.9, 중심 (60.9,109.1) → [.358,.642]
+       · triangle_party_hat: 171 박스 안 모자 밑변 폭 124(x +23.6~+147.6) / 꼭짓점 y +35 · 밑변 y +152.6 → 내접원 r 37.4, 중심 (85.6,115.2) → [.501,.674]
+     비율이므로 rect가 움직이면 배지도 함께 간다(모자는 포즈마다 rect가 바뀐다 — positionPartyHat 참조). */
   const findObjects={
     /* 37: 칠판 면 한가운데(rect [500,395,210,210])에 얹혀 있어 벽에 붙인 "도형 스티커"로 읽혔다.
        칠판 **상단 테두리 위에 세워 기대어** 놓고 약간 왼쪽으로 옮긴다(2026-08-03 사용자 확인).
@@ -1209,9 +1381,9 @@
        실제 삼각자는 x +23~+154 / y +19~+147이다 → rect [300,95,170,170]이면 밑변이 y 242(프레임 윗면)에 정확히 닿고
        꼭짓점만 몰딩 선을 살짝 넘는다. 천장 형광등(stage y 25~78)에는 닿지 않는다.
        210 → 170으로 줄인 것은 이 면의 높이 제약 때문이다. CSS로 눕히거나 세우지 않는다(24번). */
-    triangle_ruler:{src:'classroom-triangle-ruler.webp',alt:'눈금이 그려진 나무 삼각자',rect:[300,95,170,170],hotspotRect:[323,114,131,128]},
+    triangle_ruler:{src:'classroom-triangle-ruler.webp',alt:'눈금이 그려진 나무 삼각자',rect:[300,95,170,170],hotspotRect:[323,114,131,128],numberAnchor:[.358,.642]},
     circle_wall_clock:{src:'classroom-wall-clock.webp',alt:'파란 테두리의 둥근 교실 벽시계',rect:[880,215,190,190]},
-    triangle_party_hat:{src:'classroom-party-hat.webp',alt:'교실 아이가 머리에 쓴 하늘색 줄무늬 고깔모자',rect:HAT_POSE_RECT.idle,hotspotRect:[1136,405,170,178]},
+    triangle_party_hat:{src:'classroom-party-hat.webp',alt:'교실 아이가 머리에 쓴 하늘색 줄무늬 고깔모자',rect:HAT_POSE_RECT.idle,hotspotRect:[1136,405,170,178],numberAnchor:[.501,.674]},
     square_notebook:{src:'classroom-notebook.webp',alt:'책상 위에 놓인 청록색 표지의 공책',rect:[910,866,150,150],cls:'on-desk',hotspotRect:[906,890,150,102]},
     square_lunchbox:{src:'classroom-lunchbox.webp',alt:'책상 위에 놓인 빨간 뚜껑의 사각 도시락통',rect:[1430,829,150,150],cls:'on-desk',hotspotRect:[1442,848,127,110]},
     circle_ball:{src:'classroom-ball.webp',alt:'파란색과 노란색 띠가 있는 둥근 공',rect:[470,690,180,180]}
@@ -1246,15 +1418,20 @@
   function sceneStudentVisible(){const el=sceneStudentEl();return !!el&&!el.classList.contains('hidden')}
   /* 25: 포즈마다 머리가 옮겨가므로 모자 그림도 같이 옮긴다. 핫스팟(hotspotRect)은 세 포즈의 머리를
      모두 덮는 고정 박스라 여기서 건드리지 않는다 — renderSearch가 다시 만들어도 어긋나지 않는다. */
-  function positionPartyHat(pose){const img=document.querySelector('.find-object[data-object="triangle_party_hat"]');if(!img)return;const r=HAT_POSE_RECT[pose]||HAT_POSE_RECT.idle;Object.assign(img.style,{left:r[0]+'px',top:r[1]+'px',width:r[2]+'px',height:r[3]+'px'})}
+  function positionPartyHat(pose){const img=document.querySelector('.find-object[data-object="triangle_party_hat"]');if(!img)return;const r=HAT_POSE_RECT[pose]||HAT_POSE_RECT.idle;Object.assign(img.style,{left:r[0]+'px',top:r[1]+'px',width:r[2]+'px',height:r[3]+'px'});/* 91: 모자가 옮겨가면 그 위 번호 배지도 함께 옮긴다 — 안 부르면 배지만 이전 포즈 자리에 남는다 */refreshHotspotNumbers()}
+  /* 91: 사물 그림의 **지금** rect. 모자만 포즈에 따라 바뀌므로 findObjects.rect(=idle)를 그대로 믿으면 안 된다. */
+  function objectRect(id){return id==='triangle_party_hat'?(HAT_POSE_RECT[sceneStudentPose]||HAT_POSE_RECT.idle):findObjects[id].rect}
+  /* 91: 배지는 핫스팟(고정 박스)의 자식이지만 자리는 사물 **그림**이 정한다 → stage 좌표로 잡아 핫스팟 원점만큼 뺀다. */
+  function positionHotspotNumber(hotspot){const el=hotspot.querySelector('.hotspot-number');if(!el)return;const id=hotspot.dataset.target,o=findObjects[id];if(!o)return;const r=objectRect(id),a=o.numberAnchor||[.5,.5],box=hotspotDefs[id];Object.assign(el.style,{left:(r[0]+a[0]*r[2]-box[0])+'px',top:(r[1]+a[1]*r[3]-box[1])+'px'})}
+  function refreshHotspotNumbers(){document.querySelectorAll('#hotspots .hotspot').forEach(positionHotspotNumber)}
   function setSceneStudentPose(pose,holdMs){const el=sceneStudentEl();if(!el)return;clearTimeout(sceneStudentPoseTimer);sceneStudentPose=SCENE_STUDENT_POSE_SRC[pose]?pose:'idle';el.src='assets/'+SCENE_STUDENT_POSE_SRC[sceneStudentPose];positionPartyHat(sceneStudentPose);if(holdMs)sceneStudentPoseTimer=setTimeout(()=>setSceneStudentPose('idle'),holdMs)}
   function showSceneStudent(){const el=sceneStudentEl();if(!el)return;setSceneStudentPose('idle');el.classList.remove('hidden','student-enter');void el.offsetWidth;el.classList.add('student-enter')}
   function hideSceneStudent(){const el=sceneStudentEl();if(!el)return;setSceneStudentPose('idle');el.classList.add('hidden');el.classList.remove('student-enter')}
   function clearShapeTimers(){shapeTimers.forEach(clearTimeout);shapeTimers=[]}
   function scheduleShape(fn,delay){const timer=setTimeout(fn,delay);shapeTimers.push(timer)}
   function resetShapeScene(){clearShapeTimers();shapePhase='opening';shapeDialogueIndex=0;searchIndex=0;searchWrong=0;countIndex=0;countWrong=0;countValue='';countAssisted=false;found.clear();const bg=document.getElementById('shapeBg'),ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech'),tap=document.getElementById('shapeDialogueTap');bg.src='assets/classroom-shape-search.webp';bg.alt='칠판과 책상, 나무 바닥이 보이고 벽면을 넓게 비워 둔 밝은 1학년 교실';/* 64: 배경을 교실로 되돌리므로 제목도 칠판 좌표로 돌린다(재진입 시 중앙 상단이 남지 않게) */document.getElementById('shapeTitleImage').classList.remove('on-wall');hideSceneStudent();endSearchTutorial();renderFindObjects();document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeSearch').classList.add('hidden');document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintIntroVisual').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');document.getElementById('shapeNext').classList.add('hidden');document.getElementById('hotspots').innerHTML='';document.getElementById('countShapes').innerHTML='';document.getElementById('countDisplay').textContent='';document.getElementById('shapeMark').classList.remove('show');setProgress(14);renderShapeDialogue();ch.classList.add('stagger-character');sp.classList.add('hidden','stagger-speech');tap.classList.add('hidden');scheduleShape(()=>sp.classList.remove('hidden'),INTRO_SPEECH_DELAY_MS);scheduleShape(()=>tap.classList.remove('hidden'),INTRO_PROGRESS_DELAY_MS)}
-  function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b[0],b[4])}
-  document.getElementById('shapeDialogueTap').onclick=()=>{stopVoice();if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');/* 23: 대사가 끝난 뒤에야 교실 학생이 등장한다 */showSceneStudent();renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex<PAINT_INTRO_SHAPES.length){renderPaintIntroShape(shapeDialogueIndex++)}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='페인트 소개를 부탁해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('페인트 소개를 부탁해요!','shape-outro-2-request')}else{/* 58: 대사 묶음을 통째로 내린다 — #shapeDialogue 안에 인물·말풍선·탭 레이어가 다 들어 있다 */document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
+  function renderShapeDialogue(){const b=shapeDialogues[shapeDialogueIndex],ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');/* 84: 오프닝 beat는 교실 배경이라 발끝을 마루면에 맞춘다(.on-floor). 담장으로 바뀌는 paint-intro·아웃트로에는 안 붙인다 */ch.src='assets/'+b[1];ch.alt=b[2];ch.className='character on-floor '+b[3];sp.className='speech '+(b[3]==='left'?'left-speaker':'right-speaker');sp.innerHTML=b[0]+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b[0],b[4])}
+  document.getElementById('shapeDialogueTap').onclick=()=>{stopVoice();playButtonSelectSfx();if(shapePhase==='opening'){if(shapeDialogueIndex<shapeDialogues.length-1){shapeDialogueIndex++;renderShapeDialogue()}else{document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeSearch').classList.remove('hidden');/* 23: 대사가 끝난 뒤에야 교실 학생이 등장한다 */showSceneStudent();renderSearch()}}else if(shapePhase==='paint-intro'){if(shapeDialogueIndex<PAINT_INTRO_SHAPES.length){renderPaintIntroShape(shapeDialogueIndex++)}else startCount()}else if(shapePhase==='outro'){if(shapeDialogueIndex===0){shapeDialogueIndex=1;document.getElementById('shapeSpeech').innerHTML='페인트 소개를 부탁해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('페인트 소개를 부탁해요!','shape-outro-2-request')}else{/* 58: 대사 묶음을 통째로 내린다 — #shapeDialogue 안에 인물·말풍선·탭 레이어가 다 들어 있다 */document.getElementById('shapeDialogueTap').classList.add('hidden');document.getElementById('shapeDialogue').classList.add('hidden');document.getElementById('shapeNext').classList.remove('hidden')}}};
   /* 36: 핫스팟의 상태(hover·힌트·정답)를 그 사물의 **그림**에 옮긴다.
      .find-object는 pointer-events:none이고 #shapeObjects와 #hotspots가 부모가 달라 형제 선택자가 닿지 않는다 → JS로 전달한다.
      포커스도 함께 건다 — 사각 테두리를 걷어낸 뒤 키보드 사용자에게 남는 유일한 표시다. */
@@ -1304,7 +1481,7 @@
     /* clearObjectGlow() 뒤에 와야 한다 — 앞에 두면 튜토리얼 대상의 glow-hint가 바로 지워진다 */
     if(tutorial)startSearchTutorial();else endSearchTutorial()}
   function advanceSearch(){if(searchIndex<searchQuestions.length-1){searchIndex++;renderSearch()}else startPaintIntro()}
-  function revealSearchAnswers(q,withNumbers){document.querySelectorAll('.hotspot').forEach(h=>{const answerIndex=q.answers.indexOf(h.dataset.target);h.classList.toggle('hint',answerIndex>=0);setObjectGlow(h.dataset.target,'glow-hint',answerIndex>=0);if(answerIndex>=0&&withNumbers&&!h.querySelector('.hotspot-number')){const number=document.createElement('span');number.className='hotspot-number';number.textContent=String(answerIndex+1);number.setAttribute('aria-hidden','true');h.appendChild(number)}})}
+  function revealSearchAnswers(q,withNumbers){document.querySelectorAll('.hotspot').forEach(h=>{const answerIndex=q.answers.indexOf(h.dataset.target);h.classList.toggle('hint',answerIndex>=0);setObjectGlow(h.dataset.target,'glow-hint',answerIndex>=0);if(answerIndex>=0&&withNumbers&&!h.querySelector('.hotspot-number')){const number=document.createElement('span');number.className='hotspot-number';number.textContent=String(answerIndex+1);number.setAttribute('aria-hidden','true');h.appendChild(number);/* 91: 붙이자마자 사물 그림 기준으로 자리를 잡는다(핫스팟 박스 중심이 아니다) */positionHotspotNumber(h)}})}
   /* 26: 정답 확정 뒤에는 즉시 빠진다. 이 가드가 없으면 hotspot이 전부 disabled인 상태에서
      장면 아무 데나 누른 클릭이 진행 말풍선을 지워 탈출 경로가 0개가 된다. */
   /* 69: 튜토리얼 구간에서는 오답을 세지 않는다. 조작 방법을 알려주는 중에 탐색 탭을 처벌하면
@@ -1344,23 +1521,23 @@
     /* 39: 세는 도형과 같은 색 통을 옆에 세운다. 40번이 세운 색↔모양 대응이 세기 단계에서도 유지된다 */
     const can=document.getElementById('paintCan');can.dataset.color=q.color;can.setAttribute('aria-label',`${PAINT_COLOR_LABEL[q.color]||''} 페인트가 담긴 금속 페인트통`);can.classList.remove('hidden');display.textContent='';display.classList.remove('answer-reveal');display.removeAttribute('data-assisted');document.getElementById('countShapes').innerHTML=Array.from({length:q.count},()=>`<div class="paint-shape ${q.shape} ${q.color}"></div>`).join('');speak(q.prompt,q.voice);buildKeypad('countKeypad',n=>{if(n==='enter'){if(countValue===q.answer){setKeypadEnabled('countKeypad',false);tone(true);display.toggleAttribute('data-assisted',countAssisted);showFeedback(document.getElementById('shapeMark'),'정답입니다.',advanceCount,'correct-1')}else{tone(false);showWrongFeedback();countWrong++;shake(display);hintCountShapes();countValue='';display.textContent='';if(countWrong>=3){countAssisted=true;countValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');setKeypadConfirmOnly('countKeypad')}}}else if(n==='del'){if(!countAssisted){countValue=countValue.slice(0,-1);display.textContent=countValue;keypadDisplayTick(display)}}else if(!countAssisted){countValue=(countValue+n).slice(-2);display.textContent=countValue;keypadDisplayTick(display)}})}
   function finishShape(){shapePhase='outro';shapeDialogueIndex=0;setProgress(47);document.getElementById('shapeCount').classList.add('hidden');document.getElementById('paintCan').classList.add('hidden');const ch=document.getElementById('shapeCharacter'),sp=document.getElementById('shapeSpeech');document.getElementById('shapeDialogue').classList.remove('hidden');document.getElementById('shapeDialogueTap').classList.remove('hidden');ch.src='assets/teacher-praising.webp';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='잘했어요.<br>이제 벽화를 색칠해봐요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('잘했어요. 이제 벽화를 색칠해봐요!','shape-outro-1-praise')}
-  document.getElementById('shapeNext').onclick=()=>showScene('section_arithmetic_tutorial');
+  document.getElementById('shapeNext').onclick=()=>goScene('section_arithmetic_tutorial');
 
   const arithmeticQuestions=[
     {id:'q_total_shapes_ten',prompt:'모양은 모두 몇 개인가요?',voice:'arith-q-total-ten',correctVoice:'correct-1',answer:'10',count:10,remove:0,bg:'school-wall-closeup.webp',preBeats:[]},
     {id:'q_add_7_3',prompt:'7개에서 3개를 더 색칠하면 몇 개일까요?\n7 + 3 = (   )',voice:'arith-q-add-7-3',correctVoice:'correct-1',answer:'10',count:10,remove:0,bg:'school-wall-closeup.webp',preBeats:[]},
     /* 45: 계산식만 있는 문항(10 + 2 / 7 + 3 + 2 / 12 – 2 – 3)은 원문 스크립트에도 대사가 없어 녹음이 오지 않았다 → voice 없음(무음) */
     {id:'q_add_10_2',prompt:'10 + 2 = (   )',correctVoice:'correct-1',answer:'12',count:12,remove:0,bg:'school-wall-closeup.webp',preBeats:[
-      {text:'페인트 1통을 다 썼어요',voice:'arith-beat-can-empty',img:'student-thinking.webp',alt:'한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이',side:'left',cans:'first-empty'},
+      {text:'페인트 1통을 다 썼어요',voice:'arith-beat-can-empty',img:'student-thinking.webp',alt:'페인트 롤러를 든 채 한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이',side:'left',cans:'first-empty'},
       {text:'1통을 더 준비했어요.',voice:'arith-beat-can-ready',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left',cans:'two'},
       {text:'2개를 더 색칠해주세요.',voice:'arith-beat-paint-2-more',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
-      {text:'네',voice:'arith-beat-yes',img:'student-idle.webp',alt:'주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이',side:'right'}
+      {text:'네',voice:'arith-beat-yes',img:'student-idle.webp',alt:'페인트 얼룩이 묻은 청록색 멜빵 반바지를 입고 페인트 롤러를 든 채 정면에 편안히 서 있는 주인공 어린이',side:'right'}
     ]},
     /* correct-2는 원문 씬7-1의 `정답입니다`다 — 이 문항의 정답 직후 `고마워요!` 대사로 이어지는 자리다 */
     {id:'q_add_7_3_2',prompt:'7 + 3 + 2 = (   )',correctVoice:'correct-2',answer:'12',count:12,remove:0,bg:'school-wall-closeup.webp',preBeats:[]},
     {id:'q_subtract_12_2',prompt:'모양 12개에서 2개를 지우면 몇 개일까요?\n12 - 2 = (   )',voice:'arith-q-subtract-12-2',correctVoice:'correct-1',answer:'10',count:12,remove:2,bg:'school-wall-second.webp',preBeats:[
       {text:'고마워요!<br>다른 담장으로 가요.',voice:'arith-beat-thanks',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'},
-      {text:'네!',voice:'arith-beat-yes-2',img:'student-idle.webp',alt:'주황색 티셔츠와 청록색 멜빵 반바지를 입고 정면에 편안히 서 있는 주인공 어린이',side:'right'},
+      {text:'네!',voice:'arith-beat-yes-2',img:'student-idle.webp',alt:'페인트 얼룩이 묻은 청록색 멜빵 반바지를 입고 페인트 롤러를 든 채 정면에 편안히 서 있는 주인공 어린이',side:'right'},
       {text:'잘못 그린 2개를 지워주세요!',voice:'arith-beat-erase-2',img:'worker-explaining.webp',alt:'오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자',side:'left'}
     ]},
     /* correct-3는 원문 씬8-3의 `정답입니다`다 — 이 문항(10 - 3) 정답 직후 자리다 */
@@ -1394,9 +1571,9 @@
   /* 82: 등장과 같은 프레임에 켠다. .arriving과 겹칠 때의 순서(등장 → 글로우)는 CSS가 잡는다. */
   function spotlightPaintCan(on){const first=document.getElementById('arithPaintCan1');if(!first)return;first.classList.remove('spotlight');if(on){void first.offsetWidth;first.classList.add('spotlight')}}
   function renderArithmeticBeat(q){const beat=q.preBeats[arithQuestionBeat],ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');if(beat.cans)setPaintCans(beat.cans);ch.src='assets/'+beat.img;ch.alt=beat.alt;ch.className='character '+beat.side;sp.className='speech '+(beat.side==='left'?'left-speaker':'right-speaker');sp.innerHTML=beat.text+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(beat.text,beat.voice)}
-  document.getElementById('arithIntroTap').onclick=()=>{stopVoice();if(arithPhase==='intro'){if(arithIntroBeat<arithmeticIntroBeats.length-1){arithIntroBeat++;const b=arithmeticIntroBeats[arithIntroBeat];/* 82: 대사가 바뀌는 그 순간에 통이 등장하고(pop) 지목된다(글로우 3회) */if(b.cans)setPaintCans(b.cans);spotlightPaintCan(!!b.spotlight);document.getElementById('arithSpeech').innerHTML=b.text+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b.text,b.voice)}else{/* 61: 제목(#arithTitleSurface)은 여기서 숨기지 않는다 — 문항을 푸는 내내 남긴다.
+  document.getElementById('arithIntroTap').onclick=()=>{stopVoice();playButtonSelectSfx();if(arithPhase==='intro'){if(arithIntroBeat<arithmeticIntroBeats.length-1){arithIntroBeat++;const b=arithmeticIntroBeats[arithIntroBeat];/* 82: 대사가 바뀌는 그 순간에 통이 등장하고(pop) 지목된다(글로우 3회) */if(b.cans)setPaintCans(b.cans);spotlightPaintCan(!!b.spotlight);document.getElementById('arithSpeech').innerHTML=b.text+'<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak(b.text,b.voice)}else{/* 61: 제목(#arithTitleSurface)은 여기서 숨기지 않는다 — 문항을 푸는 내내 남긴다.
         예전에 숨긴 이유는 그 자리를 .arith-context(top 155)가 이어받아서였는데 62번으로 그 요소가 없어졌다. */
-      document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');renderArithmetic()}}else if(arithPhase==='question-beats'){const q=arithmeticQuestions[arithIndex];if(arithQuestionBeat<q.preBeats.length-1){arithQuestionBeat++;renderArithmeticBeat(q)}else{document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');startArithmeticQuestion(q)}}else if(arithPhase==='outro'){if(arithFinishBeat===0){arithFinishBeat=1;const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/student-volunteer.webp';ch.alt='활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='네!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('네!','arith-outro-3-yes')}else{/* 58: 씬1과 같은 형태 — 인물과 말풍선이 형제로 흩어져 있어 둘을 각각 내린다 */document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithNext').classList.remove('hidden')}}};
+      document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');renderArithmetic()}}else if(arithPhase==='question-beats'){const q=arithmeticQuestions[arithIndex];if(arithQuestionBeat<q.preBeats.length-1){arithQuestionBeat++;renderArithmeticBeat(q)}else{document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithIntroTap').classList.add('hidden');startArithmeticQuestion(q)}}else if(arithPhase==='outro'){if(arithFinishBeat===0){arithFinishBeat=1;const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.src='assets/student-volunteer.webp';ch.alt='페인트 롤러를 든 채 활짝 웃으며 한 손을 높이 들어 도움을 자원하는 주인공 어린이';ch.className='character right';sp.className='speech right-speaker';sp.innerHTML='네!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('네!','arith-outro-3-yes')}else{/* 58: 씬1과 같은 형태 — 인물과 말풍선이 형제로 흩어져 있어 둘을 각각 내린다 */document.getElementById('arithIntroTap').classList.add('hidden');document.getElementById('arithCharacter').classList.add('hidden');document.getElementById('arithSpeech').classList.add('hidden');document.getElementById('arithNext').classList.remove('hidden')}}};
   function arithmeticInitialClass(q,index){if(q.id==='q_total_shapes_ten')return' pending';if(q.id==='q_add_7_3'&&index>=7)return' pending';if(q.id==='q_add_10_2'&&index>=10)return' pending';if(q.id==='q_add_7_3_2'&&index>=7)return' pending';return''}
   /* 20: 빼는 쪽은 .removed로 표시되는데 더하는 쪽은 표시가 없어 무엇이 더해졌는지 알 수 없었다.
      더해지는 도형에는 .added(사각 테두리 + glow)를 남긴다. 처음부터 다 있는 q_total_shapes_ten은 "더하기"가 아니므로 표시하지 않는다. */
@@ -1410,7 +1587,7 @@
 document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,i)=>`<div class="paint-shape circle green${arithmeticInitialClass(q,i)}"></div>`).join('');speak(q.prompt,q.voice);buildKeypad('arithKeypad',n=>{if(n==='enter'){if(arithValue===q.answer){setKeypadEnabled('arithKeypad',false);tone(true);display.toggleAttribute('data-assisted',arithAssisted);showFeedback(document.getElementById('arithMark'),'정답입니다.',advanceArithmetic,q.correctVoice)}else{tone(false);showWrongFeedback();arithWrong++;shake(display);hintArithmetic(q);arithValue='';display.textContent='';if(arithWrong>=3){arithAssisted=true;arithValue=q.answer;display.textContent=q.answer;display.classList.add('answer-reveal');display.setAttribute('data-assisted','true');setKeypadConfirmOnly('arithKeypad')}}}else if(n==='del'){if(!arithAssisted){arithValue=arithValue.slice(0,-1);display.textContent=arithValue;keypadDisplayTick(display)}}else if(!arithAssisted){arithValue=(arithValue+n).slice(-2);display.textContent=arithValue;keypadDisplayTick(display)}});setKeypadEnabled('arithKeypad',false);animateArithmetic(q)}
   function advanceArithmetic(){if(arithIndex<arithmeticQuestions.length-1){arithIndex++;renderArithmetic()}else finishArithmetic()}
   function finishArithmetic(){clearArithmeticTimers();arithPhase='outro';arithFinishBeat=0;setProgress(70);document.getElementById('arithShapes').classList.add('hidden');document.getElementById('arithKeypadWrap').classList.add('hidden');const ch=document.getElementById('arithCharacter'),sp=document.getElementById('arithSpeech');ch.className='character left';ch.classList.remove('hidden');ch.src='assets/worker-explaining.webp';ch.alt='오른쪽을 바라보며 열린 손바닥으로 학습 대상을 안내하는 공사 작업자';sp.className='speech left-speaker';sp.classList.remove('hidden');sp.innerHTML='잘했어요!<br>더 많은 담장을<br>색칠해야해요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';/* 45: 원문은 씬8-4·8-5 두 대사라 녹음도 2본이다. 말풍선은 하나이므로 이어 붙여 재생한다 */speak('잘했어요! 더 많은 담장을 색칠해야해요!',['arith-outro-1-well-done','arith-outro-2-more-walls']);document.getElementById('arithIntroTap').classList.remove('hidden')}
-  document.getElementById('arithNext').onclick=()=>{showScene('section_random_problems')};
+  document.getElementById('arithNext').onclick=()=>{goScene('section_random_problems')};
 
   let randomType=0,randomSequenceIndex=0,randomSequence=[],randomWrong=0,randomAnswer='',randomValue='',randomAnswerRevealed=false,randomAssisted=false,randomAwaitingContinue=false,randomCompletedCount=0,randomBundle={add:null,subtract:null},randomShapeSteps=null,randomShapeTimers=[],randomShapePending=[];
   /* 53: 힌트는 문자열 하나가 아니라 단계 배열이다. randomShapeGroups·randomSlotNode는 각 단계가
@@ -1442,7 +1619,8 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
      19번 매핑(초록 ● / 파랑 ■ / 빨강 ▲)을 항 순서에 그대로 얹으면 색과 모양이 함께 묶여 두 규칙이 충돌하지 않는다.
      49: 뺄셈도 같은 규칙을 따른다. 예전에는 "한 덩어리에서 빼는 것"이라며 그룹을 하나(초록 ●)만 두고
      빠지는 쪽을 .removed로만 표시했는데, 덧셈에만 항별 색이 있고 뺄셈에는 없는 **비대칭**이 됐다.
-     이제 `a - b - c`를 [남는 것(a-b-c) / 빼는 b / 빼는 c] 세 그룹으로 나눠 같은 매핑을 얹는다.
+     이제 `a - b - c`를 [남는 것(a-b-c) / 빼는 c / 빼는 b] 세 그룹으로 나눠 같은 매핑을 얹는다
+     (그룹 배치가 항 순서와 다른 이유는 아래 89번 주석 참고).
      제거 대상을 **그룹 번호로 지정**한다 — 예전 `shapes[--cursorRemove]`(배열 뒤에서부터)는 그룹 순서와
      제거 순서가 맞물려야만 맞았다. */
   const RANDOM_OPERAND_CLASS=['circle green','square blue','triangle red'];
@@ -1459,7 +1637,13 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
     if(type===2)return{mode:'add',groups:[{n:A.a,cls:G[0]},{n:A.b,cls:G[1]}],steps:[{op:'add',group:1}]};
     if(type===3)return{mode:'add',groups:[{n:A.a,cls:G[0]},{n:A.b,cls:G[1]},{n:A.c,cls:G[2]}],steps:[{op:'add',group:1},{op:'add',group:2}]};
     if(type===4)return{mode:'remove',groups:[{n:S.a-S.b,cls:G[0]},{n:S.b,cls:G[1]}],steps:[{op:'remove',group:1}]};
-    if(type===5)return{mode:'remove',groups:[{n:S.a-S.b-S.c,cls:G[0]},{n:S.b,cls:G[1]},{n:S.c,cls:G[2]}],steps:[{op:'remove',group:1},{op:'remove',group:2}]};
+    /* 89: 세 그룹의 **배치는 항 순서를 따르지 않는다** — 먼저 빠지는 b를 꼬리(빨강 ▲)에 둔다.
+       `a - b - c`에서 먼저 빠지는 것은 b인데 [남는 것 / b / c] 순으로 놓으면 줄 한가운데가 먼저
+       지워지고 꼬리가 나중에 지워져, "뒤에서부터 덜어낸다"는 뺄셈의 방향과 어긋난다.
+       [남는 것 / c / b]로 놓고 group 2 → group 1 순으로 지우면 오른쪽 → 왼쪽 한 방향이 된다.
+       덧셈(type 3)은 왼→오른쪽으로 쌓이므로 항 순서 그대로가 맞다 — 두 연산은 화면에서 방향이 반대다.
+       randomHintSteps(type 5)의 문구·focus가 이 배치에 물려 있으니 함께 고친다. */
+    if(type===5)return{mode:'remove',groups:[{n:S.a-S.b-S.c,cls:G[0]},{n:S.c,cls:G[1]},{n:S.b,cls:G[2]}],steps:[{op:'remove',group:2},{op:'remove',group:1}]};
     return null;
   }
   function playRandomShapeIntro(script){
@@ -1517,7 +1701,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
       randomHintSteps=[{text:'초록 ●를 세어 봐요.',focus:[0]},{text:`${a}개에서 10까지\n몇 개가 더 필요할까요?`,focus:'slot'}];
       prompt.textContent=ex.prompt;input.innerHTML='<div class="choices">'+vals.map(n=>`<button class="choice"><span>${a} + ${n} = 10</span></button>`).join('')+'</div>';input.querySelectorAll('.choice').forEach(but=>but.onclick=()=>judgeRandomChoice(but));speak(ex.prompt,ex.voice);
       const introScript=shapeStepsFor(0);if(introScript)playRandomShapeIntro(introScript);else document.getElementById('randomShapes').classList.add('hidden')}
-    else{let text=ex.prompt,answer=ex.answer;if(randomType===1){const {c}=randomBundle.subtract;text=`덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - ${c}=(   )`;answer=String(10-c);randomHintSteps=[{text:'지워진 파랑 ■를 세어 봐요.',focus:[1]},{text:'이제 남은 초록 ●를\n세어 봐요.',focus:[0]}]}else if(randomType===2||randomType===3){const {a,b,c}=randomBundle.add;text=randomType===2?`덧셈과 뺄셈\n${a} + ${b} = (  )\n얼마일까요?`:`세 수의 덧셈을 해 보세요\n${a} + ${b} + ${c}=(   )`;answer=String(randomType===2?10:10+c);randomHintSteps=randomType===2?[{text:'초록 ●를 세어 봐요.',focus:[0]},{text:'이제 파랑 ■를 이어서\n세어 봐요.',focus:[1]}]:[{text:'앞의 두 수를 먼저 더해\n10을 만들어 봐요.',focus:[0,1]},{text:'이제 10에 빨강 ▲를\n더해 봐요.',focus:[2]}]}else{const {a,b,c}=randomBundle.subtract;text=randomType===4?`덧셈과 뺄셈\n${a} - ${b} = (  )\n얼마일까요?`:`세 수의 뺄셈을 해 보세요\n${a} - ${b} - ${c}=(   )`;answer=String(randomType===4?10:10-c);randomHintSteps=randomType===4?[{text:'지워진 파랑 ■를 세어 봐요.',focus:[1]},{text:'이제 남은 초록 ●를\n세어 봐요.',focus:[0]}]:[{text:'앞의 두 수를 먼저 빼서\n10을 만들어 봐요.',focus:[1]},{text:'이제 10에서 빨강 ▲를\n빼 봐요.',focus:[2]}]}randomAnswer=answer;
+    else{let text=ex.prompt,answer=ex.answer;if(randomType===1){const {c}=randomBundle.subtract;text=`덧셈과 뺄셈\n10에서 빼어 보세요.\n10 - ${c}=(   )`;answer=String(10-c);randomHintSteps=[{text:'지워진 파랑 ■를 세어 봐요.',focus:[1]},{text:'이제 남은 초록 ●를\n세어 봐요.',focus:[0]}]}else if(randomType===2||randomType===3){const {a,b,c}=randomBundle.add;text=randomType===2?`덧셈과 뺄셈\n${a} + ${b} = (  )\n얼마일까요?`:`세 수의 덧셈을 해 보세요\n${a} + ${b} + ${c}=(   )`;answer=String(randomType===2?10:10+c);randomHintSteps=randomType===2?[{text:'초록 ●를 세어 봐요.',focus:[0]},{text:'이제 파랑 ■를 이어서\n세어 봐요.',focus:[1]}]:[{text:'앞의 두 수를 먼저 더해\n10을 만들어 봐요.',focus:[0,1]},{text:'이제 10에 빨강 ▲를\n더해 봐요.',focus:[2]}]}else{const {a,b,c}=randomBundle.subtract;text=randomType===4?`덧셈과 뺄셈\n${a} - ${b} = (  )\n얼마일까요?`:`세 수의 뺄셈을 해 보세요\n${a} - ${b} - ${c}=(   )`;answer=String(randomType===4?10:10-c);randomHintSteps=randomType===4?[{text:'지워진 파랑 ■를 세어 봐요.',focus:[1]},{text:'이제 남은 초록 ●를\n세어 봐요.',focus:[0]}]:[{text:'뒤의 빨강 ▲를 먼저 빼서\n10을 만들어 봐요.',focus:[2]},{text:'이제 10에서 파랑 ■를\n빼 봐요.',focus:[1]}]}randomAnswer=answer;
       const revealQuestion=()=>{prompt.textContent=text;input.innerHTML='<div class="keypad-wrap" style="position:relative;right:auto;top:auto;margin:20px auto 0"><div class="answer-display" id="randomDisplay"></div><div class="keypad" id="randomKeypad"></div></div>';buildKeypad('randomKeypad',judgeRandomKey);/* 45: 숫자는 매번 다르지만 녹음은 유형 문장(세 수의 덧셈을 해 보세요)이라 그대로 맞는다 */speak(text,ex.voice)};
       /* 29-b: 식·키패드를 **먼저** 열고 도형 연출을 그 옆에서 재생한다.
          예전에는 연출이 끝나야 revealQuestion()이 불려 그림과 문제가 한 화면에 공존하지 않았다. */
@@ -1573,6 +1757,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
      둘이 갈라지면 66번처럼 한쪽만 고쳐 상태가 어긋난다. */
   function stepRandomHint(){
     if(randomAwaitingContinue)return;
+    playButtonSelectSfx(); /* 96 */
     hideFingerHint();
     const help=document.getElementById('helpCard');
     if(!help.classList.contains('open'))openRandomHint(randomHintIndex<0?0:randomHintIndex);
@@ -1594,12 +1779,9 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
     /* 키패드·보기는 정답 뒤 죽은 표면이라 감춘다(입력값 표시는 남는다) */
     document.getElementById('randomPanel').setAttribute('data-solved','1');
     if(randomType===0)fillRandomSlotWithShapes();
-    showFeedback(document.getElementById('randomMark'),'정답입니다.',nextRandom,'correct-1');
-    /* 78: 자리는 공용 기본값(도장 바로 아래)을 그대로 쓴다 — 씬별 좌표를 주지 않는다.
-       라벨만 마지막 문항에서 다음 씬 이름으로 바꾼다(showFeedback은 '다음 문제'로 세운다). */
-    const nav=document.getElementById('narrationAdvance');
-    nav.setAttribute('aria-label',randomSequenceIndex===randomSequence.length-1?'모양으로 자유 그리기':'다음 문제');
-    nav.focus()}
+    /* 87: 자동 진행이 되면서 78번의 진행 버튼 라벨(마지막 문항만 다음 씬 이름) · focus() 이동이 함께 없어졌다.
+       누를 것이 없으므로 이름을 붙일 대상도, 포커스를 옮길 대상도 없다. */
+    showFeedback(document.getElementById('randomMark'),'정답입니다.',nextRandom,'correct-1')}
   /* 81: 유형 A의 정답 표현. 예전에는 물음표 칸에 **숫자를 적었다**(`8 + [2] = 10`).
      이 씬의 다른 유형은 전부 개수를 도형으로 세는데 이 유형만 답이 숫자로 나와, "10을 채웠다"가 그림에서 안 보였다.
      이제 `+` 뒤에 모자란 개수만큼 도형을 **채워 넣어** 화면의 도형이 정확히 10개가 되게 한다(2026-08-04 사용자 지시).
@@ -1621,7 +1803,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
   function completeRandomProblem(){document.getElementById('randomPanel').toggleAttribute('data-assisted',randomAssisted);armRandomContinue()}
   function judgeRandomChoice(btn){if(randomAwaitingContinue)return;if(btn.textContent===randomAnswer){document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);tone(true);completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;shake(btn);if(randomWrong>=3){const answerButton=[...document.querySelectorAll('#randomInput .choice')].find(b=>b.textContent===randomAnswer);randomAnswerRevealed=true;randomAssisted=true;document.querySelectorAll('#randomInput .choice').forEach(b=>b.disabled=true);answerButton.disabled=false;revealRandomAnswer(answerButton)}}}
   function judgeRandomKey(n){if(randomAwaitingContinue)return;const d=document.getElementById('randomDisplay');if(n==='enter'){if(randomValue===randomAnswer){setKeypadEnabled('randomKeypad',false);tone(true);completeRandomProblem()}else{tone(false);showWrongFeedback();randomWrong++;shake(d);randomValue='';d.textContent='';if(randomWrong>=3){randomAnswerRevealed=true;randomAssisted=true;randomValue=randomAnswer;d.textContent=randomAnswer;d.setAttribute('data-assisted','true');revealRandomAnswer(d);setKeypadConfirmOnly('randomKeypad')}}}else if(n==='del'){if(!randomAnswerRevealed){randomValue=randomValue.slice(0,-1);d.textContent=randomValue;keypadDisplayTick(d)}}else if(!randomAnswerRevealed){randomValue=(randomValue+n).slice(-2);d.textContent=randomValue;keypadDisplayTick(d)}}
-  function nextRandom(){stopVoice();if(randomSequenceIndex<randomSequence.length-1){randomSequenceIndex++;randomType=randomSequence[randomSequenceIndex];renderRandom()}else showScene('section_free_drawing')}
+  function nextRandom(){stopVoice();if(randomSequenceIndex<randomSequence.length-1){randomSequenceIndex++;randomType=randomSequence[randomSequenceIndex];renderRandom()}else goScene('section_free_drawing')}
   /* 53: 선생님을 누를 때마다 힌트가 **한 단계씩** 열린다. 마지막 단계에서 한 번 더 누르면 닫힌다.
      예전에는 open 토글 하나뿐이라 "누를 때마다 같은 글"이 나왔다.
      80: 말풍선(#helpCard)도 같은 조작을 받는다 — .help-speech에 cursor:pointer만 있고 핸들러가 없어
@@ -1644,7 +1826,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
   function updateDrawingCompletionState(){const done=document.getElementById('drawingDone'),items=drawingState(),ready=drawingRequirementsMet(items);done.disabled=!ready;done.setAttribute('aria-disabled',String(!ready));done.dataset.shapeCount=String(items.length);done.dataset.requirementsMet=String(ready)}
   function renderCompletedMural(){const preview=document.getElementById('completedMuralPreview');preview.innerHTML='';savedDrawing.forEach(item=>{const shape=document.createElement('div');shape.className=`drawn-shape paint-shape ${item.shape} ${item.color}`;applyDrawnShapeStyle(shape,item);preview.appendChild(shape)})}
   function resetDrawingIntro(){clearTimeout(drawingIntroTimer);drawingBeat=0;drawShape='circle';drawColor='green';drawSize=DRAW_SIZE_DEFAULT;drawTilt=DRAW_TILT_DEFAULT;syncDrawSliders();savedDrawing=[];renderCompletedMural();setProgress(84);const dialogue=document.getElementById('drawingDialogue'),teacher=document.getElementById('drawingTeacher'),speech=document.getElementById('drawingSpeech'),canvas=document.getElementById('drawingCanvas'),done=document.getElementById('drawingDone');dialogue.classList.remove('hidden');teacher.src='assets/teacher-praising.webp';teacher.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';teacher.classList.remove('drawing-enter');void teacher.offsetWidth;teacher.classList.add('drawing-enter');speech.innerHTML='담장 색칠이 끝나가요!<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speech.classList.add('hidden','stagger-speech');drawingIntroTimer=setTimeout(()=>{speech.classList.remove('hidden');speak('담장 색칠이 끝나가요!','drawing-1-almost-done')},INTRO_SPEECH_DELAY_MS);document.querySelectorAll('.tool').forEach(button=>{const active=button.dataset.shape===drawShape;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});document.querySelectorAll('.color-tool').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.color===drawColor)));document.getElementById('paintTools').classList.add('hidden');canvas.classList.add('hidden');canvas.innerHTML='';canvas.removeAttribute('data-completed');done.classList.add('hidden');document.getElementById('drawingSummary').innerHTML='';document.getElementById('drawingConfirm').classList.remove('open');updateDrawingCompletionState()}
-  document.getElementById('drawingTap').onclick=()=>{stopVoice();if(drawingBeat===0){drawingBeat++;document.getElementById('drawingTeacher').src='assets/teacher-explaining.webp';document.getElementById('drawingTeacher').alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';document.getElementById('drawingSpeech').innerHTML='마지막 담장은 자유롭게 그려주세요.<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('마지막 담장은 자유롭게 그려주세요.','drawing-2-free-draw')}else{document.getElementById('drawingDialogue').classList.add('hidden');document.getElementById('paintTools').classList.remove('hidden');document.getElementById('drawingCanvas').classList.remove('hidden');document.getElementById('drawingDone').classList.remove('hidden')}};
+  document.getElementById('drawingTap').onclick=()=>{stopVoice();playButtonSelectSfx();if(drawingBeat===0){drawingBeat++;document.getElementById('drawingTeacher').src='assets/teacher-explaining.webp';document.getElementById('drawingTeacher').alt='민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사';document.getElementById('drawingSpeech').innerHTML='마지막 담장은 자유롭게 그려주세요.<span class="repair-bubble-nav"><button type="button" class="repair-narr-next" tabindex="-1">다음 ▸</button></span>';speak('마지막 담장은 자유롭게 그려주세요.','drawing-2-free-draw')}else{document.getElementById('drawingDialogue').classList.add('hidden');document.getElementById('paintTools').classList.remove('hidden');document.getElementById('drawingCanvas').classList.remove('hidden');document.getElementById('drawingDone').classList.remove('hidden')}};
   document.querySelectorAll('.tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tool').forEach(x=>{x.classList.remove('active');x.setAttribute('aria-pressed','false')});b.classList.add('active');b.setAttribute('aria-pressed','true');drawShape=b.dataset.shape});document.querySelectorAll('.color-tool').forEach(b=>b.onclick=()=>{document.querySelectorAll('.color-tool').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');drawColor=b.dataset.color});
   /* 30-a: 슬라이더는 다음에 찍을 도형에만 적용된다(이미 찍은 도형은 그대로 둔다 — 저학년이 되돌리기를 기대하지 않는다). */
   function syncDrawSliders(){const size=document.getElementById('drawSizeRange'),tilt=document.getElementById('drawTiltRange');if(!size||!tilt)return;size.value=String(drawSize);tilt.value=String(drawTilt);document.getElementById('drawSizeValue').textContent=String(drawSize);document.getElementById('drawTiltValue').textContent=drawTilt+'°'}
@@ -1665,7 +1847,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
   const DRAWING_SUMMARY_MAX=4;
   function renderDrawingSummary(){const summary=document.getElementById('drawingSummary'),seen=new Set();summary.innerHTML='';document.querySelectorAll('#drawingCanvas .drawn-shape').forEach(shape=>{const shapeName=['circle','triangle','square'].find(name=>shape.classList.contains(name)),colorName=['green','blue','red','purple'].find(name=>shape.classList.contains(name)),key=`${shapeName}-${colorName}`;if(!shapeName||!colorName||seen.has(key))return;seen.add(key);if(seen.size>DRAWING_SUMMARY_MAX)return;const sample=document.createElement('div');sample.className=`paint-shape ${shapeName} ${colorName}`;summary.appendChild(sample)});
     if(seen.size>DRAWING_SUMMARY_MAX){const more=document.createElement('span');more.className='summary-more';more.textContent='…';summary.appendChild(more)}}
-  document.getElementById('drawingDone').onclick=()=>{const items=drawingState();if(drawingRequirementsMet(items)){renderDrawingSummary();document.getElementById('drawingConfirm').classList.add('open');/* 45: 확인 패널 문구에도 녹음(원문 씬10-3)이 있다 */playVoice('drawing-3-finished-question')}};document.getElementById('drawingNo').onclick=()=>{stopVoice();document.getElementById('drawingConfirm').classList.remove('open')};document.getElementById('drawingYes').onclick=()=>{savedDrawing=drawingState();document.getElementById('drawingCanvas').setAttribute('data-completed','true');setProgress(90);showScene('section_math_story')};
+  document.getElementById('drawingDone').onclick=()=>{const items=drawingState();if(drawingRequirementsMet(items)){renderDrawingSummary();document.getElementById('drawingConfirm').classList.add('open');/* 45: 확인 패널 문구에도 녹음(원문 씬10-3)이 있다 */playVoice('drawing-3-finished-question')}};document.getElementById('drawingNo').onclick=()=>{stopVoice();document.getElementById('drawingConfirm').classList.remove('open')};document.getElementById('drawingYes').onclick=()=>{savedDrawing=drawingState();document.getElementById('drawingCanvas').setAttribute('data-completed','true');setProgress(90);goScene('section_math_story')};
 
   /* 32: `● ■ ▲`는 인트로 판(#storyIntroBoard)으로 옮겼으므로 여기 첫 beat를 뺀다.
      길이가 7 → 6이 되어 setProgress(94+storyIndex)는 94~99, 마지막 beat 분기도 함께 따라온다. */
@@ -1683,8 +1865,8 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
   /* 44: 도형은 .sign-row(y 275~665)와 같은 영역을 쓰므로 표지판이 열리기 전에 반드시 내린다 */
   function openStorySigns(){document.getElementById('storyTitleSurface').classList.add('hidden');document.getElementById('storyIntroBoard').classList.add('hidden');document.getElementById('storyIntroShapes').classList.add('hidden');document.getElementById('storyIntroTap').classList.add('hidden');const signRow=document.getElementById('signRow');signRow.classList.remove('hidden');signRow.classList.add('revealing');document.getElementById('storyCard').classList.remove('hidden');renderStory();clearTimeout(storyRevealTimer);storyRevealTimer=setTimeout(()=>signRow.classList.remove('revealing'),STORY_REVEAL_CLEAR_MS)}
   function renderStory(){const beat=storyBeats[storyIndex],card=document.getElementById('storyCard');card.textContent=beat.text;card.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML);card.setAttribute('role','button');card.setAttribute('tabindex','0');card.setAttribute('aria-label',beat.question?'설명 보기':beat.text);document.querySelectorAll('.sign').forEach((s,i)=>s.classList.toggle('active',beat.sign<0||i===beat.sign));speak(beat.text,beat.voice)}
-  document.getElementById('storyIntroTap').onclick=()=>{stopVoice();openStorySigns()};
-  document.getElementById('storyCard').onclick=()=>{stopVoice();if(storyIndex<storyBeats.length-1){storyIndex++;setProgress(94+storyIndex);renderStory()}else showScene('section_completion')};
+  document.getElementById('storyIntroTap').onclick=()=>{stopVoice();playButtonSelectSfx();openStorySigns()};
+  document.getElementById('storyCard').onclick=()=>{stopVoice();if(storyIndex<storyBeats.length-1){playButtonSelectSfx();storyIndex++;setProgress(94+storyIndex);renderStory()}else goScene('section_completion')};
   document.getElementById('storyCard').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('storyCard').click()}};
 
   /* 68: 인증서. 1-2/01의 `repairCertConfig` / `openRepairCertificate` / `downloadRepairCertificate`를 이식했다.
@@ -1829,7 +2011,7 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
       if(v==='enter')b.setAttribute('aria-label','확인');
       if(v==='del')b.setAttribute('aria-label','지우기');
       b.addEventListener('pointerdown',()=>keypadPress(b));
-      b.onclick=()=>handler(typeof v==='number'?String(v):v);
+      b.onclick=()=>{playButtonSelectSfx();handler(typeof v==='number'?String(v):v)};
       root.appendChild(b)})}
   function setKeypadEnabled(id,enabled){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!enabled)}
   function setKeypadConfirmOnly(id){document.querySelectorAll(`#${id} .key`).forEach(key=>key.disabled=!key.classList.contains('enter'))}
@@ -1842,34 +2024,40 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
      앞의 낱개 도장 타이머가 뒤의 `hold` 도장(진행을 누를 때까지 떠 있어야 하는 것)을 걷어 갔다. */
   let heldStamp=null,stampHideTimer=0;
   function showStamp(el,type,hold){if(!el)return;clearTimeout(stampHideTimer);const correct=type==='correct';el.src=correct?'assets/feedback-stamp-correct.webp':'assets/feedback-stamp-wrong.webp';el.alt=correct?'정답 O 도장':'오답 X 도장';el.classList.remove('show');void el.offsetWidth;el.classList.add('show');if(hold){heldStamp=el;return}stampHideTimer=setTimeout(()=>el.classList.remove('show'),700)}
-  function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech'),nav=document.getElementById('narrationAdvance');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null;sp.onkeydown=null}
+  function resetFeedbackOverlay(){clearTimeout(wrongPoseTimer);clearTimeout(feedbackHideTimer);clearTimeout(feedbackAdvanceTimer);feedbackContinueAction=null;const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech'),nav=document.getElementById('narrationAdvance');if(ch)ch.classList.add('hidden');if(sp){sp.classList.add('hidden');sp.textContent='';sp.onclick=null;sp.onkeydown=null}
     /* 60: 내레이션 진행 표면과 띄워 둔 도장도 같은 자리에서 걷는다 — 안 걷으면 다음 문항에 그대로 남는다 */
     if(nav){nav.classList.add('hidden');nav.innerHTML='';nav.onclick=null;nav.onkeydown=null}
     if(heldStamp){heldStamp.classList.remove('show');heldStamp=null}}
   function completeFeedback(){const action=feedbackContinueAction;if(!action)return;stopVoice();feedbackContinueAction=null;resetFeedbackOverlay();action()}
   /* 60: 화자를 원문(`…723 음성 스크립트.md`)대로 가른다. `정답입니다`는 **내레이션**(씬2-6·씬3-2 등 4회)이라
      캐릭터를 세우지 않고 도장 + 음성만 낸다. 화자가 있는 대사(씬2-3 교사 `잘 찾았어요!`)만 speaker='teacher'로 부른다.
-     내레이션에서 말풍선을 없애면 17·26번이 세운 유일한 진행 표면이 사라지므로 #narrationAdvance로 **함께 옮긴다** —
-     옮기지 않으면 정답 뒤 진행 경로가 0개가 되어 26번 데드엔드가 그대로 재발한다(47번과 같은 함정). */
-  function showFeedback(el,text='정답입니다.',onContinue=null,voice='',speaker='narration'){resetFeedbackOverlay();playVoice(voice);/* 23: 오답과 대칭이 되게 정답 포즈도 무대의 학생에게서 낸다(칭찬 말풍선은 선생님 몫으로 둔다) */if(sceneStudentVisible())setSceneStudentPose('volunteer',SCENE_STUDENT_POSE_MS);const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech'),nav=document.getElementById('narrationAdvance');
+     내레이션에서 말풍선을 없애면 17·26번이 세운 유일한 진행 표면이 사라진다 — 60번은 그 자리를 #narrationAdvance로
+     옮겼고, **87번이 그 표면을 아예 없애고 자동 진행으로 바꿨다**(아래 참조). */
+  /* 87: 정답 뒤 자동 진행까지의 시간. 두 값이 다른 이유는 화면에 남는 것이 다르기 때문이다 —
+     도장은 보는 즉시 읽히지만 글자는 읽어야 한다. 정답 음성 길이도 함께 본다(둘 다 음성보다 길다). */
+  const FEEDBACK_ADVANCE_MS=1500,FEEDBACK_ADVANCE_SPEECH_MS=2500;
+  function showFeedback(el,text='정답입니다.',onContinue=null,voice='',speaker='narration'){resetFeedbackOverlay();playVoice(voice);/* 23: 오답과 대칭이 되게 정답 포즈도 무대의 학생에게서 낸다(칭찬 말풍선은 선생님 몫으로 둔다) */if(sceneStudentVisible())setSceneStudentPose('volunteer',SCENE_STUDENT_POSE_MS);const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');
     const useCharacter=speaker==='teacher'&&!!text;
     if(useCharacter){ch.src='assets/teacher-praising.webp';ch.alt='민트색 블라우스를 입고 왼쪽 학습자를 바라보며 두 손으로 박수치는 여 교사';ch.classList.remove('hidden');sp.textContent=text;sp.classList.remove('hidden')}
     /* 진행을 기다리는 동안에는 도장을 띄워 둔다 — 내레이션에서는 도장이 화면에 남는 유일한 정답 신호다 */
     showStamp(el,'correct',!!onContinue&&!useCharacter);
     if(!onContinue){if(useCharacter)feedbackHideTimer=setTimeout(()=>{ch.classList.add('hidden');sp.classList.add('hidden')},700);return}
+    /* 87: `다음 ▸`를 눌러야 넘어가던 것을 **자동 진행**으로 바꿨다(2026-08-04 사용자 지시).
+       17·26번이 진행 표면을 세운 이유는 "정답 뒤 진행 경로가 0개가 되는 데드엔드"였는데, 타이머는 사람의 클릭에
+       기대지 않으므로 그 데드엔드가 원천적으로 없다. 대신 위험이 **타이머를 안 걷는 것**으로 옮겨간다 —
+       걷는 곳은 resetFeedbackOverlay 한 곳이고 showScene도 그 함수를 타므로 씬을 벗어나면 함께 걷힌다.
+       feedbackContinueAction은 계속 세운다: 26번의 오답 오버레이 가드(showWrongFeedback)가 이 값을 본다. */
     feedbackContinueAction=onContinue;
-    const surface=useCharacter?sp:nav;
-    surface.setAttribute('aria-label','다음 문제');
-    /* 17: 눌러야 넘어간다는 신호를 사람이 볼 수 있는 표면으로 보장한다 */
-    ensureAdvanceNav(surface);
-    if(!useCharacter)nav.classList.remove('hidden');
-    surface.onclick=completeFeedback;surface.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();completeFeedback()}}}
+    feedbackAdvanceTimer=setTimeout(completeFeedback,useCharacter?FEEDBACK_ADVANCE_SPEECH_MS:FEEDBACK_ADVANCE_MS)}
   /* 23: 무대에 학생이 서 있으면 오답 포즈는 그 아이의 src 교체로 낸다.
      서 있지 않은 씬(계산 단계·씬3·씬4)에서만 종전처럼 #feedbackCharacter 오버레이를 띄운다. */
   /* 26: 어느 씬이든 정답이 확정돼 feedbackContinueAction이 armed된 뒤에는 오답 오버레이를 띄우지 않는다.
      띄우면 안에서 resetFeedbackOverlay()가 진행 경로와 말풍선을 함께 지워 데드엔드가 된다.
      씬2의 searchSolved 가드와 이 가드는 원인이 둘이라 함께 둔다(하나만으로도 막히지만 다른 씬에서 재발한다). */
-  function showWrongFeedback(){if(feedbackContinueAction)return;resetFeedbackOverlay();showStamp(currentFeedbackMark(),'wrong');if(sceneStudentVisible()){setSceneStudentPose('thinking',SCENE_STUDENT_POSE_MS);return}const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.webp';ch.alt='한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),SCENE_STUDENT_POSE_MS)}
+  /* 94: 씬4는 오답에 인물을 세우지 않는다(2026-08-04 사용자 지시) — 오답 신호는 X 도장 + 효과음 + 흔들림이고,
+     힌트는 선생님(#helpCharacter)을 눌러 여는 별도 경로라 왼쪽에 아이를 또 띄우면 화면만 시끄러워진다. */
+  const NO_WRONG_CHARACTER_SCENES=['section_random_problems'];
+  function showWrongFeedback(){if(feedbackContinueAction)return;resetFeedbackOverlay();showStamp(currentFeedbackMark(),'wrong');if(NO_WRONG_CHARACTER_SCENES.includes(currentScene))return;if(sceneStudentVisible()){setSceneStudentPose('thinking',SCENE_STUDENT_POSE_MS);return}const ch=document.getElementById('feedbackCharacter'),sp=document.getElementById('feedbackSpeech');ch.src='assets/student-thinking.webp';ch.alt='페인트 롤러를 든 채 한 손을 턱에 대고 오른쪽 위를 바라보며 궁금해하는 주인공 어린이';ch.classList.remove('hidden');sp.classList.add('hidden');wrongPoseTimer=setTimeout(()=>ch.classList.add('hidden'),SCENE_STUDENT_POSE_MS)}
   function shake(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),450)}
   /* 정적 마크업으로 들어 있는 첫 대사에는 진행 버튼이 붙어 있지 않다(이후 대사는 render*가 innerHTML로 다시 그린다). 여기서 한 번 붙인다. */
   function ensureAdvanceNav(el){if(el&&!el.querySelector('.repair-bubble-nav'))el.insertAdjacentHTML('beforeend',ADVANCE_NAV_HTML)}
@@ -1923,6 +2111,32 @@ document.getElementById('arithShapes').innerHTML=Array.from({length:q.count},(_,
     if(e.key==='Escape'&&!document.getElementById('debugPanel').hidden)toggleDebugPanel(false);
   });
   buildDebugScenes();
+
+  /* 88: 1-2/01의 이미지 커서 추종. 01의 클래스명(.big / .readable-hover)을 그대로 쓴다.
+     01의 반짝이 트레일(.cspark)은 가져오지 않았다 — 01에서 이미 `display:none!important`로 꺼진 죽은 코드다.
+     조준선(#drawingCanvas·#shapeSearch의 cursor:crosshair)은 *{cursor:none}에 덮여 사라진다(사용자 결정, 2026-08-04). */
+  (() => {
+    const cur=document.getElementById('cursor');
+    if(!cur)return;
+    /* 커서가 커지는 대상 = 누를 수 있는 것. 08의 조작 표면은 01과 클래스가 달라 이 목록만 08 것으로 바꿨다.
+       .tap-layer·#shapeSearch·#drawingCanvas 같은 전면 레이어는 뺐다 — 화면 대부분에서 커서가 커져 있게 된다. */
+    const HOT='button,[role="button"],.cta,.choice,.key,.tool,.confirm-btn,.hotspot,.color-tool,.course-menu-item,.help-character';
+    /* 글을 읽어야 하는 표면에서는 커서를 살짝 죽여 글자를 덜 가린다(01의 .readable-hover와 같은 역할). */
+    const READ='.speech,.prompt,.story-card';
+    addEventListener('mousemove',e=>{
+      cur.style.left=e.clientX+'px';
+      cur.style.top=e.clientY+'px';
+    },{passive:true});
+    /* mouseover만 쓴다. mouseout의 target은 *떠나는* 요소라 거기서 다시 판정하면 클래스가 도로 붙는다
+       (01은 add/remove를 나눠 이 함정을 피했다). 버튼 → 배경으로 나가면 배경에서 mouseover가 한 번 더 온다. */
+    const sync=t=>{
+      const el=t instanceof Element?t:null;
+      cur.classList.toggle('big',!!el&&!!el.closest(HOT));
+      cur.classList.toggle('readable-hover',!!el&&!!el.closest(READ));
+    };
+    addEventListener('mouseover',e=>sync(e.target));
+    document.addEventListener('mouseleave',()=>sync(null));
+  })();
 
   showScene(currentScene);
 })();
