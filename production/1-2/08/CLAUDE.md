@@ -91,3 +91,7 @@ complete.md           완료된 항목 보관소(todo.md에서 옮겨온 것)
 - 캐릭터는 `{역할}-{상태}` 형태다: `worker-idle` / `worker-explaining` / `worker-apologizing`, `teacher-idle` / `teacher-explaining` / `teacher-praising`, `student-idle` / `student-thinking` / `student-volunteer`.
 - UI 위에 얹는 요소(도형 타일, 스탬프, 힌트 등)는 **배경을 투명하게** 만든다. 배경색이 박힌 PNG를 씬 위에 올리지 않는다.
 - 텍스트가 필요한 이미지는 이미지에 글자를 굽지 말고 빈 면을 남긴 뒤 HTML 텍스트를 얹는다(현재 `*-body.png` 에셋들이 이 규칙을 따르고 있다).
+- **예외: 제목·로고류처럼 문구가 고정인 것은 글자를 이미지에 굽는다**(51번, 2026-08-03 사용자 지시). 가르는 기준은 "텍스트냐"가 아니라 **"변하느냐 고정이냐"** 다. 문항·보기·정답·상태 표시처럼 바뀌는 글자는 어떤 경우에도 굽지 않는다.
+  - 구운 에셋: `title-shape-find.png` / `title-arithmetic.png` / `title-random-problems.png` / `title-free-drawing.png` / `title-math-story.png`(씬2~6 제목).
+  - 굽는 대가는 **문구 수정에 재생성이 필요하다는 것**이다. 굽기 전에 문구를 사용자에게 확정받는다.
+  - 제목 에셋은 **알파 bbox까지 잘라서** 저장한다. 여백이 남아 있으면 `height`만 줬을 때 씬마다 글자 높이가 어긋난다.
