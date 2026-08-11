@@ -1,0 +1,103 @@
+.c-debugToggle {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: var(--z-drawer);
+  width: 54px;
+  height: 54px;
+  border: 2px solid rgba(76,52,40,.45);
+  border-radius: var(--r-circle);
+  background: rgba(255,253,246,.9);
+  color: var(--bubble-ink);
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.c-debugPanel {
+  position: absolute;
+  right: 24px;
+  top: 78px;
+  z-index: var(--z-drawer);
+  width: 410px;
+  max-height: 850px;
+  overflow: auto;
+  padding: 14px;
+  border: 3px solid rgba(76,52,40,.55);
+  border-radius: 18px;
+  background: rgba(255,253,246,.96);
+  box-shadow: var(--shadow);
+  color: var(--bubble-ink);
+}
+
+.c-debugHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.c-debugHead button {
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(76,52,40,.45);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.c-debugCurrent {
+  margin-bottom: 10px;
+  font-size: 16px;
+  opacity: .75;
+}
+
+.c-debugList {
+  display: grid;
+  gap: 8px;
+}
+
+.c-debugScene {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 2px solid rgba(76,52,40,.25);
+  border-radius: 12px;
+  background: rgba(255,255,255,.65);
+  color: var(--bubble-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.c-debugScene.current {
+  border-color: var(--surface);
+  box-shadow: 0 0 0 3px rgba(31,115,201,.18);
+}
+
+.c-debugOrder {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-circle);
+  background: var(--accent);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.c-debugLabel {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.c-debugId {
+  display: block;
+  font-size: 13px;
+  opacity: .65;
+}

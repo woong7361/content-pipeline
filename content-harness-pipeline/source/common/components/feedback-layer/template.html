@@ -1,0 +1,19 @@
+<!--
+  Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
+  함께 넣을 것:
+    CSS    _shared/base.css → feedback-layer/style.css
+    JS     feedback-layer/behavior.js  (window.CommonFeedbackLayer 등록)
+    Asset  assets/feedback-stamp-correct.webp, assets/feedback-stamp-wrong.webp → output/assets/
+  사용:
+    src는 비워 두고 JS가 data-*-src에서 골라 넣는다.
+      CommonFeedbackLayer.showStamp(el, "correct" | "wrong", { hold: false })
+      CommonFeedbackLayer.hideStamp(el)
+  동작 확인은 example/index.html.
+-->
+<img
+  class="c-feedbackStamp"
+  data-component="feedback-stamp"
+  data-correct-src="assets/feedback-stamp-correct.webp"
+  data-wrong-src="assets/feedback-stamp-wrong.webp"
+  alt=""
+>

@@ -1,0 +1,105 @@
+.c-speechBubble {
+  --speech-face-y: 492px;
+  --speech-side-x: 390px;
+  position: absolute;
+  z-index: var(--z-speech);
+  width: max-content;
+  max-width: 990px;
+  padding: 20px 40px;
+  text-align: left;
+  background: var(--bubble-bg);
+  border: 6px solid var(--bubble-line);
+  border-radius: 28px;
+  box-shadow: 0 10px 0 rgba(0,0,0,.18);
+  color: var(--bubble-ink);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.4;
+  word-break: keep-all;
+  text-wrap: balance;
+  white-space: pre-line;
+  animation: speechPop var(--dur) var(--ease-speech-pop) both;
+}
+
+.c-speechBubble[data-state="hidden"] {
+  display: none;
+}
+
+.c-speechBubble::before,
+.c-speechBubble::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.c-speechBubble::before {
+  border-width: 17px;
+}
+
+.c-speechBubble::after {
+  border-width: 14px;
+}
+
+.c-speechBubble.left-speaker {
+  left: var(--speech-side-x);
+  top: var(--speech-face-y);
+  translate: 0 -50%;
+}
+
+.c-speechBubble.left-speaker::before {
+  left: -34px;
+  transform: translateY(-17px);
+  border-right-color: var(--bubble-line);
+}
+
+.c-speechBubble.left-speaker::after {
+  left: -22px;
+  transform: translateY(-14px);
+  border-right-color: var(--bubble-bg);
+}
+
+.c-speechBubble.right-speaker {
+  right: var(--speech-side-x);
+  top: var(--speech-face-y);
+  translate: 0 -50%;
+}
+
+.c-speechBubble.right-speaker::before {
+  right: -34px;
+  transform: translateY(-17px);
+  border-left-color: var(--bubble-line);
+}
+
+.c-speechBubble.right-speaker::after {
+  right: -22px;
+  transform: translateY(-14px);
+  border-left-color: var(--bubble-bg);
+}
+
+.c-speechBubble.top-speaker::before,
+.c-speechBubble.top-speaker::after {
+  top: auto;
+  transform: none;
+}
+
+.c-speechBubble.top-speaker::before {
+  right: 60px;
+  bottom: -34px;
+  border-top-color: var(--bubble-line);
+}
+
+.c-speechBubble.top-speaker::after {
+  right: 63px;
+  bottom: -22px;
+  border-top-color: var(--bubble-bg);
+}
+
+@keyframes speechPop {
+  0% { opacity: 0; transform: scale(.5); }
+  70% { transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}

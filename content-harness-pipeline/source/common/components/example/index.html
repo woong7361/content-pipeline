@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Common Components Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../scene-controller/style.css">
+  <link rel="stylesheet" href="../speech-bubble/style.css">
+  <link rel="stylesheet" href="../ticket-button/style.css">
+  <link rel="stylesheet" href="../keypad/style.css">
+  <link rel="stylesheet" href="../feedback-layer/style.css">
+  <link rel="stylesheet" href="../debug-jumper/style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <header class="previewTopbar">
+        <strong>Common Components Preview</strong>
+        <span>production/1-2/08 extracted patterns</span>
+      </header>
+
+      <section class="scene active" id="scene-intro" data-qa-scene="scene-intro" data-qa-order="1" data-qa-label="컴포넌트 소개">
+        <img class="c-bg" src="./assets/school-wall-repaired.webp" alt="알록달록하게 수리된 학교 담장">
+        <div class="previewShade"></div>
+        <div class="previewTitle">
+          <small>source/common/components</small>
+          <h1>분리된 컴포넌트 예시</h1>
+          <p>말풍선, CTA, scene controller, debug jumper를 한 화면에서 확인합니다.</p>
+        </div>
+        <img class="previewCharacter teacher" src="./assets/teacher-praising.webp" alt="박수치며 칭찬하는 선생님">
+        <div class="c-speechBubble right-speaker" id="introSpeech" style="--speech-side-x: 430px; --speech-face-y: 510px">
+          <span data-slot="text">좋아요! 이제 production 1-2/08에서 뽑은 컴포넌트를 따로 수정하고, 나중에 단일 HTML로 합칠 수 있어요.</span>
+        </div>
+        <button class="c-ticketButton previewStart" id="goPractice" type="button">
+          <span data-slot="label">[키패드 예시 확인하기 →]</span>
+        </button>
+      </section>
+
+      <section class="scene" id="scene-practice" data-qa-scene="scene-practice" data-qa-order="2" data-qa-label="키패드와 피드백">
+        <img class="c-bg" src="./assets/school-wall-repaired.webp" alt="알록달록하게 수리된 학교 담장">
+        <div class="practicePanel">
+          <h2>키패드 컴포넌트</h2>
+          <p>정답은 <strong>12</strong>입니다. 숫자를 누르고 확인해 보세요.</p>
+          <div class="c-keypadWrap" id="demoKeypad">
+            <div class="c-answerDisplay" data-slot="display" id="demoDisplay"></div>
+            <div class="c-keypad" data-slot="keys"></div>
+          </div>
+        </div>
+        <img class="previewCharacter student" id="practiceCharacter" src="./assets/student-thinking.webp" alt="생각하는 학생">
+        <div class="c-speechBubble left-speaker" id="practiceSpeech" style="--speech-side-x: 340px; --speech-face-y: 690px">
+          <span data-slot="text">키패드 상태는 component JS가 만들고, 정답/오답 도장은 feedback-layer가 맡아요.</span>
+        </div>
+        <button class="c-ticketButton previewBack" id="goIntro" type="button">
+          <span data-slot="label">[처음 화면으로 돌아가기]</span>
+        </button>
+      </section>
+
+      <img
+        class="c-feedbackStamp"
+        id="demoStamp"
+        data-correct-src="../feedback-layer/assets/feedback-stamp-correct.webp"
+        data-wrong-src="../feedback-layer/assets/feedback-stamp-wrong.webp"
+        alt=""
+      >
+
+      <button class="c-debugToggle" id="debugToggle" type="button" aria-label="debug scene jumper">⌘</button>
+      <aside class="c-debugPanel" data-component="debug-jumper" id="debugPanel" hidden>
+        <div class="c-debugHead">
+          <strong>Scenes</strong>
+          <button type="button" data-action="close" aria-label="닫기">×</button>
+        </div>
+        <div class="c-debugCurrent" data-slot="current"></div>
+        <div class="c-debugList" data-slot="scene-list"></div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="../scene-controller/behavior.js"></script>
+  <script src="../speech-bubble/behavior.js"></script>
+  <script src="../ticket-button/behavior.js"></script>
+  <script src="../keypad/behavior.js"></script>
+  <script src="../feedback-layer/behavior.js"></script>
+  <script src="../debug-jumper/behavior.js"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

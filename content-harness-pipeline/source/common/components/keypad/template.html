@@ -1,0 +1,16 @@
+<!--
+  Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
+  함께 넣을 것:
+    CSS  _shared/base.css → keypad/style.css
+    JS   keypad/behavior.js  (window.CommonKeypad 등록)
+  사용:
+    키 그리드는 비어 있고 JS가 채운다. 반드시 build를 호출해야 키가 생긴다.
+      CommonKeypad.build(root, key => { ... })   key: "0".."9" | "del" | "enter"
+      CommonKeypad.setEnabled(root, false) / setConfirmOnly(root)
+      CommonKeypad.displayTick(display)
+  동작 확인은 example/index.html.
+-->
+<div class="c-keypadWrap" data-component="keypad">
+  <div class="c-answerDisplay" data-slot="display"></div>
+  <div class="c-keypad" data-slot="keys"></div>
+</div>

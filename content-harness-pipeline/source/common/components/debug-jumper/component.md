@@ -1,0 +1,25 @@
+# Debug Jumper
+
+- Type: `debug_tool`
+- Status: `candidate`
+- Source: `production/1-2/08/index.html` debug panel
+- Final output: inline only for preview/debug builds
+- Required:
+  - scene controller object
+  - `.scene[data-qa-*]`
+- Slots:
+  - `current` — 현재 scene 표시
+  - `scene-list` — scene 버튼 목록 (JS가 채운다)
+- Actions:
+  - `data-action="close"`
+- Runtime API:
+  - `CommonDebugJumper.init(panel, controller, { toggle })` → `{ open, sync }`
+  - slot이 없으면 `null`을 반환한다
+- Trigger:
+  - backquote key
+  - optional visible debug button
+- Notes:
+  - `common:scenechange`를 구독해 현재 항목을 갱신한다
+  - panel 내부는 ID가 아니라 `data-slot`으로 찾는다. 여러 페이지에 붙일 수 있어야 한다.
+- Avoid:
+  - learner-facing production UI

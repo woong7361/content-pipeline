@@ -1,0 +1,39 @@
+.c-feedbackStamp {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: var(--z-effect);
+  transform: translate(-50%, -50%) scale(0);
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+  filter: var(--ds-lg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.c-feedbackStamp.show {
+  animation: feedbackStamp var(--dur-slow) var(--ease-back) both;
+}
+
+@keyframes feedbackStamp {
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(1.22) rotate(-8deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-8deg); }
+}
+
+.c-feedbackCharacter {
+  position: absolute;
+  z-index: var(--z-character);
+  left: 80px;
+  bottom: -12px;
+  width: 330px;
+  height: 540px;
+  object-fit: contain;
+  filter: var(--ds-lg);
+  pointer-events: none;
+}
+
+.c-feedbackSpeech {
+  --speech-side-x: 430px;
+  --speech-face-y: 610px;
+}

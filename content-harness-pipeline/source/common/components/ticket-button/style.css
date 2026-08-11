@@ -1,0 +1,39 @@
+.c-ticketButton {
+  width: 868px;
+  height: 140px;
+  min-width: 868px;
+  min-height: 140px;
+  padding: 0 72px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--clear);
+  background-image: url("assets/activity-cta-body.webp");
+  background-repeat: no-repeat;
+  background-size: 2606px 398px;
+  background-position: 0 -130px;
+  box-shadow: none;
+  color: #7b4626;
+  font-size: var(--fs-xs);
+  font-weight: 900;
+  line-height: 1.18;
+  text-align: center;
+  word-break: keep-all;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.c-ticketButton:hover {
+  background-position: -869px -130px;
+}
+
+.c-ticketButton:active {
+  background-position: -1737px -130px;
+}
+
+.c-ticketButton:disabled,
+.c-ticketButton[aria-disabled="true"] {
+  cursor: default;
+  filter: var(--filter-disabled);
+}

@@ -52,6 +52,24 @@
 
 <!-- 새 항목은 이 아래에 추가한다. -->
 
+### [visual-qa-pixel-measure-cost] 정렬 판정을 LLM이 스크린샷 픽셀로 매번 재게 해서 토큰·시간 비용이 과도함
+
+- 대상: content-harness-pipeline/prompts/design_review_system.md (STEP1 픽셀 전수 검사), schemas/design_review_model_output.schema.json (`alignment_offset`), stages/visual_qa.py, stages/design_review.py
+- 분류 태그: visual-qa-pixel-measure-cost
+- 상태: 열림 (조사 완료, 설계안 미적용)
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-08
+- 최근 발생일: 2026-08-08
+- 사례:
+  - 2026-08-08: 사용자가 "playwright로 화면을 보고 거기서 픽셀을 계산하고 있어서 token 소모가 너무 심하다"고 지적. 대표 사례로 "이미지 내부에 글자를 중앙에 넣는 것"을 듦. 좌표평면을 다루는 다른 도메인(도면/CAD 등)의 기법을 레퍼런스로 가져오고 싶다며 조사를 요청.
+- 배경(왜 이 구조가 됐나): [design-review-no-image-input] 대응으로 2026-07-22에 "모델=측정기, 코드=임계값 판정기" 구조를 넣었다. 그 결정 자체가 비용을 명시적으로 기록해 두었다 — `alignment_offset` 필수화로 리뷰 생성 시간 **1.7~2배(cell9 642초)**. 즉 이번 지적은 그 조치의 **알려진 잔여 비용**이 임계에 달한 것이다. 두 항목은 같은 지점의 앞뒤 면이므로 태그를 합치지 말 것 — 그쪽은 "못 잡는다"(정확도), 이쪽은 "비싸다"(비용).
+- 비용 구조 분석: 씬 N개 × 표면 M개마다 (1) 스크린샷 PNG를 이미지로 열고 (2) 두 중심의 오프셋을 눈으로 재고 (3) `alignment_offset{dx_px,dy_px,surface_w,surface_h}`를 채운다. **정보이론적으로 이 값은 이미 결정되어 있다** — 슬롯 중심은 asset 저작 시점에, DOM 박스 중심은 CSS에 있다. 매 iteration마다 렌더된 픽셀에서 역산하는 것은 이미 아는 값을 비싼 경로로 다시 구하는 것이다. 게다가 측정 결과가 흔들려(cell6/7/8에서 같은 ~12px를 high/none/low) 코드 임계값을 덧대야 했다.
+- 조치: (조사만, 미조치) 좌표계 도메인 6종 레퍼런스 조사 완료. 공통 원리는 **"측정하지 말고 선언하라"** — 좌표를 산출물에서 역산하지 않고, 각 요소가 자기 기준계(anchor/pivot/safe zone)를 **입력 데이터로 신고**하고 배치는 solver/레이아웃 엔진이 푼다.
+  - 핵심 후보 ①: **Android 9-patch / Aseprite slice 방식** — 에셋이 자기 content rect(=safe zone)를 메타데이터로 들고 다닌다. asset_generator가 `composition_notes`에 산문으로 적는 safe zone을 정규화 좌표 JSON(`{x,y,w,h}` 0~1)으로 승격하면, builder는 그 값을 CSS로 옮기기만 하면 되고 측정이 사라진다.
+  - 핵심 후보 ②: **CAD 구속(constraint) + GD&T 공차** — "중앙에 놓아라"를 `concentric(text_box, slot)` 같은 관계로 선언하고, 검증은 공차 위반만 보고. `visual_qa.py`가 `getBoundingClientRect()`로 결정적 계산 → 위반 건만 출력하면 토큰은 위반 수에 비례(정상이면 0).
+  - 나머지: TeX box-glue(중앙정렬은 glue가 푼다), Cassowary/Auto Layout(선언적 제약 + priority), Unity RectTransform(정규화 anchor/pivot), Mapbox 라벨 배치(anchor+offset+collision index).
+- 규칙화 메모: 아직 1회. 설계안을 실제 적용해 효과가 확인되면 "**정렬은 산출물 픽셀에서 역산하지 않는다. 에셋은 자기 safe zone을 정규화 좌표로 신고하고, 정렬 검증은 결정적 기하 계산으로 위반만 보고한다**"를 `content-harness-pipeline/AGENTS.md` 또는 `prompts/common_html_contract.md`에 승격 제안. 연관: [design-review-no-image-input](정확도 면), [bg-anchor-alignment]·[content-overflows-fixed-surface](배경 면 좌표를 눈대중으로 잡아 생긴 결함 — safe zone 메타데이터화의 직접 수혜자).
+
 ### [debug-panel-missing-from-run-output] run 산출물에서 백틱으로 여는 씬 이동 디버그 패널이 누락됨
 
 - 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html
@@ -1503,3 +1521,30 @@
 - 규칙화 메모: 아직 1회. 반복되면 "**피드백에 인물을 세울지는 씬 단위 정책으로 둔다** — 씬에 이미 인물이 있거나(상시 배치·힌트 인물) 판정 신호(도장·소리·모션)만으로 읽히는 자리에는 피드백 전용 캐릭터를 추가로 띄우지 않는다"를 `prompts/builder_system.md`의 "channel 렌더링 계약" `feedback` 절에 예외로 추가 제안.
   - 경계: `[same-character-duplicated-on-screen]`(같은 인물이 둘 보임 — 씬2, 무대 인물의 포즈 교체로 해결)과 **원인이 다르다.** 여기는 인물이 중복된 게 아니라 **다른 인물이 하나 더 늘어난** 것이고, 해법도 포즈 교체가 아니라 **안 띄우기**다. 같은 뿌리는 `showWrongFeedback`의 "무대에 학생이 없으면 무조건 오버레이" 기본값 하나다.
   - 연관: `[feedback-as-character-bubble]`(규칙화됨 — 피드백은 캐릭터+말풍선으로) 규칙의 **두 번째 예외 후보**다. 첫 번째는 60번의 "내레이션 대사는 화자를 세우지 않는다"(승인 대기). 둘을 묶어 "피드백 표면은 화자·씬 맥락에 따라 인물 없이 낼 수 있다"로 한 번에 제안하는 편이 낫다.
+
+### [context-file-not-agents-md] 디렉토리 컨텍스트 문서를 README.md로 만들어 AI가 자동으로 읽지 않음
+
+- 대상: content-harness-pipeline/source/common/components/README.md
+- 분류 태그: context-file-not-agents-md
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-08
+- 최근 발생일: 2026-08-08
+- 사례:
+  - 2026-08-08: "common/components에 Readme.md를 바꾸자. 차라리 AGENTS.md나 CLAUDE.md로 바꾸고, 거기에 공용으로 쓸 컴포넌트들이라고 설명을 써두자. 어떤 선생님이든 아니면 다른거에 상관 없이." 컴포넌트 1차 추출 때 디렉토리 설명을 `README.md`로 만들었다. 전역 규칙(`~/.claude/CLAUDE.md`)은 "작업 디렉토리에 `AGENTS.md` 또는 `CLAUDE.md`가 있으면 반드시 먼저 읽는다"인데 `README.md`는 그 트리거에 걸리지 않아, 이 디렉토리에서 작업하는 AI가 사용 계약을 안 읽고 지나갈 수 있었다. 내용에도 "선생님/콘텐츠와 무관한 공용 자산"이라는 범위 선언이 없어 teacher source와의 경계가 안 적혀 있었다.
+- 조치: `README.md`를 `AGENTS.md`로 바꾸고 "선생님·차시·콘텐츠 무관"이라는 범위 선언, common에 둘 것과 두지 말 것의 판단 기준, 사용 절차, 네이밍/조회 규칙을 앞쪽에 배치했다.
+- 규칙화 메모: 아직 1회. 반복되면 "**AI가 따라야 할 디렉토리 규칙은 `README.md`가 아니라 `AGENTS.md`에 쓴다.** `README.md`는 사람용 소개로만 쓰고, 제약·계약·사용 절차는 자동으로 읽히는 파일에 둔다"를 최상단 `AGENTS.md`에 제안 후보.
+
+### [component-fragment-not-self-verifiable] 컴포넌트 template.html이 css/js를 안 물고 있어 단독으로 열면 아무것도 적용되지 않음
+
+- 대상: content-harness-pipeline/source/common/components/*/template.html
+- 분류 태그: component-fragment-not-self-verifiable
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-08
+- 최근 발생일: 2026-08-08
+- 사례:
+  - 2026-08-08: "template.html에서 css나 js가 import 안되어있어 적용이 안되고있는거 아니야?" `template.html`은 최종 단일 HTML로 inline할 마크업 조각이라 `<head>`가 없는 것이 설계 의도(`docs/reusable-source-design.md` 7.5)지만, **파일만 봐서는 그 의도도, 무엇을 함께 넣어야 동작하는지도 알 수 없었다.** 실제로 브라우저에서 직접 열면 스타일도 동작도 없다.
+- 조치: (1) 각 `template.html` 맨 위에 필요한 CSS/JS와 runtime 호출을 적은 주석 헤더를 넣어, 조각만 봐도 무엇과 함께 써야 하는지 알 수 있게 했다. (2) 컴포넌트마다 `preview.html`을 만들어 **그 컴포넌트 하나만** 띄우고 상태를 버튼으로 밟아볼 수 있게 했다(`_shared/preview.css`, `_shared/preview.js` harness). 확인 경로가 두 층이 됐다 — `preview.html`은 컴포넌트가 혼자 성립하는지, `example/index.html`은 조합이 성립하는지 본다.
+- 규칙화 메모: 아직 1회. 반복되면 "**단독으로 실행되지 않는 조각 파일은 맨 위 주석에 의존물과 사용법을 적는다** — 조각인지 완성 파일인지가 파일 자체에서 읽혀야 한다"를 `content-harness-pipeline/AGENTS.md`에 제안 후보.
+  - 부수 효과: preview가 무엇을 로드하는지가 **그 컴포넌트의 실제 의존 목록**이 됐다. `debug-jumper`만 `scene-controller`를 함께 싣고 나머지는 자기 것만 싣는다. 편의로 전부 로드하면 이 정보가 사라지므로 그렇게 하지 않는다.

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ticket-button preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <button
+        class="c-ticketButton"
+        type="button"
+        data-component="ticket-button"
+        id="cta"
+        style="position:absolute; left:50%; top:400px; translate:-50% 0"
+      >
+        <span data-slot="label">[다음으로 가기]</span>
+      </button>
+
+      <button
+        class="c-ticketButton"
+        type="button"
+        id="ctaDisabled"
+        disabled
+        style="position:absolute; left:50%; top:620px; translate:-50% 0"
+      >
+        <span data-slot="label">[비활성 상태 비교용]</span>
+      </button>
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "ticket-button",
+        path: "source/common/components/ticket-button",
+        note: "hover / active는 sprite 배경 위치로 표현된다. 버튼 위에 마우스를 올리고 눌러서 확인한다."
+      });
+
+      const cta = document.getElementById("cta");
+      const LABELS = ["[다음으로 가기]", "[시작하기]", "[완료하고 저장하기]", "[아주 긴 라벨을 넣으면 두 줄로 접히는지 확인합니다]"];
+      let i = 0;
+
+      cta.addEventListener("click", () => Preview.log("click — 핸들러는 콘텐츠 쪽에서 붙인다"));
+
+      Preview.control("라벨 순환", () => {
+        i = (i + 1) % LABELS.length;
+        CommonTicketButton.setLabel(cta, LABELS[i]);
+      });
+      Preview.control("disabled 토글", () => {
+        cta.disabled = !cta.disabled;
+        Preview.log("disabled: " + cta.disabled);
+      });
+    })();
+  </script>
+</body>
+</html>

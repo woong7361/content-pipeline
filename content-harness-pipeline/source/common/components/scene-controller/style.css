@@ -1,0 +1,50 @@
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-bg);
+  display: none;
+  opacity: 0;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.scene.active {
+  display: block;
+  opacity: 1;
+  animation: stageFadeIn var(--dur-scene-in) ease both;
+}
+
+.scene.leaving {
+  display: block;
+  animation: stageFadeOut var(--dur-scene-out) ease both;
+  pointer-events: none;
+}
+
+@keyframes stageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes stageFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+#stage[data-transition="slide"] .scene.active {
+  animation: stageSlideInRight var(--dur-scene-out) ease both;
+}
+
+#stage[data-transition="slide"] .scene.leaving {
+  opacity: 1;
+  animation: stageSlideOutRight var(--dur-scene-out) ease both;
+}
+
+@keyframes stageSlideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes stageSlideInRight {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}

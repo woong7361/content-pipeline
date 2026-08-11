@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>speech-bubble preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <!-- 화자 자리표시. 실제 콘텐츠에서는 캐릭터 이미지가 온다. -->
+      <div class="p-ghost" id="ghostLeft" style="left:80px; bottom:0; width:330px; height:540px">화자 (좌)</div>
+      <div class="p-ghost" id="ghostRight" style="right:70px; bottom:0; width:430px; height:650px">화자 (우)</div>
+
+      <div
+        class="c-speechBubble right-speaker"
+        data-component="speech-bubble"
+        data-state="visible"
+        id="bubble"
+        style="--speech-side-x: 530px; --speech-face-y: 470px"
+      >
+        <span data-slot="text">말풍선 미리보기입니다.</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "speech-bubble",
+        path: "source/common/components/speech-bubble",
+        note: "화자 옆에 붙는 대사 표면. 위치는 --speech-side-x / --speech-face-y로 잡는다."
+      });
+
+      const bubble = document.getElementById("bubble");
+      const SHORT = "정답이에요!";
+      const LONG = "긴 대사를 넣으면 어디까지 늘어나는지 확인합니다. max-width 990px에서 줄바꿈되고, word-break: keep-all이라 단어 중간에서 끊기지 않아야 합니다.";
+      const SIDES = ["right-speaker", "left-speaker", "top-speaker"];
+      let side = 0;
+
+      function applySide() {
+        const name = SIDES[side];
+        bubble.classList.remove.apply(bubble.classList, SIDES);
+        bubble.classList.add(name);
+        if (name === "left-speaker") {
+          bubble.style.setProperty("--speech-side-x", "440px");
+          bubble.style.setProperty("--speech-face-y", "470px");
+        } else if (name === "right-speaker") {
+          bubble.style.setProperty("--speech-side-x", "530px");
+          bubble.style.setProperty("--speech-face-y", "470px");
+        } else {
+          // top-speaker는 꼬리가 아래를 보므로 side-x/face-y 대신 직접 배치한다
+          bubble.style.setProperty("--speech-side-x", "700px");
+          bubble.style.setProperty("--speech-face-y", "300px");
+        }
+        Preview.log("side: " + name);
+      }
+
+      Preview.control("화자 위치 전환", () => {
+        side = (side + 1) % SIDES.length;
+        applySide();
+      });
+      Preview.control("짧은 대사", () => CommonSpeechBubble.show(bubble, SHORT));
+      Preview.control("긴 대사", () => CommonSpeechBubble.show(bubble, LONG));
+      Preview.control("hide", () => {
+        CommonSpeechBubble.hide(bubble);
+        Preview.log("data-state=hidden — display:none");
+      });
+      Preview.control("show", () => CommonSpeechBubble.show(bubble));
+
+      applySide();
+      CommonSpeechBubble.show(bubble, SHORT);
+    })();
+  </script>
+</body>
+</html>

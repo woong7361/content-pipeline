@@ -1,0 +1,24 @@
+# Scene Controller
+
+- Type: `runtime_component`
+- Status: `candidate`
+- Source: `production/1-2/08/index.html`
+- Final output: inline CSS/JS into `output/index.html`
+- Owns:
+  - scene active/leaving state
+  - stage scale
+  - `window.__contentHarnessShowScene`
+- Required DOM:
+  - `#stage`
+  - `.scene`
+  - each scene has `id`, `data-qa-scene`, `data-qa-order`, `data-qa-label`
+- States: class `active`, `leaving` (전환 중 두 scene이 공존하므로 `data-state`를 쓰지 않는다)
+- Runtime API:
+  - `CommonSceneController.scaleStage(stage)` — resize/orientationchange에 다시 호출
+  - `CommonSceneController.createSceneController(stage)` → `{ scenes, showScene, currentScene }`
+- Emits:
+  - `common:scenechange` → `{ sceneId, scene }`
+- Use when:
+  - 단일 HTML 안에서 여러 section/scene을 전환할 때
+- Avoid:
+  - data-driven renderer 전체를 새로 만드는 용도

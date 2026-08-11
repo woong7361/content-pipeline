@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>keypad preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <div
+        class="c-keypadWrap"
+        data-component="keypad"
+        id="keypad"
+        style="left:50%; top:180px; translate:-50% 0"
+      >
+        <div class="c-answerDisplay" data-slot="display" id="display"></div>
+        <div class="c-keypad" data-slot="keys"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "keypad",
+        path: "source/common/components/keypad",
+        note: "키 그리드는 비어 있고 CommonKeypad.build가 채운다. 정답은 12로 두었다."
+      });
+
+      const root = document.getElementById("keypad");
+      const display = document.getElementById("display");
+      let value = "";
+
+      function setValue(next) {
+        value = next;
+        display.textContent = value;
+        CommonKeypad.displayTick(display);
+      }
+
+      CommonKeypad.build(root, key => {
+        if (key === "del") return setValue(value.slice(0, -1));
+        if (key === "enter") {
+          Preview.log(value === "12" ? "확인: 정답 (12)" : "확인: 오답 (" + (value || "빈 입력") + ")");
+          return setValue("");
+        }
+        setValue((value + key).slice(-2));
+      });
+
+      Preview.control("전체 비활성", () => {
+        CommonKeypad.setEnabled(root, false);
+        Preview.log("setEnabled(root, false) — 모든 키 disabled");
+      });
+      Preview.control("전체 활성", () => {
+        CommonKeypad.setEnabled(root, true);
+        Preview.log("setEnabled(root, true)");
+      });
+      Preview.control("확인만 활성", () => {
+        CommonKeypad.setConfirmOnly(root);
+        Preview.log("setConfirmOnly(root) — 확인 키만 누를 수 있다");
+      });
+      Preview.control("display tick", () => CommonKeypad.displayTick(display));
+    })();
+  </script>
+</body>
+</html>

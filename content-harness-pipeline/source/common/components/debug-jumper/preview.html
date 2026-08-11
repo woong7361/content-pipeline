@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>debug-jumper preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="../scene-controller/style.css">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* preview 전용 — scene 내용을 구분해 보기 위한 배경 */
+    .pv-scene { display: grid; place-items: center; font-size: 88px; color: var(--ink); }
+    #s1.pv-scene { background: #d8ecff; }
+    #s2.pv-scene { background: #ffe9c9; }
+    #s3.pv-scene { background: #dcf6de; }
+    #s4.pv-scene { background: #f0e0ff; }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <section class="scene pv-scene active" id="s1" data-qa-scene="s1" data-qa-order="1" data-qa-label="인트로">인트로</section>
+      <section class="scene pv-scene" id="s2" data-qa-scene="s2" data-qa-order="2" data-qa-label="개념 설명">개념 설명</section>
+      <section class="scene pv-scene" id="s3" data-qa-scene="s3" data-qa-order="3" data-qa-label="연습 문제">연습 문제</section>
+      <section class="scene pv-scene" id="s4" data-qa-scene="s4" data-qa-order="4" data-qa-label="마무리">마무리</section>
+
+      <button class="c-debugToggle" id="debugToggle" type="button" aria-label="debug scene jumper">⌘</button>
+
+      <aside class="c-debugPanel" data-component="debug-jumper" id="debugPanel" hidden>
+        <div class="c-debugHead">
+          <strong>Scenes</strong>
+          <button type="button" data-action="close" aria-label="닫기">×</button>
+        </div>
+        <div class="c-debugCurrent" data-slot="current"></div>
+        <div class="c-debugList" data-slot="scene-list"></div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="../scene-controller/behavior.js"></script>
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "debug-jumper",
+        path: "source/common/components/debug-jumper",
+        note: "scene 목록은 data-qa-order / data-qa-label에서 자동 구성된다. 백틱(`) 키로도 열린다."
+      });
+
+      const stage = document.getElementById("stage");
+      const scenes = CommonSceneController.createSceneController(stage);
+      const debug = CommonDebugJumper.init(
+        document.getElementById("debugPanel"),
+        scenes,
+        { toggle: document.getElementById("debugToggle") }
+      );
+
+      addEventListener("common:scenechange", event => {
+        Preview.log("common:scenechange → " + event.detail.sceneId + " (패널이 따라 갱신된다)");
+      });
+
+      Preview.control("패널 열기", () => debug.open(true));
+      Preview.control("패널 닫기", () => debug.open(false));
+      Preview.control("scene 추가 후 재구성", () => {
+        const n = stage.querySelectorAll(".scene").length + 1;
+        const el = document.createElement("section");
+        el.className = "scene pv-scene";
+        el.id = "s" + n;
+        el.dataset.qaScene = el.id;
+        el.dataset.qaOrder = String(n);
+        el.dataset.qaLabel = "추가된 화면 " + n;
+        el.textContent = "추가된 화면 " + n;
+        el.style.background = "#ffe4ec";
+        stage.insertBefore(el, stage.querySelector(".c-debugToggle"));
+        Preview.log("scene을 DOM에 추가했다. init 시점에 목록을 만들므로 패널에는 아직 안 보인다 — 새로고침하면 잡힌다.");
+      });
+    })();
+  </script>
+</body>
+</html>

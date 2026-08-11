@@ -1,0 +1,76 @@
+.c-keypadWrap {
+  position: absolute;
+  z-index: var(--z-interactive);
+  width: 510px;
+  padding: 26px;
+  background: var(--veil);
+  border: 5px solid var(--surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+}
+
+.c-answerDisplay {
+  height: 96px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 4px solid var(--ink);
+  border-radius: var(--r-md);
+  background: var(--white);
+  font-size: var(--fs-2xl);
+  font-weight: 900;
+}
+
+.c-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+}
+
+.c-key {
+  height: 78px;
+  font-size: var(--fs-md);
+  font-weight: 800;
+  color: #12355f;
+  background: rgba(255,255,255,.92);
+  border: 3px solid rgba(180,218,255,.95);
+  border-radius: 17px;
+  box-shadow: 0 4px 0 rgba(143,173,211,.76), 0 11px 22px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+
+.c-key.del {
+  color: #a75f28;
+  background: rgba(255,244,230,.96);
+  border-color: #e7c197;
+  box-shadow: 0 4px 0 rgba(198,146,86,.6), 0 11px 22px rgba(0,0,0,.15);
+}
+
+.c-key.enter {
+  color: #fff;
+  background: #e23b3b;
+  border-color: #e23b3b;
+  box-shadow: 0 4px 0 rgba(150,26,26,.55), 0 11px 22px rgba(0,0,0,.15);
+  font-size: var(--fs-sm);
+}
+
+.c-key.keypad-pressing:not(:disabled) {
+  transform: translateY(4px) scale(.98);
+  box-shadow: 0 1px 0 #020810;
+}
+
+.c-answerDisplay.keypad-tick {
+  animation: keypadDisplayTick var(--dur-fast) var(--ease) both;
+}
+
+@keyframes keypadDisplayTick {
+  0% { transform: scale(.94); filter: brightness(1.85); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.c-key:disabled {
+  cursor: default;
+  filter: var(--filter-disabled);
+  box-shadow: var(--shadow-flat);
+}

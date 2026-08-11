@@ -1,0 +1,28 @@
+# Speech Bubble
+
+- Type: `ui_component`
+- Status: `candidate`
+- Source: `production/1-2/08/index.html` `.speech`
+- Final output: inline into `output/index.html`
+- Slots:
+  - `text`
+  - optional `action`
+- States:
+  - hidden
+  - visible
+- Required classes:
+  - `.c-speechBubble`
+  - `.left-speaker` or `.right-speaker` or `.top-speaker`
+- State: `data-state="hidden | visible"`
+- Position: `--speech-side-x`, `--speech-face-y` CSS 변수로 화자 옆에 붙인다
+- Runtime API:
+  - `CommonSpeechBubble.show(el, text)`
+  - `CommonSpeechBubble.hide(el)`
+  - `CommonSpeechBubble.setText(el, text)`
+- Use when:
+  - 캐릭터 대사
+  - 짧은 feedback 대사
+- Avoid:
+  - 긴 설명문
+  - 문제 본문
+  - 화면 하단 자막 카드

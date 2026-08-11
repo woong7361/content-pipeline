@@ -1,0 +1,137 @@
+.previewTopbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: var(--z-hud);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  background: linear-gradient(180deg, rgba(255,253,244,.94), rgba(255,250,232,.82));
+  border-bottom: 1px solid rgba(113,63,18,.16);
+  box-shadow: 0 4px 14px rgba(66,32,6,.08);
+  color: #713f12;
+  font-size: 18px;
+}
+
+.previewTopbar span {
+  opacity: .72;
+}
+
+.previewShade {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-scenery);
+  background: linear-gradient(90deg, rgba(21,63,107,.44), rgba(21,63,107,.08) 48%, rgba(21,63,107,.34));
+}
+
+.previewTitle {
+  position: absolute;
+  left: 120px;
+  top: 155px;
+  z-index: var(--z-content);
+  width: 760px;
+  padding: 42px 50px;
+  border: 6px solid var(--bubble-line);
+  border-radius: 32px;
+  background: rgba(255,253,246,.94);
+  box-shadow: var(--shadow);
+  color: var(--bubble-ink);
+}
+
+.previewTitle small {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--surface);
+  font-size: 26px;
+}
+
+.previewTitle h1 {
+  margin: 0 0 16px;
+  font-size: 68px;
+  line-height: 1.05;
+}
+
+.previewTitle p {
+  margin: 0;
+  font-size: 33px;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.previewCharacter {
+  position: absolute;
+  z-index: var(--z-character);
+  object-fit: contain;
+  filter: var(--ds-lg);
+  pointer-events: none;
+}
+
+.previewCharacter.teacher {
+  right: 70px;
+  bottom: -8px;
+  width: 430px;
+  height: 650px;
+}
+
+.previewCharacter.student {
+  left: 80px;
+  bottom: -10px;
+  width: 330px;
+  height: 540px;
+}
+
+.previewStart {
+  position: absolute;
+  z-index: var(--z-interactive);
+  left: 180px;
+  bottom: 110px;
+}
+
+.previewBack {
+  position: absolute;
+  z-index: var(--z-interactive);
+  right: 90px;
+  bottom: 78px;
+  transform: scale(.75);
+  transform-origin: right bottom;
+}
+
+.practicePanel {
+  position: absolute;
+  left: 510px;
+  top: 150px;
+  z-index: var(--z-content);
+  width: 850px;
+  min-height: 720px;
+  padding: 44px;
+  border: 6px solid var(--surface);
+  border-radius: 30px;
+  background: rgba(255,253,246,.95);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+}
+
+.practicePanel h2 {
+  margin: 0 0 14px;
+  font-size: 58px;
+  line-height: 1.1;
+}
+
+.practicePanel p {
+  margin: 0 0 32px;
+  font-size: 34px;
+}
+
+#demoKeypad {
+  position: relative;
+  left: auto;
+  top: auto;
+  margin: 0 auto;
+}
+
+#practiceSpeech {
+  max-width: 700px;
+}

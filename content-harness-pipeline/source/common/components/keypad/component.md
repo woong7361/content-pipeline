@@ -1,0 +1,21 @@
+# Keypad
+
+- Type: `input_component`
+- Status: `candidate`
+- Source: `production/1-2/08/index.html` `buildKeypad`
+- Slots:
+  - `display` — 입력값 표시
+  - `keys` — 키 그리드 (JS가 채운다)
+- Layout: `[1..9][← 0 확인]`
+- States: 키 단위 네이티브 `disabled`
+- Runtime API:
+  - `CommonKeypad.build(root, handler)` — `handler(key)`의 key는 숫자 문자열 또는 `"del"` / `"enter"`
+  - `CommonKeypad.setEnabled(root, enabled)`
+  - `CommonKeypad.setConfirmOnly(root)` — 확인 키만 활성
+  - `CommonKeypad.displayTick(display)` — 입력 반응 애니메이션
+- Use when:
+  - 숫자 1~2자리 입력
+  - 확인/지우기 흐름이 필요한 문제
+- Avoid:
+  - 긴 수식 입력기
+  - 텍스트 입력

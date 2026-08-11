@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>feedback-layer preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <div class="p-ghost" style="left:50%; top:44%; translate:-50% -50%; width:760px; height:420px">
+        판정 대상 화면 (자리표시)
+      </div>
+
+      <img
+        class="c-feedbackStamp"
+        data-component="feedback-stamp"
+        id="stamp"
+        data-correct-src="assets/feedback-stamp-correct.webp"
+        data-wrong-src="assets/feedback-stamp-wrong.webp"
+        alt=""
+      >
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "feedback-layer",
+        path: "source/common/components/feedback-layer",
+        note: "도장은 stage 중앙(top 48%)에 뜬다. hold=false면 900ms 후 자동으로 사라진다."
+      });
+
+      const stamp = document.getElementById("stamp");
+
+      Preview.control("정답 도장", () => {
+        CommonFeedbackLayer.showStamp(stamp, "correct", { hold: false });
+        Preview.log("showStamp(correct) — 900ms 후 자동 숨김");
+      });
+      Preview.control("오답 도장", () => {
+        CommonFeedbackLayer.showStamp(stamp, "wrong", { hold: false });
+        Preview.log("showStamp(wrong) — 900ms 후 자동 숨김");
+      });
+      Preview.control("정답 (hold)", () => {
+        CommonFeedbackLayer.showStamp(stamp, "correct", { hold: true });
+        Preview.log("showStamp(correct, hold:true) — hideStamp를 부를 때까지 유지");
+      });
+      Preview.control("hide", () => {
+        CommonFeedbackLayer.hideStamp(stamp);
+        Preview.log("hideStamp()");
+      });
+    })();
+  </script>
+</body>
+</html>

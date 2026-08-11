@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>scene-controller preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    /* preview 전용 — scene 내용을 구분해 보기 위한 배경 */
+    .pv-scene { display: grid; place-items: center; font-size: 96px; color: var(--ink); }
+    #scene-a.pv-scene { background: #d8ecff; }
+    #scene-b.pv-scene { background: #ffe9c9; }
+    #scene-c.pv-scene { background: #dcf6de; }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <section class="scene pv-scene active" id="scene-a" data-qa-scene="scene-a" data-qa-order="1" data-qa-label="첫 화면">A · 첫 화면</section>
+      <section class="scene pv-scene" id="scene-b" data-qa-scene="scene-b" data-qa-order="2" data-qa-label="두 번째 화면">B · 두 번째 화면</section>
+      <section class="scene pv-scene" id="scene-c" data-qa-scene="scene-c" data-qa-order="3" data-qa-label="세 번째 화면">C · 세 번째 화면</section>
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "scene-controller",
+        path: "source/common/components/scene-controller",
+        note: "전환 중에는 나가는 scene(.leaving)과 들어오는 scene(.active)이 잠시 함께 존재한다."
+      });
+
+      const stage = document.getElementById("stage");
+      const scenes = CommonSceneController.createSceneController(stage);
+
+      addEventListener("common:scenechange", event => {
+        Preview.log("common:scenechange → " + event.detail.sceneId);
+      });
+
+      Preview.control("A", () => scenes.showScene("scene-a"));
+      Preview.control("B", () => scenes.showScene("scene-b"));
+      Preview.control("C", () => scenes.showScene("scene-c"));
+      Preview.control("fade / slide 전환", () => {
+        const slide = stage.dataset.transition === "slide";
+        if (slide) delete stage.dataset.transition;
+        else stage.dataset.transition = "slide";
+        Preview.log("transition: " + (slide ? "fade (기본)" : "slide"));
+      });
+      Preview.control("__contentHarnessShowScene", () => {
+        window.__contentHarnessShowScene("scene-c");
+        Preview.log("전역 훅으로 scene-c 이동 — QA/디버그에서 쓰는 경로");
+      });
+    })();
+  </script>
+</body>
+</html>

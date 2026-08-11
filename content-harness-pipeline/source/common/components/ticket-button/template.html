@@ -1,0 +1,13 @@
+<!--
+  Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
+  함께 넣을 것:
+    CSS    _shared/base.css → ticket-button/style.css
+    JS     ticket-button/behavior.js  (window.CommonTicketButton 등록, 라벨 교체용)
+    Asset  assets/activity-cta-body.webp → output/assets/
+  사용:
+    click 핸들러는 콘텐츠 쪽에서 붙인다. 비활성은 button.disabled.
+  동작 확인은 example/index.html.
+-->
+<button class="c-ticketButton" type="button" data-component="ticket-button">
+  <span data-slot="label">[다음으로 가기]</span>
+</button>
