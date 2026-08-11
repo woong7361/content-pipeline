@@ -3,6 +3,7 @@
 - Type: `input_component`
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `buildKeypad`
+- Final output: inline into `output/index.html`
 - Slots:
   - `display` — 입력값 표시
   - `keys` — 키 그리드 (JS가 채운다)

@@ -6,6 +6,8 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from stages.scripts.style_references import resolve_style_reference_set
+
 PROJECT_DIR = Path(__file__).resolve().parent
 SCHEMA_DIR = PROJECT_DIR / "schemas"
 ARTIFACT_SCHEMAS = {
@@ -16,37 +18,6 @@ ARTIFACT_SCHEMAS = {
     "design_review_output": SCHEMA_DIR / "design_review_output.schema.json",
     "content_critique_output": SCHEMA_DIR / "content_critique_output.schema.json",
     "content_eval_output": SCHEMA_DIR / "content_eval_output.schema.json",
-    "gen_output": SCHEMA_DIR / "gen_output.schema.json",
-    "refine_output": SCHEMA_DIR / "gen_output.schema.json",
-    "critique_output": SCHEMA_DIR / "critique_output.schema.json",
-    "eval_output": SCHEMA_DIR / "eval_output.schema.json",
-    "draft": SCHEMA_DIR / "draft.schema.json",
-    "critique": SCHEMA_DIR / "critique.schema.json",
-    "eval": SCHEMA_DIR / "eval.schema.json",
-    "final": SCHEMA_DIR / "final.schema.json",
-}
-
-DRAFT_FORBIDDEN_FIELDS = {
-    "self_score",
-    "self_critique",
-    "verdict",
-    "rubric_scores",
-    "contract_errors",
-}
-
-CRITIQUE_FORBIDDEN_FIELDS = {
-    "score",
-    "rubric_scores",
-    "weighted_total",
-    "verdict",
-    "rewritten_content",
-}
-
-EVAL_FORBIDDEN_FIELDS = {
-    "verdict",
-    "contract_errors",
-    "revision_instructions",
-    "rewritten_content",
 }
 
 
@@ -57,13 +28,7 @@ def load_json(path: Path) -> Any:
         raise ValueError(f"invalid JSON: {exc}") from exc
 
 
-def validate_file(
-    file_path: Path,
-    artifact: str,
-    expected_brief_hash: str | None = None,
-    expected_iteration: str | None = None,
-    rubric: dict[str, Any] | None = None,
-) -> dict:
+def validate_file(file_path: Path, artifact: str) -> dict:
     if artifact not in ARTIFACT_SCHEMAS:
         raise ValueError(f"unknown artifact: {artifact}")
 
@@ -80,14 +45,10 @@ def validate_file(
     schema = load_json(ARTIFACT_SCHEMAS[artifact])
     errors = validate_schema(data, schema)
 
-    if artifact == "draft" and isinstance(data, dict):
-        errors += validate_draft_contract(data, expected_brief_hash, expected_iteration)
-    if artifact == "critique" and isinstance(data, dict):
-        errors += validate_critique_contract(data, expected_brief_hash, expected_iteration)
-    if artifact == "eval" and isinstance(data, dict):
-        errors += validate_eval_contract(data, expected_brief_hash, expected_iteration, rubric)
-    if artifact == "final" and isinstance(data, dict):
-        errors += validate_final_contract(data, expected_brief_hash)
+    # schema는 모양만 본다. 경로가 실제로 있는지는 파일시스템을 봐야 알고,
+    # 그걸 stage에 맡기면 run 디렉토리를 만든 뒤에야 실패한다.
+    if artifact == "input" and not errors:
+        errors = validate_style_reference_set(data)
 
     return {
         "artifact": artifact,
@@ -95,6 +56,29 @@ def validate_file(
         "status": "REJECT" if errors else "PASS",
         "errors": errors,
     }
+
+
+def validate_style_reference_set(data: Any) -> list[str]:
+    """화풍 참조가 실제로 해석되는지 run 시작 전에 확인한다.
+
+    stage 안에서 처음 해석하면 planner를 부르기 직전에야 FileNotFoundError가 나고,
+    그때는 이미 run 디렉토리와 input 사본이 만들어진 뒤다. 같은 검사를 여기서 먼저 돌린다.
+    """
+    if not isinstance(data, dict) or "style_reference_set" not in data.get("metadata", {}):
+        return []
+    try:
+        resolved = resolve_style_reference_set(input_data=data, project_dir=PROJECT_DIR)
+    except (ValueError, FileNotFoundError) as exc:
+        return [f"style_reference_set: {exc}"]
+
+    total = sum(len(items) for items in resolved["categories"].values())
+    if total == 0:
+        return [
+            "style_reference_set: 참조가 0개다. "
+            f"root '{resolved['root']}'의 md catalog에 `- Path:`가 달린 `## 항목`이 없거나 "
+            "전부 `Status: deprecated`다."
+        ]
+    return []
 
 
 def write_result(result: dict[str, Any], output_path: Path) -> None:
@@ -120,84 +104,6 @@ def format_schema_error(error: Any) -> str:
     return f"schema {path}: {error.message}"
 
 
-def validate_draft_contract(data: dict, expected_brief_hash: str | None, expected_iteration: str | None) -> list[str]:
-    errors = []
-    if expected_brief_hash and data.get("brief_hash") != expected_brief_hash:
-        errors.append("brief_hash mismatch")
-    if expected_iteration and data.get("iteration") != expected_iteration:
-        errors.append("iteration mismatch")
-    for key in sorted(DRAFT_FORBIDDEN_FIELDS & data.keys()):
-        errors.append(f"draft must not include {key}")
-    return errors
-
-
-def validate_critique_contract(data: dict, expected_brief_hash: str | None, expected_iteration: str | None) -> list[str]:
-    errors = []
-    if expected_brief_hash and data.get("brief_hash") != expected_brief_hash:
-        errors.append("brief_hash mismatch")
-    if expected_iteration and data.get("iteration") != expected_iteration:
-        errors.append("iteration mismatch")
-    for key in sorted(CRITIQUE_FORBIDDEN_FIELDS & data.keys()):
-        errors.append(f"critique must not include {key}")
-    return errors
-
-
-def validate_eval_contract(
-    data: dict,
-    expected_brief_hash: str | None,
-    expected_iteration: str | None,
-    rubric: dict[str, Any] | None,
-) -> list[str]:
-    errors = []
-    if expected_brief_hash and data.get("brief_hash") != expected_brief_hash:
-        errors.append("brief_hash mismatch")
-    if expected_iteration and data.get("iteration") != expected_iteration:
-        errors.append("iteration mismatch")
-    for key in sorted(EVAL_FORBIDDEN_FIELDS & data.keys()):
-        errors.append(f"eval must not include {key}")
-
-    rubric_scores = data.get("rubric_scores", {})
-    scores = rubric_scores.get("scores", {}) if isinstance(rubric_scores, dict) else {}
-    weights = rubric_scores.get("weights", {}) if isinstance(rubric_scores, dict) else {}
-    axis_rationales = data.get("axis_rationales", {})
-    if rubric:
-        axes = set(rubric.get("axes", {}).keys())
-        if axes:
-            if set(scores.keys()) != axes:
-                errors.append(f"rubric score axes mismatch: expected {sorted(axes)}, actual {sorted(scores.keys())}")
-            if set(weights.keys()) != axes:
-                errors.append(f"rubric weight axes mismatch: expected {sorted(axes)}, actual {sorted(weights.keys())}")
-            if set(axis_rationales.keys()) != axes:
-                errors.append(
-                    f"rubric rationale axes mismatch: expected {sorted(axes)}, actual {sorted(axis_rationales.keys())}"
-                )
-
-        thresholds = rubric.get("thresholds", {})
-        min_total = thresholds.get("min_total")
-        weighted_total = rubric_scores.get("weighted_total") if isinstance(rubric_scores, dict) else None
-        if isinstance(min_total, (int, float)) and isinstance(weighted_total, (int, float)):
-            if weighted_total < min_total:
-                errors.append(f"min_total: {weighted_total} < {min_total}")
-
-        min_axis = thresholds.get("min_axis", {})
-        if isinstance(min_axis, dict) and isinstance(scores, dict):
-            for axis, minimum in min_axis.items():
-                score = scores.get(axis)
-                if isinstance(minimum, (int, float)) and isinstance(score, (int, float)) and score < minimum:
-                    errors.append(f"min_axis.{axis}: {score} < {minimum}")
-    return errors
-
-
-def validate_final_contract(data: dict, expected_brief_hash: str | None) -> list[str]:
-    errors = []
-    if expected_brief_hash and data.get("brief_hash") != expected_brief_hash:
-        errors.append("brief_hash mismatch")
-    contract_result = data.get("contract_result", {})
-    if isinstance(contract_result, dict) and contract_result.get("verdict") != "PASS":
-        errors.append("final contract_result.verdict must be PASS")
-    return errors
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate a pipeline JSON artifact.")
     parser.add_argument("file", type=Path)
@@ -212,27 +118,12 @@ def main() -> int:
             "design_review_output",
             "content_critique_output",
             "content_eval_output",
-            "gen_output",
-            "refine_output",
-            "critique_output",
-            "eval_output",
-            "draft",
-            "critique",
-            "eval",
-            "final",
         ],
     )
-    parser.add_argument("--brief-hash")
-    parser.add_argument("--iteration")
     parser.add_argument("--write-result", type=Path)
     args = parser.parse_args()
 
-    result = validate_file(
-        file_path=args.file,
-        artifact=args.artifact,
-        expected_brief_hash=args.brief_hash,
-        expected_iteration=args.iteration,
-    )
+    result = validate_file(file_path=args.file, artifact=args.artifact)
 
     if args.write_result:
         write_result(result, args.write_result)

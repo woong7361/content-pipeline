@@ -72,16 +72,18 @@
 
 ### [debug-panel-missing-from-run-output] run 산출물에서 백틱으로 여는 씬 이동 디버그 패널이 누락됨
 
-- 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html
+- 대상: content-harness-pipeline/runs/2026-07-31_dfbc1027/output/index.html, runs/2026-08-11_dfbc1027/output/index.html
 - 분류 태그: debug-panel-missing-from-run-output
-- 상태: 조치 (2026-08-04 수정 완료, 규칙 승격은 미제안 — 1회)
-- 발생 횟수: 1
+- 상태: 열림 (2회 재발, 2026-08-11 원인 제거)
+- 발생 횟수: 2
 - 최초 발생일: 2026-08-04
-- 최근 발생일: 2026-08-04
+- 최근 발생일: 2026-08-11
 - 사례:
   - 2026-08-04: 사용자가 `production/1-2/08`과 똑같이 백틱(`) 키를 누르면 디버그 모드가 열리도록 요청. 기준 파일에는 스테이지 밖 고정 패널, 씬 목록 자동 생성, 현재 씬 동기화, 백틱 토글과 Esc 닫기가 있으나 해당 run 산출물에는 전체 구현이 누락되어 있었다.
-- 조치: **2026-08-04 수정 완료.** `production/1-2/08/index.html`과 같은 구조로 스테이지 밖 고정 디버그 패널을 이식했다. `.scene`의 `data-qa-order`·`data-qa-label`에서 8개 씬 버튼을 자동 생성하고, 버튼 클릭은 기존 `showScene()`을 사용해 씬별 초기화 경로를 유지한다. 씬 전환 때 현재 버튼·씬 정보를 동기화하며, 백틱/Backquote로 열고 닫고 Esc 또는 닫기 버튼으로 닫는다. 입력 필드에서는 백틱 토글을 무시한다. 검증: 인라인 JavaScript 문법 파싱 통과, 8개 씬 및 필수 패널 DOM·키 핸들러 계약 자동 검사 통과. 현재 세션의 인앱 브라우저 목록이 비어 있어 실제 키 입력 화면 검증은 수행하지 못했다.
-- 규칙화 메모: 아직 1회. 반복되면 디버그 패널을 공통 HTML 계약 또는 builder 산출물 필수 개발 도구로 승격하는 규칙을 제안한다.
+  - 2026-08-11: "그리고 debugger도 안넣어줬어". **이번 누락은 우연이 아니라 내가 규칙으로 막은 것이다.** 공용 컴포넌트를 파이프라인에 연결하면서 `debug-jumper/component.md`에 `Final output: inline only for preview/debug builds`를 적고, `common_html_contract.md`에 "그 값인 컴포넌트는 학습자용 산출물에 넣지 않는다"를 넣었다. builder는 그 지시를 정확히 지켜 6/7 컴포넌트만 넣었다. 판단 자체가 틀렸다 — 패널은 기본 `hidden`이고 백틱으로만 열리므로 학습자 화면을 침범하지 않고, 사용자는 이 패널로 QA를 한다. 2회차이므로 이제 "산출물에 항상 포함"으로 뒤집는다.
+- 조치(2026-08-11): `debug-jumper/component.md`의 `Final output`을 `inline into output/index.html`로 바꾸고, `common_html_contract.md`의 제외 조항을 **"scene이 둘 이상이면 debug-jumper를 함께 inline한다(기본 hidden)"** 요구 조항으로 교체했다. 상세는 아래 조치(2026-08-04)와 함께 본다.
+- 조치(2026-08-04): **수정 완료.** `production/1-2/08/index.html`과 같은 구조로 스테이지 밖 고정 디버그 패널을 이식했다. `.scene`의 `data-qa-order`·`data-qa-label`에서 8개 씬 버튼을 자동 생성하고, 버튼 클릭은 기존 `showScene()`을 사용해 씬별 초기화 경로를 유지한다. 씬 전환 때 현재 버튼·씬 정보를 동기화하며, 백틱/Backquote로 열고 닫고 Esc 또는 닫기 버튼으로 닫는다. 입력 필드에서는 백틱 토글을 무시한다. 검증: 인라인 JavaScript 문법 파싱 통과, 8개 씬 및 필수 패널 DOM·키 핸들러 계약 자동 검사 통과. 현재 세션의 인앱 브라우저 목록이 비어 있어 실제 키 입력 화면 검증은 수행하지 못했다.
+- 규칙화 메모: 2회. 5회 승격 대상이지만, 이번 원인이 "내가 넣은 제외 규칙"이라 규칙 승격이 아니라 **잘못된 규칙 철회**로 처리했다. 3회째가 나오면 그때는 "개발용 도구는 산출물에 항상 포함하되 기본 숨김" 형태로 `content-harness-pipeline/CLAUDE.md` 승격을 제안한다.
 
 ### [blend-tint-bleeds-outside-alpha] background-color + blend-mode로 투명 스프라이트를 색칠해 도형 바깥 사각형까지 색이 새어 나감
 
@@ -907,9 +909,9 @@
 - 대상: content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html (`#s-tut .tut-drag-cue`)
 - 분류 태그: low-contrast-cue
 - 상태: 열림
-- 발생 횟수: 3
+- 발생 횟수: 4
 - 최초 발생일: 2026-07-09
-- 최근 발생일: 2026-08-04
+- 최근 발생일: 2026-08-11
 - 사례:
   - 2026-07-09: 유형 B 보드의 문제 제목(`독서 교실이 8시에 시작해 9시에 끝났어요…`)이 코르크 배경 위에서 진갈색(`color:#5a3b1b`)이라 잘 안 보임. 다른 색으로 요청.
     - 조치: 제목을 크림색 라벨 칩(`#s-b .b-qtitle`, `background:rgba(255,248,232,.94)` + 진한 적갈색 글자 `#7a1f10`)으로 감싸 코르크 배경과 무관하게 고대비 확보.
@@ -918,7 +920,8 @@
   - 2026-07-09: (후속) 큐가 실제 화면에서 아예 안 보인다고 지적. 원인은 대비가 아니라 **CSS 애니메이션 override로 인한 opacity 미해제**: 큐 엘리먼트에 `enter d3`가 있어 `.scene .enter{opacity:0}`로 시작하는데, opacity를 1로 올리는 `enterUp` 애니메이션이 내가 큐에 준 `cueBounce`(명시도 `#s-tut ...`가 더 높음)에 덮여 실행되지 않음 → opacity 0 고정. (검증 스크린샷은 opacity를 강제로 켜서 버그가 가려져 있었음.)
     - 조치: `#s-tut .tut-drag-cue`에 `opacity:1` 명시. opacity 강제 없이(실제 CSS만) virtual-time 렌더로 큐 표시 확인.
   - 2026-08-04: **(상태 규칙이 변형의 색 계약을 덮음)** `production/1-2/08` `section_random_problems` 키패드에서 "**확인 버튼에 호버하면 흰색으로 바뀌어 글자가 안 보인다**"고 지적. `.key.enter`는 `color:#fff` on `background:#e23b3b`(빨강)인데, `#randomInput .key:hover{background:var(--veil)}`(= `rgba(255,255,255,.92)`)가 **id 명시도로 그 위를 덮어** 흰 판 위 흰 글자가 됐다. 앞 두 사례가 **정적인 색 선택**의 대비 문제였다면 이번은 **상태(:hover) 규칙이 변형(.key.enter)의 색 계약을 모른 채 배경만 갈아 끼운 것**이라 층위가 다르다 — 평상시에는 멀쩡하고 호버에서만 사라진다. 씬2·3 키패드에는 이 규칙이 없어 **씬4에서만** 났다. (**조치 완료 2026-08-04** — `production/1-2/08/complete.md` 77번: 호버 배경 교체를 빼고 들림만 남겼다.)
-- 규칙화 메모: 3회(가독 1 + 상태 대비 1 + 별개의 가시성 버그 1). 반복되면 (a) "유도 큐/힌트는 고대비 칩으로", (b) "`.enter`(entrance opacity:0)를 가진 엘리먼트에 별도 `animation`을 주면 `enterUp` 리빌이 덮여 안 보일 수 있으니 opacity를 명시하거나 `.enter`를 빼거나 애니메이션을 합성" 규칙을 builder_system.md에 제안 후보. (c) **상태 규칙(`:hover`/`:focus`)은 색 계약이 다른 변형이 그 선택자에 걸리는지 먼저 확인한다** — 공통 hover가 배경만 갈아 끼우면 반전 배색 변형(흰 글자 버튼)에서 글자가 사라진다. 배경을 바꿔야 하면 글자색도 함께 바꾸거나, 변형을 뺀 선택자로 좁힌다.
+  - 2026-08-11: **(표면을 안 쓰고 배경 위에 직접 얹음)** `tmp/runs-fresh/2026-08-11_dfbc1027` 완료 화면의 `3차시 수리 완료!`가 `.heroTitle{color:#fff}` + text-shadow로 **밝은 하늘·크림 담장 위에 그대로** 얹혀 거의 안 읽힌다. 앞 사례들이 색 선택이나 상태 규칙 문제였다면 이번은 **쓸 수 있는 표면 asset이 있는데 안 쓴 것**이다 — `school-title-banner-body.png`가 준비돼 있고 `.banner-school` 규칙까지 만들어 놓고 완료 제목에는 붙이지 않았다. 대비를 색으로 풀려다 실패한 게 아니라, 텍스트를 얹을 표면을 아예 고르지 않은 결과다. (builder 1회 산출물이며 design_refine 미실행 상태에서 관찰)
+- 규칙화 메모: 4회(가독 1 + 상태 대비 1 + 가시성 버그 1 + 표면 미선택 1). 반복되면 (a) "유도 큐/힌트는 고대비 칩으로", (b) "`.enter`(entrance opacity:0)를 가진 엘리먼트에 별도 `animation`을 주면 `enterUp` 리빌이 덮여 안 보일 수 있으니 opacity를 명시하거나 `.enter`를 빼거나 애니메이션을 합성" 규칙을 builder_system.md에 제안 후보. (c) **상태 규칙(`:hover`/`:focus`)은 색 계약이 다른 변형이 그 선택자에 걸리는지 먼저 확인한다** — 공통 hover가 배경만 갈아 끼우면 반전 배색 변형(흰 글자 버튼)에서 글자가 사라진다. 배경을 바꿔야 하면 글자색도 함께 바꾸거나, 변형을 뺀 선택자로 좁힌다.
 
 ### [ambient-effect-hover-only] 상시로 요구된 이펙트(글로우)를 호버 상태에만 구현
 
@@ -1548,3 +1551,66 @@
 - 조치: (1) 각 `template.html` 맨 위에 필요한 CSS/JS와 runtime 호출을 적은 주석 헤더를 넣어, 조각만 봐도 무엇과 함께 써야 하는지 알 수 있게 했다. (2) 컴포넌트마다 `preview.html`을 만들어 **그 컴포넌트 하나만** 띄우고 상태를 버튼으로 밟아볼 수 있게 했다(`_shared/preview.css`, `_shared/preview.js` harness). 확인 경로가 두 층이 됐다 — `preview.html`은 컴포넌트가 혼자 성립하는지, `example/index.html`은 조합이 성립하는지 본다.
 - 규칙화 메모: 아직 1회. 반복되면 "**단독으로 실행되지 않는 조각 파일은 맨 위 주석에 의존물과 사용법을 적는다** — 조각인지 완성 파일인지가 파일 자체에서 읽혀야 한다"를 `content-harness-pipeline/AGENTS.md`에 제안 후보.
   - 부수 효과: preview가 무엇을 로드하는지가 **그 컴포넌트의 실제 의존 목록**이 됐다. `debug-jumper`만 `scene-controller`를 함께 싣고 나머지는 자기 것만 싣는다. 편의로 전부 로드하면 이 정보가 사라지므로 그렇게 하지 않는다.
+
+### [component-missing-layout-contract] 공용 컴포넌트 루트에 position/z-index가 없어 배치 지시가 무시되고 배경 뒤에 깔림
+
+- 대상: content-harness-pipeline/source/common/components/ticket-button/style.css, runs/2026-08-11_dfbc1027/output/index.html
+- 분류 태그: component-missing-layout-contract
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-11
+- 최근 발생일: 2026-08-11
+- 사례:
+  - 2026-08-11: "html이 다음으로 가는 버튼이 없어서 못간다 input에는 있을텐데". 실제로는 버튼이 **있었고** 라벨도 원문 그대로였다(`모양의 힘으로 색칠하기` 등, `c-ticketButton` 19개). 보이지 않은 이유는 `ticket-button/style.css`에 `position`과 `z-index`가 없어서다. builder는 배치를 `style="left:720px; top:800px"`로 줬지만 `position:static`이라 그 값이 무시되고 요소가 (0,0)에 흘렀으며, `.c-bg`가 `z-index:1`이라 배경 이미지가 버튼 위를 덮었다. `elementFromPoint`로 버튼 중심을 찍으면 `c-bg`가 잡힌다 — 보이지도 눌리지도 않으므로 콘텐츠가 첫 화면에서 더 진행되지 않는다.
+- 원인: 나머지 5개 컴포넌트(`speech-bubble`, `keypad`, `feedback-layer`, `topbar`, `debug-jumper`)는 모두 자기 `style.css`에 `position:absolute` + `z-index`를 갖는데 `ticket-button`만 없었다. **`preview.html`과 `example/index.html`이 이 결함을 가렸다** — 두 확인 페이지 모두 `.previewStart`/`.previewBack` 같은 페이지 전용 class로 버튼을 따로 배치하고 있어서, 컴포넌트가 스스로 배치되지 않는다는 사실이 드러나지 않았다.
+- 조치: `ticket-button/style.css`에 `position:absolute; z-index:var(--z-interactive)`를 넣어 다른 컴포넌트와 계약을 맞췄다. `component.md`에 "위치는 사용처가 `left`/`top`으로만 준다"를 명시했다. `source/common/components/CLAUDE.md` 규칙에 "stage 위에 얹는 컴포넌트 루트는 자기 `position`과 `z-index`를 갖는다"를 추가했다.
+- 규칙화 메모: 아직 1회. 반복되면 "**확인 페이지가 컴포넌트 대신 해주는 일이 있으면 그 결함은 확인 페이지에서 드러나지 않는다** — preview는 위치·크기를 대신 잡아주지 않는다"를 컴포넌트 작성 규칙으로 승격 제안한다. [component-fragment-not-self-verifiable]와 같은 계열(컴포넌트 원본의 불완전함이 실제 사용 시점에야 드러남)이므로 3회째에는 두 항목을 묶어 검토한다.
+
+### [stage-copies-neighbor-run-output] builder가 옆 run 디렉토리의 완성 산출물을 읽어 그대로 이어붙임
+
+- 대상: content-harness-pipeline/runs/2026-08-11_dfbc1027-opus/output/index.html, stages/scripts/codex_client.py (ClaudeClient), prompts/common_html_contract.md
+- 분류 태그: stage-copies-neighbor-run-output
+- 상태: 열림 (프롬프트 층 금지 조항만 추가, 강제는 미구현)
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-11
+- 최근 발생일: 2026-08-11
+- 사례:
+  - 2026-08-11: 같은 planner/asset으로 builder를 opus로 다시 돌렸는데, 산출물이 **직전 sonnet 산출물의 확장본**이었다. sonnet 1251줄이 opus 1315줄 안에 **한 줄도 빠짐없이 그대로** 들어 있고(difflib 일치 100%), 늘어난 64줄은 이번에 새로 요구한 debug 패널이었다. 소요 시간도 1543초 → 236초로 6.5배 빨랐다. 스프라이트 좌표(`background-size:1629px 543px; background-position:-30px -165px`)처럼 모델이 독립적으로 같은 값을 낼 수 없는 계산까지 문자 단위로 같았다.
+- 원인: `--claude-html-stages` 경로는 CLI를 `cwd=project_dir` + `--permission-mode acceptEdits`로 띄운다. stage는 `runs/` 아래 **다른 run의 완성 HTML을 자유롭게 읽을 수 있다.** 정보 차단 규칙(`content-harness-pipeline/CLAUDE.md`)은 "stage가 임의로 run 디렉토리를 훑어 읽게 만들지 않는다"라고 적혀 있지만, 그건 **runner가 payload를 좁게 준다**는 뜻이었고 파일시스템 접근 자체는 막혀 있지 않았다. codex 경로(`--dangerously-bypass-approvals-and-sandbox`)도 같다.
+- 영향: 모델 비교가 성립하지 않는다. 더 중요하게는 **직전 산출물의 결함이 그대로 상속된다** — 이번에도 `[component-missing-layout-contract]`의 깨진 CTA CSS가 글자 그대로 옮겨왔다. 입력(컴포넌트 원본)을 고쳐도 결과가 따라오지 않으므로, 파이프라인을 고쳐서 결과를 개선한다는 전제 자체가 무너진다.
+- 조치: `prompts/common_html_contract.md` "공통 금지"에 "다른 run 디렉토리의 산출물을 읽거나 베끼지 않는다"를 넣었다. 프롬프트 층 조항이므로 강제력은 없다.
+- 규칙화 메모: 아직 1회. 반복되면 프롬프트가 아니라 **실행 격리**로 올린다 — stage를 그 run에 필요한 파일만 있는 임시 작업 디렉토리에서 돌리고, 끝난 뒤 산출물을 run 디렉토리로 옮기는 방식. 검증 방법도 함께 남긴다: 같은 입력으로 두 번 빌드해 `difflib`로 라인 일치율을 재고, 90%를 넘으면 베낀 것으로 본다.
+
+### [cta-label-overlaid-not-baked] 고정 문구 CTA를 빈 표면으로 만들고 글자를 HTML로 얹어 완성도가 안 나옴
+
+- 대상: content-harness-pipeline/prompts/planner_system.md(이미지 안의 텍스트 절), source/common/components/ticket-button/, production/1-2/08/assets/activity-cta-body.webp
+- 분류 태그: cta-label-overlaid-not-baked
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-11
+- 최근 발생일: 2026-08-11
+- 사례:
+  - 2026-08-11: "CTA가 한번에 이미지로 구워지지 않는 문제도 있어. 결과를 보았을 때 이미지 위에 글을 쓰는 결과가 나왔었다." CTA asset(`activity-cta-body.webp`)은 3-state 스프라이트인데 안이 **완전히 빈 알약**(장식은 왼쪽 스파클 하나뿐)이고, 라벨은 `.c-ticketButton [data-slot="label"]`에 HTML 텍스트로 얹힌다. 타이틀·도장은 글자를 구워 완성도가 나오는데 CTA만 CSS 글자라 같은 화면 안에서 재질이 어긋난다.
+- 검증 (2026-08-11, 발생 횟수에 포함하지 않음 — 사용자 지적이 아니라 내가 돌린 테스트 run의 관찰): `runs/2026-08-11_65126dad`(2학년 시간 차시)에서 **CTA 문제가 한 단계 더 나쁜 형태로 재현**됐다. 라벨을 오버레이한 게 아니라 **planner가 CTA·보기 카드 표면을 `asset_plan`에 아예 넣지 않았다**(19개 중 0개). teacher source에 `ctas` 참조 2개와 `surface-choice-plaque`가 있고 `must_follow: true`였는데도 계획 단계에서 빠졌다. 결과적으로 `[시작하기]`는 흰 알약, `[3시][4시][5시]`는 노란 CSS 사각형으로 나왔고 `visual_qa`도 "3 buttons are present and 100% look like generic rounded web buttons"로 잡았다. **즉 이 문제의 상류는 굽기 판정이 아니라 `asset_plan`에 CTA 항목이 생성되지 않는 것이다.** 굽기 규칙만 고쳐서는 asset이 없으므로 아무 효과가 없다.
+- 원인: `planner_system.md`의 굽기 판정 3조건 중 ②"타이포그래피 자체가 그 asset의 디자인인 자족적 그래픽"과 ③"선택·입력·판정·측정의 대상이 아니다"에서 CTA가 양쪽으로 읽힌다. 예시 목록("정답/실패 도장, 인트로·완료 타이틀, 장면 속 간판·표지")에 CTA가 없고, 같은 문서의 "배경·표면·컴포넌트 asset은 기본적으로 [코드로 얹는다]에 해당"이 CTA를 표면으로 끌어간다. 굽기 완성도 기준 이미지(`asset_examples/`)에도 CTA 예시가 없어 합격선 자체가 전달되지 않는다.
+- 영향: [cta-text-offcenter-padding]·[cert-cta-button-two-lines]가 **같은 뿌리의 하류 증상**이다. 둘 다 "장식 있는 고정 표면에 가변 폭 텍스트를 얹느라 패딩·줄바꿈·폰트를 손으로 맞추는" 일이었다. 라벨을 구우면 이 조정 자체가 사라진다.
+- 조치 (2026-08-11): **사용자 결정 = "고정 문구 CTA만 굽기".** 씬을 여닫는 CTA(시작/완료/다음 차시)는 굽고, 한 씬에서 반복되는 진행 버튼(확인/다음)은 `ticket-button` + HTML 라벨을 유지한다. 반영: ①`planner_system.md` 굽기 판정 ②의 예시에 "씬을 여닫는 CTA" 추가, ③을 "**읽고 고르거나 값을 매기는** 대상이 아니다 — 눌러서 다음으로 가는 것은 해당하지 않는다"로 명확화(클릭 대상이라는 이유로 빠지던 경로를 막음). ②"굽는 문구와 얹는 문구의 경계" 조항 신설 — 기준은 **그 문구가 그 화면을 특정하는가**. ③"배경·표면·컴포넌트 asset은 기본적으로 코드로 얹는다"에서 컴포넌트를 분리하고 "몸체를 공유한다는 이유만으로 고정 문구를 오버레이로 내리지 않는다"를 붙임(이게 CTA를 표면으로 끌어가던 문장). ④`ticket-button/component.md`의 `Use when`을 "반복되는 진행 버튼"으로 좁히고 "라벨을 구운 CTA는 이 컴포넌트를 쓰지 않는다" 절 추가. ⑤`asset_generator_system.md`에 "문구를 굽는 asset은 상태 스프라이트로 만들지 않는다" 금지 추가.
+- 주의: 굽는 CTA가 `ticket-button`을 쓸 수 없는 이유는 그 몸체가 `[normal|hover|active]` 3-state 스프라이트이고 상태 전환이 `background-position`이기 때문이다. 라벨을 구우면 프레임 3장에 같은 글자를 다시 그려야 해서 누를 때 글자가 어긋난다. 크기도 `868x140` 고정이라 문구 길이에 맞춘 이미지를 못 담는다.
+- 미해결: (a) craft example에 **CTA 기준 이미지가 없다** — 굽기 판정은 정해졌지만 합격선은 일반 규칙에만 의존한다. 구운 CTA가 나오면 `source/common/craft-examples/`에 올린다. (b) `production/1-2/08`은 손대지 않았다. 19개 버튼이 여전히 오버레이 방식이며, 그 차시의 `CLAUDE.md` asset 규칙도 그대로다.
+- 규칙화 메모: 남은 충돌 지점. ①`ticket-button/component.md`의 `Text policy: HTML text overlay`와 `Slots: label` — 라벨을 구우면 이 컴포넌트는 가변 라벨 전용으로 좁아진다. ②`production/1-2/08/CLAUDE.md`의 "`*-body.png`는 빈 면을 남긴다" 규칙. ③`rendered_text` 대조 — 구운 문구는 HTML에서 사라지므로 `alt_text` 경로(planner_system.md:129, common_html_contract.md:55)가 실제로 동작하는지 확인이 필요하다. 이 대조는 Python이 아니라 content_eval LLM이 하므로 기계적 보장이 없다.
+
+### [source-asset-role-collision] 같은 이미지가 "복사해서 쓰는 컴포넌트 asset"과 "참조만 하는 화풍 참조" 양쪽에 있어 design_review가 오판함
+
+- 대상: content-harness-pipeline/source/baek-seungyong/assets/cta/, source/common/components/ticket-button/assets/, stages/scripts/style_references.py
+- 분류 태그: source-asset-role-collision
+- 상태: 규칙화됨(코드) — 해석 단계에서 REJECT
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-11
+- 최근 발생일: 2026-08-11
+- 사례:
+  - 2026-08-11: `runs/2026-08-11_65126dad`의 design_review가 **[high] "must_follow 참조 CTA를 output asset으로 직접 복제했다"** 를 냈다. 사용자가 "복사를 금지해야 하는데 방법이 있을까"라고 물어 확인에 들어갔다. sha256 대조 결과 `output/assets/activity-cta-body.webp`가 `source/baek-seungyong/assets/cta/cta-activity-body.webp`와 **바이트 동일**한 것은 사실이었다.
+- 원인: **design_review의 판정은 사실 관찰은 맞고 귀속이 틀렸다.** 그 파일은 화풍 참조가 아니라 `source/common/components/ticket-button/assets/activity-cta-body.webp`에서 왔고, 그 복사는 `prompts/common_html_contract.md:74`가 **지시한** 동작이다("컴포넌트에 `assets/`가 있으면 그 파일을 `output/assets/`로 복사하고"). mtime이 09:06:47로 run 시작(14시) 이전인 것이 근거다 — 컴포넌트 디렉토리에서 메타데이터를 보존한 채 복사됐다.
+  진짜 결함은 **내가 teacher source를 만들 때 08 asset을 그대로 복사하면서, 이미 컴포넌트가 소유한 파일을 화풍 참조에도 넣은 것**이다. 두 디렉토리의 계약이 정반대다 — 컴포넌트 `assets/`는 "복사하라", teacher `assets/`는 "참조만 하고 복사하지 마라". 한 파일이 두 계약을 동시에 만족할 수 없다.
+- 조치: ①`baek-seungyong/assets.md`의 `cta-activity-body` 항목을 `Status: deprecated`로 바꿔 catalog 스캔에서 제외(파일은 삭제하지 않음, 사용자 확인 대기). ②`style_references.find_component_asset_conflicts()`를 추가해 **해석 단계에서 REJECT**. 파일명이 아니라 **내용 해시**로 비교한다 — 실제 충돌이 `activity-cta-body` vs `cta-activity-body`로 이름이 달랐다. `validate.py --artifact input`에서 run 전에 잡힌다. 검증: 정상 input PASS(참조 16→15), 충돌을 명시로 되살리면 REJECT.
+- 주의: **여기서 "output asset이 화풍 참조와 같으면 REJECT"라는 런타임 게이트를 만들면 안 된다.** 정당한 컴포넌트 asset 복사에서 영구 오탐이 난다. 금지해야 할 것은 복사가 아니라 **역할 중복**이고, 그건 run 때가 아니라 source를 만들 때 잡아야 한다.
+- 규칙화 메모: 아직 1회지만 코드로 봉인했으므로 재발 시 자동 REJECT다. 사람이 지켜야 할 규칙으로는 승격하지 않는다 — `source/common/components/CLAUDE.md`의 "다음 차시에서 이걸 그대로 쓸까?"로 이미 common에 올라간 것을 teacher에 또 넣지 않는다는 뜻이고, 그건 해시 비교가 대신 판정한다. 연관: [cta-label-overlaid-not-baked](CTA asset이 asset_plan에 없어 생긴 빈자리와 같은 run에서 함께 관찰됨).

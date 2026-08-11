@@ -5,6 +5,133 @@ content-harness-pipeline의 버전별 변경 이력이다. 버전은 커밋 메�
 
 ---
 
+## version 0.33 — 재사용 source 3축 스캔 연결 · 컴포넌트 CSS를 코드가 소유 · teacher 화풍 축 (2026-08-11)
+
+컴포넌트를 `common`으로 뽑았는데 다른 차시 산출물의 헤더가 08과 달라진 것에서 출발했다.
+실측하니 `.c-topbar`가 `height:70px` / `backdrop-filter` 없음 / `3px` 테두리로 **재작성**돼 있었다.
+
+### 진단
+
+- 클래스명·`data-slot`·DOM은 전부 보존됐고 **CSS만 새로 쓰였다.** 컴포넌트별로 대조하니
+  `ticket-button`(1.1KB)·`keypad`(1.8KB)·`speech-bubble`(2.2KB)는 원본 그대로였고
+  **`topbar`(10.6KB) 하나만** 재작성됐다. 전형적인 satisficing이다.
+- 구조적 원인: `common_components.py`는 `COMMON_BASE_CSS`만 전문을 싣고 컴포넌트는 **경로만** 넘긴다.
+  즉 `style.css`를 최종 HTML에 넣는 일을 **모델이 파일을 열어 자발적으로 옮겨 적기를 기대**하고,
+  그렇게 했는지 **검증하지 않았다.** `common_html_contract.md:71`에 "기억으로 재작성하지 않습니다"라는
+  조항이 이미 있었는데도 샜다.
+- 교훈: **글자 단위 복사는 모델의 일이 아니다.** 규칙으로 막을 게 아니라 옮겨 적을 일 자체를 없애야 한다.
+
+### 변경
+
+**1. 컴포넌트 CSS/JS를 코드가 소유 (`stages/scripts/component_bundle.py` 신규)**
+
+- `emit_common(run_dir, teacher_root)`가 `output/common.css`(24KB) · `output/common.js`(15KB)를 원본에서 쓴다.
+  모델은 `index.html`에 `<link>` · `<script src>` **두 줄만** 유지한다.
+- `runner.finalize_html_artifact()`가 HTML을 쓰는 세 지점(builder `:1113`, content_refine `:1823`,
+  design_refine `:1884`) 뒤에서 부른다. 이미 `validate_builder_files`가 그 세 자리에 있어 새 seam을 만들지 않았다.
+- **성격이 반대인 둘을 구분한다** — `common.*`는 코드 소유라 **무조건 덮어쓰고**(검증 없음),
+  `index.html`은 모델 소유라 **되돌릴 수 없으므로 검증**해 REJECT한다(`check_html_links`, 순서까지).
+  기준은 "되돌릴 수 있으면 되돌리고, 없으면 검증한다".
+- drift는 **로그이지 게이트가 아니다.** 게이트로 만들면 정당한 오버라이드 시도까지 run을 죽인다.
+- 보장 대상을 바꿨다 — "결과가 동일하다"가 아니라 **"컴포넌트 원본이 항상 온전히 그 자리에 있다"**.
+  콘텐츠는 `<link>` 뒤 `<style>`에서 소스 순서로 오버라이드할 수 있고 그건 막지 않는다.
+- 폐기한 방향: 마커+구간 교체(HTML 파싱 필요, 마크업 재탐지 필요), 컴포넌트 CSS 전문을 프롬프트에 싣기
+  (34KB를 넣고도 복사를 강제하지 못해 문제 성격이 안 바뀜).
+
+**2. 공용 컴포넌트가 이미지를 소유하지 않는다**
+
+- `ticket-button`·`feedback-layer`가 08의 CTA·도장 art 3장을 갖고 있었다. `components/CLAUDE.md`가
+  "여기 두지 않는 것: 특정 선생님 캐릭터가 들어간 말풍선·**CTA**·**피드백**"이라고 **명시한 바로 그 세 범주**였고,
+  common이 정당하게 소유한 이미지는 0개였다.
+- `craft-examples`가 "콘텐츠 세계관이 다르면 도장도 그 세계의 물건이어야 한다"고 금지하는 것을
+  다른 축이 실행하고 있었다. 실제로 도서관 차시 화면에 08의 크림·갈색 CTA와 파란 도장이 섞였다.
+- 3장을 제거하고 `ticket-button`은 `--cta-body`(없으면 토큰 CSS), `feedback-layer`는 `data-*-src`로
+  생성 asset 경로를 밖에서 받게 했다. `1-2/01`의 시작 버튼이 이미 이미지 없이 토큰 CSS로 만들어져 있다.
+- `common_html_contract.md`의 "컴포넌트 `assets/`를 `output/assets/`로 복사한다" 조항을 삭제.
+  **`source/`의 어떤 파일도 output으로 복사하지 않는다.**
+
+**3. teacher 화풍 축 신설 (`source/baek-seungyong/`, `stages/scripts/teacher_source.py`)**
+
+- `production/1-2/08` 51개에서 대표 21장을 골라 catalog화(16항목). `style.md`에 **이미지를 봐야 갈리는
+  판별 지점**을 적었다 — 외곽선 3층 위계(배경 없음 / 캐릭터 중간 / 소품 굵은 남색), 등신 분리(성인 7~7.5 vs 어린이 4~4.5).
+- `load_catalog()`가 `source/[teacher]/*.md`를 스캔한다. `## 항목`에 `- Path:`가 있으면 catalog,
+  없으면 산문 — 사람이 읽는 설명과 기계가 읽는 항목이 한 파일에 공존한다.
+- `style_reference_set.categories`를 **생략하면 스캔이 채운다.** 항목별 `use`/`avoid`는 catalog가 소유하고
+  input에 다시 적지 않는다. **input이 103줄 → 20줄**로 줄었는데 화풍 추종은 떨어지지 않았다.
+- 명시하면 그대로 쓴다(catalog 밖 이미지 1회용 + 기존 input 호환).
+
+**4. 이름이 같으면 teacher가 common을 덮는다 (`stages/scripts/source_resolve.py`)**
+
+- 세부가 일반을 이긴다. `source/[teacher]/components/keypad/`가 있으면 common 것은 무시된다.
+  **병합이 아니라 통째 교체** — 섞으면 teacher가 일부러 뺀 규칙이 common에서 되살아난다.
+- 컴포넌트 축·craft example 축·`emit_common`이 같은 `shadowed_dirs()`를 쓴다.
+  teacher는 `input.metadata.style_reference_set.root`가 정하고, 없으면 common만.
+
+**5. craft example을 `source/common/craft-examples/`로 이관 + 스캔**
+
+- `prompts/asset_examples/`(하드코딩 md + 3장)를 옮기고 `craft_examples.py`가 스캔한다.
+  `CRAFT_EXAMPLES_RULES`(전문) + `CRAFT_EXAMPLES_JSON`(경로)의 2블록 구조는 컴포넌트 축과 같다.
+- **이 축만 참조와 결과의 관계가 반대다** — "베끼면 실패". `art_direction`이 예시를 이긴다는 조항이
+  빠지면 모델이 `identity_context` 습관대로 예시 팔레트를 복제해 run의 화풍을 덮어쓴다.
+
+**6. input 계약 (`schemas/input.schema.json`, `validate.py`)**
+
+- `metadata.style_reference_set` 모양을 스키마로 강제(`required: id, root`, `additionalProperties: false`).
+- **on/off 플래그를 두지 않았다.** 키의 유무가 곧 on/off다. `teacher_reference: true`를 따로 두면
+  "true인데 root가 없는 상태"가 생기고 어느 쪽이 맞는지 판정할 근거가 없다. 강도는 `must_follow`가 표현한다.
+- `validate.py`가 스키마 통과 후 **경로까지 해석**한다. stage 안에서 처음 해석하면
+  run 디렉토리와 input 사본을 만든 뒤에야 실패하므로 입력 검증 단계로 당겼다.
+- `find_component_asset_conflicts()` — 같은 파일이 "복사해서 쓰는 컴포넌트 asset"과 "참조만 하는 화풍 참조"
+  양쪽에 있으면 REJECT. **파일명이 아니라 내용 해시로 비교**한다(실제 충돌이 `activity-cta-body` vs
+  `cta-activity-body`로 이름이 달랐다).
+
+**7. CTA 굽기 판정 (`planner_system.md`)**
+
+- 굽기 조건 ③ "선택·입력·판정·측정의 대상이 아니다"가 **버튼을 클릭 대상이라는 이유로 배제**하고 있었다.
+  "**읽고 고르거나 값을 매기는** 대상이 아니다 — 눌러서 다음으로 가는 것은 해당하지 않는다"로 명확화.
+- "굽는 문구와 얹는 문구의 경계" 신설 — 기준은 **그 문구가 그 화면을 특정하는가**.
+  씬을 여닫는 CTA는 굽고, 한 씬에서 반복되는 진행 버튼은 컴포넌트 + HTML 라벨.
+- 굽는 asset은 상태 스프라이트로 만들지 않는다(프레임마다 글자가 어긋난다).
+
+### 검증
+
+- **화풍 추종 (실제 run `2026-08-11_65126dad`, 임상현 2학년 시간 차시 × 백승용 화풍)**
+  - planner PASS. `art_direction.line_style`이 외곽선 3층 위계를 잡았고, `characters`가
+    7~7.5등신 / 4~4.5등신 대두 + "사서 선생님 키의 약 60%"로 분리했다.
+  - `forbidden_styles`에 "학교 담장·교실 책상 배열·도로 표지·페인트 소재의 복제", "참조 캐릭터의 얼굴·헤어·의상 복제".
+    **소재는 안 가져오고 화풍만 가져왔다.** 배경은 도서관 로비, 인물 의상은 전부 새로.
+  - asset 19/19 생성. `clock-body`에 **바늘이 없다**(가변부 규칙 작동 — 시간 차시라 깨졌으면 12문항이 전부 재생성 대상).
+    `mission-title`은 craft example의 완성도만 가져오고 색·모티프는 새로(노랑·별 → 청록·버건디·책갈피·시계).
+  - 얇은 input(20줄, 스캔)과 명시형 input(103줄)을 각각 planner에 태워 대조 — **결과 동등**.
+- **컴포넌트 계약 (builder 재실행)**
+  - `common.css` 24.6KB / `common.js` 15.5KB 생성, `<link>`·`<script src>` 두 줄 삽입 확인.
+  - `.c-topbar`가 08과 **값 일치** — `height:56px` · `backdrop-filter:blur(14px) saturate(1.3)` ·
+    `1px solid rgba(113,63,18,.16)` · 그라데이션. 재작성이 사라졌다.
+  - `index.html`의 `<style>`이 35KB+ → 11KB, `.c-topbar` 재선언 0, `:root` 재선언 0.
+- **design_refine 경로 (제일 위험한 지점)** — HTML을 통째로 재작성하고도 두 줄이 남았고,
+  `common.*`가 종료 시각에 재생성됐으며, `common-restored` 로그 없음(= 손대지 않음).
+  `<style>`은 11KB → 17KB로 늘었는데 findings 12건을 반영한 콘텐츠 CSS다.
+- **emit_common 단위** — 멱등(2회차 drift 0), 자가복구(망가뜨린 뒤 22591자 복원 + 로그),
+  link 검증 4/4(누락·순서 뒤집힘·script 누락 전부 REJECT).
+- **teacher shadow** — 임시 teacher `ticket-button`을 만들어 확인. 컴포넌트 7개(중복 없음),
+  teacher 버전 채택, `common.css`에 common 규칙 제외, 정리 후 common 복귀.
+- **input 계약** — 정상 2종 PASS, `root` 누락·오타 필드·없는 디렉토리·없는 이미지 4종 전부 REJECT.
+
+### 미해결
+
+- **planner가 CTA·보기 카드·표면을 `asset_plan`에 넣지 않는다**(19개 중 0개). 컴포넌트가 art를 안 갖게 됐으므로
+  이제 그 자리는 토큰 CSS로만 남는다. **7번의 굽기 규칙이 효과를 내려면 이게 먼저다.**
+  (`problem.md` `[cta-label-overlaid-not-baked]`)
+- `content_refine` 경로(`:1823`)는 단독 플래그가 없어 미검증. 품질 루프로만 도달한다.
+- `design_review`가 craft example 기준을 보지 않는다. 구운 글자의 완성도가 낮아도 게이트에 안 걸린다.
+- 참조가 실제로 쓰였는지 산출물에 기록되지 않는다. codex는 `view_image`와
+  `image_gen__imagegen(referenced_image_paths)`를 갖고 있고 프롬프트가 둘 다 지시하지만,
+  `asset_generator_output.schema.json`에 기록 필드가 없어 사후 검증이 안 된다.
+- 최종 산출물이 단일 HTML이 아니다(`index.html` + `common.css` + `common.js`). 필요하면
+  run 끝에 `<link>`를 인라인으로 치환하는 단계를 하나 두기로 하고 미뤘다.
+
+---
+
 ## version 0.32 — design_review 픽셀 우선 검수 · 정렬 오프셋 계량 (2026-07-22)
 
 ch8c0718 튜토리얼 화면에서 시계 에셋이 트레이 홈을 일부만 덮고 `[?]`·티켓 글자가 표면 중심에서 어긋났는데

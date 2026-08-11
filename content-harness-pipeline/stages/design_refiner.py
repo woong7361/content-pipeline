@@ -4,7 +4,9 @@ import json
 import re
 from pathlib import Path
 
+from stages.scripts.source_resolve import teacher_root_from_input
 from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
+from stages.scripts.common_components import build_common_components_section
 from stages.scripts.prompt_parts import with_common_html_contract
 from stages.scripts.style_references import build_style_reference_prompt
 
@@ -125,6 +127,8 @@ OUTPUT_CONTRACT:
 - Return builder_output.html_path exactly equal to TARGET_HTML_PATH.
 - If TARGET_HTML_PATH is not output/index.html, do not overwrite output/index.html.
 - If you run the visual QA preview command, pass --html-path "<RUN_DIR>/{target_html_path}" so the preview captures the refined debug file.
+
+{build_common_components_section(teacher_root_from_input(input_data))}
 
 INPUT_JSON:
 {json.dumps(input_data, ensure_ascii=False, indent=2)}

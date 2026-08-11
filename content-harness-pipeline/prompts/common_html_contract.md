@@ -18,11 +18,10 @@ stage별 역할·수정 우선순위·판단 기준은 각자의 system prompt�
 
 반응형 레이아웃을 만들지 않습니다. **1920×1080 고정 캔버스를 통짜로 스케일**하고, 비율이 안 맞아 남는 영역은 공백(레터박스)으로 둡니다.
 
-- `#viewport`(`position:fixed; inset:0; overflow:hidden`) 안에 `#stage`를 **1920×1080 고정 px**로 중앙 배치합니다.
-- `#stage`에 `container-type:size; container-name:stage`를 주고, **내부의 모든 크기는 `cqw`/`cqh`(=1920×1080 기준) 또는 px로** 씁니다.
-- JS로 `scale = Math.min(innerWidth/1920, innerHeight/1080)`을 계산해 `#stage`에 `transform: translate(-50%,-50%) scale(s)`로 적용하고, `resize`·`orientationchange`에 재계산합니다.
+- `#viewport`·`#stage`·`.c-bg`의 CSS는 **COMMON_BASE_CSS가 이미 정의합니다.** 그대로 inline하고 같은 규칙을 다시 쓰지 않습니다.
+- stage 스케일과 portrait 90° 회전은 `scene-controller` 컴포넌트의 `CommonSceneController.scaleStage(stage)`가 합니다. 같은 계산을 새로 작성하지 말고 그 함수를 inline해 `resize`·`orientationchange`에 연결합니다.
+- **내부의 모든 크기는 `cqw`/`cqh`(=1920×1080 기준) 또는 px로** 씁니다.
 - `#viewport`의 `background`를 콘텐츠 톤에 맞는 단색으로 채웁니다. **남는 공간을 콘텐츠로 채우거나 요소를 늘려 메우지 않습니다.**
-- 세로 화면(portrait)이면 `#stage`를 90° 회전해 가로로 채웁니다.
 - 스크린샷 가장자리의 여백은 캔버스 비율과 캡처 뷰포트 비율이 다를 때 생기는 **의도된 결과**이며 결함이 아닙니다.
 
 금지:
@@ -64,52 +63,70 @@ HTML을 다시 쓰다 보면 문구를 다듬고 싶은 충동이 생깁니다. 
 - Builder는 `backgrounds`·`characters`·`props`를 생성 asset 배치와 전체 팔레트의 교차 검사에 사용합니다. Content/Design Refiner는 기존 준수 상태를 보존하고 참조와 다른 새 스타일을 추가하지 않습니다.
 - 참조 속 기존 캐릭터 정체성, 배경 주제, 문구를 복제하지 않습니다. `usage_policy`와 항목별 `use`·`avoid`를 지킵니다.
 
+## 공용 컴포넌트 재사용
+
+`COMMON_COMPONENTS_JSON`은 이미 만들어져 검증된 재사용 컴포넌트 목록입니다. 같은 것을 처음부터 새로 만들지 않습니다.
+
+- 각 항목의 `use_when`·`avoid`로 이번 화면에 맞는 것을 고르고, 고른 컴포넌트는 `contract`(component.md) 파일을 **실제로 열어 읽습니다.** manifest에는 선택에 필요한 요약만 있고 slot·state·DOM 계약은 그 파일에 있습니다.
+- **컴포넌트의 CSS와 JS는 쓰지 않습니다.** `output/common.css`와 `output/common.js`를 코드가 만들어 두므로 `style.css`·`behavior.js`의 내용을 HTML로 옮겨 적지 않습니다. 마크업만 `template.html`을 보고 넣습니다.
+- `status`가 `deprecated`인 컴포넌트는 쓰지 않습니다.
+- **scene이 둘 이상이면 scene 이동 debug 패널을 함께 inline합니다.** 기본이 `hidden`이고 지정된 키로만 열리므로 학습자 화면에 노출되지 않습니다. QA가 화면을 확인하는 경로이므로 "학습자용이 아니다"를 이유로 빼지 않습니다.
+- **공용 컴포넌트는 이미지를 소유하지 않습니다.** `source/`의 어떤 파일도 `output/assets/`로 복사하지 않습니다. 화면에 쓰는 이미지는 이 run이 생성한 `output/assets/`의 asset뿐입니다.
+  - 버튼 몸체, 도장처럼 컴포넌트가 art를 필요로 하면 **그 run이 생성한 asset 경로**를 넘깁니다. `ticket-button`은 `--cta-body`, `feedback-layer`는 `data-correct-src`/`data-wrong-src`로 받습니다. 안 넘기면 토큰 CSS로 성립합니다.
+  - art를 재사용하지 않는 이유는 **콘텐츠마다 세계관이 다르기 때문**입니다. 다른 차시의 팔레트로 만든 버튼·도장을 가져오면 그 화면만 색이 어긋납니다.
+- `preview.html`과 `_shared/preview.*`는 확인 전용입니다. 최종 output에 넣지 않습니다. 외부 폰트 link도 옮기지 않습니다.
+
+### `common.css` / `common.js`는 코드가 소유합니다
+
+`output/common.css`(`:root` 토큰 + `#viewport`/`#stage` + 전 컴포넌트 CSS)와
+`output/common.js`(전 컴포넌트 `behavior.js`, `window.Common*` 전역 등록)는
+**stage가 끝날 때마다 코드가 원본에서 다시 씁니다.**
+
+두 파일을 열어 고쳐도 되돌아갑니다. 고칠 필요도 없습니다 — 이 차시에서만 값을 바꾸려면
+아래 순서 덕분에 콘텐츠 `<style>`에서 그냥 오버라이드하면 이깁니다.
+
+**대신 `index.html`에 이 두 줄을 반드시 유지합니다.** 빠지면 REJECT입니다.
+
+```html
+<link rel="stylesheet" href="common.css">
+<script src="common.js"></script>
+```
+
+순서는 계약입니다. CSS는 소스 순서로 우선순위가 갈립니다.
+
+```text
+<head>
+  1. <link rel="stylesheet" href="common.css">   ← 코드가 만든다
+  2. <style> 콘텐츠 고유 CSS </style>             ← 여기서 오버라이드한다
+</head>
+
+<body>
+  ...마크업...
+  1. <script src="common.js"></script>           ← 코드가 만든다. 전역만 등록
+  2. <script> 콘텐츠 controller </script>         ← scaleStage, createSceneController, 각 init
+</body>
+```
+
+`<link>`를 콘텐츠 `<style>` **뒤로 옮기면 REJECT입니다.** 순서가 뒤집히면 컴포넌트가
+콘텐츠를 덮어써서 이 차시의 조정이 전부 무시됩니다.
+
+컴포넌트에서 가져온 계약은 보존합니다. **HTML을 다시 쓰는 stage에서 특히 그렇습니다.**
+
+- class 이름(`c-` prefix), `data-component`/`data-slot`/`data-action`/`data-state`, 상태 class(`active`, `leaving`, `show`, `is-open`), 전역 API 이름(`window.Common*`)을 바꾸지 않습니다.
+- 컴포넌트 내부를 고쳐야 하면 이름을 바꾸지 말고 그 규칙의 값을 고칩니다. 컴포넌트 CSS를 통째로 풀어헤쳐 scene-local 사본으로 흩뿌리지 않습니다.
+- 컴포넌트가 DOM을 채우는 자리(`data-slot`)는 마크업이 비어 있는 것이 정상입니다. 채우는 것은 `behavior.js` 호출이며, 호출을 빠뜨리면 빈 채로 남습니다.
+
 ## 디자인 토큰 계약
 
-CSS의 타이포·색·간격·모서리·z-index·모션·그림자는 **아래 `:root` 디자인 토큰으로만** 표현합니다. 개별 선택자에 raw 값(예: `font-size:33px`, `#ffe15f`, `z-index:18`)을 흩뿌리지 않습니다. 이 계약의 목적은 refine이 HTML을 다시 쓸 때 값이 기준 없이 흔들려(폰트 크기가 제각각, 육안 구분 안 되는 노랑이 수십 종) 통일성이 깨지는 것을 막는 것입니다.
+CSS의 타이포·색·간격·모서리·z-index·모션·그림자는 **`COMMON_BASE_CSS`의 `:root` 디자인 토큰으로만** 표현합니다. 개별 선택자에 raw 값(예: `font-size:33px`, `#ffe15f`, `z-index:18`)을 흩뿌리지 않습니다. 이 계약의 목적은 refine이 HTML을 다시 쓸 때 값이 기준 없이 흔들려(폰트 크기가 제각각, 육안 구분 안 되는 노랑이 수십 종) 통일성이 깨지는 것을 막는 것입니다.
 
-`:root`에 아래 토큰 블록을 **그대로 선언**하고, 컴포넌트는 `var(--토큰)`으로 참조합니다.
-
-```css
-:root{
-  /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
-  /* 타이포 사다리 (--fs-sm 31px = 본문 기본) */
-  --fs-2xs:24px; --fs-xs:28px; --fs-sm:31px; --fs-md:34px;
-  --fs-lg:38px;  --fs-xl:42px; --fs-2xl:48px; --fs-hero:72px;
-  /* z-index 레이어 */
-  --z-bg:1; --z-scenery:5; --z-content:10; --z-character:12;
-  --z-interactive:20; --z-speech:30; --z-hud:40; --z-effect:60;
-  --z-drawer:70; --z-flash:90;
-  /* 모서리 */
-  --r-none:0; --r-sm:8px; --r-md:22px; --r-pill:999px; --r-circle:50%;
-  /* 모션 */
-  --ease:cubic-bezier(.2,.8,.2,1);        /* 표준 진입/전환 */
-  --ease-out:cubic-bezier(.4,0,.8,.2);    /* 퇴장 */
-  --ease-back:cubic-bezier(.2,.9,.3,1.18);/* 살짝 튕기는 등장 */
-  --dur-fast:.15s; --dur:.45s; --dur-slow:.65s;
-  /* 그림자 (고도 3단) */
-  --shadow:0 18px 44px rgba(3,29,39,.36);
-  --ds-sm:drop-shadow(0 6px 8px rgba(0,0,0,.25));
-  --ds-md:drop-shadow(0 12px 16px rgba(0,0,0,.3));
-  --ds-lg:drop-shadow(0 18px 26px rgba(0,0,0,.38));
-
-  /* ── 팔레트 토큰: 이름·역할은 고정, 값은 콘텐츠 art_direction에서 채운다 ──
-     아래 값은 예시(도서관 톤)일 뿐이다. 콘텐츠 분위기에 맞춰 값만 바꾼다. */
-  --bg:#062c3c;           /* 배경 기저 */
-  --surface:#0b5364;      /* 무대·판 표면 */
-  --ink:#073547;          /* 어두운 잉크(스트로크 등) */
-  --plate-ink:#173f49;    /* 대사판·티켓 위 텍스트 */
-  --accent:#ffd75a;       /* 주강조 */
-  --accent-bright:#ffe45f;/* 강한 글로우 하이라이트 */
-  --glow:#ffe66c;         /* 글로우 */
-  --cream:#fff6d7;        /* 밝은 표면 텍스트 */
-  --danger:#e65043;       /* 오답/경고 — 역할 고정(오답 신호는 빨강 계열 유지) */
-}
-```
+토큰의 원본은 `source/common/components/_shared/base.css`이고, **`output/common.css`에 이미 들어 있습니다.**
+프롬프트의 `COMMON_BASE_CSS` 블록은 **어떤 토큰이 있는지 알려주는 참고용**입니다 — 그 내용을 `<style>`에 옮겨 적지 않습니다.
+`:root`를 다시 선언하거나 값이 다른 사본을 만들지 않고, `var(--토큰)`으로 참조만 합니다.
 
 지키는 규칙:
 
-- **참조만** — 색·font-size·radius·z-index·그림자·이징은 위 토큰만 `var()`로 씁니다. 컴포넌트에 새 raw 값을 만들지 않습니다.
+- **참조만** — 색·font-size·radius·z-index·그림자·이징은 그 토큰만 `var()`로 씁니다. 컴포넌트에 새 raw 값을 만들지 않습니다.
 - **수정은 토큰 값으로** — 크기·색을 조정할 때 개별 선택자를 고치지 말고 토큰 값을 바꿉니다(한 곳 수정 → 전역 일관).
 - **확장은 named 토큰으로** — 사다리로 표현 안 되는 값이 정말 필요하면, raw 값을 박지 말고 `:root`에 `--fs-<이름>` 같은 **새 토큰을 추가하고 주석으로 용도를 남깁니다.**
 - **한 화면만 예외** — 특정 scene만 달라야 하면 전역 토큰을 건드리지 말고 그 scope에서 재정의합니다: `.certificate{--fs-sm:36px}`.
@@ -120,13 +137,13 @@ CSS의 타이포·색·간격·모서리·z-index·모션·그림자는 **아래
 
 planner가 `elements[].channel`로 각 줄의 역할을 이미 구분해 두었습니다. channel마다 아래 표면으로 렌더하고, 임의로 다른 표면에 넣지 않습니다.
 
-- `dialogue` — 캐릭터 발화입니다. **반드시 기존 speech_bubble asset을 배경으로 한 말풍선**으로 렌더하고 화자 머리 옆(head-height)에 붙입니다. plaque·board·monitor·인증서·책 지면 같은 표면 텍스트나 자막 카드로 넣지 않습니다.
-  - 말풍선 컴포넌트를 새로 만들지 말고 이미 쓰고 있는 것을 재사용합니다. 한 콘텐츠 안에 서로 다른 말풍선이 섞이면 실패로 봅니다.
+- `dialogue` — 캐릭터 발화입니다. **말풍선**으로 렌더하고 화자 머리 옆(head-height)에 붙입니다. plaque·board·monitor·인증서·책 지면 같은 표면 텍스트나 자막 카드로 넣지 않습니다.
+  - 말풍선은 `COMMON_COMPONENTS_JSON`의 `speech-bubble`을 씁니다. 새로 만들지 않습니다. 한 콘텐츠 안에 서로 다른 말풍선이 섞이면 실패로 봅니다.
   - 한 section에 dialogue 줄이 여러 개면 한 번에 다 띄우지 말고 순차 beat로 전개합니다(자동 진행 + 탭 스킵, 마지막 beat에서 CTA 노출).
 - `feedback` — 정오답 반응입니다. 세 층을 동시에 구현합니다.
   1. 캐릭터 표정/pose 전환 (정답=성공, 오답=고민)
-  2. 캐릭터 옆 말풍선의 짧은 고정 대사 (dialogue와 같은 speech_bubble 재사용)
-  3. 화면 중앙 도장/이펙트
+  2. 캐릭터 옆 말풍선의 짧은 고정 대사 (dialogue와 같은 `speech-bubble` 재사용)
+  3. 화면 중앙 도장/이펙트 — `COMMON_COMPONENTS_JSON`의 `feedback-layer`를 씁니다
   - **오답 pose는 말풍선이 사라지는 시점에 idle로 되돌립니다.** 이 복귀 타이머는 정답 처리 시 취소해 환호 pose를 덮어쓰지 않게 합니다.
   - 가변 길이 개념 설명은 말풍선이 아니라 별도 칩/카드로 분리합니다.
 
@@ -140,10 +157,12 @@ planner가 `elements[].channel`로 각 줄의 역할을 이미 구분해 두었�
 - 사람이 읽을 이름이 필요하면 `data-qa-label`을 넣습니다. 값은 한국어여도 됩니다.
 - 첫 화면뿐 아니라 튜토리얼, 메인 활동, 스토리/정리, 완료 화면처럼 design review가 별도로 봐야 하는 화면은 모두 `data-qa-scene`을 가져야 합니다.
 - `window.__contentHarnessShowScene = function(sceneId) { ... }`를 정의하거나 유지합니다. 전달받은 `data-qa-scene` 값의 화면만 보여 주고 나머지는 숨겨야 합니다.
+- 이 hook과 scene 전환(`active`/`leaving`)의 구현은 `COMMON_COMPONENTS_JSON`의 `scene-controller`에 이미 있습니다. `CommonSceneController.createSceneController(stage)`가 `__contentHarnessShowScene`을 등록하므로 같은 로직을 새로 작성하지 않습니다.
 - 이 contract는 사용자가 보는 UI가 아니라 QA hook입니다. 화면에 설명 문구로 노출하지 않습니다.
 
 ## 공통 금지
 
+- **다른 run 디렉토리의 산출물을 읽거나 베끼지 않습니다.** 지금 `RUN_DIR`과 프롬프트로 주어진 입력만 씁니다. 이미 만들어진 결과를 가져오면 그 결과의 결함까지 함께 옮겨지고, 입력이 바뀌어도 결과가 따라오지 않습니다.
 - 지정된 경로 외의 HTML 파일을 만들지 않습니다.
 - planner에 없는 학습 내용이나 story board와 충돌하는 내용을 추가하지 않습니다.
 - 기존 DOM id, event target, data attribute, 주요 JS 참조를 보존합니다. 요소를 옮길 때는 참조를 함께 갱신합니다.

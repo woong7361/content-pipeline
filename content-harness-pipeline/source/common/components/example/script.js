@@ -5,6 +5,28 @@
   addEventListener("orientationchange", () => CommonSceneController.scaleStage(stage));
 
   const scenes = CommonSceneController.createSceneController(stage);
+
+  /* topbar는 scene을 직접 알지 못한다. common:scenechange를 듣고
+     data-qa-label / data-progress만 읽는다 (followScenes 기본값) */
+  const topbar = CommonTopbar.init(document.getElementById("topbar"), {
+    menu: document.getElementById("courseMenu"),
+    title: "공용 컴포넌트 조립 예시",
+    step: "컴포넌트 소개",
+    progress: 10,
+    course: {
+      gradeLabel: "예시 차시 목록",
+      current: "example",
+      lessons: [
+        { no: 1, id: "example", title: "공용 컴포넌트 조립 예시" },
+        { no: 2, title: "준비 중" },
+        { no: 3, title: "준비 중" }
+      ]
+    },
+    onHome: () => scenes.showScene("scene-intro"),
+    onNavigate: href => console.log("navigate", href),
+    onSoundChange: on => console.log("sound", on)
+  });
+
   const debug = CommonDebugJumper.init(
     document.getElementById("debugPanel"),
     scenes,
@@ -38,6 +60,7 @@
         character.src = "./assets/student-volunteer.webp";
         character.alt = "손을 들고 기뻐하는 학생";
         CommonSpeechBubble.show(speech, "정답입니다! 이 조합을 나중에 단일 index.html 안으로 inline하면 됩니다.");
+        topbar.setProgress(100); /* scene 중간에 오르는 진행률은 콘텐츠가 직접 부른다 */
       } else {
         CommonFeedbackLayer.showStamp(stamp, "wrong", { hold: false });
         character.src = "./assets/student-thinking.webp";

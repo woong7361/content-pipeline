@@ -42,8 +42,9 @@
 | Component | Source | Notes |
 |---|---|---|
 | `scene-controller` | `production/1-2/08/index.html` scene 전환 | `data-qa-scene`, `active/leaving` 계약 |
+| `topbar` | 08 `.topbar` + `.course-menu-*` | 상단 HUD(제목·단계·진행률·소리)와 차시 목록 드로어 |
 | `speech-bubble` | 08 `.speech` | 1-2/01에서 이식된 크림 말풍선 |
-| `ticket-button` | 08 `.cta.activity-cta` | `activity-cta-body.webp` sprite 기반 CTA |
+| `ticket-button` | 08 `.cta.activity-cta` | `activity-cta-body.webp` sprite 기반 CTA. **라벨을 구운 CTA는 여기 해당하지 않는다** |
 | `keypad` | 08 `buildKeypad` | `[1..9][← 0 확인]` 숫자 키패드 |
 | `feedback-layer` | 08 `showStamp`/feedback overlay | 정답/오답 도장 |
 | `debug-jumper` | 08 debug panel | `data-qa-*`에서 scene 목록 자동 구성 |
@@ -72,18 +73,28 @@
 
 1. 필요한 컴포넌트의 `component.md`를 읽고 `Use when` / `Avoid`를 확인한다.
 2. `template.html`을 마크업에 넣고, `data-slot` / `data-action` 계약을 유지한다.
-3. CSS는 `_shared/base.css` → 컴포넌트 `style.css` → 콘텐츠 CSS 순서로 inline한다.
-4. JS는 컴포넌트 `behavior.js`(전역 `window.Common*` 등록) → 콘텐츠 controller 순서로 inline한다.
-5. asset은 `output/assets/`로 복사한다. `template.html`의 경로는 이미 `assets/...` 기준이다.
+3. **CSS와 JS는 옮겨 적지 않는다.** `stages/scripts/component_bundle.py`의 `emit_common()`이
+   `output/common.css` · `output/common.js`를 만든다. HTML에는 두 줄만 둔다.
+   ```html
+   <link rel="stylesheet" href="common.css">
+   <script src="common.js"></script>
+   ```
+4. 이 차시에서만 값을 바꾸려면 `<link>` **뒤**의 콘텐츠 `<style>`에서 오버라이드한다. 소스 순서로 이긴다.
+5. **컴포넌트는 이미지를 소유하지 않는다.** art가 필요한 컴포넌트는 그 run이 생성한 asset 경로를
+   밖에서 받는다 (`ticket-button`은 `--cta-body`, `feedback-layer`는 `data-*-src`).
 
-순서가 계약이다. CSS는 소스 순서로 우선순위가 갈리고, `behavior.js`는 전역을 등록만 하므로
-controller보다 먼저 실행돼야 한다.
+순서가 계약이다. `<link>`가 콘텐츠 `<style>`보다 앞에 있어야 콘텐츠가 오버라이드할 수 있고,
+`common.js`는 전역을 등록만 하므로 콘텐츠 controller보다 먼저 실행돼야 한다.
 
 ## 규칙
 
 - **DOM 조회는 ID가 아니라 `data-component` / `data-slot` / `data-action`을 쓴다.**
   ID로 찾으면 그 컴포넌트는 특정 페이지에서만 동작한다.
 - 컴포넌트 class는 `c-` prefix를 쓴다. 상태 class(`active`, `leaving`, `show`)에는 prefix를 붙이지 않는다.
+- **stage 위에 얹히는 컴포넌트 루트는 자기 `style.css`에 `position`과 `z-index`를 갖는다.**
+  사용처가 `left`/`top`만 주면 되게 한다. 둘이 없으면 배치 지시가 무시되고 배경(`z-index:1`) 뒤로 깔린다.
+  확인 페이지가 위치를 대신 잡아주면 이 결함이 드러나지 않으므로, `preview.html`에서 컴포넌트 루트의
+  `position`을 페이지 쪽 class로 채우지 않는다.
 - 상태 표현은 배타적이면 `data-state`, 전환 중 겹치면 class, 브라우저가 의미를 가지면 네이티브 속성(`disabled`, `hidden`)을 쓴다.
 - 컴포넌트끼리 직접 호출하지 않는다. 필요하면 이벤트로 알린다 (`common:scenechange`).
 - 컴포넌트를 고쳤으면 `preview.html` → `example/index.html`을 열어 확인하고, `component.md`의 `Runtime API`를 함께 갱신한다.

@@ -3,8 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from stages.scripts.source_resolve import teacher_root_from_input
 from stages.scripts.codex_client import CodexClient
-from stages.scripts.prompt_parts import ASSET_EXAMPLES_DIR, load_asset_examples
+from stages.scripts.craft_examples import build_craft_examples_section
 from stages.scripts.style_references import build_style_reference_prompt
 
 
@@ -45,13 +46,10 @@ def build_prompt(input_data: dict, planner_output: dict, run_dir: Path) -> str:
     style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}
 
-{load_asset_examples()}
+{build_craft_examples_section(teacher_root_from_input(input_data))}
 
 RUN_DIR:
 {run_dir.resolve()}
-
-ASSET_EXAMPLES_DIR:
-{ASSET_EXAMPLES_DIR.resolve()}
 
 저장 규칙:
 - JSON의 `path`는 planner의 `intended_path`와 같은 `output/assets/...` 상대 경로를 사용합니다.

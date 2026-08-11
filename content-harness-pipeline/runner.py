@@ -15,8 +15,6 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 
-from stages.critique import critique
-from stages.evaluator import evaluate
 from stages.asset_generator import generate_assets
 from stages.builder import build_html
 from stages.content_critic import critique_content
@@ -24,15 +22,13 @@ from stages.content_evaluator import evaluate_content
 from stages.content_refiner import refine_content
 from stages.design_review import review_design
 from stages.design_refiner import refine_design
-from stages.generator import generate
 from stages.planner import plan
-from stages.refine import refine
+from stages.scripts.component_bundle import check_html_links, emit_common
 from validate import validate_file, validate_schema, write_result
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
 RUNS_DIR = PROJECT_DIR / "runs"
-RUBRIC_PATH = PROJECT_DIR / "rubric.yaml"
 CONTENT_RUBRIC_PATH = PROJECT_DIR / "content_rubric.yaml"
 BUILDER_OUTPUT_SCHEMA_PATH = PROJECT_DIR / "schemas" / "builder_output.schema.json"
 KST = timezone(timedelta(hours=9))
@@ -90,7 +86,6 @@ def default_codex_bin() -> str:
 
 DEFAULT_CODEX_BIN = default_codex_bin()
 
-AGENT_GEN = "gen"
 AGENT_PLANNER = "planner"
 AGENT_ASSET_GENERATOR = "asset_generator"
 AGENT_BUILDER = "builder"
@@ -99,9 +94,6 @@ AGENT_DESIGN_REFINE = "design_refine"
 AGENT_CONTENT_CRITIQUE = "content_critique"
 AGENT_CONTENT_EVAL = "content_eval"
 AGENT_CONTENT_REFINE = "content_refine"
-AGENT_CRITIQUE = "critique"
-AGENT_EVAL = "eval"
-AGENT_REFINE = "refine"
 
 AGENT_MODELS = {
     AGENT_PLANNER: MODEL_GPT_5_6_SOL,
@@ -112,10 +104,6 @@ AGENT_MODELS = {
     AGENT_CONTENT_CRITIQUE: MODEL_GPT_5_6_SOL,
     AGENT_CONTENT_EVAL: MODEL_GPT_5_6_SOL,
     AGENT_CONTENT_REFINE: MODEL_GPT_5_6_SOL,
-    AGENT_GEN: MODEL_GPT_5_6_SOL,
-    AGENT_CRITIQUE: MODEL_GPT_5_6_SOL,
-    AGENT_EVAL: MODEL_GPT_5_6_SOL,
-    AGENT_REFINE: MODEL_GPT_5_6_SOL,
 }
 CLAUDE_HTML_AGENTS = (AGENT_BUILDER, AGENT_DESIGN_REFINE, AGENT_CONTENT_REFINE)
 CLAUDE_MODEL_ALIASES = {MODEL_CLAUDE_OPUS, MODEL_CLAUDE_SONNET}
@@ -166,23 +154,6 @@ def summarize_errors(errors: list[object], limit: int = 3) -> str:
     if len(errors) > limit:
         visible_errors.append(f"... +{len(errors) - limit} more")
     return "; ".join(visible_errors)
-
-
-def format_eval_scores(eval_artifact: dict, rubric: dict) -> str:
-    rubric_scores = eval_artifact.get("rubric_scores", {})
-    if not isinstance(rubric_scores, dict):
-        return "total=n/a"
-
-    total = rubric_scores.get("weighted_total")
-    scale = rubric.get("scale", {})
-    max_score = scale.get("max", 5) if isinstance(scale, dict) else 5
-    min_total = rubric.get("thresholds", {}).get("min_total", "n/a")
-    scores = rubric_scores.get("scores", {})
-    axes = ""
-    if isinstance(scores, dict):
-        axes = " axes=" + " ".join(f"{axis}:{format_score(score)}" for axis, score in scores.items())
-
-    return f"total={format_score(total)}/{format_score(max_score)} min={format_score(min_total)}{axes}"
 
 
 class ProgressReporter:
@@ -372,38 +343,6 @@ class RunContext:
     def html_path(self) -> Path:
         return self.output_dir / "index.html"
 
-    @property
-    def draft_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_draft.json"
-
-    @property
-    def draft_validation_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_draft.validation.json"
-
-    @property
-    def critique_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_critique.json"
-
-    @property
-    def critique_validation_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_critique.validation.json"
-
-    @property
-    def eval_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_eval.json"
-
-    @property
-    def eval_validation_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_eval.validation.json"
-
-    @property
-    def final_path(self) -> Path:
-        return self.run_dir / f"{self.brief_hash}_final.json"
-
-    @property
-    def failed_path(self) -> Path:
-        return self.run_dir / f"{self.brief_hash}_failed.json"
-
 
 def load_json(path: Path) -> dict:
     with path.open("r", encoding="utf-8") as file:
@@ -523,175 +462,6 @@ def now_iso() -> str:
     return datetime.now(KST).isoformat(timespec="seconds")
 
 
-def build_draft(
-    input_data: dict,
-    stage_output: dict,
-    iteration: str,
-    model_name: str,
-    token_usage: dict | None = None,
-    source_stage: str = "gen",
-) -> dict:
-    metadata = {
-        "prompt_version": f"{source_stage}_system:v1",
-        "source_files": [f'{input_data["brief_hash"]}_input.json'],
-    }
-    if token_usage:
-        metadata["token_usage"] = token_usage
-
-    return {
-        "brief_hash": input_data["brief_hash"],
-        "iteration": iteration,
-        "stage": source_stage,
-        "content": stage_output["content"],
-        "generated_at": now_iso(),
-        "model": model_name,
-        "metadata": metadata,
-    }
-
-
-def build_critique(
-    critique_output: dict,
-    iteration: str,
-    model_name: str,
-    token_usage: dict | None = None,
-) -> dict:
-    metadata = {
-        "prompt_version": "critique_system:v1",
-        "source_files": [
-            f'{critique_output["brief_hash"]}_input.json',
-            f'{critique_output["brief_hash"]}_iter-{iteration}_draft.json',
-        ],
-    }
-    if token_usage:
-        metadata["token_usage"] = token_usage
-
-    return {
-        **critique_output,
-        "critiqued_at": now_iso(),
-        "model": model_name,
-        "metadata": metadata,
-    }
-
-
-def build_eval(
-    eval_output: dict,
-    iteration: str,
-    model_name: str,
-    token_usage: dict | None = None,
-) -> dict:
-    metadata = {
-        "prompt_version": "eval_system:v1",
-        "source_files": [
-            f'{eval_output["brief_hash"]}_input.json',
-            f'{eval_output["brief_hash"]}_iter-{iteration}_draft.json',
-        ],
-    }
-    if token_usage:
-        metadata["token_usage"] = token_usage
-
-    return {
-        **eval_output,
-        "evaluated_at": now_iso(),
-        "model": model_name,
-        "metadata": metadata,
-    }
-
-
-def get_weak_axes(eval_data: dict, rubric: dict) -> list[str]:
-    scores = eval_data.get("rubric_scores", {}).get("scores", {})
-    min_axis = rubric.get("thresholds", {}).get("min_axis", {})
-    weak_axes = []
-    if not isinstance(scores, dict) or not isinstance(min_axis, dict):
-        return weak_axes
-    for axis, minimum in min_axis.items():
-        score = scores.get(axis)
-        if isinstance(score, (int, float)) and isinstance(minimum, (int, float)) and score < minimum:
-            weak_axes.append(axis)
-    return weak_axes
-
-
-def get_refine_contract_errors(eval_result: dict) -> list[object]:
-    errors = eval_result.get("errors", [])
-    if not isinstance(errors, list):
-        return []
-    return [error for error in errors if categorize_failure(str(error)) == "contract_error"]
-
-
-def build_refine_request(
-    input_data: dict,
-    draft: dict,
-    critique_artifact: dict,
-    eval_artifact: dict,
-    eval_result: dict,
-    rubric: dict,
-    to_iteration: str,
-) -> dict:
-    weak_axes = get_weak_axes(eval_artifact, rubric)
-    axis_rationales = eval_artifact.get("axis_rationales", {})
-    weak_axis_rationales = {
-        axis: axis_rationales[axis]
-        for axis in weak_axes
-        if isinstance(axis_rationales, dict) and axis in axis_rationales
-    }
-    weaknesses = critique_artifact.get("weaknesses", [])
-    revision_priority = [
-        item["suggestion"]
-        for item in weaknesses
-        if isinstance(item, dict) and item.get("severity") == "high" and item.get("suggestion")
-    ]
-    revision_priority.extend(weak_axes)
-
-    return {
-        "brief_hash": input_data["brief_hash"],
-        "from_iteration": draft["iteration"],
-        "to_iteration": to_iteration,
-        "contract_errors": get_refine_contract_errors(eval_result),
-        "weak_axes": weak_axes,
-        "weak_axis_rationales": weak_axis_rationales,
-        "revision_priority": revision_priority,
-    }
-
-
-def build_final(
-    context: RunContext,
-    input_data: dict,
-    draft: dict,
-    eval_artifact: dict,
-    eval_result: dict,
-    rubric: dict,
-    refine_request_lineage: str | None,
-) -> dict:
-    lineage = {
-        "run_id": context.run_id,
-        "input": relative_to_run(context.copied_input_path, context.run_dir),
-        "draft": relative_to_run(context.draft_path, context.run_dir),
-        "critique": relative_to_run(context.critique_path, context.run_dir),
-        "eval": relative_to_run(context.eval_path, context.run_dir),
-    }
-    if refine_request_lineage:
-        lineage["refine_request"] = refine_request_lineage
-
-    rubric_scores = eval_artifact["rubric_scores"]
-    return {
-        "brief_hash": input_data["brief_hash"],
-        "final_iteration": context.iteration,
-        "content": draft["content"],
-        "accepted_at": now_iso(),
-        "quality_snapshot": {
-            "rubric_name": eval_artifact["rubric_name"],
-            "weighted_total": rubric_scores["weighted_total"],
-            "scores": rubric_scores["scores"],
-            "weak_axes": get_weak_axes(eval_artifact, rubric),
-        },
-        "contract_result": {
-            "verdict": "PASS",
-            "contract_errors": [],
-            "checked_rules": FINAL_CHECKED_RULES,
-        },
-        "lineage": lineage,
-    }
-
-
 def relative_to_run(path: Path, run_dir: Path) -> str:
     try:
         return path.relative_to(run_dir).as_posix()
@@ -701,69 +471,6 @@ def relative_to_run(path: Path, run_dir: Path) -> str:
 
 def next_iteration(iteration: str) -> str:
     return f"{int(iteration) + 1:03d}"
-
-
-def write_max_iteration_failed(
-    context: RunContext,
-    eval_rejections: list[dict],
-    config: dict[str, object],
-) -> Path:
-    last_rejection = eval_rejections[-1] if eval_rejections else {}
-    last_errors = last_rejection.get("errors", [])
-    failure_counts: dict[str, int] = {}
-    for rejection in eval_rejections:
-        for error in rejection.get("errors", []):
-            category = categorize_failure(error)
-            failure_counts[category] = failure_counts.get(category, 0) + 1
-
-    payload = {
-        "brief_hash": context.brief_hash,
-        "run_id": context.run_id,
-        "failed_at": now_iso(),
-        "terminal_reason": "max_iteration_exceeded",
-        "last_iteration": context.iteration,
-        "failure_counts_by_category": failure_counts,
-        "last_failures": [
-            {
-                "category": categorize_failure(error),
-                "rule": failure_rule(error),
-                "severity": "high",
-                "retryable": False,
-                "message": error,
-            }
-            for error in last_errors
-        ],
-        "lineage": {
-            "input": relative_to_run(context.copied_input_path, context.run_dir),
-            "last_draft": relative_to_run(context.draft_path, context.run_dir),
-            "last_critique": relative_to_run(context.critique_path, context.run_dir),
-            "last_eval": relative_to_run(context.eval_path, context.run_dir),
-        },
-        "iteration_rejections": eval_rejections,
-        "config": config,
-        "next_actions": [
-            "원본 brief에 구체적 사례와 제약을 보강한다",
-            "반복 실패의 주된 category를 보고 rubric threshold 또는 stage prompt를 조정한다",
-        ],
-    }
-    write_json(context.failed_path, payload, overwrite=True)
-    return context.failed_path
-
-
-def categorize_failure(error: str) -> str:
-    if error.startswith("schema "):
-        return "schema_error"
-    if "must not include" in error:
-        return "role_boundary_violation"
-    if error.startswith("min_total") or error.startswith("min_axis"):
-        return "quality_reject"
-    return "contract_error"
-
-
-def failure_rule(error: str) -> str:
-    if ":" in error:
-        return error.split(":", 1)[0]
-    return error
 
 
 def run_planner_only(args: argparse.Namespace) -> dict:
@@ -1403,7 +1110,7 @@ def run_builder_only(args: argparse.Namespace) -> dict:
             builder_output = load_json(temp_builder_output_path)
 
         stage = "builder_files_validate"
-        builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+        builder_file_errors = finalize_html_artifact(context.run_dir, builder_output, progress)
         if builder_file_errors:
             raise FileNotFoundError("; ".join(builder_file_errors))
 
@@ -1451,6 +1158,42 @@ def validate_asset_files(run_dir: Path, asset_output: dict) -> list[str]:
             continue
         if not resolved.exists():
             errors.append(f"asset file missing: {path}")
+    return errors
+
+
+def finalize_html_artifact(
+    run_dir: Path,
+    builder_output: dict,
+    progress=None,
+    expected_html_path: str = DEFAULT_BUILDER_HTML_PATH,
+    teacher_root: str = "",
+) -> list[str]:
+    """HTML을 쓴 stage 뒤에 항상 도는 마무리.
+
+    두 가지를 하는데 성격이 반대다.
+
+    - `output/common.*`는 **덮어쓴다.** 코드가 소유하므로 모델이 뭘 했든 원본으로 돌아간다.
+      되돌릴 수 있으니 검증할 이유가 없다.
+    - `index.html`은 **검증한다.** 모델이 소유하므로 되돌릴 수 없고, `<link>`가 빠지면
+      컴포넌트가 통째로 없는 화면이 나온다.
+
+    이 함수를 세 HTML stage(builder, design_refine, content_refine) 뒤에서 부른다.
+    stage 쪽이 아니라 runner에 두는 이유는 runner만 전체 시퀀스를 알고,
+    이미 같은 자리에서 산출물 파일 검증을 하고 있었기 때문이다.
+    """
+    bundle = emit_common(run_dir, teacher_root)
+    if bundle["drifted"] and progress is not None:
+        for item in bundle["drifted"]:
+            # 게이트가 아니라 로그다. 같은 항목이 반복되면 컴포넌트가 부족하다는 신호다.
+            progress.line(
+                f"common-restored {item['file']} "
+                f"({item['previous_chars']}→{item['restored_chars']} chars)"
+            )
+
+    errors = validate_builder_files(run_dir, builder_output, expected_html_path)
+    html_path = builder_output.get("html_path")
+    if html_path == expected_html_path:
+        errors.extend(check_html_links(run_dir / html_path))
     return errors
 
 
@@ -2078,7 +1821,7 @@ def run_content_refine_stage(
         ensure_pass(builder_result, context.builder_validation_path)
         builder_output = load_json(temp_builder_output_path)
 
-    builder_file_errors = validate_builder_files(context.run_dir, builder_output)
+    builder_file_errors = finalize_html_artifact(context.run_dir, builder_output, progress)
     if builder_file_errors:
         raise FileNotFoundError("; ".join(builder_file_errors))
 
@@ -2139,9 +1882,10 @@ def run_design_refine_stage(
         ensure_pass(builder_result, builder_validation_path)
         builder_output = load_json(temp_builder_output_path)
 
-    builder_file_errors = validate_builder_files(
+    builder_file_errors = finalize_html_artifact(
         context.run_dir,
         builder_output,
+        progress,
         expected_html_path=target_html_path,
     )
     if builder_file_errors:
@@ -2355,329 +2099,6 @@ def run_content_eval_only(args: argparse.Namespace) -> dict:
         raise RuntimeError(f"content-eval-only failed at {stage}; wrote {failed_path}") from exc
 
 
-def run_writing_loop(args: argparse.Namespace) -> dict:
-    progress = ProgressReporter()
-    pipeline_started_at = time.perf_counter()
-    stage = "input_validate"
-    input_path = args.input.resolve()
-    input_result = validate_file(input_path, artifact="input")
-    progress.validation(stage, input_result)
-    ensure_pass(input_result)
-
-    input_data = load_json(input_path)
-    brief_hash = input_data["brief_hash"]
-    start_iteration = int(args.iteration)
-    if args.max_iterations < start_iteration:
-        raise ValueError("--max-iterations must be greater than or equal to --iteration")
-    rubric_path = args.rubric.resolve()
-    rubric = load_rubric(rubric_path)
-
-    root_context = RunContext.create(
-        brief_hash=brief_hash,
-        iteration=args.iteration,
-        runs_dir=args.runs_dir,
-    )
-    lineage = {
-        "input": str(root_context.copied_input_path),
-    }
-    config = {
-        "codex_bin": args.codex_bin,
-        "codex_access": "dangerously-bypass-approvals-and-sandbox",
-        "agent_models": resolve_agent_models(args),
-        "iteration": args.iteration,
-        "max_iterations": args.max_iterations,
-        "timeout_seconds": args.timeout_seconds,
-        "rubric_path": str(rubric_path),
-        "rubric": rubric,
-    }
-    eval_rejections: list[dict] = []
-    last_refine_request_lineage: str | None = None
-    progress.line(
-        f"run start brief={brief_hash} iteration={args.iteration} max_iterations={args.max_iterations} "
-        f"rubric={rubric.get('name', rubric_path.name)} run_id={root_context.run_id}"
-    )
-
-    try:
-        stage = "prepare"
-        copy_input(input_path, root_context.copied_input_path, overwrite=args.overwrite)
-
-        for iteration_number in range(start_iteration, args.max_iterations + 1):
-            iteration = f"{iteration_number:03d}"
-            iteration_label = f"iter {iteration}/{args.max_iterations:03d}"
-            progress.line(f"{iteration_label} start")
-            context = RunContext.create(brief_hash=brief_hash, iteration=iteration, runs_dir=args.runs_dir)
-            context.iter_dir.mkdir(parents=True, exist_ok=True)
-            lineage.update(
-                {
-                    "draft": str(context.draft_path),
-                    "critique": str(context.critique_path),
-                    "eval": str(context.eval_path),
-                }
-            )
-
-            if iteration_number == start_iteration:
-                with tempfile.TemporaryDirectory(prefix="writing-harness-gen-") as temp_dir:
-                    temp_gen_output_path = Path(temp_dir) / "gen-output.json"
-
-                    stage = f"iter_{iteration}_gen"
-                    with progress.step(
-                        f"{iteration_label} gen model={display_model(config['agent_models'][AGENT_GEN])}",
-                        live=True,
-                    ):
-                        token_usage = generate(
-                            input_path=root_context.copied_input_path,
-                            output_path=temp_gen_output_path,
-                            codex_bin=args.codex_bin,
-                            model=config["agent_models"][AGENT_GEN],
-                            timeout_seconds=args.timeout_seconds,
-                        )
-
-                    stage = f"iter_{iteration}_gen_validate"
-                    gen_result = validate_file(temp_gen_output_path, artifact="gen_output")
-                    progress.validation(f"{iteration_label} gen_output_validate", gen_result)
-                    ensure_pass(gen_result)
-                    gen_output = load_json(temp_gen_output_path)
-
-                stage = f"iter_{iteration}_draft_write"
-                draft = build_draft(
-                    input_data=input_data,
-                    stage_output=gen_output,
-                    iteration=iteration,
-                    model_name=display_model(config["agent_models"][AGENT_GEN]),
-                    token_usage=token_usage,
-                    source_stage=AGENT_GEN,
-                )
-                write_json(context.draft_path, draft, overwrite=args.overwrite)
-            elif not context.draft_path.exists():
-                raise FileNotFoundError(f"expected refined draft for iteration {iteration}: {context.draft_path}")
-
-            stage = f"iter_{iteration}_draft_validate"
-            draft_result = validate_file(
-                context.draft_path,
-                artifact="draft",
-                expected_brief_hash=brief_hash,
-                expected_iteration=iteration,
-            )
-            progress.validation(f"{iteration_label} draft_validate", draft_result)
-            ensure_pass(draft_result, context.draft_validation_path)
-            draft = load_json(context.draft_path)
-
-            with tempfile.TemporaryDirectory(prefix="writing-harness-critique-") as temp_dir:
-                temp_critique_path = Path(temp_dir) / "critique.json"
-
-                stage = f"iter_{iteration}_critique"
-                with progress.step(
-                    f"{iteration_label} critique model={display_model(config['agent_models'][AGENT_CRITIQUE])}",
-                    live=True,
-                ):
-                    token_usage = critique(
-                        input_path=root_context.copied_input_path,
-                        draft_path=context.draft_path,
-                        output_path=temp_critique_path,
-                        codex_bin=args.codex_bin,
-                        model=config["agent_models"][AGENT_CRITIQUE],
-                        timeout_seconds=args.timeout_seconds,
-                    )
-
-                stage = f"iter_{iteration}_critique_output_validate"
-                critique_output_result = validate_file(temp_critique_path, artifact="critique_output")
-                progress.validation(f"{iteration_label} critique_output_validate", critique_output_result)
-                ensure_pass(critique_output_result)
-                critique_output = load_json(temp_critique_path)
-
-            stage = f"iter_{iteration}_critique_write"
-            critique_artifact = build_critique(
-                critique_output=critique_output,
-                iteration=iteration,
-                model_name=display_model(config["agent_models"][AGENT_CRITIQUE]),
-                token_usage=token_usage,
-            )
-            write_json(context.critique_path, critique_artifact, overwrite=args.overwrite)
-
-            stage = f"iter_{iteration}_critique_validate"
-            critique_result = validate_file(
-                context.critique_path,
-                artifact="critique",
-                expected_brief_hash=brief_hash,
-                expected_iteration=iteration,
-            )
-            progress.validation(f"{iteration_label} critique_validate", critique_result)
-            ensure_pass(critique_result, context.critique_validation_path)
-
-            with tempfile.TemporaryDirectory(prefix="writing-harness-eval-") as temp_dir:
-                temp_eval_path = Path(temp_dir) / "eval.json"
-
-                stage = f"iter_{iteration}_eval"
-                with progress.step(
-                    f"{iteration_label} eval model={display_model(config['agent_models'][AGENT_EVAL])}",
-                    live=True,
-                ):
-                    token_usage = evaluate(
-                        input_path=root_context.copied_input_path,
-                        draft_path=context.draft_path,
-                        rubric=rubric,
-                        output_path=temp_eval_path,
-                        codex_bin=args.codex_bin,
-                        model=config["agent_models"][AGENT_EVAL],
-                        timeout_seconds=args.timeout_seconds,
-                    )
-
-                stage = f"iter_{iteration}_eval_output_validate"
-                eval_output_result = validate_file(temp_eval_path, artifact="eval_output")
-                progress.validation(f"{iteration_label} eval_output_validate", eval_output_result)
-                ensure_pass(eval_output_result)
-                eval_output = load_json(temp_eval_path)
-
-            stage = f"iter_{iteration}_eval_write"
-            eval_artifact = build_eval(
-                eval_output=eval_output,
-                iteration=iteration,
-                model_name=display_model(config["agent_models"][AGENT_EVAL]),
-                token_usage=token_usage,
-            )
-            write_json(context.eval_path, eval_artifact, overwrite=args.overwrite)
-
-            stage = f"iter_{iteration}_eval_validate"
-            eval_result = validate_file(
-                context.eval_path,
-                artifact="eval",
-                expected_brief_hash=brief_hash,
-                expected_iteration=iteration,
-                rubric=rubric,
-            )
-            eval_summary = format_eval_scores(eval_artifact, rubric)
-            if eval_result["status"] == "PASS":
-                progress.line(f"{iteration_label} eval PASS {eval_summary}")
-            else:
-                error_summary = summarize_errors(eval_result.get("errors", []))
-                errors = f" errors={error_summary}" if error_summary else ""
-                progress.line(f"{iteration_label} eval {eval_result['status']} {eval_summary}{errors}")
-            if eval_result["status"] == "PASS":
-                stage = f"iter_{iteration}_final_write"
-                final_artifact = build_final(
-                    context=context,
-                    input_data=input_data,
-                    draft=draft,
-                    eval_artifact=eval_artifact,
-                    eval_result=eval_result,
-                    rubric=rubric,
-                    refine_request_lineage=last_refine_request_lineage,
-                )
-                write_json(context.final_path, final_artifact, overwrite=args.overwrite)
-
-                stage = f"iter_{iteration}_final_validate"
-                final_result = validate_file(
-                    context.final_path,
-                    artifact="final",
-                    expected_brief_hash=brief_hash,
-                )
-                progress.validation(f"{iteration_label} final_validate", final_result)
-                ensure_pass(final_result)
-                progress.line(
-                    f"run PASS iteration={iteration} total_elapsed={format_duration(time.perf_counter() - pipeline_started_at)}"
-                )
-                return {
-                    "status": "PASS",
-                    "run_id": context.run_id,
-                    "input": str(root_context.copied_input_path),
-                    "draft": str(context.draft_path),
-                    "critique": str(context.critique_path),
-                    "eval": str(context.eval_path),
-                    "final": str(context.final_path),
-                    "iteration": iteration,
-                }
-
-            write_result(eval_result, context.eval_validation_path)
-            eval_rejections.append(
-                {
-                    "iteration": iteration,
-                    "validation": str(context.eval_validation_path),
-                    "errors": eval_result.get("errors", []),
-                }
-            )
-
-            if iteration_number >= args.max_iterations:
-                stage = f"iter_{iteration}_max_iteration_exceeded"
-                with progress.step(f"{iteration_label} max_iteration_exceeded"):
-                    failed_path = write_max_iteration_failed(
-                        context=context,
-                        eval_rejections=eval_rejections,
-                        config=config,
-                    )
-                progress.line(
-                    "run FAILED terminal_reason=max_iteration_exceeded "
-                    f"last_iteration={iteration} total_elapsed={format_duration(time.perf_counter() - pipeline_started_at)}"
-                )
-                return {
-                    "status": "FAILED",
-                    "run_id": context.run_id,
-                    "failed": str(failed_path),
-                    "terminal_reason": "max_iteration_exceeded",
-                    "last_iteration": iteration,
-                }
-
-            to_iteration = next_iteration(iteration)
-            with progress.step(f"iter {iteration}->{to_iteration} refine_request"):
-                refine_request = build_refine_request(
-                    input_data=input_data,
-                    draft=draft,
-                    critique_artifact=critique_artifact,
-                    eval_artifact=eval_artifact,
-                    eval_result=eval_result,
-                    rubric=rubric,
-                    to_iteration=to_iteration,
-                )
-            last_refine_request_lineage = f"memory:{iteration}->{to_iteration}"
-            next_context = RunContext.create(brief_hash=brief_hash, iteration=to_iteration, runs_dir=args.runs_dir)
-            next_context.iter_dir.mkdir(parents=True, exist_ok=True)
-
-            with tempfile.TemporaryDirectory(prefix="writing-harness-refine-") as temp_dir:
-                temp_refine_output_path = Path(temp_dir) / "refine-output.json"
-
-                stage = f"iter_{iteration}_refine_to_{to_iteration}"
-                with progress.step(
-                    f"iter {iteration}->{to_iteration} refine model={display_model(config['agent_models'][AGENT_REFINE])}",
-                    live=True,
-                ):
-                    token_usage = refine(
-                        input_path=root_context.copied_input_path,
-                        draft_path=context.draft_path,
-                        critique_path=context.critique_path,
-                        refine_request=refine_request,
-                        output_path=temp_refine_output_path,
-                        codex_bin=args.codex_bin,
-                        model=config["agent_models"][AGENT_REFINE],
-                        timeout_seconds=args.timeout_seconds,
-                    )
-
-                stage = f"iter_{iteration}_refine_output_validate"
-                refine_result = validate_file(temp_refine_output_path, artifact="refine_output")
-                progress.validation(f"iter {iteration}->{to_iteration} refine_output_validate", refine_result)
-                ensure_pass(refine_result)
-                refine_output = load_json(temp_refine_output_path)
-
-            stage = f"iter_{to_iteration}_draft_write"
-            refined_draft = build_draft(
-                input_data=input_data,
-                stage_output=refine_output,
-                iteration=to_iteration,
-                model_name=display_model(config["agent_models"][AGENT_REFINE]),
-                token_usage=token_usage,
-                source_stage=AGENT_REFINE,
-            )
-            write_json(next_context.draft_path, refined_draft, overwrite=args.overwrite)
-    except Exception as exc:
-        progress.line(
-            f"run ERROR stage={stage} total_elapsed={format_duration(time.perf_counter() - pipeline_started_at)} "
-            f"error={type(exc).__name__}"
-        )
-        failed_path = write_failed(root_context.run_dir, brief_hash, root_context.run_id, stage, exc, lineage, config)
-        progress.line(f"run failed artifact={failed_path}")
-        raise RuntimeError(f"pipeline failed at {stage}; wrote {failed_path}") from exc
-
-    raise RuntimeError("pipeline ended without PASS or FAILED status")
-
-
 def run(args: argparse.Namespace) -> dict:
     progress = ProgressReporter()
     started_at = time.perf_counter()
@@ -2845,7 +2266,6 @@ def run(args: argparse.Namespace) -> dict:
 def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
     models = AGENT_MODELS.copy()
     if args.model:
-        models[AGENT_GEN] = args.model
         models[AGENT_PLANNER] = args.model
         models[AGENT_ASSET_GENERATOR] = args.model
         models[AGENT_BUILDER] = args.model
@@ -2868,14 +2288,6 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
         models[AGENT_CONTENT_EVAL] = args.content_eval_model
     if args.content_refine_model:
         models[AGENT_CONTENT_REFINE] = args.content_refine_model
-    if args.gen_model:
-        models[AGENT_GEN] = args.gen_model
-    if args.critique_model:
-        models[AGENT_CRITIQUE] = args.critique_model
-    if args.eval_model:
-        models[AGENT_EVAL] = args.eval_model
-    if args.refine_model:
-        models[AGENT_REFINE] = args.refine_model
     return models
 
 
@@ -2925,7 +2337,7 @@ def main() -> int:
         default=MODEL_CLAUDE_SONNET,
         help="Claude model alias for --claude-html-stages: opus or sonnet. Defaults to sonnet.",
     )
-    parser.add_argument("--model", help="Alias for planner/gen model in the current MVP.")
+    parser.add_argument("--model", help="Alias for planner/asset/builder model in the current MVP.")
     parser.add_argument("--planner-only", action="store_true", help="Run only input validation and planner.")
     parser.add_argument("--asset-generator-only", action="store_true", help="Run only asset generation from an existing planner output.")
     parser.add_argument("--builder-only", action="store_true", help="Run only HTML builder from existing planner and asset outputs.")
@@ -2941,12 +2353,7 @@ def main() -> int:
     parser.add_argument("--content-critique-model", help="Model for the Content Critique agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--content-eval-model", help="Model for the Content Eval agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--content-refine-model", help="Model for the Content Refine agent. Defaults to the Codex CLI default model.")
-    parser.add_argument("--gen-model", help="Model for the Gen agent. Defaults to the official Codex recommended model.")
-    parser.add_argument("--critique-model", help="Model for the Critique agent. Defaults to the Codex CLI default model.")
-    parser.add_argument("--eval-model", help="Model for the Eval agent. Defaults to the Codex CLI default model.")
-    parser.add_argument("--refine-model", help="Model for the Refine agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--runs-dir", type=Path, default=RUNS_DIR)
-    parser.add_argument("--rubric", type=Path, default=RUBRIC_PATH)
     parser.add_argument("--content-rubric", type=Path, default=CONTENT_RUBRIC_PATH)
     parser.add_argument("--iteration", default="001")
     parser.add_argument(

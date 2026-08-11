@@ -3,7 +3,8 @@
 - Type: `debug_tool`
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` debug panel
-- Final output: inline only for preview/debug builds
+- Final output: inline into `output/index.html`
+  - 기본이 `hidden`이고 backquote로만 열리므로 학습자 화면을 침범하지 않는다. QA가 이 패널로 scene을 확인한다.
 - Required:
   - scene controller object
   - `.scene[data-qa-*]`
@@ -18,6 +19,9 @@
 - Trigger:
   - backquote key
   - optional visible debug button
+- Use when:
+  - QA에서 특정 scene을 빠르게 확인해야 할 때
+  - scene이 여러 개인 콘텐츠를 반복 수정할 때
 - Notes:
   - `common:scenechange`를 구독해 현재 항목을 갱신한다
   - panel 내부는 ID가 아니라 `data-slot`으로 찾는다. 여러 페이지에 붙일 수 있어야 한다.

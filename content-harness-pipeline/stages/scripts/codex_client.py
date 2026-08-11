@@ -185,12 +185,25 @@ class ClaudeClient:
                 "--output-format",
                 "json",
                 "--json-schema",
-                output_schema.read_text(encoding="utf-8"),
+                load_schema_for_claude(output_schema),
                 "--permission-mode",
                 self.permission_mode,
             ]
         )
         return command
+
+
+def load_schema_for_claude(output_schema: Path) -> str:
+    """Claude Code CLI에 넘길 schema 문자열을 만든다.
+
+    `$schema: https://json-schema.org/draft/2020-12/schema`를 그대로 넘기면 CLI가
+    모델을 부르기 전에 `no schema with key or ref ...`로 거절한다(메타 schema를 해석하지 못한다).
+    codex 쪽은 같은 파일을 그대로 받으므로 파일에서는 유지하고, 여기서만 떼어낸다.
+    """
+    schema = json.loads(output_schema.read_text(encoding="utf-8"))
+    if isinstance(schema, dict):
+        schema.pop("$schema", None)
+    return json.dumps(schema, ensure_ascii=False)
 
 
 def extract_token_usage(stdout: str) -> dict | None:

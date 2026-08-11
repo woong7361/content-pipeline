@@ -1,0 +1,173 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-08-11T17:14:27+09:00",
+  "html_path": "output/index.html",
+  "viewports": [
+    "desktop"
+  ],
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_refine_preview/desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_a1_problem",
+      "path": "iter_001/design_refine_preview/desktop__01_a1_problem.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_a1_tutorial",
+      "path": "iter_001/design_refine_preview/desktop__02_a1_tutorial.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_a1_success",
+      "path": "iter_001/design_refine_preview/desktop__03_a1_success.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_a2_global_ui",
+      "path": "iter_001/design_refine_preview/desktop__04_a2_global_ui.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_a2_type_a",
+      "path": "iter_001/design_refine_preview/desktop__05_a2_type_a.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_a2_type_b",
+      "path": "iter_001/design_refine_preview/desktop__06_a2_type_b.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_a2_type_c",
+      "path": "iter_001/design_refine_preview/desktop__07_a2_type_c.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_a2_outro",
+      "path": "iter_001/design_refine_preview/desktop__08_a2_outro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_a3_story_gallery",
+      "path": "iter_001/design_refine_preview/desktop__09_a3_story_gallery.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_a3_popup_quiz",
+      "path": "iter_001/design_refine_preview/desktop__10_a3_popup_quiz.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "render_checks": {
+    "console_errors": [],
+    "page_errors": [],
+    "request_failures": [],
+    "broken_images": [],
+    "horizontal_overflow": [],
+    "text_clipping": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "span:nth-child(1)",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "span:nth-child(2)",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      }
+    ],
+    "small_touch_targets": [],
+    "overlaps": [],
+    "fixed_overlay_risks": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "selector": "div#viewport",
+        "evidence": "Fixed or sticky element covers about 100% of the viewport.",
+        "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+      }
+    ]
+  },
+  "design_review": {
+    "status": "REJECT",
+    "summary": "Visual QA found high-priority design risks.",
+    "card_template_risk": "low",
+    "asset_integration_risk": "low",
+    "interface_affordance_risk": "low",
+    "composition_risk": "high",
+    "evidence": [
+      {
+        "viewport": "desktop",
+        "severity": "high",
+        "type": "composition",
+        "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+        "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "fixed_overlay",
+      "evidence": "div#viewport: Fixed or sticky element covers about 100% of the viewport.",
+      "suggested_fix": "Reduce this persistent UI or make it part of the scrollable scene."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "span:nth-child(1): Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "span:nth-child(2): Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "high",
+      "type": "composition",
+      "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
+      "suggested_fix": "Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+    }
+  ],
+  "refine_suggestions": [
+    "[desktop] Reduce this persistent UI or make it part of the scrollable scene.",
+    "[desktop] Allow wrapping, reduce fixed height, or move long copy to a larger responsive area.",
+    "[desktop] Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity."
+  ]
+}

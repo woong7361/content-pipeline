@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
   <link rel="stylesheet" href="../_shared/base.css">
   <link rel="stylesheet" href="../scene-controller/style.css">
+  <link rel="stylesheet" href="../topbar/style.css">
   <link rel="stylesheet" href="../speech-bubble/style.css">
   <link rel="stylesheet" href="../ticket-button/style.css">
   <link rel="stylesheet" href="../keypad/style.css">
@@ -19,12 +20,44 @@
 <body>
   <div id="viewport">
     <main id="stage">
-      <header class="previewTopbar">
-        <strong>Common Components Preview</strong>
-        <span>production/1-2/08 extracted patterns</span>
+      <header class="c-topbar" data-component="topbar" id="topbar">
+        <div class="c-topbarLeft">
+          <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false">
+            <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="c-topbarMenuLabel">목록</span>
+          </button>
+          <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+            <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+              <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+              <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+            </svg>
+          </button>
+          <span class="c-topbarStep" data-slot="step" hidden></span>
+        </div>
+        <span class="c-topbarProgress">
+          <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+            <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+            <span class="c-lessonBarPct" data-slot="pct">0%</span>
+          </span>
+        </span>
+        <div class="c-topbarTitle" data-slot="title"></div>
       </header>
 
-      <section class="scene active" id="scene-intro" data-qa-scene="scene-intro" data-qa-order="1" data-qa-label="컴포넌트 소개">
+      <div class="c-courseMenu" data-component="course-menu" id="courseMenu">
+        <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+          <div class="c-courseMenuHead">
+            <span class="c-courseMenuGrade" data-slot="grade"></span>
+            <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+          </div>
+          <div class="c-courseMenuList" data-slot="list"></div>
+          <div class="c-courseMenuFoot">
+            <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="scene active" id="scene-intro" data-qa-scene="scene-intro" data-qa-order="1" data-qa-label="컴포넌트 소개" data-progress="10">
         <img class="c-bg" src="./assets/school-wall-repaired.webp" alt="알록달록하게 수리된 학교 담장">
         <div class="previewShade"></div>
         <div class="previewTitle">
@@ -41,7 +74,7 @@
         </button>
       </section>
 
-      <section class="scene" id="scene-practice" data-qa-scene="scene-practice" data-qa-order="2" data-qa-label="키패드와 피드백">
+      <section class="scene" id="scene-practice" data-qa-scene="scene-practice" data-qa-order="2" data-qa-label="키패드와 피드백" data-progress="65">
         <img class="c-bg" src="./assets/school-wall-repaired.webp" alt="알록달록하게 수리된 학교 담장">
         <div class="practicePanel">
           <h2>키패드 컴포넌트</h2>
@@ -81,6 +114,7 @@
   </div>
 
   <script src="../scene-controller/behavior.js"></script>
+  <script src="../topbar/behavior.js"></script>
   <script src="../speech-bubble/behavior.js"></script>
   <script src="../ticket-button/behavior.js"></script>
   <script src="../keypad/behavior.js"></script>

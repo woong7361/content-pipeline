@@ -12,15 +12,19 @@
 (function () {
   let controls = null;
   let logEl = null;
+  let hudEl = null;
 
   function scale() {
     const stage = document.getElementById("stage");
     if (!stage) return;
+    /* HUD는 내용에 따라 줄바꿈되어 높이가 변한다. 고정값으로 비우면
+       topbar처럼 stage 맨 위에 붙는 컴포넌트가 HUD에 가린다. */
+    const hudHeight = hudEl ? hudEl.offsetHeight : 0;
     const w = innerWidth;
-    const h = innerHeight - 44;
+    const h = innerHeight - hudHeight;
     const s = Math.min(w / 1920, h / 1080);
     stage.style.transform = "translate(-50%, -50%) scale(" + s + ")";
-    stage.style.top = 44 + h / 2 + "px";
+    stage.style.top = hudHeight + h / 2 + "px";
   }
 
   function mount(options) {
@@ -37,6 +41,7 @@
     hud.querySelector(".p-note").textContent = opts.note || "";
     document.body.appendChild(hud);
 
+    hudEl = hud;
     controls = hud.querySelector(".p-controls");
     logEl = hud.querySelector(".p-log");
 
@@ -52,11 +57,13 @@
     button.textContent = label;
     button.addEventListener("click", handler);
     controls.appendChild(button);
+    scale(); /* 버튼이 줄바꿈되면 HUD 높이가 바뀐다 */
   }
 
   function log(message) {
     if (!logEl) return;
     logEl.textContent = message;
+    scale();
   }
 
   window.Preview = { mount, control, log, scale };

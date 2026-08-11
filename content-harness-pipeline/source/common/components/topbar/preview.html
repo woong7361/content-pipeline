@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>topbar preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;700;900&amp;display=swap">
+  <link rel="stylesheet" href="../_shared/base.css">
+  <link rel="stylesheet" href="../_shared/preview.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage">
+      <header class="c-topbar" data-component="topbar" id="topbar">
+        <div class="c-topbarLeft">
+          <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false">
+            <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="c-topbarMenuLabel">목록</span>
+          </button>
+          <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+            <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+              <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+              <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+            </svg>
+          </button>
+          <span class="c-topbarStep" data-slot="step" hidden></span>
+        </div>
+
+        <span class="c-topbarProgress">
+          <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+            <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+            <span class="c-lessonBarPct" data-slot="pct">0%</span>
+          </span>
+        </span>
+
+        <div class="c-topbarTitle" data-slot="title"></div>
+      </header>
+
+      <div class="c-courseMenu" data-component="course-menu" id="courseMenu">
+        <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+          <div class="c-courseMenuHead">
+            <span class="c-courseMenuGrade" data-slot="grade"></span>
+            <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+          </div>
+          <div class="c-courseMenuList" data-slot="list"></div>
+          <div class="c-courseMenuFoot">
+            <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="./behavior.js"></script>
+  <script src="../_shared/preview.js"></script>
+  <script>
+    (function () {
+      Preview.mount({
+        title: "topbar",
+        path: "source/common/components/topbar",
+        note: "차시 목록은 비어 있고 CommonTopbar.init(options.course)가 채운다. preview에서는 실제 이동 대신 로그만 남긴다."
+      });
+
+      const topbar = CommonTopbar.init(document.getElementById("topbar"), {
+        menu: document.getElementById("courseMenu"),
+        title: "알록달록, 학교 담장 색칠하기",
+        step: "수리력 +",
+        progress: 4,
+        course: {
+          gradeLabel: "1학년 차시 목록",
+          current: "08",
+          lessons: [
+            { no: 1, path: "../../1-1/01/", title: "어지러운 교실을 수리하라!" },
+            { no: 2, path: "../../1-1/02/", title: "복잡한 강당을 수리하라!" },
+            { no: 5, title: "준비 중" },
+            { no: 6, id: "01", title: "와글와글, 운동회를 도와요!" },
+            { no: 8, id: "08", title: "알록달록, 학교 담장 색칠하기" },
+            { no: 9, title: "준비 중" }
+          ]
+        },
+        onNavigate: href => Preview.log("onNavigate(\"" + href + "\") — preview라 이동하지 않는다"),
+        onHome: () => Preview.log("onHome() — 콘텐츠가 첫 scene으로 보낸다"),
+        onSoundChange: on => Preview.log("onSoundChange(" + on + ")")
+      });
+
+      const steps = ["수리력 +", "수리가 필요해요 1", "수리로 해결해요", "수리 이야기", ""];
+      let stepIndex = 0;
+      let progress = 4;
+      let hidden = false;
+
+      Preview.control("진행률 +12", () => {
+        progress = progress >= 100 ? 0 : Math.min(100, progress + 12);
+        topbar.setProgress(progress);
+        Preview.log("setProgress(" + progress + ")");
+      });
+      Preview.control("단계 라벨 순환", () => {
+        stepIndex = (stepIndex + 1) % steps.length;
+        topbar.setStep(steps[stepIndex]);
+        Preview.log(steps[stepIndex] ? "setStep(\"" + steps[stepIndex] + "\")" : "setStep(\"\") — 라벨과 구분선을 감춘다");
+      });
+      Preview.control("목록 열기", () => {
+        topbar.open();
+        Preview.log("open() — 패널 밖을 누르거나 Escape로 닫는다");
+      });
+      Preview.control("소리 토글", () => {
+        const next = !topbar.isSoundOn();
+        topbar.setSoundOn(next);
+        Preview.log("setSoundOn(" + next + ") — 실제 음소거는 콘텐츠가 한다");
+      });
+      Preview.control("topbar 숨김/표시", () => {
+        hidden = !hidden;
+        topbar.setHidden(hidden);
+        Preview.log(hidden ? "setHidden(true) — 타이틀 화면" : "setHidden(false)");
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,4 +1,14 @@
+/*
+  공용 토큰과 stage 계약. 이 파일이 디자인 토큰의 **원본**이다.
+  파이프라인이 만드는 output/index.html도 이 :root 블록을 그대로 inline한다
+  (prompts/common_html_contract.md "디자인 토큰 계약" 참조).
+
+  값은 production/1-2/08 실측이다. 컴포넌트 style.css가 이 값에 맞춰져 있으므로
+  구조 토큰의 값은 바꾸지 않는다. 팔레트 토큰만 콘텐츠에 맞춰 값을 바꾼다.
+*/
 :root {
+  /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
+  /* 타이포 사다리 (--fs-sm 37px = 본문 기본) */
   --fs-2xs: 29px;
   --fs-xs: 34px;
   --fs-sm: 37px;
@@ -7,6 +17,7 @@
   --fs-xl: 50px;
   --fs-2xl: 57px;
   --fs-hero: 86px;
+  /* z-index 레이어 */
   --z-bg: 1;
   --z-scenery: 5;
   --z-content: 10;
@@ -16,39 +27,55 @@
   --z-hud: 40;
   --z-effect: 60;
   --z-drawer: 70;
+  --z-flash: 90;
+  /* 모서리 */
+  --r-none: 0;
   --r-sm: 8px;
   --r-md: 22px;
   --r-pill: 999px;
   --r-circle: 50%;
-  --ease: cubic-bezier(.2,.8,.2,1);
-  --ease-back: cubic-bezier(.2,.9,.3,1.18);
+  /* 모션 */
+  --ease: cubic-bezier(.2,.8,.2,1);         /* 표준 진입/전환 */
+  --ease-out: cubic-bezier(.4,0,.8,.2);     /* 퇴장 */
+  --ease-back: cubic-bezier(.2,.9,.3,1.18); /* 살짝 튕기는 등장 */
   --ease-speech-pop: cubic-bezier(.36,.07,.19,.97);
   --dur-fast: .15s;
   --dur: .45s;
   --dur-slow: .65s;
   --dur-scene-out: .42s;
   --dur-scene-in: .45s;
+  /* 그림자 (고도 3단) */
   --shadow: 0 18px 44px rgba(3,29,39,.36);
   --shadow-flat: 0 1px 0 var(--ink);
+  --ds-sm: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+  --ds-md: drop-shadow(0 12px 16px rgba(0,0,0,.3));
   --ds-lg: drop-shadow(0 18px 26px rgba(0,0,0,.38));
+  /* 상태 필터 */
   --filter-hover: brightness(1.06);
   --filter-disabled: grayscale(.78) saturate(.2) brightness(.94);
-  --bg: #49b9ed;
-  --surface: #1f73c9;
-  --ink: #153f6b;
-  --plate-ink: #173f62;
-  --accent: #ffd84d;
-  --accent-bright: #fff080;
-  --glow: #ffe86a;
-  --cream: #fff8df;
-  --bubble-bg: #fffdf6;
-  --bubble-line: #4c3428;
-  --bubble-ink: #221914;
-  --danger: #e65043;
+  /* 값이 아니라 의미가 고정인 색 */
   --white: #ffffff;
+  --clear: rgba(255,255,255,0);
+
+  /* ── 팔레트 토큰: 이름·역할은 고정, 값은 콘텐츠 art_direction에서 채운다 ──
+     아래 값은 08(학교 담장) 기준이다. 다른 콘텐츠에서는 값만 바꾼다. */
+  --bg: #49b9ed;            /* 배경 기저 */
+  --surface: #1f73c9;       /* 무대·판 표면 */
+  --ink: #153f6b;           /* 어두운 잉크(스트로크 등) */
+  --plate-ink: #173f62;     /* 대사판·티켓 위 텍스트 */
+  --accent: #ffd84d;        /* 주강조 */
+  --accent-bright: #fff080; /* 강한 글로우 하이라이트 */
+  --glow: #ffe86a;          /* 글로우 */
+  --cream: #fff8df;         /* 밝은 표면 */
+  --danger: #e65043;        /* 오답/경고 — 역할 고정(빨강 계열 유지) */
   --veil: rgba(255,255,255,.92);
   --dim: rgba(21,63,107,.45);
-  --clear: rgba(255,255,255,0);
+  --bubble-bg: #fffdf6;     /* 말풍선 면 */
+  --bubble-line: #4c3428;   /* 말풍선 테두리 */
+  --bubble-ink: #221914;    /* 말풍선 텍스트 */
+  --brown-800: #713f12;     /* topbar 기본 글자 */
+  --brown-900: #422006;     /* topbar 글자 강조 */
+
   --font-body: "Jua", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 }
 

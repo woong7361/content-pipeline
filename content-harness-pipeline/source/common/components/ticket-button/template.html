@@ -1,9 +1,13 @@
 <!--
   Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
   함께 넣을 것:
-    CSS    _shared/base.css → ticket-button/style.css
-    JS     ticket-button/behavior.js  (window.CommonTicketButton 등록, 라벨 교체용)
-    Asset  assets/activity-cta-body.webp → output/assets/
+    CSS    common.css (base + 이 컴포넌트)   ※ 코드가 만든다. 옮겨 적지 않는다
+    JS     common.js  (window.CommonTicketButton 등록, 라벨 교체용)
+  Asset:
+    이 컴포넌트는 이미지를 소유하지 않는다.
+    생성한 CTA asset이 있으면 사용처가 --cta-body로 준다:
+      style="left:720px; top:800px; --cta-body:url('assets/cta-start.png')"
+    안 주면 base.css 토큰으로 만든 알약 버튼으로 성립한다.
   사용:
     click 핸들러는 콘텐츠 쪽에서 붙인다. 비활성은 button.disabled.
   동작 확인은 example/index.html.

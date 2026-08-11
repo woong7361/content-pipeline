@@ -1,39 +1,53 @@
+/* 위치는 사용처가 left/top으로만 준다. 컴포넌트가 position과 z-index를 갖지 않으면
+   그 left/top이 무시되고 요소가 (0,0)으로 흘러 배경(.c-bg, z-index:1) 뒤에 깔린다. */
+
+/* 이 컴포넌트는 이미지를 소유하지 않는다.
+   버튼 몸체 art는 콘텐츠마다 세계관이 달라 재사용 대상이 아니다(craft-examples 규칙과 같다).
+   생성한 CTA asset이 있으면 사용처가 --cta-body에 url(...)을 주고, 없으면 아래 토큰 CSS로 성립한다.
+   1-2/01의 시작 버튼도 이미지 없이 토큰 CSS만으로 만들어져 있다. */
 .c-ticketButton {
-  width: 868px;
-  height: 140px;
-  min-width: 868px;
-  min-height: 140px;
-  padding: 0 72px;
+  position: absolute;
+  z-index: var(--z-interactive);
+  min-width: 420px;
+  min-height: 112px;
+  padding: 0 clamp(48px, 5cqw, 72px);
   display: grid;
   place-items: center;
-  border: 0;
-  border-radius: 0;
-  background-color: var(--clear);
-  background-image: url("assets/activity-cta-body.webp");
+
+  border: 6px solid var(--plate-ink);
+  border-radius: var(--r-pill);
+  background: var(--cta-body, linear-gradient(180deg, var(--cream), var(--accent)));
   background-repeat: no-repeat;
-  background-size: 2606px 398px;
-  background-position: 0 -130px;
-  box-shadow: none;
-  color: #7b4626;
+  background-position: center;
+  background-size: cover;
+  box-shadow: var(--shadow);
+
+  color: var(--plate-ink);
+  font-family: var(--font-body);
   font-size: var(--fs-xs);
   font-weight: 900;
   line-height: 1.18;
   text-align: center;
   word-break: keep-all;
   cursor: pointer;
-  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out);
 }
 
+/* 상태를 스프라이트 프레임이 아니라 CSS로 낸다.
+   프레임을 쓰면 문구를 구운 CTA에서 프레임마다 글자를 다시 그려야 하고 누를 때 글자가 어긋난다. */
 .c-ticketButton:hover {
-  background-position: -869px -130px;
+  transform: translateY(-3px);
+  filter: var(--filter-hover);
 }
 
 .c-ticketButton:active {
-  background-position: -1737px -130px;
+  transform: translateY(3px);
+  box-shadow: var(--shadow-flat);
 }
 
 .c-ticketButton:disabled,
 .c-ticketButton[aria-disabled="true"] {
   cursor: default;
+  transform: none;
   filter: var(--filter-disabled);
 }

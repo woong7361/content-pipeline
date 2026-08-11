@@ -1,25 +1,3 @@
-.previewTopbar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  z-index: var(--z-hud);
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  background: linear-gradient(180deg, rgba(255,253,244,.94), rgba(255,250,232,.82));
-  border-bottom: 1px solid rgba(113,63,18,.16);
-  box-shadow: 0 4px 14px rgba(66,32,6,.08);
-  color: #713f12;
-  font-size: 18px;
-}
-
-.previewTopbar span {
-  opacity: .72;
-}
-
 .previewShade {
   position: absolute;
   inset: 0;
@@ -83,16 +61,14 @@
   height: 540px;
 }
 
+/* 위치만 준다. position/z-index는 ticket-button 컴포넌트가 갖는다 —
+   여기서 채워주면 컴포넌트가 스스로 배치되지 않는 결함이 이 페이지에서 드러나지 않는다. */
 .previewStart {
-  position: absolute;
-  z-index: var(--z-interactive);
   left: 180px;
   bottom: 110px;
 }
 
 .previewBack {
-  position: absolute;
-  z-index: var(--z-interactive);
   right: 90px;
   bottom: 78px;
   transform: scale(.75);

@@ -1,0 +1,1033 @@
+/* 이 파일은 source/common/components에서 코드가 생성한다.
+   여기를 고쳐도 다음 stage가 끝나면 원본으로 되돌아간다.
+   이 차시에서만 값을 바꾸려면 index.html의 <style>에서 오버라이드한다.
+   <link>보다 뒤에 오므로 소스 순서로 이긴다. */
+
+/*
+  공용 토큰과 stage 계약. 이 파일이 디자인 토큰의 **원본**이다.
+  파이프라인이 만드는 output/index.html도 이 :root 블록을 그대로 inline한다
+  (prompts/common_html_contract.md "디자인 토큰 계약" 참조).
+
+  값은 production/1-2/08 실측이다. 컴포넌트 style.css가 이 값에 맞춰져 있으므로
+  구조 토큰의 값은 바꾸지 않는다. 팔레트 토큰만 콘텐츠에 맞춰 값을 바꾼다.
+*/
+:root {
+  /* ── 구조 토큰: 콘텐츠와 무관하게 고정. 값을 바꾸지 않는다 ───────── */
+  /* 타이포 사다리 (--fs-sm 37px = 본문 기본) */
+  --fs-2xs: 29px;
+  --fs-xs: 34px;
+  --fs-sm: 37px;
+  --fs-md: 41px;
+  --fs-lg: 46px;
+  --fs-xl: 50px;
+  --fs-2xl: 57px;
+  --fs-hero: 86px;
+  /* z-index 레이어 */
+  --z-bg: 1;
+  --z-scenery: 5;
+  --z-content: 10;
+  --z-character: 12;
+  --z-interactive: 20;
+  --z-speech: 30;
+  --z-hud: 40;
+  --z-effect: 60;
+  --z-drawer: 70;
+  --z-flash: 90;
+  /* 모서리 */
+  --r-none: 0;
+  --r-sm: 8px;
+  --r-md: 22px;
+  --r-pill: 999px;
+  --r-circle: 50%;
+  /* 모션 */
+  --ease: cubic-bezier(.2,.8,.2,1);         /* 표준 진입/전환 */
+  --ease-out: cubic-bezier(.4,0,.8,.2);     /* 퇴장 */
+  --ease-back: cubic-bezier(.2,.9,.3,1.18); /* 살짝 튕기는 등장 */
+  --ease-speech-pop: cubic-bezier(.36,.07,.19,.97);
+  --dur-fast: .15s;
+  --dur: .45s;
+  --dur-slow: .65s;
+  --dur-scene-out: .42s;
+  --dur-scene-in: .45s;
+  /* 그림자 (고도 3단) */
+  --shadow: 0 18px 44px rgba(3,29,39,.36);
+  --shadow-flat: 0 1px 0 var(--ink);
+  --ds-sm: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+  --ds-md: drop-shadow(0 12px 16px rgba(0,0,0,.3));
+  --ds-lg: drop-shadow(0 18px 26px rgba(0,0,0,.38));
+  /* 상태 필터 */
+  --filter-hover: brightness(1.06);
+  --filter-disabled: grayscale(.78) saturate(.2) brightness(.94);
+  /* 값이 아니라 의미가 고정인 색 */
+  --white: #ffffff;
+  --clear: rgba(255,255,255,0);
+
+  /* ── 팔레트 토큰: 이름·역할은 고정, 값은 콘텐츠 art_direction에서 채운다 ──
+     아래 값은 08(학교 담장) 기준이다. 다른 콘텐츠에서는 값만 바꾼다. */
+  --bg: #49b9ed;            /* 배경 기저 */
+  --surface: #1f73c9;       /* 무대·판 표면 */
+  --ink: #153f6b;           /* 어두운 잉크(스트로크 등) */
+  --plate-ink: #173f62;     /* 대사판·티켓 위 텍스트 */
+  --accent: #ffd84d;        /* 주강조 */
+  --accent-bright: #fff080; /* 강한 글로우 하이라이트 */
+  --glow: #ffe86a;          /* 글로우 */
+  --cream: #fff8df;         /* 밝은 표면 */
+  --danger: #e65043;        /* 오답/경고 — 역할 고정(빨강 계열 유지) */
+  --veil: rgba(255,255,255,.92);
+  --dim: rgba(21,63,107,.45);
+  --bubble-bg: #fffdf6;     /* 말풍선 면 */
+  --bubble-line: #4c3428;   /* 말풍선 테두리 */
+  --bubble-ink: #221914;    /* 말풍선 텍스트 */
+  --brown-800: #713f12;     /* topbar 기본 글자 */
+  --brown-900: #422006;     /* topbar 글자 강조 */
+
+  --font-body: "Jua", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--plate-ink);
+  background: var(--bg);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+#viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: center center;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: size;
+  container-name: stage;
+  background: var(--cream);
+}
+
+.c-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: var(--z-bg);
+}
+
+.hidden {
+  display: none;
+}
+
+/* --- debug-jumper --- */
+.c-debugToggle {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: var(--z-drawer);
+  width: 54px;
+  height: 54px;
+  border: 2px solid rgba(76,52,40,.45);
+  border-radius: var(--r-circle);
+  background: rgba(255,253,246,.9);
+  color: var(--bubble-ink);
+  font-size: 24px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.c-debugPanel {
+  position: absolute;
+  right: 24px;
+  top: 78px;
+  z-index: var(--z-drawer);
+  width: 410px;
+  max-height: 850px;
+  overflow: auto;
+  padding: 14px;
+  border: 3px solid rgba(76,52,40,.55);
+  border-radius: 18px;
+  background: rgba(255,253,246,.96);
+  box-shadow: var(--shadow);
+  color: var(--bubble-ink);
+}
+
+.c-debugHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.c-debugHead button {
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(76,52,40,.45);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.c-debugCurrent {
+  margin-bottom: 10px;
+  font-size: 16px;
+  opacity: .75;
+}
+
+.c-debugList {
+  display: grid;
+  gap: 8px;
+}
+
+.c-debugScene {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 11px;
+  border: 2px solid rgba(76,52,40,.25);
+  border-radius: 12px;
+  background: rgba(255,255,255,.65);
+  color: var(--bubble-ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.c-debugScene.current {
+  border-color: var(--surface);
+  box-shadow: 0 0 0 3px rgba(31,115,201,.18);
+}
+
+.c-debugOrder {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-circle);
+  background: var(--accent);
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.c-debugLabel {
+  display: block;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.c-debugId {
+  display: block;
+  font-size: 13px;
+  opacity: .65;
+}
+
+/* --- feedback-layer --- */
+.c-feedbackStamp {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  z-index: var(--z-effect);
+  transform: translate(-50%, -50%) scale(0);
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+  filter: var(--ds-lg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.c-feedbackStamp.show {
+  animation: feedbackStamp var(--dur-slow) var(--ease-back) both;
+}
+
+@keyframes feedbackStamp {
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(1.22) rotate(-8deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-8deg); }
+}
+
+.c-feedbackCharacter {
+  position: absolute;
+  z-index: var(--z-character);
+  left: 80px;
+  bottom: -12px;
+  width: 330px;
+  height: 540px;
+  object-fit: contain;
+  filter: var(--ds-lg);
+  pointer-events: none;
+}
+
+.c-feedbackSpeech {
+  --speech-side-x: 430px;
+  --speech-face-y: 610px;
+}
+
+/* --- keypad --- */
+.c-keypadWrap {
+  position: absolute;
+  z-index: var(--z-interactive);
+  width: 510px;
+  padding: 26px;
+  background: var(--veil);
+  border: 5px solid var(--surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+}
+
+.c-answerDisplay {
+  height: 96px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  border: 4px solid var(--ink);
+  border-radius: var(--r-md);
+  background: var(--white);
+  font-size: var(--fs-2xl);
+  font-weight: 900;
+}
+
+.c-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+}
+
+.c-key {
+  height: 78px;
+  font-size: var(--fs-md);
+  font-weight: 800;
+  color: #12355f;
+  background: rgba(255,255,255,.92);
+  border: 3px solid rgba(180,218,255,.95);
+  border-radius: 17px;
+  box-shadow: 0 4px 0 rgba(143,173,211,.76), 0 11px 22px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+
+.c-key.del {
+  color: #a75f28;
+  background: rgba(255,244,230,.96);
+  border-color: #e7c197;
+  box-shadow: 0 4px 0 rgba(198,146,86,.6), 0 11px 22px rgba(0,0,0,.15);
+}
+
+.c-key.enter {
+  color: #fff;
+  background: #e23b3b;
+  border-color: #e23b3b;
+  box-shadow: 0 4px 0 rgba(150,26,26,.55), 0 11px 22px rgba(0,0,0,.15);
+  font-size: var(--fs-sm);
+}
+
+.c-key.keypad-pressing:not(:disabled) {
+  transform: translateY(4px) scale(.98);
+  box-shadow: 0 1px 0 #020810;
+}
+
+.c-answerDisplay.keypad-tick {
+  animation: keypadDisplayTick var(--dur-fast) var(--ease) both;
+}
+
+@keyframes keypadDisplayTick {
+  0% { transform: scale(.94); filter: brightness(1.85); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+.c-key:disabled {
+  cursor: default;
+  filter: var(--filter-disabled);
+  box-shadow: var(--shadow-flat);
+}
+
+/* --- scene-controller --- */
+.scene {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-bg);
+  display: none;
+  opacity: 0;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+.scene.active {
+  display: block;
+  opacity: 1;
+  animation: stageFadeIn var(--dur-scene-in) ease both;
+}
+
+.scene.leaving {
+  display: block;
+  animation: stageFadeOut var(--dur-scene-out) ease both;
+  pointer-events: none;
+}
+
+@keyframes stageFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes stageFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+#stage[data-transition="slide"] .scene.active {
+  animation: stageSlideInRight var(--dur-scene-out) ease both;
+}
+
+#stage[data-transition="slide"] .scene.leaving {
+  opacity: 1;
+  animation: stageSlideOutRight var(--dur-scene-out) ease both;
+}
+
+@keyframes stageSlideOutRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes stageSlideInRight {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* --- speech-bubble --- */
+.c-speechBubble {
+  --speech-face-y: 492px;
+  --speech-side-x: 390px;
+  position: absolute;
+  z-index: var(--z-speech);
+  width: max-content;
+  max-width: 990px;
+  padding: 20px 40px;
+  text-align: left;
+  background: var(--bubble-bg);
+  border: 6px solid var(--bubble-line);
+  border-radius: 28px;
+  box-shadow: 0 10px 0 rgba(0,0,0,.18);
+  color: var(--bubble-ink);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.4;
+  word-break: keep-all;
+  text-wrap: balance;
+  white-space: pre-line;
+  animation: speechPop var(--dur) var(--ease-speech-pop) both;
+}
+
+.c-speechBubble[data-state="hidden"] {
+  display: none;
+}
+
+.c-speechBubble::before,
+.c-speechBubble::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.c-speechBubble::before {
+  border-width: 17px;
+}
+
+.c-speechBubble::after {
+  border-width: 14px;
+}
+
+.c-speechBubble.left-speaker {
+  left: var(--speech-side-x);
+  top: var(--speech-face-y);
+  translate: 0 -50%;
+}
+
+.c-speechBubble.left-speaker::before {
+  left: -34px;
+  transform: translateY(-17px);
+  border-right-color: var(--bubble-line);
+}
+
+.c-speechBubble.left-speaker::after {
+  left: -22px;
+  transform: translateY(-14px);
+  border-right-color: var(--bubble-bg);
+}
+
+.c-speechBubble.right-speaker {
+  right: var(--speech-side-x);
+  top: var(--speech-face-y);
+  translate: 0 -50%;
+}
+
+.c-speechBubble.right-speaker::before {
+  right: -34px;
+  transform: translateY(-17px);
+  border-left-color: var(--bubble-line);
+}
+
+.c-speechBubble.right-speaker::after {
+  right: -22px;
+  transform: translateY(-14px);
+  border-left-color: var(--bubble-bg);
+}
+
+.c-speechBubble.top-speaker::before,
+.c-speechBubble.top-speaker::after {
+  top: auto;
+  transform: none;
+}
+
+.c-speechBubble.top-speaker::before {
+  right: 60px;
+  bottom: -34px;
+  border-top-color: var(--bubble-line);
+}
+
+.c-speechBubble.top-speaker::after {
+  right: 63px;
+  bottom: -22px;
+  border-top-color: var(--bubble-bg);
+}
+
+@keyframes speechPop {
+  0% { opacity: 0; transform: scale(.5); }
+  70% { transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* --- ticket-button --- */
+/* 위치는 사용처가 left/top으로만 준다. 컴포넌트가 position과 z-index를 갖지 않으면
+   그 left/top이 무시되고 요소가 (0,0)으로 흘러 배경(.c-bg, z-index:1) 뒤에 깔린다. */
+.c-ticketButton {
+  position: absolute;
+  z-index: var(--z-interactive);
+  width: 868px;
+  height: 140px;
+  min-width: 868px;
+  min-height: 140px;
+  padding: 0 72px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background-color: var(--clear);
+  background-image: url("assets/activity-cta-body.webp");
+  background-repeat: no-repeat;
+  background-size: 2606px 398px;
+  background-position: 0 -130px;
+  box-shadow: none;
+  color: #7b4626;
+  font-size: var(--fs-xs);
+  font-weight: 900;
+  line-height: 1.18;
+  text-align: center;
+  word-break: keep-all;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.c-ticketButton:hover {
+  background-position: -869px -130px;
+}
+
+.c-ticketButton:active {
+  background-position: -1737px -130px;
+}
+
+.c-ticketButton:disabled,
+.c-ticketButton[aria-disabled="true"] {
+  cursor: default;
+  filter: var(--filter-disabled);
+}
+
+/* --- topbar --- */
+.c-topbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 56px;
+  z-index: var(--z-hud);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 1.4cqw, 18px);
+  padding: 0 clamp(18px, 2cqw, 26px);
+  background: linear-gradient(180deg, rgba(255,253,244,.94), rgba(255,250,232,.82));
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid rgba(113,63,18,.16);
+  box-shadow: 0 4px 14px rgba(66,32,6,.08);
+  font-family: var(--font-body);
+}
+
+/* 타이틀 화면처럼 HUD를 감춰야 할 때. 08의 `#stage.title-mode .topbar`를 컴포넌트 자기 상태로 옮긴 것 */
+.c-topbar[data-state="hidden"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.c-topbarLeft {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(9px, 1cqw, 14px);
+  min-width: 0;
+}
+
+.c-topbarMenu {
+  height: 34px;
+  min-width: 98px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px 1px 12px;
+  border: 1px solid rgba(146,64,14,.22);
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,247,214,.78));
+  color: var(--brown-800);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255,253,230,.9);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 2px 7px rgba(66,32,6,.08);
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease;
+}
+
+.c-topbarMenu:hover {
+  transform: translateY(-1px);
+  border-color: rgba(146,64,14,.34);
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(254,240,138,.9));
+  color: var(--brown-900);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.98), 0 4px 10px rgba(66,32,6,.12);
+}
+
+.c-topbarMenu:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 4px rgba(66,32,6,.12);
+}
+
+.c-topbarMenu:focus-visible {
+  outline: 3px solid rgba(14,165,233,.35);
+  outline-offset: 3px;
+}
+
+.c-topbarMenuLabel {
+  font-weight: 1000;
+}
+
+.c-topbarBurger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  width: 17px;
+  height: 14px;
+}
+
+.c-topbarBurger i {
+  display: block;
+  height: 2.5px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.c-topbarSound {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 0;
+  border: 1px solid rgba(21,158,184,.28);
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.5);
+  color: #0b9ec1;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.82), 0 2px 7px rgba(28,105,122,.1);
+  transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.c-topbarSound:hover {
+  transform: translateY(-1px);
+  background: rgba(232,250,255,.72);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 4px 10px rgba(28,105,122,.14);
+}
+
+.c-topbarSound:focus-visible {
+  outline: 3px solid rgba(14,165,233,.35);
+  outline-offset: 3px;
+}
+
+.c-topbarSound[aria-pressed="false"] {
+  color: #9aa7ad;
+  background: rgba(255,255,255,.34);
+}
+
+.c-topbarSound[aria-pressed="false"] .c-topbarWave {
+  opacity: .24;
+}
+
+.c-topbarSoundIcon {
+  width: 23px;
+  height: 23px;
+}
+
+.c-topbarSpeaker {
+  fill: currentColor;
+}
+
+.c-topbarWave {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.c-topbarStep {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 1 auto;
+  height: 34px;
+  max-width: clamp(140px, 20cqw, 260px);
+  padding: 0 0 0 12px;
+  border-left: 2px solid rgba(202,138,4,.42);
+  color: var(--brown-800);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255,253,230,.86);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.c-topbarStep[hidden] {
+  display: none;
+}
+
+.c-topbarTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: max-content;
+  max-width: min(560px, 44cqw);
+  padding: 0 0 4px;
+  color: var(--brown-800);
+  font-size: clamp(17px, 1.5cqw, 22px);
+  font-weight: 1000;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,253,230,.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.c-topbarTitle::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--clear), rgba(234,179,8,.72), var(--clear));
+}
+
+.c-topbarProgress {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 176px;
+  height: 34px;
+  padding: 0 12px;
+  border: 2px solid rgba(103,201,239,.5);
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,.42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 3px 8px rgba(24,39,86,.08);
+  color: #20407a;
+}
+
+.c-lessonBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 22px;
+}
+
+.c-lessonBarTrack {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  border-radius: var(--r-pill);
+  background: rgba(24,39,86,.16);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(24,39,86,.18);
+}
+
+.c-lessonBarFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, #5ec1ef, #4c8bff 70%, #4caf6a);
+  transition: width .5s cubic-bezier(.3,.9,.3,1);
+}
+
+.c-lessonBarPct {
+  min-width: 32px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 1000;
+  font-variant-numeric: tabular-nums;
+  color: #20407a;
+}
+
+/* 차시 목록 드로어. #stage 직계 자식이어야 inset:0이 스테이지 전체를 덮는다 */
+.c-courseMenu {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-drawer);
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  background: rgba(20,12,4,0);
+  visibility: hidden;
+  pointer-events: none;
+  transition: background .24s ease, visibility 0s linear .28s;
+}
+
+.c-courseMenu.is-open {
+  background: rgba(20,12,4,.42);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  visibility: visible;
+  pointer-events: auto;
+  transition: background .24s ease, visibility 0s;
+}
+
+.c-courseMenuPanel {
+  display: flex;
+  flex-direction: column;
+  width: min(400px, 40cqw);
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+  border-right: 3px solid #6a3d16;
+  background: linear-gradient(180deg, #fff7e6, #f6e4c0);
+  box-shadow: 14px 0 36px rgba(20,12,4,.34), inset 0 1px 0 rgba(255,255,255,.7);
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+}
+
+.c-courseMenu.is-open .c-courseMenuPanel {
+  transform: translateX(0);
+}
+
+.c-courseMenuHead {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: clamp(8px, 1cqh, 12px) clamp(14px, 1.6cqw, 20px);
+  border-bottom: 2px solid rgba(106,61,22,.24);
+  background: linear-gradient(180deg, #fff7e6, #fdf0d6);
+}
+
+.c-courseMenuGrade {
+  font-size: clamp(13px, 2.7cqh, 20px);
+  font-weight: 900;
+  color: #5a3512;
+}
+
+.c-courseMenuClose {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  padding: 4px 0 0;
+  border: 2px solid rgba(106,61,22,.5);
+  border-radius: 9px;
+  background: rgba(255,255,255,.6);
+  color: #5a3512;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.c-courseMenuClose:hover {
+  background: #fff;
+}
+
+.c-courseMenuList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, .55cqh, 7px);
+  padding: clamp(6px, 1.1cqh, 13px) clamp(12px, 1.4cqw, 16px);
+}
+
+.c-courseMenuItem {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.2cqw, 15px);
+  width: 100%;
+  text-align: left;
+  padding: clamp(3px, .7cqh, 9px) clamp(12px, 1.3cqw, 16px);
+  border: 2px solid rgba(106,61,22,.28);
+  border-radius: 13px;
+  background: rgba(255,255,255,.55);
+  color: #40260f;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .14s ease, background .14s ease, border-color .14s ease;
+}
+
+.c-courseMenuItem:hover:not(:disabled) {
+  background: #fff;
+  border-color: rgba(106,61,22,.55);
+  transform: translateY(-1px);
+}
+
+.c-courseMenuNo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(18px, 4.3cqh, 34px);
+  height: clamp(18px, 4.3cqh, 34px);
+  border-radius: var(--r-circle);
+  background: linear-gradient(180deg, #ffdf8f, #efb14e);
+  border: 2px solid #8a5320;
+  color: #4a2b12;
+  font-size: clamp(12px, 2.4cqh, 18px);
+  font-weight: 900;
+}
+
+.c-courseMenuTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: clamp(12px, 2.4cqh, 18px);
+  line-height: 1.22;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.c-courseMenuNow {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: #e5482f;
+  color: #fff;
+  font-size: clamp(10px, 2cqh, 14px);
+  font-weight: 900;
+  box-shadow: 0 2px 6px rgba(180,40,20,.4);
+}
+
+.c-courseMenuSoon {
+  flex-shrink: 0;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  background: rgba(90,53,18,.14);
+  color: #7a5124;
+  border: 1px dashed rgba(106,61,22,.5);
+  font-size: clamp(10px, 2cqh, 14px);
+  font-weight: 900;
+}
+
+.c-courseMenuItem.is-current {
+  background: linear-gradient(180deg, #fff3d0, #ffe3a6);
+  border-color: #d98a2b;
+  box-shadow: 0 0 0 2px rgba(217,138,43,.35), 0 4px 10px rgba(120,70,20,.18);
+  cursor: default;
+}
+
+.c-courseMenuItem.is-locked {
+  opacity: .72;
+  cursor: default;
+}
+
+.c-courseMenuItem.is-locked .c-courseMenuNo {
+  background: rgba(120,95,60,.25);
+  border-color: rgba(106,61,22,.4);
+  color: #7a5124;
+}
+
+.c-courseMenuItem.is-locked .c-courseMenuTitle {
+  color: #8a6a40;
+}
+
+.c-courseMenuFoot {
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  padding: clamp(8px, 1.1cqh, 13px) clamp(12px, 1.4cqw, 16px);
+  border-top: 2px solid rgba(106,61,22,.24);
+  background: linear-gradient(180deg, #fdf0d6, #f6e4c0);
+}
+
+.c-courseMenuHome {
+  width: 100%;
+  padding: clamp(6px, 1cqh, 11px) 0;
+  border: 2px solid rgba(106,61,22,.45);
+  border-radius: 12px;
+  background: rgba(255,255,255,.7);
+  color: #5a3512;
+  font-size: clamp(12px, 2.4cqh, 17px);
+  font-weight: 900;
+  cursor: pointer;
+  transition: background .14s ease, transform .14s ease;
+}
+
+.c-courseMenuHome:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}

@@ -1,0 +1,51 @@
+<!--
+  Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
+  함께 넣을 것:
+    CSS  _shared/base.css → topbar/style.css
+    JS   topbar/behavior.js  (window.CommonTopbar 등록)
+  사용:
+    CommonTopbar.init(root, { course, title, onHome, onSoundChange })
+  블록이 둘이다. 드로어(.c-courseMenu)는 헤더 안이 아니라 #stage의 직계 자식으로 둔다.
+    .c-topbar는 position:absolute라 그 안에 넣으면 inset:0 오버레이가 56px 헤더에 갇힌다.
+  차시 목록은 비어 있고 CommonTopbar.init이 options.course를 받아 채운다.
+    init을 부르지 않으면 목록은 빈 채로 남는다.
+  동작 확인은 example/index.html.
+-->
+<header class="c-topbar" data-component="topbar">
+  <div class="c-topbarLeft">
+    <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false">
+      <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="c-topbarMenuLabel">목록</span>
+    </button>
+    <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+      <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+        <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+        <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+        <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+      </svg>
+    </button>
+    <span class="c-topbarStep" data-slot="step" hidden></span>
+  </div>
+
+  <span class="c-topbarProgress">
+    <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+      <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+      <span class="c-lessonBarPct" data-slot="pct">0%</span>
+    </span>
+  </span>
+
+  <div class="c-topbarTitle" data-slot="title"></div>
+</header>
+
+<div class="c-courseMenu" data-component="course-menu">
+  <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+    <div class="c-courseMenuHead">
+      <span class="c-courseMenuGrade" data-slot="grade"></span>
+      <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+    </div>
+    <div class="c-courseMenuList" data-slot="list"></div>
+    <div class="c-courseMenuFoot">
+      <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+    </div>
+  </div>
+</div>

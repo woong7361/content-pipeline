@@ -292,19 +292,64 @@ Codex structured output schema 제약은 최상단 `CLAUDE.md`의 "문제사항�
 ## 재사용 source
 
 반복해서 쓰는 컴포넌트와 asset은 `source/` 아래에 둔다.
-설계는 `docs/reusable-source-design.md`, 공용 컴포넌트 사용 규칙은 `source/common/components/CLAUDE.md`를 따른다.
+설계는 `docs/reusable-source-design.md`를 따르고, 각 축의 사용 규칙은 그 디렉토리의 `CLAUDE.md`에 있다.
 
-## 미사용 코드
+스캔 모듈이 **항상 싣는 규칙 블록**과 **선택용 manifest**를 만들어 프롬프트에 붙인다. 두 축이 같은 패턴이다.
 
-다음은 이 저장소에 남아 있지만 **현재 파이프라인에서 실행되지 않는다.**
+| 축 | 모듈 | 블록 | 붙는 stage |
+|---|---|---|---|
+| 컴포넌트 | `stages/scripts/common_components.py` | `COMMON_BASE_CSS` + `COMMON_COMPONENTS_JSON` | `builder`, `design_refine`, `content_refine` |
+| craft example | `stages/scripts/craft_examples.py` | `CRAFT_EXAMPLES_RULES` + `CRAFT_EXAMPLES_JSON` | `asset_generator` |
+| teacher 화풍 | `stages/scripts/teacher_source.py` | `STYLE_REFERENCE_SET_JSON` | `planner`, `asset_generator` |
 
-- `runner.py`의 `run_writing_loop()` — 정의만 있고 `main()`에서 도달할 수 없다
+- **목록을 프롬프트에도 input에도 손으로 적지 않는다.** 손으로 적으면 항목이 늘 때 사본과 디렉토리가 어긋난다.
+  새 컴포넌트·새 예시·새 화풍 참조는 디렉토리에 넣기만 하면 되고, 프롬프트와 input은 고치지 않는다.
+- teacher 축만 입구가 다르다. 프롬프트가 아니라 **`input.json`의 `metadata.style_reference_set`** 이 어느 선생님을
+  쓸지 고르고, `categories`를 생략하면 `root`의 md catalog를 스캔해 채운다.
+  항목별 `use`·`avoid`는 **`source/[teacher]/*.md`가 소유한다.** input에 다시 적지 않는다.
+- **이름이 같으면 teacher가 common을 덮는다.** 세부가 일반을 이긴다.
+  `source/[teacher]/components/keypad/`가 있으면 `source/common/components/keypad/`는 무시된다.
+  **병합이 아니라 통째 교체다** — 섞으면 teacher가 일부러 뺀 규칙이 common에서 되살아난다.
+  판정은 `stages/scripts/source_resolve.py`의 `shadowed_dirs()`가 하고 컴포넌트·craft example 축이 함께 쓴다.
+- **공용 컴포넌트는 이미지를 소유하지 않는다.** 버튼 몸체·도장 art는 콘텐츠마다 세계관이 달라 재사용 대상이 아니다.
+  `source/`의 어떤 파일도 `output/assets/`로 복사하지 않으며, art가 필요한 컴포넌트는 그 run이 생성한
+  asset 경로를 밖에서 받는다(`ticket-button`은 `--cta-body`, `feedback-layer`는 `data-*-src`).
+  이 규칙을 어기면 다른 차시의 팔레트가 화면에 섞이고, teacher/common 우선순위 판정도 무너진다.
+- 규칙 블록에는 **어긋나면 그 뒤 모든 판단이 함께 흔들리는 것**만 통째로 싣는다.
+  컴포넌트는 `:root` 토큰, craft example은 우선순위 규칙이 그렇다.
+  개별 항목의 상세 계약은 stage가 고른 뒤 `component.md` / `example.md`를 직접 열어 읽는다.
+- **컴포넌트 CSS·JS는 모델이 옮겨 적지 않는다.** `stages/scripts/component_bundle.py`의 `emit_common()`이
+  `output/common.css` · `output/common.js`를 원본에서 만들고, 모델은 `index.html`에 `<link>`·`<script src>`
+  두 줄만 유지한다. HTML을 쓰는 세 stage 뒤에서 `runner.finalize_html_artifact()`가 매번 다시 쓴다.
+  - **되돌릴 수 있는 것은 되돌리고, 되돌릴 수 없는 것만 검증한다.** `common.*`는 코드 소유라 덮어쓰면 그만이고,
+    `index.html`은 모델 소유라 되돌릴 수 없으므로 두 줄의 존재와 순서를 검증해 REJECT한다.
+  - drift는 **로그이지 게이트가 아니다.** 게이트로 만들면 정당한 오버라이드 시도까지 run을 죽인다.
+    같은 항목이 반복되면 모델이 틀린 게 아니라 컴포넌트가 부족하다는 신호로 읽는다.
+  - 보장하는 것은 "결과가 동일하다"가 아니라 **"컴포넌트 원본이 항상 온전히 그 자리에 있다"** 이다.
+    콘텐츠는 `<link>` 뒤 `<style>`에서 소스 순서로 오버라이드할 수 있고, 그건 막지 않는다.
+- 디자인 토큰의 원본은 `_shared/base.css` **한 곳**이다. 프롬프트의 `COMMON_BASE_CSS`는 **어떤 토큰이 있는지
+  알려주는 참고용**이지 옮겨 적을 원본이 아니다. `prompts/common_html_contract.md`에 값을 다시 적지 않는다.
+- 컴포넌트 사용 규칙(선택 기준, inline 순서, 계약 보존)은 `common_html_contract.md`의 "공용 컴포넌트 재사용" 한 곳에만 둔다.
+- **HTML을 다시 쓰는 stage가 `c-` prefix·`data-slot`·`window.Common*`를 바꾸지 않게 하는 조항을 지운다면 이 연결은 무의미해진다.** design_refine은 HTML을 통째로 재작성하므로 그 조항이 없으면 컴포넌트가 한 iteration 만에 풀어헤쳐진다.
+- **craft example은 참조와 결과의 관계가 나머지 축과 반대다.** 컴포넌트와 화풍 참조는 그대로 가져오는 것이 정답이지만,
+  craft example은 완성도만 가져오고 색·모티프·세계관은 그 run의 `art_direction`을 따라 새로 그려야 한다.
+  `art_direction`이 예시를 이긴다는 조항을 지우면 모델이 예시를 복제해 run마다 정한 화풍을 덮어쓴다.
+
+## 삭제된 글쓰기 파이프라인 잔재 (2026-08-11)
+
+글쓰기 파이프라인에서 넘어와 실행되지 않던 코드를 지웠다. 다음 경로는 **이제 없다.**
+
+- `runner.py`의 `run_writing_loop()`와 그 전용 헬퍼
+  (`build_draft`/`build_critique`/`build_eval`/`build_refine_request`/`build_final`,
+  `get_weak_axes`, `get_refine_contract_errors`, `format_eval_scores`,
+  `write_max_iteration_failed`, `categorize_failure`, `failure_rule`)
+- `RunContext`의 `draft_path`·`critique_path`·`eval_path`·`final_path`·`failed_path` 계열 속성
+- `--gen-model`, `--critique-model`, `--eval-model`, `--refine-model`, `--rubric` 인자와 `rubric.yaml`
 - `stages/generator.py`, `stages/critique.py`, `stages/evaluator.py`, `stages/refine.py`
 - `prompts/gen_system.md`, `critique_system.md`, `eval_system.md`, `refine_system.md`
-- `schemas/draft.schema.json`, `critique.schema.json`, `eval.schema.json`, `final.schema.json`,
-  `gen_output.schema.json`, `critique_output.schema.json`, `eval_output.schema.json`
-- `validate.py`의 `gen_output`, `refine_output`, `critique_output`, `eval_output`, `draft`, `critique`, `eval`, `final` artifact
+- `schemas/draft`, `critique`, `eval`, `final`, `gen_output`, `critique_output`, `eval_output`
+- `validate.py`의 같은 이름 artifact와 `validate_draft_contract` 계열 검증기,
+  그리고 그 검증기 전용이던 `--brief-hash`·`--iteration` 인자
 
-글쓰기 파이프라인에서 넘어온 잔재다.
-새 작업에서 이 경로를 참고하거나 확장하지 않는다.
-삭제 여부는 별도로 판단한다.
+`content_rubric.yaml`과 `content_critique`/`content_eval` 계열은 **현재 파이프라인의 일부다.** 이름이 비슷하다고 함께 지우지 않는다.
+과거 run 산출물에서 이 이름을 보더라도 되살리지 않는다.

@@ -41,8 +41,69 @@
     "metadata": {
       "type": "object",
       "description": "선택 부가 정보",
-      "additionalProperties": true
+      "additionalProperties": true,
+      "properties": {
+        "style_reference_set": {
+          "type": "object",
+          "description": "teacher 화풍 참조. 이 키의 유무가 곧 on/off다. 별도 boolean 플래그를 두지 않는다 — 플래그와 내용이 어긋나면 어느 쪽이 맞는지 알 수 없다.",
+          "required": ["id", "root"],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "참조 묶음 식별자. 로그와 추적에만 쓴다"
+            },
+            "root": {
+              "type": "string",
+              "minLength": 1,
+              "description": "프로젝트 기준 상대 경로. 보통 source/[teacher]. 모든 path는 이 밖으로 나갈 수 없다"
+            },
+            "must_follow": {
+              "type": "boolean",
+              "default": false,
+              "description": "true면 참조 이미지가 자유로운 스타일 해석보다 우선한다. true인데 참조가 하나도 없으면 REJECT"
+            },
+            "categories": {
+              "type": "object",
+              "description": "생략하면 root의 md catalog를 스캔해 채운다. 명시는 catalog 밖 이미지를 한 번만 끼워 넣을 때만. 항목별 use/avoid를 차시마다 옮겨 적지 않는다",
+              "additionalProperties": false,
+              "properties": {
+                "backgrounds": { "$ref": "#/$defs/referenceItems" },
+                "characters": { "$ref": "#/$defs/referenceItems" },
+                "props": { "$ref": "#/$defs/referenceItems" },
+                "ctas": { "$ref": "#/$defs/referenceItems" }
+              }
+            },
+            "usage_policy": {
+              "type": "object",
+              "description": "이 run에만 해당하는 사용 정책. 항목별 use/avoid는 catalog가 소유하므로 여기 적지 않는다",
+              "additionalProperties": { "type": "string" }
+            }
+          }
+        }
+      }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "referenceItems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "root 기준 상대 경로. .png / .jpg / .jpeg / .webp만 허용"
+          },
+          "role": { "type": "string", "description": "이 이미지가 무엇의 기준인지" },
+          "use": { "type": "string", "description": "그 이미지에서 무엇을 볼지" },
+          "avoid": { "type": "string", "description": "그 소재 중 무엇을 가져오면 안 되는지" }
+        }
+      }
+    }
+  }
 }
