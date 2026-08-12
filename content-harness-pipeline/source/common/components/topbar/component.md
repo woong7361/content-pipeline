@@ -1,6 +1,7 @@
 # Topbar
 
 - Type: `ui_component`
+- Role: 차시 전체에 걸리는 상단 HUD(제목·단계·진행률·소리)와 차시 목록 드로어
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `.topbar` + `.course-menu-*` (원본은 `1-2/01`의 `installCourseMenu`)
 - Final output: inline into `output/index.html`

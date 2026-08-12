@@ -14,7 +14,7 @@ BASE_CSS = COMPONENTS_DIR / "_shared" / "base.css"
 # manifest의 일은 "어떤 컴포넌트를 열어볼지 고르게 하는 것"까지다.
 # slot/state/DOM 계약은 stage가 고른 뒤 component.md를 직접 읽는다.
 LIST_FIELDS = ("Runtime API", "Use when", "Avoid", "Requires art")
-SCALAR_FIELDS = ("Type", "Status", "Final output")
+SCALAR_FIELDS = ("Type", "Role", "Status", "Final output")
 
 # preview/example 전용 파일은 최종 output에 들어가지 않으므로 목록에서 뺀다.
 EXCLUDED_FILES = ("preview.html",)

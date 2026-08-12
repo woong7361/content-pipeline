@@ -1,6 +1,7 @@
 # Speech Bubble
 
 - Type: `ui_component`
+- Role: 캐릭터 옆에 붙는 대사 말풍선
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `.speech`
 - Final output: inline into `output/index.html`

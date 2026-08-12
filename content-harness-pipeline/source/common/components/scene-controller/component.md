@@ -1,6 +1,7 @@
 # Scene Controller
 
 - Type: `runtime_component`
+- Role: 씬 전환과 stage 스케일링 런타임. 마크업이 없고 코드만 있다
 - Status: `candidate`
 - Source: `production/1-2/08/index.html`
 - Final output: inline CSS/JS into `output/index.html`

@@ -1,6 +1,7 @@
 # Ticket Button
 
 - Type: `ui_component`
+- Role: 다음 단계로 넘어가는 진행·전환 CTA 버튼
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `.cta.activity-cta`
 - Final output: inline into `output/index.html`

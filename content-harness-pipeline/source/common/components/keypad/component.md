@@ -1,6 +1,7 @@
 # Keypad
 
 - Type: `input_component`
+- Role: 숫자를 눌러 넣는 입력 키패드
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `buildKeypad`
 - Final output: inline into `output/index.html`

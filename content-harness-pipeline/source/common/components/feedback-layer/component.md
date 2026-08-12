@@ -1,6 +1,7 @@
 # Feedback Layer
 
 - Type: `feedback_component`
+- Role: 정답/오답 판정을 도장으로 찍어 보여주는 레이어
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` `showStamp`, `showFeedback`, `showWrongFeedback`
 - Final output: inline into `output/index.html`

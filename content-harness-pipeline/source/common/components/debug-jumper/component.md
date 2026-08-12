@@ -1,6 +1,7 @@
 # Debug Jumper
 
 - Type: `debug_tool`
+- Role: QA가 특정 씬으로 바로 이동하는 개발용 패널
 - Status: `candidate`
 - Source: `production/1-2/08/index.html` debug panel
 - Final output: inline into `output/index.html`
