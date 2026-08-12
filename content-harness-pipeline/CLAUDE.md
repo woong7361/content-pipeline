@@ -18,6 +18,19 @@
 - stage 코드나 프롬프트가 임의로 run 디렉토리 전체를 훑어 읽게 만들지 않는다.
 - 검증 가능한 형태로 마무리한다. 코드 변경 후 가능한 경우 `python runner.py ...` 또는 `python validate.py ...` 계열 검증을 실행한다.
 
+## input.json은 skill로 만든다
+
+**`input.json`을 손으로 쓰지 않는다. `build-pipeline-input` skill을 쓴다.**
+
+`brief_hash`는 스토리보드 md의 sha256 앞 8자이고, 컴포넌트 이름과 teacher root는 디렉토리를 스캔해야 나온다.
+손으로 쓰면 틀리고, 틀리면 run 중간이 아니라 시작조차 못 한다.
+
+skill이 정하는 것: 스토리보드 / 따라갈 선생님 화풍 또는 `plain` / `must_follow` / 쓸 공용 컴포넌트 / 추가 요청.
+해시 계산과 `validate.py --artifact input` 통과까지 skill이 책임진다.
+
+이미 있는 input을 고칠 때도 같다 — 특히 `metadata.components`를 바꾸면 그 컴포넌트가 요구하는 art가
+`asset_plan`에 늘거나 줄므로, 고친 뒤 반드시 다시 검증한다.
+
 ## 실행 명령어
 
 명령어는 `content-harness-pipeline` 디렉토리에서 실행한다.
