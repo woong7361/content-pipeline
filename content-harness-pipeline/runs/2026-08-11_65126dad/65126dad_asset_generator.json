@@ -1,246 +1,340 @@
 {
   "assets": [
     {
-      "id": "mission_title",
+      "id": "library-lobby-messy",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/mission-title.png",
+      "path": "output/assets/library-lobby-messy.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a1_title"
+        "activity1-title",
+        "activity1-problem",
+        "activity1-tutorial",
+        "activity1-success",
+        "activity2-global",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-type-c",
+        "activity2-outro"
       ],
-      "alt_text": "시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라! — 책갈피와 작은 시계 장식이 결합된 2단 미션 타이틀"
+      "alt_text": "도입과 활동 2 전반에서 고장과 혼란이 발생한 동일한 마을 도서관 로비를 제공한다."
     },
     {
-      "id": "bg_library_disordered",
+      "id": "library-lobby-restored",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/library-disordered.png",
+      "path": "output/assets/library-lobby-restored.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a1_title",
-        "a1_problem",
-        "a1_tutorial",
-        "a1_success",
-        "a2_type_a",
-        "a2_type_b",
-        "a2_type_c",
-        "a2_outro"
+        "activity2-outro",
+        "activity3-gallery",
+        "activity3-quiz",
+        "activity3-certificate"
       ],
-      "alt_text": "바닥 가장자리에 책 몇 권이 떨어지고 안내물이 비뚤어진 따뜻한 마을 도서관 로비. 좌우 책장과 안내 데스크 사이의 중앙 활동 공간과 대형 시계 오버레이 자리가 비어 있다."
+      "alt_text": "복구 연출 이후와 활동 3에 사용할 깨끗하고 평화로운 동일 로비를 제공한다."
     },
     {
-      "id": "bg_library_restored",
+      "id": "mission-title",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/library-restored.png",
+      "path": "output/assets/mission-title.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a2_outro",
-        "a3_story_gallery",
-        "a3_popup_quiz",
-        "a3_certificate"
+        "activity1-title"
       ],
-      "alt_text": "떨어진 책과 안내물이 모두 정돈된 평화로운 마을 도서관 로비. 어질러진 배경과 동일한 카메라와 공간 구조를 유지하며 중앙은 팝업북과 인증서가 놓이도록 비어 있다."
+      "alt_text": "타이틀 화면을 특정하는 고정 차시 제목을 장면성 있는 레터링으로 제시한다."
     },
     {
-      "id": "librarian_idle",
-      "kind": "image",
-      "character_id": "librarian",
-      "path": "output/assets/librarian-idle.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a1_problem"
-      ],
-      "alt_text": "아이보리 블라우스와 버건디 조끼, 짙은 청록 치마를 입고 편안하게 정면으로 서 있는 사서 선생님"
-    },
-    {
-      "id": "librarian_worried",
-      "kind": "image",
-      "character_id": "librarian",
-      "path": "output/assets/librarian-worried.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a1_problem"
-      ],
-      "alt_text": "두 손으로 머리 양옆을 감싸고 오른쪽 위를 바라보며 난처해하는 사서 선생님"
-    },
-    {
-      "id": "librarian_explaining",
-      "kind": "image",
-      "character_id": "librarian",
-      "path": "output/assets/librarian-explaining.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a1_tutorial",
-        "a2_type_a",
-        "a2_type_b",
-        "a2_type_c",
-        "a3_story_gallery"
-      ],
-      "alt_text": "돋보기를 들고 화면 안쪽의 학습 대상을 가리키며 차분하게 설명하는 사서 선생님 전신"
-    },
-    {
-      "id": "librarian_praising",
-      "kind": "image",
-      "character_id": "librarian",
-      "path": "output/assets/librarian-praising.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a1_success",
-        "a2_outro",
-        "a3_certificate"
-      ],
-      "alt_text": "가슴 높이에서 박수 치며 따뜻하게 축하하는 사서 선생님 전신"
-    },
-    {
-      "id": "junior_librarian_idle",
-      "kind": "image",
-      "character_id": "junior_librarian",
-      "path": "output/assets/junior-librarian-idle.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a2_global_ui",
-        "a2_type_a",
-        "a2_type_b",
-        "a2_type_c"
-      ],
-      "alt_text": "짙은 청록색 사서 모자와 조끼를 입고 정면에 편안히 서 있는 꼬마 사서"
-    },
-    {
-      "id": "junior_librarian_success",
-      "kind": "image",
-      "character_id": "junior_librarian",
-      "path": "output/assets/junior-librarian-success.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a1_tutorial",
-        "a1_success",
-        "a2_type_a",
-        "a2_type_b",
-        "a2_type_c",
-        "a2_outro",
-        "a3_popup_quiz"
-      ],
-      "alt_text": "밝게 웃으며 화면 안쪽을 향해 한 손을 높이 든 꼬마 사서"
-    },
-    {
-      "id": "junior_librarian_thinking",
-      "kind": "image",
-      "character_id": "junior_librarian",
-      "path": "output/assets/junior-librarian-thinking.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a2_type_a",
-        "a2_type_b",
-        "a2_type_c"
-      ],
-      "alt_text": "한 손을 턱에 대고 오른쪽 문제 영역을 바라보며 차분히 고민하는 꼬마 사서"
-    },
-    {
-      "id": "junior_librarian_hero",
-      "kind": "image",
-      "character_id": "junior_librarian",
-      "path": "output/assets/junior-librarian-hero.png",
-      "status": "generated",
-      "usage_section_ids": [
-        "a2_outro",
-        "a3_certificate"
-      ],
-      "alt_text": "한 손을 허리에 얹고 다른 손으로 브이 표시를 하며 자신 있게 웃는 꼬마 사서"
-    },
-    {
-      "id": "clock_body",
+      "id": "cta-start",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/clock-body.png",
+      "path": "output/assets/cta-start.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a1_problem",
-        "a1_tutorial",
-        "a1_success",
-        "a2_type_a",
-        "a2_type_b",
-        "a2_outro"
+        "activity1-title"
       ],
-      "alt_text": "짙은 청록과 황동 테두리, 크림색 문자판, 12개 눈금과 중앙축으로 구성된 바늘 없는 원형 아날로그 시계"
+      "alt_text": "타이틀 장면을 여는 단일 고정 CTA를 세계관과 결합해 제공한다."
     },
     {
-      "id": "library_time_board",
+      "id": "cta-step2",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/library-time-board.png",
+      "path": "output/assets/cta-step2.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a2_type_a"
+        "activity1-success"
       ],
-      "alt_text": "문제 문구를 표시할 넓고 빈 크림색 화면이 있는 짙은 청록 프레임의 도서관 전광 안내판"
+      "alt_text": "튜토리얼 성공 장면에서 본 문제 단계로 이동하는 고정 CTA를 제공한다."
     },
     {
-      "id": "cork_schedule_board",
+      "id": "cta-step3",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/cork-schedule-board.png",
+      "path": "output/assets/cta-step3.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a2_type_b"
+        "activity2-outro"
       ],
-      "alt_text": "시간표 문제와 시계를 배치할 넓고 빈 코르크 면이 있는 짙은 청록과 황동 장식의 도서관 게시판"
+      "alt_text": "도서관 복구 장면을 닫고 실생활 연계로 이동하는 고정 CTA를 제공한다."
     },
     {
-      "id": "checkout_terminal",
+      "id": "cta-next-lesson",
       "kind": "image",
       "character_id": "",
-      "path": "output/assets/checkout-terminal.png",
+      "path": "output/assets/cta-next-lesson.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a2_type_c"
+        "activity3-certificate"
       ],
-      "alt_text": "문제와 타임라인을 표시할 넓고 빈 화면, 황동 전원 장식, 카드 인식 홈을 갖춘 짙은 청록색 도서 대출 단말기"
+      "alt_text": "최종 인증 장면에서 다음 차시로 이동하는 고정 CTA를 제공한다."
     },
     {
-      "id": "story_page_convenience",
+      "id": "librarian-idle",
       "kind": "image",
-      "character_id": "",
-      "path": "output/assets/story-page-convenience.png",
+      "character_id": "librarian-teacher",
+      "path": "output/assets/librarian-idle.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a3_story_gallery"
+        "activity1-problem"
       ],
-      "alt_text": "열린 팝업북 위에 ‘24시간’ 간판이 달린 작은 동네 편의점이 입체 종이 모형으로 펼쳐진 장면"
+      "alt_text": "사서 선생님의 모든 pose 제작 기준이 되는 중립 pose를 제공한다."
     },
     {
-      "id": "story_page_sundial",
+      "id": "librarian-distressed",
       "kind": "image",
-      "character_id": "",
-      "path": "output/assets/story-page-sundial.png",
+      "character_id": "librarian-teacher",
+      "path": "output/assets/librarian-distressed.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a3_story_gallery"
+        "activity1-problem"
       ],
-      "alt_text": "열린 팝업북 위에 앙부일구 해시계와 햇빛, 시간을 가리키는 선명한 그림자가 입체 종이 모형으로 펼쳐진 장면"
+      "alt_text": "도서관 시계 고장에 당황한 문제 발생 장면을 표현한다."
     },
     {
-      "id": "story_page_oven",
+      "id": "librarian-explaining",
       "kind": "image",
-      "character_id": "",
-      "path": "output/assets/story-page-oven.png",
+      "character_id": "librarian-teacher",
+      "path": "output/assets/librarian-explaining.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a3_story_gallery"
+        "activity1-tutorial",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-type-c",
+        "activity3-gallery"
       ],
-      "alt_text": "열린 팝업북 위에 빵이 든 따뜻한 오븐과 표시 면을 비워 둔 둥근 요리 타이머가 입체 종이 모형으로 펼쳐진 장면"
+      "alt_text": "탁상시계, 전광판, 게시판, 모니터와 갤러리를 가리키며 안내하는 공통 pose를 제공한다."
     },
     {
-      "id": "certificate_sheet",
+      "id": "librarian-praising",
       "kind": "image",
-      "character_id": "",
-      "path": "output/assets/certificate-sheet.png",
+      "character_id": "librarian-teacher",
+      "path": "output/assets/librarian-praising.webp",
       "status": "generated",
       "usage_section_ids": [
-        "a3_certificate"
+        "activity1-success",
+        "activity2-outro",
+        "activity3-certificate"
       ],
-      "alt_text": "중앙 기록 영역을 비워 둔 아이보리색 인증서로, 짙은 청록·버건디 테두리와 황동 책·시계 장식, 하단 리본과 빈 도장 자리가 있다"
+      "alt_text": "튜토리얼 성공, 도서관 복구, 최종 감사에서 칭찬과 안도를 표현한다."
+    },
+    {
+      "id": "little-librarian-idle",
+      "kind": "image",
+      "character_id": "little-librarian",
+      "path": "output/assets/little-librarian-idle.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity2-global",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-type-c"
+      ],
+      "alt_text": "꼬마 사서의 모든 pose 제작 기준과 활동 2의 고정 대기 상태를 제공한다."
+    },
+    {
+      "id": "little-librarian-volunteer",
+      "kind": "image",
+      "character_id": "little-librarian",
+      "path": "output/assets/little-librarian-volunteer.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-tutorial",
+        "activity3-quiz"
+      ],
+      "alt_text": "도움을 자청하는 튜토리얼 등장과 마지막 퀴즈 팝업을 표현한다."
+    },
+    {
+      "id": "little-librarian-success",
+      "kind": "image",
+      "character_id": "little-librarian",
+      "path": "output/assets/little-librarian-success.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-success",
+        "activity2-type-a",
+        "activity2-outro",
+        "activity3-quiz",
+        "activity3-certificate"
+      ],
+      "alt_text": "정답 점프, 수리 완료 브이 pose와 최종 성공 반응에 사용한다."
+    },
+    {
+      "id": "little-librarian-thinking",
+      "kind": "image",
+      "character_id": "little-librarian",
+      "path": "output/assets/little-librarian-thinking.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity2-type-a"
+      ],
+      "alt_text": "오답 시 고개를 갸우뚱하며 다시 생각하도록 돕는 반응을 제공한다."
+    },
+    {
+      "id": "analog-clock-body",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/analog-clock-body.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-problem",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-outro"
+      ],
+      "alt_text": "대형 벽시계와 객관식 시계 보기에 반복 사용할 바늘 없는 고정 몸체를 제공한다."
+    },
+    {
+      "id": "table-clock-body",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/table-clock-body.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-tutorial",
+        "activity1-success"
+      ],
+      "alt_text": "튜토리얼에서 반복 시계 규격을 유지하면서 탁상 위 물건으로 보이는 바늘 없는 몸체를 제공한다."
+    },
+    {
+      "id": "library-info-board",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/library-info-board.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity2-type-a",
+        "activity2-outro"
+      ],
+      "alt_text": "유형 A 문제 문구와 복구 연출의 시간을 표시할 도서관 전광판 몸체를 제공한다."
+    },
+    {
+      "id": "reading-class-board",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/reading-class-board.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity2-type-b"
+      ],
+      "alt_text": "유형 B의 실제 독서 교실 시간표 게시 공간과 시각화 맥락을 제공한다."
+    },
+    {
+      "id": "checkout-monitor",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/checkout-monitor.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity2-type-c"
+      ],
+      "alt_text": "유형 C의 날짜·시간 규칙을 입력할 도서 대출 시스템 장치를 제공한다."
+    },
+    {
+      "id": "magic-time-book",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/magic-time-book.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity3-gallery"
+      ],
+      "alt_text": "활동 3의 세 실생활 삽화를 한 장씩 보여주는 장면 속 팝업북 몸체를 제공한다."
+    },
+    {
+      "id": "gallery-store-24h",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/gallery-store-24h.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity3-gallery"
+      ],
+      "alt_text": "24시간이 하루 종일 운영한다는 뜻으로 쓰이는 생활 사례를 보여준다."
+    },
+    {
+      "id": "gallery-sundial",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/gallery-sundial.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity3-gallery"
+      ],
+      "alt_text": "옛사람이 해의 그림자로 시간을 알았다는 역사 사례를 시각화한다."
+    },
+    {
+      "id": "gallery-oven-timer",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/gallery-oven-timer.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity3-gallery"
+      ],
+      "alt_text": "30분 후와 걸린 시간 계산이 요리에 쓰이는 생활 사례를 보여준다."
+    },
+    {
+      "id": "stamp-correct",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/stamp-correct.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-tutorial",
+        "activity1-success",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-type-c",
+        "activity3-quiz"
+      ],
+      "alt_text": "feedback-layer가 모든 정답 판정을 일관되게 표시하도록 필수 정답 도장을 제공한다."
+    },
+    {
+      "id": "stamp-wrong",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/stamp-wrong.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity1-tutorial",
+        "activity2-type-a",
+        "activity2-type-b",
+        "activity2-type-c",
+        "activity3-quiz"
+      ],
+      "alt_text": "feedback-layer가 재시도 가능한 오답 판정을 정답과 별개의 asset으로 표시하도록 한다."
+    },
+    {
+      "id": "completion-certificate",
+      "kind": "image",
+      "character_id": "",
+      "path": "output/assets/completion-certificate.webp",
+      "status": "generated",
+      "usage_section_ids": [
+        "activity3-certificate"
+      ],
+      "alt_text": "최종 학습 완료를 도서관 세계관의 인증서로 보상한다."
     }
   ]
 }

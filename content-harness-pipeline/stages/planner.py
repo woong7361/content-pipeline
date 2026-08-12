@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 
 from stages.scripts.codex_client import CodexClient
+from stages.scripts.common_components import build_required_art_section
+from stages.scripts.source_resolve import teacher_root_from_input
 from stages.scripts.style_references import build_style_reference_prompt
 
 
@@ -58,6 +60,8 @@ def resolve_markdown_path(input_data: dict, input_path: Path) -> Path:
 def build_prompt(input_data: dict, markdown: str) -> str:
     system_prompt = PLANNER_SYSTEM_PROMPT.read_text(encoding="utf-8")
     input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
+    # 선택된 컴포넌트가 요구하는 art만 넘긴다. planner는 컴포넌트를 고르지 않는다.
+    required_art = build_required_art_section(input_data, teacher_root_from_input(input_data))
     style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}
 
@@ -66,6 +70,8 @@ INPUT_JSON:
 
 STYLE_REFERENCE_SET_JSON:
 {style_reference_json}
+
+{required_art}
 
 STORY_BOARD_MARKDOWN:
 {markdown}

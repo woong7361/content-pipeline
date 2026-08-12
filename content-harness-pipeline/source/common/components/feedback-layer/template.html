@@ -1,9 +1,16 @@
 <!--
   Fragment — 단독 실행되지 않는다. 최종 HTML에 inline할 마크업 조각이다.
   함께 넣을 것:
-    CSS    _shared/base.css → feedback-layer/style.css
-    JS     feedback-layer/behavior.js  (window.CommonFeedbackLayer 등록)
-    Asset  assets/feedback-stamp-correct.webp, assets/feedback-stamp-wrong.webp → output/assets/
+    CSS    common.css (base + 이 컴포넌트)   ※ 코드가 만든다. 옮겨 적지 않는다
+    JS     common.js  (window.CommonFeedbackLayer 등록)
+  Asset:
+    이 컴포넌트는 이미지를 소유하지 않는다.
+    아래 두 경로는 **비워 둔 자리이고, 그 run이 생성한 도장 asset 경로로 채워야 한다.**
+      data-correct-src="assets/<정답 도장>.webp"
+      data-wrong-src="assets/<오답 도장>.webp"
+    정답과 오답은 완전히 별개의 asset이다. 한 장을 CSS filter로 색만 바꿔 쓰지 않는다.
+    채우지 않으면 판정 때 이미지가 뜨지 않는다 — 그건 planner가 도장을 계획하지 않았다는 뜻이므로
+    빈 경로를 임시로 메우지 말고 asset_plan을 고친다.
   사용:
     src는 비워 두고 JS가 data-*-src에서 골라 넣는다.
       CommonFeedbackLayer.showStamp(el, "correct" | "wrong", { hold: false })
@@ -13,7 +20,7 @@
 <img
   class="c-feedbackStamp"
   data-component="feedback-stamp"
-  data-correct-src="assets/feedback-stamp-correct.webp"
-  data-wrong-src="assets/feedback-stamp-wrong.webp"
+  data-correct-src=""
+  data-wrong-src=""
   alt=""
 >

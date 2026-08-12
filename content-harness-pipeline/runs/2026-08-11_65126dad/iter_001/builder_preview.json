@@ -1,6 +1,6 @@
 {
   "status": "REJECT",
-  "checked_at": "2026-08-11T15:10:04+09:00",
+  "checked_at": "2026-08-11T18:00:23+09:00",
   "html_path": "output/index.html",
   "viewports": [
     "desktop"
@@ -9,77 +9,77 @@
     {
       "viewport": "desktop",
       "capture_label": "initial",
-      "path": "iter_001/builder_preview/desktop.png",
+      "path": "iter_001/builder_preview/desktop.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "01_a1_problem",
-      "path": "iter_001/builder_preview/desktop__01_a1_problem.png",
+      "path": "iter_001/builder_preview/desktop__01_a1_problem.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "02_a1_tutorial",
-      "path": "iter_001/builder_preview/desktop__02_a1_tutorial.png",
+      "path": "iter_001/builder_preview/desktop__02_a1_tutorial.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "03_a1_success",
-      "path": "iter_001/builder_preview/desktop__03_a1_success.png",
+      "path": "iter_001/builder_preview/desktop__03_a1_success.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "04_a2_global_ui",
-      "path": "iter_001/builder_preview/desktop__04_a2_global_ui.png",
+      "path": "iter_001/builder_preview/desktop__04_a2_global_ui.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "05_a2_type_a",
-      "path": "iter_001/builder_preview/desktop__05_a2_type_a.png",
+      "path": "iter_001/builder_preview/desktop__05_a2_type_a.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "06_a2_type_b",
-      "path": "iter_001/builder_preview/desktop__06_a2_type_b.png",
+      "path": "iter_001/builder_preview/desktop__06_a2_type_b.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "07_a2_type_c",
-      "path": "iter_001/builder_preview/desktop__07_a2_type_c.png",
+      "path": "iter_001/builder_preview/desktop__07_a2_type_c.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "08_a2_outro",
-      "path": "iter_001/builder_preview/desktop__08_a2_outro.png",
+      "path": "iter_001/builder_preview/desktop__08_a2_outro.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "09_a3_story_gallery",
-      "path": "iter_001/builder_preview/desktop__09_a3_story_gallery.png",
+      "path": "iter_001/builder_preview/desktop__09_a3_story_gallery.webp",
       "width": 1920,
       "height": 1080
     },
     {
       "viewport": "desktop",
       "capture_label": "10_a3_popup_quiz",
-      "path": "iter_001/builder_preview/desktop__10_a3_popup_quiz.png",
+      "path": "iter_001/builder_preview/desktop__10_a3_popup_quiz.webp",
       "width": 1920,
       "height": 1080
     }
@@ -90,7 +90,22 @@
     "request_failures": [],
     "broken_images": [],
     "horizontal_overflow": [],
-    "text_clipping": [],
+    "text_clipping": [
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "span:nth-child(1)",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      },
+      {
+        "viewport": "desktop",
+        "severity": "medium",
+        "selector": "span:nth-child(2)",
+        "evidence": "Text content is larger than the visible box.",
+        "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+      }
+    ],
     "small_touch_targets": [],
     "overlaps": [],
     "fixed_overlay_risks": [
@@ -113,13 +128,6 @@
     "evidence": [
       {
         "viewport": "desktop",
-        "severity": "medium",
-        "type": "interface_affordance",
-        "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
-        "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-      },
-      {
-        "viewport": "desktop",
         "severity": "high",
         "type": "composition",
         "evidence": "Fixed or sticky UI covers about 100% of the viewport area.",
@@ -129,22 +137,15 @@
         "viewport": "desktop",
         "severity": "high",
         "type": "card_template",
-        "evidence": "14 card-like white panels and 0 large white panels detected.",
+        "evidence": "11 card-like white panels and 0 large white panels detected.",
         "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
       },
       {
         "viewport": "desktop",
         "severity": "medium",
         "type": "interface_affordance",
-        "evidence": "14 buttons are present and 93% look like generic rounded web buttons.",
+        "evidence": "14 buttons are present and 71% look like generic rounded web buttons.",
         "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-      },
-      {
-        "viewport": "desktop",
-        "severity": "medium",
-        "type": "card_template",
-        "evidence": "3 card-like white panels detected.",
-        "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
       }
     ]
   },
@@ -158,9 +159,23 @@
     },
     {
       "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "span:nth-child(1): Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
+      "severity": "medium",
+      "type": "text_clipping",
+      "evidence": "span:nth-child(2): Text content is larger than the visible box.",
+      "suggested_fix": "Allow wrapping, reduce fixed height, or move long copy to a larger responsive area."
+    },
+    {
+      "viewport": "desktop",
       "severity": "high",
       "type": "card_template",
-      "evidence": "14 card-like white panels and 0 large white panels detected.",
+      "evidence": "11 card-like white panels and 0 large white panels detected.",
       "suggested_fix": "Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas."
     },
     {
@@ -173,30 +188,16 @@
     {
       "viewport": "desktop",
       "severity": "medium",
-      "type": "card_template",
-      "evidence": "3 card-like white panels detected.",
-      "suggested_fix": "Reduce repeated card surfaces and give each section a more specific visual structure."
-    },
-    {
-      "viewport": "desktop",
-      "severity": "medium",
       "type": "interface_affordance",
-      "evidence": "3 buttons are present and 100% look like generic rounded web buttons.",
-      "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
-    },
-    {
-      "viewport": "desktop",
-      "severity": "medium",
-      "type": "interface_affordance",
-      "evidence": "14 buttons are present and 93% look like generic rounded web buttons.",
+      "evidence": "14 buttons are present and 71% look like generic rounded web buttons.",
       "suggested_fix": "Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
     }
   ],
   "refine_suggestions": [
     "[desktop] Reduce this persistent UI or make it part of the scrollable scene.",
+    "[desktop] Allow wrapping, reduce fixed height, or move long copy to a larger responsive area.",
     "[desktop] Collapse repeated white panels into scene-specific frames, boards, machines, or inline status areas.",
     "[desktop] Shrink fixed UI and move persistent status into the scene so it does not compete with the main activity.",
-    "[desktop] Reduce repeated card surfaces and give each section a more specific visual structure.",
     "[desktop] Restyle primary controls as story objects such as tickets, machine keys, panels, or reward controls."
   ]
 }

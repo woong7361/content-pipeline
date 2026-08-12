@@ -43,6 +43,12 @@
       "description": "선택 부가 정보",
       "additionalProperties": true,
       "properties": {
+        "components": {
+          "type": "array",
+          "description": "이 콘텐츠에서 반드시 쓸 공용 컴포넌트 이름. source/common/components(또는 teacher가 덮은 것)의 디렉토리명. 생략하면 builder가 use_when/avoid로 고른다. 여기 적으면 그 컴포넌트가 요구하는 art가 asset_plan에 들어간다 — story board가 요구하지 않아도 들어간다.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
         "style_reference_set": {
           "type": "object",
           "description": "teacher 화풍 참조. 이 키의 유무가 곧 on/off다. 별도 boolean 플래그를 두지 않는다 — 플래그와 내용이 어긋나면 어느 쪽이 맞는지 알 수 없다.",

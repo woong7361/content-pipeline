@@ -1,0 +1,32 @@
+{
+  "brief_hash": "65126dad",
+  "run_id": "2026-08-11_65126dad",
+  "failed_at": "2026-08-12T10:52:34+09:00",
+  "stage": "asset_generator_output_validate",
+  "error_type": "RuntimeError",
+  "message": "{\n  \"artifact\": \"asset_generator_output\",\n  \"checked_file\": \"C:\\\\Users\\\\PC-220~1\\\\AppData\\\\Local\\\\Temp\\\\content-harness-assets-ydkke_1n\\\\asset-generator-output.json\",\n  \"status\": \"REJECT\",\n  \"errors\": [\n    \"schema $.assets[2]: 'character_id' is a required property\",\n    \"schema $.assets[7]: 'character_id' is a required property\",\n    \"schema $.assets[9]: 'character_id' is a required property\",\n    \"schema $.assets[10]: 'character_id' is a required property\"\n  ]\n}",
+  "config": {
+    "codex_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\codex.CMD",
+    "codex_access": "dangerously-bypass-approvals-and-sandbox",
+    "agent_models": {
+      "planner": "gpt-5.6-sol",
+      "asset_generator": "gpt-5.6-sol",
+      "builder": "gpt-5.6-sol",
+      "design_review": "gpt-5.6-sol",
+      "design_refine": "gpt-5.6-sol",
+      "content_critique": "gpt-5.6-sol",
+      "content_eval": "gpt-5.6-sol",
+      "content_refine": "gpt-5.6-sol"
+    },
+    "timeout_seconds": 2400,
+    "asset_batch_size": 3,
+    "asset_parallelism": 15,
+    "asset_generator_missing_only": true,
+    "mode": "asset_generator_only"
+  },
+  "lineage": {
+    "input": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-11_65126dad\\65126dad_input.json",
+    "planner": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-11_65126dad\\65126dad_planner.json",
+    "asset_generator": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-11_65126dad\\65126dad_asset_generator.json"
+  }
+}

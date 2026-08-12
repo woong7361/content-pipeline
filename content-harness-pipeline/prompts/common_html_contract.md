@@ -67,7 +67,9 @@ HTML을 다시 쓰다 보면 문구를 다듬고 싶은 충동이 생깁니다. 
 
 `COMMON_COMPONENTS_JSON`은 이미 만들어져 검증된 재사용 컴포넌트 목록입니다. 같은 것을 처음부터 새로 만들지 않습니다.
 
+- **`INPUT_JSON.metadata.components`가 있으면 그 컴포넌트를 반드시 씁니다.** 그 목록이 이 콘텐츠의 정형이고, 필요한 art는 이미 `asset_plan`에 계획돼 생성돼 있습니다. 목록에 없는 컴포넌트를 추가로 쓸 수는 있지만, **art를 요구하는 컴포넌트는 그 art가 `output/assets/`에 실제로 있을 때만** 씁니다. 없으면 그 컴포넌트를 쓰지 않습니다 — 빈 경로를 남기거나 다른 이미지로 대신 채우지 않습니다.
 - 각 항목의 `use_when`·`avoid`로 이번 화면에 맞는 것을 고르고, 고른 컴포넌트는 `contract`(component.md) 파일을 **실제로 열어 읽습니다.** manifest에는 선택에 필요한 요약만 있고 slot·state·DOM 계약은 그 파일에 있습니다.
+- `component.md`에 `Requires art`가 있으면 그 슬롯을 **생성된 asset 경로로 채웁니다**(`--cta-body`, `data-*-src`). 비워 두면 화면에서 그 자리가 빕니다.
 - **컴포넌트의 CSS와 JS는 쓰지 않습니다.** `output/common.css`와 `output/common.js`를 코드가 만들어 두므로 `style.css`·`behavior.js`의 내용을 HTML로 옮겨 적지 않습니다. 마크업만 `template.html`을 보고 넣습니다.
 - `status`가 `deprecated`인 컴포넌트는 쓰지 않습니다.
 - **scene이 둘 이상이면 scene 이동 debug 패널을 함께 inline합니다.** 기본이 `hidden`이고 지정된 키로만 열리므로 학습자 화면에 노출되지 않습니다. QA가 화면을 확인하는 경로이므로 "학습자용이 아니다"를 이유로 빼지 않습니다.

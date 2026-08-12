@@ -83,11 +83,16 @@ def emit_common(run_dir: Path, teacher_root: str | Path | None = None) -> dict:
         target = output_dir / name
         previous = target.read_text(encoding="utf-8") if target.is_file() else None
         if previous is not None and previous != content:
+            # 되돌리기 전에 원본을 남긴다. 글자 수만 적으면 "무엇을 바꾸려 했는지"를 알 수 없고,
+            # 그 답이 곧 컴포넌트에 무엇이 부족한지에 대한 답이다.
+            rejected = output_dir / f"{name}.rejected"
+            rejected.write_text(previous, encoding="utf-8")
             drifted.append(
                 {
                     "file": name,
                     "previous_chars": len(previous),
                     "restored_chars": len(content),
+                    "rejected_copy": rejected.name,
                 }
             )
         target.write_text(content, encoding="utf-8")

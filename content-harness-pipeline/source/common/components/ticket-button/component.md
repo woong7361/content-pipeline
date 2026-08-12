@@ -5,9 +5,8 @@
 - Source: `production/1-2/08/index.html` `.cta.activity-cta`
 - Final output: inline into `output/index.html`
 - Assets: 없음. **이 컴포넌트는 이미지를 소유하지 않는다**
-- CSS vars:
-  - `--cta-body` — 버튼 몸체 배경. 생성한 CTA asset이 있으면 사용처가 `url('assets/...')`로 준다.
-    안 주면 `base.css` 토큰으로 만든 알약 버튼으로 성립한다
+- Requires art:
+  - `--cta-body` — 버튼 몸체 표면. **선택**. 안 만들면 `base.css` 토큰으로 만든 알약 버튼으로 성립한다. 만들면 문구가 얹힐 안쪽 면을 비우고 투명 배경으로 그린다
 - Slots:
   - `label`
 - States: `:hover`, `:active`, 네이티브 `disabled`

@@ -5,6 +5,95 @@ content-harness-pipeline의 버전별 변경 이력이다. 버전은 커밋 메�
 
 ---
 
+## version 0.34 — 컴포넌트가 요구하는 art를 planner가 계획한다 · 컴포넌트 선택을 input으로 (2026-08-12)
+
+0.33에서 컴포넌트가 이미지를 소유하지 않게 바꾸자, 도서관 차시에 **도장이 사라졌다.**
+추적하니 이 차시는 도장을 한 번도 생성한 적이 없었다 — 화면에 있던 건 08의 도장을 컴포넌트가 복사한 것이었다.
+
+### 진단
+
+- 스토리보드에 "도장/스탬프" 언급 **0건**. 정답 피드백은 "딩동댕 + 글로우 + 캐릭터 점프"다.
+  planner가 도장을 계획하지 않은 것은 **원문에 충실한 판단**이었다.
+- 진짜 결함은 builder가 art를 요구하는 컴포넌트(`feedback-layer`)를 골랐는데 그 art가 `asset_plan`에 없다는
+  불일치였고, **컴포넌트의 기본 이미지가 그 불일치를 가리고 있었다.**
+- 구조적으로는 **컴포넌트 선택이 asset 생성보다 뒤에 있는 것**이 원인이다.
+  `planner(asset_plan 확정) → asset_generator(생성) → builder(컴포넌트 선택)` 순서라
+  컴포넌트가 요구하는 art는 생성될 방법이 없었다. planner는 컴포넌트 목록을 보지도 못했다.
+- 교훈: **기본값이 있으면 그 값이 필요하다는 사실이 안 보인다.**
+
+### 변경
+
+**1. 컴포넌트가 자기 art 요구를 선언한다**
+
+- `component.md`에 `Requires art` 필드. `feedback-layer` 2개(필수), `ticket-button` 1개(선택).
+- **무엇이 필요한지와 구조 제약만 쓴다.** 색·모티프·소재·팔레트는 쓰지 않는다 —
+  그건 planner가 `art_direction`과 story board 분위기에서 가져와 `prompt_brief`·`style_constraints`에 쓴다.
+  이 경계를 안 지키면 08의 분위기가 모든 콘텐츠로 샌다. craft-examples의 `Take`/`Do not take`와 같은 규칙이다.
+
+**2. 컴포넌트 선택을 input으로 (`input.metadata.components`)**
+
+- 선택이 input에서 끝나므로 **planner는 고르지 않는다.** 그 결과가 요구하는 art를 계획하기만 한다.
+- planner에는 선택된 것의 `requires_art`만 넘긴다(`SELECTED_COMPONENTS_JSON`, ~10줄).
+  manifest 전체를 실으면 planner가 선택까지 하게 되고 선택 주체가 둘이 된다.
+- **`planner_output.schema.json`을 건드리지 않았다.** builder는 input을 이미 받으므로 목록을 거기서 읽는다.
+  0.3x에서 `characters`를 required로 만들었을 때처럼 기존 run resume이 깨지는 일이 없다.
+- 없는 컴포넌트 이름은 run 전에 REJECT하고 사용 가능 목록을 보여준다.
+- 폐기한 방향: planner가 컴포넌트를 고르게 하기(프롬프트에 manifest 전체 + 스키마 변경 + resume 파손).
+
+**3. 정형 예외를 planner 프롬프트에 명시**
+
+> 선택된 컴포넌트가 요구하는 art는 `asset_plan`에 넣습니다. **story board가 요구하지 않아도 넣습니다** —
+> 콘텐츠가 아니라 플랫폼의 정형이기 때문입니다.
+
+원문 보존 규칙("story board에 없는 것을 임의로 추가하지 않는다")의 예외를 **이유와 함께** 열었다.
+예외인 이유는 그 화면 요소를 story board가 아니라 **선택된 컴포넌트가 요구**하기 때문이다.
+
+**4. `--asset-generator-missing-only`가 한 번도 동작한 적 없었다**
+
+두 결함이 겹쳐 서로를 숨기고 있었다.
+
+- `build_existing_asset_output`이 계획 경로를 **정확히** 찾는데, planner는 늘 `.png`로 계획하고
+  산출물은 `.webp`로 압축돼 있어 하나도 못 찾았다 → `existing`이 항상 0.
+- 그래서 재사용 항목이 schema required 7개 중 `character_id`를 빠뜨린 것이 **실행된 적이 없어 안 드러났다.**
+  첫 번째를 고치자마자 `asset_generator_output_validate REJECT`로 터졌다.
+- `resolve_existing_asset()` 추가(확장자를 따지지 않고 stem으로 찾아 **실제 확장자를 기록**) + `character_id` 채움.
+
+**5. 확인 페이지 복구**
+
+컴포넌트에서 이미지를 들어내면서 `feedback-layer/preview.html`과 `example/index.html`이 깨졌다(4건).
+preview 전용 이미지는 `example/assets/`에 `preview-*`로 둔다 — 거기는 번들에서 제외되므로 컴포넌트 소유가 아니다.
+
+### 검증
+
+- **정형 예외 작동** — planner 재실행 시 `asset_plan` 19 → 27. 도장 2장이 계획됐고
+  `purpose`에 "feedback-layer가 ... 표시하도록 필수 정답 도장을 제공한다"고 **근거를 스스로 적었다.**
+- **분위기가 들어갔다** — 08의 파란 물결 씰이 아니라 **도서 대출일 도장**(황동 인장 + 숲청록 손잡이,
+  정답=펼친 책+체크 `정답`, 오답=되돌림 화살표 `다시 생각해보세요`). `Requires art`에 색·모티프가 없는데
+  planner가 `art_direction`에서 가져왔다. craft-examples의 구조 규칙(문구를 도장 면 안쪽 밴드에,
+  밴드 곡률을 따라, 정답/오답 별개 asset, 상태색은 글자·심볼만)은 전부 지켰다.
+- **CTA도 해결** — `--cta-body`가 선택인데도 4장을 계획했고 **문구를 구웠다**
+  (`[시작하기]` 등 대괄호까지 원문 그대로, 각각 단일 이미지). 0.33에서 고친 굽기 판정의 첫 실물이다.
+  반복되는 `[3시][4시][5시]` 보기는 계획되지 않아 굽기 경계도 맞았다.
+- **missing-only** — 재사용 0 → 4 → (재실행) 27, 재생성 0장으로 0.03초 PASS.
+
+### 정리
+
+- `output/assets/` 고아 18개 제거(이름이 바뀐 옛 asset + 컴포넌트 복사 잔재).
+- 산출물·스크린샷 png → webp: **25.4MB → 2.3MB**, **43.2MB → 4.6MB** (각 91%·90% 감소).
+  스크린샷 경로를 들고 있던 json 4개의 참조도 함께 갱신했다.
+  단 `design_review/`를 가리키는 22건은 디렉토리 자체가 없어 원래부터 dangling이므로 기록을 원래대로 뒀다.
+- run 디렉토리 약 100MB → 31MB.
+
+### 미해결
+
+- `content_refine` 경로(`runner.py:1823`)는 단독 플래그가 없어 여전히 미검증.
+- `design_review`가 craft example 기준을 보지 않는다.
+- 참조가 실제로 쓰였는지 산출물에 기록되지 않는다(`style_references_used` 없음).
+- `--overwrite`가 `output/assets/`를 비우지 않아 run 간 고아가 누적된다. 이번엔 손으로 지웠다.
+- `iter_001/design_review/`·`builder_visual_qa/` 스크린샷이 디스크에 없는데 json은 참조한다(각 11건).
+
+---
+
 ## version 0.33 — 재사용 source 3축 스캔 연결 · 컴포넌트 CSS를 코드가 소유 · teacher 화풍 축 (2026-08-11)
 
 컴포넌트를 `common`으로 뽑았는데 다른 차시 산출물의 헤더가 08과 달라진 것에서 출발했다.

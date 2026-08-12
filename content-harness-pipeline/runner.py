@@ -692,6 +692,26 @@ def merge_asset_outputs(asset_outputs: list[dict], planner_output: dict) -> dict
     return {"assets": merged_assets}
 
 
+ASSET_SUFFIXES = (".png", ".webp", ".jpg", ".jpeg")
+
+
+def resolve_existing_asset(run_dir: Path, intended_path: str) -> Path | None:
+    """계획된 경로의 파일을 찾되 **확장자는 따지지 않는다.**
+
+    asset의 정체는 stem이지 확장자가 아니다. planner는 늘 `.png`로 계획하는데
+    산출물을 `.webp`로 압축해 두면 계획한 이름으로는 하나도 못 찾아
+    `--asset-generator-missing-only`가 매번 전부 다시 만든다.
+    """
+    exact = run_dir / intended_path
+    if exact.exists():
+        return exact
+    for suffix in ASSET_SUFFIXES:
+        candidate = exact.with_suffix(suffix)
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def build_existing_asset_output(asset_plan: list[dict], run_dir: Path) -> tuple[dict, list[dict]]:
     existing_assets = []
     missing_assets = []
@@ -702,14 +722,21 @@ def build_existing_asset_output(asset_plan: list[dict], run_dir: Path) -> tuple[
         if not isinstance(intended_path, str):
             missing_assets.append(asset)
             continue
-        asset_path = run_dir / intended_path
-        if not asset_path.exists():
+        asset_path = resolve_existing_asset(run_dir, intended_path)
+        if asset_path is None:
             missing_assets.append(asset)
             continue
+        # 디스크에 있는 실제 확장자를 쓴다. planner는 항상 .png로 계획하지만
+        # 산출물을 .webp로 압축해 두면 그 파일이 정답이고, 계획한 이름으로는 찾을 수 없다.
+        intended_path = asset_path.relative_to(run_dir).as_posix()
         existing_assets.append(
             {
                 "id": asset["id"],
                 "kind": "image",
+                # schema의 required 7개를 모두 채운다. Codex structured output 제약 때문에
+                # asset_generator_output의 모든 필드가 required이고, 하나만 빠져도 REJECT다.
+                # character_id는 planner의 asset_plan이 이미 갖고 있으므로 그대로 옮긴다.
+                "character_id": asset.get("character_id", ""),
                 "path": intended_path,
                 "status": "generated",
                 "usage_section_ids": asset.get("usage_section_ids", []),

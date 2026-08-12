@@ -1594,6 +1594,7 @@
 - 검증 (2026-08-11, 발생 횟수에 포함하지 않음 — 사용자 지적이 아니라 내가 돌린 테스트 run의 관찰): `runs/2026-08-11_65126dad`(2학년 시간 차시)에서 **CTA 문제가 한 단계 더 나쁜 형태로 재현**됐다. 라벨을 오버레이한 게 아니라 **planner가 CTA·보기 카드 표면을 `asset_plan`에 아예 넣지 않았다**(19개 중 0개). teacher source에 `ctas` 참조 2개와 `surface-choice-plaque`가 있고 `must_follow: true`였는데도 계획 단계에서 빠졌다. 결과적으로 `[시작하기]`는 흰 알약, `[3시][4시][5시]`는 노란 CSS 사각형으로 나왔고 `visual_qa`도 "3 buttons are present and 100% look like generic rounded web buttons"로 잡았다. **즉 이 문제의 상류는 굽기 판정이 아니라 `asset_plan`에 CTA 항목이 생성되지 않는 것이다.** 굽기 규칙만 고쳐서는 asset이 없으므로 아무 효과가 없다.
 - 원인: `planner_system.md`의 굽기 판정 3조건 중 ②"타이포그래피 자체가 그 asset의 디자인인 자족적 그래픽"과 ③"선택·입력·판정·측정의 대상이 아니다"에서 CTA가 양쪽으로 읽힌다. 예시 목록("정답/실패 도장, 인트로·완료 타이틀, 장면 속 간판·표지")에 CTA가 없고, 같은 문서의 "배경·표면·컴포넌트 asset은 기본적으로 [코드로 얹는다]에 해당"이 CTA를 표면으로 끌어간다. 굽기 완성도 기준 이미지(`asset_examples/`)에도 CTA 예시가 없어 합격선 자체가 전달되지 않는다.
 - 영향: [cta-text-offcenter-padding]·[cert-cta-button-two-lines]가 **같은 뿌리의 하류 증상**이다. 둘 다 "장식 있는 고정 표면에 가변 폭 텍스트를 얹느라 패딩·줄바꿈·폰트를 손으로 맞추는" 일이었다. 라벨을 구우면 이 조정 자체가 사라진다.
+- **해결됨 (2026-08-12)**: 상류가 뚫렸다. `input.metadata.components` + `Requires art` + planner 정형 예외로 CTA 4장이 문구를 구워 `asset_plan`에 들어갔다(`cta-start` `[시작하기]` 등, 각각 단일 이미지). 아래 '미해결 (a)'로 적어둔 "굽기 규칙만으로는 asset이 없어 효과가 없다"가 해소됐다. 상세는 [component-art-masks-planner-gap].
 - 조치 (2026-08-11): **사용자 결정 = "고정 문구 CTA만 굽기".** 씬을 여닫는 CTA(시작/완료/다음 차시)는 굽고, 한 씬에서 반복되는 진행 버튼(확인/다음)은 `ticket-button` + HTML 라벨을 유지한다. 반영: ①`planner_system.md` 굽기 판정 ②의 예시에 "씬을 여닫는 CTA" 추가, ③을 "**읽고 고르거나 값을 매기는** 대상이 아니다 — 눌러서 다음으로 가는 것은 해당하지 않는다"로 명확화(클릭 대상이라는 이유로 빠지던 경로를 막음). ②"굽는 문구와 얹는 문구의 경계" 조항 신설 — 기준은 **그 문구가 그 화면을 특정하는가**. ③"배경·표면·컴포넌트 asset은 기본적으로 코드로 얹는다"에서 컴포넌트를 분리하고 "몸체를 공유한다는 이유만으로 고정 문구를 오버레이로 내리지 않는다"를 붙임(이게 CTA를 표면으로 끌어가던 문장). ④`ticket-button/component.md`의 `Use when`을 "반복되는 진행 버튼"으로 좁히고 "라벨을 구운 CTA는 이 컴포넌트를 쓰지 않는다" 절 추가. ⑤`asset_generator_system.md`에 "문구를 굽는 asset은 상태 스프라이트로 만들지 않는다" 금지 추가.
 - 주의: 굽는 CTA가 `ticket-button`을 쓸 수 없는 이유는 그 몸체가 `[normal|hover|active]` 3-state 스프라이트이고 상태 전환이 `background-position`이기 때문이다. 라벨을 구우면 프레임 3장에 같은 글자를 다시 그려야 해서 누를 때 글자가 어긋난다. 크기도 `868x140` 고정이라 문구 길이에 맞춘 이미지를 못 담는다.
 - 미해결: (a) craft example에 **CTA 기준 이미지가 없다** — 굽기 판정은 정해졌지만 합격선은 일반 규칙에만 의존한다. 구운 CTA가 나오면 `source/common/craft-examples/`에 올린다. (b) `production/1-2/08`은 손대지 않았다. 19개 버튼이 여전히 오버레이 방식이며, 그 차시의 `CLAUDE.md` asset 규칙도 그대로다.
@@ -1614,3 +1615,34 @@
 - 조치: ①`baek-seungyong/assets.md`의 `cta-activity-body` 항목을 `Status: deprecated`로 바꿔 catalog 스캔에서 제외(파일은 삭제하지 않음, 사용자 확인 대기). ②`style_references.find_component_asset_conflicts()`를 추가해 **해석 단계에서 REJECT**. 파일명이 아니라 **내용 해시**로 비교한다 — 실제 충돌이 `activity-cta-body` vs `cta-activity-body`로 이름이 달랐다. `validate.py --artifact input`에서 run 전에 잡힌다. 검증: 정상 input PASS(참조 16→15), 충돌을 명시로 되살리면 REJECT.
 - 주의: **여기서 "output asset이 화풍 참조와 같으면 REJECT"라는 런타임 게이트를 만들면 안 된다.** 정당한 컴포넌트 asset 복사에서 영구 오탐이 난다. 금지해야 할 것은 복사가 아니라 **역할 중복**이고, 그건 run 때가 아니라 source를 만들 때 잡아야 한다.
 - 규칙화 메모: 아직 1회지만 코드로 봉인했으므로 재발 시 자동 REJECT다. 사람이 지켜야 할 규칙으로는 승격하지 않는다 — `source/common/components/CLAUDE.md`의 "다음 차시에서 이걸 그대로 쓸까?"로 이미 common에 올라간 것을 teacher에 또 넣지 않는다는 뜻이고, 그건 해시 비교가 대신 판정한다. 연관: [cta-label-overlaid-not-baked](CTA asset이 asset_plan에 없어 생긴 빈자리와 같은 run에서 함께 관찰됨).
+
+### [missing-only-never-worked] `--asset-generator-missing-only`가 재사용을 한 번도 성공한 적 없었음 (두 원인이 서로를 가림)
+
+- 대상: content-harness-pipeline/runner.py `build_existing_asset_output`
+- 분류 태그: missing-only-never-worked
+- 상태: 규칙화됨(코드)
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-12
+- 최근 발생일: 2026-08-12
+- 사례:
+  - 2026-08-12: 27개 중 8개만 새로 만들면 되는 상황에서 missing-only를 걸었는데 `existing=0 missing=27`이 나왔다.
+- 원인: **두 결함이 겹쳐 서로를 숨기고 있었다.** ①`build_existing_asset_output`이 계획 경로를 `run_dir / intended_path`로 **정확히** 찾는데, planner는 항상 `.png`로 계획하고 산출물은 `.webp`로 압축돼 있어 하나도 못 찾았다. ②그래서 `existing`이 늘 0이었고, 재사용 항목을 만드는 코드가 schema required 7개 중 `character_id`를 빠뜨린 것이 **한 번도 실행되지 않아 드러나지 않았다.** ①을 고치자마자 ②가 `asset_generator_output_validate REJECT`로 터졌다.
+- 조치: ①`resolve_existing_asset()` 추가 — asset의 정체는 stem이지 확장자가 아니므로 `.png/.webp/.jpg/.jpeg`를 순회해 찾고, 찾은 **실제 확장자**를 `path`에 기록한다. ②재사용 항목에 `character_id`를 planner의 `asset_plan`에서 옮겨 채운다. 검증: 재사용 0→4→(재실행 후)27, schema 오류 0, 재생성 0장으로 0.03초 PASS.
+- 교훈: **결함이 둘 겹치면 하나를 고쳐야 나머지가 보인다.** ①만 보고 "고쳤다"고 끝냈으면 다음 run에서 REJECT가 났다. 고친 뒤 실제로 그 경로를 태워보는 것까지가 수정이다.
+- 규칙화 메모: 코드로 봉인했으므로 사람 규칙으로 승격하지 않는다. 연관: [source-asset-role-collision](둘 다 "실행된 적 없는 경로에 숨어 있던 결함").
+
+### [component-art-masks-planner-gap] 컴포넌트가 들고 있던 art가 planner의 계획 누락을 가림
+
+- 대상: content-harness-pipeline/source/common/components/{feedback-layer,ticket-button}, prompts/common_html_contract.md
+- 분류 태그: component-art-masks-planner-gap
+- 상태: 규칙화됨(프롬프트 + 구조)
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-12
+- 최근 발생일: 2026-08-12
+- 사례:
+  - 2026-08-12: 도서관 차시 화면에 08의 파란 물결 도장이 떠 있었다. 추적하니 **이 차시는 도장을 한 번도 생성한 적이 없었다** — planner `asset_plan` 27개 중 도장 0개. 스토리보드에도 "도장/스탬프" 언급이 0건이고 정답 피드백은 "딩동댕 + 글로우 + 캐릭터 점프"였다.
+- 원인: `feedback-layer` 컴포넌트가 08의 도장 2장을 소유했고 `common_html_contract.md:74`가 "컴포넌트 `assets/`를 `output/assets/`로 복사하라"고 지시했다. 그래서 planner가 계획하지 않아도 화면에 도장이 있었다. **planner 잘못이 아니다** — 스토리보드에 없으니 안 만든 게 맞다. 진짜 결함은 builder가 art를 요구하는 컴포넌트를 골랐는데 그 art가 `asset_plan`에 없다는 불일치였고, 컴포넌트의 기본 이미지가 그 불일치를 가렸다.
+- 조치: ①컴포넌트에서 이미지 3장 제거(`components/CLAUDE.md`가 "여기 두지 않는 것: 말풍선·CTA·피드백"으로 이미 금지한 범주였다). ②`component.md`에 `Requires art` 필드 — 무엇이 필요한지와 **구조 제약만** 쓰고 색·모티프·소재는 쓰지 않는다(그건 planner가 `art_direction`에서 가져온다). ③`input.metadata.components`로 컴포넌트를 선택하고, planner가 그 `requires_art`를 `asset_plan`에 넣는다. ④`planner_system.md`에 정형 예외 — "story board가 요구하지 않아도 넣습니다. 콘텐츠가 아니라 플랫폼의 정형이기 때문입니다."
+- 검증: planner 재실행 시 `asset_plan` 19→27, 도장 2장이 **도서 대출일 도장(황동 인장 + 숲청록 손잡이, 정답=펼친 책+체크, 오답=되돌림 화살표)** 으로 계획·생성됐다. 08의 색·모티프는 하나도 안 왔고 craft-examples의 구조 규칙(문구를 도장 면 안쪽 밴드에, 정답/오답 별개 asset, 상태색은 글자·심볼만)은 전부 지켰다.
+- 교훈: **기본값이 있으면 그 값이 필요하다는 사실이 안 보인다.** 컴포넌트가 art를 들고 있는 한 "이 콘텐츠가 그 art를 계획했는가"는 아무도 묻지 않는다.
+- 규칙화 메모: 코드·프롬프트로 반영됨. 연관: [cta-label-overlaid-not-baked](같은 뿌리 — 그쪽도 asset_plan에 CTA가 없던 문제였고 이번 변경으로 CTA 4장이 문구를 구워 계획됨).

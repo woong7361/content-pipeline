@@ -13,7 +13,7 @@ BASE_CSS = COMPONENTS_DIR / "_shared" / "base.css"
 # component.md에서 프롬프트로 넘길 필드.
 # manifest의 일은 "어떤 컴포넌트를 열어볼지 고르게 하는 것"까지다.
 # slot/state/DOM 계약은 stage가 고른 뒤 component.md를 직접 읽는다.
-LIST_FIELDS = ("Runtime API", "Use when", "Avoid")
+LIST_FIELDS = ("Runtime API", "Use when", "Avoid", "Requires art")
 SCALAR_FIELDS = ("Type", "Status", "Final output")
 
 # preview/example 전용 파일은 최종 output에 들어가지 않으므로 목록에서 뺀다.
@@ -116,3 +116,53 @@ def build_common_components_section(teacher_root: str | Path | None = None) -> s
 
 COMMON_COMPONENTS_JSON:
 {build_common_components_json(teacher_root)}"""
+
+
+def selected_components(input_data: dict | None) -> list[str]:
+    """input.metadata.components. 없으면 빈 목록 = 선택하지 않음."""
+    if not isinstance(input_data, dict):
+        return []
+    names = input_data.get("metadata", {}).get("components")
+    return [n for n in names if isinstance(n, str)] if isinstance(names, list) else []
+
+
+def build_required_art_section(input_data: dict, teacher_root: str | Path | None = None) -> str:
+    """선택된 컴포넌트가 요구하는 art만 planner에 넘긴다.
+
+    planner에 컴포넌트 manifest 전체(use_when/avoid)를 싣지 않는다. **planner는 고르지 않는다.**
+    고르는 일은 input이 끝냈고, planner는 그 결과가 요구하는 art를 계획하기만 한다.
+    manifest를 통째로 실으면 planner가 선택까지 하게 되고, 그러면 선택 주체가 둘이 된다.
+
+    `requires_art`에는 색·모티프·소재가 없다. 그건 planner가 art_direction에서 가져온다.
+    컴포넌트는 "무엇이 필요한가"와 "그 컴포넌트가 성립하려면 어떤 구조여야 하는가"만 말한다.
+    """
+    selected = selected_components(input_data)
+    if not selected:
+        return ""
+
+    by_name = {c["name"]: c for c in load_components(teacher_root)}
+    unknown = [n for n in selected if n not in by_name]
+    if unknown:
+        raise ValueError(
+            f"input.metadata.components에 없는 컴포넌트가 있습니다: {unknown} "
+            f"(사용 가능: {sorted(by_name)})"
+        )
+
+    payload = {
+        "selected": selected,
+        "rule": (
+            "여기 있는 art는 asset_plan에 반드시 넣습니다. "
+            "story board가 요구하지 않아도 넣습니다 — 콘텐츠가 아니라 플랫폼의 정형이기 때문입니다. "
+            "**선택**으로 표시된 것은 넣지 않아도 됩니다."
+        ),
+        "components": [
+            {
+                "name": name,
+                "contract": by_name[name]["contract"],
+                "requires_art": by_name[name].get("requires_art", []),
+            }
+            for name in selected
+        ],
+    }
+    body = json.dumps(payload, ensure_ascii=False, indent=2)
+    return "SELECTED_COMPONENTS_JSON:\n" + body

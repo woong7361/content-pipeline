@@ -44,7 +44,7 @@
 | `scene-controller` | `production/1-2/08/index.html` scene 전환 | `data-qa-scene`, `active/leaving` 계약 |
 | `topbar` | 08 `.topbar` + `.course-menu-*` | 상단 HUD(제목·단계·진행률·소리)와 차시 목록 드로어 |
 | `speech-bubble` | 08 `.speech` | 1-2/01에서 이식된 크림 말풍선 |
-| `ticket-button` | 08 `.cta.activity-cta` | `activity-cta-body.webp` sprite 기반 CTA. **라벨을 구운 CTA는 여기 해당하지 않는다** |
+| `ticket-button` | 08 `.cta.activity-cta` | 토큰 CSS 알약. 생성 asset이 있으면 `--cta-body`로 받는다 |
 | `keypad` | 08 `buildKeypad` | `[1..9][← 0 확인]` 숫자 키패드 |
 | `feedback-layer` | 08 `showStamp`/feedback overlay | 정답/오답 도장 |
 | `debug-jumper` | 08 debug panel | `data-qa-*`에서 scene 목록 자동 구성 |
@@ -97,6 +97,9 @@
   `position`을 페이지 쪽 class로 채우지 않는다.
 - 상태 표현은 배타적이면 `data-state`, 전환 중 겹치면 class, 브라우저가 의미를 가지면 네이티브 속성(`disabled`, `hidden`)을 쓴다.
 - 컴포넌트끼리 직접 호출하지 않는다. 필요하면 이벤트로 알린다 (`common:scenechange`).
+- **컴포넌트는 이미지를 소유하지 않는다.** art가 필요하면 `component.md`의 `Requires art`에 선언하고
+  사용처가 그 run에서 생성한 경로를 준다. 확인 페이지에 필요한 이미지는 `example/assets/`에 `preview-*`로 둔다 —
+  거기는 번들에서 제외되므로 컴포넌트 소유가 아니다.
 - 컴포넌트를 고쳤으면 `preview.html` → `example/index.html`을 열어 확인하고, `component.md`의 `Runtime API`를 함께 갱신한다.
 - 새 컴포넌트를 추가하면 `preview.html`도 함께 만든다. 상태가 있으면 그 상태를 바꿔볼 버튼을 넣는다.
 - 외부 CDN·원격 이미지를 추가하지 않는다.
