@@ -5,9 +5,9 @@
 - Character id: `teacher`
 - Identity source: Existing teacher assets are the visual identity anchors.
 - Reference files:
-  - `output/assets/teacher_worried.png`
-  - `output/assets/teacher_pointing.png`
-  - `output/assets/teacher_happy.png`
+  - `output/assets/teacher_worried.webp`
+  - `output/assets/teacher_pointing.webp`
+  - `output/assets/teacher_happy.webp`
 - Usage target: `content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html`
 - Lesson context: `2학년_8차시(시간)_임상현_no_img.md`, a grade 2 time-learning library repair mission.
 

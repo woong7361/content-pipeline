@@ -11,18 +11,14 @@
     "axis_critiques": {
       "type": "object",
       "required": [
-        "content_fidelity",
         "learning_goal_alignment",
         "feedback_scaffolding",
-        "interaction_flow_clarity",
-        "functional_integrity"
+        "interaction_flow_clarity"
       ],
       "properties": {
-        "content_fidelity": { "$ref": "#/$defs/axisCritique" },
         "learning_goal_alignment": { "$ref": "#/$defs/axisCritique" },
         "feedback_scaffolding": { "$ref": "#/$defs/axisCritique" },
-        "interaction_flow_clarity": { "$ref": "#/$defs/axisCritique" },
-        "functional_integrity": { "$ref": "#/$defs/axisCritique" }
+        "interaction_flow_clarity": { "$ref": "#/$defs/axisCritique" }
       },
       "additionalProperties": false
     },
@@ -36,11 +32,9 @@
           "axis": {
             "type": "string",
             "enum": [
-              "content_fidelity",
               "learning_goal_alignment",
               "feedback_scaffolding",
-              "interaction_flow_clarity",
-              "functional_integrity"
+              "interaction_flow_clarity"
             ]
           },
           "issue": { "type": "string", "minLength": 1 },

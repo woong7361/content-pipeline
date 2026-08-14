@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from pathlib import Path
 
 from stages.scripts.source_resolve import resolve_teacher_root, shadowed_dirs
@@ -112,7 +114,10 @@ def check_html_links(html_path: Path) -> list[str]:
     if not html_path.is_file():
         return [f"html file missing: {html_path.name}"]
 
-    html = html_path.read_text(encoding="utf-8")
+    # 주석을 지운 마크업만 본다. 계약이 순서를 강조하므로 모델이 그 규칙을 주석으로 부연하는데
+    # (실측: `<!-- 반드시 콘텐츠 <style>보다 앞에 온다 -->`), 주석 속 문구를 태그로 읽으면
+    # 계약을 지킨 HTML이 REJECT된다. 반대로 주석 처리된 <link>를 "실려 있다"로 읽어도 안 된다.
+    html = re.sub(r"<!--.*?-->", "", html_path.read_text(encoding="utf-8"), flags=re.S)
     errors = []
 
     css_at = html.find(f'href="{COMMON_CSS_NAME}"')

@@ -12,7 +12,7 @@
 ## 1. header를 1-2/01 방식으로 수정
 
 - 상태: 완료 (2026-07-31)
-- 조치(1차, 시각 양식): 01 `topbar`의 CSS 값을 그대로 이식했다. `.topbar`(56px, 크림 유리 그라디언트 + 하단 보더) > `.topbar-left`(`.btn-home.course-menu-btn` 햄버거+목록 → `.header-voice-volume-button` 원형 스피커 SVG → `.step-label` 금색 세로 구분선) / 중앙 절대배치 `.lesson-header-title` + 금색 밑줄 / 우측 `.lesson-bar-reward`(track+fill+`%`). `sceneMeta`는 `title` → `stage`로 바꾸고 `progress`를 숫자로 통일했다. 제거: 08 자체 3단계 chip, `assets/global-hud-frame.png` 프레임(파일도 2026-07-31 삭제).
+- 조치(1차, 시각 양식): 01 `topbar`의 CSS 값을 그대로 이식했다. `.topbar`(56px, 크림 유리 그라디언트 + 하단 보더) > `.topbar-left`(`.btn-home.course-menu-btn` 햄버거+목록 → `.header-voice-volume-button` 원형 스피커 SVG → `.step-label` 금색 세로 구분선) / 중앙 절대배치 `.lesson-header-title` + 금색 밑줄 / 우측 `.lesson-bar-reward`(track+fill+`%`). `sceneMeta`는 `title` → `stage`로 바꾸고 `progress`를 숫자로 통일했다. 제거: 08 자체 3단계 chip, `assets/global-hud-frame.webp` 프레임(파일도 2026-07-31 삭제).
 - 조치(2차, 코스 메뉴 — 2026-07-31 사용자 확정): 씬 이동 드로어(`#menuDrawer` + `unlockedMenuScenes` / `refreshMenuAccess` / `unlockMenuScene`)를 통째로 걷어내고 01의 `installCourseMenu` 드로어를 이식했다. 클래스명은 01 그대로 — `.course-menu-overlay` / `-panel` / `-head` / `-grade` / `-close` / `-list` / `-item` / `-no` / `-title` / `-now` / `-soon` / `-foot` / `-home`, 상태는 `.is-open` / `.is-current` / `.is-locked`. 데이터는 `lesson.json` 대신 index.html 내부 상수 **`COURSE_MENU`**. `path` / `id` 값은 01 `lesson.json`의 `ui.courseMenu` 원본 그대로다 — **1-2/01과 1-2/08은 디렉토리 깊이가 같아 `../../1-1/01/`·`../01/` 상대 경로가 그대로 맞는다.**
 - 01의 CSS는 `clamp(..., cq*, ...)` 기반인데 08은 고정 캔버스라 container query를 안 쓴다. 1366에서 대부분 clamp 상한에 걸리므로 **상한값을 취해 × 1.4056** 했다(패널 400→562px, 항목 글자 18→25px, 번호 원 34→48px 등).
 - 검증: headless Chrome 1920×1080에서 `#menuButton` 클릭 → 드로어 열림, 10개 항목 렌더, 8번 항목에 `지금` 태그 + `is-current` 강조, 5·7·9·10번 `is-locked` + `준비 중`, 닫기 버튼/배경 클릭으로 닫힘 확인. 런타임 오류 0.
@@ -27,14 +27,14 @@
 - 확정: 삭제 대상은 `section_global_ui`(공통 UI + 활동 목표 3칸 overview). 사용자 확인 완료.
 - 조치: `<section id="section_global_ui">` 블록과 `#section_global_ui`-스코프 CSS 7줄, `#goalButton{}` 규칙을 제거했다. `section_intro`가 `class="scene active"` + `data-qa-order="1"`이 되고 나머지 씬은 2~7로 재번호했다. `sceneMeta`에서 항목을 빼고 `section_intro.progress`를 12 → **4**로 내렸다(뒤 씬의 인라인 `setProgress()` 값은 그대로 두어도 단조 증가가 유지된다). `currentScene`·`exitButton` 폴백을 `section_intro`로 바꾸고, 부팅을 `updateHud(currentScene)` → **`showScene(currentScene)`** 으로 바꿔 첫 씬에서도 `resetIntro()`와 `title-mode`가 걸리게 했다.
 - 검증: 7개 씬 전수 캡처, `.scene` 개수 7, `data-qa-order` 1~7 연속, 런타임 오류 0.
-- **주의**: `assets/school-wall-wide.png`와 `assets/overview-mural-triptych-frame.png`는 참조가 없어져 **2026-07-31 삭제했다**(사용자 확정). `.hero-title` 기본 규칙은 `.title-banner .hero-title`이 아직 쓰므로 남겨 뒀다.
+- **주의**: `assets/school-wall-wide.webp`와 `assets/overview-mural-triptych-frame.webp`는 참조가 없어져 **2026-07-31 삭제했다**(사용자 확정). `.hero-title` 기본 규칙은 `.title-banner .hero-title`이 아직 쓰므로 남겨 뒀다.
 
 
 ## 3. title을 CTA 이미지로 변경
 
 - 상태: 완료 (2026-07-31)
 - 해석 확정: (a) **타이틀 로고 에셋 교체**였다. (b) CTA 버튼의 이미지화가 아니다 — 그건 4번에서 CSS 버튼으로 이미 처리됐다.
-- 조치: `assets/colorful-school-wall-title.png`를 01 `assets/ui/title-logo.png` 화풍으로 재생성했다. 금빛 그라데이션 + 두꺼운 갈색 외곽선/베벨 + 별 장식 + 2줄 구성까지 01과 같은 계열로 맞춰졌다. **파일명과 마크업(`#introTitleSurface` > `.intro-title-img`)은 그대로라 CSS·JS 변경은 없다.**
+- 조치: `assets/colorful-school-wall-title.png`를 01 `assets/ui/title-logo.webp` 화풍으로 재생성했다. 금빛 그라데이션 + 두꺼운 갈색 외곽선/베벨 + 별 장식 + 2줄 구성까지 01과 같은 계열로 맞춰졌다. **파일명과 마크업(`#introTitleSurface` > `.intro-title-img`)은 그대로라 CSS·JS 변경은 없다.**
 - 검증: 두 로고를 나란히 육안 비교 — 색감·외곽선 두께·베벨·별 장식이 같은 작가 결과물로 보인다. 이전 에셋의 "납작한 노랑" 문제 해소.
 - **9번 오프셋 재계산 불필요.** 새 에셋 `1909×824`, 알파 bbox `(48, 100, 1848, 758)` — 이전 에셋의 y 범위(100~758 / 824)와 **동일**하다.
 
@@ -67,30 +67,30 @@
 ## 6. 말풍선을 1-2/01과 동일하게 변경
 
 - 상태: 완료 (2026-07-31)
-- 조치: 배경 이미지(`school-speech-bubble-body.png`, 990×190 고정)를 걷어내고 CSS 말풍선으로 교체했다. 값은 01 `.speech`를 `getComputedStyle`로 실측한 뒤 × 1.4056: 배경 `#fffdf6`, 테두리 `6px solid #4c3428`, `border-radius:28px`, `box-shadow:0 10px 0 rgba(0,0,0,.18)`, 글자 `--fs-xs`(28px) / **weight 400** / line-height 1.4 / `#221914`, `word-break:keep-all` + `text-wrap:balance`. 꼬리는 01과 같은 2겹(`::before`=테두리색 17px, `::after`=배경색 14px)이고 `left-speaker` / `right-speaker`로 좌우를 미러링했다. 등장은 `speechPop`(`cubic-bezier(.36,.07,.19,.97)`) — 01의 키프레임 그대로.
+- 조치: 배경 이미지(`school-speech-bubble-body.webp`, 990×190 고정)를 걷어내고 CSS 말풍선으로 교체했다. 값은 01 `.speech`를 `getComputedStyle`로 실측한 뒤 × 1.4056: 배경 `#fffdf6`, 테두리 `6px solid #4c3428`, `border-radius:28px`, `box-shadow:0 10px 0 rgba(0,0,0,.18)`, 글자 `--fs-xs`(28px) / **weight 400** / line-height 1.4 / `#221914`, `word-break:keep-all` + `text-wrap:balance`. 꼬리는 01과 같은 2겹(`::before`=테두리색 17px, `::after`=배경색 14px)이고 `left-speaker` / `right-speaker`로 좌우를 미러링했다. 등장은 `speechPop`(`cubic-bezier(.36,.07,.19,.97)`) — 01의 키프레임 그대로.
 - 토큰 `--bubble-bg` / `--bubble-line` / `--bubble-ink` / `--ease-speech-pop`을 추가했다(디자인 토큰 계약대로 raw hex를 흩뿌리지 않음).
 - **주의 — 함께 지워야 했던 것**: `#shapeSpeech` / `#arithSpeech` / `#drawingSpeech`에 걸려 있던 비대칭 패딩(`28px 83px 66px 61px` 등)은 **배경 이미지 아트에 맞춘 보정값**이었다. CSS 말풍선에서는 그대로 두면 한 줄짜리 대사가 145px 높이로 렌더된다. 전부 제거했다(`#arithSpeech`의 `top:350px`만 남김).
 - **01의 weight는 900이 아니라 400이다** — `#app .speech{text-align:left;font-weight:400}`가 뒤에서 덮는다. 이 항목 초안에 적혀 있던 `font-weight:900`은 소스 순서 오독이다.
-- 검증: 7개 씬 캡처에서 좌/우 화자 꼬리 방향, 대사 길이에 따른 높이 자동 조정, 넘침 없음 확인. `school-speech-bubble-body.png` 참조 0개(preload 링크도 제거). **파일은 2026-07-31 삭제했다.**
+- 검증: 7개 씬 캡처에서 좌/우 화자 꼬리 방향, 대사 길이에 따른 높이 자동 조정, 넘침 없음 확인. `school-speech-bubble-body.webp` 참조 0개(preload 링크도 제거). **파일은 2026-07-31 삭제했다.**
 
 
 ## 7. "수리가 필요해요 1"의 모양 찾기 대폭 변경
 
 - 상태: 완료 (2026-07-31)
 - 사용자 결정: **교실 배경 + 개별 사물 에셋**.
-- 조치: 배경을 `school-yard-shape-search.png`(학교 마당, 도형이 그림에 굳어 있음) → 신규 `classroom-shape-search.png`(교실)로 바꾸고, 찾을 도형 사물 6종을 **투명 PNG 개별 에셋**으로 얹었다. `hotspotDefs`(픽셀 하드코딩 6개)를 없애고 **`findObjects`** 테이블 하나로 통합했다 — `{src, alt, rect:[left,top,w,h]}`이고 `hotspotDefs`는 여기서 파생시킨다(`Object.fromEntries`). 이미지는 `renderFindObjects()`가 `#shapeObjects` 레이어에 그리며 `.find-object{pointer-events:none}`이라 클릭은 기존 `.hotspot` 버튼이 받는다. **이제 좌표 한 줄만 고치면 위치·난이도가 바뀐다.**
+- 조치: 배경을 `school-yard-shape-search.webp`(학교 마당, 도형이 그림에 굳어 있음) → 신규 `classroom-shape-search.png`(교실)로 바꾸고, 찾을 도형 사물 6종을 **투명 PNG 개별 에셋**으로 얹었다. `hotspotDefs`(픽셀 하드코딩 6개)를 없애고 **`findObjects`** 테이블 하나로 통합했다 — `{src, alt, rect:[left,top,w,h]}`이고 `hotspotDefs`는 여기서 파생시킨다(`Object.fromEntries`). 이미지는 `renderFindObjects()`가 `#shapeObjects` 레이어에 그리며 `.find-object{pointer-events:none}`이라 클릭은 기존 `.hotspot` 버튼이 받는다. **이제 좌표 한 줄만 고치면 위치·난이도가 바뀐다.**
 - 6종 / hotspot id: 원 `circle_wall_clock`(벽시계) · `circle_ball`(공) / 삼각 `triangle_ruler`(삼각자) · `triangle_pennant`(삼각 깃발) / 사각 `square_window`(창문) · `square_locker`(사물함). `searchQuestions`의 `answers`도 새 id로 교체했다.
 - 배경 실측: 칠판은 stage `x 80~763 / y 241~660`, 화분은 `x 1722~1894`. 사물은 그 사이 벽면과 바닥에만 배치했다. **`.search-prompt`의 `top`을 160px → 90px로 올렸다** — 안 올리면 문제 배너가 시계·창문을 덮는다.
 - 에셋 생성: codex `exec`를 asset 1장당 1프로세스로 병렬 실행. 프롬프트에는 `dfbc1027_planner.json`의 `art_direction` 전문 + 기존 08 에셋 2~3장의 절대경로(실제로 열어 대조하라는 지시) + `asset_generator_system.md`의 텍스트/투명/component 정책을 인라인했다.
 - **주의 — 초판 3장을 폐기하고 재생성했다.** (a) 배경이 가구 없는 빈 방이라 교실로 안 읽혔다(프롬프트의 "비워 두라" 제약이 과했음) → 칠판·책상·형광등을 넣되 찾기 대상 6종과 **창문은 배경에 절대 금지**로 다시 지시. (b) 벽시계에 바늘이 없어 시계로 안 보였다 — 이 씬은 시각을 묻지 않으므로 바늘은 `component_rules`의 가변부가 아니다. (c) 사물함이 창문과 똑같은 파랑/하늘색이라 구별이 안 됐다 → 원목 갈색으로 재지시.
 - 검증: 6개 사물 + 배너의 상호 겹침 0(경계 상자 전수 대조), 찾기 3문항 정답 클릭 → 세기 단계 진입까지 통과, 런타임 오류 0.
-- **주의**: `school-yard-shape-search.png`는 참조가 없어져 **2026-07-31 삭제했다**.
+- **주의**: `school-yard-shape-search.webp`는 참조가 없어져 **2026-07-31 삭제했다**.
 
 
 ## 8. 동그라미·세모·네모 에셋 배경 투명 처리
 
 - 상태: 완료 (2026-07-31)
-- **이 항목의 현황 서술은 틀렸다.** "도형은 에셋이 아니라 CSS로 그려져 있다"가 아니라, `assets/shape-tile-body.png`(1536×1024 RGBA, 3프레임 스프라이트, 알파 bbox `40,261~1490,730`)를 `background-size:300% 100%`로 잘라 쓰는 구조였고 **에셋 알파는 이미 정상**이었다(네 모서리 alpha=0 실측).
+- **이 항목의 현황 서술은 틀렸다.** "도형은 에셋이 아니라 CSS로 그려져 있다"가 아니라, `assets/shape-tile-body.webp`(1536×1024 RGBA, 3프레임 스프라이트, 알파 bbox `40,261~1490,730`)를 `background-size:300% 100%`로 잘라 쓰는 구조였고 **에셋 알파는 이미 정상**이었다(네 모서리 alpha=0 실측).
 - 실제 문제(사용자 지적): **도형 채우기가 도형 바깥까지 새어 배경 사각형까지 칠해졌다.** 원인은 `background-color` + `background-blend-mode:multiply` 조합이다 — `background-color`는 padding-box 전체를 칠하고 blend는 그 위에서 이미지와 섞을 뿐이라, **이미지 알파가 0인 영역에는 섞을 대상이 없어 배경색이 그대로 남는다.** 스프라이트 세로 알파 점유율이 46%뿐이라 `height:150px` 요소에서 위아래로 각 ~38px씩 색 띠가 생겼다.
 - 조치: 색칠을 `.paint-shape::before`로 옮기고 같은 스프라이트를 `mask-image`(`mask-size:300% 100%` + 도형별 `mask-position`)로 걸어 실루엣 밖을 잘라냈다. `filter`(그림자·글로우)는 요소에 남겨 마스크된 결과 위에 적용되게 했다. `.drawn-shape`에서 중복으로 깔던 `background-image`는 제거했다(항상 `.paint-shape`와 같이 붙으므로 `::before`가 담당).
 - 함께 고친 것: `.paint-shape`에 `aspect-ratio:1;justify-self:center`를 넣어 **그리드 칸에 눌려 타원·직사각형으로 보이던 왜곡**을 없앴다(도형 차시에서 동그라미가 타원으로 보이는 문제). `.random-progress`(112×92→96×96)·`.drawing-summary`(118×108→112×112)도 정사각으로 맞췄다.
@@ -102,7 +102,7 @@
 
 - 상태: 완료 (2026-07-31)
 - 대상: `section_intro`의 `#introStartWrap` (타이틀 `#introTitleSurface` + `#introStart` 시작 버튼 컬럼)
-- 배경 측정: `school-wall-damaged.png`(1672x941, cover 배율 1.148)의 담장 기둥 윗면이 stage 좌표 **y≈550**. 타이틀 에셋은 알파 bbox가 y 100~758/824라, 폭 1068px로 그리면 높이 461px 중 실제 그림은 박스 상단 **+56 ~ +424** 구간에만 있다.
+- 배경 측정: `school-wall-damaged.webp`(1672x941, cover 배율 1.148)의 담장 기둥 윗면이 stage 좌표 **y≈550**. 타이틀 에셋은 알파 bbox가 y 100~758/824라, 폭 1068px로 그리면 높이 461px 중 실제 그림은 박스 상단 **+56 ~ +424** 구간에만 있다.
 - 조치: **`#section_intro #introStartWrap{translate:0 calc(-50% - 140px)}`** 로 140px 올려 그림이 y **165~533**, 담장 윗면 바로 위 하늘에 놓이게 했다. 01 규칙(`#introStartWrap{top:50%;translate:0 -50%}`)은 건드리지 않고 씬 스코프 오버라이드만 추가했다(명시도 id 2개 > id 1개라 `!important` 불필요).
 - 검증: headless Chrome 1920x1080 캡처에서 담장 전체·무너진 구간·벽돌 더미·콘·바리케이드가 모두 드러나고 타이틀이 상단 헤더와 겹치지 않음을 확인.
 - ~~주의: 3번에서 로고 에셋이 바뀌면 140px 오프셋을 다시 계산해야 한다.~~ → 3번 완료 시 재측정 결과 알파 bbox가 동일해 재계산 불필요. 로고를 또 바꾸면 이 확인은 다시 해야 한다.
@@ -128,7 +128,7 @@
 - 조치: 대사 0(무너진 담장) → 대사 1(수리 완료) 사이에 연출을 끼웠다. `introTap` 핸들러가 `introBeat===0`에서 `startIntroRepair()`를 부르고, 4회 타격(`HAMMER_SWING_MS=420` × `HAMMER_STRIKES=4`)마다 임팩트 스파크(`.repair-impact.hit`)와 정답음이 나면서 `#introBgRepaired` 오버레이 opacity를 `.25 → .5 → .75 → 1`로 올린다. 끝나면 `finishIntroRepair()`가 `introBeat=1`로 넘기고 오버레이를 0으로 되돌린다(이때 `#introBg`가 이미 repaired라 이음새가 없다).
 - 에셋: `assets/repair-hammer.png`(1254×1254 투명 PNG, 손잡이 우상단·머리 좌하단 대각선, 손·팔·효과선 없음). codex 이미지 생성으로 제작.
 - **주의 — damaged / repaired 두 배경은 담장 텍스처가 전체적으로 미묘하게 다르다**(diff 실측: 임계 120에서 `x 44~1832 / y 576~980` 전 구간). 그래서 `clip-path` 부분 와이프는 이음새가 보인다 → **전체 크로스페이드**로 갔다.
-- 붕괴 구간 실측: `school-wall-damaged.png` 크롭 스캔으로 stage `x 1160~1550 / y 620~792`(벽돌 더미 포함). 망치는 `left:1250px;top:485px;width:300px`, `transform-origin:90% 12%`(손잡이 끝)이고 타격 포즈에서 머리가 `(1300, 655)`에 닿는다. 스파크는 그 지점에 맞춰 `left:1240px;top:595px`.
+- 붕괴 구간 실측: `school-wall-damaged.webp` 크롭 스캔으로 stage `x 1160~1550 / y 620~792`(벽돌 더미 포함). 망치는 `left:1250px;top:485px;width:300px`, `transform-origin:90% 12%`(손잡이 끝)이고 타격 포즈에서 머리가 `(1300, 655)`에 닿는다. 스파크는 그 지점에 맞춰 `left:1240px;top:595px`.
 - **주의 — 회전 방향을 두 번 틀렸다.** 이 에셋은 손잡이가 우상단이라 `transform-origin`을 손잡이 끝에 두면 **양수 회전이 머리를 들어올린다.** 처음에 `rotate(-40deg)`를 "들어올린 포즈"로 잡았다가 머리가 오히려 내려갔다. 최종: `0%/100% rotate(50deg)`(들어올림) → `42% rotate(8deg)`(타격) → `56% rotate(16deg)`(반동).
 - **연출 중 탭은 무시한다 — 끝까지 보게 한다**(2026-07-31 사용자 확정). `introRepairing`이 true인 동안 `introTap` 핸들러가 즉시 return한다.
 - 마지막 타격 뒤 망치 레이어를 먼저 감추고, 고쳐진 담장을 **`HAMMER_HOLD_MS=1000`** 동안 그대로 보여 준 다음 대사 1로 넘어간다. 총 소요 = 타격 1.86s + 유지 1.0s.
@@ -143,7 +143,7 @@
 - 조치: 01 `.repair-count-key` 실측값(1366)을 × 1.4056 해서 `.key`에 넣었다 — `border:3px solid rgba(180,218,255,.95)`, `border-radius:17px`, `background:rgba(255,255,255,.92)`, `color:#12355f`, `font-weight:800`, `box-shadow:0 4px 0 rgba(143,173,211,.76), 0 11px 22px rgba(0,0,0,.15)`, 그리드 `gap:17px`. 지우기(`.key.del`)와 확인(`.key.enter`)도 01의 색 체계(`#e7c197`/`#a75f28`, `#e23b3b`/흰색) 그대로.
 - **키 배치를 01의 `keypadControlsHtml`과 같게 바꿨다** — 1~9 다음 줄이 **`[←] [0] [확인]`**. 08에는 지우기 키가 아예 없어서 오입력하면 확인을 눌러 오답 처리되기를 기다려야 했다(problem.md `[content-refine-learning-flow-integrity]`에서 반복 지적된 "키패드 삭제" 결함과 같은 것). `.key.zero{grid-column:2}` 규칙은 마지막 줄이 꽉 차면서 필요 없어져 제거했다.
 - 상호작용 이식: `keypadPress()`(pointerdown에 `.keypad-pressing` 부착, pointerup/leave/cancel에 해제) + `.key.keypad-pressing:not(:disabled){transform:translateY(4px) scale(.98);box-shadow:0 1px 0 #020810}`, `keypadDisplayTick()` + `@keyframes keypadDisplayTick{0%{transform:scale(.94);filter:brightness(1.85)}100%{...}}` — 둘 다 01의 이름·값 그대로. 세 핸들러(`countKeypad` / `arithKeypad` / `judgeRandomKey`)에 `del` 분기와 입력 시 tick 호출을 넣었다.
-- `#randomInput`의 `wall-choice-plaque-body.png` 4겹 배경은 `gap:0`을 전제로 한 행 배경 흉내였다. 01 크롬을 쓰면 겹쳐 보여서 껐다(`#randomInput .keypad{gap:17px}`, `#randomInput .key{height:78px}`만 남김).
+- `#randomInput`의 `wall-choice-plaque-body.webp` 4겹 배경은 `gap:0`을 전제로 한 행 배경 흉내였다. 01 크롬을 쓰면 겹쳐 보여서 껐다(`#randomInput .keypad{gap:17px}`, `#randomInput .key{height:78px}`만 남김).
 - **키 높이만 08의 78px을 유지했다.** 01은 `clamp(24px, 5.2cqh, 50px)`라 실측 33px이고, 그대로 × 1.4056 하면 46px로 오히려 작아진다(1학년 타깃에 부적합, problem.md `[content-scale-too-small]` 위험).
 - 검증: `#randomKeypad` 키 12개(`1..9 ← 0 확인`), 숫자 2개 입력 후 `←` 클릭 시 `'72' → '7'` 확인, 캡처로 크롬 렌더 확인. 런타임 오류 0.
 - 확인 키 글자는 **`확인`**(2026-07-31 사용자 확정). 원래 08은 `O`였는데 `0`과 혼동된다. `확인`은 planner에 없는 새 화면 문구지만 **입력기 컨트롤 라벨이라 학습 원문이 아니고**, 01이 이미 같은 문구를 쓰므로 원문 보존 계약의 대상이 아니라고 판단했다. 실측: 키 159×78px에 글자 57px(31px `--fs-sm`)로 넘침 없음.
@@ -164,11 +164,11 @@
 
 - 상태: 완료 (2026-07-31)
 - 사용자 결정: **픽토그램 + 글자 모두 이미지에 굽기.**
-- 조치: 스프라이트 1장(`road-sign-body.png`, 가로 710px를 `overflow:hidden` + `left:0/-237px/-474px`로 잘라 씀)을 도형별 개별 에셋 3장으로 분리했다 — `road-sign-circle.png`(파란 원형 + 흰 자동차 픽토그램 + `자동차 전용도로`), `road-sign-square.png`(파란 사각 + `P` + `주차`), `road-sign-triangle.png`(노란 삼각 + 빨간 테두리 + 인부 픽토그램 + `공사`). 모두 1024×1024 투명 PNG, 기둥 포함, 기둥 높이·두께 통일.
+- 조치: 스프라이트 1장(`road-sign-body.webp`, 가로 710px를 `overflow:hidden` + `left:0/-237px/-474px`로 잘라 씀)을 도형별 개별 에셋 3장으로 분리했다 — `road-sign-circle.webp`(파란 원형 + 흰 자동차 픽토그램 + `자동차 전용도로`), `road-sign-square.png`(파란 사각 + `P` + `주차`), `road-sign-triangle.png`(노란 삼각 + 빨간 테두리 + 인부 픽토그램 + `공사`). 모두 1024×1024 투명 PNG, 기둥 포함, 기둥 높이·두께 통일.
 - CSS: `overflow:hidden`과 픽셀 오프셋 3줄을 제거하고 `.sign img{position:absolute;left:50%;top:0;height:100%;width:auto;transform:translateX(-50%)}`로 바꿨다. **`object-fit:fill` + `width:710px` 강제가 사라져 원본 비율이 눌리지 않는다.** `.sign-label`과 `.sign.circle .sign-label` 보정 규칙도 제거했다(문구가 이미지에 있음).
 - 문구는 planner 원문 그대로(`자동차 전용도로` / `주차` / `공사`) 이미지에 통합해 그렸다. `asset_generator_system.md`의 판단 기준("변하느냐 고정이냐")상 이 셋은 고정 문구라 굽는 것이 맞다.
 - 검증: 세 표지판 렌더 크기 413×413 동일, 비율 왜곡 없음, 문구 오탈자 없음(육안), 도로 배경 위 배치 확인.
-- **주의**: `road-sign-body.png`는 참조가 없어져 **2026-07-31 삭제했다**.
+- **주의**: `road-sign-body.webp`는 참조가 없어져 **2026-07-31 삭제했다**.
 
 
 ## 15. 말풍선 크기 자동 조정 + 01의 공통 UI(음소거·다음 버튼) 이식
@@ -240,14 +240,14 @@
 
 - 상태: 완료 (2026-07-31)
 - 사용자 결정: 표지판 도형(`road-sign-*.png`)은 **범위 제외**(14번의 "픽토그램·글자 모두 굽기" 결정을 유지).
-- 조치: `.paint-shape`에서 `shape-tile-body.png` 스프라이트 + `background-blend-mode:multiply` + `mask-image` 우회를 **전부 걷어냈다**. 8번이 넣은 마스크는 색이 도형 밖으로 새는 raster 전용 문제의 우회였으므로 raster가 사라지면서 함께 불필요해졌다.
+- 조치: `.paint-shape`에서 `shape-tile-body.webp` 스프라이트 + `background-blend-mode:multiply` + `mask-image` 우회를 **전부 걷어냈다**. 8번이 넣은 마스크는 색이 도형 밖으로 새는 raster 전용 문제의 우회였으므로 raster가 사라지면서 함께 불필요해졌다.
 - 새 구조: `::before`가 외곽선(`--shape-line`), `::after`가 채움(`--shape-fill`)이고 `::after`만 `inset:var(--shape-stroke)`만큼 안으로 들어간다. 원은 `border-radius:50%`, 사각은 `border-radius:9%`, **삼각은 `clip-path:polygon(50% 0%,100% 100%,0% 100%)`**.
 - **삼각형은 `border`가 `clip-path`에 잘려 선을 만들 수 없다.** 안쪽 폴리곤을 내심 기준으로 축소해 선 두께를 냈다 — 내접원 반지름 `r=30.9%`, 4% 안쪽 → 배율 `0.8706` → `polygon(50% 8.94%,93.53% 96%,6.47% 96%)`.
 - `--shape-stroke:4%`는 px가 아니라 **비율**이라 96px(`.random-progress`) / 112px(`.drawing-summary`) / 150px(`.work-area`) 어디서도 같은 굵기 비율로 보인다.
 - 선 색 토큰 신설: `--leaf-line:#3f8a26` / `--surface-line:#12508f` / `--danger-line:#a8342a` / `--purple-line:#5f428f` / `--accent-line:#c9971a`.
 - 요소 자신에는 배경이 없으므로 `filter`의 `drop-shadow`·glow가 **도형 실루엣을 그대로 따라간다**(과거에 요소에 마스크를 직접 걸어 그림자가 잘린 전례를 피했다). `.hint-step`의 `--filter-glow-lg`도 유지된다.
 - 검증: 영향 범위 전수 확인 — `#paintIntroVisual`(3색 3모양) · `#countShapes` · `#arithShapes` · `#randomShapes` · `#randomWorkProgress` · `.drawn-shape`(자유 그리기 4개 실제 클릭 배치) · `.drawing-summary`(확인 팝업). 전부 외곽선·채움·그림자 정상, 런타임 오류 0.
-- **주의**: `shape-tile-body.png`는 참조가 없어졌다(삭제 여부 미확정 — todo.md 확인 항목 참조).
+- **주의**: `shape-tile-body.webp`는 참조가 없어졌다(삭제 여부 미확정 — todo.md 확인 항목 참조).
 
 ## 23. `section_shape_find` 상시 배치 학생 — 등장 시점 · 발 위치 · 피드백 주체
 
@@ -262,7 +262,7 @@
   - 등장 시점: `resetShapeScene`에서 숨기고, `shapeDialogueTap`의 `opening` → 찾기 전환 지점에서 `showSceneStudent()`로 등장시킨다. 진입 모션은 `.classroom-student.student-enter`(기존 `characterEnter` 키프레임 재사용).
   - 발 위치: `.classroom-student`를 `bottom:-12px / 340x560` → `bottom:129px / 300x494`. `student-*.png`는 셋 다 1024x1536이고 알파 bbox 하단이 y≈1370이라 `object-fit:contain`에서 발끝이 요소 하단 71px 위 → 발끝 stage y≈880으로 벽·바닥 경계(818)와 책상 상판(900) 사이 마루면에 앉는다. 크기 축소는 그 깊이의 원근 보정이다(배경 화분 기준 1m≈310px).
   - 피드백 주체: `showWrongFeedback()`은 `sceneStudentVisible()`이면 `#feedbackCharacter` 오버레이를 띄우지 않고 서 있는 아이를 `student-thinking`으로 700ms 교체한다. 대칭으로 `showFeedback()`도 `student-volunteer`로 700ms 교체한다(칭찬 말풍선은 종전대로 선생님 `teacher-praising`). 무대에 학생이 없는 계산 단계·씬3·씬4는 기존 오버레이 경로를 그대로 탄다.
-  - `student-thinking.png`를 `<link rel="preload">`에 추가했다(첫 오답에서 src 교체 시 한 프레임 비는 것 방지).
+  - `student-thinking.webp`를 `<link rel="preload">`에 추가했다(첫 오답에서 src 교체 시 한 프레임 비는 것 방지).
 - 검증: Playwright 1920x1080 실주행. 대사 중 `hidden:true` → 찾기 진입 `hidden:false, bottom:951px`(= 1080-129) → 오답 직후 `student-thinking` → 700ms 후 `student-idle` 복귀 → paint-intro `hidden:true` → 세기 단계 오답은 오버레이 경로. 스크린샷으로 발이 마루면에 닿고 아이가 한 명만 보이는 것을 확인.
 - 주의: 이 학생의 좌표·크기를 다시 만지면 `findObjects`(특히 `square_lunchbox` x1480~, `circle_wall_clock` x880~1070)와 `.search-prompt`(y 90~190) 겹침을 다시 본다. 현재 학생 실루엣은 stage x 1165~1296 / y 509~880으로 어느 것과도 겹치지 않는다.
 - 미해결 아님(참고): 대사용 `#shapeCharacter`와 `#feedbackCharacter`는 여전히 `bottom:-12px`로 책상 앞에 선다. 이건 전 씬 공통의 "전경 화자" 규약이라 이번 범위에서 건드리지 않았다.
@@ -293,9 +293,9 @@
 - 상태: 완료 (2026-08-03)
 - 대상: `index.html` `.work-area`
 - 사용자 지적: "모양이 3줄이 되면 담장 바깥으로 모양이 삐져나온다."
-- 조치: `.work-area`의 `top:250px` → **`338px`** 한 줄. 담장 면(`school-wall-closeup.png` stage y 367~878) 중앙 622에 박스 중앙을 맞췄다. 도형 크기는 줄이지 않았다 — 3행 높이 486px < 면 높이 511px이라 좌표만 내리면 된다.
+- 조치: `.work-area`의 `top:250px` → **`338px`** 한 줄. 담장 면(`school-wall-closeup.webp` stage y 367~878) 중앙 622에 박스 중앙을 맞췄다. 도형 크기는 줄이지 않았다 — 3행 높이 486px < 면 높이 511px이라 좌표만 내리면 된다.
 - 검증: headless 실측 — 12개(3행)가 stage y **380~866**으로 면(367~878) 안. 캡처로 1행이 담장 캡 아래에 있는 것을 눈으로 확인.
-- 주의: 이 박스는 `#paintIntroVisual`·`#countShapes`·`#arithShapes`가 공유한다(전부 같은 `school-wall-closeup.png` 배경이라 함께 내려가는 게 맞다). `#randomShapes`는 배경 면이 달라 29번에서 좌표를 통째로 오버라이드했다.
+- 주의: 이 박스는 `#paintIntroVisual`·`#countShapes`·`#arithShapes`가 공유한다(전부 같은 `school-wall-closeup.webp` 배경이라 함께 내려가는 게 맞다). `#randomShapes`는 배경 면이 달라 29번에서 좌표를 통째로 오버라이드했다.
 
 ## 29. `section_random_problems` — 유형 4종 전부 출제 + 그림과 문제를 같이 보여주기
 
@@ -314,7 +314,7 @@
   - `finishRandomShapeIntro`는 이제 도형을 숨기지 않고 **남은 단계를 즉시 적용(`randomShapePending`)한 뒤 건너뛰기 레이어만 내린다.** `randomShapeDone` 변수는 `randomShapePending` 배열로 대체했다.
   - `#randomShapeSkip`을 전면(`inset:142px 0 0`) → 도형 박스와 같은 좌표로 좁혔다. 전면으로 두면 같이 떠 있는 키패드를 막는다.
   - 보기 선택 문제(type 0)만 도형을 숨긴다 — 식이 3개라 도형 하나로 무엇을 세는지 특정할 수 없다.
-- 조치(덤, 같은 요소라 함께 고침): `#randomPanel .random-prompt` 높이 165 → **220px**, 패딩 `33px 40px`. 문항 최장인 3줄(`덧셈과 뺄셈 / 10에서 빼어 보세요. / 10 - 6=(   )`)은 41px × 1.2 × 3 = 148px이 필요한데 165px로는 모자라 **3번째 줄이 `overflow:hidden`에 잘려 있었다**(이번 수정 전부터 그랬다). `wall-choice-plaque-body.png`(780×100) 실측 크림 면 y 0.15~0.85 비율로 패딩을 잡았다. `#randomInput .choice`도 780×120 → 700×115로 함께 줄였다.
+- 조치(덤, 같은 요소라 함께 고침): `#randomPanel .random-prompt` 높이 165 → **220px**, 패딩 `33px 40px`. 문항 최장인 3줄(`덧셈과 뺄셈 / 10에서 빼어 보세요. / 10 - 6=(   )`)은 41px × 1.2 × 3 = 148px이 필요한데 165px로는 모자라 **3번째 줄이 `overflow:hidden`에 잘려 있었다**(이번 수정 전부터 그랬다). `wall-choice-plaque-body.webp`(780×100) 실측 크림 면 y 0.15~0.85 비율로 패딩을 잡았다. `#randomInput .choice`도 780×120 → 700×115로 함께 줄였다.
 - 검증: headless 캡처 — 2문항째(`10 - 6=(   )`)에서 도형(왼쪽)과 식·키패드(오른쪽)가 한 화면에 함께 보이고, 프롬프트 3줄이 온전히 표시되며, 진행 표시 6칸 중 1칸이 채워지고 진행률 74%인 것을 확인. 런타임 오류 0.
 - 주의: 원문 387행의 "`B + C = 10`·`A + C = 10`도 가능하면"은 **감사 요청(필수 아님)** 이라 이번 범위에서 제외했다(2026-08-03 결정).
 - 주의: 씬4를 벗어난 뒤에도 연출 타이머는 남는다(재진입 시 `renderRandom`이 정리). 이전과 같은 동작이다.
@@ -330,7 +330,7 @@
   - **저장·복원을 함께 고쳤다.** `drawingState()`가 `{shape,color,left,top,size,tilt}`를 저장하고 `renderCompletedMural()`이 같은 규칙으로 복원한다. 생성·복원이 어긋나지 않게 `applyDrawnShapeStyle(el,item)` 한 함수로 모았다(값은 `dataset.size`/`dataset.tilt`에도 남긴다).
   - 크기는 **가로세로 같은 배율**로만 건다 — 22번의 `.paint-shape.triangle` 안쪽 폴리곤이 정삼각형 비율 전제라 늘리면 선 두께가 어긋난다.
 - 조치(30-b, 담장 밖 잘림):
-  - `#drawingCanvas` `top:275px;width:1370px` → **`top:320px;width:1320px`**(x 390~1710 / y 320~860). 담장 면(x 172~1776 / y 308~877) 안이다. `#completedMuralPreview`도 **같은 값**으로 맞췄다(씬7 `school-wall-completed.png`의 면은 실측 y 304~876으로 씬5와 사실상 같아 같은 박스를 쓸 수 있다).
+  - `#drawingCanvas` `top:275px;width:1370px` → **`top:320px;width:1320px`**(x 390~1710 / y 320~860). 담장 면(x 172~1776 / y 308~877) 안이다. `#completedMuralPreview`도 **같은 값**으로 맞췄다(씬7 `school-wall-completed.webp`의 면은 실측 y 304~876으로 씬5와 사실상 같아 같은 박스를 쓸 수 있다).
   - `drawingCanvas.onclick`에서 클릭 좌표를 도형 반폭만큼 clamp한다. 반폭은 `drawnHalfExtent()` — **회전을 반영해야 한다.** 한 변 s를 θ만큼 돌리면 축정렬 반폭이 `s/2`가 아니라 `(s/2)(|cosθ|+|sinθ|)`로 커진다(30°에서 1.37배). 원만 `s/2`. 처음에 `s/2`만 쓴 판을 캡처했더니 기울인 사각형·삼각형이 모서리에서 잘렸다.
 - 검증: headless 실주행 — 네 모서리 극단 좌표에 크기 220/80/150/180 · 기울기 0/30/−30/15로 찍어 전부 잘림 없이 담장 면 안에 들어오는 것을 캡처로 확인. 씬7까지 진행해 크기·기울기가 그대로 복원되는 것도 확인.
 - 주의: `#drawingCanvas`와 `#completedMuralPreview`는 여전히 **같은 값을 두 곳에 하드코딩**한다. 한쪽만 바꾸면 완성 그림이 다른 자리에 복원된다.
@@ -353,7 +353,7 @@
 - 사용자 지적: "`모양을 길에서 본 적 있나요?` 위에 동그라미 세모 네모가 필요하다. 그 다음 화면에 나오는 게 아니라."
 - 조치:
   - `#storyIntroBoard` 안을 `<div class="story-intro-shapes">`(●■▲) + `<span>`(문구) 두 줄로 바꾸고, `.story-intro-board`를 `place-items:center` → `grid-auto-flow:row;align-content:center;justify-items:center;gap:14px`로 바꿨다. 도형은 22번대로 raster가 아니라 `.paint-shape` CSS이며 색은 19번의 **초록=● / 파랑=■ / 빨강=▲** 매핑을 따랐다.
-  - **판 높이(220px)는 늘리지 않았다.** 이 판은 `story-roadside-info-board.png`를 원본 비율 그대로 쓰는 유일한 곳이라 늘리면 `.story-card`와 같은 늘어짐이 생긴다. 가용 높이 220 − 33 − 59 = 128px에서 문구 한 줄이 62.5px이므로 도형은 `height:50px` + gap 14 = 64px로 맞췄다.
+  - **판 높이(220px)는 늘리지 않았다.** 이 판은 `story-roadside-info-board.webp`를 원본 비율 그대로 쓰는 유일한 곳이라 늘리면 `.story-card`와 같은 늘어짐이 생긴다. 가용 높이 220 − 33 − 59 = 128px에서 문구 한 줄이 62.5px이므로 도형은 `height:50px` + gap 14 = 64px로 맞췄다.
   - `● ■ ▲`가 인트로로 옮겨졌으므로 `storyBeats[0]`(`{text:'● ■ ▲',sign:-1}`)을 **제거**했다. 길이 7 → 6이 되어 `setProgress(94+storyIndex)`는 94~99가 되고 마지막 beat 분기는 자동으로 따라온다. 정적 마크업 `#storyCard`의 초기 텍스트도 `무슨 표지판일까요?`로 맞췄다.
 - 검증: headless 캡처로 인트로 판 문구 위에 ●■▲ 세 개가 크림 면 안에 들어가는 것, 씬6 진행이 6 beat로 끝나 99% → 완료 화면 100%로 이어지는 것을 확인.
 
@@ -363,7 +363,7 @@
 - 대상: `index.html` `.story-card`
 - 사용자 지적: "표지판 설명이 그림 가운데 정렬이 아니라 아래로 치우쳐 잘리고 있고, 글자 크기도 더 키우면 좋겠다."
 - 조치(**카드 크기도 `.sign-row`도 건드리지 않았다** — 2026-08-03 사용자 지시 "카드를 키우는 게 아니라 글씨를 키우면 된다"):
-  - 패딩을 손으로 잡은 `282px 108px 118px` → **에셋 크림 면 비율로 계산한 `101px 64px 153px`**. `story-roadside-info-board.png`(1420×220) 실측 크림 면은 x 0.048~0.954 / y 0.168~0.745이고, 카드 1300×600 환산으로 가용 영역이 **1177 × 346px**(stage y 696~1042)이 된다.
+  - 패딩을 손으로 잡은 `282px 108px 118px` → **에셋 크림 면 비율로 계산한 `101px 64px 153px`**. `story-roadside-info-board.webp`(1420×220) 실측 크림 면은 x 0.048~0.954 / y 0.168~0.745이고, 카드 1300×600 환산으로 가용 영역이 **1177 × 346px**(stage y 696~1042)이 된다.
   - `display:grid;grid-auto-flow:row;align-content:center` 추가 — 짧은 beat도 크림 면 세로 가운데에 온다.
   - 글자를 사다리 한 단계 올렸다: `--fs-sm`(37px) → **`--fs-md`(41px)**. 개별 px를 쓰지 않았다(16번 규칙).
 - 검증: headless 실측 — 가장 긴 beat(▲ 표지판)의 글 영역이 **stage y 709~1036**으로 크림 면(696~1042)과 무대(1080) 안에 모두 들어간다. 캡처로 마지막 줄과 `다음 ▸` 버튼이 모두 보이는 것을 확인.
@@ -378,7 +378,7 @@
 - 조치(화자·방향 + **순서까지** — 2026-08-03 사용자 결정):
   - `shapeDialogues`의 앞 두 원소를 맞바꾸고 교사 대사의 에셋·방향을 바꿨다. 결과 순서는 원문 `…723 음성 스크립트.md` 씬2 그대로 — `1.주인공(좌) 벽화를 어떻게 그려야 되지? → 2.교사(우) 여러 가지 모양으로 그리면 좋겠어요. → 3.교사(우) → 4.주인공(좌)`. **문구는 하나도 바꾸지 않았다.**
   - 교사 alt는 같은 파일이 이미 쓰는 문구를 그대로 복사했다(`민트색 블라우스를 입고 밝게 미소 지으며 왼쪽 학습 대상을 열린 손으로 안내하는 여 교사`).
-  - 정적 마크업(`#shapeDialogue`)도 함께 `student-thinking.png` / 주인공 alt / `벽화를 어떻게 그려야 되지?`로 바꿨다. **한쪽만 고치면 첫 프레임에 이전 인물이 번쩍인다.**
+  - 정적 마크업(`#shapeDialogue`)도 함께 `student-thinking.webp` / 주인공 alt / `벽화를 어떻게 그려야 되지?`로 바꿨다. **한쪽만 고치면 첫 프레임에 이전 인물이 번쩍인다.**
 - 검증: headless 캡처로 씬2 진입 첫 화면이 주인공(왼쪽) + `벽화를 어떻게 그려야 되지?`인 것을 확인.
 - 주의: 오프닝 동안 `#shapeSceneStudent`는 `hideSceneStudent()`로 숨어 있어 beat 1·3의 `student-*` 화자와 인물이 중복되지 않는다(23번 전제 유지).
 
@@ -485,7 +485,7 @@
 - 사용자 지적: "`페인트 색깔마다 모양이 달라요` 할 때 색깔 모양이 있는 페인트 통을 모양 아래에 배치해 주기."
 - 조치: `#paintIntroVisual`의 도형 3개 가로 배치를 `.paint-pair`(도형 위 / 같은 색 통 아래) 세로 짝 **3벌**로 바꾸고, `startPaintIntro`에서 오른쪽 단일 `#paintCan`을 `remove('hidden')` → `add('hidden')`으로 뒤집었다. 색 매핑은 19번(초록 ● / 파랑 ■ / 빨강 ▲).
   - 좌표는 **`#paintIntroVisual`에만 오버라이드**했다(`left:360px;top:390px;height:440px;grid-template-columns:repeat(3,1fr)`). 공유 `.work-area{top:338px;height:570px}`는 `#countShapes`·`#arithShapes`가 함께 쓰므로 건드리지 않았다.
-  - 담장 면(`school-wall-closeup.png` stage y 367~878, 높이 511) 안에 도형 150 + gap 16 + 통 200 = 366이 들어간다(박스 y 390~830 → 내용 y 427~793). 단일 통이 사라진 만큼 가로를 오른쪽으로 옮겨 무대 가운데에 맞추되 `.character.right`(x 1428~)를 넘지 않게 했다.
+  - 담장 면(`school-wall-closeup.webp` stage y 367~878, 높이 511) 안에 도형 150 + gap 16 + 통 200 = 366이 들어간다(박스 y 390~830 → 내용 y 427~793). 단일 통이 사라진 만큼 가로를 오른쪽으로 옮겨 무대 가운데에 맞추되 `.character.right`(x 1428~)를 넘지 않게 했다.
 - 검증: headless 캡처 — 세 짝이 담장 면 안에 들어가고 교사·말풍선과 겹치지 않는 것을 확인.
 - 주의: 통 크기 200px은 담장 면 높이에서 역산한 값이다. 도형을 키우면 통을 줄여야 한다.
 
@@ -499,7 +499,7 @@
   - **(b) 중앙 면으로.** `#randomShapes{left:180 → 374, width:576 → 610, height:466 → 500, gap:14 → 12, padding:20 → 16}`, 도형 96 → 104px. 예전 x 180~756은 왼쪽 194px이 배경의 낮은 대비 추상 벽화(x 253~374) 위에 걸쳐 있었다. 이제 x 374~984 · y 390~890으로 깨끗한 중앙 면(x 374~1522 / y 380~946) 안이다. 최대 19개 → 5열 × 4행. `#randomShapeSkip`도 같은 박스로 맞췄다.
   - **(c) 패널·키패드 축소.** `#randomPanel{left:690 → 990, width:940 → 570, min-height:700 → 640}`, `.random-prompt{720 → 540, padding 40 → 30}`, `.choice{700×115 → 540×110}`, `#randomInput .keypad-wrap{width 510 → 440}`, `.key{78 → 68}`, `.answer-display{100 → 88}`, `.keypad{gap 17 → 14}`. 내용 x 990~1560이고 오른쪽 한계는 `.help-character` 알파 실측의 뻗은 손 x≈1569다.
   - `.random-progress`를 `left:360px` → `left:50%;transform:translateX(-50%)`로 바꿔 칸 수가 달라져도 가운데 정렬이 유지되게 했다(43번과 함께).
-- 검증(16번 재실측 포함): headless에서 5개 문항 문구를 `#randomPromptText`에 직접 넣어 측정 — 최장인 3줄 문항이 148px로 `wall-choice-plaque-body.png` 크림 면 154px 안에 들어간다(전부 `fits:true`). 4문항 연속 진행 캡처로 `1 + 9 + 5`가 초록 원 1 · 파랑 사각 9 · 빨강 삼각 5로 나뉘는 것을 확인.
+- 검증(16번 재실측 포함): headless에서 5개 문항 문구를 `#randomPromptText`에 직접 넣어 측정 — 최장인 3줄 문항이 148px로 `wall-choice-plaque-body.webp` 크림 면 154px 안에 들어간다(전부 `fits:true`). 4문항 연속 진행 캡처로 `1 + 9 + 5`가 초록 원 1 · 파랑 사각 9 · 빨강 삼각 5로 나뉘는 것을 확인.
 - 주의: 폭 540에서는 유형 A의 `10이 되는 덧셈식을 찾아 보세요.`가 2줄로 접혀 문항 전체가 3줄이 된다(예전 720에서는 2줄). 크림 면 안에는 들어가지만 **여유가 6px뿐**이므로 사다리를 또 올리거나 패딩을 키우면 넘친다.
 - 주의: 패널 폭을 다시 키우면 도형과 겹친다. 도형 박스를 키우면 패널이 밀려 위 3줄 판정이 깨진다.
 
@@ -604,7 +604,7 @@
 - 사용자 지적: "정답을 맞췄는데도 힌트가 나오느라 정답 처리가 안 되고 있어. **힌트는 오답일 때와 누를 때만** 나오는 거야."
 - 조치:
   - **표면을 갈랐다.** `#helpCard`(선생님 힌트 말풍선)는 이제 힌트 전용이고, 정답 결과(중간식)와 진행 버튼은 문제 패널 안에 새로 만든 **`#randomSolved`**가 맡는다. `showRandomSolution()`은 없앴고 `armRandomContinue()`가 `closeRandomHint()` → 결과 판 열기 → `focus()`까지 한다.
-  - 정답 뒤 입력기는 내린다 — `#randomPanel[data-solved="1"]`에서 `.keypad`(입력값 표시 `#randomDisplay`는 남긴다)와 `.choices`를 감춘다. **보기를 남겨 두면 결과 판이 네 번째 보기처럼 보인다**(같은 `wall-choice-plaque-body.png`를 쓰기 때문).
+  - 정답 뒤 입력기는 내린다 — `#randomPanel[data-solved="1"]`에서 `.keypad`(입력값 표시 `#randomDisplay`는 남긴다)와 `.choices`를 감춘다. **보기를 남겨 두면 결과 판이 네 번째 보기처럼 보인다**(같은 `wall-choice-plaque-body.webp`를 쓰기 때문).
   - 유형 A는 48번의 물음표 칸이 정답을 받아 닫힌다(`.paint-slot.filled`, `8 + ? = 10` → `8 + 2 = 10`).
 - 자리 선정(실측으로 걸렀다): `.bottom-cta`(y 870~1010)는 `#randomWorkProgress`(y 956~1052)와 겹치고, `#randomPrompt` 작업표는 41-c 기준 여유가 6px뿐이며, 공용 `#feedbackSpeech`(left 380/top 470)는 도형 박스를 덮고 `#feedbackCharacter`가 오른쪽 `.help-character`와 같은 선생님을 둘로 만든다. 남는 면은 패널 안 입력기 아래뿐이었다.
 - 검증: headless로 4문항을 실제 클릭으로 주파 — 모든 정답 시점에서 `#helpCard`가 닫혀 있고(`helpOpen:false`) `#randomSolved`가 열린다. 판 위치는 유형 A y 437~587 / 키패드 유형 y 545~745로 진행 표시 막대(956) 위에서 끝난다.
@@ -686,7 +686,7 @@
 - 대상: `index.html` `.title-image`(신규) / `#shapeTitleImage`·`#arithTitleSurface`·`#randomTitleImage`·`#drawingTitleImage`·`#storyTitleSurface` / 신규 에셋 5종 / `CLAUDE.md` 에셋 규칙
 - 사용자 지적: "각 섹션에 제목을 이미지로 붙여 주면 좋겠어. 상단에 두고, **글과 이미지를 하나로 굽는** 형식으로."
 - 조치:
-  - **에셋 5장을 이미지 생성으로 만들었다**(`codex exec`). 문구는 `모양 찾기와 세기` / `세 수의 덧셈과 뺄셈` / `무작위 계산 문제` / `모양으로 그리기` / `수리 이야기`. 화풍 기준은 사용자가 준 `assets/reference/title-image-exemplar.png`(`100까지의 수`)와 `1-2/01/lesson.json`의 `artDirection`이고, 2장째부터는 **먼저 만든 타이틀을 참조로 함께 넣어** 세트로 보이게 했다.
+  - **에셋 5장을 이미지 생성으로 만들었다**(`codex exec`). 문구는 `모양 찾기와 세기` / `세 수의 덧셈과 뺄셈` / `무작위 계산 문제` / `모양으로 그리기` / `수리 이야기`. 화풍 기준은 사용자가 준 `assets/reference/title-image-exemplar.webp`(`100까지의 수`)와 `1-2/01/lesson.json`의 `artDirection`이고, 2장째부터는 **먼저 만든 타이틀을 참조로 함께 넣어** 세트로 보이게 했다.
   - 생성 캔버스의 여백이 장마다 달라 **알파 bbox까지 잘라 설치**했다(`tmp/titlegen/install_titles.py`). 자르지 않으면 `height`만 줬을 때 씬마다 글자 높이가 어긋난다. 설치 후 크기는 1068×258 ~ 1810×304, 비율 4.14~5.95다(글자 높이는 같고 글자 수만큼 가로가 길어진다). 씬3만 캔버스가 1860×320이고 나머지는 1240×300이다.
   - 마크업은 `.title-banner`(빈 판 `<img>` + `<h2 class="hero-title">`) → **`<img class="title-image">` 한 장**으로 바꿨다. 씬3·6은 **기존 id(`arithTitleSurface`·`storyTitleSurface`)를 그대로 유지**해 JS 여닫이(`arithIntroTap`·`resetStory`·`openStorySigns`)를 건드리지 않았다.
   - 씬2·4·5에는 제목 표면이 아예 없어 새로 넣었다.
@@ -703,7 +703,7 @@
 - **씬2·4·5는 씬 내내 남고, 씬3·6은 도입에서만 보인다.** 후자는 기존 동작을 유지한 것이다 — 그 자리를 `.arith-context`(top 155)와 `.sign-row`(y 275~665)가 이어받기 때문에 남겨 두면 겹친다.
 - 검증: headless 캡처 5장 + rect 실측. 다섯 자리 모두 위 표대로이고 다른 요소와 겹치지 않는다. 다섯 장이 같은 글자 높이·같은 화풍으로 보인다.
 - 주의: **`세 수의 덧셈과 뺄셈`은 한 번 폐기하고 다시 만들었다.** 9자라 첫 시안이 글자를 캔버스 높이의 30%로 작게 그려 다른 넉 장과 크기가 어긋났다. 캔버스를 넓히고 "글자 높이 78% 이상 · 가로를 끝까지 쓴다 · 폐기 시안을 반례로 첨부"를 프롬프트에 넣어 해결했다. **글자 수가 많은 문구는 이 함정을 다시 만난다.** 또 하나 — codex는 실행 중 같은 경로에 **중간본을 먼저 쓰고 나중에 최종본으로 덮는다.** 파일이 생기자마자 설치했다가 2분 뒤 최종본(1860×320)이 따로 떨어져 다시 설치했다. **codex 프로세스가 끝난 뒤에 파일을 가져간다.**
-- 주의: 씬7(`3차시 수리 완료!`)은 사용자 목록에 없어 **기존 `.title-banner`(빈 판 + HTML 텍스트) 구조를 유지**한다. `school-title-banner-body.png`는 이 한 곳에서만 쓰인다.
+- 주의: 씬7(`3차시 수리 완료!`)은 사용자 목록에 없어 **기존 `.title-banner`(빈 판 + HTML 텍스트) 구조를 유지**한다. `school-title-banner-body.webp`는 이 한 곳에서만 쓰인다.
 - 주의: 문구를 고치려면 **에셋을 다시 생성해야 한다.** 이 대가를 감수하는 예외임을 `CLAUDE.md` 에셋 규칙에 조항으로 넣었다("제목·로고류는 예외 — 가르는 기준은 텍스트냐가 아니라 변하느냐 고정이냐").
 
 ## 55. `section_random_problems` 제목·문제·보기가 너무 위에 있다
@@ -711,7 +711,7 @@
 - 상태: 완료 (2026-08-03)
 - 대상: `index.html` `#randomTitleImage`(top 58 → **118**) / `#randomPanel`(top 205 → **278**) / `shapeStepsFor`의 `type 0` extras
 - 사용자 지적: "무작위 계산 문제에서는 title 이미지를 아래로 내리는데 **문제와 보기도 같이** 내려 줘. 너무 위에 있다."
-- 원인: 배경 `school-wall-problem-scene.png`의 담장 면은 y **380~946**인데 제목(58~198)도 문제 작업표(205~425)도 그 **위 하늘 구간**에 떠 있었다. 도형(390~890)만 담장 위에 있어 좌우가 서로 다른 높이에서 시작했다.
+- 원인: 배경 `school-wall-problem-scene.webp`의 담장 면은 y **380~946**인데 제목(58~198)도 문제 작업표(205~425)도 그 **위 하늘 구간**에 떠 있었다. 도형(390~890)만 담장 위에 있어 좌우가 서로 다른 높이에서 시작했다.
 - 조치: 제목 **+60**, 문제 판 **+73**. 제목 118~258 / 작업표 278~498 / 보기 510~864 / 키패드 518~932가 됐다.
   - **내릴 수 있는 한계는 키패드 유형이 정한다.** 입력기 바닥이 859였고 진행 막대(`#randomWorkProgress`)가 956에서 시작해 여유가 97px뿐이었다. 판을 담장 면 시작(390)까지 내리면 키패드가 1044까지 내려가 막대·무대 밖으로 나간다. 그래서 작업표가 하늘/담장 경계를 걸치는 자리가 최선이다(중심 388이 담장 윗선과 거의 같다).
   - 함께 고친 것(48번 후속): 5열 그리드라 `a`가 **4·9면 `+`가 줄 끝에 걸리고 `?` 칸만 다음 줄로 혼자 떨어져** 식이 끊겨 읽혔다. 그때만 빈 칸 하나를 앞세워 `+ ?`를 같은 줄로 민다.

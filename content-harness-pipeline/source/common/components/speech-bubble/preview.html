@@ -26,6 +26,9 @@
         style="--speech-side-x: 530px; --speech-face-y: 470px"
       >
         <span data-slot="text">말풍선 미리보기입니다.</span>
+        <span class="c-speechBubbleNav" data-slot="nav" hidden>
+          <button class="c-speechBubbleNext" type="button" data-action="next">다음 ▸</button>
+        </span>
       </div>
     </main>
   </div>
@@ -37,7 +40,7 @@
       Preview.mount({
         title: "speech-bubble",
         path: "source/common/components/speech-bubble",
-        note: "화자 옆에 붙는 대사 표면. 위치는 --speech-side-x / --speech-face-y로 잡는다."
+        note: "화자 옆에 붙는 대사 표면. 위치는 --speech-side-x / --speech-face-y로 잡는다. 대사 아래에 진행 버튼을 켤 수 있다."
       });
 
       const bubble = document.getElementById("bubble");
@@ -75,6 +78,20 @@
         Preview.log("data-state=hidden — display:none");
       });
       Preview.control("show", () => CommonSpeechBubble.show(bubble));
+
+      const NEXT_LABELS = [null, "다음 ▸", "닫기"];
+      let nextLabel = 0;
+      Preview.control("다음 버튼 전환", () => {
+        nextLabel = (nextLabel + 1) % NEXT_LABELS.length;
+        CommonSpeechBubble.setNext(bubble, NEXT_LABELS[nextLabel]);
+        Preview.log("next: " + (NEXT_LABELS[nextLabel] || "없음"));
+      });
+      Preview.control("대사만 교체", () => {
+        // setText는 nav를 건드리지 않는다 — 버튼이 켜져 있으면 그대로 남아야 한다
+        CommonSpeechBubble.setText(bubble, "대사만 바꿨습니다. 버튼 상태는 그대로입니다.");
+      });
+
+      bubble.addEventListener("common:speechnext", () => Preview.log("common:speechnext"));
 
       applySide();
       CommonSpeechBubble.show(bubble, SHORT);

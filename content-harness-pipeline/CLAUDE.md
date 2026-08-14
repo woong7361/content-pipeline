@@ -72,11 +72,29 @@ python -B ./runner.py ./input.json --overwrite
 python -B ./runner.py ./input.json --overwrite --claude-html-stages --claude-model sonnet
 ```
 
+계획이 굳기 전의 refine은 기본으로 돈다. 계획을 만든 그대로 굳히려면 끈다.
+
+```bash
+python -B ./runner.py ./input.json --no-planner-refine
+```
+
+이미 굳은 계획을 손대볼 때는 별도 스크립트를 쓴다. 대상 파일을 덮어쓰지 않고 `-o`로 정한 곳에 쓴다.
+`--check-only`는 LLM 없이 확정된 위반만 본다.
+
+```bash
+python -B ./refine_planner.py runs/{run_id}/{hash}_planner.json \
+    --input runs/{run_id}/{hash}_input.json -o runs/{run_id}/{hash}_planner_refined.json
+```
+
 중간 단계부터 이어서 돌릴 때는 `--run-id`로 기존 run을 지정하고 `--start-at`을 쓴다.
 
 ```bash
 python -B ./runner.py ./input.json --run-id 2026-07-31_dfbc1027 --start-at builder --overwrite
 ```
+
+`--start-at loop`는 builder를 다시 부르지 않고 현재 `output/index.html` 상태에서 품질 루프만 다시 돈다.
+루프 도중에 죽은 run을 재개할 때 쓴다. iteration 번호는 1부터 다시 세므로 기존 iter 산출물은
+`--overwrite`로 덮인다.
 
 단일 stage만 돌리는 플래그는 서로 함께 쓸 수 없다.
 
@@ -101,6 +119,15 @@ input validate
       ↓
 planner            → {brief_hash}_planner.json
       ↓
+planner_check      → 확정된 위반 목록 (LLM 0회)
+      ↓
+planner_refine     → 고친 계획 (LLM 1회). --no-planner-refine 으로 끈다
+      ↓
+회귀 검사          → 잃은 것이 있으면 기각하고 원본을 굳힌다 (LLM 0회)
+      ↓
+test spec 파생     → {brief_hash}_test_spec.json (LLM 0회)
+      ↓                파생 못 한 것이 있으면 여기서 멈춰 사람에게 묻는다.
+      ↓                asset을 굽기 전이라 결정할 수 있다. --accept-test-gaps 로 넘어간다.
 asset_generator    → {brief_hash}_asset_generator.json + output/assets/
       ↓
 builder            → {brief_hash}_builder.json + output/index.html
@@ -111,8 +138,11 @@ builder            → {brief_hash}_builder.json + output/index.html
 품질 루프 한 iteration은 다음을 돈다.
 
 ```text
+functional_test (playwright 실행, LLM 0회)   → 관찰 기록을 먼저 만든다
+      ↓ REJECT면 LLM 리뷰 3종을 건너뛰고 바로 content_refine으로 간다.
+      ↓ 기능이 깨진 HTML을 세 LLM이 읽어 봐야 같은 결함을 세 번 반복할 뿐이다.
 design_review (visual_qa 스크린샷 포함) ┐
-content_critique                       ├ 세 산출물을 만든다
+content_critique                       ├ functional PASS일 때만 세 산출물을 만든다
 content_eval                           ┘
       ↓
 asset 변경 요청 있음 → asset revision → design_refine
@@ -120,10 +150,21 @@ design_review REJECT → design_refine
 content_eval REJECT  → content_refine   (design_refine 뒤에 순차)
 ```
 
-### 두 축은 독립이다
+자유 흐름 시나리오(`author_scenarios.py`, LLM 1회)는 runner가 부르지 않는 선택 단계다.
+`runs/{run_id}/{brief_hash}_scenarios.json`이 있으면 test spec 파생이 합쳐 싣는다.
 
-design 축의 게이트는 `design_review`, content 축의 게이트는 `content_eval`이다.
-각 축은 **자기 게이트에만 반응한다.**
+### 축은 독립이다
+
+design 축의 게이트는 `design_review`, content 축의 게이트는 `content_eval`,
+기능 축의 게이트는 `functional_test`다. 각 축은 **자기 게이트에만 반응한다.**
+기능 실패의 수리는 content_refine이 담당한다 — 동작 결함은 content 축 소관이고,
+관찰 기록이 critique의 산문 지적보다 고칠 대상을 좁게 특정하기 때문이다.
+
+기능·충실도 판정은 `functional_test` **한 곳**이다(docs/pipeline-redesign.md 5.5).
+`content_eval`·`content_critique`는 폐지가 아니라 3축(목표 정합·피드백의 질·흐름 명확성)으로
+축소됐다 — 테스트는 planner의 학습적 품질을 검증하지 못하고(spec에서 파생되므로 나쁜 기획을
+충실히 구현할수록 전부 통과한다), critique를 없애면 refine이 방향을 얻을 곳이 eval밖에 남지 않아
+점수를 보게 된다. 같은 결함을 두 게이트가 이중 판정하게 되돌리지 않는다.
 
 과거에는 이 둘이 `if/elif/else` 한 줄로 묶여 있어 `content_refine`이 "design_review가 PASS일 때만"
 도달하는 3순위 분기였다. 그 결과 design이 REJECT인 동안 `content_refine`이 한 번도 실행되지 않고
@@ -138,8 +179,10 @@ design 축의 게이트는 `design_review`, content 축의 게이트는 `content
 
 ### PASS 조건
 
-`design_review`가 PASS이고, `content_eval`이 PASS이고, **asset 변경 요청이 없어야** 한다.
-셋 중 하나라도 아니면 다음 iteration으로 간다.
+`design_review`가 PASS이고, `content_eval`이 PASS이고, `functional_test`가 PASS이고,
+**asset 변경 요청이 없어야** 한다. 하나라도 아니면 다음 iteration으로 간다.
+test spec의 `unsupported`(케이스를 못 얻은 문항)는 게이트를 막지 않는다 — builder가 고칠 수
+없는 것을 게이트로 세우면 refine 루프가 영원히 돈다. 대신 리포트에 집계되어 남는다.
 `--content-max-iterations`를 소진하면 REJECT로 끝난다.
 
 asset 재생성·신규 요청은 `design_review`만 낸다.
@@ -153,13 +196,19 @@ asset 재생성·신규 요청은 `design_review`만 낸다.
 runs/2026-07-31_dfbc1027/
   dfbc1027_input.json
   dfbc1027_planner.json
+  dfbc1027_planner_pre_refine.json       # (조건부) refine을 채택했을 때의 고치기 전 계획
+  dfbc1027_planner_refine_rejected.json  # (조건부) 회귀 검사에 걸려 안 굳은 계획. 원인 분석용
+  dfbc1027_test_spec.json     # planner에서 파생, 코드 소유라 재파생 시 덮어쓴다
+  dfbc1027_scenarios.json     # (선택) author_scenarios.py 산출물. 있으면 spec에 합쳐진다
   dfbc1027_asset_generator.json
   dfbc1027_builder.json
 
   iter_001/
+    dfbc1027_iter-001_test_report.json
     dfbc1027_iter-001_design_review.json
     dfbc1027_iter-001_content_critique.json
     dfbc1027_iter-001_content_eval.json
+    functional_test/          # 실패 케이스 스크린샷
     design_review/            # visual_qa 스크린샷
     design_refine_preview/
     content_refine_preview/
@@ -179,6 +228,22 @@ runs/2026-07-31_dfbc1027/
 - 출력: `{brief_hash}_planner.json`
 - 책임: 화면 구성, scene/interaction 설계, 캐릭터 엔티티, asset_plan을 만든다.
 - 금지: HTML 작성, 자기 평가, 최종 판정.
+
+### Planner Refine
+
+- 입력: input, 스토리보드 md 원문, planner, `planner_check`가 확정한 위반 목록
+- 출력: 갱신된 `{brief_hash}_planner.json` (채택 시 원본은 `{brief_hash}_planner_pre_refine.json`으로 남는다)
+- 책임: 확정된 위반과 **스토리보드가 요구했는데 계획에 안 내려온 것**을 고친다.
+- 금지: 새로 기획하기, 판정·점수 만들기, 스토리보드에 없는 것 지어내기, 화면·문항·문구 줄이기.
+- **critique와 eval 역할은 코드가 맡는다.** 앞은 `stages/scripts/planner_check.py`가 참조 무결성과
+  시점 정합을 확정하고, 뒤는 같은 모듈의 회귀 검사가 채택 여부를 정한다. 모델은 계획만 내고 자기
+  결과를 판정하지 않는다 — 다른 stage와 같은 경계다.
+- **줄어든 것은 고친 것이 아니라 잃은 것으로 본다.** 계획을 통째로 다시 쓰는 stage라 고치는 김에
+  지울 수 있고, 이 파이프라인은 HTML 층에서 같은 일을 이미 겪었다(`design_refine`이 앞선 수정을
+  지워 순서를 고정해야 했다). 화면·요소·문항·asset·캐릭터 수와 학습자가 읽는 문구가 줄면 기각하고
+  원본을 굳힌다. 위반이 남아 있는 것은 막지 않는다 — 못 고친 것까지 되돌리면 같은 호출을 반복한다.
+- refine 실패는 run을 죽이지 않는다. 원본은 이미 schema를 통과했고, 여기서 멈추면 방금 만든 계획까지
+  잃는다. 대신 왜 못 고쳤는지 남긴다.
 
 ### Asset Generator
 
@@ -206,17 +271,21 @@ runs/2026-07-31_dfbc1027/
 
 - 입력: input, planner, asset_generator, builder, HTML
 - 출력: `{brief_hash}_iter-{iteration}_content_critique.json`
-- 책임: 학습 흐름과 콘텐츠가 약한 지점, 다음 수정 방향을 제시한다.
-- 금지: 점수표 생성, HTML 재작성, 최종 판정, asset 요청.
+- 책임: 학습 품질 3축(목표 정합·피드백의 질·흐름 명확성)에서 약한 지점과 다음 수정 방향을 제시한다.
+- 금지: 점수표 생성, HTML 재작성, 최종 판정, asset 요청, **기능·충실도 지적**(functional_test의
+  관찰 기록과 중복되어 refine이 같은 결함을 두 경로로 받는다).
+- functional_test가 REJECT인 iteration에는 실행되지 않는다.
 
 ### Content Eval
 
 - 입력: planner, asset_generator, builder, HTML, `content_rubric.yaml`
 - 출력: `{brief_hash}_iter-{iteration}_content_eval.json`
-- 책임: 루브릭 기반 점수와 축별 근거를 낸다.
-- 금지: critique를 읽고 채점하기, HTML 재작성.
+- 책임: 루브릭 기반 점수와 축별 근거를 낸다. 축은 3개 — 학습 목표 정합, 피드백의 질, 흐름 명확성.
+  실행으로 나오지 않는 판단만 남긴 것이며, 문항·문구의 존재와 동작은 functional_test 소관이다.
+- 금지: critique를 읽고 채점하기, HTML 재작성, 기능·충실도를 점수에 반영하기.
 - **input을 받지 않는다.** `input.json`에는 스토리보드 본문이 없고 `md_path` 경로 문자열만 있다.
   평가에 필요한 스펙은 planner 출력에서 온다.
+- functional_test가 REJECT인 iteration에는 실행되지 않는다.
 
 ### Design Refine
 
@@ -227,10 +296,37 @@ runs/2026-07-31_dfbc1027/
 
 ### Content Refine
 
-- 입력: input, planner, asset_generator, builder, HTML, content_critique
+- 입력: input, planner, asset_generator, builder, HTML, content_critique(있을 때), test_report
 - 출력: 갱신된 `output/index.html`
-- 책임: content critique를 HTML에 반영한다.
-- 금지: CSS·레이아웃 통짜 재작성, eval 총점 원문 참조.
+- 책임: 기능 테스트 관찰 기록(사실)을 먼저, content critique(방향)를 다음으로 HTML에 반영한다.
+- functional_test가 REJECT인 iteration에는 critique 없이 관찰 기록만 받아 돈다.
+- 금지: CSS·레이아웃 통짜 재작성, eval 총점 원문 참조, HTML 결함이 아닌 실패(runtime/spec 문제) 수리 시도.
+
+### Test Spec Derive
+
+- 입력: planner, (있으면) scenarios
+- 출력: `{brief_hash}_test_spec.json`
+- 책임: planner의 문항·화면·노출 시점에서 실행 가능한 테스트 케이스를 기계적으로 파생한다. LLM 0회.
+- 파생 못 한 것은 `underivable`로 모아 run을 멈추고 사람에게 묻는다. `--accept-test-gaps`로만 넘어간다.
+- 금지: 모델 호출, 난수, planner에 없는 규칙 지어내기.
+
+### Scenario Author
+
+- 입력: planner의 흐름 뷰(화풍·asset 계획은 뺀다)
+- 출력: `{brief_hash}_scenarios.json`
+- 책임: 파생 규칙이 못 만드는 여러 화면·여러 조작에 걸친 자유 흐름 시나리오를 쓴다. 테스트에 LLM이 관여하는 유일한 자리다.
+- 조합은 열고 어휘는 닫는다 — 실행기 어휘 밖 이름과 값은 생성 직후 기계적으로 걸러지거나 교정된다.
+- runner가 부르지 않는 수동 단계다(`author_scenarios.py`). 같은 planner면 다시 쓰지 않는다.
+- 금지: HTML 읽기, 새 조작·단언 이름 만들기.
+
+### Functional Test
+
+- 입력: `{brief_hash}_test_spec.json`, `output/index.html`
+- 출력: `{brief_hash}_iter-{iteration}_test_report.json` + 실패 스크린샷
+- 책임: spec을 playwright로 실행해 **있는가·도달하는가·동작하는가**를 판정한다. LLM 0회.
+- 읽히는가(대비·가려짐)는 픽셀을 봐야 하므로 design_review의 축이다. 두 축을 합치지 않는다.
+- hook이 없어 확인 못 한 것(`hook_missing`)과 동작이 틀린 것(`expect_failed`)을 섞지 않는다.
+- 금지: planner 읽기(spec은 자족적이다), 시나리오 케이스에 JS 주입.
 
 ### Visual QA
 
@@ -254,13 +350,17 @@ runs/2026-07-31_dfbc1027/
 | 단계 | 봐도 되는 것 | 보면 안 되는 것 |
 | --- | --- | --- |
 | Planner | input, 스토리보드 md 원문 | 이후 모든 산출물 |
+| Planner Refine | input, 스토리보드 md 원문, planner, 위반 목록 | 이후 모든 산출물 |
 | Asset Generator | input, planner | builder, review, eval |
 | Builder | input, planner, asset_generator | review, critique, eval |
 | Design Review | input, planner, asset, builder, HTML, 스크린샷 | content_critique, content_eval |
 | Content Critique | input, planner, asset, builder, HTML | content_eval, design_review |
 | Content Eval | planner, asset, builder, HTML, content_rubric | **input**, content_critique, design_review |
 | Design Refine | input, planner, asset, builder, HTML, design_review | content_eval 총점 |
-| Content Refine | input, planner, asset, builder, HTML, content_critique | **content_eval 총점** |
+| Content Refine | input, planner, asset, builder, HTML, content_critique, test_report | **content_eval 총점** |
+| Test Spec Derive | planner, scenarios | HTML, 모든 review·eval 산출물 |
+| Scenario Author | planner 흐름 뷰 | **HTML**, asset·화풍 계획, 모든 review·eval 산출물 |
+| Functional Test | test_spec, HTML | **planner**, critique, eval, design_review |
 | Validate | 검사 대상 JSON, schema | LLM 대화 히스토리 |
 
 핵심은 두 가지다.
@@ -283,6 +383,10 @@ Codex structured output schema 제약은 최상단 `CLAUDE.md`의 "문제사항�
 
 - 성공한 validate 결과는 기본적으로 별도 파일로 남기지 않는다.
 - 실패한 validate 결과만 원인 분석을 위해 `*.validation.json`으로 저장한다.
+- 저장된 산출물의 재검증(`--start-at` 재개 경로)은 `validate.py`의 revalidation 모드로 돈다.
+  생성 게이트는 지금 계약을 그대로 강제하고, 재검증은 **파이프라인이 아직 처리할 수 있는가**만 본다.
+  계약을 조일 때마다 기존 run의 재개 경로가 전부 죽으면 계약을 조일 수 없기 때문이다.
+  구 산출물의 처리 불가능한 값은 조용히 통과되지 않고 하류(test spec 파생)가 사람 판단으로 올린다.
 - `REJECT`는 파일은 생성됐지만 schema, 계약, 품질 하한, 필수 조건을 통과하지 못한 상태다.
 - `ERROR`는 stage 실행, 파일 읽기/쓰기, JSON 파싱, schema/rubric 로딩 등 파이프라인 자체가 진행하지 못한 상태다.
 - validate 호출은 검사 대상 파일을 직접 수정하지 않는다.

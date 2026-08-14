@@ -323,7 +323,7 @@
       <img class="bg" src="assets/bg_library_lobby_broken.png" alt="책이 흩어지고 전광판 불빛이 흔들리는 밝은 동화책풍 마을 도서관 로비 배경">
       <div class="veil"></div>
       <div class="clock spin seq" id="crisis-clock" style="position:absolute;left:508px;top:70px;width:250px;height:250px;z-index:4;">
-        <img src="assets/clock_body_large.png" alt="바늘 없이 숫자만 있는 도서관 대형 벽시계 몸체">
+        <img src="assets/clock_body_large.webp" alt="바늘 없이 숫자만 있는 도서관 대형 벽시계 몸체">
         <div class="hand hour"></div><div class="hand minute"></div><div class="pivot"></div>
       </div>
       <div class="signboard seq" id="crisis-sign-wrap" style="top:24px;width:380px;left:auto;right:44px;transform:none;animation-delay:.1s;">
@@ -347,13 +347,13 @@
       <div class="veil soft"></div>
       <div class="seq" style="position:absolute;left:50%;top:40px;transform:translateX(-50%);display:flex;align-items:center;gap:26px;z-index:6;">
         <div class="clock" id="tut-clock" style="width:180px;height:180px;">
-          <img src="assets/clock_body_small.png" alt="바늘 없는 작은 아날로그 시계 몸체">
+          <img src="assets/clock_body_small.webp" alt="바늘 없는 작은 아날로그 시계 몸체">
           <div class="hand hour"></div><div class="hand minute"></div><div class="pivot"></div>
         </div>
         <div class="field" id="tut-slot" style="min-width:100px;height:76px;font-size:32px;">?</div>
       </div>
       <img class="char bob" src="assets/librarian_explaining.png" alt="둥근 안경과 초록 카디건을 입은 사서 선생님이 돋보기를 들고 친절하게 설명하며 가리키는 동화책풍 캐릭터" style="left:30px;bottom:180px;height:270px;">
-      <img class="char enter-right bob" id="tut-kid" src="assets/child_librarian_confident.png" alt="노란 조끼와 책 배지를 단 꼬마 사서가 한 손을 들고 자신 있게 인사하는 포즈" style="right:30px;bottom:180px;height:270px;">
+      <img class="char enter-right bob" id="tut-kid" src="assets/child_librarian_confident.webp" alt="노란 조끼와 책 배지를 단 꼬마 사서가 한 손을 들고 자신 있게 인사하는 포즈" style="right:30px;bottom:180px;height:270px;">
       <div class="dialogue plaque seq" style="animation-delay:.2s;">
         <img class="dsurf" src="assets/dialogue_plaque_set.png" alt="">
         <span class="who teacher">사서 선생님</span>
@@ -368,7 +368,7 @@
       <div class="veil soft"></div>
       <div class="seq" style="position:absolute;left:50%;top:44px;transform:translateX(-50%);display:flex;align-items:center;gap:26px;z-index:6;">
         <div class="clock glow" id="tut-clock2" style="width:180px;height:180px;">
-          <img src="assets/clock_body_small.png" alt="바늘 없는 작은 아날로그 시계 몸체">
+          <img src="assets/clock_body_small.webp" alt="바늘 없는 작은 아날로그 시계 몸체">
           <div class="hand hour"></div><div class="hand minute"></div><div class="pivot"></div>
         </div>
         <div class="field filled glow" style="min-width:100px;height:76px;font-size:30px;">3시</div>
@@ -440,7 +440,7 @@
       <img class="bg" id="repair-bg-restored" src="assets/bg_library_lobby_restored.png" alt="책장이 정돈되고 따뜻한 빛이 드는 복구된 마을 도서관 로비 배경" style="opacity:0;transition:opacity 1.6s ease;">
       <div class="veil soft"></div>
       <div class="clock" id="repair-clock" style="position:absolute;left:512px;top:64px;width:250px;height:250px;z-index:4;">
-        <img src="assets/clock_body_large.png" alt="도서관 대형 벽시계 몸체">
+        <img src="assets/clock_body_large.webp" alt="도서관 대형 벽시계 몸체">
         <div class="hand hour"></div><div class="hand minute"></div><div class="pivot"></div>
       </div>
       <div class="signboard" style="top:24px;width:360px;left:auto;right:52px;transform:none;">
@@ -477,7 +477,7 @@
     <section class="scene" id="sc-final" data-qa-scene="final-quiz" data-qa-order="11" data-qa-label="마무리 퀴즈">
       <img class="bg" src="assets/bg_library_lobby_restored.png" alt="복구된 마을 도서관 로비 배경">
       <div class="veil soft"></div>
-      <img class="char bob" id="final-kid" src="assets/child_librarian_confident.png" alt="꼬마 사서가 한 손을 들고 자신 있게 인사하는 포즈" style="left:56px;bottom:36px;height:300px;z-index:12;">
+      <img class="char bob" id="final-kid" src="assets/child_librarian_confident.webp" alt="꼬마 사서가 한 손을 들고 자신 있게 인사하는 포즈" style="left:56px;bottom:36px;height:300px;z-index:12;">
       <div class="popcard" id="final-pop">
         <span class="who">꼬마 사서</span>
         <div class="fp-board">
@@ -638,7 +638,7 @@
   }
   function makeClock(h,m,size){
     var c=document.createElement('div'); c.className='clock'; c.style.width=size+'px'; c.style.height=size+'px';
-    var img=document.createElement('img'); img.src='assets/clock_body_small.png'; img.alt='아날로그 시계 몸체';
+    var img=document.createElement('img'); img.src='assets/clock_body_small.webp'; img.alt='아날로그 시계 몸체';
     var hh=document.createElement('div'); hh.className='hand hour';
     var mm=document.createElement('div'); mm.className='hand minute';
     var pv=document.createElement('div'); pv.className='pivot';
@@ -1056,7 +1056,7 @@
   /* ================= FINAL QUIZ (sec11) ================= */
   enterHooks['final-quiz']=function(){
     var pop=document.getElementById('final-pop'); pop.classList.remove('show');
-    document.getElementById('final-kid').src='assets/child_librarian_confident.png';
+    document.getElementById('final-kid').src='assets/child_librarian_confident.webp';
     document.getElementById('final-q').textContent='그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?';
     var opts=document.getElementById('final-opts'); opts.innerHTML='';
     var data=[{t:'1일',ok:true},{t:'1시간'},{t:'24일'}];

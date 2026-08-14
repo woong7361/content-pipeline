@@ -3,7 +3,7 @@
 ## Accepted
 
 - `child_librarian_idle.png`: locked identity, neutral full-body pose, clear margins, transparent background.
-- `child_librarian_volunteer.png`: same identity and outfit, exactly one raised hand, full-body framing, transparent background.
+- `child_librarian_volunteer.webp`: same identity and outfit, exactly one raised hand, full-body framing, transparent background.
 - `child_librarian_success.png`: same identity and outfit, both arms raised and both feet airborne, full-body framing, transparent background.
 
 ## Needs Regeneration

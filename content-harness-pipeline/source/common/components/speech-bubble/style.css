@@ -21,6 +21,18 @@
   animation: speechPop var(--dur) var(--ease-speech-pop) both;
 }
 
+/* 줄바꿈(\n) 보존은 대사 슬롯의 일이다.
+   슬롯 바깥까지 pre-line이면 마크업 들여쓰기의 개행이 그대로 빈 줄이 되어,
+   대사 뒤에 형제 요소(진행 버튼)를 두는 순간 말풍선 아래에 죽은 한 줄이 생긴다.
+   슬롯 없이 말풍선에 직접 글을 넣는 사용처는 위의 pre-line을 그대로 받는다. */
+.c-speechBubble:has([data-slot="text"]) {
+  white-space: normal;
+}
+
+.c-speechBubble [data-slot="text"] {
+  white-space: pre-line;
+}
+
 .c-speechBubble[data-state="hidden"] {
   display: none;
 }
@@ -102,4 +114,60 @@
   0% { opacity: 0; transform: scale(.5); }
   70% { transform: scale(1.08); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+/* 대사 아래에 붙는 진행 버튼.
+   말풍선 폭·패딩은 손대지 않는다 — 본문의 자동 크기 조정을 그대로 쓰고 아래로만 자란다.
+   white-space를 되돌리는 이유: 말풍선이 pre-line이라 flex 안의 공백 텍스트 노드가
+   항목으로 남아 버튼 앞에 빈 칸이 생길 수 있다(template의 들여쓰기가 그대로 렌더된다). */
+.c-speechBubbleNav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 13px;
+  width: 100%;
+  margin-top: 11px;
+  white-space: normal;
+  pointer-events: auto;
+}
+
+/* 네이티브 hidden은 UA 스타일이라 위 display:flex에 진다. 명시적으로 되돌린다. */
+.c-speechBubbleNav[hidden] {
+  display: none;
+}
+
+.c-speechBubbleNext {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 22px;
+  border: 3px solid var(--bubble-line);
+  border-radius: var(--r-pill);
+  background: linear-gradient(var(--accent-bright), var(--accent));
+  box-shadow: 0 3px 0 rgba(122,82,34,.42), inset 0 2px 0 rgba(255,255,255,.6);
+  color: var(--bubble-ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-2xs);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.02em;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  cursor: pointer;
+  /* 다음이 있다는 신호라 가만히 있어도 눈에 들어와야 한다 */
+  animation: speechNextPulse 1.8s ease-in-out infinite;
+  transition: filter var(--dur-fast), transform .08s;
+}
+
+.c-speechBubbleNext:hover {
+  filter: var(--filter-hover);
+  transform: translateY(-2px);
+}
+
+.c-speechBubbleNext:active {
+  transform: translateY(2px);
+}
+
+@keyframes speechNextPulse {
+  0%, 100% { box-shadow: 0 3px 0 rgba(122,82,34,.42), inset 0 2px 0 rgba(255,255,255,.6), 0 0 0 0 rgba(240,180,41,.55); }
+  50% { box-shadow: 0 3px 0 rgba(122,82,34,.42), inset 0 2px 0 rgba(255,255,255,.6), 0 0 0 18px rgba(240,180,41,0); }
 }

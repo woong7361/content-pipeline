@@ -22,9 +22,21 @@ from stages.content_evaluator import evaluate_content
 from stages.content_refiner import refine_content
 from stages.design_review import review_design
 from stages.design_refiner import refine_design
+from stages.functional_test import run_functional_test
 from stages.planner import plan
+from stages.planner_refine import format_review, refine_plan, review_refined
+from stages.scenario_author import to_cases
 from stages.scripts.component_bundle import check_html_links, emit_common
+from stages.scripts.planner_check import check_planner, format_violations
+from stages.scripts.test_spec_derive import derive_test_spec, format_decision_report
 from validate import validate_file, validate_schema, write_result
+
+# Windows 콘솔 기본 인코딩(cp949)은 이 파이프라인이 쓰는 문장 부호를 못 실어 print에서
+# 죽는다(실측: 결정 리포트의 U+2014). 출력은 항상 UTF-8로 고정하고, 못 싣는 글자는
+# 크래시 대신 치환한다 -- 멈춰서 물어야 할 순간에 보고 자체가 죽으면 안 된다.
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -87,6 +99,7 @@ def default_codex_bin() -> str:
 DEFAULT_CODEX_BIN = default_codex_bin()
 
 AGENT_PLANNER = "planner"
+AGENT_PLANNER_REFINE = "planner_refine"
 AGENT_ASSET_GENERATOR = "asset_generator"
 AGENT_BUILDER = "builder"
 AGENT_DESIGN_REVIEW = "design_review"
@@ -97,6 +110,7 @@ AGENT_CONTENT_REFINE = "content_refine"
 
 AGENT_MODELS = {
     AGENT_PLANNER: MODEL_GPT_5_6_SOL,
+    AGENT_PLANNER_REFINE: MODEL_GPT_5_6_SOL,
     AGENT_ASSET_GENERATOR: MODEL_GPT_5_6_SOL,
     AGENT_BUILDER: MODEL_GPT_5_6_SOL,
     AGENT_DESIGN_REVIEW: MODEL_GPT_5_6_SOL,
@@ -288,6 +302,16 @@ class RunContext:
         return self.run_dir / f"{self.brief_hash}_planner.validation.json"
 
     @property
+    def planner_pre_refine_path(self) -> Path:
+        """refine을 채택했을 때만 남는 고치기 전 계획. 어느 쪽이 굳었는지 대조할 수 있어야 한다."""
+        return self.run_dir / f"{self.brief_hash}_planner_pre_refine.json"
+
+    @property
+    def planner_refine_rejected_path(self) -> Path:
+        """회귀 검사에 걸린 계획. 굳지는 않지만 왜 기각됐는지 보려면 그 산출물이 있어야 한다."""
+        return self.run_dir / f"{self.brief_hash}_planner_refine_rejected.json"
+
+    @property
     def asset_generator_path(self) -> Path:
         return self.run_dir / f"{self.brief_hash}_asset_generator.json"
 
@@ -334,6 +358,22 @@ class RunContext:
     @property
     def content_eval_validation_path(self) -> Path:
         return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_eval.validation.json"
+
+    @property
+    def test_spec_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_test_spec.json"
+
+    @property
+    def scenarios_path(self) -> Path:
+        return self.run_dir / f"{self.brief_hash}_scenarios.json"
+
+    @property
+    def test_report_path(self) -> Path:
+        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_test_report.json"
+
+    @property
+    def functional_screenshots_dir(self) -> Path:
+        return self.iter_dir / "functional_test"
 
     @property
     def output_dir(self) -> Path:
@@ -473,6 +513,68 @@ def next_iteration(iteration: str) -> str:
     return f"{int(iteration) + 1:03d}"
 
 
+def run_planner_refine_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+    config: dict,
+    input_path: Path,
+    planner_output: dict,
+    temp_dir: Path,
+) -> tuple[dict, dict]:
+    """계획이 굳기 전에 한 번 고친다. asset을 굽기 전이라 아직 되돌릴 수 있는 자리다.
+
+    채택 판정은 코드가 한다(`review_refined`). 모델은 고친 계획만 내고 자기 결과를 판정하지
+    않는다 — 다른 stage에서 지키는 경계와 같다.
+
+    refine이 실패해도 계획은 굳힌다. 원본은 이미 schema를 통과했고, 여기서 run을 죽이면 방금
+    만든 계획까지 함께 잃는다. 대신 조용히 넘어가지 않고 무엇 때문에 못 고쳤는지 남긴다.
+    """
+    if not args.planner_refine:
+        return planner_output, {"accepted": False, "skipped": True}
+
+    violations = check_planner(planner_output)
+    progress.line(f"planner_check {format_violations(violations).splitlines()[0]}")
+    for item in violations:
+        progress.line(f"  · [{item['kind']}] {item['where']} — {item['detail']}")
+
+    temp_refined_path = temp_dir / "planner-refined.json"
+    try:
+        with progress.step(
+            f"planner_refine model={display_model(config['agent_models'][AGENT_PLANNER_REFINE])}",
+            live=True,
+        ):
+            refine_plan(
+                input_path=input_path,
+                planner_output=planner_output,
+                violations=violations,
+                output_path=temp_refined_path,
+                codex_bin=args.codex_bin,
+                model=config["agent_models"][AGENT_PLANNER_REFINE],
+                timeout_seconds=args.timeout_seconds,
+            )
+        refined_result = validate_file(temp_refined_path, artifact="planner_output")
+        progress.validation("planner_refine_output_validate", refined_result)
+        if refined_result["status"] != "PASS":
+            write_result(refined_result, context.planner_validation_path)
+            shutil.copyfile(temp_refined_path, context.planner_refine_rejected_path)
+            progress.line("planner_refine 기각 — 고친 계획이 schema를 통과하지 못했다. 원본을 유지한다")
+            return planner_output, {"accepted": False}
+
+        refined_output = load_json(temp_refined_path)
+        review = review_refined(planner_output, refined_output)
+    except Exception as exc:
+        progress.line(f"planner_refine 건너뜀 — {type(exc).__name__}: {exc}. 원본을 유지한다")
+        return planner_output, {"accepted": False}
+
+    progress.line(f"planner_refine {format_review(review)}")
+    if not review["accepted"]:
+        write_json(context.planner_refine_rejected_path, refined_output, overwrite=True)
+        return planner_output, review
+    return refined_output, review
+
+
 def run_planner_only(args: argparse.Namespace) -> dict:
     progress = ProgressReporter()
     started_at = time.perf_counter()
@@ -524,7 +626,22 @@ def run_planner_only(args: argparse.Namespace) -> dict:
             ensure_pass(planner_result, context.planner_validation_path)
             planner_output = load_json(temp_planner_output_path)
 
+            stage = "planner_refine"
+            refined_output, review = run_planner_refine_stage(
+                args=args,
+                progress=progress,
+                context=context,
+                config=config,
+                input_path=input_path,
+                planner_output=planner_output,
+                temp_dir=Path(temp_dir),
+            )
+
         stage = "planner_write"
+        if review.get("accepted"):
+            # 고치기 전 계획을 먼저 남긴다. 굳는 파일은 하나지만 어느 쪽이 굳었는지는 남아야 한다.
+            write_json(context.planner_pre_refine_path, planner_output, overwrite=args.overwrite)
+            planner_output = refined_output
         write_json(context.planner_path, planner_output, overwrite=args.overwrite)
         progress.line(f"planner-only PASS total_elapsed={format_duration(time.perf_counter() - started_at)}")
         return {
@@ -836,7 +953,7 @@ def run_asset_generator_only(args: argparse.Namespace) -> dict:
             raise FileNotFoundError(f"planner output not found: {context.planner_path}")
 
         stage = "planner_output_validate"
-        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        planner_result = validate_file(context.planner_path, artifact="planner_output", revalidation=True)
         progress.validation("planner_output_validate", planner_result)
         ensure_pass(planner_result, context.planner_validation_path)
         planner_output = load_json(context.planner_path)
@@ -1097,7 +1214,7 @@ def run_builder_only(args: argparse.Namespace) -> dict:
             raise FileNotFoundError(f"planner output not found: {context.planner_path}")
 
         stage = "planner_output_validate"
-        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        planner_result = validate_file(context.planner_path, artifact="planner_output", revalidation=True)
         progress.validation("planner_output_validate", planner_result)
         ensure_pass(planner_result, context.planner_validation_path)
         planner_output = load_json(context.planner_path)
@@ -1809,12 +1926,77 @@ def run_content_review_set(
     return design_review_result, critique_result, eval_result
 
 
+def run_test_spec_derive_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+) -> dict:
+    """planner 직후에 test spec을 파생한다. asset을 굽기 전에 사람이 결정할 수 있는 자리다.
+
+    spec은 planner의 결정적 파생물이라 코드 소유다 — common.css처럼 언제든 다시 만들 수 있으므로
+    덮어쓴다. 저작 시나리오 파일이 run 디렉토리에 있으면 합친다(경로는 runner가 정한다).
+    """
+    planner_output = load_json(context.planner_path)
+    spec = derive_test_spec(planner_output, source_name=context.planner_path.name)
+
+    if context.scenarios_path.exists():
+        authored = load_json(context.scenarios_path)
+        added = to_cases(authored)
+        spec["cases"].extend(added)
+        spec["coverage"]["authored_scenarios"] = len(added)
+        progress.line(f"test_spec 자유 시나리오 {len(added)}건 합침 ({context.scenarios_path.name})")
+
+    write_json(context.test_spec_path, spec, overwrite=True)
+    coverage = spec["coverage"]
+    progress.line(
+        f"test_spec cases={len(spec['cases'])} "
+        f"questions={coverage['questions_covered']}/{coverage['questions_total']} "
+        f"underivable={coverage['underivable_total']}"
+    )
+
+    if spec["underivable"] and not args.accept_test_gaps:
+        progress.line(format_decision_report(spec))
+        raise RuntimeError(
+            "test spec을 전부 파생하지 못했다. 위 보고를 보고 정한 뒤 "
+            "--accept-test-gaps 로 넘어가거나 planner/실행기를 고쳐 다시 돌린다"
+        )
+    if spec["underivable"]:
+        progress.line(
+            f"--accept-test-gaps: 문항 {coverage['questions_uncovered']}개는 검증되지 않은 채 진행한다"
+        )
+    return {"test_spec": str(context.test_spec_path), "coverage": coverage}
+
+
+def run_functional_test_stage(
+    *,
+    args: argparse.Namespace,
+    progress: ProgressReporter,
+    context: RunContext,
+) -> dict:
+    """굳은 spec을 현재 HTML에 실행한다. LLM 0회라 매 iteration 돌려도 게이트가 흔들리지 않는다."""
+    with progress.step(f"iter {context.iteration} functional_test", live=True):
+        report = run_functional_test(
+            spec_path=context.test_spec_path,
+            html_path=context.html_path,
+            output_path=context.test_report_path,
+            screenshots_dir=context.functional_screenshots_dir,
+        )
+    progress.line(
+        f"iter {context.iteration} functional_test {report['verdict']} "
+        f"passed={report['passed']}/{report['total']} hook_missing={report['hook_missing']} "
+        f"unsupported={report['unsupported']}"
+    )
+    return report
+
+
 def run_content_refine_stage(
     *,
     args: argparse.Namespace,
     progress: ProgressReporter,
     input_path: Path,
     context: RunContext,
+    test_report_path: Path | None = None,
 ) -> dict:
     agent_models = resolve_agent_models(args)
     agent_providers = resolve_agent_providers(args)
@@ -1836,6 +2018,7 @@ def run_content_refine_stage(
                 content_critique_path=context.content_critique_path,
                 run_dir=context.run_dir,
                 output_path=temp_builder_output_path,
+                test_report_path=test_report_path,
                 codex_bin=args.codex_bin,
                 claude_bin=args.claude_bin,
                 llm_provider=agent_providers[AGENT_CONTENT_REFINE],
@@ -2059,11 +2242,10 @@ def run_content_eval_only(args: argparse.Namespace) -> dict:
         if not context.html_path.exists():
             raise FileNotFoundError(f"html not found: {context.html_path}")
 
-        # planner를 검증하지 않으면 rendered_text가 없는 구형 planner로도 조용히 채점된다.
-        # 그 경우 content_fidelity 체크리스트가 통째로 비어 "누락 0개 = 5점"이 나와 거짓 PASS가 된다.
-        # 점수가 아니라 채점 기준이 사라진 것이므로, 여기서 schema로 막는다.
+        # planner를 검증하지 않으면 구조가 다른 구형 planner로도 조용히 채점된다.
+        # 평가가 참조하는 questions·elements 구조가 없으면 근거 없는 점수가 나오므로 schema로 막는다.
         stage = "planner_output_validate"
-        planner_result = validate_file(context.planner_path, artifact="planner_output")
+        planner_result = validate_file(context.planner_path, artifact="planner_output", revalidation=True)
         progress.validation("planner_output_validate", planner_result)
         ensure_pass(planner_result, context.planner_validation_path)
 
@@ -2149,7 +2331,7 @@ def run(args: argparse.Namespace) -> dict:
     else:
         if not context.planner_path.exists():
             raise FileNotFoundError(f"planner output not found: {context.planner_path}")
-        planner_validation = validate_file(context.planner_path, artifact="planner_output")
+        planner_validation = validate_file(context.planner_path, artifact="planner_output", revalidation=True)
         progress.validation("planner_output_validate", planner_validation)
         ensure_pass(planner_validation, context.planner_validation_path)
         planner_result = {
@@ -2158,6 +2340,10 @@ def run(args: argparse.Namespace) -> dict:
             "input": str(context.copied_input_path),
             "planner": str(context.planner_path),
         }
+
+    # planner 직후·asset 이전에 파생한다. 파생 못 한 것이 있으면 이미지 수십 장을 굽기 전에
+    # 사람이 결정한다(run_test_spec_derive_stage가 멈춘다).
+    run_test_spec_derive_stage(args=args, progress=progress, context=context)
 
     if args.start_at in ("planner", "asset"):
         asset_result = run_asset_generator_only(args)
@@ -2186,11 +2372,27 @@ def run(args: argparse.Namespace) -> dict:
                 "output": str(context.output_dir),
             }
 
-    builder_result = run_builder_only(args)
+    if args.start_at == "loop":
+        # 품질 루프만 다시 돈다. HTML은 refine을 거친 중간 상태일 수 있고, 그 상태에서
+        # 루프를 재개하려고 builder를 다시 사는 것은 낭비다. 산출물 존재와 계약만 확인한다.
+        for required in (context.builder_path, context.html_path):
+            if not required.exists():
+                raise FileNotFoundError(f"loop 재진입에 필요한 산출물이 없다: {required}")
+        loop_builder_validation = validate_file(context.builder_path, artifact="builder_output")
+        progress.validation("builder_output_validate", loop_builder_validation)
+        ensure_pass(loop_builder_validation, context.builder_validation_path)
+        builder_result = {
+            "builder": str(context.builder_path),
+            "html": str(context.html_path),
+            "output": str(context.output_dir),
+        }
+    else:
+        builder_result = run_builder_only(args)
     content_rubric = load_rubric(args.content_rubric.resolve())
     latest_design_review_result: dict = {}
     latest_critique_result: dict = {}
     latest_eval_result: dict = {}
+    latest_functional_report: dict = {}
     status = "REJECT"
 
     for iteration_number in range(1, args.content_max_iterations + 1):
@@ -2198,6 +2400,32 @@ def run(args: argparse.Namespace) -> dict:
         context = create_run_context(args, brief_hash, iteration)
         context.iter_dir.mkdir(parents=True, exist_ok=True)
         progress.line(f"content quality loop iter {iteration}/{args.content_max_iterations:03d} start")
+
+        # 기능 축은 LLM 판정보다 먼저 돈다. 결정적이고 싸며, 그 관찰 기록이 content_refine의
+        # 입력이 되기 때문이다.
+        latest_functional_report = run_functional_test_stage(args=args, progress=progress, context=context)
+        functional_status = latest_functional_report.get("verdict", "REJECT")
+
+        # FAIL이면 그 iteration의 LLM 리뷰 3종을 건너뛴다(docs/pipeline-redesign.md 5.4).
+        # 기능이 깨진 HTML을 세 LLM이 읽어 봐야 같은 결함을 세 번 다른 말로 반복할 뿐이고,
+        # 그 토큰이 통째로 낭비된다. 깨진 것부터 고치고 다음 iteration에서 품질을 본다.
+        if functional_status != "PASS":
+            status = "REJECT"
+            if iteration_number >= args.content_max_iterations:
+                progress.line(
+                    f"content run REJECT terminal_reason=max_content_iterations "
+                    f"last_iteration={iteration} total_elapsed={format_duration(time.perf_counter() - started_at)}"
+                )
+                break
+            progress.line(f"iter {iteration} functional REJECT — LLM 리뷰를 건너뛰고 content_refine으로 간다")
+            builder_result = run_content_refine_stage(
+                args=args,
+                progress=progress,
+                input_path=input_path,
+                context=context,
+                test_report_path=context.test_report_path,
+            )
+            continue
 
         latest_design_review_result, latest_critique_result, latest_eval_result = run_content_review_set(
             args=args,
@@ -2263,12 +2491,15 @@ def run(args: argparse.Namespace) -> dict:
         # content 축: design_refine이 HTML을 다시 썼을 수 있으므로 그 뒤에 순차로 돈다.
         # content_refine이 마지막인 이유는 더 보수적인 stage이기 때문이다(CSS·레이아웃을
         # 건드리지 않는다). 반대로 두면 design_refine의 통짜 재작성이 content 수정을 지운다.
+        # (이 분기에 왔다는 것은 functional PASS라는 뜻이다 — REJECT면 위에서 리뷰를 건너뛰고
+        # content_refine으로 갔다.)
         if eval_status != "PASS":
             builder_result = run_content_refine_stage(
                 args=args,
                 progress=progress,
                 input_path=input_path,
                 context=context,
+                test_report_path=context.test_report_path,
             )
 
     progress.line(f"content run {status} total_elapsed={format_duration(time.perf_counter() - started_at)}")
@@ -2285,6 +2516,10 @@ def run(args: argparse.Namespace) -> dict:
         "content_critique": latest_critique_result.get("content_critique"),
         "content_eval": latest_eval_result.get("content_eval"),
         "threshold_errors": latest_eval_result.get("threshold_errors", []),
+        "functional_status": latest_functional_report.get("verdict"),
+        "functional_passed": latest_functional_report.get("passed"),
+        "functional_total": latest_functional_report.get("total"),
+        "test_spec": str(context.test_spec_path),
         "html": builder_result.get("html"),
         "output": builder_result.get("output"),
     }
@@ -2294,6 +2529,7 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
     models = AGENT_MODELS.copy()
     if args.model:
         models[AGENT_PLANNER] = args.model
+        models[AGENT_PLANNER_REFINE] = args.model
         models[AGENT_ASSET_GENERATOR] = args.model
         models[AGENT_BUILDER] = args.model
     if args.claude_html_stages:
@@ -2301,6 +2537,8 @@ def resolve_agent_models(args: argparse.Namespace) -> dict[str, str | None]:
             models[agent] = args.claude_model
     if args.planner_model:
         models[AGENT_PLANNER] = args.planner_model
+    if args.planner_refine_model:
+        models[AGENT_PLANNER_REFINE] = args.planner_refine_model
     if args.asset_generator_model:
         models[AGENT_ASSET_GENERATOR] = args.asset_generator_model
     if args.builder_model:
@@ -2366,6 +2604,12 @@ def main() -> int:
     )
     parser.add_argument("--model", help="Alias for planner/asset/builder model in the current MVP.")
     parser.add_argument("--planner-only", action="store_true", help="Run only input validation and planner.")
+    parser.add_argument(
+        "--no-planner-refine",
+        dest="planner_refine",
+        action="store_false",
+        help="Skip the planner refine pass. The planner output is frozen exactly as generated.",
+    )
     parser.add_argument("--asset-generator-only", action="store_true", help="Run only asset generation from an existing planner output.")
     parser.add_argument("--builder-only", action="store_true", help="Run only HTML builder from existing planner and asset outputs.")
     parser.add_argument("--design-review-only", action="store_true", help="Run only Senior Designer review from existing builder output.")
@@ -2373,6 +2617,7 @@ def main() -> int:
     parser.add_argument("--content-critique-only", action="store_true", help="Run only content HTML critique from existing builder output.")
     parser.add_argument("--content-eval-only", action="store_true", help="Run only content HTML evaluation from existing builder output.")
     parser.add_argument("--planner-model", help="Model for the Planner agent. Defaults to the Codex CLI default model.")
+    parser.add_argument("--planner-refine-model", help="Model for the Planner Refine agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--asset-generator-model", help="Model for the Asset Generator agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--builder-model", help="Model for the Builder agent. Defaults to the Codex CLI default model.")
     parser.add_argument("--design-review-model", help="Model for the Senior Designer Review agent. Defaults to the Codex CLI default model.")
@@ -2389,9 +2634,12 @@ def main() -> int:
     )
     parser.add_argument(
         "--start-at",
-        choices=["planner", "asset", "builder"],
+        choices=["planner", "asset", "builder", "loop"],
         default="planner",
-        help="Start the full content pipeline at this stage, reusing earlier artifacts from the run directory.",
+        help=(
+            "Start the full content pipeline at this stage, reusing earlier artifacts from the run directory. "
+            "'loop'는 builder를 다시 부르지 않고 현재 output/index.html 상태에서 품질 루프만 다시 돈다."
+        ),
     )
     parser.add_argument("--max-iterations", type=int, default=3)
     parser.add_argument("--content-max-iterations", type=int, default=DEFAULT_CONTENT_MAX_ITERATIONS)
@@ -2425,6 +2673,11 @@ def main() -> int:
             f"{DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS}, because reading the full HTML and every asset takes longer "
             "than other stages."
         ),
+    )
+    parser.add_argument(
+        "--accept-test-gaps",
+        action="store_true",
+        help="test spec을 전부 파생하지 못해도 진행한다. 그 문항은 검증되지 않고 리포트에 unsupported로 남는다.",
     )
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")
     args = parser.parse_args()

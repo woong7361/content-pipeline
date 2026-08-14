@@ -402,7 +402,7 @@ md에는 항상 `source/` 기준 안정 경로를 적는다.
 
 ```md
 - Source:
-  - `runs/2026-07-22_ch8c0719/output/assets/feedback_stamp_correct.png`
+  - `runs/2026-07-22_ch8c0719/output/assets/feedback_stamp_correct.webp`
 ```
 
 ---

@@ -66,7 +66,7 @@
           <p>말풍선, CTA, scene controller, debug jumper를 한 화면에서 확인합니다.</p>
         </div>
         <img class="previewCharacter teacher" src="./assets/teacher-praising.webp" alt="박수치며 칭찬하는 선생님">
-        <div class="c-speechBubble right-speaker" id="introSpeech" style="--speech-side-x: 430px; --speech-face-y: 510px">
+        <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="introSpeech" style="--speech-side-x: 430px; --speech-face-y: 510px">
           <span data-slot="text">좋아요! 이제 production 1-2/08에서 뽑은 컴포넌트를 따로 수정하고, 나중에 단일 HTML로 합칠 수 있어요.</span>
         </div>
         <button class="c-ticketButton previewStart" id="goPractice" type="button">
@@ -85,8 +85,11 @@
           </div>
         </div>
         <img class="previewCharacter student" id="practiceCharacter" src="./assets/student-thinking.webp" alt="생각하는 학생">
-        <div class="c-speechBubble left-speaker" id="practiceSpeech" style="--speech-side-x: 340px; --speech-face-y: 690px">
+        <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="practiceSpeech" style="--speech-side-x: 340px; --speech-face-y: 690px">
           <span data-slot="text">키패드 상태는 component JS가 만들고, 정답/오답 도장은 feedback-layer가 맡아요.</span>
+          <span class="c-speechBubbleNav" data-slot="nav" hidden>
+            <button class="c-speechBubbleNext" type="button" data-action="next">다음 ▸</button>
+          </span>
         </div>
         <button class="c-ticketButton previewBack" id="goIntro" type="button">
           <span data-slot="label">[처음 화면으로 돌아가기]</span>

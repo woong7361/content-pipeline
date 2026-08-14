@@ -1,24 +1,13 @@
 {
-  "name": "content-html:v4",
+  "name": "content-html:v5",
+  "note": "5축 → 3축 (docs/pipeline-redesign.md 5.5). content_fidelity와 functional_integrity는 functional_test가 브라우저 실측으로 판정한다 — 문항·보기·정답·순서·동작은 눌러 보면 알고, LLM이 HTML 텍스트를 읽어 추측할 이유가 없다. 여기 남은 3축은 실행으로 나오지 않는 판단이다.",
   "scale": {
     "min": 0,
     "max": 5
   },
   "axes": {
-    "content_fidelity": {
-      "weight": 0.28,
-      "scoring": "deterministic_count",
-      "counting_rule": "누락·불일치 항목 1개 = 다음 중 하나로 센다. (a) planner sections[].questions[] 문항이 HTML에 없음, (b) 문항의 보기(choices[].label, 오답 포함) 하나가 없거나 원문과 다름, (c) 정답이 다르거나 HTML의 정답 처리가 planner choices[].correct 또는 answer와 불일치, (d) planner sections[].elements[].rendered_text 의 문자열 하나가 HTML에 원문 그대로 없음, (e) planner 대비 장면 또는 문항 순서가 뒤바뀜. 항목마다 1개씩 누적한다. elements[].content 는 원문 서술이며 체크 대상이 아니다 — 제작 지시와 '예:' 예시가 섞여 있어 화면에 없는 것이 정상이다. rendered_text 가 빈 배열인 element 는 세지 않는다. 대조는 grep -cF 로 하고 -F 를 반드시 붙인다(대괄호가 정규식 문자클래스로 해석되면 오판한다).",
-      "scale": {
-        "1": "누락·불일치 4개 이상.",
-        "2": "누락·불일치 3개.",
-        "3": "누락·불일치 2개.",
-        "4": "누락·불일치 1개.",
-        "5": "누락·불일치 0개. 저작 문항·보기(오답 포함)·대사·순서·완료/보상 흐름이 원문 그대로 전부 구현되어 학습 경험이 닫힌다."
-      }
-    },
     "learning_goal_alignment": {
-      "weight": 0.22,
+      "weight": 0.37,
       "scoring": "qualitative",
       "scale": {
         "1": "활동, 문항, 조작이 학습 목표와 분리되어 있어 사용자가 무엇을 배우는지 알기 어렵다.",
@@ -27,49 +16,35 @@
       }
     },
     "feedback_scaffolding": {
-      "weight": 0.20,
-      "scoring": "count_capped",
-      "counting_rule": "정답 또는 오답 피드백이 없는 문항이 1개라도 있으면 3점을 넘길 수 없다. 모든 문항에 정답·오답 피드백이 있어야 4점 이상이 가능하고, 왜 맞고 틀렸는지와 다음 행동까지 안내해야 5점이다.",
+      "weight": 0.33,
+      "scoring": "qualitative",
+      "note": "피드백의 존재와 노출 시점은 functional_test가 판정하므로 여기서 세지 않는다. 이 축이 보는 것은 문장의 질이다 — 결과만 통보하는가, 왜 맞고 틀렸는지와 다음 행동까지 안내하는가.",
       "scale": {
-        "1": "피드백이 없는 문항이 있거나, 대부분 결과(정답/오답)만 통보한다.",
-        "3": "모든 문항에 피드백이 있으나 상당수가 결과만 알려 주고 왜 틀렸는지 설명이 약하다.",
-        "5": "모든 문항의 정답/오답/힌트/완료 피드백이 개념 이해와 다음 행동을 구체적으로 안내한다."
+        "1": "피드백 대부분이 결과(정답/오답)만 통보하고 개념으로 이어지지 않는다.",
+        "3": "피드백이 있으나 상당수가 결과만 알려 주고 왜 틀렸는지 설명이 약하다.",
+        "5": "정답/오답/힌트/완료 피드백이 개념 이해와 다음 행동을 구체적으로 안내한다."
       }
     },
     "interaction_flow_clarity": {
-      "weight": 0.18,
+      "weight": 0.30,
       "scoring": "qualitative",
+      "note": "진행이 실제로 되는지(도달 가능성)는 functional_test가 판정한다. 이 축이 보는 것은 사용자가 알 수 있는지다 — 안내, 상태 표시, 다음 행동의 명확성.",
       "scale": {
         "1": "사용자가 다음에 무엇을 해야 하는지, 어떤 순서로 진행되는지 이해하기 어렵다.",
         "3": "기본 진행은 가능하지만 안내, 상태 표시, 단계 전환이 일부 모호해 시행착오가 필요하다.",
         "5": "목표, 현재 단계, 가능한 조작, 다음 행동이 명확해 사용자가 막힘 없이 학습 흐름을 따라갈 수 있다."
-      }
-    },
-    "functional_integrity": {
-      "weight": 0.12,
-      "scoring": "deterministic_count",
-      "counting_rule": "정상 동작하지 않는 필수 기능(버튼, 입력, 진행 상태, 완료 처리) 1개를 1개로 센다.",
-      "scale": {
-        "1": "필수 기능 2개 이상이 깨지거나 학습 진행이 불가능하다.",
-        "3": "필수 기능 1개에 혼동이나 불안정이 있으나 진행은 가능하다.",
-        "5": "필수 버튼, 입력, 진행 상태, 완료 처리가 결함 0개로 의도한 흐름대로 안정적으로 동작한다."
       }
     }
   },
   "thresholds": {
     "min_total": 4.2,
     "min_axis": {
-      "content_fidelity": 5.0,
       "learning_goal_alignment": 4.0,
       "feedback_scaffolding": 4.0,
-      "interaction_flow_clarity": 4.0,
-      "functional_integrity": 4.0
+      "interaction_flow_clarity": 4.0
     }
   },
   "hard_gates": [
-    "no_missing_required_content",
-    "required_interactions_reachable",
-    "no_blocking_runtime_errors",
     "no_planner_content_conflict"
   ]
 }

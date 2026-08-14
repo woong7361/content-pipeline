@@ -252,7 +252,7 @@ for case in spec["cases"]:
       "reason": "expect_failed",
       "expectation": "feedback_wrong_visible",
       "detail": "[data-qa-feedback=\"wrong\"] not visible after 2000ms",
-      "screenshot": "iter_001/functional_test/case_q3_wrong.png"
+      "screenshot": "iter_001/functional_test/case_q3_wrong.webp"
     }
   ]
 }

@@ -3,7 +3,7 @@
 ## Source Of Truth
 
 - Character id: `char_librarian_teacher`
-- Identity source: planner의 `characters[].identity` 텍스트가 최초 기준이며, 생성 후 `librarian_teacher_explaining.png`를 형제 포즈의 시각 기준으로 사용한다.
+- Identity source: planner의 `characters[].identity` 텍스트가 최초 기준이며, 생성 후 `librarian_teacher_explaining.webp`를 형제 포즈의 시각 기준으로 사용한다.
 - Reference files: 최초 생성 전에는 없음.
 - Usage target: 초등 2학년 시간 학습용 단일 HTML의 설명·당황·축하 상태.
 

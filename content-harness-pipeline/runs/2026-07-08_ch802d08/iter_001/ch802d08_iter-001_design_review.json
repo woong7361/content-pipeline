@@ -1040,7 +1040,7 @@
         "severity": "medium",
         "target": "pickA(), submitB(), checkC(), toast()",
         "issue": "정답/오답 반응이 주로 toast, 캐릭터 이미지 교체, shake에 의존하고 학습 surface 자체가 복구되는 연출이 약하다.",
-        "evidence": "pickA correct path: wrap.classList.add('picked'); aKid.src='assets/kid_librarian_success.png'; toast('정답! '+q.note,'ok'); goldBurst(10); wrong path: wrap.classList.add('wrong'); toast('다시 생각해보세요','bad').",
+        "evidence": "pickA correct path: wrap.classList.add('picked'); aKid.src='assets/kid_librarian_success.webp'; toast('정답! '+q.note,'ok'); goldBurst(10); wrong path: wrap.classList.add('wrong'); toast('다시 생각해보세요','bad').",
         "suggested_fix": "정답 시 선택한 시계 슬롯에 gold stamp, 전광판 숫자 재조립, energy spark가 해당 surface에서 발생하게 하라. 오답은 선택 슬롯만 짧게 흔들고 캐릭터 confusion 말풍선을 600ms 후 표시하라."
       },
       {
@@ -1123,7 +1123,7 @@
         "priority": 1,
         "impact": "여러 scene의 high severity 웹 버튼 문제를 한 번에 줄이는 가장 높은 가치의 반복 CTA surface다.",
         "kind": "image",
-        "intended_path": "output/assets/golden_repair_ticket_button_blank.png",
+        "intended_path": "output/assets/golden_repair_ticket_button_blank.webp",
         "usage_section_ids": [
           "section_title",
           "section_problem_intro",
@@ -1143,7 +1143,7 @@
         "priority": 2,
         "impact": "흰 말풍선 반복 문제를 줄이고 장면 속 안내판/방송판으로 통합할 수 있다.",
         "kind": "image",
-        "intended_path": "output/assets/library_dialogue_plaque_blank.png",
+        "intended_path": "output/assets/library_dialogue_plaque_blank.webp",
         "usage_section_ids": [
           "section_problem_intro",
           "section_mission_type_a",
@@ -1162,7 +1162,7 @@
         "priority": 3,
         "impact": "튜토리얼과 퀴즈의 선택지를 웹 카드 대신 조작 가능한 종이/책 표면으로 바꾼다.",
         "kind": "image",
-        "intended_path": "output/assets/ticket_time_choice_blank.png",
+        "intended_path": "output/assets/ticket_time_choice_blank.webp",
         "usage_section_ids": [
           "section_tutorial_clock",
           "section_popup_quiz"
@@ -1180,7 +1180,7 @@
         "priority": 4,
         "impact": "튜토리얼 첫 조작을 웹 패널에서 실제 시계 수리 작업대로 바꿔 핵심 학습 경험의 첫인상을 개선한다.",
         "kind": "image",
-        "intended_path": "output/assets/repair_workbench_mat_blank.png",
+        "intended_path": "output/assets/repair_workbench_mat_blank.webp",
         "usage_section_ids": [
           "section_tutorial_clock"
         ],
@@ -1197,7 +1197,7 @@
         "priority": 5,
         "impact": "최종 화면의 긴 다음 차시 CTA를 인증서 수여식에 맞는 초대장으로 바꾼다.",
         "kind": "image",
-        "intended_path": "output/assets/next_lesson_invitation_ticket_blank.png",
+        "intended_path": "output/assets/next_lesson_invitation_ticket_blank.webp",
         "usage_section_ids": [
           "section_final_certificate"
         ],

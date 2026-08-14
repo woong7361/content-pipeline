@@ -168,7 +168,7 @@
       "description": "단일 HTML 안에 배치할 주요 섹션 계획",
       "items": {
         "type": "object",
-        "required": ["id", "title", "purpose", "elements", "questions", "staging_notes", "interaction_ids", "asset_ids"],
+        "required": ["id", "title", "purpose", "elements", "questions", "staging_notes", "interaction_ids", "asset_ids", "advance"],
         "properties": {
           "id": {
             "type": "string",
@@ -190,7 +190,7 @@
             "description": "이 섹션을 이루는 스토리보드 줄들. 스토리보드의 각 줄(배경, 대사, 캐릭터 모션, 문제, 버튼 등)을 요소 하나로 담는다. 스토리보드 줄 하나당 요소 하나로 나눠 개수를 보존한다. 줄에는 화면에 노출되는 문구와 제작 지시(연출·배치·조작 설명)가 섞여 있으므로, 화면에 실제로 노출되는 문자열은 `rendered_text`로 따로 뽑는다",
             "items": {
               "type": "object",
-              "required": ["channel", "content", "rendered_text", "notes", "refs"],
+              "required": ["channel", "content", "rendered_text", "notes", "refs", "reveal"],
               "properties": {
                 "channel": {
                   "type": "string",
@@ -221,6 +221,29 @@
                     "type": "string",
                     "pattern": "^[a-z][a-z0-9_-]*$"
                   }
+                },
+                "reveal": {
+                  "type": "object",
+                  "required": ["when", "index", "question_id"],
+                  "description": "이 요소의 rendered_text가 화면에 나타나는 시점. 하류 검증이 '언제 이 문구가 보여야 하는가'를 이 값으로 정한다. 시점을 적지 않으면 화면에 들어가자마자 보여야 하는 것으로 판정되므로, 조작해야 나타나는 문구는 반드시 여기에 시점을 적는다",
+                  "properties": {
+                    "when": {
+                      "type": "string",
+                      "enum": ["scene_enter", "beat", "on_correct", "on_wrong", "on_page"],
+                      "description": "scene_enter=화면에 들어가면 바로 보인다(기본값). beat=같은 화면의 순차 대사 중 index번째에 보인다. on_correct=question_id 문항을 맞히면 보인다. on_wrong=question_id 문항을 틀리면 보인다. on_page=캐러셀·페이지 넘김의 index번째 장에서 보인다"
+                    },
+                    "index": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "beat와 on_page에서 0부터 세는 순번. 그 외에는 0"
+                    },
+                    "question_id": {
+                      "type": "string",
+                      "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                      "description": "on_correct와 on_wrong에서 이 문구를 띄우는 문항의 id. 그 외에는 빈 문자열"
+                    }
+                  },
+                  "additionalProperties": false
                 }
               },
               "additionalProperties": false
@@ -231,7 +254,7 @@
             "description": "이 섹션의 평가 문항. 스토리보드의 문제 하나당 항목 하나로 담아 문항 수를 보존한다. 문항이 없으면 빈 배열",
             "items": {
               "type": "object",
-              "required": ["id", "prompt", "input_type", "choices", "answer", "feedback"],
+              "required": ["id", "prompt", "input_type", "choices", "answer", "feedback", "attempt_policy"],
               "properties": {
                 "id": {
                   "type": "string",
@@ -245,8 +268,8 @@
                 },
                 "input_type": {
                   "type": "string",
-                  "minLength": 1,
-                  "description": "입력 방식. 권장 어휘: choice, keypad, drag_drop. 새 방식이면 그에 맞는 이름을 만든다"
+                  "enum": ["choice", "keypad", "drag_drop", "hotspot"],
+                  "description": "학습자가 답을 내는 방식. 이 값은 설명용 이름이 아니라 하류가 이 문항을 조작하는 방법을 고르는 키이므로 새 이름을 만들지 않는다. choice=제시된 보기 중 하나를 고른다. keypad=숫자나 값을 눌러 넣는다. drag_drop=조각을 자리로 옮긴다(누르기로도 옮길 수 있어야 한다). hotspot=그림이나 장면 위에서 해당하는 자리를 고른다. 정답 자리가 여러 개여도 hotspot이며, 개수는 answer에 적는다. 넷 중 어느 것도 맞지 않으면 가장 가까운 것을 고르지 말고 그 활동을 문항이 아닌 요소로 다룬다"
                 },
                 "choices": {
                   "type": "array",
@@ -270,7 +293,8 @@
                 },
                 "answer": {
                   "type": "string",
-                  "description": "정답 원문. 서술형·키패드 등 보기가 없는 경우 정답 값을 쓴다"
+                  "minLength": 1,
+                  "description": "정답. 비워 둘 수 없다 — 정답이 정해지지 않은 것은 평가 문항이 아니므로 questions가 아니라 elements의 활동으로 다룬다. 보기가 있으면 정답 보기의 label을 그대로 쓴다. 보기가 없으면 학습자가 실제로 입력할 값만 쓴다 — `[1]시간`이 아니라 `1`이다. 채울 칸이 둘 이상이면 각 칸의 값을 대괄호로 감싸 순서대로 쓴다(`[12]시 [0]분`). 하류가 이 값을 그대로 입력해 정답 판정을 확인하므로, 단위나 조사를 섞으면 입력할 값을 알 수 없다"
                 },
                 "feedback": {
                   "type": "object",
@@ -283,6 +307,27 @@
                     "wrong": {
                       "type": "string",
                       "description": "오답 피드백 원문. 없으면 빈 문자열"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "attempt_policy": {
+                  "type": "object",
+                  "required": ["max_attempts", "on_exhausted"],
+                  "description": "이 문항을 몇 번까지 틀릴 수 있고 그 뒤에 무엇이 일어나는지. story board가 '3번 오답이면 정답을 보여준다'처럼 정한 규칙을 여기에 적는다. 이 규칙이 문항이 아니라 화면 설명에만 남아 있으면 어느 문항에 걸리는지 알 수 없어 검증되지 않는다. 규칙이 없으면 max_attempts는 0, on_exhausted는 빈 배열",
+                  "properties": {
+                    "max_attempts": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "학습자가 이 문항을 틀릴 수 있는 최대 횟수. 제한이 없으면 0"
+                    },
+                    "on_exhausted": {
+                      "type": "array",
+                      "description": "최대 횟수를 다 쓴 뒤 일어나는 일. 해당하는 것을 모두 넣는다. 규칙이 없으면 빈 배열",
+                      "items": {
+                        "type": "string",
+                        "enum": ["reveal_answer", "advance"]
+                      }
                     }
                   },
                   "additionalProperties": false
@@ -312,6 +357,24 @@
               "type": "string",
               "pattern": "^[a-z][a-z0-9_-]*$"
             }
+          },
+          "advance": {
+            "type": "object",
+            "required": ["interaction_id", "to_section_id"],
+            "description": "이 화면에서 학습자가 다음 화면으로 나가는 출구. 어떤 조작을 하면 어느 화면으로 가는지를 적는다. 이 값이 없으면 화면들이 순서대로 나열만 되어 있을 뿐 실제로 이어지는지 아무도 확인할 수 없고, 전환이 전부 깨져 있어도 드러나지 않는다. 마지막 화면이거나 학습자가 나가는 출구가 없으면 두 값 모두 빈 문자열",
+            "properties": {
+              "interaction_id": {
+                "type": "string",
+                "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                "description": "다음 화면으로 넘기는 interactions[].id"
+              },
+              "to_section_id": {
+                "type": "string",
+                "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                "description": "그 조작으로 도착하는 sections[].id"
+              }
+            },
+            "additionalProperties": false
           }
         },
         "additionalProperties": false

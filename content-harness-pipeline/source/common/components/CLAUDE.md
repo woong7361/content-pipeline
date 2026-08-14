@@ -43,7 +43,7 @@
 |---|---|---|
 | `scene-controller` | `production/1-2/08/index.html` scene 전환 | `data-qa-scene`, `active/leaving` 계약 |
 | `topbar` | 08 `.topbar` + `.course-menu-*` | 상단 HUD(제목·단계·진행률·소리)와 차시 목록 드로어 |
-| `speech-bubble` | 08 `.speech` | 1-2/01에서 이식된 크림 말풍선 |
+| `speech-bubble` | 08 `.speech` + `.repair-bubble-nav` | 1-2/01에서 이식된 크림 말풍선. 대사 아래 진행 버튼은 선택 |
 | `ticket-button` | 08 `.cta.activity-cta` | 토큰 CSS 알약. 생성 asset이 있으면 `--cta-body`로 받는다 |
 | `keypad` | 08 `buildKeypad` | `[1..9][← 0 확인]` 숫자 키패드 |
 | `feedback-layer` | 08 `showStamp`/feedback overlay | 정답/오답 도장 |

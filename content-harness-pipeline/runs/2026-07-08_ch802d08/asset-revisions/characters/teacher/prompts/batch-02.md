@@ -4,9 +4,9 @@
 
 Use these existing assets as identity and style references:
 
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_worried.png`
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_pointing.png`
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_happy.png`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_worried.webp`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_pointing.webp`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_happy.webp`
 
 Generate the same teacher/librarian character: warm young adult librarian teacher, high rounded brown hair bun with loose wisps, round thin-rimmed glasses, large brown eyes, cream cable-knit cardigan, white blouse with scalloped collar, coral neck scarf, brown belt, teal A-line midi skirt with small floral pattern, cream socks, brown Mary Jane shoes, gold/brass name badge, and magnifying glass.
 
@@ -14,11 +14,11 @@ Strict alpha requirement: transparent background only. The character, clothing, 
 
 Canvas: full-body transparent PNG, 1024x1536, shoes visible, clean antialiased cutout, safe padding around hair, hands, props, and feet.
 
-## Prompt: `teacher_happy.png`
+## Prompt: `teacher_happy.webp`
 
 Intended HTML use:
 
-- `#s-problem` / `section_problem_intro` / "고장 난 도서관 시계", via JavaScript success transition to `teacher_happy.png`
+- `#s-problem` / `section_problem_intro` / "고장 난 도서관 시계", via JavaScript success transition to `teacher_happy.webp`
 - `#s-tutok` / `section_tutorial_success` / "첫 번째 시계 수리 성공"
 - `#s-repair` / `section_repair_outro` / "수리 완료와 도서관 복구"
 - `#s-story` / `section_story_gallery` / "수리 이야기: 생활 속 시간"

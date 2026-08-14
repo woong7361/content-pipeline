@@ -5,6 +5,7 @@
     JS   speech-bubble/behavior.js  (window.CommonSpeechBubble 등록)
   사용:
     CommonSpeechBubble.show(el, "대사")  /  CommonSpeechBubble.hide(el)
+    CommonSpeechBubble.setNext(el, "다음 ▸")  /  CommonSpeechBubble.setNext(el, null)
   화자 옆에 붙이려면 --speech-side-x, --speech-face-y를 지정한다.
   동작 확인은 example/index.html.
 -->
@@ -15,4 +16,9 @@
   style="--speech-side-x: 430px; --speech-face-y: 510px"
 >
   <span data-slot="text">여기에 대사가 들어갑니다.</span>
+  <!-- 대사 아래의 진행 버튼. 기본은 숨김이고 setNext로 켠다.
+       다음이 없는 말풍선(마지막 대사, 상태 표시)에서는 이 줄을 지운다. -->
+  <span class="c-speechBubbleNav" data-slot="nav" hidden>
+    <button class="c-speechBubbleNext" type="button" data-action="next">다음 ▸</button>
+  </span>
 </div>

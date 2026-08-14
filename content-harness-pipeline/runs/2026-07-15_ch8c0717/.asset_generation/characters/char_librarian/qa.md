@@ -2,9 +2,9 @@
 
 ## Accepted
 
-- `output/assets/librarian_explaining.png`: 동일한 얼굴·헤어·안경·의상·배지 정체성, 화면 중앙을 향한 손과 돋보기, 전신 및 소품 여백, RGBA 투명 배경 확인.
-- `output/assets/librarian_distressed.png`: 기준 포즈와 동일 정체성, 양손 머리 감싸기·올라간 어깨·땀방울·중앙 상단 시선, 전신 여백, RGBA 투명 배경 확인.
-- `output/assets/librarian_success.png`: 기준 포즈와 동일 정체성, 가슴 앞 박수·환한 미소·화면 중앙 시선, 전신 및 손 여백, RGBA 투명 배경 확인.
+- `output/assets/librarian_explaining.webp`: 동일한 얼굴·헤어·안경·의상·배지 정체성, 화면 중앙을 향한 손과 돋보기, 전신 및 소품 여백, RGBA 투명 배경 확인.
+- `output/assets/librarian_distressed.webp`: 기준 포즈와 동일 정체성, 양손 머리 감싸기·올라간 어깨·땀방울·중앙 상단 시선, 전신 여백, RGBA 투명 배경 확인.
+- `output/assets/librarian_success.webp`: 기준 포즈와 동일 정체성, 가슴 앞 박수·환한 미소·화면 중앙 시선, 전신 및 손 여백, RGBA 투명 배경 확인.
 
 ## Needs Regeneration
 

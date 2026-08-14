@@ -39,7 +39,7 @@
 
 기차역을 배경으로 4자리 수 세기 콘텐츠를 4단계로 구성한다. 전체 흐름 설명을 위한 페이지이며, 개발 대상 화면은 아니다.
 
-![전체 흐름 예시 화면](assets/content_plan_sb/example_page_03.png)
+![전체 흐름 예시 화면](assets/content_plan_sb/example_page_03.webp)
 
 | 단계 | 화면 | 의도 |
 |---:|---|---|
@@ -50,7 +50,7 @@
 
 ## 활동 1. 들어가기
 
-![활동 1 예시 화면](assets/content_plan_sb/example_page_04.png)
+![활동 1 예시 화면](assets/content_plan_sb/example_page_04.webp)
 
 ### 개요
 
@@ -70,7 +70,7 @@
 
 ## 활동 2. 수리가 필요해요
 
-![활동 2 예시 화면](assets/content_plan_sb/example_page_05.png)
+![활동 2 예시 화면](assets/content_plan_sb/example_page_05.webp)
 
 ### 개요
 
@@ -90,7 +90,7 @@
 
 ## 활동 3. 수리로 해결해요
 
-![활동 3 예시 화면 1](assets/content_plan_sb/example_page_06.png)
+![활동 3 예시 화면 1](assets/content_plan_sb/example_page_06.webp)
 
 ### 개요
 
@@ -105,7 +105,7 @@
 | 3 | 중앙 문제판 UI | 무작위 문제은행 시스템이 작동하며, 슬롯머신 톱니바퀴처럼 숫자가 스크롤되다가 멈추면서 문제가 출제되는 역동적인 애니메이션을 적용한다. |
 | 4 | 하단 입력 UI | 정답을 직접 타이핑하여 입력할 수 있는 빈칸 텍스트 필드 또는 화면 터치용 숫자 키패드 UI를 제공한다. |
 
-![활동 3 예시 화면 2](assets/content_plan_sb/example_page_07.png)
+![활동 3 예시 화면 2](assets/content_plan_sb/example_page_07.webp)
 
 ### 문제은행 출제 알고리즘
 
@@ -119,7 +119,7 @@
 
 ## 활동 4. 수리 이야기
 
-![활동 4 예시 화면 1](assets/content_plan_sb/example_page_08.png)
+![활동 4 예시 화면 1](assets/content_plan_sb/example_page_08.webp)
 
 ### 화면 연출 의도 및 목표
 
@@ -132,7 +132,7 @@
 | 1 | 배경 화면 변화 | 전광판의 번호표 시스템이 정상 작동한다. `3501 -> 3502 -> 3503...` 흐름이 표시되고, 승객들이 질서 있게 표를 사는 평화로운 매표소 배경으로 변경한다. 주인공과 역무원 캐릭터를 화면 중앙에 나란히 배치한다. |
 | 2 | 실생활 사진 슬라이드 UI | 역무원의 대사 타이밍에 맞춰 화면 중앙에 반투명 팝업창을 띄운다. `은행 대기 번호표`, `유명 맛집 태블릿 대기 화면`, `병원 대기 전광판` 등의 실생활 사진을 부드럽게 페이드 인/아웃한다. |
 
-![활동 4 예시 화면 2](assets/content_plan_sb/example_page_09.png)
+![활동 4 예시 화면 2](assets/content_plan_sb/example_page_09.webp)
 
 ### 내레이션 및 대사
 
@@ -142,7 +142,7 @@
 | 2 | 핵심 내레이션 | "오늘 우리가 고친 기차역 번호표처럼, 일상생활에서 순서를 숫자로 나타내어 편리한 경우는 또 어디에 있을까요?"를 음성으로 출력한다. |
 | 3 | 설명 대사 | 사진 슬라이드가 지나갈 때 역무원 대사를 노출한다. 대사는 "은행이나 맛집에서도 번호표를 받으면 내 순서를 알 수 있어 정말 편리하단다. 숫자가 커지는 규칙을 알면 내 차례를 정확히 예상할 수 있지!"이다. |
 
-![활동 4 예시 화면 3](assets/content_plan_sb/example_page_10.png)
+![활동 4 예시 화면 3](assets/content_plan_sb/example_page_10.webp)
 
 ### 완료 및 다음 차시 유도
 

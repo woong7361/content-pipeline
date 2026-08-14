@@ -59,13 +59,14 @@
         CommonFeedbackLayer.showStamp(stamp, "correct", { hold: false });
         character.src = "./assets/student-volunteer.webp";
         character.alt = "손을 들고 기뻐하는 학생";
-        CommonSpeechBubble.show(speech, "정답입니다! 이 조합을 나중에 단일 index.html 안으로 inline하면 됩니다.");
+        /* 정답이라 다음이 생겼다. 진행 버튼은 그때 켠다 */
+        CommonSpeechBubble.show(speech, "정답입니다! 이 조합을 나중에 단일 index.html 안으로 inline하면 됩니다.", { next: "다음 ▸" });
         topbar.setProgress(100); /* scene 중간에 오르는 진행률은 콘텐츠가 직접 부른다 */
       } else {
         CommonFeedbackLayer.showStamp(stamp, "wrong", { hold: false });
         character.src = "./assets/student-thinking.webp";
         character.alt = "생각하는 학생";
-        CommonSpeechBubble.show(speech, "다시 생각해보세요. 지우기 키로 고친 뒤 확인할 수 있어요.");
+        CommonSpeechBubble.show(speech, "다시 생각해보세요. 지우기 키로 고친 뒤 확인할 수 있어요.", { next: null });
       }
       value = "";
       setDisplay("");
@@ -75,8 +76,12 @@
     setDisplay(value);
   });
 
+  /* 말풍선의 진행 버튼도 scene 전환의 입구가 된다 (CTA와 같은 곳으로 간다) */
+  speech.addEventListener("common:speechnext", () => scenes.showScene("scene-intro"));
+
   addEventListener("common:scenechange", () => {
     CommonFeedbackLayer.hideStamp(stamp);
+    CommonSpeechBubble.setNext(speech, null);
     debug.sync();
   });
 })();

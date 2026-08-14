@@ -1,0 +1,1339 @@
+{
+  "schema_version": "2",
+  "page": {
+    "goal": "초등학교 1학년 학습자가 생활 속 원·삼각형·사각형을 찾고 개수를 센 뒤, 10 만들기와 10에서 빼기를 발판으로 세 수의 덧셈과 뺄셈을 익혀 학교 담장 벽화를 완성한다.",
+    "audience": "도형 찾기와 두 자리 수 범위의 덧셈·뺄셈을 배우는 초등학교 1학년 학습자",
+    "tone": "맑은 학교 풍경 속에서 교사·작업자·어린이들이 함께 해결하는 밝고 친근한 분위기이며, 한 화면에 한 가지 판단만 요구하는 차분한 진행"
+  },
+  "art_direction": {
+    "style_name": "맑은 한낮의 학교 벽화 교과서 일러스트",
+    "palette": "실제 참조에서 관찰한 밝은 하늘색, 잎사귀 초록, 따뜻한 크림, 밝은 목재·모래색을 넓은 면에 사용하고 청록·파랑·산호·노랑을 활동 포인트로 쓴다. 배경은 중간 이상의 밝기와 선명하지만 자극적이지 않은 채도, 캐릭터는 배경보다 또렷한 국소 대비, 소품은 짙은 남색 테두리와 밝은 크림 면으로 계층을 나눈다. 오답 도장의 문구·심볼만 경고 빨강을 예외로 허용한다.",
+    "line_style": "배경은 외곽선 없이 면의 색 경계와 얕은 명암으로 형태를 만들고, 캐릭터는 짙은 갈색 계열의 균일한 중간 두께 외곽선, 소품·장면 속 안내 표면은 캐릭터보다 굵은 짙은 남색 외곽선을 사용한다. 형상은 저학년이 즉시 구별하도록 모서리와 실루엣을 단순하고 깨끗하게 유지한다.",
+    "lighting": "실제 참조처럼 화면 좌상단에서 들어오는 맑은 한낮 광원을 고정한다. 배경은 밝은 면과 한 단계 어두운 면을 중심으로 공간을 나누고, 캐릭터와 소품은 2~3단계 플랫 셰이딩과 한 줄의 광택 하이라이트를 사용한다. 그림자는 대상 아래 오른쪽에 바탕색보다 어두운 색으로 부드럽게 한 겹만 둔다.",
+    "character_rules": "큰 타원 눈의 흰 하이라이트 1~2점, 옅은 볼 홍조, 단순한 입 선을 공통 언어로 사용한다. 감정은 눈썹 각도와 입꼬리, 팔의 방향으로 읽히게 하며 당황·칭찬도 과장된 데포르메 없이 부드럽게 표현한다. 손가락과 손동작은 설명 대상이 분명히 보이는 수준으로 단순화하고, 성인과 어린이가 함께 있을 때 관계와 시선 방향이 즉시 읽히게 배치한다.",
+    "component_rules": "반복 페인트통은 뚜껑·손잡이·원통 몸체의 형태와 비율, 정면에 가까운 3/4 시점, 금속성 하이라이트 위치를 고정하며 내부 색과 색상 표시는 asset에 굽지 않고 HTML/CSS 오버레이로 바꾼다. 원·정삼각형·정사각형의 색, 개수, 흐려짐 상태는 모두 HTML/CSS로 생성·변경한다. 장면 속 문제 표면은 굵은 남색 테두리, 얇은 두께, 크림색 빈 면과 작은 고정부를 유지하고 문제·수식·보기는 코드로 얹는다. 정답·오답 도장은 서로 별개 asset으로 만들며 몸체는 세계관 팔레트, 판정 신호는 중앙 문구·심볼에만 사용한다.",
+    "background_rules": "16:9 불투명 raster를 기준으로 학교 건물·나무·담장·보도는 가장자리에 배치하고, 중앙 활동 면은 넓게 비운다. 담장 근경은 좌우가 안쪽으로 접히는 약한 원근과 낮은 재질 밀도를 사용하고, 원경은 구름과 나뭇잎을 큰 덩어리로 묶어 디테일을 줄인다. 주요 캐릭터, 반복 페인트통, 문제 문구, 도형 정답 상태는 배경에 포함하지 않는다.",
+    "continuity_rules": "모든 장면의 하늘 밝기, 좌상단 광원, 크림색 담장 재질, 보도 높이와 학교의 공간 방향을 고정한다. 배경·캐릭터·소품의 외곽선 계층을 모든 batch에서 유지하고, 같은 캐릭터는 characters의 identity와 reference_asset_id를 기준으로 일치시킨다. 활동 장면은 동일한 담장 클로즈업을 재사용하고 도형·수식·페인트 색만 코드로 바꾸며, 도입과 완료는 같은 학교 입구 방향을 사용해 시작과 해결이 연결되게 한다.",
+    "forbidden_styles": [
+      "사진실사",
+      "3D 렌더",
+      "배경까지 동일하게 두꺼운 외곽선을 두른 화풍",
+      "거친 종이결·붓자국·노이즈 텍스처",
+      "고대비 역광·석양·드라마틱 조명",
+      "과장된 만화 표정과 극단적 데포르메",
+      "SVG 패널·flat icon illustration·UI mockup kit처럼 보이는 소품",
+      "참조 캐릭터의 얼굴·헤어·의상을 복제하는 표현",
+      "참조 이미지의 교실 책상 배열이나 학교 담장 구도를 그대로 복제하는 표현",
+      "batch마다 다른 선 굵기·채도·명암 체계"
+    ]
+  },
+  "characters": [
+    {
+      "id": "teacher",
+      "name": "여 교사",
+      "role": "생활 속 모양 찾기와 활동 전환을 안내하고 학습자의 성공을 격려하는 조력자",
+      "identity": {
+        "face": "부드러운 역삼각형 얼굴, 따뜻한 베이지 피부, 짙은 자주색의 큰 타원 눈, 가는 아치형 눈썹, 작은 둥근 코, 왼쪽 눈 아래 작은 점",
+        "hair": "짙은 흑갈색의 긴 머리를 낮은 하나 묶음으로 정리하고 이마 오른쪽에 짧은 옆머리 두 가닥을 둔다.",
+        "outfit": "산호색 둥근 카라 카디건, 아이보리 블라우스, 남색 종아리 길이 주름치마, 짙은 갈색 로퍼, 얇은 청록색 목걸이",
+        "palette": "산호색, 아이보리, 남색, 짙은 갈색, 소량의 청록",
+        "proportions": "성인 여성, 약 7등신의 길고 안정적인 체형, 어린이보다 머리 하나 이상 크게 보이는 키",
+        "distinctive_features": "왼쪽 눈 아래 작은 점과 청록색 물방울형 목걸이"
+      },
+      "reference_asset_id": "teacher-idle"
+    },
+    {
+      "id": "worker",
+      "name": "공사 작업자",
+      "role": "담장 사고를 설명하고 페인트와 색칠·지우기 상황을 제시하는 성인 안내자",
+      "identity": {
+        "face": "각이 완만한 사각형 얼굴, 햇볕에 그을린 황갈색 피부, 짙은 갈색 타원 눈, 굵고 수평에 가까운 눈썹, 둥근 코끝",
+        "hair": "짧은 검은 곱슬머리로 옆머리는 단정하게 정리한다.",
+        "outfit": "남색 안전모, 아이보리 긴팔 작업 셔츠, 산호색 안전 조끼, 올리브색 작업 바지, 짙은 남색 작업화",
+        "palette": "남색, 아이보리, 산호색, 올리브색, 짙은 갈색",
+        "proportions": "성인 남성, 약 7.5등신의 넓은 어깨와 단순화된 직선형 체형",
+        "distinctive_features": "오른쪽 눈썹 끝의 짧은 흉터와 안전 조끼 왼쪽 가슴의 원형 학교 배지"
+      },
+      "reference_asset_id": "worker-explaining"
+    },
+    {
+      "id": "boy",
+      "name": "남자 어린이",
+      "role": "도형을 찾고 수 계산과 담장 색칠을 함께 수행하는 학습자 대리인",
+      "identity": {
+        "face": "둥근 얼굴, 밝은 복숭아색 피부, 청남색의 크고 둥근 눈, 짧은 곡선 눈썹, 작은 들창코",
+        "hair": "푸른 기가 도는 검은색 짧은 머리, 왼쪽으로 넘긴 사선 앞머리와 정수리의 짧은 삐침 한 가닥",
+        "outfit": "아이보리 맨투맨, 가슴의 청록색 삼각형 천 배지, 남색 반바지, 흰 양말, 산호색 벨크로 운동화",
+        "palette": "아이보리, 청록, 남색, 산호색, 흰색",
+        "proportions": "초등학교 1학년 남아, 약 4등신의 큰 머리와 짧은 팔다리",
+        "distinctive_features": "가슴의 청록색 삼각형 배지와 정수리의 한 가닥 삐침"
+      },
+      "reference_asset_id": "boy-idle"
+    },
+    {
+      "id": "girl",
+      "name": "여자 어린이",
+      "role": "남자 어린이와 함께 도움을 약속하고 도형·계산·자유 그리기에 참여하는 학습자 대리인",
+      "identity": {
+        "face": "둥근 얼굴, 따뜻한 베이지 피부, 짙은 갈색의 크고 둥근 눈, 부드러운 곡선 눈썹, 작은 둥근 코",
+        "hair": "밤색 머리를 양쪽 낮은 땋은 머리로 묶고 짧고 반듯한 앞머리를 둔다.",
+        "outfit": "연보라색 반팔 티셔츠, 가슴의 노란 원형 천 배지, 청록색 치마형 반바지, 흰 레깅스, 노란 벨크로 운동화",
+        "palette": "연보라, 노랑, 청록, 흰색, 밤색",
+        "proportions": "초등학교 1학년 여아, 약 4.5등신의 큰 머리와 둥근 실루엣",
+        "distinctive_features": "노란 원형 배지와 양쪽 낮은 땋은 머리 끝의 청록색 고무줄"
+      },
+      "reference_asset_id": "girl-idle"
+    }
+  ],
+  "sections": [
+    {
+      "id": "shape-find",
+      "title": "수리가 필요해요 1 — 생활 속 모양 찾기",
+      "purpose": "학교 장면에서 원·삼각형과 닮은 물건을 직접 찾아 모양 분류의 기초를 확인한다.",
+      "steps": [
+        {
+          "id": "open",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "title",
+              "speaker": "",
+              "content": "수리가 필요해요 1",
+              "rendered_text": [
+                "수리가 필요해요 1"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "bg-wall-activity",
+              "target_kind": "asset",
+              "action": "background_transition",
+              "to_state": "크림색 학교 담장 근경",
+              "duration_hint": "medium",
+              "source_line": "모양을 생활 속에서 찾음."
+            },
+            {
+              "order": 1,
+              "target": "boy-idle",
+              "target_kind": "character",
+              "action": "appear",
+              "to_state": "담장 오른쪽",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "d-boy",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "boy",
+              "content": "벽화를 어떻게 그려야 되지?",
+              "rendered_text": [
+                "벽화를 어떻게 그려야 되지?"
+              ]
+            }
+          ],
+          "staging": [],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": "주인공 오디오(혼잣말 느낌)."
+        },
+        {
+          "id": "d-teacher-1",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "teacher",
+              "content": "여러 가지 모양으로 그리면 좋겠어요.",
+              "rendered_text": [
+                "여러 가지 모양으로 그리면 좋겠어요."
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "teacher-explaining",
+              "target_kind": "character",
+              "action": "appear",
+              "to_state": "담장 왼쪽",
+              "duration_hint": "short",
+              "source_line": "교사 등장"
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "d-teacher-2",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "teacher",
+              "content": "저와 학교에서 모양을 찾아 보아요.",
+              "rendered_text": [
+                "저와 학교에서 모양을 찾아 보아요."
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "bg-wall-activity",
+              "target_kind": "asset",
+              "action": "highlight",
+              "to_state": "담장 앞 관찰 영역",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "d-kids",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "boy",
+              "content": "네!",
+              "rendered_text": [
+                "네!"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "boy-helping",
+              "target_kind": "character",
+              "action": "replace",
+              "to_state": "손 든 대답 포즈",
+              "duration_hint": "short",
+              "source_line": ""
+            },
+            {
+              "order": 0,
+              "target": "girl-helping",
+              "target_kind": "character",
+              "action": "appear",
+              "to_state": "담장 오른쪽",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "open-observation",
+          "kind": "staging",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "overlay-shape-find-school-objects",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 앞에 생활 소품이 흩어져 놓인 상태",
+              "duration_hint": "medium",
+              "source_line": ""
+            },
+            {
+              "order": 1,
+              "target": "surface-info-board-mural",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 상단 문제 표면",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": "관찰 대상은 대사가 끝난 뒤에 나타난다. 대사 중에 미리 띄우면 무엇을 보라는지 흐려진다."
+        },
+        {
+          "id": "q1",
+          "kind": "question",
+          "lines": [
+            {
+              "channel": "question_prompt",
+              "speaker": "",
+              "content": "모양 2개를 찾아 봅시다.",
+              "rendered_text": [
+                "모양 2개를 찾아 봅시다."
+              ]
+            }
+          ],
+          "staging": [],
+          "question_id": "q-find-shape",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "correct_answer",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q1-wrong",
+          "kind": "feedback",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "stamp-wrong",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 중앙에 짧게",
+              "duration_hint": "short",
+              "source_line": "알맞지 않은 곳을 누르면 오답 효과음"
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "wrong",
+            "question_id": "q-find-shape"
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": "오답 문구는 원문에 없다. 도장만 찍고 hotspot은 계속 살아 있다."
+        },
+        {
+          "id": "q1-exhausted",
+          "kind": "feedback",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "q-find-shape",
+              "target_kind": "question",
+              "action": "highlight",
+              "to_state": "정답 자리에 번호 표시",
+              "duration_hint": "short",
+              "source_line": "3번 오답인 경우, 숫자가 정답인 모양이 뜸."
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "exhausted",
+            "question_id": "q-find-shape"
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q1-correct",
+          "kind": "feedback",
+          "lines": [
+            {
+              "channel": "feedback",
+              "speaker": "",
+              "content": "정답 효과: 내레이션: “정답입니다.” / 표기: O 표기",
+              "rendered_text": [
+                "정답입니다."
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "stamp-correct",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 중앙에 짧게",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "correct",
+            "question_id": "q-find-shape"
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "swap-observation",
+          "kind": "transition",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "stamp-correct",
+              "target_kind": "asset",
+              "action": "disappear",
+              "to_state": "",
+              "duration_hint": "short",
+              "source_line": ""
+            },
+            {
+              "order": 1,
+              "target": "overlay-shape-find-school-objects",
+              "target_kind": "asset",
+              "action": "replace",
+              "to_state": "두 번째 관찰 대상 묶음. 배경과 캐릭터 위치는 그대로 둔다",
+              "duration_hint": "medium",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "correct",
+            "question_id": "q-find-shape"
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q2",
+          "kind": "question",
+          "lines": [
+            {
+              "channel": "question_prompt",
+              "speaker": "",
+              "content": "▲모양 2개를 찾아 봅시다.",
+              "rendered_text": [
+                "▲모양 2개를 찾아 봅시다."
+              ]
+            }
+          ],
+          "staging": [],
+          "question_id": "q-find-triangle",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "correct_answer",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q2-correct",
+          "kind": "feedback",
+          "lines": [
+            {
+              "channel": "feedback",
+              "speaker": "",
+              "content": "정답 효과: 내레이션: “정답입니다.” / 표기: O 표기",
+              "rendered_text": [
+                "정답입니다."
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "stamp-correct",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 중앙에 짧게",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "correct",
+            "question_id": "q-find-triangle"
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "exit",
+          "kind": "staging",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "cta-activity-mural-worktag",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "화면 하단 중앙",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "none",
+            "label": ""
+          },
+          "notes": ""
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-find-shape",
+          "prompt": "모양 2개를 찾아 봅시다.",
+          "input_type": "hotspot",
+          "choices": [],
+          "targets": [
+            {
+              "name": "둥근 화분 받침",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": true,
+              "appear_order": 0
+            },
+            {
+              "name": "둥근 시계판",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": true,
+              "appear_order": 0
+            },
+            {
+              "name": "삼각 깃발",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": false,
+              "appear_order": 0
+            },
+            {
+              "name": "사각 안내 상자",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": false,
+              "appear_order": 0
+            }
+          ],
+          "answer": "둥근 화분 받침, 둥근 시계판",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-find-triangle",
+          "prompt": "▲모양 2개를 찾아 봅시다.",
+          "input_type": "hotspot",
+          "choices": [],
+          "targets": [
+            {
+              "name": "삼각 깃발",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": true,
+              "appear_order": 0
+            },
+            {
+              "name": "삼각 지붕 장식",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": true,
+              "appear_order": 1
+            },
+            {
+              "name": "둥근 화분 받침",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": false,
+              "appear_order": 0
+            },
+            {
+              "name": "사각 안내 상자",
+              "anchor_asset_id": "overlay-shape-find-school-objects",
+              "correct": false,
+              "appear_order": 0
+            }
+          ],
+          "answer": "삼각 깃발, 삼각 지붕 장식",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        }
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-explaining",
+        "boy-idle",
+        "boy-helping",
+        "girl-helping",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "cta-activity-mural-worktag",
+        "overlay-shape-find-school-objects"
+      ],
+      "advance": {
+        "interaction_id": "shape-find-advance",
+        "to_section_id": "shape-count"
+      }
+    },
+    {
+      "id": "shape-count",
+      "title": "수리가 필요해요 1 — 모양 세기",
+      "purpose": "색과 모양의 대응을 보고 각 모양의 개수를 세어 수 개념으로 잇는다.",
+      "steps": [
+        {
+          "id": "praise",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "teacher",
+              "content": "잘 찾았어요!",
+              "rendered_text": [
+                "잘 찾았어요!"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "overlay-shape-find-school-objects",
+              "target_kind": "asset",
+              "action": "disappear",
+              "to_state": "",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": "앞 화면의 담장 배경과 캐릭터 위치를 그대로 유지한다. 관찰 overlay만 걷는다."
+        },
+        {
+          "id": "intro-color",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "dialogue",
+              "speaker": "teacher",
+              "content": "페인트 색깔마다 모양이 달라요",
+              "rendered_text": [
+                "페인트 색깔마다 모양이 달라요"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "teacher-explaining",
+              "target_kind": "character",
+              "action": "highlight",
+              "to_state": "담장 앞 바닥 세 자리를 차례로 가리킴",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "tap",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "legend",
+          "kind": "narration",
+          "lines": [
+            {
+              "channel": "caption",
+              "speaker": "",
+              "content": "● ■ ▲ 모양",
+              "rendered_text": [
+                "● ■ ▲ 모양"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "surface-info-board-mural",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "담장 상단 색-모양 대응 범례",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "paint-sequence",
+          "kind": "staging",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "초록 페인트통이 담장 앞 왼쪽에 놓임",
+              "duration_hint": "short",
+              "source_line": "페인트와 모양이 초록, 파랑, 빨강 순으로 등장"
+            },
+            {
+              "order": 1,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "change_state",
+              "to_state": "초록 원 3개가 담장에 찍힘",
+              "duration_hint": "medium",
+              "source_line": "예)초록 페인트-> 원 모양 3개 등장 순"
+            },
+            {
+              "order": 2,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "파랑 페인트통이 가운데에 놓임",
+              "duration_hint": "short",
+              "source_line": "페인트와 모양이 초록, 파랑, 빨강 순으로 등장"
+            },
+            {
+              "order": 3,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "change_state",
+              "to_state": "파랑 사각형 4개가 담장에 찍힘",
+              "duration_hint": "medium",
+              "source_line": ""
+            },
+            {
+              "order": 4,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "빨강 페인트통이 오른쪽에 놓임",
+              "duration_hint": "short",
+              "source_line": "페인트와 모양이 초록, 파랑, 빨강 순으로 등장"
+            },
+            {
+              "order": 5,
+              "target": "paint-can-body",
+              "target_kind": "asset",
+              "action": "change_state",
+              "to_state": "빨강 삼각형 2개가 담장에 찍힘",
+              "duration_hint": "medium",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "auto",
+            "label": ""
+          },
+          "notes": "원문 '모양, 색깔 순서로 등장'을 지켜 색 표식이 먼저 찍히고 그 자리에 도형이 뒤이어 나타난다."
+        },
+        {
+          "id": "q-circle",
+          "kind": "question",
+          "lines": [
+            {
+              "channel": "caption",
+              "speaker": "",
+              "content": "모양은 몇 개 인가요?  (     )",
+              "rendered_text": [
+                "모양은 몇 개 인가요?"
+              ]
+            },
+            {
+              "channel": "question_prompt",
+              "speaker": "",
+              "content": "●모양은 몇 개 인가요?  (     )",
+              "rendered_text": [
+                "●모양은 몇 개 인가요?"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "q-count-circle",
+              "target_kind": "question",
+              "action": "highlight",
+              "to_state": "담장의 초록 원들만 강조",
+              "duration_hint": "short",
+              "source_line": "원 -> 사각형 -> 삼각형 순으로 모양 변경"
+            }
+          ],
+          "question_id": "q-count-circle",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "correct_answer",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q-triangle",
+          "kind": "question",
+          "lines": [
+            {
+              "channel": "question_prompt",
+              "speaker": "",
+              "content": "▲모양은 몇 개 인가요?  (     )",
+              "rendered_text": [
+                "▲모양은 몇 개 인가요?"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "q-count-triangle",
+              "target_kind": "question",
+              "action": "highlight",
+              "to_state": "담장의 빨강 삼각형들만 강조",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "q-count-triangle",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "correct_answer",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "q-square",
+          "kind": "question",
+          "lines": [
+            {
+              "channel": "question_prompt",
+              "speaker": "",
+              "content": "■모양은 몇 개 인가요?  (     )",
+              "rendered_text": [
+                "■모양은 몇 개 인가요?"
+              ]
+            }
+          ],
+          "staging": [
+            {
+              "order": 0,
+              "target": "q-count-square",
+              "target_kind": "question",
+              "action": "highlight",
+              "to_state": "담장의 파랑 사각형들만 강조",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "q-count-square",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "correct_answer",
+            "label": ""
+          },
+          "notes": ""
+        },
+        {
+          "id": "exit",
+          "kind": "staging",
+          "lines": [],
+          "staging": [
+            {
+              "order": 0,
+              "target": "cta-activity-mural-worktag",
+              "target_kind": "asset",
+              "action": "appear",
+              "to_state": "화면 하단 중앙",
+              "duration_hint": "short",
+              "source_line": ""
+            }
+          ],
+          "question_id": "",
+          "condition": {
+            "on": "always",
+            "question_id": ""
+          },
+          "advance": {
+            "by": "none",
+            "label": ""
+          },
+          "notes": ""
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-count-circle",
+          "prompt": "●모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "targets": [],
+          "answer": "3",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-count-triangle",
+          "prompt": "▲모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "targets": [],
+          "answer": "2",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-count-square",
+          "prompt": "■모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "targets": [],
+          "answer": "4",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        }
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-explaining",
+        "surface-info-board-mural",
+        "paint-can-body",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "shape-count-advance",
+        "to_section_id": "shape-transition"
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "shape-find-hotspots",
+      "type": "quiz",
+      "description": "학교 관찰 장면에서 정답 hotspot 두 곳을 선택한다. 오답 세 번이면 정답 위치를 드러내며, 키보드·누르기 방식으로도 선택할 수 있게 한다."
+    },
+    {
+      "id": "shape-find-advance",
+      "type": "button",
+      "description": "두 모양 찾기 문항을 완료하면 shape-count 섹션으로 이동한다."
+    },
+    {
+      "id": "shape-count-advance",
+      "type": "button",
+      "description": "세 개수 세기 문항을 완료하면 shape-transition 섹션으로 이동한다."
+    }
+  ],
+  "asset_plan": [
+    {
+      "id": "bg-wall-activity",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg-wall-activity.png",
+      "purpose": "도형 찾기부터 자유 그리기까지 반복 사용하는 담장 클로즈업 활동 무대",
+      "prompt_brief": "중앙에 넓고 깨끗한 크림색 벽면이 있는 학교 담장 근경, 얕은 벽돌 이음과 낮은 보도, 상단 가장자리의 하늘과 나뭇잎을 포함한 16:9 raster 배경.",
+      "visual_role": "도형·수식·그리기 상호작용이 놓이는 실제 담장 활동 면",
+      "style_constraints": "참조의 중앙을 크게 비우고 좌우로 원근을 접는 구도, 외곽선 없는 배경, 노이즈 없이 색 경계와 얕은 명암으로 벽 재질을 표현한다.",
+      "composition_notes": "화면 중앙 70%를 빈 담장 면으로 두고 하단 보도는 캐릭터 발이 놓일 높이를 일정하게 유지한다. HTML 도형, 문제 표면, 키패드가 올라갈 safe zone을 남긴다.",
+      "negative_prompt": "주요 캐릭터, 페인트통, 도형, 벽화, 글자, 숫자, 문제판, 표지판, 버튼, 사진실사, 3D 렌더, 굵은 배경 외곽선, 종이결, UI mockup",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "teacher-idle",
+      "kind": "image",
+      "character_id": "teacher",
+      "intended_path": "output/assets/teacher-idle.png",
+      "purpose": "교사의 중립적인 안내와 자유 그리기 도입에 사용하는 기준 포즈",
+      "prompt_brief": "교사 캐릭터의 전신 정면 기본 대기 포즈, 양손을 편안히 내린 상태, 투명 배경.",
+      "visual_role": "교사 정체성의 source of truth이자 차분한 안내 상태",
+      "style_constraints": "부드러운 미소, 정면 시선, 긴장을 풀고 곧게 선 자세만 적용한다.",
+      "composition_notes": "전신이 잘리지 않는 세로 2:3 투명 배경, 발밑 그림자 없이 화면 왼쪽 배치에 맞추고 시선은 화면 안쪽을 향하게 한다.",
+      "negative_prompt": "배경, 가구, 손에 든 소품, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "shape-count",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "teacher-explaining",
+      "kind": "image",
+      "character_id": "teacher",
+      "intended_path": "output/assets/teacher-explaining.png",
+      "purpose": "도형 찾기, 페인트 대응, 활동 전환을 설명하는 교사 포즈",
+      "prompt_brief": "교사 캐릭터가 한 손바닥을 펴 화면 오른쪽의 활동 대상을 안내하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "담장·도형·그리기 도구를 가리키는 설명 상태",
+      "style_constraints": "한 손은 허리 높이에서 펼치고 다른 손은 자연스럽게 내리며, 친절한 미소와 화면 오른쪽 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 왼쪽 배치 기준, 손끝 오른쪽에 말풍선과 활동 대상을 위한 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과도한 손가락 묘사, 과장된 표정, 사진실사, 3D 렌더, 글자",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "boy-idle",
+      "kind": "image",
+      "character_id": "boy",
+      "intended_path": "output/assets/boy-idle.png",
+      "purpose": "문제를 듣고 생각하거나 보조 설명을 여는 남자 어린이 기준 포즈",
+      "prompt_brief": "남자 어린이 캐릭터의 전신 정면 기본 대기 포즈, 양손을 자연스럽게 내린 상태, 투명 배경.",
+      "visual_role": "남자 어린이 정체성의 source of truth이자 문제 풀이 대기 상태",
+      "style_constraints": "호기심 있는 작은 미소, 정면 또는 화면 안쪽 시선, 안정적으로 선 자세를 적용한다.",
+      "composition_notes": "전신이 잘리지 않는 세로 2:3 투명 배경, 발밑 그림자 없이 오른쪽 배치에 맞춘다.",
+      "negative_prompt": "배경, 손에 든 소품, 페인트 얼룩, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "shape-find",
+        "addition",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "boy-helping",
+      "kind": "image",
+      "character_id": "boy",
+      "intended_path": "output/assets/boy-helping.png",
+      "purpose": "도움을 약속하고 계산·색칠 활동에 응답하는 남자 어린이 포즈",
+      "prompt_brief": "남자 어린이 캐릭터가 한 손을 어깨 높이로 들고 자신 있게 대답하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "도전 시작과 긍정 응답을 보여 주는 어린이 상태",
+      "style_constraints": "밝은 미소, 살짝 올라간 눈썹, 화면 왼쪽 성인 캐릭터를 향한 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 오른쪽 배치, 든 손 위와 왼쪽에 말풍선 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과장된 점프, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "addition",
+        "subtraction-intro",
+        "subtraction"
+      ]
+    },
+    {
+      "id": "girl-helping",
+      "kind": "image",
+      "character_id": "girl",
+      "intended_path": "output/assets/girl-helping.png",
+      "purpose": "도움을 약속하고 계산·색칠 활동에 응답하는 여자 어린이 포즈",
+      "prompt_brief": "여자 어린이 캐릭터가 한 손을 가슴 앞에서 펼쳐 자신 있게 대답하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "도전 시작과 긍정 응답을 보여 주는 어린이 상태",
+      "style_constraints": "밝은 미소, 부드럽게 올라간 눈썹, 화면 왼쪽 성인 캐릭터를 향한 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 오른쪽 배치, 손과 얼굴 주변에 말풍선 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과장된 점프, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "addition",
+        "subtraction-intro",
+        "subtraction"
+      ]
+    },
+    {
+      "id": "paint-can-body",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/paint-can-body.png",
+      "purpose": "초록·파랑·빨강 페인트와 여러 계산 장면에서 재사용하는 페인트통 고정 몸체",
+      "prompt_brief": "뚜껑이 반쯤 열린 원통형 금속 페인트통의 빈 몸체, 굵은 짙은 남색 외곽선과 한 줄의 밝은 광택, 투명 배경. 내부 색과 라벨은 비워 둔다.",
+      "visual_role": "색과 사용량이 바뀌는 페인트 한 통의 재사용 가능한 실제 소품",
+      "style_constraints": "금속 재질은 플랫한 밝은 회청색 면과 선명한 하이라이트로만 표현하고, 손잡이와 테두리 두께를 모든 사용처에서 고정한다.",
+      "composition_notes": "정사각 투명 배경, 정면에 가까운 3/4 시점, 내부 타원과 몸체 정면에 색 오버레이 safe zone을 확보하고 중심축을 이미지 중앙에 맞춘다.",
+      "negative_prompt": "페인트 색, 내용물 색, 글자, 숫자, 라벨, 로고, 캐릭터, 배경, 사진실사, 3D 렌더, SVG style, icon kit",
+      "usage_section_ids": [
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "stamp-correct",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp-correct.png",
+      "purpose": "feedback-layer가 정답 판정을 찍어 보여 주기 위해 반드시 사용하는 정답 도장",
+      "prompt_brief": "학교 미술 준비실에서 쓰는 눌러 찍는 원형 도장 물건. 크림색 손잡이와 청록·남색 테두리, 도장 면 중앙에 원문 ‘정답입니다.’와 둥근 O 심볼을 한 덩어리로 새긴 정사각 투명 raster.",
+      "visual_role": "정답 판정을 즉시 읽히게 하는 물리적인 피드백 도장",
+      "style_constraints": "도장 몸체·테두리는 콘텐츠 팔레트를 따르고 문구·O 심볼에만 긍정 청록색을 사용한다. 눌림 상태는 별도 프레임 없이 CSS transform으로 표현한다.",
+      "composition_notes": "정사각 투명 배경, 도장 면이 정면에 가깝게 보이는 약한 3/4 시점, 문구와 심볼이 작은 화면에서도 읽히며 가장자리가 잘리지 않게 한다.",
+      "negative_prompt": "오답 문구, X 심볼, 스프라이트 시트, 여러 상태 프레임, 사진실사, 3D 렌더, flat vector UI, CSS component, 배경 장면",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "stamp-wrong",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp-wrong.png",
+      "purpose": "feedback-layer가 오답 판정을 찍어 보여 주기 위해 반드시 사용하는 별도의 오답 도장",
+      "prompt_brief": "학교 미술 준비실에서 쓰는 눌러 찍는 사각 도장 물건. 크림색 손잡이와 청록·남색 테두리, 도장 면 중앙에 큰 X 심볼을 새긴 정사각 투명 raster. 정답 도장과 완전히 별개의 형태로 그린다.",
+      "visual_role": "오답을 즉시 알리되 재시도를 방해하지 않는 물리적인 피드백 도장",
+      "style_constraints": "도장 몸체·테두리는 콘텐츠 팔레트를 따르고 중앙 X 심볼만 경고 빨강으로 유지한다. 눌림 상태는 별도 프레임 없이 CSS transform으로 표현한다.",
+      "composition_notes": "정사각 투명 배경, 도장 면이 정면에 가깝게 보이는 약한 3/4 시점, X 심볼이 작은 화면에서도 분명하고 가장자리가 잘리지 않게 한다.",
+      "negative_prompt": "정답 문구, O 심볼, 정답 도장의 색상 필터 복제, 스프라이트 시트, 여러 상태 프레임, 사진실사, 3D 렌더, flat vector UI, CSS component, 배경 장면",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "surface-speech-bubble-school",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/surface-speech-bubble-school.png",
+      "purpose": "동적 대사를 얹는 학교 벽화 세계관의 물리적 대사판 몸체",
+      "prompt_brief": "밝은 한낮 학교 벽화 세계관의 가로형 빈 대사판. 짙은 남색 굵은 외곽선, 크림색 완전 빈 내부 면, 얇은 판 두께, 좌측 화자 방향 꼬리 또는 연결 브래킷, 작은 나사 고정부. 글자와 버튼 라벨은 그리지 않는다.",
+      "visual_role": "캐릭터 대사를 장면 속 안내 물건으로 흡수하는 공용 표면",
+      "style_constraints": "참조 surface-info-board의 두께·하이라이트·고정부 밀도를 따르고 좌상단 광원과 한 겹 우하단 그림자를 사용한다.",
+      "composition_notes": "투명 배경, 가로 약 3:1, 내부 82%를 장식 없는 safe zone으로 두고 하단 우측에 작은 진행 탭을 얹을 빈 자리 확보.",
+      "negative_prompt": "글자, 숫자, baked-in 라벨, 캐릭터, 배경, SVG, flat UI, 흰 웹 카드, 과도한 텍스처, 3D 렌더",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "surface-info-board-mural",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/surface-info-board-mural.png",
+      "purpose": "동적 제목·문제·수식을 얹는 공용 담장 안내판",
+      "prompt_brief": "학교 담장에 고정하는 가로형 빈 안내판. 짙은 남색 굵은 프레임, 밝은 크림색 내부, 얇은 판 두께, 작은 청록 고정부와 한 줄 광택. 내부에는 아무 글자도 넣지 않는다.",
+      "visual_role": "웹 카드로 흩어진 제목과 수식을 하나의 장면 표면 언어로 통일",
+      "style_constraints": "참조 surface-info-board의 선·면 분할과 고정부를 따르되 이 차시의 청록·산호 포인트를 사용한다.",
+      "composition_notes": "투명 배경, 가로 4:1, 내부 텍스트 safe zone 86%, 1~2줄 큰 한글과 수식이 들어가도록 중앙 장식을 비운다.",
+      "negative_prompt": "글자, 숫자, 로고, 캐릭터, 배경, SVG, flat icon, 흰 rounded web card, 복잡한 장식",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "keypad-console-paint-counter",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/keypad-console-paint-counter.png",
+      "purpose": "동적 답 표시와 12개 키를 얹는 페인트 계수기 몸체",
+      "prompt_brief": "벽화 작업용 휴대형 금속 계수기 console. 상단에 넓은 빈 display 홈 하나, 아래 3열×4행의 완전히 빈 키 슬롯 12개, 짙은 남색 프레임, 회청색 금속 면, 청록 고정부, 한 줄 하이라이트. 글자와 숫자는 그리지 않는다.",
+      "visual_role": "일반 웹 keypad를 장면 속 실제 계산 장치로 변환",
+      "style_constraints": "prop-paint-can의 금속 하이라이트와 surface-info-board의 굵은 선 계층을 결합한다.",
+      "composition_notes": "투명 배경, 세로형이되 1920×1080에서 높이 460px 이하로 사용할 수 있는 비율, 모든 슬롯 중심과 간격을 균일하게 한다.",
+      "negative_prompt": "숫자, 확인 문구, 화살표, baked-in label, 캐릭터, 배경, SVG, calculator icon, 3D photorealism",
+      "usage_section_ids": [
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "cta-activity-mural-worktag",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/cta-activity-mural-worktag.png",
+      "purpose": "동적 진행 라벨을 얹는 벽화 작업표형 CTA 몸체",
+      "prompt_brief": "학교 벽화 작업표 또는 페인트 견본표 모양의 빈 CTA 몸체. 청록 프레임, 노란 강조 면, 얕은 두께, 좌상단 하이라이트, 눌림이 가능한 하단 그림자. 라벨은 그리지 않는다.",
+      "visual_role": "일반 웹 버튼을 현장 조작물로 통일",
+      "style_constraints": "참조 cta-activity-body의 두께와 상태 위계를 따르되 이 차시의 청록·파랑·산호·노랑 팔레트를 사용한다.",
+      "composition_notes": "투명 배경, 가로 3.2:1, 중앙 75%를 동적 라벨 safe zone으로 비우고 양끝 장식은 작게 제한한다.",
+      "negative_prompt": "글자, 화살표, baked-in label, 캐릭터, 배경, SVG, flat pill button, 과도한 광택, 3D 렌더",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice",
+        "free-draw",
+        "math-story"
+      ]
+    },
+    {
+      "id": "overlay-shape-find-school-objects",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/overlay-shape-find-school-objects.png",
+      "purpose": "원·삼각형·사각형을 발견할 수 있는 학교 생활 소품 overlay",
+      "prompt_brief": "학교 담장 앞에 놓을 서로 분리된 생활 소품 묶음: 둥근 화분 받침, 삼각 깃발 또는 삼각 장식, 사각 안내 상자 등. 각 물건은 실제 학교 소품으로 먼저 읽히고 기본 도형 실루엣도 분명해야 한다. 글자는 넣지 않는다.",
+      "visual_role": "투명 hotspot의 실제 관찰 대상",
+      "style_constraints": "소품은 짙은 남색 굵은 외곽선, 2~3단계 플랫 셰이딩, 좌상단 광원, 한 줄 하이라이트를 사용한다.",
+      "composition_notes": "1920×1080 담장 중앙에 배치 가능한 투명 overlay. 정답과 오답 후보를 화면 전역에 균형 있게 분산하고 각 물건 사이 충분한 hotspot 여백을 둔다.",
+      "negative_prompt": "도형만 단독으로 떠 있는 구성, 글자, 숫자, 캐릭터, 배경 전체, flat icon kit, SVG, 복잡한 패턴",
+      "usage_section_ids": [
+        "shape-find"
+      ]
+    }
+  ],
+  "asset_groups": []
+}

@@ -453,7 +453,7 @@
       max-width: 940px;
       padding: 26px 74px;
       font-size: 29px; line-height: 1.34; font-weight: 1000; color: #46290f;
-      background: url("assets/time_option_card_surface.png") center/100% 100% no-repeat;
+      background: url("assets/time_option_card_surface.webp") center/100% 100% no-repeat;
     }
     .cards-row, .choices-row, .blocks-row {
       display: flex; gap: 26px; justify-content: center; flex-wrap: wrap;
@@ -536,7 +536,7 @@
       width: 960px; min-height: 236px; padding: 36px 84px;
       display: flex; align-items: center; justify-content: center;
       font-size: 25px; line-height: 1.28; color: #46290f;
-      background: url("assets/time_option_card_surface.png") center/100% 100% no-repeat;
+      background: url("assets/time_option_card_surface.webp") center/100% 100% no-repeat;
     }
     /* A single flex child keeps the sentence + <strong> emphasis in normal inline flow;
        a grid/flex container applied to the text directly blockifies each run onto its
@@ -584,7 +584,7 @@
       min-width: 224px; min-height: 56px; padding: 6px 16px;
       display: grid; place-items: center;
       font-size: 27px; font-weight: 1000; color: #5a3413; text-align: center; line-height: 1.05;
-      background: url("assets/time_option_card_surface.png") center/100% 100% no-repeat;
+      background: url("assets/time_option_card_surface.webp") center/100% 100% no-repeat;
     }
     .clock-choice.chosen .clock-object { filter: drop-shadow(0 0 0 8px rgba(255,212,58,.5)) drop-shadow(0 0 34px rgba(255,212,58,.62)); }
     .clock-choice.correct-flash .clock-object { animation: correctFlash .65s ease 2; }
@@ -633,10 +633,10 @@
     #typeBControls .answer-field {
       min-width: 152px; min-height: 96px; padding: 0 16px;
       border: 0; border-radius: 0; color: #4f2c16;
-      background: url("assets/time_option_card_surface.png") center/100% 100% no-repeat;
+      background: url("assets/time_option_card_surface.webp") center/100% 100% no-repeat;
     }
     #typeBControls .answer-field.active {
-      background: url("assets/time_option_card_surface.png") center/100% 100% no-repeat;
+      background: url("assets/time_option_card_surface.webp") center/100% 100% no-repeat;
       outline: 0;
       filter: drop-shadow(0 0 0 4px rgba(88,201,185,.6)) drop-shadow(0 0 18px rgba(88,201,185,.55));
     }
@@ -933,11 +933,11 @@
 
       <header class="topbar" id="topbar">
         <button class="icon-btn" id="hamburger" type="button" aria-label="차시 목록 열기">
-          <img class="menu-surface" src="assets/library_menu_button_surface.png" alt="">
+          <img class="menu-surface" src="assets/library_menu_button_surface.webp" alt="">
           <span class="hamburger-lines" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
         <div class="energy-wrap" aria-label="수리 에너지 진행도">
-          <img class="gauge-surface" src="assets/repair_energy_gauge_surface.png" alt="">
+          <img class="gauge-surface" src="assets/repair_energy_gauge_surface.webp" alt="">
           <div class="energy-label"><span>수리 에너지</span><span id="energyText">0%</span></div>
           <div class="energy-shell" id="energyShell"><div class="energy-fill" id="energyFill"></div></div>
         </div>
@@ -948,13 +948,13 @@
 
       <!-- 활동 1 Scene 1: 타이틀 -->
       <section class="scene active" id="scene-title" data-qa-scene="activity1_title" data-qa-order="1" data-qa-label="타이틀 화면">
-        <img class="bg blurred" src="assets/title_lobby.png" alt="책이 가장자리에 흩어져 있고 중앙은 제목을 위해 흐릿하게 비워 둔 밝은 마을 도서관 로비">
+        <img class="bg blurred" src="assets/title_lobby.webp" alt="책이 가장자리에 흩어져 있고 중앙은 제목을 위해 흐릿하게 비워 둔 밝은 마을 도서관 로비">
         <div class="scene-tint title-tint"></div>
         <div class="center-stack">
           <h1 class="sr-only">시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!</h1>
-          <img class="mission-banner" src="assets/title_mission_banner_surface.png" alt="시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!">
+          <img class="mission-banner" src="assets/title_mission_banner_surface.webp" alt="시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!">
           <button type="button" class="ticket-btn pulse" id="startBtn">
-            <img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">
+            <img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">
             <span class="ticket-label">[시작하기]</span>
           </button>
         </div>
@@ -962,64 +962,64 @@
 
       <!-- 활동 1 Scene 2: INTRO & PROBLEM -->
       <section class="scene" id="scene-problem" data-qa-scene="activity1_problem" data-qa-order="2" data-qa-label="문제 발생">
-        <img class="bg" src="assets/messy_library_lobby.png" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
+        <img class="bg" src="assets/messy_library_lobby.webp" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
         <div class="scene-tint"></div>
         <div class="q-bubble" style="left:470px;top:300px">?</div>
         <div class="q-bubble" style="left:1400px;top:250px;animation-delay:.6s">?</div>
         <div class="clock-object large spinning" id="problemClock">
-          <img src="assets/wall_clock_body.png" alt="시곗바늘 없이 크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축만 표현한 대형 벽시계 몸체">
+          <img src="assets/wall_clock_body.webp" alt="시곗바늘 없이 크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축만 표현한 대형 벽시계 몸체">
           <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
         </div>
-        <img class="char teacher distressed" src="assets/librarian_distressed.png" alt="고장 난 시계를 올려다보며 두 손으로 머리를 감싸고 당황한 사서 선생님">
+        <img class="char teacher distressed" src="assets/librarian_distressed.webp" alt="고장 난 시계를 올려다보며 두 손으로 머리를 감싸고 당황한 사서 선생님">
         <div class="sweat" style="right:340px;bottom:600px">💦</div>
         <div class="speech teacher-speech visible" id="problemSpeech"><span class="speaker">사서 선생님</span>큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</div>
       </section>
 
       <!-- 활동 1 Scene 3: TUTORIAL -->
       <section class="scene" id="scene-tutorial" data-qa-scene="activity1_tutorial" data-qa-order="3" data-qa-label="튜토리얼">
-        <img class="bg" src="assets/messy_library_lobby.png" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
+        <img class="bg" src="assets/messy_library_lobby.webp" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
         <div class="scene-tint"></div>
         <div class="clock-object large" id="tutorialWallClock" data-clock-time="10:10" style="z-index:1">
-          <img src="assets/wall_clock_body.png" alt="크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축을 갖춘 대형 벽시계 몸체">
+          <img src="assets/wall_clock_body.webp" alt="크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축을 갖춘 대형 벽시계 몸체">
           <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
         </div>
-        <img class="char teacher" src="assets/librarian_explaining.png" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
-        <img class="char child enter-right" id="tutorialChild" src="assets/child_librarian_volunteer.png" alt="자신감 있게 미소 지으며 한 손을 높이 든 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_explaining.webp" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
+        <img class="char child enter-right" id="tutorialChild" src="assets/child_librarian_volunteer.webp" alt="자신감 있게 미소 지으며 한 손을 높이 든 꼬마 사서">
         <div class="speech" id="tutorialSpeech"></div>
         <div class="workbench">
           <div class="clock-object" id="tutorialClock" data-clock-time="3:00">
-            <img src="assets/desktop_clock_body.png" alt="시곗바늘 없이 크림색 문자판과 원목 몸체, 두 개의 짧은 받침 다리를 갖춘 작은 탁상시계 몸체">
+            <img src="assets/desktop_clock_body.webp" alt="시곗바늘 없이 크림색 문자판과 원목 몸체, 두 개의 짧은 받침 다리를 갖춘 작은 탁상시계 몸체">
             <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
           </div>
-          <div class="slot-card" id="tutorialDrop" data-answer="[3시]" tabindex="0"><img class="card-surface" src="assets/time_option_card_surface.png" alt=""><span class="slot-label">[?]</span></div>
+          <div class="slot-card" id="tutorialDrop" data-answer="[3시]" tabindex="0"><img class="card-surface" src="assets/time_option_card_surface.webp" alt=""><span class="slot-label">[?]</span></div>
         </div>
         <div class="card-tray disabled" id="tutorialTray">
           <div class="tray-prompt">지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</div>
           <div class="cards-row">
-            <button class="opt-card card" draggable="true" data-value="[3시]"><img class="card-surface" src="assets/time_option_card_surface.png" alt=""><span class="card-label">[3시]</span></button>
-            <button class="opt-card card" draggable="true" data-value="[4시]"><img class="card-surface" src="assets/time_option_card_surface.png" alt=""><span class="card-label">[4시]</span></button>
-            <button class="opt-card card" draggable="true" data-value="[5시]"><img class="card-surface" src="assets/time_option_card_surface.png" alt=""><span class="card-label">[5시]</span></button>
+            <button class="opt-card card" draggable="true" data-value="[3시]"><img class="card-surface" src="assets/time_option_card_surface.webp" alt=""><span class="card-label">[3시]</span></button>
+            <button class="opt-card card" draggable="true" data-value="[4시]"><img class="card-surface" src="assets/time_option_card_surface.webp" alt=""><span class="card-label">[4시]</span></button>
+            <button class="opt-card card" draggable="true" data-value="[5시]"><img class="card-surface" src="assets/time_option_card_surface.webp" alt=""><span class="card-label">[5시]</span></button>
           </div>
         </div>
       </section>
 
       <!-- 활동 1 Scene 4: SUCCESS -->
       <section class="scene" id="scene-success" data-qa-scene="activity1_success" data-qa-order="4" data-qa-label="튜토리얼 성공">
-        <img class="bg" src="assets/messy_library_lobby.png" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
+        <img class="bg" src="assets/messy_library_lobby.webp" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
         <div class="scene-tint"></div>
         <div class="workbench">
           <div class="clock-object glow-face" data-clock-time="3:00">
-            <img src="assets/desktop_clock_body.png" alt="시곗바늘 없이 크림색 문자판과 원목 몸체, 두 개의 짧은 받침 다리를 갖춘 작은 탁상시계 몸체">
+            <img src="assets/desktop_clock_body.webp" alt="시곗바늘 없이 크림색 문자판과 원목 몸체, 두 개의 짧은 받침 다리를 갖춘 작은 탁상시계 몸체">
             <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
           </div>
-          <div class="slot-card ready"><img class="card-surface" src="assets/time_option_card_surface.png" alt=""><span class="slot-label">[3시]</span></div>
+          <div class="slot-card ready"><img class="card-surface" src="assets/time_option_card_surface.webp" alt=""><span class="slot-label">[3시]</span></div>
         </div>
-        <img class="char child success" src="assets/child_librarian_success.png" alt="두 팔을 높이 들고 공중으로 뛰어오르며 기뻐하는 꼬마 사서">
-        <img class="char teacher" src="assets/librarian_success.png" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
+        <img class="char child success" src="assets/child_librarian_success.webp" alt="두 팔을 높이 들고 공중으로 뛰어오르며 기뻐하는 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_success.webp" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
         <div class="speech teacher-speech visible" style="width:486px;right:330px;top:176px;bottom:auto"><span class="speaker">사서 선생님</span>와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</div>
         <div class="bottom-cta">
           <button type="button" class="ticket-btn long pulse" id="goStep2">
-            <img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">
+            <img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">
             <span class="ticket-label">[좋아요! 본격적으로 수리하러 가기 →]</span>
           </button>
         </div>
@@ -1027,10 +1027,10 @@
 
       <!-- 활동 2 Scene 1: 유형 A -->
       <section class="scene" id="scene-type-a" data-qa-scene="activity2_type_a" data-qa-order="5" data-qa-label="유형 A 시계 맞추기">
-        <img class="bg" src="assets/type_a_information_desk.png" alt="꺼진 전광판과 세 개의 시계를 놓을 빈 원목 선반이 있는 햇살 가득한 도서관 안내 데스크">
+        <img class="bg" src="assets/type_a_information_desk.webp" alt="꺼진 전광판과 세 개의 시계를 놓을 빈 원목 선반이 있는 햇살 가득한 도서관 안내 데스크">
         <div class="scene-tint"></div>
-        <img class="char teacher" src="assets/librarian_explaining.png" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
-        <img class="char child" id="typeAChild" src="assets/child_librarian_idle.png" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_explaining.webp" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
+        <img class="char child" id="typeAChild" src="assets/child_librarian_idle.webp" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
         <div class="speech teacher-speech" id="typeASpeech"><span class="speaker">사서 선생님</span>전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?</div>
         <div class="surface-text" id="typeAPrompt"></div>
         <div class="control-tray" id="typeAControls"></div>
@@ -1038,10 +1038,10 @@
 
       <!-- 활동 2 Scene 2: 유형 B -->
       <section class="scene" id="scene-type-b" data-qa-scene="activity2_type_b" data-qa-order="6" data-qa-label="유형 B 시간표 복구">
-        <img class="bg" src="assets/type_b_reading_classroom.png" alt="시간 문제와 시계 자료를 배치할 넓은 코르크 게시판이 있는 밝은 도서관 독서 교실">
+        <img class="bg" src="assets/type_b_reading_classroom.webp" alt="시간 문제와 시계 자료를 배치할 넓은 코르크 게시판이 있는 밝은 도서관 독서 교실">
         <div class="scene-tint"></div>
-        <img class="char teacher" src="assets/librarian_explaining.png" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
-        <img class="char child" id="typeBChild" src="assets/child_librarian_idle.png" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_explaining.webp" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
+        <img class="char child" id="typeBChild" src="assets/child_librarian_idle.webp" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
         <div class="speech teacher-speech" id="typeBSpeech"><span class="speaker">사서 선생님</span>독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?</div>
         <div class="surface-text" id="typeBPrompt"></div>
         <div class="visual-aid" id="typeBVisual"></div>
@@ -1050,10 +1050,10 @@
 
       <!-- 활동 2 Scene 3: 유형 C -->
       <section class="scene" id="scene-type-c" data-qa-scene="activity2_type_c" data-qa-order="7" data-qa-label="유형 C 대출 시스템">
-        <img class="bg" src="assets/type_c_lending_terminal.png" alt="빈 화면의 베이지색 모니터와 키보드, 카드 스캐너가 놓인 원목 도서 대출 데스크">
+        <img class="bg" src="assets/type_c_lending_terminal.webp" alt="빈 화면의 베이지색 모니터와 키보드, 카드 스캐너가 놓인 원목 도서 대출 데스크">
         <div class="scene-tint"></div>
-        <img class="char teacher" src="assets/librarian_explaining.png" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
-        <img class="char child" id="typeCChild" src="assets/child_librarian_idle.png" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_explaining.webp" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
+        <img class="char child" id="typeCChild" src="assets/child_librarian_idle.webp" alt="청록색 사서 모자와 노란 나비넥타이를 착용하고 편안하게 서 있는 꼬마 사서">
         <div class="speech teacher-speech" id="typeCSpeech"><span class="speaker">사서 선생님</span>도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!</div>
         <div class="surface-text" id="typeCPrompt"></div>
         <div class="timeline-aid" aria-label="오전 12시간과 오후 12시간으로 이루어진 하루 타임라인">
@@ -1068,20 +1068,20 @@
 
       <!-- 활동 2 Scene 4: 수리 완료 -->
       <section class="scene" id="scene-repair" data-qa-scene="activity2_outro" data-qa-order="8" data-qa-label="수리 완료">
-        <img class="bg" src="assets/messy_library_lobby.png" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
-        <img class="bg restore-bg" id="restoreBg" src="assets/restored_library_lobby.png" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
+        <img class="bg" src="assets/messy_library_lobby.webp" alt="원목 책장과 안내 데스크 사이 바닥에 책이 흐트러져 있고 중앙 벽의 시계 자리가 비어 있는 도서관 로비">
+        <img class="bg restore-bg" id="restoreBg" src="assets/restored_library_lobby.webp" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
         <div class="scene-tint"></div>
         <div class="clock-object large normal glow-face" id="repairClock">
-          <img src="assets/wall_clock_body.png" alt="시곗바늘 없이 크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축만 표현한 대형 벽시계 몸체">
+          <img src="assets/wall_clock_body.webp" alt="시곗바늘 없이 크림색 문자판과 원목 테두리, 고정 눈금, 금속 중심축만 표현한 대형 벽시계 몸체">
           <span class="hand hour-hand"></span><span class="hand minute-hand"></span><span class="pin"></span>
         </div>
         <div class="floating-books" id="floatingBooks"><span class="book-piece"></span><span class="book-piece"></span><span class="book-piece"></span><span class="book-piece"></span></div>
-        <img class="char child" src="assets/child_librarian_proud.png" alt="한 손을 허리에 얹고 다른 손으로 브이 표시를 하며 뿌듯하게 웃는 꼬마 사서">
-        <img class="char teacher" src="assets/librarian_success.png" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
+        <img class="char child" src="assets/child_librarian_proud.webp" alt="한 손을 허리에 얹고 다른 손으로 브이 표시를 하며 뿌듯하게 웃는 꼬마 사서">
+        <img class="char teacher" src="assets/librarian_success.webp" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
         <div class="speech" id="repairSpeech"></div>
         <div class="bottom-cta">
           <button type="button" class="ticket-btn long pulse" id="goStep3" hidden>
-            <img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">
+            <img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">
             <span class="ticket-label">[3. 수리 이야기 보러 가기 →]</span>
           </button>
         </div>
@@ -1089,33 +1089,33 @@
 
       <!-- 활동 3 Scene 1: 실생활/역사 갤러리 -->
       <section class="scene" id="scene-gallery" data-qa-scene="activity3_story" data-qa-order="9" data-qa-label="실생활 역사 연계">
-        <img class="bg" src="assets/restored_library_lobby.png" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
+        <img class="bg" src="assets/restored_library_lobby.webp" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
         <div class="scene-tint"></div>
-        <img class="char teacher" src="assets/librarian_explaining.png" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
+        <img class="char teacher" src="assets/librarian_explaining.webp" alt="둥근 돋보기를 들고 화면 중앙의 문제 영역을 가리키는 사서 선생님">
         <div class="book-wrap">
-          <img class="book-surface" src="assets/open_magic_time_book.png" alt="청록색 가죽 표지와 금색 모서리 장식이 있는, 빈 크림색 페이지의 펼쳐진 마법 책">
-          <button class="book-nav prev" id="bookPrev" type="button" aria-label="이전 페이지"><img class="tab-surface" src="assets/magic_book_page_tab_surface.png" alt=""><span class="nav-glyph">◀</span></button>
+          <img class="book-surface" src="assets/open_magic_time_book.webp" alt="청록색 가죽 표지와 금색 모서리 장식이 있는, 빈 크림색 페이지의 펼쳐진 마법 책">
+          <button class="book-nav prev" id="bookPrev" type="button" aria-label="이전 페이지"><img class="tab-surface" src="assets/magic_book_page_tab_surface.webp" alt=""><span class="nav-glyph">◀</span></button>
           <div class="book-page-content" id="bookPageContent"></div>
           <div class="page-text" id="gallerySpeech"></div>
-          <button class="book-nav next" id="bookNext" type="button" aria-label="다음 페이지"><img class="tab-surface" src="assets/magic_book_page_tab_surface.png" alt=""><span class="nav-glyph">▶</span></button>
+          <button class="book-nav next" id="bookNext" type="button" aria-label="다음 페이지"><img class="tab-surface" src="assets/magic_book_page_tab_surface.webp" alt=""><span class="nav-glyph">▶</span></button>
         </div>
       </section>
 
       <!-- 활동 3 Scene 2: 마무리 퀴즈 -->
       <section class="scene" id="scene-popup-quiz" data-qa-scene="activity3_popup_quiz" data-qa-order="10" data-qa-label="마무리 퀴즈">
-        <img class="bg" src="assets/restored_library_lobby.png" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
+        <img class="bg" src="assets/restored_library_lobby.webp" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
         <div class="scene-tint"></div>
-        <img class="popup-child" id="popupChild" src="assets/child_librarian_volunteer.png" alt="자신감 있게 미소 지으며 한 손을 높이 든 꼬마 사서">
-        <div class="quiz-book"><img class="book-surface" src="assets/open_magic_time_book.png" alt="청록색 가죽 표지와 금색 모서리 장식이 있는, 빈 크림색 페이지의 펼쳐진 마법 책"></div>
+        <img class="popup-child" id="popupChild" src="assets/child_librarian_volunteer.webp" alt="자신감 있게 미소 지으며 한 손을 높이 든 꼬마 사서">
+        <div class="quiz-book"><img class="book-surface" src="assets/open_magic_time_book.webp" alt="청록색 가죽 표지와 금색 모서리 장식이 있는, 빈 크림색 페이지의 펼쳐진 마법 책"></div>
         <div class="quiz-popup" id="popupQuiz"></div>
       </section>
 
       <!-- 활동 3 Scene 3: 최종 인증서 -->
       <section class="scene" id="scene-final" data-qa-scene="activity3_final" data-qa-order="11" data-qa-label="최종 인증서">
-        <img class="bg" src="assets/restored_library_lobby.png" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
+        <img class="bg" src="assets/restored_library_lobby.webp" alt="모든 책이 책장에 정돈되고 따뜻한 햇살이 비치는 깨끗하고 평화로운 도서관 로비">
         <div class="scene-tint"></div>
         <div class="cert-box">
-          <img class="cert-surface" src="assets/village_repair_certificate.png" alt="책과 바늘 없는 시계 문양의 금박 테두리, 청록색 리본과 금색 봉인이 장식된 글자 없는 크림색 종이 인증서">
+          <img class="cert-surface" src="assets/village_repair_certificate.webp" alt="책과 바늘 없는 시계 문양의 금박 테두리, 청록색 리본과 금색 봉인이 장식된 글자 없는 크림색 종이 인증서">
           <div class="cert-safe-zone">
             <div class="cert-emblem">[마을 수리대원 인증서]</div>
             <h2>마을 수리대원 인증서 (도서관 편)</h2>
@@ -1126,17 +1126,17 @@
             </div>
           </div>
         </div>
-        <img class="char child" style="left:56px" src="assets/child_librarian_proud.png" alt="한 손을 허리에 얹고 다른 손으로 브이 표시를 하며 뿌듯하게 웃는 꼬마 사서">
-        <img class="char teacher" style="right:64px" src="assets/librarian_success.png" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
+        <img class="char child" style="left:56px" src="assets/child_librarian_proud.webp" alt="한 손을 허리에 얹고 다른 손으로 브이 표시를 하며 뿌듯하게 웃는 꼬마 사서">
+        <img class="char teacher" style="right:64px" src="assets/librarian_success.webp" alt="화면 중앙을 바라보며 환하게 웃고 가슴 앞에서 박수치는 사서 선생님">
         <div class="speech child-speech" style="left:60px;width:400px;bottom:560px"><span class="speaker">꼬마 사서</span>언제든 제 수학실력이 필요하면 불러주세요!</div>
         <div class="speech teacher-speech" style="right:60px;width:400px;bottom:560px"><span class="speaker">사서 선생님</span>정말 고마워! 네 덕분에 도서관이 완벽해졌어!</div>
         <div class="final-actions">
           <button type="button" class="ticket-btn save" id="saveCertificate">
-            <img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">
+            <img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">
             <span class="ticket-label">[내 사진첩에 저장하기]</span>
           </button>
           <button type="button" class="ticket-btn long" id="nextMission">
-            <img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">
+            <img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">
             <span class="ticket-label">[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]</span>
           </button>
         </div>
@@ -1181,13 +1181,13 @@
       const particleField = document.getElementById("particleField");
 
       const CHILD = {
-        idle: "assets/child_librarian_idle.png",
-        success: "assets/child_librarian_success.png",
-        confused: "assets/child_librarian_confused.png"
+        idle: "assets/child_librarian_idle.webp",
+        success: "assets/child_librarian_success.webp",
+        confused: "assets/child_librarian_confused.webp"
       };
-      const CHOICE_CLOCK = "assets/analog_choice_clock_body.png";
-      const OPT_CARD = "assets/time_option_card_surface.png";
-      const KEYCAP = "assets/library_keycap_surface.png";
+      const CHOICE_CLOCK = "assets/analog_choice_clock_body.webp";
+      const OPT_CARD = "assets/time_option_card_surface.webp";
+      const KEYCAP = "assets/library_keycap_surface.webp";
       // Asset-native option card: time-table ticket surface + centered HTML label.
       function optCardHTML(label, attrs) {
         return '<button class="opt-card choice" type="button" ' + (attrs || "") + '>' +
@@ -1333,17 +1333,17 @@
 
       const galleryPages = [
         {
-          img: "assets/story_24hour_store.png",
+          img: "assets/story_24hour_store.webp",
           alt: "간판에 '24시간'이라고 적힌 햇살 밝은 마을 편의점",
           text: `<span class="speaker">사서 선생님</span>우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!`
         },
         {
-          img: "assets/story_sundial.png",
+          img: "assets/story_sundial.webp",
           alt: "맑은 낮 전통 마당에서 해의 그림자가 드리운 오목한 앙부일구",
           text: `<span class="speaker">사서 선생님</span>시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!`
         },
         {
-          img: "assets/story_oven_timer.png",
+          img: "assets/story_oven_timer.webp",
           alt: "따뜻한 햇살이 드는 주방에서 빵이 익는 오븐 옆에 바늘 없이 중심축이 비어 있는 둥근 요리 타이머가 놓인 그림",
           text: `<span class="speaker">사서 선생님</span>오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.`
         }
@@ -1503,7 +1503,7 @@
         }
         feedbackLayer.innerHTML =
           '<div class="stamp ' + (ok ? "correct" : "wrong") + '">' +
-            '<img class="stamp-surface" src="assets/repair_feedback_stamp_surface.png" alt="">' +
+            '<img class="stamp-surface" src="assets/repair_feedback_stamp_surface.webp" alt="">' +
             '<span class="stamp-label">' + message + '</span>' +
           '</div>' +
           '<div class="speech child-speech visible" style="left:120px;width:420px;bottom:560px">' +
@@ -1731,7 +1731,7 @@
             keycapHTML("지우기", 'type="button" data-action="clear"', "number-block clearkey") +
             "</div>" +
             '<button type="button" class="ticket-btn" id="checkBlocks" style="width:236px;height:90px">' +
-              '<img class="ticket-surface" src="assets/library_ticket_button_surface.png" alt="">' +
+              '<img class="ticket-surface" src="assets/library_ticket_button_surface.webp" alt="">' +
               '<span class="ticket-label" style="font-size:30px">확인하기</span></button>';
           bindNumberBlocks(tray, q, "#typeCChild");
         }

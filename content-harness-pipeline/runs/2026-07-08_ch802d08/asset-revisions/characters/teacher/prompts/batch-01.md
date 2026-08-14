@@ -4,9 +4,9 @@
 
 Use these existing assets as identity and style references:
 
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_worried.png`
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_pointing.png`
-- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_happy.png`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_worried.webp`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_pointing.webp`
+- `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/teacher_happy.webp`
 
 Generate the same teacher/librarian character: warm young adult librarian teacher, high rounded brown hair bun with loose wisps, round thin-rimmed glasses, large brown eyes, cream cable-knit cardigan, white blouse with scalloped collar, coral neck scarf, brown belt, teal A-line midi skirt with small floral pattern, cream socks, brown Mary Jane shoes, gold/brass name badge, and magnifying glass.
 
@@ -14,7 +14,7 @@ Strict alpha requirement: transparent background only. The character, clothing, 
 
 Canvas: full-body transparent PNG, 1024x1536, shoes visible, clean antialiased cutout, safe padding around hair, hands, props, and feet.
 
-## Prompt: `teacher_worried.png`
+## Prompt: `teacher_worried.webp`
 
 Intended HTML use:
 
@@ -40,7 +40,7 @@ Negative prompt:
 different character, child, elderly, different hairstyle, no glasses, different outfit, pants, apron, hat, book in hand, clock in hand, background, floor, wall, furniture, text, speech bubble, UI, cropped feet, cropped hands, malformed hands, extra fingers, distorted glasses, translucent skirt, transparent clothing, ghosted fabric, semi-transparent body parts, low-resolution edges
 ```
 
-## Prompt: `teacher_pointing.png`
+## Prompt: `teacher_pointing.webp`
 
 Intended HTML use:
 

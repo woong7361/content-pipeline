@@ -4,7 +4,7 @@
 
 - Character id: `little_librarian`
 - Identity source: planner `characters[].identity` and the generated idle pose
-- Reference files: `output/assets/little_librarian_idle.png`
+- Reference files: `output/assets/little_librarian_idle.webp`
 - Usage target: activity 1 tutorial/success, activity 2 problem and outro scenes, activity 3 quiz/certificate
 
 ## Identity Invariants

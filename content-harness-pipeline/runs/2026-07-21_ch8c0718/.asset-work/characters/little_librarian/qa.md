@@ -4,7 +4,7 @@
 
 - `little_librarian_idle.png`: canonical identity, confident raised-hand pose, full-body crop, intact hands and feet, transparent corners, opaque clothing.
 - `little_librarian_success.png`: same identity and outfit, readable airborne hooray pose, full-body crop, intact hands and feet, transparent corners, opaque clothing.
-- `little_librarian_proud.png`: same identity and outfit, readable hand-on-hip and V-sign pose, full-body crop, intact hands and feet, transparent corners, opaque clothing.
+- `little_librarian_proud.webp`: same identity and outfit, readable hand-on-hip and V-sign pose, full-body crop, intact hands and feet, transparent corners, opaque clothing.
 - All outputs are 1024×1536 RGBA PNGs with zero-alpha corner pixels and consistent upper-left daylight, line weight, palette, freckles, bow tie, and open-book badge.
 
 ## Needs Regeneration

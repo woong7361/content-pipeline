@@ -5,7 +5,7 @@
 - Character id: `kid-librarian`
 - Identity source: New textual identity spec below. No existing kid-librarian image is an identity anchor.
 - Reference files:
-  - Usage references only: `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/kid_librarian_explaining.png`, `kid_librarian_idle.png`, `kid_librarian_success.png`, `kid_librarian_confused.png`
+  - Usage references only: `content-harness-pipeline/runs/2026-07-08_ch802d08/output/assets/kid_librarian_explaining.webp`, `kid_librarian_idle.webp`, `kid_librarian_success.webp`, `kid_librarian_confused.webp`
   - These existing files show where the character appears and what pose filenames the HTML expects, but they must not be copied as the new identity.
 - Usage target: HTML interactive lesson `content-harness-pipeline/runs/2026-07-08_ch802d08/output/index.html`, a grade 2 time lesson set in a village library repair mission.
 
@@ -51,7 +51,7 @@
 
 - Do not change: bob hair, mint star hair clips, no-glasses identity, teal vest/capelet, ivory blouse, mustard skirt, coral ribbon, yellow book satchel, Mary Jane shoes.
 - Do not include: adult proportions, teacher character traits, extra classmates, extra project-specific characters, scenery, floor, wall clock background, speech bubbles, UI labels.
-- Avoid: copying `kid_librarian_explaining.png` or the current idle/success/confused assets; round glasses; orange polka-dot bow headband; yellow smock with purple pockets; gray-blue vest; orange neckerchief; tan trousers; boyish short-hair replacement; unrelated face.
+- Avoid: copying `kid_librarian_explaining.webp` or the current idle/success/confused assets; round glasses; orange polka-dot bow headband; yellow smock with purple pockets; gray-blue vest; orange neckerchief; tan trousers; boyish short-hair replacement; unrelated face.
 
 ## Pose Compatibility Notes
 

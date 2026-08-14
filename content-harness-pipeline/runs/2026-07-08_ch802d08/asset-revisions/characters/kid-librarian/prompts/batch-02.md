@@ -14,7 +14,7 @@ Shared negative prompt:
 Do not copy the old kid_librarian_explaining image. No round glasses, no orange polka-dot headband, no yellow smock with purple pockets, no gray vest, no orange neckerchief, no tan trousers, no short-haired boy replacement, no adult proportions, no teacher character, no speech bubble, no wall clock, no UI, no text, no background, no semi-transparent clothing or body parts.
 ```
 
-## Prompt 01 - `kid_librarian_success.png`
+## Prompt 01 - `kid_librarian_success.webp`
 
 Intended HTML use:
 
@@ -41,7 +41,7 @@ Acceptance checks:
 - Reads clearly as success at small on-screen size.
 - Transparent background and fully opaque character.
 
-## Prompt 02 - `kid_librarian_confused.png`
+## Prompt 02 - `kid_librarian_confused.webp`
 
 Intended HTML use:
 

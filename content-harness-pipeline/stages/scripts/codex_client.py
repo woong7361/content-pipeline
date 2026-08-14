@@ -1,9 +1,22 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
+
+def resolve_executable(name: str) -> str:
+    """이름만 넘기지 않고 셸이 고르는 것과 같은 실행 파일을 찾아 준다.
+
+    Windows에서 `subprocess`에 이름만 주면 `CreateProcess`가 PATH를 자체 탐색하는데,
+    그 순서가 셸과 달라 **같은 이름의 다른 설치본**이 실행될 수 있다.
+    실측: 셸에서는 npm 설치본(0.147.0)이 도는데 `["codex", ...]`로는 오래된
+    standalone(0.133.0-alpha.1)이 돌아, 서버의 새 모델 목록을 못 읽고 400으로 거절됐다.
+    어느 바이너리가 도는지가 산출물을 좌우하므로 여기서 한 번에 고정한다.
+    """
+    return shutil.which(name) or name
+
 
 PROVIDER_CODEX = "codex"
 PROVIDER_CLAUDE = "claude"
@@ -86,7 +99,7 @@ class CodexClient:
         model: str | None = None,
     ) -> list[str]:
         command = [
-            self.codex_bin,
+            resolve_executable(self.codex_bin),
             "exec",
         ]
         if model:
@@ -173,7 +186,8 @@ class ClaudeClient:
         return extract_claude_usage(result)
 
     def build_command(self, output_schema: Path, model: str | None = None) -> list[str]:
-        command = [self.claude_bin]
+        # codex와 같은 이유로 셸이 고르는 것과 같은 실행 파일을 고정한다(resolve_executable 주석).
+        command = [resolve_executable(self.claude_bin)]
         if self.bare:
             command.append("--bare")
         if model:

@@ -14,7 +14,7 @@ Shared negative prompt:
 Do not copy the old kid_librarian_explaining image. No round glasses, no orange polka-dot headband, no yellow smock with purple pockets, no gray vest, no orange neckerchief, no tan trousers, no short-haired boy replacement, no adult proportions, no teacher character, no speech bubble, no wall clock, no UI, no text, no background, no semi-transparent clothing or body parts.
 ```
 
-## Prompt 01 - `kid_librarian_explaining.png`
+## Prompt 01 - `kid_librarian_explaining.webp`
 
 Intended HTML use:
 
@@ -39,7 +39,7 @@ Acceptance checks:
 - Hands, hair clips, satchel, skirt, socks, and shoes all remain visible.
 - Transparent background and fully opaque character.
 
-## Prompt 02 - `kid_librarian_idle.png`
+## Prompt 02 - `kid_librarian_idle.webp`
 
 Intended HTML use:
 

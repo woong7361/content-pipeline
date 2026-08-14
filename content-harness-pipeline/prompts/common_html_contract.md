@@ -114,7 +114,7 @@ HTML을 다시 쓰다 보면 문구를 다듬고 싶은 충동이 생깁니다. 
 
 컴포넌트에서 가져온 계약은 보존합니다. **HTML을 다시 쓰는 stage에서 특히 그렇습니다.**
 
-- class 이름(`c-` prefix), `data-component`/`data-slot`/`data-action`/`data-state`, 상태 class(`active`, `leaving`, `show`, `is-open`), 전역 API 이름(`window.Common*`)을 바꾸지 않습니다.
+- class 이름(`c-` prefix), `data-component`/`data-slot`/`data-action`/`data-state`, `data-qa-*` 검증 hook, 상태 class(`active`, `leaving`, `show`, `is-open`), 전역 API 이름(`window.Common*`)을 바꾸지 않습니다.
 - 컴포넌트 내부를 고쳐야 하면 이름을 바꾸지 말고 그 규칙의 값을 고칩니다. 컴포넌트 CSS를 통째로 풀어헤쳐 scene-local 사본으로 흩뿌리지 않습니다.
 - 컴포넌트가 DOM을 채우는 자리(`data-slot`)는 마크업이 비어 있는 것이 정상입니다. 채우는 것은 `behavior.js` 호출이며, 호출을 빠뜨리면 빈 채로 남습니다.
 
@@ -154,13 +154,53 @@ planner가 `elements[].channel`로 각 줄의 역할을 이미 구분해 두었�
 ## Visual QA scene contract
 
 - Playwright design review가 화면별 screenshot을 안정적으로 찍을 수 있도록 모든 주요 화면/섹션 root에 `data-qa-scene`을 넣거나 유지합니다.
-- `data-qa-scene` 값은 고정 enum이 아닙니다. 기존 값이 있으면 유지하고, 새 화면은 planner section id·화면 목적·step 이름에 맞는 안정적인 kebab/snake/camel case 문자열을 자유롭게 씁니다. 예: `intro`, `step1_intro`, `ticketMachineRepair`, `story-branch-1`.
+- `data-qa-scene` 값은 **planner `sections[].id`를 글자 그대로** 씁니다. 줄이거나 바꿔 쓰지 않습니다. 이 값은 표시용 이름이 아니라 planner와 화면을 잇는 유일한 조인 키이고, 다르면 검증기가 그 화면을 열지 못해 없는 누락이 잡힙니다. 사람이 읽을 이름이 필요하면 `data-qa-label`에 따로 씁니다. planner section에 대응하지 않는 보조 화면에만 자유 문자열을 씁니다.
 - 화면 순서가 있으면 `data-qa-order="1"`처럼 숫자 순서를 넣습니다. 없으면 DOM 순서대로 캡처됩니다.
 - 사람이 읽을 이름이 필요하면 `data-qa-label`을 넣습니다. 값은 한국어여도 됩니다.
 - 첫 화면뿐 아니라 튜토리얼, 메인 활동, 스토리/정리, 완료 화면처럼 design review가 별도로 봐야 하는 화면은 모두 `data-qa-scene`을 가져야 합니다.
 - `window.__contentHarnessShowScene = function(sceneId) { ... }`를 정의하거나 유지합니다. 전달받은 `data-qa-scene` 값의 화면만 보여 주고 나머지는 숨겨야 합니다.
 - 이 hook과 scene 전환(`active`/`leaving`)의 구현은 `COMMON_COMPONENTS_JSON`의 `scene-controller`에 이미 있습니다. `CommonSceneController.createSceneController(stage)`가 `__contentHarnessShowScene`을 등록하므로 같은 로직을 새로 작성하지 않습니다.
 - 이 contract는 사용자가 보는 UI가 아니라 QA hook입니다. 화면에 설명 문구로 노출하지 않습니다.
+
+## QA hook contract
+
+기능 검증기가 planner의 문항을 화면에서 **지목**하려면 주소가 있어야 합니다. class는 디자인이 바뀌면 함께 바뀌고 문구는 콘텐츠마다 다르므로, 아래 `data-qa-*` 속성이 그 주소입니다. 값에 planner id를 그대로 실어 planner와 화면을 잇습니다.
+
+| 속성 | 붙는 곳 | 값 |
+|---|---|---|
+| `data-qa-question` | 문항 root | planner `questions[].id` **그대로** |
+| `data-qa-choice` | 고를 수 있는 것 하나(보기·블록·그림 위 자리) | 안정적인 식별자. 순번도 됩니다 |
+| `data-qa-correct` | 같은 요소 | `"true"` / `"false"` |
+| `data-qa-blank` | 값을 채울 칸 | 0부터의 순번 |
+| `data-qa-key` | 키패드 키 | 숫자 또는 `"submit"` |
+| `data-qa-block` | 옮길 수 있는 값 블록 | 그 블록이 나타내는 **값** |
+| `data-qa-slot` | 옮겨 놓을 자리 | 0부터의 순번 |
+| `data-qa-feedback` | 정오답 반응 표면 | `"correct"` / `"wrong"` |
+| `data-qa-revealed` | **정답 보기·자리** | 시도 횟수를 다 써 정답을 공개했으면 `"true"`. 학습자에게는 그 자리가 눈에 띄게 강조돼야 한다 |
+| `data-qa-beat-next` | 다음 대사로 넘기는 조작 | 존재 자체가 신호 |
+| `data-qa-page-next` | 다음 장으로 넘기는 조작 | 존재 자체가 신호 |
+| `data-qa-advance` | 다음 화면으로 나가는 조작 | 도착할 화면의 planner `sections[].id` (= `advance.to_section_id`) |
+
+세 가지를 못박습니다.
+
+- **런타임에 만드는 요소에도 붙입니다.** 보기나 문항을 JS로 생성하면 만들면서 hook도 함께 붙입니다. 정적 검사가 못 보는 자리를 잡는 것이 이 계약의 존재 이유입니다.
+- **hook은 UI가 아닙니다.** 화면에 노출하지 않고, `data-qa-correct`가 정답 보기를 시각적으로 구분되게 만들어서도 안 됩니다.
+- **오답도 표시합니다.** `data-qa-correct="false"`인 자리가 하나도 없으면 오답 경로를 확인할 수 없습니다.
+
+### 조작 계약
+
+주소만으로는 부족합니다. 같은 화면이라도 조작 방식이 매번 다르면 검증기가 밀 수 없습니다.
+
+- **옮기는 조작은 클릭 두 번(원본 → 대상)으로도 같은 결과에 도달해야 합니다.** 끌기만 되는 UI로 만들지 않습니다. 드래그 전용 조작은 운동 조절이 어려운 학습자에게 장벽이고, 자동화가 합성한 마우스 이벤트로는 native drag 이벤트가 발생하지 않습니다. 끌기를 함께 지원하는 것은 괜찮습니다.
+- **장 넘김·대사 진행은 버튼으로 도달할 수 있어야 합니다.** 스와이프 전용이나 시간이 지나야만 넘어가는 방식으로 만들지 않습니다. 자동 진행을 두더라도 `data-qa-beat-next` / `data-qa-page-next`를 함께 둡니다.
+- **`window.__contentHarnessShowQuestion = function(questionId) { ... }`를 정의합니다.** 전달받은 `data-qa-question` 값의 문항을 지금 조작할 수 있는 상태로 만듭니다(숨겨져 있으면 보이게, 다른 문항이 떠 있으면 그 문항으로 이동). 문항을 한 번에 하나씩 내보내는 화면이면 **그 문항까지 순서대로 풀지 않고도** 검증기가 각 문항을 확인할 수 있어야 하고, 이 함수가 그 통로입니다. 없으면 뒤쪽 문항은 아무도 검증하지 못합니다.
+  - `__contentHarnessShowScene`과 같은 성격의 QA 통로입니다. 학습자에게 노출하지 않으며, **이 함수로 정답 처리나 진행 상태를 건드리지 않습니다** — 보여 주기만 합니다.
+- **planner `sections[].advance`가 가리키는 출구를 실제로 만듭니다.** 그 조작에 `data-qa-advance="<도착 화면 id>"`를 붙이고, 누르면 그 화면이 열려야 합니다. 검증기는 다른 케이스에서 화면을 프로그램으로 전환하므로, **전환이 실제로 되는지는 이 조작으로만 확인됩니다.**
+- **시도 횟수 규칙이 planner `questions[].attempt_policy`에 있으면 그대로 구현합니다.** 정답 공개는 문항 root에 `data-qa-revealed="true"`로 표시하고, 다음으로 넘어가는 경우 그 문항을 숨깁니다.
+
+### 보존
+
+`data-qa-*` 속성과 그 값은 **HTML을 다시 쓸 때도 그대로 유지합니다.** `c-` prefix·`data-slot`·`window.Common*`과 같은 취급입니다. 이 속성이 사라지면 그 문항은 검증 대상에서 조용히 빠지고, 통과한 것처럼 보입니다.
 
 ## 공통 금지
 

@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Content Evaluator Direct Output",
+  "description": "3축 판정. content_fidelity와 functional_integrity는 functional_test가 브라우저 실측으로 판정하므로 여기 없다 (docs/pipeline-redesign.md 5.5).",
   "type": "object",
   "required": [
     "rubric_name",
@@ -13,7 +14,7 @@
   "properties": {
     "rubric_name": {
       "type": "string",
-      "const": "content-html:v4"
+      "const": "content-html:v5"
     },
     "verdict": {
       "type": "string",
@@ -26,36 +27,28 @@
         "scores": {
           "type": "object",
           "required": [
-            "content_fidelity",
             "learning_goal_alignment",
             "feedback_scaffolding",
-            "interaction_flow_clarity",
-            "functional_integrity"
+            "interaction_flow_clarity"
           ],
           "properties": {
-            "content_fidelity": { "type": "number", "minimum": 0, "maximum": 5 },
             "learning_goal_alignment": { "type": "number", "minimum": 0, "maximum": 5 },
             "feedback_scaffolding": { "type": "number", "minimum": 0, "maximum": 5 },
-            "interaction_flow_clarity": { "type": "number", "minimum": 0, "maximum": 5 },
-            "functional_integrity": { "type": "number", "minimum": 0, "maximum": 5 }
+            "interaction_flow_clarity": { "type": "number", "minimum": 0, "maximum": 5 }
           },
           "additionalProperties": false
         },
         "weights": {
           "type": "object",
           "required": [
-            "content_fidelity",
             "learning_goal_alignment",
             "feedback_scaffolding",
-            "interaction_flow_clarity",
-            "functional_integrity"
+            "interaction_flow_clarity"
           ],
           "properties": {
-            "content_fidelity": { "type": "number", "const": 0.28 },
-            "learning_goal_alignment": { "type": "number", "const": 0.22 },
-            "feedback_scaffolding": { "type": "number", "const": 0.2 },
-            "interaction_flow_clarity": { "type": "number", "const": 0.18 },
-            "functional_integrity": { "type": "number", "const": 0.12 }
+            "learning_goal_alignment": { "type": "number", "const": 0.37 },
+            "feedback_scaffolding": { "type": "number", "const": 0.33 },
+            "interaction_flow_clarity": { "type": "number", "const": 0.3 }
           },
           "additionalProperties": false
         },
@@ -70,18 +63,14 @@
     "axis_rationales": {
       "type": "object",
       "required": [
-        "content_fidelity",
         "learning_goal_alignment",
         "feedback_scaffolding",
-        "interaction_flow_clarity",
-        "functional_integrity"
+        "interaction_flow_clarity"
       ],
       "properties": {
-        "content_fidelity": { "type": "string", "minLength": 1 },
         "learning_goal_alignment": { "type": "string", "minLength": 1 },
         "feedback_scaffolding": { "type": "string", "minLength": 1 },
-        "interaction_flow_clarity": { "type": "string", "minLength": 1 },
-        "functional_integrity": { "type": "string", "minLength": 1 }
+        "interaction_flow_clarity": { "type": "string", "minLength": 1 }
       },
       "additionalProperties": false
     },
@@ -100,11 +89,9 @@
     "contentAxis": {
       "type": "string",
       "enum": [
-        "content_fidelity",
         "learning_goal_alignment",
         "feedback_scaffolding",
-        "interaction_flow_clarity",
-        "functional_integrity"
+        "interaction_flow_clarity"
       ]
     }
   },

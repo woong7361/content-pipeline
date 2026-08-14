@@ -24,7 +24,7 @@
 
 | Item | Reason | Suggested action |
 |---|---|---|
-| `kid_librarian_proud.png` | Optional asset not referenced by current HTML. | Generate only if planning to update `#s-repair` from `kid_librarian_success.png` to `kid_librarian_proud.png`. |
+| `kid_librarian_proud.png` | Optional asset not referenced by current HTML. | Generate only if planning to update `#s-repair` from `kid_librarian_success.webp` to `kid_librarian_proud.png`. |
 
 ## Integration Notes
 
@@ -38,13 +38,13 @@ Generated under `generated/final/` on 2026-07-09.
 
 | File | Status |
 |---|---|
-| `teacher_worried.png` | Passed: RGBA, transparent corners, held magnifier, full-body. |
-| `teacher_pointing.png` | Passed: RGBA, transparent corners, right-pointing pose, magnifier visible. |
-| `teacher_happy.png` | Passed: RGBA, transparent corners, clapping pose, opaque skirt. |
-| `kid_librarian_explaining.png` | Passed: RGBA, transparent corners, new textual identity, points to the viewer's upper-left after v2 regeneration. |
-| `kid_librarian_idle.png` | Passed: RGBA, transparent corners, compact idle pose, new textual identity. |
-| `kid_librarian_success.png` | Passed: RGBA, transparent corners, raised-hands success pose, new textual identity. |
-| `kid_librarian_confused.png` | Passed: RGBA, transparent corners, mild confused-thinking pose, new textual identity. |
+| `teacher_worried.webp` | Passed: RGBA, transparent corners, held magnifier, full-body. |
+| `teacher_pointing.webp` | Passed: RGBA, transparent corners, right-pointing pose, magnifier visible. |
+| `teacher_happy.webp` | Passed: RGBA, transparent corners, clapping pose, opaque skirt. |
+| `kid_librarian_explaining.webp` | Passed: RGBA, transparent corners, new textual identity, points to the viewer's upper-left after v2 regeneration. |
+| `kid_librarian_idle.webp` | Passed: RGBA, transparent corners, compact idle pose, new textual identity. |
+| `kid_librarian_success.webp` | Passed: RGBA, transparent corners, raised-hands success pose, new textual identity. |
+| `kid_librarian_confused.webp` | Passed: RGBA, transparent corners, mild confused-thinking pose, new textual identity. |
 | `kid_librarian_proud.png` | Passed: RGBA, transparent corners, hand-on-waist plus V-sign pose, new textual identity. |
 
 Raw chroma-key intermediates are retained under `generated/raw/`; use only `generated/final/` for integration.

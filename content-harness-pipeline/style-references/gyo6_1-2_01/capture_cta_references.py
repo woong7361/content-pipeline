@@ -5,9 +5,9 @@ from playwright.sync_api import sync_playwright
 
 VIEWPORT = {"width": 1600, "height": 900}
 SCENES = {
-    "intro": "cta-intro.png",
-    "activity": "cta-activity.png",
-    "final": "cta-primary-secondary.png",
+    "intro": "cta-intro.webp",
+    "activity": "cta-activity.webp",
+    "final": "cta-primary-secondary.webp",
 }
 
 
