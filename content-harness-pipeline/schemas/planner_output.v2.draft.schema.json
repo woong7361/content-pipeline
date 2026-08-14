@@ -1,0 +1,766 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Planner Direct Output v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "page",
+    "art_direction",
+    "characters",
+    "sections",
+    "interactions",
+    "asset_plan",
+    "asset_groups"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": [
+        "2"
+      ],
+      "description": "계획 스키마 버전. v1 산출물과 구분해 하류가 어느 계약으로 읽을지 정한다"
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "goal",
+        "audience",
+        "tone"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "minLength": 1,
+          "description": "index.html이 달성해야 하는 핵심 목표"
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1,
+          "description": "주요 사용자 또는 학습자"
+        },
+        "tone": {
+          "type": "string",
+          "minLength": 1,
+          "description": "화면의 분위기와 표현 방향"
+        }
+      },
+      "additionalProperties": false
+    },
+    "art_direction": {
+      "type": "object",
+      "required": [
+        "style_name",
+        "palette",
+        "line_style",
+        "lighting",
+        "character_rules",
+        "component_rules",
+        "background_rules",
+        "continuity_rules",
+        "forbidden_styles"
+      ],
+      "description": "모든 asset batch가 공유해야 하는 시각 일관성 계약",
+      "properties": {
+        "style_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "콘텐츠 전체의 대표 화풍 이름"
+        },
+        "palette": {
+          "type": "string",
+          "minLength": 1,
+          "description": "반복해서 사용할 주요 색감과 채도 방향"
+        },
+        "line_style": {
+          "type": "string",
+          "minLength": 1,
+          "description": "선 굵기, 외곽선, 형태 단순화 기준"
+        },
+        "lighting": {
+          "type": "string",
+          "minLength": 1,
+          "description": "조명, 명암, 그림자 처리 기준"
+        },
+        "character_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "모든 캐릭터에 공통으로 적용할 연출·표현 기법만 적는다. 예: 표정을 어떻게 단순화해 읽히게 할지, 감정 표현의 과장 정도. 개별 캐릭터를 식별하는 정보(얼굴, 헤어, 의상, 팔레트, 비율·등신, 키, 연령감)는 여기 적지 않는다 — 그것은 characters[].identity가 소유하며, 여기에 다시 쓰면 두 곳이 어긋나 포즈마다 다른 인물이 되는 원인이 된다. 외곽선은 line_style, 음영은 lighting이 담당하므로 중복해 적지 않는다. 캐릭터가 없으면 그 취지를 간단히 적는다"
+        },
+        "component_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "반복 등장 소품·기구(시계, 계기판, 신호등 등)의 고정 형태·비율·재질·시점, 그리고 상태에 따라 바뀌는 가변부는 asset에 그리지 않고 builder가 HTML/CSS/JS로 얹도록 남긴다는 재사용 규칙. 반복 컴포넌트가 없으면 그 취지를 간단히 적는다"
+        },
+        "background_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "배경 밀도, 원근, 소품, 세계관 유지 기준"
+        },
+        "continuity_rules": {
+          "type": "string",
+          "minLength": 1,
+          "description": "batch가 나뉘어도 같은 콘텐츠 세트처럼 보이게 하는 연결 규칙"
+        },
+        "forbidden_styles": {
+          "type": "array",
+          "minItems": 1,
+          "description": "섞이면 안 되는 화풍, 매체감, 분위기",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "characters": {
+      "type": "array",
+      "description": "반복 등장하는 캐릭터의 정체성 정의. 이 배열이 캐릭터 정체성의 단일 소유자다. asset_plan은 character_id로 여기를 참조만 하고 정체성을 다시 서술하지 않는다. 캐릭터가 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "identity",
+          "reference_asset_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "asset_plan의 character_id가 참조할 캐릭터 식별자"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "콘텐츠 안에서 부르는 이름"
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "description": "학습 흐름에서 맡는 역할"
+          },
+          "identity": {
+            "type": "object",
+            "required": [
+              "face",
+              "hair",
+              "outfit",
+              "palette",
+              "proportions",
+              "distinctive_features"
+            ],
+            "description": "포즈가 바뀌어도 절대 변하지 않아야 하는 고정 특징. 포즈·표정·소품처럼 asset마다 달라지는 것은 여기 적지 않고 asset_plan의 style_constraints에 적는다",
+            "properties": {
+              "face": {
+                "type": "string",
+                "minLength": 1,
+                "description": "얼굴형, 눈·코·입 형태, 피부톤, 안경 등 얼굴 고정 특징"
+              },
+              "hair": {
+                "type": "string",
+                "minLength": 1,
+                "description": "머리 색, 길이, 묶음 형태 등 고정 특징"
+              },
+              "outfit": {
+                "type": "string",
+                "minLength": 1,
+                "description": "상의·하의·신발·액세서리의 고정 구성"
+              },
+              "palette": {
+                "type": "string",
+                "minLength": 1,
+                "description": "이 캐릭터에만 쓰는 색 조합. 포즈가 달라도 동일해야 한다"
+              },
+              "proportions": {
+                "type": "string",
+                "minLength": 1,
+                "description": "키, 머리 대 몸 비율, 연령감"
+              },
+              "distinctive_features": {
+                "type": "string",
+                "minLength": 1,
+                "description": "이 캐릭터를 다른 캐릭터와 구분 짓는 결정적 특징. 없으면 없다고 적는다"
+              }
+            },
+            "additionalProperties": false
+          },
+          "reference_asset_id": {
+            "type": "string",
+            "pattern": "^$|^[a-z][a-z0-9_-]*$",
+            "description": "이 캐릭터의 기준 포즈가 되는 asset_plan의 id. 정체성 판단이 갈릴 때 이 asset이 source of truth다. 기준을 정하지 않으면 빈 문자열을 사용한다"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "description": "HTML 안에서 구현할 상호작용 계획. 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "상호작용 유형. 예: button, tabs, drag_drop, quiz, animation 등"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "asset_plan": {
+      "type": "array",
+      "description": "AI가 필요하다고 판단한 이미지 asset 계획. 필요 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "character_id",
+          "intended_path",
+          "purpose",
+          "prompt_brief",
+          "visual_role",
+          "style_constraints",
+          "composition_notes",
+          "negative_prompt",
+          "usage_section_ids"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "image"
+            ]
+          },
+          "character_id": {
+            "type": "string",
+            "pattern": "^$|^[a-z][a-z0-9_-]*$",
+            "description": "이 asset이 그리는 캐릭터의 characters[].id. 캐릭터가 등장하지 않는 asset(배경, 소품, UI 표면 등)이면 빈 문자열을 사용한다. 값이 있으면 그 캐릭터의 identity가 이 asset의 얼굴·헤어·의상·팔레트를 결정하며, style_constraints로 정체성을 덮어쓰지 않는다"
+          },
+          "intended_path": {
+            "type": "string",
+            "pattern": "^output/assets/[^/\\\\]+\\.(png|jpg|jpeg|webp)$",
+            "description": "planner가 의도한 asset 저장 경로. 실제 생성과 검증은 asset_generator와 runner가 담당한다"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prompt_brief": {
+            "type": "string",
+            "minLength": 1,
+            "description": "asset_generator가 이미지 또는 placeholder를 만들 때 사용할 짧은 지시"
+          },
+          "visual_role": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset이 화면에서 맡는 시각적 역할. 예: 핵심 장면, 배경, 피드백 상태, 캐릭터 표정 등"
+          },
+          "style_constraints": {
+            "type": "string",
+            "minLength": 1,
+            "description": "art_direction 안에서 이 asset에만 적용할 제약. character_id가 있는 asset이면 포즈·표정·손에 든 소품·시선처럼 이 컷에서만 달라지는 것만 적고, 얼굴·헤어·의상·팔레트 같은 고정 정체성은 적지 않는다(그것은 characters[].identity가 소유한다)"
+          },
+          "composition_notes": {
+            "type": "string",
+            "minLength": 1,
+            "description": "화면 배치와 어울리도록 지켜야 할 구도, 여백, 시점, 배경 밀도, 투명 영역 지시"
+          },
+          "negative_prompt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset에서 피해야 할 표현. 예: 실사풍, 과도한 배경, 다른 화풍 등. 텍스트 금지는 무조건 쓰지 않는다 — 문구가 고정이고 타이포그래피 자체가 디자인인 asset(도장, 타이틀, 간판)은 글자를 이미지에 그리는 것이 맞다. 값이 변하거나 입력·판정에 쓰이는 텍스트가 올라갈 asset(배경, 표면, 컴포넌트)일 때만 텍스트 금지를 쓴다"
+          },
+          "usage_section_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "asset_groups": {
+      "type": "array",
+      "description": "runner가 병렬 asset batch를 만들 때 우선 함께 묶을 asset id 그룹. 필요 없으면 빈 배열을 사용한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "asset_ids",
+          "grouping_reason"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "asset batch 후보 그룹 식별자"
+          },
+          "asset_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            },
+            "description": "같은 캐릭터, 같은 배경, 같은 섹션 흐름 때문에 함께 생성하면 좋은 asset id 목록"
+          },
+          "grouping_reason": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 asset들을 같은 batch 후보로 묶는 이유"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "description": "단일 HTML 안에 배치할 화면들. 배열 순서가 학습 흐름의 순서다",
+      "items": {
+        "type": "object",
+        "description": "단일 HTML 안에 배치할 화면 하나.",
+        "required": [
+          "id",
+          "title",
+          "purpose",
+          "steps",
+          "questions",
+          "asset_ids",
+          "advance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "화면 식별자"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "description": "이 화면이 필요한 이유"
+          },
+          "steps": {
+            "type": "array",
+            "minItems": 1,
+            "description": "이 화면에서 일어나는 일을 **시간 순서대로** 담는다. 배열 순서가 계약이며 하류는 이 순서를 그대로 따라간다. 스토리보드 줄을 시점별로 묶어 담되 줄 자체는 lines에서 개수를 보존한다",
+            "items": {
+              "type": "object",
+              "description": "이 화면에서 일어나는 한 시점. **배열 순서가 곧 시간 순서다.** 하류는 이 배열을 위에서 아래로 따라가 구현하고 검증한다.",
+              "required": [
+                "id",
+                "kind",
+                "lines",
+                "staging",
+                "question_id",
+                "condition",
+                "advance",
+                "notes"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$",
+                  "description": "step 식별자. 화면 안에서만 유일하면 된다"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "narration",
+                    "staging",
+                    "question",
+                    "feedback",
+                    "transition"
+                  ],
+                  "description": "이 시점의 성격. narration=읽을 문구가 나타난다. staging=글자 없이 화면이 변한다. question=학습자가 문항을 푼다. feedback=판정 결과가 나타난다. transition=화면 안에서 장면이 통째로 바뀐다. kind는 설명용 이름이 아니라 하류가 이 시점을 어떻게 렌더하고 어떻게 조작할지 고르는 키다"
+                },
+                "lines": {
+                  "type": "array",
+                  "description": "이 시점에 나타나는 스토리보드 줄들. 스토리보드 줄 하나당 항목 하나로 나눠 개수를 보존한다. 글자가 나타나지 않는 시점이면 빈 배열",
+                  "items": {
+                    "type": "object",
+                    "description": "이 시점에 화면에 나타나는 스토리보드 줄 하나. 원문을 보존하는 자리이며, 여기 없는 문구는 화면에 나타나지 않는다.",
+                    "required": [
+                      "channel",
+                      "speaker",
+                      "content",
+                      "rendered_text"
+                    ],
+                    "properties": {
+                      "channel": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "이 줄의 종류. 권장 어휘: dialogue, narration, title, question_prompt, feedback, cta, caption. 권장 어휘에 없는 형식이면 스토리보드 줄 이름에 맞는 새 이름을 만든다"
+                      },
+                      "speaker": {
+                        "type": "string",
+                        "description": "이 줄을 말하는 인물의 characters[].id. 화자가 인물이 아니면(내레이션, 화면 문구, 버튼 라벨) 빈 문자열을 쓴다. 빈 문자열은 '누가 말하는지 모른다'가 아니라 '말하는 인물이 없다'는 뜻이며, 하류는 이 값이 비면 화면에 인물을 세우지 않는다"
+                      },
+                      "content": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "스토리보드 줄의 원문 서술 그대로. 대사·문구·버튼 라벨·성공 메시지를 요약하거나 대표 예시로 줄이지 않는다. 이 필드는 원문 보존용이며 화면 노출 검증의 기준이 아니다(그것은 rendered_text가 담당한다)"
+                      },
+                      "rendered_text": {
+                        "type": "array",
+                        "description": "이 줄에서 학습자가 눈으로 읽게 될 문자열만 원문 그대로 담는다. 판단 기준은 하나 — 학습자가 이 문자열을 읽는가. 읽는 것 = 대사, 버튼·전환 라벨, 문제 문구, 피드백 메시지, 화면 제목, 보상 문구. 읽지 않는 것 = 배치·색·크기·연출· 모션 설명, 조작 방법 설명, 게이지 수치, 효과음 의성어. 화자 접두어·라벨 접두어· 배치 주석·바깥 따옴표·markdown 표기는 벗기고 대괄호는 원문의 일부이므로 남긴다. 읽히는 것이 없으면 빈 배열 — 지시는 content에 원문으로 남으므로 잃는 것이 없다",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "staging": {
+                  "type": "array",
+                  "description": "이 시점에 일어나는 화면 변화들. 변화가 없으면 빈 배열. **대사가 화면의 대상을 처음 소개하거나 가리키면 그 대상의 appear 또는 highlight를 같은 step에 둔다** — 이미 떠 있는 것을 말로만 가리키면 학습자는 무엇을 보라는지 알 수 없다",
+                  "items": {
+                    "type": "object",
+                    "description": "이 시점에 화면에서 일어나는 변화 하나. 글자를 띄우는 것은 lines가 맡고 여기는 '무엇이 어떻게 변하는가'만 맡는다. v1에서 이 자리가 없어 연출이 notes 산문으로만 남았고, 그래서 누구도 검증하지 않고 builder가 매번 다시 해석했다.",
+                    "required": [
+                      "order",
+                      "target",
+                      "target_kind",
+                      "action",
+                      "to_state",
+                      "duration_hint",
+                      "source_line"
+                    ],
+                    "properties": {
+                      "order": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "같은 step 안에서 자동으로 이어지는 순번(0부터). 학습자 조작이 개입하지 않는 연출의 순서다. 순서가 상관없어 동시에 일어나야 하면 같은 값을 쓴다. 예: 초록 통이 놓이고(0) 원 3개가 찍히고(1) 파랑 통이 놓이는(2) 자동 연쇄"
+                      },
+                      "target": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "변하는 대상의 이름. target_kind가 asset이면 asset_plan[].id, question이면 questions[].id, character면 characters[].id를 그대로 쓴다. surface면 화면 표면의 이름을 평어로 쓴다"
+                      },
+                      "target_kind": {
+                        "type": "string",
+                        "enum": [
+                          "asset",
+                          "character",
+                          "question",
+                          "surface"
+                        ],
+                        "description": "target이 무엇을 가리키는 이름인지. 이 값이 있어야 코드가 target을 어느 목록에서 찾아 존재를 확인할지 정할 수 있다. surface만 참조 검사를 면제한다"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "appear",
+                          "disappear",
+                          "move",
+                          "highlight",
+                          "replace",
+                          "change_state",
+                          "background_transition"
+                        ],
+                        "description": "일어나는 변화. appear=없던 것이 나타난다. disappear=있던 것이 사라진다. move=자리를 옮긴다. highlight=이미 있는 것을 지목·강조한다(대사가 대상을 처음 소개하거나 가리킬 때 필요하다). replace=같은 자리의 것을 다른 것으로 바꾼다. change_state=대상은 그대로고 색·개수·값만 바뀐다. background_transition=배경 자체가 바뀐다(새 배경에 속한 것은 이 전환과 같은 시점에 나타나야 이전 배경 위에 뜨지 않는다). 일곱 중 맞는 것이 없으면 가장 가까운 것을 고르지 말고 그 변화를 lines나 notes로 다룬다"
+                      },
+                      "to_state": {
+                        "type": "string",
+                        "description": "변화 뒤의 상태를 평어로. change_state·move·replace처럼 '무엇으로 바뀌는가'가 있어야 성립하는 action에서 채운다. appear·disappear처럼 상태가 자명하면 빈 문자열. 예: '초록색 원 3개', '담장 왼쪽 아래'"
+                      },
+                      "duration_hint": {
+                        "type": "string",
+                        "enum": [
+                          "instant",
+                          "short",
+                          "medium",
+                          "long"
+                        ],
+                        "description": "이 변화가 걸리는 시간의 크기만 정한다. **밀리초를 planner가 정하지 않는다** — 대사에 붙는 연출의 실제 길이는 음성 길이를 실측해야 나오고 planner는 그것을 모른다. 임의의 ms를 적으면 말풍선이 대사 도중 사라지는 것을 계획이 보증하게 된다"
+                      },
+                      "source_line": {
+                        "type": "string",
+                        "description": "이 연출의 근거가 된 스토리보드 원문 조각. 원문에 없이 계획이 정한 배치라면 빈 문자열. 지어낸 연출과 원문이 요구한 연출을 하류가 구분할 수 있게 한다"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "question_id": {
+                  "type": "string",
+                  "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                  "description": "kind가 question일 때 이 시점에 푸는 questions[].id. 그 외에는 빈 문자열. 한 시점에 문항 하나만 둔다 — 여러 문항을 한 시점에 묶으면 하류가 그 화면을 한 번에 다 조작할 수 있다고 읽어, 순서대로 풀어야 하는 문항을 첫 문항 자리에서 누르려 한다"
+                },
+                "condition": {
+                  "type": "object",
+                  "description": "이 step이 언제 도달되는가. 이 값이 always가 아니면 학습자가 그 조건을 만들어야만 나타난다.",
+                  "required": [
+                    "on",
+                    "question_id"
+                  ],
+                  "properties": {
+                    "on": {
+                      "type": "string",
+                      "enum": [
+                        "always",
+                        "correct",
+                        "wrong",
+                        "exhausted"
+                      ],
+                      "description": "always=앞 step이 끝나면 반드시 도달한다(선형 경로). correct=question_id 문항을 맞히면. wrong=틀리면. exhausted=시도 횟수를 다 쓰면. 선형 경로만 걸으면 always인 step들이고, 나머지는 그 문항에 매달린 분기다"
+                    },
+                    "question_id": {
+                      "type": "string",
+                      "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                      "description": "on이 correct·wrong·exhausted일 때 그 조건을 만드는 문항의 id. always이면 빈 문자열. 비어 있으면 시점은 아는데 어느 문항의 결과인지 몰라 하류가 케이스를 만들 수 없다"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "advance": {
+                  "type": "object",
+                  "description": "이 step에서 다음 step으로 넘어가는 방법. 이 값이 계획의 진행 계약이며, 하류는 이것을 보고 화면을 걷는다.",
+                  "required": [
+                    "by",
+                    "label"
+                  ],
+                  "properties": {
+                    "by": {
+                      "type": "string",
+                      "enum": [
+                        "auto",
+                        "tap",
+                        "correct_answer",
+                        "exhaust_attempts",
+                        "none"
+                      ],
+                      "description": "auto=학습자 조작 없이 이어진다. tap=학습자가 눌러야 넘어간다. correct_answer=이 step의 문항을 맞혀야 넘어간다. exhaust_attempts=시도를 다 써서 넘어간다. none=여기서 이 화면 안의 진행이 끝난다(화면 밖으로 나가는 것은 sections[].advance가 맡는다). auto를 남발하면 학습자가 따라갈 수 없는 화면이 되고, tap을 남발하면 읽을 것도 없는데 계속 눌러야 하는 화면이 된다"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "by가 tap일 때 학습자가 누르는 것의 원문 라벨. 원문에 라벨이 없거나 by가 tap이 아니면 빈 문자열. 라벨이 있으면 그 문자열은 lines의 rendered_text에도 있어야 화면에 실제로 나타난다"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "notes": {
+                  "type": "string",
+                  "description": "위 자리들로 담기지 않는 이 시점의 보충 서술. **여기 적은 것은 아무도 검증하지 않는다** — 순서는 배열이, 연출은 staging이, 진행은 advance가 이미 담으므로 그 자리에 담길 것을 여기 적으면 그 계약을 잃는 것이다. 없으면 빈 문자열"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "questions": {
+            "type": "array",
+            "description": "이 화면의 문항 정의. 문항이 없으면 빈 배열",
+            "items": {
+              "type": "object",
+              "description": "이 화면의 평가 문항. 스토리보드의 문제 하나당 항목 하나로 담아 문항 수를 보존한다. 정의만 담고 언제 푸는지는 steps가 정한다.",
+              "required": [
+                "id",
+                "prompt",
+                "input_type",
+                "choices",
+                "targets",
+                "answer",
+                "feedback",
+                "attempt_policy"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z][a-z0-9_-]*$",
+                  "description": "문항 식별자. steps[].question_id가 이 id로 참조한다"
+                },
+                "prompt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "문제 문구 원문 그대로"
+                },
+                "input_type": {
+                  "type": "string",
+                  "enum": [
+                    "choice",
+                    "keypad",
+                    "drag_drop",
+                    "hotspot"
+                  ],
+                  "description": "학습자가 답을 내는 방식. 설명용 이름이 아니라 하류가 이 문항을 조작하는 방법을 고르는 키이므로 새 이름을 만들지 않는다. choice=보기 중 하나를 고른다. keypad=숫자나 값을 눌러 넣는다. drag_drop=조각을 자리로 옮긴다(누르기로도 옮길 수 있어야 한다). hotspot=그림이나 장면 위에서 해당하는 자리를 고른다. 넷 중 어느 것도 맞지 않으면 가장 가까운 것을 고르지 말고 그 활동을 문항이 아닌 step으로 다룬다"
+                },
+                "choices": {
+                  "type": "array",
+                  "description": "객관식 보기. 오답 보기까지 원문 그대로 모두 담는다. choice가 아니면 빈 배열",
+                  "items": {
+                    "type": "object",
+                    "description": "보기 하나",
+                    "required": [
+                      "label",
+                      "correct"
+                    ],
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "보기 원문(오답 포함)"
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "정답 보기이면 true"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "targets": {
+                  "type": "array",
+                  "description": "hotspot·drag_drop에서 고르는 자리들. 정답과 오답 자리를 모두 담는다 — 오답 자리가 없으면 오답 케이스를 만들 수 없다. 그 외 input_type이면 빈 배열",
+                  "items": {
+                    "type": "object",
+                    "description": "이 문항에서 학습자가 고르는 자리 하나. hotspot·drag_drop처럼 '어디를 고르는가'가 정답인 문항에서 정답의 실체를 담는다. v1은 정답을 개수로만 적어(answer='2') 무엇이 어디에 있는지 아무도 몰랐고, 그래서 파생된 테스트가 화면이 정답이라고 말하는 자리를 그대로 눌러 **builder가 정답을 어디에 두든 통과했다.**",
+                    "required": [
+                      "name",
+                      "anchor_asset_id",
+                      "correct",
+                      "appear_order"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "이 자리에 있는 것의 이름을 평어로. 예: '둥근 화분 받침'"
+                      },
+                      "anchor_asset_id": {
+                        "type": "string",
+                        "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                        "description": "이 자리가 앉는 asset_plan[].id. 배경이나 overlay 위의 한 지점이라는 뜻이다. 앵커가 없으면 빈 문자열"
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "정답 자리이면 true"
+                      },
+                      "appear_order": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "이 자리가 나타나는 순번(0부터). 전부 동시에 나타나면 모두 0"
+                      }
+                    },
+                    "additionalProperties": false
+                  }
+                },
+                "answer": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "정답. 비워 둘 수 없다 — 정답이 정해지지 않은 것은 평가 문항이 아니므로 questions가 아니라 step의 활동으로 다룬다. 보기가 있으면 정답 보기의 label을 그대로 쓴다. targets가 있으면 정답 자리의 name을 쉼표로 이어 쓴다. 그 외에는 학습자가 실제로 입력할 값만 쓴다 — `[1]시간`이 아니라 `1`이다. 채울 칸이 둘 이상이면 각 칸의 값을 대괄호로 감싸 순서대로 쓴다(`[12]시 [0]분`)"
+                },
+                "feedback": {
+                  "type": "object",
+                  "description": "판정 결과 문구. 이 문구가 실제로 언제 나타나는지는 kind=feedback인 step이 정한다.",
+                  "required": [
+                    "correct",
+                    "wrong"
+                  ],
+                  "properties": {
+                    "correct": {
+                      "type": "string",
+                      "description": "정답 피드백 원문. 없으면 빈 문자열"
+                    },
+                    "wrong": {
+                      "type": "string",
+                      "description": "오답 피드백 원문. 없으면 빈 문자열"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "attempt_policy": {
+                  "type": "object",
+                  "description": "이 문항을 몇 번까지 틀릴 수 있고 그 뒤에 무엇이 일어나는지. 스토리보드가 정한 규칙을 여기에 적는다. 이 규칙이 화면 설명에만 남아 있으면 어느 문항에 걸리는지 알 수 없어 검증되지 않는다.",
+                  "required": [
+                    "max_attempts",
+                    "on_exhausted"
+                  ],
+                  "properties": {
+                    "max_attempts": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "틀릴 수 있는 최대 횟수. 제한이 없으면 0"
+                    },
+                    "on_exhausted": {
+                      "type": "array",
+                      "description": "최대 횟수를 다 쓴 뒤 일어나는 일. 해당하는 것을 모두 넣는다. 규칙이 없으면 빈 배열",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "reveal_answer",
+                          "advance"
+                        ]
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "asset_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_-]*$"
+            }
+          },
+          "advance": {
+            "type": "object",
+            "description": "이 화면에서 다음 화면으로 나가는 출구. 이 값이 없으면 화면들이 순서대로 나열만 되어 있을 뿐 실제로 이어지는지 아무도 확인할 수 없다. 마지막 화면이면 두 값 모두 빈 문자열.",
+            "required": [
+              "interaction_id",
+              "to_section_id"
+            ],
+            "properties": {
+              "interaction_id": {
+                "type": "string",
+                "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                "description": "다음 화면으로 넘기는 interactions[].id"
+              },
+              "to_section_id": {
+                "type": "string",
+                "pattern": "^$|^[a-z][a-z0-9_-]*$",
+                "description": "그 조작으로 도착하는 sections[].id"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

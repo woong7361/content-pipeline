@@ -1,0 +1,16 @@
+{
+  "artifact": "content_eval_output",
+  "checked_file": "C:\\Users\\PC-220~1\\AppData\\Local\\Temp\\content-harness-eval-q7hfu66s\\content-eval-output.json",
+  "status": "REJECT",
+  "errors": [
+    "schema $.axis_rationales: Additional properties are not allowed ('content_fidelity', 'functional_integrity' were unexpected)",
+    "schema $.rubric_name: 'content-html:v5' was expected",
+    "schema $.rubric_scores.scores: Additional properties are not allowed ('content_fidelity', 'functional_integrity' were unexpected)",
+    "schema $.rubric_scores.weights: Additional properties are not allowed ('content_fidelity', 'functional_integrity' were unexpected)",
+    "schema $.rubric_scores.weights.feedback_scaffolding: 0.33 was expected",
+    "schema $.rubric_scores.weights.interaction_flow_clarity: 0.3 was expected",
+    "schema $.rubric_scores.weights.learning_goal_alignment: 0.37 was expected",
+    "schema $.weak_axes[0]: 'content_fidelity' is not one of ['learning_goal_alignment', 'feedback_scaffolding', 'interaction_flow_clarity']",
+    "schema $.weak_axes[3]: 'functional_integrity' is not one of ['learning_goal_alignment', 'feedback_scaffolding', 'interaction_flow_clarity']"
+  ]
+}

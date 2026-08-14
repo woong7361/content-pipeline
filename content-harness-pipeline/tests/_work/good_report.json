@@ -1,0 +1,403 @@
+{
+  "spec_version": "1",
+  "source_planner": "fixture_planner.json",
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "hook_missing": 0,
+  "unsupported": 0,
+  "questions_total": 8,
+  "questions_covered": 8,
+  "verdict": "PASS",
+  "underivable": [],
+  "scenarios": [
+    {
+      "case_id": "case_fixture-scene_text",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면에서",
+      "when": [],
+      "then": [
+        "'시계를 함께 고쳐보자!' 가 화면에 보인다",
+        "'[시작하기]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fixture-scene_beat_1",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'먼저 모양부터 살펴보자!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fixture-scene_on_page_1",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'두 번째 장이에요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-choice_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-choice 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'잘했어요!' 가 화면에 보인다",
+        "'담장에 별이 붙었어요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-choice_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-choice 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-keypad_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-keypad 문항에서",
+      "when": [
+        "정답 값을 입력한다 (12 0)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'정확해요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-keypad_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-keypad 문항에서",
+      "when": [
+        "오답 값을 입력한다 (13 0)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 해볼까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-drag-choice_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-drag-choice 문항에서",
+      "when": [
+        "정답 조각을 자리로 옮긴다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'딱 맞아요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-drag-choice_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-drag-choice 문항에서",
+      "when": [
+        "오답 조각을 자리로 옮긴다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다른 모양이에요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-drag-values_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-drag-values 문항에서",
+      "when": [
+        "값 조각을 순서대로 옮긴다 (1 2)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'순서가 맞아요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-drag-values_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-drag-values 문항에서",
+      "when": [
+        "값 조각을 잘못된 순서로 옮긴다 (2 2)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'순서를 다시 볼까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-attempts_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-attempts 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'맞았어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-attempts_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-attempts 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 세어볼까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-attempts_attempts",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-attempts 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-hotspot_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-hotspot 문항에서",
+      "when": [
+        "정답 자리를 모두 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "정답 자리가 2개다",
+        "'둘 다 찾았어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-hotspot_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면의 fx-hotspot 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'거기는 네모가 아니에요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fixture-scene_advance",
+      "kind": "flow",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "다음 장으로 넘긴다",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (12 0)",
+        "정답 조각을 자리로 옮긴다",
+        "값 조각을 순서대로 옮긴다 (1 2)",
+        "정답 보기를 고른다",
+        "정답 자리를 모두 고른다",
+        "fixture-scene-2 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "fixture-scene-2 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fixture-scene-2_text",
+      "kind": "scene",
+      "section_id": "fixture-scene-2",
+      "status": "PASS",
+      "given": "fixture-scene-2 화면에서",
+      "when": [],
+      "then": [
+        "'잘 도착했어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-seq-first_correct",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "status": "PASS",
+      "given": "fixture-scene-2 화면의 fx-seq-first 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'맞아요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-seq-first_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "status": "PASS",
+      "given": "fixture-scene-2 화면의 fx-seq-first 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 세어볼까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-seq-second_correct",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "status": "PASS",
+      "given": "fixture-scene-2 화면의 fx-seq-second 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'정확해요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_fx-seq-second_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "status": "PASS",
+      "given": "fixture-scene-2 화면의 fx-seq-second 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'한 번 더 볼까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_journey",
+      "kind": "scenario",
+      "section_id": "fixture-scene",
+      "status": "PASS",
+      "given": "fixture-scene 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "다음 장으로 넘긴다",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (12 0)",
+        "정답 조각을 자리로 옮긴다",
+        "값 조각을 순서대로 옮긴다 (1 2)",
+        "정답 보기를 고른다",
+        "정답 자리를 모두 고른다",
+        "fixture-scene-2 로 가는 진행 조작을 누른다",
+        "정답 보기를 고른다 x2"
+      ],
+      "then": [
+        "fixture-scene-2 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    }
+  ],
+  "failures": []
+}

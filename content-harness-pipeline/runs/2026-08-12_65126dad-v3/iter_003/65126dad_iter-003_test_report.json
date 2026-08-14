@@ -1,0 +1,1609 @@
+{
+  "spec_version": "1",
+  "source_planner": "65126dad_planner.json",
+  "total": 92,
+  "passed": 85,
+  "failed": 7,
+  "hook_missing": 2,
+  "unsupported": 0,
+  "questions_total": 14,
+  "questions_covered": 14,
+  "verdict": "REJECT",
+  "underivable": [],
+  "scenarios": [
+    {
+      "case_id": "case_a1_scene1_title_text",
+      "kind": "scene",
+      "section_id": "a1_scene1_title",
+      "status": "PASS",
+      "given": "a1_scene1_title 화면에서",
+      "when": [],
+      "then": [
+        "'시간이 뒤죽박죽!' 가 화면에 보인다",
+        "'수학의 힘으로 도서관 시계를 수리하라!' 가 화면에 보인다",
+        "'[시작하기]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene1_title_advance",
+      "kind": "flow",
+      "section_id": "a1_scene1_title",
+      "status": "PASS",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a1_scene2_problem 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene2_problem_beat_0",
+      "kind": "scene",
+      "section_id": "a1_scene2_problem",
+      "status": "PASS",
+      "given": "a1_scene2_problem 화면에서",
+      "when": [],
+      "then": [
+        "'큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene2_problem_advance",
+      "kind": "flow",
+      "section_id": "a1_scene2_problem",
+      "status": "PASS",
+      "given": "a1_scene2_problem 화면에서",
+      "when": [
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a1_scene3_tutorial 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene3_tutorial_beat_0",
+      "kind": "scene",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면에서",
+      "when": [],
+      "then": [
+        "'걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene3_tutorial_beat_1",
+      "kind": "scene",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene3_tutorial_beat_2",
+      "kind": "scene",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'[3시]' 가 화면에 보인다",
+        "'[4시]' 가 화면에 보인다",
+        "'[5시]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene3_tutorial_advance",
+      "kind": "flow",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면에서",
+      "when": [
+        "a1_scene4_success 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a1_scene4_success 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_tutorial_clock_correct",
+      "kind": "question",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면의 tutorial_clock 문항에서",
+      "when": [
+        "정답 조각을 자리로 옮긴다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_tutorial_clock_wrong",
+      "kind": "question",
+      "section_id": "a1_scene3_tutorial",
+      "status": "PASS",
+      "given": "a1_scene3_tutorial 화면의 tutorial_clock 문항에서",
+      "when": [
+        "오답 조각을 자리로 옮긴다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene4_success_text",
+      "kind": "scene",
+      "section_id": "a1_scene4_success",
+      "status": "PASS",
+      "given": "a1_scene4_success 화면에서",
+      "when": [],
+      "then": [
+        "'[3시]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene4_success_beat_0",
+      "kind": "scene",
+      "section_id": "a1_scene4_success",
+      "status": "PASS",
+      "given": "a1_scene4_success 화면에서",
+      "when": [],
+      "then": [
+        "'와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene4_success_beat_1",
+      "kind": "scene",
+      "section_id": "a1_scene4_success",
+      "status": "PASS",
+      "given": "a1_scene4_success 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'[좋아요! 본격적으로 수리하러 가기 →]' 가 화면에 보인다",
+        "'[STEP 2. 수리로 해결해요]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a1_scene4_success_advance",
+      "kind": "flow",
+      "section_id": "a1_scene4_success",
+      "status": "PASS",
+      "given": "a1_scene4_success 화면에서",
+      "when": [
+        "a2_global_setup 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_global_setup 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_global_setup_text",
+      "kind": "scene",
+      "section_id": "a2_global_setup",
+      "status": "PASS",
+      "given": "a2_global_setup 화면에서",
+      "when": [],
+      "then": [
+        "'[STEP 2. 수리로 해결해요]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_global_setup_advance",
+      "kind": "flow",
+      "section_id": "a2_global_setup",
+      "status": "PASS",
+      "given": "a2_global_setup 화면에서",
+      "when": [
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_scene1_type_a 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_text",
+      "kind": "scene",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [],
+      "then": [
+        "'전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_on_page_0",
+      "kind": "scene",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [],
+      "then": [
+        "'전광판에 [3시 5분 전]이라고 적혀 있어요. 알맞은 시계를 찾아주세요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_on_page_1",
+      "kind": "scene",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'멈춰버린 시계가 [11시 50분]을 가리키고 있어요. 다른 말로 어떻게 읽을까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_on_page_2",
+      "kind": "scene",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'다음 중 [8시 15분 전]을 가리키는 시계는 어느 것인가요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_on_page_3",
+      "kind": "scene",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3"
+      ],
+      "then": [
+        "'시계가 [4시 55분]에 멈췄어요. 바르게 읽은 것을 고르세요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene1_type_a_advance",
+      "kind": "flow",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면에서",
+      "when": [
+        "a2_scene2_type_b 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_scene2_type_b 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q1_correct",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q1 문항에서",
+      "when": [
+        "정답 자리를 모두 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "정답 자리가 2개다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q1_wrong",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q1 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q1_attempts",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q1 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q2_correct",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q2 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q2_wrong",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q2 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q2_attempts",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q2 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q3_correct",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q3 문항에서",
+      "when": [
+        "정답 자리를 모두 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "정답 자리가 7개다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q3_wrong",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q3 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q3_attempts",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q3 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q4_correct",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q4 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q4_wrong",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q4 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q4_attempts",
+      "kind": "question",
+      "section_id": "a2_scene1_type_a",
+      "status": "PASS",
+      "given": "a2_scene1_type_a 화면의 q4 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_text",
+      "kind": "scene",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [],
+      "then": [
+        "'독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?' 가 화면에 보인다",
+        "'[확인하기]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_on_page_0",
+      "kind": "scene",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [],
+      "then": [
+        "'첫 번째 독서 교실은 8시에 시작해서 9시에 끝났어요. 걸린 시간은 얼마인가요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_on_page_1",
+      "kind": "scene",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'두 번째 독서 교실은 11시 30분에 시작해서 30분 동안 진행돼요. 끝나는 시각은 언제일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_on_page_2",
+      "kind": "scene",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'책 정리 봉사활동을 오후 2시에 시작해서 1시간 동안 했어요. 봉사활동이 끝난 시각은 언제일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_on_page_3",
+      "kind": "scene",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3"
+      ],
+      "then": [
+        "'꼬마 사서가 4시 30분부터 5시까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene2_type_b_advance",
+      "kind": "flow",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면에서",
+      "when": [
+        "a2_scene3_type_c 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_scene3_type_c 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q5_correct",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q5 문항에서",
+      "when": [
+        "정답 값을 입력한다 (1)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q5_wrong",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q5 문항에서",
+      "when": [
+        "오답 값을 입력한다 (2)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q5_attempts",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q5 문항에서",
+      "when": [
+        "오답 값을 입력한다 (2) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q6_correct",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q6 문항에서",
+      "when": [
+        "정답 값을 입력한다 (12 0)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q6_wrong",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q6 문항에서",
+      "when": [
+        "오답 값을 입력한다 (13 0)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q6_attempts",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q6 문항에서",
+      "when": [
+        "오답 값을 입력한다 (13 0) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q7_correct",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q7 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q7_wrong",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q7 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q7_attempts",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q7 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q8_correct",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q8 문항에서",
+      "when": [
+        "정답 값을 입력한다 (30)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q8_wrong",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q8 문항에서",
+      "when": [
+        "오답 값을 입력한다 (31)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "'다시 생각해보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q8_attempts",
+      "kind": "question",
+      "section_id": "a2_scene2_type_b",
+      "status": "PASS",
+      "given": "a2_scene2_type_b 화면의 q8 문항에서",
+      "when": [
+        "오답 값을 입력한다 (31) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "그 문항에서 벗어난다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_text",
+      "kind": "scene",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [],
+      "then": [
+        "'도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_on_page_0",
+      "kind": "scene",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [],
+      "then": [
+        "'도서관 대출 시스템을 켜려면 암호가 필요해요. 24시간은 며칠과 같을까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_on_page_1",
+      "kind": "scene",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'하루는 오전 [?]시간과 오후 [?]시간으로 이루어져 있어요. 빈칸에 알맞은 수를 넣으세요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_on_page_2",
+      "kind": "scene",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'오늘 오후 3시에 책을 빌렸어요. 하루(1일)가 지나면 내일 언제일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_on_page_3",
+      "kind": "scene",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3"
+      ],
+      "then": [
+        "'이 마법 책은 딱 1일 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene3_type_c_advance",
+      "kind": "flow",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면에서",
+      "when": [
+        "a2_scene4_outro 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_scene4_outro 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q9_correct",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q9 문항에서",
+      "when": [
+        "값 조각을 순서대로 옮긴다 (1)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q9_wrong",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q9 문항에서",
+      "when": [
+        "값 조각을 잘못된 순서로 옮긴다 (2)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q10_correct",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q10 문항에서",
+      "when": [
+        "값 조각을 순서대로 옮긴다 (12 12)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q10_wrong",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q10 문항에서",
+      "when": [
+        "값 조각을 잘못된 순서로 옮긴다 (13 12)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q11_correct",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q11 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q11_wrong",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q11 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q12_correct",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q12 문항에서",
+      "when": [
+        "값 조각을 순서대로 옮긴다 (24)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'[시스템 재부팅 완료!]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q12_wrong",
+      "kind": "question",
+      "section_id": "a2_scene3_type_c",
+      "status": "PASS",
+      "given": "a2_scene3_type_c 화면의 q12 문항에서",
+      "when": [
+        "값 조각을 잘못된 순서로 옮긴다 (25)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene4_outro_beat_0",
+      "kind": "scene",
+      "section_id": "a2_scene4_outro",
+      "status": "PASS",
+      "given": "a2_scene4_outro 화면에서",
+      "when": [],
+      "then": [
+        "'해냈다! 시간의 규칙을 모두 풀었어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene4_outro_beat_1",
+      "kind": "scene",
+      "section_id": "a2_scene4_outro",
+      "status": "PASS",
+      "given": "a2_scene4_outro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene4_outro_beat_2",
+      "kind": "scene",
+      "section_id": "a2_scene4_outro",
+      "status": "PASS",
+      "given": "a2_scene4_outro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'[3. 수리 이야기 보러 가기 →]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a2_scene4_outro_advance",
+      "kind": "flow",
+      "section_id": "a2_scene4_outro",
+      "status": "PASS",
+      "given": "a2_scene4_outro 화면에서",
+      "when": [
+        "a3_scene1_gallery 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a3_scene1_gallery 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene1_gallery_text",
+      "kind": "scene",
+      "section_id": "a3_scene1_gallery",
+      "status": "PASS",
+      "given": "a3_scene1_gallery 화면에서",
+      "when": [],
+      "then": [
+        "'◀' 가 화면에 보인다",
+        "'▶' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene1_gallery_on_page_0",
+      "kind": "scene",
+      "section_id": "a3_scene1_gallery",
+      "status": "PASS",
+      "given": "a3_scene1_gallery 화면에서",
+      "when": [],
+      "then": [
+        "'24시간' 가 화면에 보인다",
+        "'우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene1_gallery_on_page_1",
+      "kind": "scene",
+      "section_id": "a3_scene1_gallery",
+      "status": "PASS",
+      "given": "a3_scene1_gallery 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene1_gallery_on_page_2",
+      "kind": "scene",
+      "section_id": "a3_scene1_gallery",
+      "status": "PASS",
+      "given": "a3_scene1_gallery 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene1_gallery_advance",
+      "kind": "flow",
+      "section_id": "a3_scene1_gallery",
+      "status": "PASS",
+      "given": "a3_scene1_gallery 화면에서",
+      "when": [
+        "a3_scene2_quiz 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a3_scene2_quiz 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene2_quiz_text",
+      "kind": "scene",
+      "section_id": "a3_scene2_quiz",
+      "status": "PASS",
+      "given": "a3_scene2_quiz 화면에서",
+      "when": [],
+      "then": [
+        "'그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?' 가 화면에 보인다",
+        "'[1일]' 가 화면에 보인다",
+        "'[1시간]' 가 화면에 보인다",
+        "'[24일]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene2_quiz_advance",
+      "kind": "flow",
+      "section_id": "a3_scene2_quiz",
+      "status": "PASS",
+      "given": "a3_scene2_quiz 화면에서",
+      "when": [
+        "a3_scene3_certificate 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a3_scene3_certificate 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q13_correct",
+      "kind": "question",
+      "section_id": "a3_scene2_quiz",
+      "status": "PASS",
+      "given": "a3_scene2_quiz 화면의 q13 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'맞았어! 24시간은 1일과 같지!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q13_wrong",
+      "kind": "question",
+      "section_id": "a3_scene2_quiz",
+      "status": "PASS",
+      "given": "a3_scene2_quiz 화면의 q13 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene3_certificate_text",
+      "kind": "scene",
+      "section_id": "a3_scene3_certificate",
+      "status": "PASS",
+      "given": "a3_scene3_certificate 화면에서",
+      "when": [],
+      "then": [
+        "'[마을 수리대원 인증서]' 가 화면에 보인다",
+        "'마을 수리대원 인증서 (도서관 편)' 가 화면에 보인다",
+        "'위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.' 가 화면에 보인다",
+        "'맞힌 문제 수' 가 화면에 보인다",
+        "'클리어 소요 시간' 가 화면에 보인다",
+        "'[내 사진첩에 저장하기]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene3_certificate_beat_0",
+      "kind": "scene",
+      "section_id": "a3_scene3_certificate",
+      "status": "PASS",
+      "given": "a3_scene3_certificate 화면에서",
+      "when": [],
+      "then": [
+        "'정말 고마워! 네 덕분에 도서관이 완벽해졌어!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene3_certificate_beat_1",
+      "kind": "scene",
+      "section_id": "a3_scene3_certificate",
+      "status": "PASS",
+      "given": "a3_scene3_certificate 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'언제든 제 수학실력이 필요하면 불러주세요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_a3_scene3_certificate_beat_2",
+      "kind": "scene",
+      "section_id": "a3_scene3_certificate",
+      "status": "PASS",
+      "given": "a3_scene3_certificate 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_journey",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "정답 조각을 자리로 옮긴다",
+        "a1_scene4_success 로 가는 진행 조작을 누른다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "정답 자리를 모두 고른다",
+        "정답 보기를 고른다",
+        "정답 자리를 모두 고른다",
+        "정답 보기를 고른다",
+        "a2_scene2_type_b 로 가는 진행 조작을 누른다",
+        "정답 값을 입력한다 (1)",
+        "정답 값을 입력한다 (12 0)",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (30)",
+        "a2_scene3_type_c 로 가는 진행 조작을 누른다",
+        "값 조각을 순서대로 옮긴다 (1)",
+        "값 조각을 순서대로 옮긴다 (12 12)",
+        "정답 보기를 고른다",
+        "값 조각을 순서대로 옮긴다 (24)",
+        "a2_scene4_outro 로 가는 진행 조작을 누른다",
+        "a3_scene1_gallery 로 가는 진행 조작을 누른다",
+        "a3_scene2_quiz 로 가는 진행 조작을 누른다",
+        "정답 보기를 고른다",
+        "a3_scene3_certificate 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a3_scene3_certificate 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": [
+        "Locator.click: Timeout 1500ms exceeded."
+      ]
+    },
+    {
+      "case_id": "case_tutorial_wrong_keeps_retry",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "오답 조각을 자리로 옮긴다"
+      ],
+      "then": [
+        "a1_scene3_tutorial 화면이 열린다",
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다"
+      ],
+      "problems": [
+        "문항 root를 다시 찾지 못했다"
+      ]
+    },
+    {
+      "case_id": "case_tutorial_success_reaches_repair_stage",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "PASS",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "a2_scene1_type_a 화면이 열린다",
+        "'전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?' 가 화면에 보인다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_type_a_before_attempt_limit",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "오답 보기를 고른다 x2"
+      ],
+      "then": [
+        "a2_scene1_type_a 화면이 열린다",
+        "'전광판에 [3시 5분 전]이라고 적혀 있어요. 알맞은 시계를 찾아주세요!' 가 화면에 보인다",
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다"
+      ],
+      "problems": [
+        "문항 root를 다시 찾지 못했다"
+      ]
+    },
+    {
+      "case_id": "case_type_a_attempt_limit_reveals_and_advances",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "PASS",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "a2_scene1_type_a 화면이 열린다",
+        "정답이 공개된다",
+        "'멈춰버린 시계가 [11시 50분]을 가리키고 있어요. 다른 말로 어떻게 읽을까요?' 가 화면에 보인다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_type_a_retry_then_reaches_type_b",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "오답 보기를 고른다",
+        "정답 보기를 고른다 x4"
+      ],
+      "then": [
+        "a2_scene2_type_b 화면이 열린다",
+        "'첫 번째 독서 교실은 8시에 시작해서 9시에 끝났어요. 걸린 시간은 얼마인가요?' 가 화면에 보인다"
+      ],
+      "problems": [
+        "Locator.click: Timeout 1500ms exceeded."
+      ]
+    },
+    {
+      "case_id": "case_type_b_choice_retry_then_reaches_type_c",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "정답 보기를 고른다 x4",
+        "정답 값을 입력한다 (1)",
+        "정답 값을 입력한다 (12 0)",
+        "오답 보기를 고른다",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (30)"
+      ],
+      "then": [
+        "a2_scene3_type_c 화면이 열린다",
+        "'도서관 대출 시스템을 켜려면 암호가 필요해요. 24시간은 며칠과 같을까요?' 가 화면에 보인다"
+      ],
+      "problems": [
+        "Locator.click: Timeout 1500ms exceeded."
+      ]
+    },
+    {
+      "case_id": "case_gallery_path_to_final_quiz_wrong_retry",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "정답 보기를 고른다 x4",
+        "정답 값을 입력한다 (1)",
+        "정답 값을 입력한다 (12 0)",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (30)",
+        "값 조각을 순서대로 옮긴다 (1)",
+        "값 조각을 순서대로 옮긴다 (12 12)",
+        "정답 보기를 고른다",
+        "값 조각을 순서대로 옮긴다 (24)",
+        "다음 대사로 넘긴다 x2",
+        "a3_scene1_gallery 로 가는 진행 조작을 누른다",
+        "다음 장으로 넘긴다 x3",
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "a3_scene2_quiz 화면이 열린다",
+        "'그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?' 가 화면에 보인다",
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다"
+      ],
+      "problems": [
+        "Locator.click: Timeout 1500ms exceeded."
+      ]
+    },
+    {
+      "case_id": "case_final_retry_reaches_certificate",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "status": "REJECT",
+      "given": "a1_scene1_title 화면에서",
+      "when": [
+        "a1_scene2_problem 로 가는 진행 조작을 누른다",
+        "a1_scene3_tutorial 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 조각을 자리로 옮긴다",
+        "다음 대사로 넘긴다",
+        "a2_global_setup 로 가는 진행 조작을 누른다",
+        "a2_scene1_type_a 로 가는 진행 조작을 누른다",
+        "정답 보기를 고른다 x4",
+        "정답 값을 입력한다 (1)",
+        "정답 값을 입력한다 (12 0)",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (30)",
+        "값 조각을 순서대로 옮긴다 (1)",
+        "값 조각을 순서대로 옮긴다 (12 12)",
+        "정답 보기를 고른다",
+        "값 조각을 순서대로 옮긴다 (24)",
+        "다음 대사로 넘긴다 x2",
+        "a3_scene1_gallery 로 가는 진행 조작을 누른다",
+        "다음 장으로 넘긴다 x3",
+        "오답 보기를 고른다",
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "a3_scene3_certificate 화면이 열린다",
+        "'마을 수리대원 인증서 (도서관 편)' 가 화면에 보인다",
+        "'위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.' 가 화면에 보인다",
+        "'[내 사진첩에 저장하기]' 가 화면에 보인다"
+      ],
+      "problems": [
+        "Locator.click: Timeout 1500ms exceeded."
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "case_id": "case_journey",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "action_failed",
+      "subject": "activate",
+      "detail": "Locator.click: Timeout 1500ms exceeded.",
+      "screenshot": "case_journey.png"
+    },
+    {
+      "case_id": "case_tutorial_wrong_keeps_retry",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "문항 root를 다시 찾지 못했다",
+      "screenshot": "case_tutorial_wrong_keeps_retry.png"
+    },
+    {
+      "case_id": "case_type_a_before_attempt_limit",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "문항 root를 다시 찾지 못했다",
+      "screenshot": "case_type_a_before_attempt_limit.png"
+    },
+    {
+      "case_id": "case_type_a_retry_then_reaches_type_b",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "action_failed",
+      "subject": "select_correct",
+      "detail": "Locator.click: Timeout 1500ms exceeded.",
+      "screenshot": "case_type_a_retry_then_reaches_type_b.png"
+    },
+    {
+      "case_id": "case_type_b_choice_retry_then_reaches_type_c",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "action_failed",
+      "subject": "select_correct",
+      "detail": "Locator.click: Timeout 1500ms exceeded.",
+      "screenshot": "case_type_b_choice_retry_then_reaches_type_c.png"
+    },
+    {
+      "case_id": "case_gallery_path_to_final_quiz_wrong_retry",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "action_failed",
+      "subject": "select_correct",
+      "detail": "Locator.click: Timeout 1500ms exceeded.",
+      "screenshot": "case_gallery_path_to_final_quiz_wrong_retry.png"
+    },
+    {
+      "case_id": "case_final_retry_reaches_certificate",
+      "kind": "scenario",
+      "section_id": "a1_scene1_title",
+      "question_id": "",
+      "reason": "action_failed",
+      "subject": "select_correct",
+      "detail": "Locator.click: Timeout 1500ms exceeded.",
+      "screenshot": "case_final_retry_reaches_certificate.png"
+    }
+  ]
+}

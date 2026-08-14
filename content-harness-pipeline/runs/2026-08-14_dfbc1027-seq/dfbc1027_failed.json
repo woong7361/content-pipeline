@@ -1,0 +1,42 @@
+{
+  "brief_hash": "dfbc1027",
+  "run_id": "2026-08-14_dfbc1027",
+  "failed_at": "2026-08-14T10:14:23+09:00",
+  "stage": "builder_files_validate",
+  "error_type": "FileNotFoundError",
+  "message": "common.css link must come before the content <style> block (source order decides the cascade; content must be able to override components)",
+  "config": {
+    "codex_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\codex.CMD",
+    "claude_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+    "codex_access": "dangerously-bypass-approvals-and-sandbox",
+    "agent_models": {
+      "planner": "gpt-5.6-sol",
+      "asset_generator": "gpt-5.6-sol",
+      "builder": "opus",
+      "design_review": "gpt-5.6-sol",
+      "design_refine": "opus",
+      "content_critique": "gpt-5.6-sol",
+      "content_eval": "gpt-5.6-sol",
+      "content_refine": "opus"
+    },
+    "agent_providers": {
+      "planner": "codex",
+      "asset_generator": "codex",
+      "builder": "claude",
+      "design_review": "codex",
+      "design_refine": "claude",
+      "content_critique": "codex",
+      "content_eval": "codex",
+      "content_refine": "claude"
+    },
+    "timeout_seconds": 4800,
+    "mode": "builder_only"
+  },
+  "lineage": {
+    "input": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\dfbc1027_input.json",
+    "planner": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\dfbc1027_planner.json",
+    "asset_generator": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\dfbc1027_asset_generator.json",
+    "builder": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\dfbc1027_builder.json",
+    "html": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\output\\index.html"
+  }
+}

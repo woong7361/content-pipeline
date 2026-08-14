@@ -1,0 +1,826 @@
+{
+  "spec_version": "1",
+  "source_planner": "fixture_planner.json",
+  "cases": [
+    {
+      "id": "case_fixture-scene_text",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "question_id": "",
+      "input_type": "",
+      "intent": "fixture-scene 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "시계를 함께 고쳐보자!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시작하기]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fixture-scene_beat_1",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": [],
+          "question_id": ""
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "먼저 모양부터 살펴보자!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fixture-scene_on_page_1",
+      "kind": "scene",
+      "section_id": "fixture-scene",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": [],
+          "question_id": ""
+        },
+        {
+          "action": "advance_page",
+          "values": [],
+          "question_id": ""
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "두 번째 장이에요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-choice_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-choice",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-choice"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘했어요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "담장에 별이 붙었어요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-choice_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-choice",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-choice"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-keypad_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-keypad",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12",
+            "0"
+          ],
+          "question_id": "fx-keypad"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정확해요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-keypad_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-keypad",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13",
+            "0"
+          ],
+          "question_id": "fx-keypad"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 해볼까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-drag-choice_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-drag-choice",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_to_correct",
+          "values": [],
+          "question_id": "fx-drag-choice"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "딱 맞아요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-drag-choice_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-drag-choice",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_to_wrong",
+          "values": [],
+          "question_id": "fx-drag-choice"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다른 모양이에요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-drag-values_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-drag-values",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "1",
+            "2"
+          ],
+          "question_id": "fx-drag-values"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "순서가 맞아요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-drag-values_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-drag-values",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_values_wrong",
+          "values": [
+            "2",
+            "2"
+          ],
+          "question_id": "fx-drag-values"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "순서를 다시 볼까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-attempts_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-attempts",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-attempts"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "맞았어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-attempts_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-attempts",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-attempts"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 세어볼까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-attempts_attempts",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-attempts",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-attempts"
+        },
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-attempts"
+        },
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-attempts"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-hotspot_correct",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-hotspot",
+      "input_type": "hotspot",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_all_correct",
+          "values": [],
+          "question_id": "fx-hotspot"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "correct_target_count",
+          "value": "2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "둘 다 찾았어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-hotspot_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene",
+      "question_id": "fx-hotspot",
+      "input_type": "hotspot",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-hotspot"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "거기는 네모가 아니에요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fixture-scene_advance",
+      "kind": "flow",
+      "section_id": "fixture-scene",
+      "question_id": "",
+      "input_type": "",
+      "intent": "fixture-scene 에서 진행 조작으로 fixture-scene-2 에 도달한다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": [],
+          "question_id": ""
+        },
+        {
+          "action": "advance_page",
+          "values": [],
+          "question_id": ""
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-choice"
+        },
+        {
+          "action": "enter_answer",
+          "values": [
+            "12",
+            "0"
+          ],
+          "question_id": "fx-keypad"
+        },
+        {
+          "action": "drag_to_correct",
+          "values": [],
+          "question_id": "fx-drag-choice"
+        },
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "1",
+            "2"
+          ],
+          "question_id": "fx-drag-values"
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-attempts"
+        },
+        {
+          "action": "select_all_correct",
+          "values": [],
+          "question_id": "fx-hotspot"
+        },
+        {
+          "action": "activate",
+          "values": [
+            "fixture-scene-2"
+          ],
+          "question_id": ""
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "fixture-scene-2"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fixture-scene-2_text",
+      "kind": "scene",
+      "section_id": "fixture-scene-2",
+      "question_id": "",
+      "input_type": "",
+      "intent": "fixture-scene-2 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "잘 도착했어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-seq-first_correct",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "question_id": "fx-seq-first",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-seq-first"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "맞아요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-seq-first_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "question_id": "fx-seq-first",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-seq-first"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 세어볼까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-seq-second_correct",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "question_id": "fx-seq-second",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-seq-second"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정확해요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_fx-seq-second_wrong",
+      "kind": "question",
+      "section_id": "fixture-scene-2",
+      "question_id": "fx-seq-second",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": [],
+          "question_id": "fx-seq-second"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "한 번 더 볼까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_journey",
+      "kind": "scenario",
+      "section_id": "fixture-scene",
+      "question_id": "",
+      "input_type": "",
+      "intent": "첫 화면부터 조작만으로 fixture-scene-2 까지 끝까지 통과한다 (2화면)",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": [],
+          "question_id": ""
+        },
+        {
+          "action": "advance_page",
+          "values": [],
+          "question_id": ""
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-choice"
+        },
+        {
+          "action": "enter_answer",
+          "values": [
+            "12",
+            "0"
+          ],
+          "question_id": "fx-keypad"
+        },
+        {
+          "action": "drag_to_correct",
+          "values": [],
+          "question_id": "fx-drag-choice"
+        },
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "1",
+            "2"
+          ],
+          "question_id": "fx-drag-values"
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-attempts"
+        },
+        {
+          "action": "select_all_correct",
+          "values": [],
+          "question_id": "fx-hotspot"
+        },
+        {
+          "action": "activate",
+          "values": [
+            "fixture-scene-2"
+          ],
+          "question_id": ""
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-seq-first"
+        },
+        {
+          "action": "select_correct",
+          "values": [],
+          "question_id": "fx-seq-second"
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "fixture-scene-2"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "underivable": [],
+  "coverage": {
+    "questions_total": 8,
+    "questions_covered": 8,
+    "questions_uncovered": 0,
+    "question_cases": 17,
+    "scene_cases": 4,
+    "text_assertions": 5,
+    "underivable_total": 0,
+    "needs_repo_change": 0,
+    "needs_planner_change": 0
+  }
+}

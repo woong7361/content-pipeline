@@ -1,0 +1,1677 @@
+{
+  "spec_version": "1",
+  "source_planner": "65126dad_planner.json",
+  "cases": [
+    {
+      "id": "case_activity1-title_text",
+      "kind": "scene",
+      "section_id": "activity1-title",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity1-title 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "시간이 뒤죽박죽!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "수학의 힘으로 도서관 시계를 수리하라!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시작하기]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity1-problem_beat_0",
+      "kind": "scene",
+      "section_id": "activity1-problem",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity1-tutorial_text",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity1-tutorial 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "[3시]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[4시]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[5시]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity1-tutorial_beat_0",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity1-tutorial_beat_1",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_tutorial-clock-question_correct",
+      "kind": "question",
+      "section_id": "activity1-tutorial",
+      "question_id": "tutorial-clock-question",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_to_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_tutorial-clock-question_wrong",
+      "kind": "question",
+      "section_id": "activity1-tutorial",
+      "question_id": "tutorial-clock-question",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_to_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-global_text",
+      "kind": "scene",
+      "section_id": "activity2-global",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity2-global 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "[STEP 2. 수리로 해결해요]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-type-a_text",
+      "kind": "scene",
+      "section_id": "activity2-type-a",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity2-type-a 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a1_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a1",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a1_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a1",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a1_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a1",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a2_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a2",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a2_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a2",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a2_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a2",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a3_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a3",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a3_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a3",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a3_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a3",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a4_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a4",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a4_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a4",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-a4_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a4",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-type-b_text",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity2-type-b 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[확인하기]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-type-b_on_page_1",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_page",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "11:30"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[30분 후 →]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b5_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b5",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "1"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b5_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b5",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "2"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b5_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b5",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "2"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "2"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "2"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b6_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b6",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12",
+            "0"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b6_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b6",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13",
+            "0"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b6_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b6",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13",
+            "0"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13",
+            "0"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13",
+            "0"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b7_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b7",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b7_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b7",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b7_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b7",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b8_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b8",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "30"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b8_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b8",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "31"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "다시 생각해보세요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-b8_attempts",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b8",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer/advance 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "31"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "31"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "31"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "advanced",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-type-c_text",
+      "kind": "scene",
+      "section_id": "activity2-type-c",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity2-type-c 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c9_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c9",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "1"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시스템 재부팅 완료!]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c9_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c9",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_values_wrong",
+          "values": [
+            "2"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c10_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c10",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "12",
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시스템 재부팅 완료!]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c10_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c10",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_values_wrong",
+          "values": [
+            "13",
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c11_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c11",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시스템 재부팅 완료!]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c11_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c11",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c12_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c12",
+      "input_type": "drag_drop",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "drag_values_correct",
+          "values": [
+            "24"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "[시스템 재부팅 완료!]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_time-c12_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c12",
+      "input_type": "drag_drop",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "drag_values_wrong",
+          "values": [
+            "25"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-outro_beat_0",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "해냈다! 시간의 규칙을 모두 풀었어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-outro_beat_1",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity2-outro_beat_4",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 4번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "[3. 수리 이야기 보러 가기 →]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity3-gallery 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "◀"
+        },
+        {
+          "kind": "text_visible",
+          "value": "▶"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-gallery_on_page_0",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "24시간"
+        },
+        {
+          "kind": "text_visible",
+          "value": "우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-gallery_on_page_1",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_page",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-gallery_on_page_2",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_page",
+          "values": []
+        },
+        {
+          "action": "advance_page",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-quiz_text",
+      "kind": "scene",
+      "section_id": "activity3-quiz",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity3-quiz 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[1일]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[1시간]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[24일]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_final-popup-quiz_correct",
+      "kind": "question",
+      "section_id": "activity3-quiz",
+      "question_id": "final-popup-quiz",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "맞았어! 24시간은 1일과 같지!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_final-popup-quiz_wrong",
+      "kind": "question",
+      "section_id": "activity3-quiz",
+      "question_id": "final-popup-quiz",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity3-certificate 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "[마을 수리대원 인증서]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "마을 수리대원 인증서 (도서관 편)"
+        },
+        {
+          "kind": "text_visible",
+          "value": "위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "맞힌 문제 수"
+        },
+        {
+          "kind": "text_visible",
+          "value": "클리어 소요 시간"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[내 사진첩에 저장하기]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-certificate_beat_0",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "정말 고마워! 네 덕분에 도서관이 완벽해졌어!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-certificate_beat_1",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "언제든 제 수학실력이 필요하면 불러주세요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity3-certificate_beat_2",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "underivable": [],
+  "coverage": {
+    "questions_total": 14,
+    "questions_covered": 14,
+    "questions_uncovered": 0,
+    "question_cases": 36,
+    "scene_cases": 22,
+    "text_assertions": 38,
+    "underivable_total": 0,
+    "needs_repo_change": 0,
+    "needs_planner_change": 0
+  }
+}

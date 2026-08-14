@@ -1,0 +1,42 @@
+{
+  "brief_hash": "dfbc1027",
+  "run_id": "2026-08-13_dfbc1027",
+  "failed_at": "2026-08-13T18:56:41+09:00",
+  "stage": "builder",
+  "error_type": "TimeoutError",
+  "message": "Codex CLI timed out in non-interactive mode.\ncommand: ['C:\\\\Users\\\\PC-220627-03\\\\AppData\\\\Roaming\\\\npm\\\\codex.CMD', 'exec', '--model', 'gpt-5.6-sol', '--ephemeral', '--json', '--dangerously-bypass-approvals-and-sandbox', '-C', 'C:\\\\Users\\\\PC-220627-03\\\\Desktop\\\\project\\\\my\\\\architecture-thinking\\\\content-harness-pipeline', '--output-schema', 'C:\\\\Users\\\\PC-220627-03\\\\Desktop\\\\project\\\\my\\\\architecture-thinking\\\\content-harness-pipeline\\\\schemas\\\\builder_output.schema.json', '--output-last-message', 'C:\\\\Users\\\\PC-220~1\\\\AppData\\\\Local\\\\Temp\\\\content-harness-builder-v0got3ne\\\\builder-output.json', '-']\ntimeout_seconds: 2400",
+  "config": {
+    "codex_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\codex.CMD",
+    "claude_bin": "C:\\Users\\PC-220627-03\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe",
+    "codex_access": "dangerously-bypass-approvals-and-sandbox",
+    "agent_models": {
+      "planner": "gpt-5.6-sol",
+      "asset_generator": "gpt-5.6-sol",
+      "builder": "gpt-5.6-sol",
+      "design_review": "gpt-5.6-sol",
+      "design_refine": "gpt-5.6-sol",
+      "content_critique": "gpt-5.6-sol",
+      "content_eval": "gpt-5.6-sol",
+      "content_refine": "gpt-5.6-sol"
+    },
+    "agent_providers": {
+      "planner": "codex",
+      "asset_generator": "codex",
+      "builder": "codex",
+      "design_review": "codex",
+      "design_refine": "codex",
+      "content_critique": "codex",
+      "content_eval": "codex",
+      "content_refine": "codex"
+    },
+    "timeout_seconds": 2400,
+    "mode": "builder_only"
+  },
+  "lineage": {
+    "input": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-13_dfbc1027\\dfbc1027_input.json",
+    "planner": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-13_dfbc1027\\dfbc1027_planner.json",
+    "asset_generator": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-13_dfbc1027\\dfbc1027_asset_generator.json",
+    "builder": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-13_dfbc1027\\dfbc1027_builder.json",
+    "html": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-13_dfbc1027\\output\\index.html"
+  }
+}

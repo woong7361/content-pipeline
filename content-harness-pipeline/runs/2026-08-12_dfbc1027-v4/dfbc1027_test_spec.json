@@ -1,0 +1,2788 @@
+{
+  "spec_version": "1",
+  "source_planner": "dfbc1027_planner.json",
+  "cases": [
+    {
+      "id": "case_lesson_goal_text",
+      "kind": "scene",
+      "section_id": "lesson_goal",
+      "question_id": "",
+      "input_type": "",
+      "intent": "lesson_goal 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "목록"
+        },
+        {
+          "kind": "text_visible",
+          "value": "소리 조절"
+        },
+        {
+          "kind": "text_visible",
+          "value": "알록달록, 학교 담장 색칠하기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[모양과 덧셈의 힘으로 담장 색칠하기!]"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_lesson_goal_advance",
+      "kind": "flow",
+      "section_id": "lesson_goal",
+      "question_id": "",
+      "input_type": "",
+      "intent": "lesson_goal 에서 진행 조작으로 problem_intro 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "problem_intro"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "problem_intro"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_text",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "problem_intro 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "알록달록, 학교 담장 색칠하기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "시작하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_beat_0",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "공사 중에 실수로 담장을 무너뜨렸어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "죄송합니다!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_beat_1",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "휴, 담장은 다 고쳤어요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_beat_2",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "그런데, 벽화는 못 그리겠어요. 누가 도와줘요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_beat_3",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 3번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "저희가 도와드릴게요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_beat_4",
+      "kind": "scene",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 4번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "모양의 힘으로 색칠하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_problem_intro_advance",
+      "kind": "flow",
+      "section_id": "problem_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "problem_intro 에서 진행 조작으로 shape_find 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "shape_find"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "shape_find"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_text",
+      "kind": "scene",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape_find 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요 1"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_beat_0",
+      "kind": "scene",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "여러 가지 모양으로 그리면 좋겠어요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_beat_1",
+      "kind": "scene",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "벽화를 어떻게 그려야 되지?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_beat_2",
+      "kind": "scene",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "저와 학교에서 모양을 찾아 보아요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_beat_3",
+      "kind": "scene",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 3번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_find_advance",
+      "kind": "flow",
+      "section_id": "shape_find",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape_find 에서 진행 조작으로 shape_count 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "shape_count"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "shape_count"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_shape_find_two_correct",
+      "kind": "question",
+      "section_id": "shape_find",
+      "question_id": "q_shape_find_two",
+      "input_type": "hotspot",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_all_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "correct_target_count",
+          "value": "2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_shape_find_two_wrong",
+      "kind": "question",
+      "section_id": "shape_find",
+      "question_id": "q_shape_find_two",
+      "input_type": "hotspot",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_shape_find_two_attempts",
+      "kind": "question",
+      "section_id": "shape_find",
+      "question_id": "q_shape_find_two",
+      "input_type": "hotspot",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_count_beat_0",
+      "kind": "scene",
+      "section_id": "shape_count",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "페인트 색깔마다 모양이 달라요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_count_beat_1",
+      "kind": "scene",
+      "section_id": "shape_count",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "● ■ ▲ 모양"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape_count_advance",
+      "kind": "flow",
+      "section_id": "shape_count",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape_count 에서 진행 조작으로 bridge 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "bridge"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "bridge"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_triangle_find_two_correct",
+      "kind": "question",
+      "section_id": "shape_count",
+      "question_id": "q_triangle_find_two",
+      "input_type": "hotspot",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_all_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "correct_target_count",
+          "value": "2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘 찾았어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_triangle_find_two_wrong",
+      "kind": "question",
+      "section_id": "shape_count",
+      "question_id": "q_triangle_find_two",
+      "input_type": "hotspot",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_triangle_find_two_attempts",
+      "kind": "question",
+      "section_id": "shape_count",
+      "question_id": "q_triangle_find_two",
+      "input_type": "hotspot",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_circle_count_correct",
+      "kind": "question",
+      "section_id": "shape_count",
+      "question_id": "q_circle_count",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "3"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_circle_count_wrong",
+      "kind": "question",
+      "section_id": "shape_count",
+      "question_id": "q_circle_count",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "4"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_bridge_beat_0",
+      "kind": "scene",
+      "section_id": "bridge",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "잘했어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "이제 벽화를 색칠해봐요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_bridge_beat_1",
+      "kind": "scene",
+      "section_id": "bridge",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "페인트 소개를 부탁해요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_bridge_beat_2",
+      "kind": "scene",
+      "section_id": "bridge",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "모양으로 세 수의 덧셈과 뺄셈하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_bridge_advance",
+      "kind": "flow",
+      "section_id": "bridge",
+      "question_id": "",
+      "input_type": "",
+      "intent": "bridge 에서 진행 조작으로 paint_intro 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "paint_intro"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "paint_intro"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint_intro_text",
+      "kind": "scene",
+      "section_id": "paint_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "paint_intro 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요 2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint_intro_beat_0",
+      "kind": "scene",
+      "section_id": "paint_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "페인트 소개는 저희가 할게요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint_intro_beat_1",
+      "kind": "scene",
+      "section_id": "paint_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "이것을 페인트라고 해요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "초록색부터 알려드릴게요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint_intro_beat_2",
+      "kind": "scene",
+      "section_id": "paint_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "1통에 모양을 10개씩 그릴 수 있어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint_intro_advance",
+      "kind": "flow",
+      "section_id": "paint_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "paint_intro 에서 진행 조작으로 addition_steps 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "addition_steps"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "addition_steps"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_paint_total_ten_correct",
+      "kind": "question",
+      "section_id": "paint_intro",
+      "question_id": "q_paint_total_ten",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_paint_total_ten_wrong",
+      "kind": "question",
+      "section_id": "paint_intro",
+      "question_id": "q_paint_total_ten",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_addition_steps_text",
+      "kind": "scene",
+      "section_id": "addition_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "addition_steps 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_addition_steps_beat_0",
+      "kind": "scene",
+      "section_id": "addition_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "1통을 더 준비했어요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_addition_steps_beat_1",
+      "kind": "scene",
+      "section_id": "addition_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "2개를 더 색칠해주세요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_addition_steps_beat_2",
+      "kind": "scene",
+      "section_id": "addition_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "네"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_addition_steps_advance",
+      "kind": "flow",
+      "section_id": "addition_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "addition_steps 에서 진행 조작으로 subtraction_intro 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "subtraction_intro"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "subtraction_intro"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_seven_three_correct",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_seven_three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "페인트 1통을 다 썼어요"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_seven_three_wrong",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_seven_three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_ten_two_correct",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_ten_two",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_ten_two_wrong",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_ten_two",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_three_numbers_correct",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_three_numbers",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_three_numbers_wrong",
+      "kind": "question",
+      "section_id": "addition_steps",
+      "question_id": "q_add_three_numbers",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_intro_text",
+      "kind": "scene",
+      "section_id": "subtraction_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "subtraction_intro 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_intro_beat_0",
+      "kind": "scene",
+      "section_id": "subtraction_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "고마워요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "다른 담장으로 가요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_intro_beat_1",
+      "kind": "scene",
+      "section_id": "subtraction_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_intro_beat_2",
+      "kind": "scene",
+      "section_id": "subtraction_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "잘못 그린 2개를 지워주세요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_intro_advance",
+      "kind": "flow",
+      "section_id": "subtraction_intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "subtraction_intro 에서 진행 조작으로 subtraction_steps 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "subtraction_steps"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "subtraction_steps"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_three_numbers_review_correct",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_add_three_numbers_review",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_add_three_numbers_review_wrong",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_add_three_numbers_review",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_twelve_two_correct",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_sub_twelve_two",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_twelve_two_wrong",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_sub_twelve_two",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_twelve_two_equation_correct",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_sub_twelve_two_equation",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_twelve_two_equation_wrong",
+      "kind": "question",
+      "section_id": "subtraction_intro",
+      "question_id": "q_sub_twelve_two_equation",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_steps_text",
+      "kind": "scene",
+      "section_id": "subtraction_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "subtraction_steps 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_steps_beat_0",
+      "kind": "scene",
+      "section_id": "subtraction_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "3개를 더 지우고 싶어요. 지워주세요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_steps_beat_1",
+      "kind": "scene",
+      "section_id": "subtraction_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_steps_beat_2",
+      "kind": "scene",
+      "section_id": "subtraction_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        },
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "덧셈, 뺄셈의 힘으로 담장 색칠하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_subtraction_steps_advance",
+      "kind": "flow",
+      "section_id": "subtraction_steps",
+      "question_id": "",
+      "input_type": "",
+      "intent": "subtraction_steps 에서 진행 조작으로 random_practice 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "random_practice"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "random_practice"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_ten_three_correct",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_ten_three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_ten_three_wrong",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_ten_three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "8"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_ten_three_equation_correct",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_ten_three_equation",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_ten_three_equation_wrong",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_ten_three_equation",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "8"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_three_numbers_correct",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_three_numbers",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘했어요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "더 많은 담장을 색칠해야해요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_sub_three_numbers_wrong",
+      "kind": "question",
+      "section_id": "subtraction_steps",
+      "question_id": "q_sub_three_numbers",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "8"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_random_practice_text",
+      "kind": "scene",
+      "section_id": "random_practice",
+      "question_id": "",
+      "input_type": "",
+      "intent": "random_practice 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리로 해결해요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "덧셈과 뺄셈"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_random_practice_advance",
+      "kind": "flow",
+      "section_id": "random_practice",
+      "question_id": "",
+      "input_type": "",
+      "intent": "random_practice 에서 진행 조작으로 free_draw 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "free_draw"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "free_draw"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_a_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_a",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_a_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_a",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_a_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_a",
+      "input_type": "choice",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        },
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_b_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_b",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "6"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_b_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_b",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_b_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_b",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "7"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "7"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_make_ten_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_make_ten",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_make_ten_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_make_ten",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_make_ten_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_make_ten",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_three_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_three_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "14"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_c_three_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_c_three",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "14"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "14"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "14"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_make_ten_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_make_ten",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_make_ten_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_make_ten",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_make_ten_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_make_ten",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_three_correct",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "4"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_three_wrong",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "5"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q_random_d_three_attempts",
+      "kind": "question",
+      "section_id": "random_practice",
+      "question_id": "q_random_d_three",
+      "input_type": "keypad",
+      "intent": "3번 틀리면 reveal_answer 로 학습자가 갇히지 않는다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "5"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "5"
+          ]
+        },
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "5"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "answer_revealed",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_free_draw_text",
+      "kind": "scene",
+      "section_id": "free_draw",
+      "question_id": "",
+      "input_type": "",
+      "intent": "free_draw 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "그리기 툴"
+        },
+        {
+          "kind": "text_visible",
+          "value": "그림을 완성했나요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "예"
+        },
+        {
+          "kind": "text_visible",
+          "value": "아니오"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_free_draw_beat_0",
+      "kind": "scene",
+      "section_id": "free_draw",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "담장 색칠이 끝나가요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_free_draw_beat_1",
+      "kind": "scene",
+      "section_id": "free_draw",
+      "question_id": "",
+      "input_type": "",
+      "intent": "대사를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_beat",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "마지막 담장은 자유롭게 그려주세요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_free_draw_advance",
+      "kind": "flow",
+      "section_id": "free_draw",
+      "question_id": "",
+      "input_type": "",
+      "intent": "free_draw 에서 진행 조작으로 math_story 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "math_story"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "math_story"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_math_story_text",
+      "kind": "scene",
+      "section_id": "math_story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "math_story 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리 이야기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "무슨 표지판일까요?"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_math_story_on_page_0",
+      "kind": "scene",
+      "section_id": "math_story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 0번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리 이야기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양을 길에서 본 적이 있나요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "● ■ ▲"
+        },
+        {
+          "kind": "text_visible",
+          "value": "● 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_math_story_on_page_1",
+      "kind": "scene",
+      "section_id": "math_story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 1번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_page",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "■ 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_math_story_on_page_2",
+      "kind": "scene",
+      "section_id": "math_story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "장를 2번 넘기면 그 시점의 문구가 노출된다",
+      "steps": [
+        {
+          "action": "advance_page",
+          "values": []
+        },
+        {
+          "action": "advance_page",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "▲ 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "앞으로 표지판을 보며 안전하게 다녀요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_math_story_advance",
+      "kind": "flow",
+      "section_id": "math_story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "math_story 에서 진행 조작으로 completion 에 도달한다",
+      "steps": [
+        {
+          "action": "activate",
+          "values": [
+            "completion"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "scene_active",
+          "value": "completion"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_completion_text",
+      "kind": "scene",
+      "section_id": "completion",
+      "question_id": "",
+      "input_type": "",
+      "intent": "completion 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "3차시 수리 완료!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "인증서 다운로드"
+        },
+        {
+          "kind": "text_visible",
+          "value": "나가기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "underivable": [
+    {
+      "section_id": "shape_count",
+      "ref": "q_square_count",
+      "kind": "unreadable_answer",
+      "scope": "question",
+      "fixable_by": "planner",
+      "reason": "input_type=keypad answer='' 에서 실행 값을 뽑지 못했다"
+    },
+    {
+      "section_id": "shape_count",
+      "ref": "q_triangle_count",
+      "kind": "unreadable_answer",
+      "scope": "question",
+      "fixable_by": "planner",
+      "reason": "input_type=keypad answer='' 에서 실행 값을 뽑지 못했다"
+    }
+  ],
+  "coverage": {
+    "questions_total": 21,
+    "questions_covered": 19,
+    "questions_uncovered": 2,
+    "question_cases": 46,
+    "scene_cases": 42,
+    "text_assertions": 66,
+    "underivable_total": 2,
+    "needs_repo_change": 0,
+    "needs_planner_change": 2
+  }
+}

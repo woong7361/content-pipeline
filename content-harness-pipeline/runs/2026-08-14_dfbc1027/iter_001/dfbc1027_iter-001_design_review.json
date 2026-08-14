@@ -1,0 +1,1899 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-08-14T11:07:24+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_shape_find",
+      "path": "iter_001/design_review/desktop__01_shape_find.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__01_shape_find.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_shape_count",
+      "path": "iter_001/design_review/desktop__02_shape_count.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__02_shape_count.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_shape_transition",
+      "path": "iter_001/design_review/desktop__03_shape_transition.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__03_shape_transition.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_ten_intro",
+      "path": "iter_001/design_review/desktop__04_ten_intro.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__04_ten_intro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_addition",
+      "path": "iter_001/design_review/desktop__05_addition.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__05_addition.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_subtraction_intro",
+      "path": "iter_001/design_review/desktop__06_subtraction_intro.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__06_subtraction_intro.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_subtraction",
+      "path": "iter_001/design_review/desktop__07_subtraction.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__07_subtraction.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_random_practice",
+      "path": "iter_001/design_review/desktop__08_random_practice.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__08_random_practice.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_free_draw",
+      "path": "iter_001/design_review/desktop__09_free_draw.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__09_free_draw.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_math_story",
+      "path": "iter_001/design_review/desktop__10_math_story.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__10_math_story.png",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "참조 배경·캐릭터 asset은 밝은 한낮 팔레트와 선·비율 계약에 대체로 부합하지만, 11개 desktop 장면 대부분이 이를 무대로 활용하지 못하고 흰 CSS 패널·일반 키패드·알약형 CTA를 위에 쌓은 웹 퀴즈처럼 보인다. 대사판과 문제판의 반복 겹침, 화면 아래로 잘린 키패드, 미사용 paint-can-body, 생활 속 물건 대신 추상 도형만 제시한 모양 찾기, 한 화면에 여러 문제를 노출한 무작위 연습이 핵심 high severity 문제다. feedback 코드는 정답·오답 모두 동일한 도장 동작만 사용해 게임형 반응도 부족하므로 디자인 관점에서 REJECT한다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop.png",
+      "scene_purpose": "담장 사고를 제시하고 학습자가 도움을 약속하게 하는 도입",
+      "overall_assessment": "배경과 두 캐릭터의 화풍은 참조 계약과 연결되지만, 멀쩡한 담장 때문에 사고 상황이 시각화되지 않고 대형 CSS 말풍선이 제목을 가려 도입 장면의 위계가 무너진다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 복구 현장 브리핑",
+        "rationale": "학습자는 일반 랜딩 페이지가 아니라 실제 담장 사고 현장에 도착했다고 느껴야 한다.",
+        "core_metaphor": "손상된 담장 앞에서 작업자가 복구 의뢰서를 건네는 현장 브리핑",
+        "visual_language": "기존 학교 배경과 캐릭터는 유지하고 중앙 담장에 손상 흔적 overlay, 물성 있는 현장 안내판과 작업표형 CTA를 결합한다.",
+        "layout_strategy": "좌측 작업자와 우측 어린이 사이 중앙 담장을 주 시선축으로 두고 제목판은 상단 담장 safe zone, 대사판은 작업자 손끝 가까이에 배치한다.",
+        "interaction_surfaces": [
+          "담장 상단 고정 안내판",
+          "작업자 쪽 꼬리를 가진 대사판",
+          "작업표 또는 페인트 견본표형 시작 CTA"
+        ],
+        "implementation_notes": [
+          ".stage-head를 x=520..1400, y=110..250 안전 영역으로 이동한다.",
+          "대사판을 x=390..1030, y=330..500으로 내려 제목과 분리한다.",
+          "bg-school-gate 위에 별도 손상 담장 overlay를 배치한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"intro\"] .stage-head, screenshot x=60..700 y=96..477",
+            "issue": "도입 제목과 목표가 장면 속 표면 없이 배경에 직접 놓이고 대사판에 가려진다.",
+            "evidence": "1920×1080 화면에서 큰 제목은 x=60 부근에서 시작해 대사판 x=560..1200 뒤로 들어가며 문장 오른쪽이 보이지 않는다.",
+            "suggested_fix": "제목과 목표를 하나의 물성 있는 담장 안내판 안에 재배치하고 대사판과 최소 40px 간격을 확보한다. 문구는 변경하지 않는다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"intro\"] .c-speechBubble, .c-speechBubbleNext",
+            "issue": "대사와 진행 CTA가 참조의 장면 소품이 아니라 흰 CSS 웹 카드와 작은 알약 버튼으로 보인다.",
+            "evidence": "대사판은 x=560..1200, y=198..403의 흰 rounded rectangle이며 background-image asset이 없다. 내부 다음 버튼은 약 154×51px이고 라벨 중심은 표면 중심과 거의 일치하지만 물성 계약이 없다.",
+            "suggested_fix": "꼬리와 두께, 고정부가 포함된 raster 대사판 몸체를 배경으로 사용하고 버튼은 작업표 탭형 표면으로 통합한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 1,
+              "surface_w": 154,
+              "surface_h": 51
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "asset_id:bg-school-gate central wall x=330..1640 y=310..770",
+            "issue": "담장을 무너뜨렸다는 도입 목적과 달리 화면의 담장은 완전히 온전해 사건이 즉시 읽히지 않는다.",
+            "evidence": "중앙 담장에는 붕괴·균열·복구 자재가 전혀 없고 넓은 빈 크림 벽만 보인다.",
+            "suggested_fix": "배경은 유지하고 중앙 하단에 금이 간 벽돌과 빠진 벽돌 조각을 보여 주는 투명 overlay를 추가한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"intro\"] .c-speechBubble.left-speaker",
+            "issue": "말풍선 꼬리가 작업자 얼굴이나 손이 아닌 빈 담장 쪽을 가리켜 캐릭터 대사로 결합되지 않는다.",
+            "evidence": "꼬리 끝은 약 x=548, y=300인데 작업자 얼굴은 약 x=190, y=585에 있어 시각적으로 350px 이상 떨어져 있다.",
+            "suggested_fix": "말풍선의 꼬리 끝을 작업자 얼굴 오른쪽 약 x=260, y=575 방향으로 연결하거나 작업자 손끝 위에 대사판을 배치한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"intro\"] .goal-caption, .c-speechBubble, .c-speechBubbleNext",
+            "issue": "goal-caption과 대사판, CTA가 참조의 굵은 남색 테두리·두께·고정부를 가진 raster 표면 대신 CSS border와 흰 면으로만 구성됐다.",
+            "evidence": "STYLE_REFERENCE의 surface-info-board와 CTA는 물리적 두께와 하이라이트가 있으나 화면 표면은 균일한 흰 사각형과 단순 gradient다.",
+            "suggested_fix": "goal-caption과 대사판, 진행 조작물에 각각 생성된 raster 몸체를 적용하고 CSS는 위치·그림자·눌림 transform만 담당하게 한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": "[data-qa-scene=\"intro\"] .stage-head, .c-speechBubble",
+          "issue": "제목과 대사판이 겹쳐 도입 위계가 붕괴한다.",
+          "evidence": "대사판 x=560..1200가 큰 제목의 오른쪽 영역을 직접 가린다.",
+          "suggested_fix": "제목을 상단 안내판으로 묶고 대사판을 아래로 이동해 40px 이상 분리한다."
+        },
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": "asset_id:bg-school-gate central wall",
+          "issue": "담장 사고가 배경에 시각화되지 않는다.",
+          "evidence": "화면에는 온전한 담장만 보인다.",
+          "suggested_fix": "손상 담장 투명 overlay를 새로 생성해 사건의 원인을 시각화한다."
+        }
+      ],
+      "refine_suggestions": [
+        "제목·목표를 중앙 상단 안내판 하나로 통합하라.",
+        "대사판을 작업자와 연결되는 위치로 내리고 제목과 겹치지 않게 하라.",
+        "손상 담장 overlay를 중앙 벽 하단에 배치하라."
+      ]
+    },
+    {
+      "scene_id": "01_shape_find",
+      "capture_label": "01_shape_find",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__01_shape_find.png",
+      "scene_purpose": "학교 장면에서 생활 속 모양과 닮은 물건을 찾게 하는 활동",
+      "overall_assessment": "배경과 교사 asset은 유지 가능하지만, 생활 물건이 없는 거대한 흰 패널 안에 추상 삼각형 두 개만 놓여 목표와 장면 은유가 모두 약하다. 대사판과 문제판도 겹친다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 관찰 탐정",
+        "rationale": "학습자가 도형 버튼을 찾는 대신 학교 물건을 관찰해 모양을 발견해야 한다.",
+        "core_metaphor": "담장 주변 물건에 숨은 모양을 찾는 현장 관찰",
+        "visual_language": "기존 벽 배경 위에 창문, 화분, 깃발, 안내판 같은 별도 생활 소품을 배치하고 hotspot은 투명하게 유지한다.",
+        "layout_strategy": "흰 hotspot-field를 제거하고 중앙 담장 자체를 관찰 화면으로 사용한다. 문제판은 담장 상단, 교사는 좌측 하단에 유지한다.",
+        "interaction_surfaces": [
+          "담장 상단 문제 안내판",
+          "생활 소품 위 투명 hotspot",
+          "정답 시 소품 둘레에 나타나는 페인트 테두리"
+        ],
+        "implementation_notes": [
+          ".hotspot-field의 흰 background와 큰 border를 제거한다.",
+          "정답·오답 위치에 shape-find 전용 소품 overlay를 배치한다.",
+          "문제판 top을 330px 이하로 내리지 말고 대사 종료 뒤 표시한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-find\"] .q-prompt, .c-speechBubble",
+            "issue": "대사판의 하단과 문제판 상단이 겹쳐 두 개의 말하기 표면이 한 덩어리처럼 충돌한다.",
+            "evidence": "대사판은 y=215..384, 문제판은 y=360..471로 약 24px 겹친다. 문제 문구 중심은 표면 중심 대비 약 (-1px,+5px)로 자체 정렬은 양호하다.",
+            "suggested_fix": "대사 beat가 끝난 뒤 대사판을 숨기고 문제판을 표시하거나 문제판을 y=400 이후로 내려 두 표면을 최소 32px 분리한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": 5,
+              "surface_w": 608,
+              "surface_h": 111
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-find\"] .hotspot-field x=400..1520 y=495..1052",
+            "issue": "거대한 흰 상호작용 패널이 활동 배경의 담장 면을 거의 모두 덮어 작은 웹 퀴즈를 올린 것처럼 보인다.",
+            "evidence": "1120×557px 흰 패널이 화면 중앙과 하단을 차지하고 참조 배경의 크림 벽 재질과 보도 원근을 가린다.",
+            "suggested_fix": "hotspot-field를 투명한 좌표 컨테이너로 바꾸고 담장과 생활 소품을 그대로 보이게 한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-find-shape\"] .hotspot-field and .c-hotspot",
+            "issue": "생활 속 물건 대신 CSS 삼각형만 제시되며 두 보이는 도형이 패널 하단에 치우쳐 있다.",
+            "evidence": "패널 중심은 약 (960,774)인데 보이는 두 도형 묶음 중심은 약 (905,901)로 표면 중심 대비 (-55px,+127px) 치우친다.",
+            "suggested_fix": "생활 소품 overlay를 패널 전역에 배치하고 hotspot은 소품 실루엣을 정확히 감싸도록 좌표를 다시 지정한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -55,
+              "dy_px": 127,
+              "surface_w": 1120,
+              "surface_h": 557
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-find\"] .q-prompt, .hotspot-field",
+            "issue": "문제판과 관찰 영역이 CSS 흰 카드로 구성돼 참조의 물리적 안내판 언어를 따르지 않는다.",
+            "evidence": "두 표면 모두 raster body 없이 background, border, radius, shadow만 사용한다.",
+            "suggested_fix": "문제판에는 raster info-board body를 적용하고 관찰 영역의 별도 흰 카드는 제거한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_shape_find",
+          "severity": "high",
+          "axis": "creative_direction",
+          "target": "[data-qa-question=\"q-find-shape\"] .hotspot-field",
+          "issue": "생활 속 모양 찾기가 추상 도형 선택 문제로 축소됐다.",
+          "evidence": "학교 물건 없이 삼각형 두 개만 흰 패널에 놓여 있다.",
+          "suggested_fix": "학교 생활 소품 overlay와 투명 hotspot 구조로 교체한다."
+        },
+        {
+          "scene_id": "01_shape_find",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": ".hotspot-field",
+          "issue": "흰 패널이 담장 무대를 덮는다.",
+          "evidence": "1120×557px 패널이 중앙 벽과 보도를 차단한다.",
+          "suggested_fix": "필드를 투명화하고 배경을 직접 상호작용 무대로 사용한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".hotspot-field의 흰 배경과 테두리를 제거하라.",
+        "생활 속 원·삼각형·사각형 사례 소품 overlay를 추가하라.",
+        "대사판과 문제판을 동시에 노출하지 말고 beat 종료 후 문제판을 등장시켜라."
+      ]
+    },
+    {
+      "scene_id": "02_shape_count",
+      "capture_label": "02_shape_count",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__02_shape_count.png",
+      "scene_purpose": "페인트 색과 대응하는 모양의 개수를 세어 숫자로 입력하게 하는 활동",
+      "overall_assessment": "도형과 문항은 읽기 쉽지만 대사판이 범례를 덮고, 핵심 paint-can-body가 보이지 않으며, 키패드 확인 행이 화면 아래로 잘려 조작 표면이 완결되지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "페인트 조색대의 모양 계수기",
+        "rationale": "색과 모양의 대응을 페인트 작업 소품과 계산 장치 안에서 연결해야 한다.",
+        "core_metaphor": "페인트통 옆 계수기에 모양 수를 입력해 색을 준비하는 작업",
+        "visual_language": "paint-can-body와 색 overlay, 물성 있는 계수기 console, 담장 고정 문제판을 사용한다.",
+        "layout_strategy": "교사는 좌측, 페인트통은 좌중앙, 모양 묶음은 중앙 상단, 키패드는 우측 중앙에 두어 화면 아래를 침범하지 않는다.",
+        "interaction_surfaces": [
+          "페인트통 전면 색 표시 safe zone",
+          "담장 문제판",
+          "금속 계수기 display와 12개 키 슬롯"
+        ],
+        "implementation_notes": [
+          "paint-can-body를 실제 DOM에 추가한다.",
+          ".q-wrap top을 300px 안쪽으로 조정하고 keypad 전체 높이를 460px 이하로 맞춘다.",
+          "대사 beat 종료 뒤 .legend와 질문을 순차 등장시킨다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-count\"] .c-speechBubble, .legend",
+            "issue": "대사판이 범례판 왼쪽 절반을 가려 정보 위계가 충돌한다.",
+            "evidence": "대사판 x=548..840, y=216..382와 범례 x=793..1128, y=249..344가 약 47px 이상 가로로 겹친다.",
+            "suggested_fix": "대사 완료 후 대사판을 숨기고 범례·문항을 등장시키거나 대사판을 교사 오른쪽 아래로 이동한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-count-circle\"] .c-keypadWrap",
+            "issue": "키패드의 마지막 행이 1080px 설계 공간 아래로 잘려 확인 조작을 완료된 표면으로 볼 수 없다.",
+            "evidence": "키패드 상단은 y≈600이고 1~9까지만 완전히 보이며 지우기·0·확인 행은 화면 하단에 걸린다. 보이는 숫자 키 라벨은 각 약 138×78px 표면 중심 대비 최대 (0px,+2px)로 정렬된다.",
+            "suggested_fix": "키패드 console의 전체 높이를 줄이고 상단을 y≤540으로 올려 12개 키와 외곽 프레임을 모두 보이게 한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 2,
+              "surface_w": 138,
+              "surface_h": 78
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_id:paint-can-body in [data-qa-scene=\"shape-count\"]",
+            "issue": "페인트 색과 모양의 대응을 설명하는 장면인데 생성된 paint-can-body가 화면에 사용되지 않는다.",
+            "evidence": "스크린샷에는 교사, CSS 도형, 문항, 키패드만 보이고 페인트통은 없다. HTML CONFIG에도 paint-can-body를 삽입하는 요소가 없다.",
+            "suggested_fix": "paint-can-body를 좌중앙에 배치하고 뚜껑 내부와 전면 safe zone에 현재 색을 HTML overlay로 표시한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "high",
+            "target": ".q-input.c-keypadWrap",
+            "issue": "키패드가 담장 장치가 아니라 독립된 흰 웹 폼처럼 떠 있고 하단이 잘린다.",
+            "evidence": "background-image 없는 흰 wrapper와 12개의 일반 rounded button으로 구성됐으며 외곽 console 몸체가 없다.",
+            "suggested_fix": "display와 12개 빈 키 슬롯을 포함한 raster 계수기 몸체 위에 동적 숫자 라벨과 버튼 hit area를 얹는다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".c-keypadWrap, .c-answerDisplay, .c-key",
+            "issue": "입력 장치가 일반 웹 keypad 스타일이라 장면 속 페인트 작업 장치로 통합되지 않는다.",
+            "evidence": "흰 사각 wrapper, 균일한 rounded keys, 단색 빨강 확인 버튼이 화면의 주요 면적을 차지한다.",
+            "suggested_fix": "금속 계수기 raster body를 사용하고 CSS는 숫자 중앙정렬과 press transform만 유지한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_shape_count",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".c-keypadWrap",
+          "issue": "필수 확인 행이 화면 아래로 잘린다.",
+          "evidence": "12개 키 중 마지막 행이 완전히 보이지 않는다.",
+          "suggested_fix": "키패드를 올리고 축소해 전체 console을 1920×1080 안에 배치한다."
+        },
+        {
+          "scene_id": "02_shape_count",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "asset_id:paint-can-body",
+          "issue": "학습 맥락의 핵심 페인트통이 사용되지 않는다.",
+          "evidence": "화면과 HTML 장면 구성에 paint-can-body가 없다.",
+          "suggested_fix": "페인트통을 색 overlay와 함께 장면에 배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "키패드 전체를 y=540 이상으로 올려 모든 키를 노출하라.",
+        "paint-can-body를 좌중앙에 배치하고 색 overlay를 연결하라.",
+        "대사 종료 후 범례와 문제를 순차 등장시켜 겹침을 제거하라."
+      ]
+    },
+    {
+      "scene_id": "03_shape_transition",
+      "capture_label": "03_shape_transition",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__03_shape_transition.png",
+      "scene_purpose": "모양 찾기·세기에서 페인트를 이용한 덧셈·뺄셈 활동으로 전환",
+      "overall_assessment": "배경과 교사는 안정적이나 넓은 담장이 거의 비어 있고 작은 CSS 말풍선 하나만 있어 중요한 학습 전환이 장면 변화로 느껴지지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "벽화 작업 교대 브리핑",
+        "rationale": "새 학습 단계가 시작된다는 전환을 페인트 작업 준비 장면으로 시각화해야 한다.",
+        "core_metaphor": "교사가 빈 담장을 넘겨주고 작업자가 페인트 계수기를 준비하는 교대 순간",
+        "visual_language": "기존 교사와 벽 배경에 paint-can-body, 다음 단계 제목판, 작업표 CTA를 추가한다.",
+        "layout_strategy": "교사는 좌측 유지, 중앙에는 페인트통과 10칸 작업 게이지를 배치하고 대사판은 상단 안내판 아래에 둔다.",
+        "interaction_surfaces": [
+          "단계 전환 제목판",
+          "페인트 작업표 CTA",
+          "교사 연결 대사판"
+        ],
+        "implementation_notes": [
+          "paint-can-body를 중앙 하단에 배치한다.",
+          "advance CTA는 대사판 내부가 아니라 별도 작업표 표면으로 담장 중앙에 등장시킨다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-transition\"] .c-speechBubble, .c-speechBubbleNext",
+            "issue": "중요한 활동 전환이 작은 흰 말풍선과 일반 다음 버튼에만 의존한다.",
+            "evidence": "화면 중앙 약 70%의 담장이 비어 있고 유일한 진행 표면은 x=542..1057, y=164..436의 CSS 대사판이다. 내부 버튼 라벨은 약 145×53px 표면 중심 대비 (0px,+1px)다.",
+            "suggested_fix": "대사판 아래에 페인트 작업 준비 장면과 별도 raster CTA를 등장시켜 다음 학습 단계의 위계를 만든다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 1,
+              "surface_w": 145,
+              "surface_h": 53
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"shape-transition\"] central wall x=350..1650 y=450..850",
+            "issue": "전환 장면의 중앙 무대가 비어 있어 학습 초점 변화가 시각적으로 표현되지 않는다.",
+            "evidence": "교사와 말풍선 이외에 페인트·도형·계산을 연결하는 장치나 소품이 없다.",
+            "suggested_fix": "paint-can-body와 10칸 작업 게이지를 중앙에 배치해 다음 활동을 예고한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_id:paint-can-body in [data-qa-scene=\"shape-transition\"]",
+            "issue": "대사에서 페인트 소개를 요청하지만 생성된 페인트통이 전환 장면에 나타나지 않는다.",
+            "evidence": "스크린샷에는 교사와 대사판만 있다.",
+            "suggested_fix": "대사 마지막 beat에서 paint-can-body가 중앙으로 등장하도록 배치한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".c-speechBubble, .c-speechBubbleNext",
+            "issue": "대사와 진행 조작이 모두 CSS rounded surface여서 참조의 장면 소품 언어를 따르지 않는다.",
+            "evidence": "두 표면 모두 background-image가 없고 균일한 흰 면과 gradient로 그려진다.",
+            "suggested_fix": "대사판과 활동 CTA raster body를 적용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_shape_transition",
+          "severity": "high",
+          "axis": "creative_direction",
+          "target": "[data-qa-scene=\"shape-transition\"] central wall",
+          "issue": "학습 전환을 보여 주는 장면 은유가 없다.",
+          "evidence": "넓은 빈 담장과 대사판만 보인다.",
+          "suggested_fix": "페인트통과 10칸 작업 게이지를 이용한 작업 교대 장면으로 구성한다."
+        }
+      ],
+      "refine_suggestions": [
+        "paint-can-body와 10칸 게이지를 중앙에 추가하라.",
+        "진행 CTA를 대사판에서 분리해 물성 있는 작업표 버튼으로 배치하라."
+      ]
+    },
+    {
+      "scene_id": "04_ten_intro",
+      "capture_label": "04_ten_intro",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__04_ten_intro.png",
+      "scene_purpose": "페인트 한 통으로 모양 10개를 그린다는 상황을 통해 10 기준 계산 준비",
+      "overall_assessment": "작업자 asset과 배경은 통일되지만 페인트통이 없고, 대사판이 제목판과 도형을 모두 덮으며 키패드 하단도 잘린다. 10 만들기 장면보다 겹친 웹 입력 화면으로 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "페인트 1통 10칸 충전대",
+        "rationale": "한 통과 10개의 대응을 하나의 물리적 장치 안에서 즉시 읽히게 해야 한다.",
+        "core_metaphor": "페인트통에서 10칸 벽화 게이지를 충전하는 작업대",
+        "visual_language": "paint-can-body, 2×5 게이지, 금속 계수기, 담장 고정 제목판을 한 축으로 연결한다.",
+        "layout_strategy": "대사는 작업자 옆, 제목판은 상단 중앙, 2×5 게이지는 중앙, paint-can은 게이지 왼쪽, keypad는 오른쪽에 배치한다.",
+        "interaction_surfaces": [
+          "10칸 벽화 게이지",
+          "페인트통 색 safe zone",
+          "계수기 display와 key slots"
+        ],
+        "implementation_notes": [
+          "대사판과 문제 UI를 시간상 분리한다.",
+          "shape-row를 정확한 2×5 격자로 고정한다.",
+          "키패드 전체가 y=560..1040 안에 들어오게 한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"ten-intro\"] .board-title, .c-speechBubble",
+            "issue": "대사판이 제목판을 가려 제목의 중앙 단어가 읽히지 않는다.",
+            "evidence": "제목판 y=150..253 뒤에 대사판 x=539..1120, y=164..437이 겹쳐 제목 대부분이 반투명하게 가려진다.",
+            "suggested_fix": "대사 beat가 끝날 때 대사판을 숨긴 뒤 제목판·게이지·문항을 등장시키거나 대사판을 작업자 오른쪽 아래로 옮긴다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-total-ten\"] .c-keypadWrap",
+            "issue": "계수기 하단 키가 화면 아래로 잘려 조작 표면 전체가 보이지 않는다.",
+            "evidence": "키패드 상단은 y≈703이며 7·8·9 행부터 화면 하단에 걸린다. 보이는 키 라벨의 최대 중심 오프셋은 약 (0px,+2px)다.",
+            "suggested_fix": "키패드 높이를 줄이고 우측 중앙으로 이동해 display와 12개 키를 모두 노출한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 2,
+              "surface_w": 138,
+              "surface_h": 78
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_id:paint-can-body, [data-qa-scene=\"ten-intro\"] .shape-row",
+            "issue": "‘1통에 10개’의 핵심 관계에서 페인트통 asset이 빠지고 원 10개만 공중에 떠 있다.",
+            "evidence": "스크린샷과 buildScene 구성에 paint-can-body가 없으며 원들은 대사판 뒤에 일부 가려진다.",
+            "suggested_fix": "paint-can-body를 게이지 옆에 배치하고 색은 HTML overlay로 표시하며 원 10개를 2×5 슬롯에 정렬한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "high",
+            "target": ".c-speechBubble, .board-title, .shape-row",
+            "issue": "세 개의 시각 계층이 같은 중앙 상단 영역에서 중첩된다.",
+            "evidence": "대사판이 제목판과 첫째 줄 원 여러 개를 동시에 덮는다.",
+            "suggested_fix": "대사-제목-게이지를 160ms 간격의 순차 단계로 분리하고 최종 문제 상태에서는 대사판을 숨긴다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".board-title, .q-prompt, .c-keypadWrap",
+            "issue": "제목판·문제판·입력기가 모두 CSS 흰 카드로 반복돼 페인트 작업 장치의 물성이 없다.",
+            "evidence": "참조 surface의 굵은 남색 외곽, 두께, 나사 디테일 대신 border-radius와 shadow만 사용한다.",
+            "suggested_fix": "info-board와 keypad-console raster body로 교체한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_ten_intro",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "asset_id:paint-can-body, .shape-row",
+          "issue": "1통과 10개의 시각 연결이 없다.",
+          "evidence": "페인트통이 없고 원만 공중에 배열된다.",
+          "suggested_fix": "페인트통과 2×5 게이지를 하나의 충전대 장면으로 연결한다."
+        },
+        {
+          "scene_id": "04_ten_intro",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".board-title, .c-speechBubble",
+          "issue": "대사판이 제목판을 가린다.",
+          "evidence": "두 표면이 y=164..253 구간에서 겹친다.",
+          "suggested_fix": "대사 종료 후 제목판을 표시하라."
+        }
+      ],
+      "refine_suggestions": [
+        "대사와 문제 상태를 분리하라.",
+        "paint-can-body와 2×5 게이지를 결합하라.",
+        "키패드 전체를 화면 안에 들어오게 축소·이동하라."
+      ]
+    },
+    {
+      "scene_id": "05_addition",
+      "capture_label": "05_addition",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__05_addition.png",
+      "scene_purpose": "7개에 3개를 더해 10을 만든 뒤 2개를 더하는 과정을 시각화",
+      "overall_assessment": "캐릭터와 배경의 연속성은 좋지만 대사판이 제목과 원 묶음을 덮고, 페인트통 없이 CSS 원과 웹 키패드만 있어 ‘페인트로 10 만들기’ 장면성이 약하다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "10칸 페인트 게이지 채우기",
+        "rationale": "7+3이 10을 완성하는 순간을 벽화 작업 게이지의 충전으로 보여 주면 계산 전략이 명확해진다.",
+        "core_metaphor": "비어 있던 3칸에 페인트가 들어와 한 통 분량 10칸을 완성하는 작업",
+        "visual_language": "2×5 슬롯, paint-can-body, 페인트 흐름 하이라이트, 계수기 console을 사용한다.",
+        "layout_strategy": "작업자는 좌측, 어린이는 우측, 중앙 게이지는 두 캐릭터 시선 사이에 두고 대사판은 게이지와 겹치지 않게 상단 좌측으로 제한한다.",
+        "interaction_surfaces": [
+          "2×5 슬롯 게이지",
+          "수식 안내판",
+          "금속 keypad console",
+          "페인트 작업표 CTA"
+        ],
+        "implementation_notes": [
+          "첫 7칸과 추가 3칸의 상태를 색·등장 timing으로 구분한다.",
+          "paint-can-body를 게이지 아래 왼쪽에 배치한다.",
+          "문제 상태에서 대사판을 숨긴다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"addition\"] .board-title, .c-speechBubble",
+            "issue": "대사판이 제목판 아래 절반을 덮어 제목 위계가 깨진다.",
+            "evidence": "제목판 y=150..253과 대사판 y=215..384가 약 38px 겹친다.",
+            "suggested_fix": "대사 상태와 문제 상태를 분리해 문제 표시 시 대사판을 숨긴다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-add-to-ten\"] .q-prompt, .c-keypadWrap",
+            "issue": "수식은 자체 표면 중앙에 정렬됐지만 키패드 하단이 잘리고 두 표면 모두 작업 장치로 통합되지 않는다.",
+            "evidence": "수식 표면은 약 336×112px이고 텍스트 중심은 표면 중심 대비 (+1px,+2px)다. 키패드는 y≈703부터 시작해 하단 키가 화면 밖에 걸린다.",
+            "suggested_fix": "수식판은 raster info-board에 얹고 keypad console을 우측으로 이동·축소해 전체를 노출한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 2,
+              "surface_w": 336,
+              "surface_h": 112
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "asset_id:paint-can-body in [data-qa-scene=\"addition\"]",
+            "issue": "페인트 한 통을 다 쓰고 새 통을 준비하는 이야기인데 페인트통 asset이 화면에 없다.",
+            "evidence": "원 10개와 수식만 중앙에 보이며 생성된 paint-can-body는 DOM에 삽입되지 않는다.",
+            "suggested_fix": "첫 paint-can을 10칸 게이지와 연결하고 정답 후 두 번째 통의 등장 위치를 예약한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "high",
+            "target": ".shape-row, .c-speechBubble",
+            "issue": "원 묶음의 첫째 줄이 대사판 뒤에 가려져 세기 대상이 일부 불명확하다.",
+            "evidence": "대사판 하단 y≈384가 첫째 줄 원 y≈360..443 영역과 겹친다.",
+            "suggested_fix": "대사판을 숨긴 뒤 원 게이지를 등장시키고 2×5 고정 슬롯으로 정렬한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".q-prompt, .c-keypadWrap, .c-key",
+            "issue": "계산 표면이 일반 흰 웹 카드와 keypad로 구성돼 세계관 물성과 분리된다.",
+            "evidence": "표면 asset 없이 CSS background·border·radius만 사용한다.",
+            "suggested_fix": "info-board와 keypad-console raster body를 적용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "05_addition",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".shape-row, asset_id:paint-can-body",
+          "issue": "7+3의 페인트 게이지 은유가 없고 모양이 대사판에 가려진다.",
+          "evidence": "페인트통은 없으며 원 일부가 대사판 뒤로 들어간다.",
+          "suggested_fix": "paint-can-body와 2×5 슬롯 게이지를 배치하고 문제 상태에서 대사판을 숨긴다."
+        }
+      ],
+      "refine_suggestions": [
+        "7개와 추가 3개를 2×5 게이지의 서로 다른 등장 timing으로 표현하라.",
+        "paint-can-body를 게이지에 연결하라.",
+        "키패드 전체를 화면 안에 배치하라."
+      ]
+    },
+    {
+      "scene_id": "06_subtraction_intro",
+      "capture_label": "06_subtraction_intro",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__06_subtraction_intro.png",
+      "scene_purpose": "12개에서 잘못 그린 2개를 지워 10으로 돌아가는 과정을 준비",
+      "overall_assessment": "12개 사각형은 읽히지만 대사판이 제목판과 첫 행 도형을 가리고 키패드가 잘린다. 잘못 그린 대상을 지우는 작업 행위도 단순 CSS 사각형 상태에 머문다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "잘못 칠한 타일 제거 작업",
+        "rationale": "12에서 2를 빼는 과정을 실제 담장 타일 수정처럼 보여 주면 뺄셈 의미가 분명해진다.",
+        "core_metaphor": "12개 벽화 타일 중 잘못 칠한 2개에 제거 표시를 붙여 10개를 남기는 작업",
+        "visual_language": "벽돌 원근에 맞춘 12개 슬롯, 제거 예정 표시, 지우개 흔적, 계수기 console을 사용한다.",
+        "layout_strategy": "12개 슬롯을 담장 중앙에 7+5가 아닌 10+2 구조로 정돈하고 수식판은 슬롯 바로 아래, keypad는 우측 하단에 둔다.",
+        "interaction_surfaces": [
+          "12개 벽화 슬롯",
+          "제거 대상 표시",
+          "수식 안내판",
+          "계수기 console"
+        ],
+        "implementation_notes": [
+          "대사판 종료 후 타일과 수식을 표시한다.",
+          "12개를 10칸 묶음과 추가 2칸으로 시각 구분한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"subtraction-intro\"] .board-title, .c-speechBubble",
+            "issue": "대사판이 제목판 중앙을 가려 장면 제목이 불완전하게 보인다.",
+            "evidence": "제목판 y=150..253 뒤에 대사판 y=191..409가 중첩된다.",
+            "suggested_fix": "대사 beat가 끝난 후 제목판과 문항을 등장시키도록 상태를 분리한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-add-three\"] .q-prompt, .c-keypadWrap",
+            "issue": "수식은 중앙정렬됐지만 keypad 하단이 잘려 전체 입력기가 보이지 않는다.",
+            "evidence": "수식판은 약 424×111px이고 텍스트 중심은 표면 중심 대비 (0px,+4px)다. keypad는 y≈703부터 시작해 하단 행이 화면 아래에 걸린다.",
+            "suggested_fix": "수식판과 keypad를 하나의 세로 console로 묶지 말고 수식판은 중앙, keypad는 우측 중앙으로 분리한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 4,
+              "surface_w": 424,
+              "surface_h": 111
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".shape-row, .c-speechBubble",
+            "issue": "첫 행 사각형 일부가 대사판에 가려져 12개 묶음의 전체 상태를 한눈에 세기 어렵다.",
+            "evidence": "대사판 x=546..944, y=191..409가 좌측 첫 행 사각형 영역 y=360..444를 덮는다.",
+            "suggested_fix": "대사판을 숨긴 후 10+2 구조의 슬롯 묶음을 중앙에 표시한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".board-title, .q-prompt, .c-keypadWrap",
+            "issue": "제목·수식·입력기가 반복 CSS 카드로 보여 담장 수정 도구의 물성이 없다.",
+            "evidence": "참조 surface와 같은 두께·고정부·하이라이트가 없고 일반 rounded border만 있다.",
+            "suggested_fix": "info-board와 keypad-console raster body를 재사용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "06_subtraction_intro",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".shape-row, .c-speechBubble",
+          "issue": "12개 묶음 일부가 대사판에 가려진다.",
+          "evidence": "첫 행 좌측 사각형이 반투명 대사판 아래에 들어간다.",
+          "suggested_fix": "대사 종료 뒤 10+2 슬롯 묶음을 표시하라."
+        }
+      ],
+      "refine_suggestions": [
+        "12개 도형을 10칸 묶음과 추가 2칸으로 재배열하라.",
+        "대사판과 문제 상태를 분리하라.",
+        "키패드를 우측 중앙으로 이동해 전체를 노출하라."
+      ]
+    },
+    {
+      "scene_id": "07_subtraction",
+      "capture_label": "07_subtraction",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__07_subtraction.png",
+      "scene_purpose": "10개에서 3개를 지우고 전체 뺄셈식으로 연결",
+      "overall_assessment": "지워지는 세 사각형은 구분되지만 대사판이 제목과 원래 묶음을 가리고, 키패드는 하단이 잘리며, 일반 CSS 카드 구조가 작업 장면보다 강하다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "벽화 타일 지우기 레일",
+        "rationale": "10에서 3을 제거하는 순서를 물리적 작업 흐름으로 보여 줄 필요가 있다.",
+        "core_metaphor": "10칸 레일에서 3개 타일을 지우기 구역으로 내려 보내는 작업",
+        "visual_language": "10칸 슬롯, 아래쪽 제거 트레이, 페인트가 흐려지는 잔상, 계수기 console을 사용한다.",
+        "layout_strategy": "10칸을 상단 한 묶음으로 고정하고 제거할 3칸은 같은 위치에서 흐려진 뒤 아래 트레이로 이동한다.",
+        "interaction_surfaces": [
+          "10칸 벽화 레일",
+          "제거 트레이",
+          "수식 안내판",
+          "계수기 console"
+        ],
+        "implementation_notes": [
+          "현재처럼 별도 둘째 줄에 흐린 사각형을 놓지 말고 원래 슬롯 위치와 대응시킨다.",
+          "대사 종료 뒤 제목·타일·수식을 순차 표시한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"subtraction\"] .board-title, .c-speechBubble",
+            "issue": "대사판이 제목판을 가리고 첫 행 도형도 덮는다.",
+            "evidence": "대사판 y=215..384가 제목판 y=150..253과 첫 행 도형 y=360..444 양쪽에 중첩된다.",
+            "suggested_fix": "대사 상태에서는 타일과 수식을 숨기고, 문제 상태로 전환할 때 대사판을 퇴장시킨다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-subtract-three\"] .q-prompt, .c-keypadWrap",
+            "issue": "수식 텍스트는 중앙에 있으나 입력기 하단이 화면 아래로 잘린다.",
+            "evidence": "수식 표면은 약 356×111px이고 텍스트 중심은 표면 중심 대비 (0px,+3px)다. keypad의 마지막 행은 보이지 않는다.",
+            "suggested_fix": "키패드 높이를 축소하고 y≤600에 배치해 전체 조작 면을 노출한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 3,
+              "surface_w": 356,
+              "surface_h": 111
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"subtraction\"] .shape-row",
+            "issue": "지운 3개가 원래 10개 중 어느 슬롯에서 제거됐는지 대응 관계가 약하다.",
+            "evidence": "7개 진한 사각형은 첫 행, 3개 흐린 사각형은 별도 둘째 행에 놓여 원래 위치와 연결되지 않는다.",
+            "suggested_fix": "10칸 고정 슬롯을 유지한 채 제거되는 세 슬롯만 같은 자리에서 fade·지우개 잔상으로 전환한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".q-prompt, .c-keypadWrap, .c-key",
+            "issue": "핵심 조작 영역이 일반 웹 폼처럼 보여 담장 지우기 장면과 분리된다.",
+            "evidence": "raster 표면 없이 흰 wrapper와 rounded keys로 구성됐다.",
+            "suggested_fix": "계수기 console asset 위에 동적 수식과 숫자 키를 얹는다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "07_subtraction",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".shape-row",
+          "issue": "지워진 세 도형과 원래 슬롯의 대응이 약하다.",
+          "evidence": "흐린 도형이 별도 행에 분리돼 있다.",
+          "suggested_fix": "10칸 고정 슬롯 안에서 세 칸만 제거 상태로 전환하라."
+        }
+      ],
+      "refine_suggestions": [
+        "10칸 슬롯을 고정하고 세 칸만 동일 위치에서 fade 처리하라.",
+        "대사판 퇴장 후 문제판과 입력기를 등장시켜라.",
+        "키패드 전체를 화면 안에 배치하라."
+      ]
+    },
+    {
+      "scene_id": "08_random_practice",
+      "capture_label": "08_random_practice",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__08_random_practice.png",
+      "scene_purpose": "네 유형을 한 장씩 연습하고 필요할 때 보조 설명을 사용",
+      "overall_assessment": "두 대형 흰 패널이 배경과 캐릭터를 가리고 A·B 문제가 동시에 노출돼 ‘한 화면에 한 가지 판단’ 계약을 위반한다. 선택지·keypad·다음 문제 CTA도 모두 웹 UI처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "벽화 수리 작업대 한 장씩",
+        "rationale": "초등 1학년에게는 한 문제와 한 조작만 중앙에 보여 주는 차분한 작업 흐름이 필요하다.",
+        "core_metaphor": "작업대에 문제 작업표가 한 장씩 공급되고 해결 후 다음 표가 밀려오는 장치",
+        "visual_language": "단일 raster 작업판, 교체 가능한 문제 영역, 좌우 어린이, 하단 물리적 다음 레버를 사용한다.",
+        "layout_strategy": "rp-wrap을 2열 grid에서 단일 960×650 작업판 carousel로 바꾸고 현재 문제 이외의 DOM은 시각적으로 숨긴다.",
+        "interaction_surfaces": [
+          "단일 문제 작업판",
+          "선택 plaque 슬롯 또는 keypad console",
+          "힌트 말풍선",
+          "다음 작업표 레버"
+        ],
+        "implementation_notes": [
+          "grid-template-columns를 제거하고 한 문제만 active 처리한다.",
+          "캐릭터는 작업판 밖 좌우에 완전히 보이게 한다.",
+          "다음 문제 CTA는 현재 문제 해결 후에만 중앙 하단에 표시한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-random-a\"] .q-prompt",
+            "issue": "문구는 표면 중앙에 가깝지만 표면이 일반 CSS 카드이고 동시에 다른 문제와 경쟁한다.",
+            "evidence": "문제판은 약 704×97px이며 텍스트 중심은 표면 중심 대비 (+2px,+4px)다. 오른쪽 B 문제판도 같은 높이에 동시에 노출된다.",
+            "suggested_fix": "문구는 유지하고 단일 raster 작업판의 중앙 safe zone에 현재 문제만 표시한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 2,
+              "dy_px": 4,
+              "surface_w": 704,
+              "surface_h": 97
+            }
+          },
+          {
+            "severity": "high",
+            "target": "[data-qa-question=\"q-random-a\"] .c-choice",
+            "issue": "선택지 라벨은 중앙정렬됐지만 선택판이 일반 cream rounded button으로 보여 참조 choice plaque 계약을 따르지 않는다.",
+            "evidence": "각 선택 표면은 약 421×95px이고 라벨 중심은 표면 중심 대비 최대 (-1px,+3px)다.",
+            "suggested_fix": "빈 raster choice plaque 위에 동적 선택지 텍스트를 얹고 세 표면 간 간격을 18px로 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": 3,
+              "surface_w": 421,
+              "surface_h": 95
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"random-practice\"] .c-pageNext",
+            "issue": "‘다음 문제’가 작업판과 연결되지 않은 일반 노란 알약 CTA이며 남자 어린이 앞을 가린다.",
+            "evidence": "CTA는 x=70..368, y=901..999에 떠 있고 뒤의 boy-idle 하체를 가린다. 라벨 중심은 약 298×98px 표면 중심 대비 (-2px,+1px)다.",
+            "suggested_fix": "단일 작업판 하단 레버 또는 작업표 배출 탭으로 통합하고 캐릭터 영역과 겹치지 않게 한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -2,
+              "dy_px": 1,
+              "surface_w": 298,
+              "surface_h": 98
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"random-practice\"] .rp-wrap, .rp-cell",
+            "issue": "대형 흰 패널이 담장 무대와 양쪽 캐릭터를 덮는다.",
+            "evidence": "패널은 x=181..1740, y=300..1080 대부분을 차지하고 boy-idle과 girl-idle이 반투명 패널 뒤에 가려진다.",
+            "suggested_fix": "하나의 960×650 작업판만 중앙에 표시하고 캐릭터를 좌우 바깥에 노출한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"random-practice\"] .rp-wrap",
+            "issue": "planner의 한 장씩 제시하는 carousel 의도와 달리 여러 문제를 동시에 보여 저학년 정보 밀도가 과도하다.",
+            "evidence": "스크린샷에서 A 선택형과 B keypad형이 동시에 보이며 C·D는 화면 아래에 이어지는 구조다.",
+            "suggested_fix": "현재 문제 cell 하나만 active로 렌더하고 다음 문제 조작으로 교체되게 DOM 상태를 재구성한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".rp-cell, .c-choice, .c-keypadWrap, .c-pageNext",
+            "issue": "화면 대부분이 흰 카드·일반 선택 버튼·웹 keypad·알약 CTA로 구성돼 장면형 학습 경험이 사라진다.",
+            "evidence": "모든 주요 표면이 CSS background와 rounded border로만 그려졌으며 raster 작업판이 없다.",
+            "suggested_fix": "단일 작업판, choice plaque, keypad console, 작업표 CTA asset으로 표면 언어를 통일한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "08_random_practice",
+          "severity": "high",
+          "axis": "creative_direction",
+          "target": ".rp-wrap",
+          "issue": "여러 문제를 동시에 노출해 한 화면 한 판단 계약을 위반한다.",
+          "evidence": "A와 B가 동시에 보이고 C·D가 아래에 이어진다.",
+          "suggested_fix": "단일 작업판 carousel로 재구성한다."
+        },
+        {
+          "scene_id": "08_random_practice",
+          "severity": "high",
+          "axis": "background_stage",
+          "target": ".rp-cell",
+          "issue": "흰 패널이 배경과 캐릭터를 덮는다.",
+          "evidence": "두 패널이 화면 중앙 80%를 차지한다.",
+          "suggested_fix": "작업판 크기를 줄이고 캐릭터를 좌우에 완전히 노출한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".rp-wrap을 단일 active cell carousel로 재구성하라.",
+        "현재 문제 이외의 cell은 display하지 말고 문제 해결 후 다음 작업표 전환을 실행하라.",
+        "choice plaque와 keypad console을 같은 작업판 안에 배치하라."
+      ]
+    },
+    {
+      "scene_id": "09_free_draw",
+      "capture_label": "09_free_draw",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__09_free_draw.png",
+      "scene_purpose": "원·삼각형·사각형과 색을 선택해 담장 벽화를 자유롭게 구성",
+      "overall_assessment": "실제 담장 면을 그리기 영역으로 활용한 방향은 좋지만, 흰 도구 패널이 교사를 가리고 대사판과 확인판이 그리기 캔버스를 침범한다. 일반 CSS 패널과 알약 CTA도 참조 물성에 미달한다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "담장 벽화 작업 구역",
+        "rationale": "기존 배경의 넓은 벽을 실제 작업면으로 활용하면서 도구와 확인 조작을 현장 소품으로 정리하면 완성도가 크게 오른다.",
+        "core_metaphor": "이동식 페인트 도구함을 열고 담장에 직접 도형을 찍는 벽화 작업",
+        "visual_language": "좌측 이동식 도구함, 중앙 담장 작업면, 하단 작업 완료 표지판을 사용한다.",
+        "layout_strategy": "도구함은 교사 오른쪽 x=310..500에 세로로 두고, 캔버스는 x=520..1718 유지, 확인판은 캔버스 바깥 하단에 배치한다.",
+        "interaction_surfaces": [
+          "페인트 도구함의 모양 슬롯",
+          "원형 색 swatch 홈",
+          "담장 작업면",
+          "완료 확인 표지판과 두 선택 탭"
+        ],
+        "implementation_notes": [
+          "대사 beat가 끝난 뒤 대사판을 숨긴다.",
+          "confirm-box를 draw-canvas 바깥으로 내려 캔버스와 겹치지 않게 한다.",
+          "draw-tools에 raster toolbox body를 적용한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "medium",
+            "target": "[data-qa-scene=\"free-draw\"] .tool-btn, .color-btn",
+            "issue": "모양 기호와 색 swatch는 각 홈의 중앙에 정렬되지만 홈 자체가 일반 웹 버튼으로 보인다.",
+            "evidence": "약 84×84px 모양 버튼에서 기호 중심 오프셋은 최대 (0px,+1px)이며 색 버튼도 중앙 정렬된다.",
+            "suggested_fix": "버튼 hit area와 기호는 유지하고 도구함 raster asset의 빈 홈 위에 정확히 얹는다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 1,
+              "surface_w": 84,
+              "surface_h": 84
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"free-draw\"] .confirm-box, .draw-canvas",
+            "issue": "완료 질문판이 그리기 영역 하단을 약 47px 침범해 작업면과 확인 UI가 겹친다.",
+            "evidence": "draw-canvas는 y=281..839이고 confirm-q는 y=792..892에 있어 y=792..839가 중첩된다. 문구 중심은 약 466×100px 표면 중심 대비 (0px,+6px)다.",
+            "suggested_fix": "confirm-box를 캔버스 외부 y=850 이후에 배치하고 캔버스 높이를 520px로 조정해 최소 20px 간격을 확보한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 6,
+              "surface_w": 466,
+              "surface_h": 100
+            }
+          },
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"free-draw\"] .c-ticketButton in .confirm-row",
+            "issue": "예·아니오 CTA가 큰 일반 알약형 버튼으로 화면 하단을 차지한다.",
+            "evidence": "각 표면은 약 421×109px이며 라벨 중심은 표면 중심 대비 (0px,+3px)지만 raster 물성이 없다.",
+            "suggested_fix": "완료 표지판 하단의 두 물리적 탭으로 통합하고 현재 문구를 동적 overlay로 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 3,
+              "surface_w": 421,
+              "surface_h": 109
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"free-draw\"] .draw-tools, .char.left",
+            "issue": "도구 패널이 교사의 얼굴과 상체를 가려 안내 캐릭터의 표정과 시선 흐름을 훼손한다.",
+            "evidence": "draw-tools는 x=60..405, y=301..594이고 teacher-explaining은 같은 좌측 영역에 있어 얼굴 일부와 몸통이 패널 뒤로 들어간다.",
+            "suggested_fix": "교사를 x=20..260에 유지하고 도구함을 x=310..500으로 이동하거나 교사를 대사 종료 후 퇴장시킨다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".draw-tools, .tool-btn, .confirm-q, .c-ticketButton",
+            "issue": "도구함과 확인 UI가 모두 CSS 흰 카드·버튼이라 벽화 작업 소품으로 보이지 않는다.",
+            "evidence": "도구 패널은 345×293px 흰 사각형이며 물감 묻은 도구함, 손잡이, 홈 같은 raster 디테일이 없다.",
+            "suggested_fix": "도구함 raster body와 공용 info-board·CTA body를 적용한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "09_free_draw",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".draw-tools, .char.left",
+          "issue": "도구 패널이 교사를 가린다.",
+          "evidence": "두 요소가 좌측 x=60..405 영역에서 중첩된다.",
+          "suggested_fix": "도구함을 교사 오른쪽으로 이동하거나 문제 상태에서 교사를 퇴장시킨다."
+        },
+        {
+          "scene_id": "09_free_draw",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".confirm-box, .draw-canvas",
+          "issue": "확인판이 그리기 작업면을 침범한다.",
+          "evidence": "두 표면이 y=792..839에서 겹친다.",
+          "suggested_fix": "캔버스 높이를 줄이고 확인판을 아래로 분리한다."
+        }
+      ],
+      "refine_suggestions": [
+        "도구 패널을 교사 오른쪽으로 이동하고 raster toolbox body를 적용하라.",
+        "대사 종료 후 대사판을 숨겨 캔버스를 완전히 노출하라.",
+        "확인판과 그리기 캔버스 사이에 최소 20px 간격을 확보하라."
+      ]
+    },
+    {
+      "scene_id": "10_math_story",
+      "capture_label": "10_math_story",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-08-14_dfbc1027\\iter_001\\design_review\\desktop__10_math_story.png",
+      "scene_purpose": "길에서 보는 표지판의 모양과 생활 안전을 연결",
+      "overall_assessment": "bg-school-street는 참조의 하늘·구름·나뭇잎·원근 언어와 잘 맞고 화면을 충분히 채운다. 그러나 제목과 질문이 복잡한 배경에 직접 놓여 대비가 불안정하고, CTA는 일반 알약 버튼이어서 장면 통합이 부족하다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "안전 표지 산책 안내소",
+        "rationale": "강한 배경 자산을 유지하면서 설명을 길가의 실제 안내 표면에 흡수하면 장면성이 살아난다.",
+        "core_metaphor": "학교 앞 길을 걸으며 안내 표지판을 한 장씩 발견하는 안전 산책",
+        "visual_language": "도로 가장자리의 물성 있는 안내판, 기존 road-sign asset, 표지판과 연결되는 발자국형 진행 흐름을 사용한다.",
+        "layout_strategy": "중앙 질문은 우측 담장 앞 안내판 safe zone에 넣고 glyph는 안내판 아래, 다음 장 조작은 안내판 지지대의 탭으로 통합한다.",
+        "interaction_surfaces": [
+          "길가 정보 안내판",
+          "원·사각형·삼각형 표지판 asset 자리",
+          "안내판 하단 다음 장 탭"
+        ],
+        "implementation_notes": [
+          ".page-q와 .page-body를 roadside info-board body 위에 배치한다.",
+          "기존 road-sign 세 asset은 현재 크기와 선명도를 유지한다.",
+          ".c-pageNext를 안내판 하단 탭 위치로 이동한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"math-story\"] .page-q, screenshot x=600..1320 y=322..488",
+            "issue": "제목과 질문이 장면 속 표면 없이 나무·학교·담장 위에 직접 놓여 배경 명암에 따라 대비가 흔들린다.",
+            "evidence": "짙은 파랑 글자가 녹색 나뭇잎과 건물 경계 위를 가로지르며 참조의 info-board 사용 언어를 따르지 않는다.",
+            "suggested_fix": "문구를 우측 담장 앞 길가 안내판의 빈 크림 safe zone 안에 배치하고 문구는 변경하지 않는다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"math-story\"] .c-pageNext",
+            "issue": "다음 장 CTA가 도로 위에 떠 있는 일반 노란 알약 버튼이다.",
+            "evidence": "CTA는 x≈1588..1850, y≈903..999의 CSS gradient surface이며 라벨 중심은 약 262×96px 표면 중심 대비 (0px,0px)지만 장면 소품이 아니다.",
+            "suggested_fix": "길가 안내판 하단의 물리적 탭 또는 표지판 지지대 버튼으로 통합한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 262,
+              "surface_h": 96
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "[data-qa-scene=\"math-story\"] .page.active",
+            "issue": "좋은 거리 배경의 비어 있는 우측 담장 safe zone을 사용하지 않고 텍스트와 glyph를 도로·나무 위에 직접 띄운다.",
+            "evidence": "배경에는 우측 담장과 보도 영역이 충분하지만 별도 장면 표면 없이 중앙 overlay만 사용한다.",
+            "suggested_fix": "우측 담장 앞에 정보 안내판 asset을 배치하고 모든 페이지의 동적 텍스트를 그 빈 면에 얹는다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".c-pageNext, .page-body",
+            "issue": "진행 CTA와 후속 설명 패널이 raster 표면 없이 CSS로만 구성된다.",
+            "evidence": "HTML의 .c-pageNext와 .page-body는 gradient/background, border, radius만 사용한다.",
+            "suggested_fix": "roadside info-board와 activity CTA raster body를 적용하고 CSS는 위치·hover·press만 담당하게 한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "10_math_story",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".page-q, .page-body",
+          "issue": "텍스트가 복잡한 배경에 직접 놓인다.",
+          "evidence": "질문이 나무와 건물 경계를 가로지른다.",
+          "suggested_fix": "길가 정보 안내판 asset의 빈 면에 모든 페이지 텍스트를 배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "페이지 텍스트를 길가 정보 안내판 안으로 이동하라.",
+        "기존 road-sign-round, road-sign-square, road-sign-triangle은 유지하라.",
+        "다음 장 CTA를 안내판 하단 탭으로 통합하라."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "scene 전환은 .scene.active/.scene.leaving의 fade keyframe으로 즉시 스왑을 피했고, 말풍선·키·CTA에는 기본 pop·hover·press가 있다. 그러나 캐릭터·제목·문제 장치의 순차 등장 choreography가 없고, 정답·오답은 같은 feedbackStamp 동작에 이미지 src만 바꾸며, 정답 공개도 대부분 즉시 텍스트·outline 변경에 그쳐 장면 반응이 단조롭다.",
+    "findings": [
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "initial",
+        "severity": "medium",
+        "target": "buildScene(), resetScene(), .scene.active, @keyframes speechPop",
+        "issue": "도입에서 배경·캐릭터·제목이 한꺼번에 나타나고 말풍선만 단독 pop한다.",
+        "evidence": "buildScene()은 bg·chars·stage-head를 정적으로 append하고 .scene.active는 stageFadeIn만 실행한다. resetScene()은 즉시 renderBeat(sc)를 호출하며 캐릭터나 제목의 animation-delay/stagger가 없다.",
+        "suggested_fix": "scene 진입 후 배경 0ms, 제목판 120ms, 작업자 260ms, 어린이 400ms, 대사판 560ms 순으로 420~600ms ease-out entrance를 적용한다."
+      },
+      {
+        "aspect": "feedback_reaction",
+        "scene_id": "global",
+        "severity": "high",
+        "target": "showFeedback(), CommonFeedbackLayer.showStamp(), @keyframes feedbackStamp",
+        "issue": "정답과 오답이 같은 도장 애니메이션 하나를 공유하고 캐릭터·대상 오브젝트 반응이 없다.",
+        "evidence": "showFeedback(type,text)는 두 경우 모두 CommonFeedbackLayer.showStamp를 호출하고 CommonFeedbackLayer.showStamp는 src만 correct/wrong으로 바꾼 뒤 동일한 .show/@keyframes feedbackStamp를 적용한다. 정답만 fbText를 추가할 뿐 대상 도형이나 캐릭터 상태는 바꾸지 않는다.",
+        "suggested_fix": "정답은 도장 착지 420ms→대상 슬롯 청록 glow 300ms→캐릭터 칭찬 pose 전환을 사용하고, 오답은 X 도장 260ms→대상 장치 좌우 6px shake 2회→재시도 상태 복귀로 분리한다."
+      },
+      {
+        "aspect": "answer_reveal",
+        "scene_id": "08_random_practice",
+        "severity": "medium",
+        "target": "revealKeypad(), revealChoiceOrSpot(), .q-reveal, .c-choice.revealed",
+        "issue": "세 번째 오답 뒤 정답 공개가 정적 텍스트와 outline 변경으로 끝난다.",
+        "evidence": "revealKeypad()은 disp.textContent와 q.reveal.hidden=false를 즉시 설정한다. revealChoiceOrSpot()은 .revealed 클래스만 추가하며 .c-choice.revealed는 정적 outline이다. hotspot에만 revealPulse가 있다.",
+        "suggested_fix": "정답 표면에 180ms 밝기 상승, 260ms stamp-in, 500ms glow hold를 순차 적용하고 오답 선택지는 opacity .55로 낮춰 정답 위계를 분리한다."
+      },
+      {
+        "aspect": "micro_interaction",
+        "scene_id": "global",
+        "severity": "low",
+        "target": ".c-pageNext:active, .tool-btn:hover, .color-btn:hover",
+        "issue": "ticket·choice·key에는 press 상태가 있으나 페이지 CTA와 그리기 도구에는 상태 언어가 불균형하다.",
+        "evidence": ".c-ticketButton:hover/:active와 .c-key.keypad-pressing은 존재하지만 .c-pageNext는 hover만 있고 tool-btn/color-btn에는 active outline 외 hover·press transition이 없다.",
+        "suggested_fix": "페이지 CTA와 도구 버튼에 hover -2px/brightness 1.05, pointerdown +3px/scale .98, 선택 시 180ms ring settle을 추가한다."
+      }
+    ]
+  },
+  "asset_review": {
+    "overall_asset_fit": "bg-wall-activity와 bg-school-street는 참조의 밝은 하늘·크림 벽·낮은 대비 원근을 잘 따르고, 교사·작업자·어린이도 성인/아동 비율과 중간 두께 선 계약에 대체로 부합한다. stamp와 road-sign도 유지 가능하다. 문제는 asset 품질보다 생성된 paint-can-body의 미사용과 장면 표면 asset의 구조적 부재다.",
+    "keep_assets": [
+      {
+        "asset_id": "bg-wall-activity",
+        "reason": "참조 outdoor-wall-frontal과 유사한 중앙 빈 활동 면, 밝은 크림 팔레트, 가장자리 원근을 제공한다.",
+        "suggested_action": "흰 패널로 덮지 말고 담장 자체를 주 상호작용 무대로 유지한다."
+      },
+      {
+        "asset_id": "bg-school-street",
+        "reason": "참조 outdoor-street-wide의 하늘·구름·나뭇잎 덩어리·도로 원근과 가장 잘 맞는다.",
+        "suggested_action": "현재 crop을 유지하고 우측 담장 앞에 정보 안내판만 추가한다."
+      },
+      {
+        "asset_id": "teacher-idle_and_teacher-explaining",
+        "reason": "두 포즈의 얼굴·헤어·의상 정체성과 선·명암이 일관된다.",
+        "suggested_action": "교사와 도구 패널이 겹치지 않도록 위치만 조정한다."
+      },
+      {
+        "asset_id": "worker-apologizing_and_worker-explaining",
+        "reason": "동일 인물의 정체성과 작업복 팔레트가 유지되며 참조 성인 비율과도 맞는다.",
+        "suggested_action": "대사판 꼬리와 손끝의 시선 연결을 조정한다."
+      },
+      {
+        "asset_id": "boy-idle_boy-helping_girl-idle_girl-helping",
+        "reason": "어린이 대두 비율과 반복 포즈 identity가 안정적이다.",
+        "suggested_action": "random-practice의 흰 패널 뒤가 아니라 작업판 좌우에 완전히 노출한다."
+      },
+      {
+        "asset_id": "stamp-correct_and_stamp-wrong",
+        "reason": "정답·오답이 별개 raster asset이며 planner의 필수 피드백 표면 계약을 충족한다.",
+        "suggested_action": "유지하되 서로 다른 코드 choreography와 대상 반응을 연결한다."
+      },
+      {
+        "asset_id": "road-sign-round_road-sign-square_road-sign-triangle",
+        "reason": "세 표지판의 굵은 남색 테두리, 판 두께, 하이라이트 밀도가 서로 일관된다.",
+        "suggested_action": "math-story 후속 페이지에서 기존 크기와 선명도를 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "paint-can-body",
+        "reason": "재생성할 필요 없이 기존 asset을 화면에 실제 배치하지 않은 것이 문제다.",
+        "suggested_action": "shape-count·shape-transition·ten-intro·addition의 좌중앙 작업대에 삽입하고 내부 색은 HTML overlay로 표시한다."
+      },
+      {
+        "asset_id": "teacher-explaining",
+        "reason": "free-draw에서 도구 패널과 겹쳐 얼굴·몸통이 가려진다.",
+        "suggested_action": "교사를 x=20..260에 유지하고 도구함을 x=310..500으로 옮기거나 문제 상태에서 교사를 퇴장시킨다."
+      },
+      {
+        "asset_id": "boy-idle_and_girl-idle",
+        "reason": "random-practice의 대형 패널 뒤에 가려진다.",
+        "suggested_action": "단일 작업판 좌우 외곽으로 이동해 전신을 노출한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [
+      {
+        "suggested_id": "surface-speech-bubble-school",
+        "character_id": "",
+        "priority": 1,
+        "impact": "모든 대사 장면에서 반복되는 흰 CSS 카드 문제를 한 번에 해결하고 캐릭터와 대사의 연결성을 높인다.",
+        "kind": "image",
+        "intended_path": "output/assets/surface-speech-bubble-school.webp",
+        "usage_section_ids": [
+          "intro",
+          "shape-find",
+          "shape-count",
+          "shape-transition",
+          "ten-intro",
+          "addition",
+          "subtraction-intro",
+          "subtraction",
+          "free-draw"
+        ],
+        "purpose": "동적 대사를 얹는 학교 벽화 세계관의 물리적 대사판 몸체",
+        "prompt_brief": "밝은 한낮 학교 벽화 세계관의 가로형 빈 대사판. 짙은 남색 굵은 외곽선, 크림색 완전 빈 내부 면, 얇은 판 두께, 좌측 화자 방향 꼬리 또는 연결 브래킷, 작은 나사 고정부. 글자와 버튼 라벨은 그리지 않는다.",
+        "visual_role": "캐릭터 대사를 장면 속 안내 물건으로 흡수하는 공용 표면",
+        "style_constraints": "참조 surface-info-board의 두께·하이라이트·고정부 밀도를 따르고 좌상단 광원과 한 겹 우하단 그림자를 사용한다.",
+        "composition_notes": "투명 배경, 가로 약 3:1, 내부 82%를 장식 없는 safe zone으로 두고 하단 우측에 작은 진행 탭을 얹을 빈 자리 확보.",
+        "negative_prompt": "글자, 숫자, baked-in 라벨, 캐릭터, 배경, SVG, flat UI, 흰 웹 카드, 과도한 텍스처, 3D 렌더",
+        "why_needed": "현재 CSS 말풍선이 제목·도형과 겹치고 참조의 물성 계약도 위반한다."
+      },
+      {
+        "suggested_id": "surface-info-board-mural",
+        "character_id": "",
+        "priority": 2,
+        "impact": "제목·미션·수식·완료 질문 등 반복되는 텍스트를 담장 속 표면으로 통합한다.",
+        "kind": "image",
+        "intended_path": "output/assets/surface-info-board-mural.webp",
+        "usage_section_ids": [
+          "intro",
+          "shape-find",
+          "shape-count",
+          "ten-intro",
+          "addition",
+          "subtraction-intro",
+          "subtraction",
+          "free-draw"
+        ],
+        "purpose": "동적 제목·문제·수식을 얹는 공용 담장 안내판",
+        "prompt_brief": "학교 담장에 고정하는 가로형 빈 안내판. 짙은 남색 굵은 프레임, 밝은 크림색 내부, 얇은 판 두께, 작은 청록 고정부와 한 줄 광택. 내부에는 아무 글자도 넣지 않는다.",
+        "visual_role": "웹 카드로 흩어진 제목과 수식을 하나의 장면 표면 언어로 통일",
+        "style_constraints": "참조 surface-info-board의 선·면 분할과 고정부를 따르되 이 차시의 청록·산호 포인트를 사용한다.",
+        "composition_notes": "투명 배경, 가로 4:1, 내부 텍스트 safe zone 86%, 1~2줄 큰 한글과 수식이 들어가도록 중앙 장식을 비운다.",
+        "negative_prompt": "글자, 숫자, 로고, 캐릭터, 배경, SVG, flat icon, 흰 rounded web card, 복잡한 장식",
+        "why_needed": "현재 board-title, q-prompt, confirm-q가 모두 CSS 흰 카드로 보인다."
+      },
+      {
+        "suggested_id": "keypad-console-paint-counter",
+        "character_id": "",
+        "priority": 3,
+        "impact": "다섯 계산 scene에서 화면 아래로 잘리는 일반 keypad를 세계관 장치로 바꾸고 전체 조작 면을 안정적으로 수용한다.",
+        "kind": "image",
+        "intended_path": "output/assets/keypad-console-paint-counter.webp",
+        "usage_section_ids": [
+          "shape-count",
+          "ten-intro",
+          "addition",
+          "subtraction-intro",
+          "subtraction",
+          "random-practice"
+        ],
+        "purpose": "동적 답 표시와 12개 키를 얹는 페인트 계수기 몸체",
+        "prompt_brief": "벽화 작업용 휴대형 금속 계수기 console. 상단에 넓은 빈 display 홈 하나, 아래 3열×4행의 완전히 빈 키 슬롯 12개, 짙은 남색 프레임, 회청색 금속 면, 청록 고정부, 한 줄 하이라이트. 글자와 숫자는 그리지 않는다.",
+        "visual_role": "일반 웹 keypad를 장면 속 실제 계산 장치로 변환",
+        "style_constraints": "prop-paint-can의 금속 하이라이트와 surface-info-board의 굵은 선 계층을 결합한다.",
+        "composition_notes": "투명 배경, 세로형이되 1920×1080에서 높이 460px 이하로 사용할 수 있는 비율, 모든 슬롯 중심과 간격을 균일하게 한다.",
+        "negative_prompt": "숫자, 확인 문구, 화살표, baked-in label, 캐릭터, 배경, SVG, calculator icon, 3D photorealism",
+        "why_needed": "현재 keypad wrapper와 마지막 행이 반복적으로 잘리고 웹 폼처럼 보인다."
+      },
+      {
+        "suggested_id": "cta-activity-mural-worktag",
+        "character_id": "",
+        "priority": 4,
+        "impact": "전 장면의 일반 알약형 진행 버튼을 물성 있는 공용 작업표 CTA로 교체한다.",
+        "kind": "image",
+        "intended_path": "output/assets/cta-activity-mural-worktag.webp",
+        "usage_section_ids": [
+          "intro",
+          "shape-find",
+          "shape-count",
+          "shape-transition",
+          "ten-intro",
+          "addition",
+          "subtraction-intro",
+          "subtraction",
+          "random-practice",
+          "free-draw",
+          "math-story"
+        ],
+        "purpose": "동적 진행 라벨을 얹는 벽화 작업표형 CTA 몸체",
+        "prompt_brief": "학교 벽화 작업표 또는 페인트 견본표 모양의 빈 CTA 몸체. 청록 프레임, 노란 강조 면, 얕은 두께, 좌상단 하이라이트, 눌림이 가능한 하단 그림자. 라벨은 그리지 않는다.",
+        "visual_role": "일반 웹 버튼을 현장 조작물로 통일",
+        "style_constraints": "참조 cta-activity-body의 두께와 상태 위계를 따르되 이 차시의 청록·파랑·산호·노랑 팔레트를 사용한다.",
+        "composition_notes": "투명 배경, 가로 3.2:1, 중앙 75%를 동적 라벨 safe zone으로 비우고 양끝 장식은 작게 제한한다.",
+        "negative_prompt": "글자, 화살표, baked-in label, 캐릭터, 배경, SVG, flat pill button, 과도한 광택, 3D 렌더",
+        "why_needed": "현재 c-ticketButton과 c-pageNext가 참조 CTA의 형태·계층 계약을 위반한다."
+      },
+      {
+        "suggested_id": "overlay-shape-find-school-objects",
+        "character_id": "",
+        "priority": 5,
+        "impact": "shape-find를 추상 도형 선택에서 생활 속 물건 관찰 활동으로 복구한다.",
+        "kind": "image",
+        "intended_path": "output/assets/overlay-shape-find-school-objects.webp",
+        "usage_section_ids": [
+          "shape-find"
+        ],
+        "purpose": "원·삼각형·사각형을 발견할 수 있는 학교 생활 소품 overlay",
+        "prompt_brief": "학교 담장 앞에 놓을 서로 분리된 생활 소품 묶음: 둥근 화분 받침, 삼각 깃발 또는 삼각 장식, 사각 안내 상자 등. 각 물건은 실제 학교 소품으로 먼저 읽히고 기본 도형 실루엣도 분명해야 한다. 글자는 넣지 않는다.",
+        "visual_role": "투명 hotspot의 실제 관찰 대상",
+        "style_constraints": "소품은 짙은 남색 굵은 외곽선, 2~3단계 플랫 셰이딩, 좌상단 광원, 한 줄 하이라이트를 사용한다.",
+        "composition_notes": "1920×1080 담장 중앙에 배치 가능한 투명 overlay. 정답과 오답 후보를 화면 전역에 균형 있게 분산하고 각 물건 사이 충분한 hotspot 여백을 둔다.",
+        "negative_prompt": "도형만 단독으로 떠 있는 구성, 글자, 숫자, 캐릭터, 배경 전체, flat icon kit, SVG, 복잡한 패턴",
+        "why_needed": "현재 화면에는 생활 물건이 없고 추상 삼각형만 보인다."
+      },
+      {
+        "suggested_id": "overlay-damaged-school-wall",
+        "character_id": "",
+        "priority": 6,
+        "impact": "도입의 담장 사고를 즉시 이해시키고 복구 목표의 감정적 동기를 만든다.",
+        "kind": "image",
+        "intended_path": "output/assets/overlay-damaged-school-wall.webp",
+        "usage_section_ids": [
+          "intro"
+        ],
+        "purpose": "기존 bg-school-gate 위에 얹는 손상 담장 상태 overlay",
+        "prompt_brief": "크림색 학교 담장의 일부 벽돌이 빠지고 낮은 균열이 난 복구 전 상태. 바닥에는 안전하게 정돈된 벽돌 조각 몇 개와 작은 작업 차단 표시. 글자와 캐릭터는 넣지 않는다.",
+        "visual_role": "도입 사건의 시각적 원인",
+        "style_constraints": "기존 배경과 같은 외곽선 없는 면 경계, 낮은 재질 밀도, 좌상단 한낮 광원, 부드러운 우하단 그림자를 사용한다.",
+        "composition_notes": "투명 배경, 중앙 하단 담장 약 x=700..1250 영역에 맞는 가로형 overlay, 대사판과 제목 safe zone은 침범하지 않는다.",
+        "negative_prompt": "캐릭터, 글자, 버튼, 과도한 파괴, 위험한 날카로운 잔해, драмatic lighting, 사진실사, 3D 렌더",
+        "why_needed": "현재 도입 배경의 담장이 완전히 온전해 이야기와 화면이 불일치한다."
+      },
+      {
+        "suggested_id": "surface-random-practice-workboard",
+        "character_id": "",
+        "priority": 7,
+        "impact": "무작위 연습을 단일 문제 carousel로 재구성하고 저학년 정보 밀도를 정상화한다.",
+        "kind": "image",
+        "intended_path": "output/assets/surface-random-practice-workboard.png",
+        "usage_section_ids": [
+          "random-practice"
+        ],
+        "purpose": "한 문제씩 끼워 사용하는 벽화 수리 작업판 몸체",
+        "prompt_brief": "담장에 기대 세우는 큰 벽화 수리 작업판. 상단에 작은 유형 탭, 중앙에 넓은 빈 문제 safe zone, 하단에 choice plaque 또는 keypad console을 놓을 빈 결합 구역. 글자와 숫자는 넣지 않는다.",
+        "visual_role": "네 문제를 한 장씩 교체하는 carousel의 단일 무대",
+        "style_constraints": "짙은 남색 굵은 외곽선, 크림색 빈 면, 청록 프레임, 얇은 판 두께, 리벳과 받침 다리로 장면 속 물건처럼 표현한다.",
+        "composition_notes": "투명 배경, 약 960×650 비율, 좌우 캐릭터가 가려지지 않도록 중앙 집중형이며 내부 장식을 최소화한다.",
+        "negative_prompt": "여러 문제 칸, 글자, 숫자, 캐릭터, 배경, white web dashboard, SVG, flat UI kit",
+        "why_needed": "현재 2열 흰 grid가 여러 문제와 캐릭터를 동시에 덮는다."
+      },
+      {
+        "suggested_id": "toolbox-shape-paint",
+        "character_id": "",
+        "priority": 8,
+        "impact": "free-draw의 흰 도구 패널을 이동식 벽화 도구함으로 바꾸고 교사와의 겹침을 해결한다.",
+        "kind": "image",
+        "intended_path": "output/assets/toolbox-shape-paint.png",
+        "usage_section_ids": [
+          "free-draw"
+        ],
+        "purpose": "모양 도구 세 개와 색 swatch 네 개를 얹는 도구함 몸체",
+        "prompt_brief": "이동식 벽화 페인트 도구함. 위쪽에 빈 정사각 모양 슬롯 3개, 아래쪽에 빈 원형 색상 홈 4개, 작은 손잡이와 받침, 청록·회청 금속 면과 산호 포인트. 기호와 색은 그리지 않는다.",
+        "visual_role": "그리기 도구를 장면 속 실제 작업 소품으로 통합",
+        "style_constraints": "prop-paint-can의 금속 하이라이트, 짙은 남색 굵은 외곽선, 좌상단 광원과 한 겹 그림자를 따른다.",
+        "composition_notes": "투명 배경, 세로 약 1:1.2, 모든 슬롯을 완전히 비우고 현재 HTML 기호와 swatch가 중앙에 들어갈 safe zone을 확보한다.",
+        "negative_prompt": "기호, 색상 채움, 글자, 숫자, 캐릭터, 배경, white web card, SVG, flat toolbar",
+        "why_needed": "현재 draw-tools가 일반 흰 패널이고 교사 얼굴과 상체를 가린다."
+      },
+      {
+        "suggested_id": "surface-roadside-story-board",
+        "character_id": "",
+        "priority": 9,
+        "impact": "좋은 거리 배경을 유지하면서 math-story의 제목·설명·CTA를 실제 길가 안내물로 통합한다.",
+        "kind": "image",
+        "intended_path": "output/assets/surface-roadside-story-board.png",
+        "usage_section_ids": [
+          "math-story"
+        ],
+        "purpose": "동적 안전 이야기 텍스트와 다음 장 조작을 얹는 길가 정보 안내판",
+        "prompt_brief": "학교 주변 보도에 세우는 가로형 정보 안내판. 짙은 남색 프레임, 밝은 크림색 넓은 빈 면, 청록 지지대 두 개, 얇은 판 두께, 작은 나사와 좌상단 하이라이트. 글자는 넣지 않는다.",
+        "visual_role": "배경 위에 직접 떠 있던 수리 이야기 텍스트의 장면 표면",
+        "style_constraints": "surface-info-board와 prop-road-sign의 판 두께·고정부 언어를 결합하고 배경의 한낮 조명에 맞춘다.",
+        "composition_notes": "투명 배경, 가로 약 2.5:1, 내부 82% 빈 safe zone, 하단 우측에 다음 장 탭을 결합할 빈 자리 확보.",
+        "negative_prompt": "글자, 숫자, 교통 표지 기호, 캐릭터, 배경 전체, SVG, flat panel, 3D 렌더",
+        "why_needed": "현재 페이지 텍스트가 나무와 건물 위에 직접 놓이고 CTA가 도로 위에 떠 있다."
+      }
+    ],
+    "deferred_asset_candidates": [
+      {
+        "target": "surface-choice-plaque-mural",
+        "why_beneficial": "random-practice의 세 선택지를 참조 choice plaque와 같은 물성 있는 빈 판으로 바꿀 수 있다.",
+        "why_deferred": "이번 예산에서는 단일 작업판·keypad·CTA와 핵심 서사 overlay의 구조적 개선이 더 시급하다."
+      },
+      {
+        "target": "surface-free-draw-confirm-board",
+        "why_beneficial": "완료 질문과 예·아니오를 하나의 작업 완료 표지판으로 통합할 수 있다.",
+        "why_deferred": "공용 surface-info-board와 activity CTA를 우선 재사용할 수 있어 별도 asset 우선순위를 낮췄다."
+      },
+      {
+        "target": "cta-completion-mural",
+        "why_beneficial": "미캡처 completion scene의 인증서 다운로드와 나가기 위계를 참조 completion CTA 수준으로 높인다.",
+        "why_deferred": "이번 검수의 11개 screenshot에 completion scene이 없고 캡처된 장면의 high severity 수정이 우선이다."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "scene_id": "08_random_practice",
+      "severity": "high",
+      "axis": "creative_direction",
+      "target": "[data-qa-scene=\"random-practice\"] .rp-wrap",
+      "issue": "여러 문제를 동시에 보여 ‘한 화면 한 판단’ 계약을 위반한다.",
+      "evidence": "A와 B가 동시에 보이고 C·D는 같은 grid 아래에 이어진다.",
+      "suggested_fix": "단일 raster 작업판 carousel로 재구성하고 현재 문제만 표시한다."
+    },
+    {
+      "scene_id": "02_shape_count",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".c-keypadWrap; repeated in 04_ten_intro, 05_addition, 06_subtraction_intro, 07_subtraction",
+      "issue": "주요 계산 장면의 keypad 하단과 확인 행이 화면 아래로 잘린다.",
+      "evidence": "각 screenshot에서 wrapper가 y≈600~703부터 시작해 마지막 행이 1080px 아래에 걸린다.",
+      "suggested_fix": "keypad console 전체 높이를 460px 이하로 줄이고 y≤560에 배치해 12개 키를 모두 노출한다."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": ".c-speechBubble, .q-prompt, .board-title, .c-keypadWrap, .c-ticketButton",
+      "issue": "전 장면의 핵심 표면이 참조의 raster 물성 대신 CSS 흰 카드와 알약 버튼으로 구성된다.",
+      "evidence": "reference surface·CTA에는 두께, 고정부, 하이라이트가 있지만 구현 표면은 background-image 없이 border/radius/gradient에 의존한다.",
+      "suggested_fix": "대사판·정보판·keypad console·activity CTA raster body를 생성하고 동적 텍스트만 overlay로 유지한다."
+    },
+    {
+      "scene_id": "global",
+      "severity": "high",
+      "axis": "motion",
+      "target": "showFeedback(), @keyframes feedbackStamp",
+      "issue": "정답·오답 피드백이 동일한 도장 동작 한 종류뿐이다.",
+      "evidence": "type에 따라 src만 바꾸고 같은 feedbackStamp keyframe을 사용하며 캐릭터·대상 반응이 없다.",
+      "suggested_fix": "정답과 오답을 각각 도장+대상 반응+캐릭터 반응의 별도 choreography로 구현한다."
+    },
+    {
+      "scene_id": "04_ten_intro",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "asset_id:paint-can-body; repeated in shape-count, shape-transition, addition",
+      "issue": "페인트 학습 맥락의 핵심 생성 asset이 실제 장면에 사용되지 않는다.",
+      "evidence": "HTML CONFIG와 screenshot에 paint-can-body 요소가 없고 CSS 도형만 공중에 놓인다.",
+      "suggested_fix": "paint-can-body를 해당 장면 DOM에 추가하고 현재 색을 safe zone 위 HTML overlay로 표시한다."
+    },
+    {
+      "scene_id": "01_shape_find",
+      "severity": "high",
+      "axis": "creative_direction",
+      "target": ".hotspot-field, .c-hotspot",
+      "issue": "생활 속 모양 찾기가 흰 패널의 추상 도형 선택으로 표현된다.",
+      "evidence": "학교 생활 물건 없이 두 삼각형이 패널 하단에 놓인다.",
+      "suggested_fix": "생활 소품 overlay와 투명 hotspot으로 교체하고 담장 배경을 직접 관찰 무대로 사용한다."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "background_stage",
+      "target": "asset_id:bg-school-gate central wall",
+      "issue": "담장 사고가 시각적으로 표현되지 않는다.",
+      "evidence": "도입 화면의 담장은 온전하다.",
+      "suggested_fix": "손상 담장 overlay를 중앙 하단에 추가한다."
+    },
+    {
+      "scene_id": "04_ten_intro",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": ".c-speechBubble, .board-title, .shape-row; repeated in addition, subtraction-intro, subtraction",
+      "issue": "대사판이 제목과 세기 대상을 반복해서 가린다.",
+      "evidence": "여러 screenshot에서 대사판이 제목판 및 첫 행 도형과 동일한 중앙 상단 영역을 사용한다.",
+      "suggested_fix": "대사 beat와 문제 상태를 분리하고 대사판 퇴장 뒤 제목·도형·입력기를 stagger 등장시킨다."
+    },
+    {
+      "scene_id": "09_free_draw",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".draw-tools, .char.left, .confirm-box, .draw-canvas",
+      "issue": "도구 패널이 교사를 가리고 확인판이 작업면을 침범한다.",
+      "evidence": "draw-tools와 교사가 좌측에서 겹치며 confirm-q와 canvas가 y=792..839에서 중첩된다.",
+      "suggested_fix": "도구함을 x=310..500으로 옮기고 canvas 높이를 줄여 확인판과 20px 이상 분리한다."
+    },
+    {
+      "scene_id": "10_math_story",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": ".page-q, .page-body, .c-pageNext",
+      "issue": "거리 장면의 텍스트와 CTA가 장면 속 표면에 통합되지 않는다.",
+      "evidence": "질문은 나무·건물 위에 직접 놓이고 CTA는 도로 위 알약형 버튼이다.",
+      "suggested_fix": "roadside info-board에 모든 동적 텍스트를 배치하고 CTA를 안내판 하단 탭으로 통합한다."
+    }
+  ],
+  "refine_suggestions": [
+    "모든 대사 beat와 문제 상태를 분리하고 대사판 퇴장 뒤 제목·대상·입력기를 120~180ms stagger로 등장시켜라.",
+    ".c-speechBubble, .board-title, .q-prompt, .c-keypadWrap, .c-ticketButton의 CSS 몸체를 공용 raster 표면 asset으로 교체하고 동적 텍스트만 overlay로 유지하라.",
+    "shape-count·shape-transition·ten-intro·addition에 paint-can-body를 실제 배치하고 현재 색은 HTML overlay로 표시하라.",
+    "모든 keypad console을 높이 460px 이하로 맞추고 y≤560에 배치해 display와 12개 키를 완전히 노출하라.",
+    "shape-find의 흰 hotspot-field를 투명화하고 생활 소품 overlay 위에 hotspot 좌표를 다시 배치하라.",
+    "random-practice를 2열 grid에서 단일 active 문제 carousel로 재구성하라.",
+    "free-draw 도구함을 교사 오른쪽으로 이동하고 확인판과 canvas 사이에 최소 20px 간격을 확보하라.",
+    "math-story의 모든 페이지 텍스트를 길가 정보 안내판의 빈 면에 얹고 다음 장 CTA를 안내판 하단 탭으로 통합하라.",
+    "정답과 오답에 서로 다른 도장·대상 오브젝트·캐릭터 반응 choreography를 구현하라."
+  ]
+}

@@ -1,0 +1,1415 @@
+{
+  "spec_version": "1",
+  "source_planner": "dfbc1027_planner.json",
+  "cases": [
+    {
+      "id": "case_global-shell_text",
+      "kind": "scene",
+      "section_id": "global-shell",
+      "question_id": "",
+      "input_type": "",
+      "intent": "global-shell 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "목록(차시)"
+        },
+        {
+          "kind": "text_visible",
+          "value": "소리 조절"
+        },
+        {
+          "kind": "text_visible",
+          "value": "[모양과 덧셈의 힘으로 담장 색칠하기!]"
+        },
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "와글와글, 운동회를 도와요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "알록달록, 학교 담장 색칠하기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양과 덧셈의 힘으로 담장 색칠하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_intro_text",
+      "kind": "scene",
+      "section_id": "intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "intro 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리력 +"
+        },
+        {
+          "kind": "text_visible",
+          "value": "1.도입"
+        },
+        {
+          "kind": "text_visible",
+          "value": "알록달록, 학교 담장 색칠하기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "시작하기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "공사 중에 실수로 담장을 무너뜨렸어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "죄송합니다!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "① 휴, 담장은 다 고쳤어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "저희가 도와드릴게요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양의 힘으로 색칠하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape-hunt_text",
+      "kind": "scene",
+      "section_id": "shape-hunt",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape-hunt 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요 1"
+        },
+        {
+          "kind": "text_visible",
+          "value": "2. 수리가 필요해요 1"
+        },
+        {
+          "kind": "text_visible",
+          "value": "여러 가지 모양으로 그리면 좋겠어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "벽화를 어떻게 그려야 되지?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "저와 학교에서 모양을 찾아 보아요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "O"
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘 찾았어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape-count_text",
+      "kind": "scene",
+      "section_id": "shape-count",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape-count 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "페인트 색깔마다 모양이 달라요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "● ■ ▲ 모양"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양은 몇 개 인가요?  (     )"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-circle_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-circle",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "3"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-circle_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-circle",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "4"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-triangle_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-triangle",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "2"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-triangle_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-triangle",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "3"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-square_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-square",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "3"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-count-square_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "question_id": "q-count-square",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "4"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_activity-bridge_text",
+      "kind": "scene",
+      "section_id": "activity-bridge",
+      "question_id": "",
+      "input_type": "",
+      "intent": "activity-bridge 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "① 잘했어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "이제 벽화를 색칠해봐요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "② 페인트 소개를 부탁해요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양으로 세 수의 덧셈과 뺄셈하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_paint-intro_text",
+      "kind": "scene",
+      "section_id": "paint-intro",
+      "question_id": "",
+      "input_type": "",
+      "intent": "paint-intro 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리가 필요해요 2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "3. 수리가 필요해요 2"
+        },
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "text_visible",
+          "value": "①페인트 소개는 저희가 할게요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "②이것을 페인트라고 해요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "초록색부터 알려드릴게요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "1통에 모양을 10개씩 그릴 수 있어요!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-total-ten_correct",
+      "kind": "question",
+      "section_id": "paint-intro",
+      "question_id": "q-total-ten",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-total-ten_wrong",
+      "kind": "question",
+      "section_id": "paint-intro",
+      "question_id": "q-total-ten",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_guided-addition_text",
+      "kind": "scene",
+      "section_id": "guided-addition",
+      "question_id": "",
+      "input_type": "",
+      "intent": "guided-addition 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "text_visible",
+          "value": "페인트 1통을 다 썼어요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "1통을 더 준비했어요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "2개를 더 색칠해주세요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "네"
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "O"
+        },
+        {
+          "kind": "text_visible",
+          "value": "고마워요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "다른 담장으로 가요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-seven-plus-three_correct",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-seven-plus-three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-seven-plus-three_wrong",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-seven-plus-three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-ten-plus-two_correct",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-ten-plus-two",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-ten-plus-two_wrong",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-ten-plus-two",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-seven-plus-three-plus-two_correct",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-seven-plus-three-plus-two",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "12"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-seven-plus-three-plus-two_wrong",
+      "kind": "question",
+      "section_id": "guided-addition",
+      "question_id": "q-seven-plus-three-plus-two",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_guided-subtraction_text",
+      "kind": "scene",
+      "section_id": "guided-subtraction",
+      "question_id": "",
+      "input_type": "",
+      "intent": "guided-subtraction 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "세 수의 덧셈과 뺄셈"
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘못 그린 2개를 지워주세요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "3개를 더 지우고 싶어요. 지워주세요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "text_visible",
+          "value": "O"
+        },
+        {
+          "kind": "text_visible",
+          "value": "잘했어요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "더 많은 담장을"
+        },
+        {
+          "kind": "text_visible",
+          "value": "색칠해야해요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "네!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "덧셈, 뺄셈의 힘으로 담장 색칠하기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-twelve-minus-two_correct",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-twelve-minus-two",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "10"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-twelve-minus-two_wrong",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-twelve-minus-two",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "11"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-ten-minus-three_correct",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-ten-minus-three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-ten-minus-three_wrong",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-ten-minus-three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "8"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-twelve-minus-two-minus-three_correct",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-twelve-minus-two-minus-three",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "text_visible",
+          "value": "정답입니다."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-twelve-minus-two-minus-three_wrong",
+      "kind": "question",
+      "section_id": "guided-subtraction",
+      "question_id": "q-twelve-minus-two-minus-three",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "8"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_random-practice_text",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "question_id": "",
+      "input_type": "",
+      "intent": "random-practice 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리로 해결해요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "4. 수리로 해결해요"
+        },
+        {
+          "kind": "text_visible",
+          "value": "덧셈과 뺄셈"
+        },
+        {
+          "kind": "text_visible",
+          "value": "6 + 4 = (  )"
+        },
+        {
+          "kind": "text_visible",
+          "value": "얼마일까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "13 - 3 = (  )"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-a_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-a",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-a_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-a",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-b_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-b",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "6"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-b_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-b",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "7"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-c_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-c",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "13"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-c_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-c",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "14"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-d_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-d",
+      "input_type": "keypad",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "enter_answer",
+          "values": [
+            "4"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-random-d_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-d",
+      "input_type": "keypad",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "enter_wrong_answer",
+          "values": [
+            "5"
+          ]
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_free-draw_text",
+      "kind": "scene",
+      "section_id": "free-draw",
+      "question_id": "",
+      "input_type": "",
+      "intent": "free-draw 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "담장 색칠이 끝나가요!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "마지막 담장은 자유롭게 그려주세요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "그리기 툴"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-drawing-complete_correct",
+      "kind": "question",
+      "section_id": "free-draw",
+      "question_id": "q-drawing-complete",
+      "input_type": "choice",
+      "intent": "정답을 제출하면 정답 피드백이 나온다",
+      "steps": [
+        {
+          "action": "select_correct",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_correct_visible",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_q-drawing-complete_wrong",
+      "kind": "question",
+      "section_id": "free-draw",
+      "question_id": "q-drawing-complete",
+      "input_type": "choice",
+      "intent": "오답을 제출하면 오답 피드백이 나오고 다시 시도할 수 있다",
+      "steps": [
+        {
+          "action": "select_wrong",
+          "values": []
+        }
+      ],
+      "expect": [
+        {
+          "kind": "feedback_wrong_visible",
+          "value": ""
+        },
+        {
+          "kind": "retry_available",
+          "value": ""
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_shape-story_text",
+      "kind": "scene",
+      "section_id": "shape-story",
+      "question_id": "",
+      "input_type": "",
+      "intent": "shape-story 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "수리 이야기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "4. 수리 이야기"
+        },
+        {
+          "kind": "text_visible",
+          "value": "모양을 길에서 본 적이 있나요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "● ■ ▲"
+        },
+        {
+          "kind": "text_visible",
+          "value": "무슨 표지판일까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "● 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "■ 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "▲ 모양 표지판은 어떤 것이 있을까요?"
+        },
+        {
+          "kind": "text_visible",
+          "value": "공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요."
+        },
+        {
+          "kind": "text_visible",
+          "value": "앞으로 표지판을 보며 안전하게 다녀요."
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "case_completion_text",
+      "kind": "scene",
+      "section_id": "completion",
+      "question_id": "",
+      "input_type": "",
+      "intent": "completion 화면에 들어가면 읽어야 할 문구가 노출된다",
+      "steps": [],
+      "expect": [
+        {
+          "kind": "text_visible",
+          "value": "3차시 수리 완료!"
+        },
+        {
+          "kind": "text_visible",
+          "value": "인증서 다운로드"
+        },
+        {
+          "kind": "text_visible",
+          "value": "나가기"
+        },
+        {
+          "kind": "no_console_error",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "underivable": [
+    {
+      "section_id": "shape-hunt",
+      "ref": "q-find-two",
+      "kind": "unsupported_interaction",
+      "scope": "question",
+      "fixable_by": "repo",
+      "reason": "input_type='hotspot' 는 실행기가 미는 방법을 모른다"
+    },
+    {
+      "section_id": "shape-hunt",
+      "ref": "q-find-triangle",
+      "kind": "unsupported_interaction",
+      "scope": "question",
+      "fixable_by": "repo",
+      "reason": "input_type='hotspot' 는 실행기가 미는 방법을 모른다"
+    },
+    {
+      "kind": "attempt_policy",
+      "scope": "rule",
+      "fixable_by": "planner",
+      "section_id": "shape-hunt",
+      "ref": "question_group",
+      "reason": "'3번 오답' 시도 규칙이 산문에만 있고 questions[] 어느 항목에도 연결되어 있지 않다"
+    },
+    {
+      "kind": "attempt_policy",
+      "scope": "rule",
+      "fixable_by": "planner",
+      "section_id": "shape-count",
+      "ref": "question_group",
+      "reason": "'3회' 시도 규칙이 산문에만 있고 questions[] 어느 항목에도 연결되어 있지 않다"
+    },
+    {
+      "kind": "attempt_policy",
+      "scope": "rule",
+      "fixable_by": "planner",
+      "section_id": "random-practice",
+      "ref": "question_group",
+      "reason": "'3번 오답' 시도 규칙이 산문에만 있고 questions[] 어느 항목에도 연결되어 있지 않다"
+    }
+  ],
+  "coverage": {
+    "questions_total": 17,
+    "questions_covered": 15,
+    "questions_uncovered": 2,
+    "question_cases": 30,
+    "scene_cases": 12,
+    "text_assertions": 84,
+    "underivable_total": 5,
+    "needs_repo_change": 2,
+    "needs_planner_change": 3
+  }
+}

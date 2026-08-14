@@ -1,0 +1,364 @@
+{
+  "page": {
+    "goal": "실행기 회귀 테스트용 최소 planner",
+    "audience": "파이프라인 개발자",
+    "tone": "중립"
+  },
+  "art_direction": {
+    "style_name": "n/a",
+    "palette": "n/a",
+    "line_style": "n/a",
+    "lighting": "n/a",
+    "character_rules": "캐릭터 없음",
+    "component_rules": "반복 컴포넌트 없음",
+    "background_rules": "n/a",
+    "continuity_rules": "n/a",
+    "forbidden_styles": [
+      "n/a"
+    ]
+  },
+  "characters": [],
+  "sections": [
+    {
+      "id": "fixture-scene",
+      "title": "고정 검증 화면",
+      "purpose": "실행기가 정상 HTML과 결함 HTML을 구분하는지 확인한다",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"시계를 함께 고쳐보자!\"",
+          "rendered_text": [
+            "시계를 함께 고쳐보자!"
+          ],
+          "notes": "",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "화면 하단에 [시작하기] 버튼 배치.",
+          "rendered_text": [
+            "[시작하기]"
+          ],
+          "notes": "",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "사서 선생님: \"먼저 모양부터 살펴보자!\"",
+          "rendered_text": [
+            "먼저 모양부터 살펴보자!"
+          ],
+          "notes": "첫 말풍선을 닫은 뒤 두 번째 말풍선을 연다",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "두 번째 장에 도장 이야기가 나온다.",
+          "rendered_text": [
+            "두 번째 장이에요"
+          ],
+          "notes": "",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정답을 맞히면 담장에 별이 붙는다.",
+          "rendered_text": [
+            "담장에 별이 붙었어요"
+          ],
+          "notes": "",
+          "refs": [],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "fx-choice"
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "실행기가 아는 조작마다 문항을 하나씩 둔다.",
+          "rendered_text": [],
+          "notes": "",
+          "refs": [
+            "fx-choice",
+            "fx-keypad",
+            "fx-drag-choice",
+            "fx-drag-values",
+            "fx-attempts",
+            "fx-hotspot"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "fx-choice",
+          "prompt": "지금 몇 시일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "3시",
+              "correct": true
+            },
+            {
+              "label": "4시",
+              "correct": false
+            },
+            {
+              "label": "5시",
+              "correct": false
+            }
+          ],
+          "answer": "3시",
+          "feedback": {
+            "correct": "잘했어요!",
+            "wrong": "다시 생각해보세요"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "fx-keypad",
+          "prompt": "11시 30분에서 30분 뒤는 몇 시 몇 분일까요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[12]시 [0]분",
+          "feedback": {
+            "correct": "정확해요!",
+            "wrong": "다시 해볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "fx-drag-choice",
+          "prompt": "동그란 모양을 담장에 옮겨 볼까요?",
+          "input_type": "drag_drop",
+          "choices": [
+            {
+              "label": "원",
+              "correct": true
+            },
+            {
+              "label": "세모",
+              "correct": false
+            },
+            {
+              "label": "네모",
+              "correct": false
+            }
+          ],
+          "answer": "원",
+          "feedback": {
+            "correct": "딱 맞아요!",
+            "wrong": "다른 모양이에요"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "fx-drag-values",
+          "prompt": "숫자 블록을 빈칸에 순서대로 넣어 보세요.",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "[1], [2]",
+          "feedback": {
+            "correct": "순서가 맞아요!",
+            "wrong": "순서를 다시 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "fx-attempts",
+          "prompt": "세모는 몇 개일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "2개",
+              "correct": true
+            },
+            {
+              "label": "3개",
+              "correct": false
+            },
+            {
+              "label": "4개",
+              "correct": false
+            }
+          ],
+          "answer": "2개",
+          "feedback": {
+            "correct": "맞았어요!",
+            "wrong": "다시 세어볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer",
+              "advance"
+            ]
+          }
+        },
+        {
+          "id": "fx-hotspot",
+          "prompt": "그림에서 네모 모양 2개를 찾아 보세요.",
+          "input_type": "hotspot",
+          "choices": [],
+          "answer": "정답 2개",
+          "feedback": {
+            "correct": "둘 다 찾았어요!",
+            "wrong": "거기는 네모가 아니에요"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [],
+      "interaction_ids": [
+        "go-next"
+      ],
+      "asset_ids": [],
+      "advance": {
+        "interaction_id": "go-next",
+        "to_section_id": "fixture-scene-2"
+      }
+    },
+    {
+      "id": "fixture-scene-2",
+      "title": "도착 화면",
+      "purpose": "전환으로 도달할 수 있는지 확인할 대상",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "잘 도착했어요!",
+          "rendered_text": [
+            "잘 도착했어요!"
+          ],
+          "notes": "",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "문항을 하나씩 순서대로 내보낸다.",
+          "rendered_text": [],
+          "notes": "",
+          "refs": [
+            "fx-seq-first",
+            "fx-seq-second"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "fx-seq-first",
+          "prompt": "첫 번째 문제예요. 동그라미는 몇 개일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "2개",
+              "correct": true
+            },
+            {
+              "label": "3개",
+              "correct": false
+            }
+          ],
+          "answer": "2개",
+          "feedback": {
+            "correct": "맞아요!",
+            "wrong": "다시 세어볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "fx-seq-second",
+          "prompt": "두 번째 문제예요. 세모는 몇 개일까요?",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "1개",
+              "correct": true
+            },
+            {
+              "label": "4개",
+              "correct": false
+            }
+          ],
+          "answer": "1개",
+          "feedback": {
+            "correct": "정확해요!",
+            "wrong": "한 번 더 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [],
+      "interaction_ids": [],
+      "asset_ids": [],
+      "advance": {
+        "interaction_id": "",
+        "to_section_id": ""
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "go-next",
+      "type": "button",
+      "description": "다음 화면으로 넘어가는 진행 버튼"
+    }
+  ],
+  "asset_plan": [],
+  "asset_groups": []
+}

@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>알록달록, 학교 담장 색칠하기</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  /* ── 팔레트 토큰: art_direction(맑은 한낮의 학교 벽화)에 맞춰 값만 조정 ── */
+  :root {
+    --bg: #7ecbf0;            /* 맑은 하늘색 기저 */
+    --surface: #2b8fd6;       /* 무대·판 표면 */
+    --ink: #14416b;
+    --plate-ink: #16406a;
+    --accent: #ffd23e;        /* 주강조(노랑) */
+    --accent-bright: #ffe98a;
+    --glow: #ffe45c;
+    --cream: #fff6dd;
+    --danger: #e65043;
+    /* 도형 색(코드 소유): 초록 원, 파랑 사각형, 빨강 삼각형 */
+    --shape-circle: #3bb26b;
+    --shape-square: #3b82d6;
+    --shape-triangle: #e0574a;
+  }
+
+  /* 고정 캔버스 위 공통 레이아웃 */
+  .scene { color: var(--plate-ink); }
+  .c-bg { z-index: var(--z-bg); }
+
+  /* 전환 중(leaving) scene은 display:block 상태로 460ms 남는다. 그동안 나가는 화면의
+     말풍선(data-state=visible)과 진행 버튼이 여전히 :visible이라, 화면 단위 조작을
+     페이지 전역에서 찾는 검증기가 DOM 순서 첫 요소로 나가는 화면의 죽은 버튼을 집어
+     클릭이 시간 초과된다. 활성이 아닌 화면의 진행 조작은 즉시 접어 활성 화면의 것만 남긴다. */
+  .scene:not(.active) .c-speechBubble,
+  .scene:not(.active) .adv-cta,
+  .scene:not(.active) .rp-nav,
+  .scene:not(.active) .page-nav,
+  .scene:not(.active) .c-keypadWrap,
+  .scene:not(.active) .hot-card,
+  .scene:not(.active) .c-choice { display: none; }
+
+  /* 장면 속 물건(장식 overlay): 배경 위, 콘텐츠 아래 */
+  .c-scenery { position: absolute; z-index: var(--z-scenery); pointer-events: none;
+    filter: var(--ds-md); }
+
+  /* ── 대사판: 생성 raster 표면을 몸체로 쓴다(흰 CSS 카드 제거) ── */
+  .c-speechBubble {
+    pointer-events: none;
+    background: url("assets/surface-speech-bubble-school.webp") center/100% 100% no-repeat;
+    border: none; box-shadow: none; border-radius: 0;
+    color: var(--plate-ink);
+    padding: 40px 66px 52px 88px;
+    min-width: 380px;
+  }
+  .c-speechBubble::before, .c-speechBubble::after { content: none; }
+  .c-speechBubble .c-speechBubbleNav,
+  .c-speechBubble .c-speechBubbleNext { pointer-events: auto; }
+
+  /* ── 공용 장면 표면(안내판): 제목·수식·문구를 담장 속 판으로 통일 ── */
+  .surface-board {
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    border: none; box-shadow: none; border-radius: 0; color: var(--plate-ink);
+  }
+
+  /* 씬 제목/캡션 블록 */
+  .stage-head {
+    position: absolute; left: 60px; top: 84px; z-index: var(--z-content);
+    display: flex; flex-direction: column; gap: 6px; max-width: 860px;
+    pointer-events: none;
+  }
+  .series-list { display: flex; flex-direction: column; gap: 2px; }
+  .series-item { font-size: var(--fs-xs); color: var(--ink); opacity: .85; font-weight: 400; }
+  .scene-title {
+    font-size: var(--fs-2xl); font-weight: 900; color: var(--plate-ink);
+    text-shadow: 0 2px 0 var(--white), 0 4px 12px rgba(0,0,0,.18);
+  }
+  .goal-caption {
+    margin-top: 12px; font-size: var(--fs-sm); color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 26px 56px 30px; align-self: flex-start; min-width: 520px; text-align: center;
+    font-weight: 900;
+  }
+
+  /* 상단 고정 문제판 제목 (raster 안내판 위) */
+  .board-title {
+    position: absolute; left: 50%; top: 132px; transform: translateX(-50%);
+    z-index: var(--z-content); font-size: var(--fs-xl); font-weight: 900;
+    color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 30px 88px 34px; min-width: 640px; text-align: center; pointer-events: none;
+  }
+
+  /* 캐릭터 */
+  .char { position: absolute; bottom: -8px; z-index: var(--z-character);
+    height: 620px; object-fit: contain; filter: var(--ds-lg); pointer-events: none; }
+  .char.left { left: 40px; }
+  .char.right { right: 40px; }
+  .char.small { height: 470px; }
+  .char.cheer { animation: charCheer .62s var(--ease-back); }
+  @keyframes charCheer {
+    0% { transform: translateY(0); } 28% { transform: translateY(-36px) rotate(-3deg); }
+    55% { transform: translateY(0); } 78% { transform: translateY(-14px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* 색·모양 대응 범례 (raster 안내판) */
+  .legend {
+    position: absolute; left: 50%; top: 250px; transform: translateX(-50%);
+    z-index: var(--z-content); display: flex; gap: 26px; align-items: center; justify-content: center;
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 22px 60px 26px; min-width: 520px; font-size: var(--fs-lg); font-weight: 900;
+    pointer-events: none;
+  }
+
+  /* 문제 카드 */
+  .q-wrap { position: absolute; left: 50%; top: 300px; transform: translateX(-50%);
+    z-index: var(--z-interactive); width: 1120px; display: flex; flex-direction: column;
+    align-items: center; gap: 24px; }
+  .q-card { display: flex; flex-direction: column; align-items: center; gap: 22px; width: 100%; }
+  .q-card.is-hidden { display: none; }
+  .q-prompt {
+    font-size: var(--fs-xl); font-weight: 900; color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 26px 72px 30px; text-align: center; word-break: keep-all; min-width: 420px;
+    /* 장식 텍스트 판이다. hotspot 위에 겹쳐도 클릭을 가로채지 않게 한다(가운데 위 정답 자리가
+       이 판 아래에 들어가 클릭이 시간 초과되던 문제). */
+    pointer-events: none;
+  }
+  .q-input.is-hidden { display: none; }
+
+  /* 도형 표시 */
+  .shape-row { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center;
+    max-width: 560px; }
+  .shape { width: 84px; height: 84px; filter: var(--ds-sm); transition: opacity var(--dur), filter var(--dur); }
+  .shape.circle { border-radius: var(--r-circle); background: var(--shape-circle); }
+  .shape.square { border-radius: 10px; background: var(--shape-square); }
+  .shape.triangle { width: 0; height: 0; background: transparent;
+    border-left: 46px solid transparent; border-right: 46px solid transparent;
+    border-bottom: 84px solid var(--shape-triangle); filter: var(--ds-sm); }
+  .shape.faded { opacity: .26; filter: grayscale(.6); }
+  .shape.pop-in { animation: shapePop var(--dur) var(--ease-back) both; }
+  @keyframes shapePop { 0% { opacity: 0; transform: scale(.4); } 100% { opacity: 1; transform: scale(1); } }
+
+  /* 페인트통 작업대: 생성 asset + 색 오버레이(색은 코드 소유) */
+  .paint-stage { position: absolute; z-index: var(--z-scenery); pointer-events: none;
+    filter: var(--ds-md); }
+  .paint-stage .paint-can { width: 100%; display: block; }
+  .paint-stage .paint-fill { position: absolute; left: 21%; top: 15%; width: 58%; height: 20%;
+    border-radius: 50%; background: var(--shape-circle);
+    box-shadow: inset 0 0 0 3px rgba(0,0,0,.14); transition: background var(--dur); }
+
+  /* 보기(choice) — 참조 choice plaque 계열의 크림 판 */
+  .q-choices { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+  .c-choice {
+    min-width: 520px; font-size: var(--fs-lg); font-weight: 900; color: var(--plate-ink);
+    background: linear-gradient(180deg, #fffdf3, var(--cream));
+    border: 6px solid var(--plate-ink); border-radius: var(--r-md);
+    padding: 18px 40px; box-shadow: var(--shadow); cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease), opacity var(--dur);
+  }
+  .c-choice:hover { transform: translateY(-3px); filter: var(--filter-hover); }
+  .c-choice:active { transform: translateY(2px); }
+  .c-choice.revealed { outline: 6px solid var(--accent); outline-offset: 3px;
+    animation: correctGlow .8s ease; }
+  .c-choice.dim { opacity: .5; }
+
+  /* hotspot: 흰 패널을 없애고 담장 위 생활 소품 overlay를 직접 무대로 쓴다 */
+  .obj-overlay { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px;
+    z-index: var(--z-scenery); object-fit: contain; pointer-events: none; }
+  .hot-card { position: absolute; inset: 0; z-index: var(--z-interactive); }
+  .hot-card.is-hidden { display: none; }
+  .hot-layer { position: absolute; inset: 0; }
+  .c-hotspot { position: absolute; border: 4px dashed transparent; background: transparent;
+    cursor: pointer; padding: 0; border-radius: 18px; transition: transform var(--dur-fast); }
+  .c-hotspot:hover { transform: scale(1.04); border-color: rgba(255,210,62,.7); }
+  .c-hotspot.picked { border-color: var(--accent); background: rgba(255,210,62,.22); }
+  .c-hotspot.revealed { border-color: var(--accent); background: rgba(255,210,62,.3);
+    animation: revealPulse 1s ease-in-out 2; }
+  @keyframes revealPulse { 50% { box-shadow: 0 0 0 12px rgba(255,210,62,.4); } }
+  .hot-card .q-prompt { position: absolute; left: 50%; top: 26px; transform: translateX(-50%);
+    z-index: var(--z-hud); }
+  .hot-card .q-reveal { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%); }
+
+  /* 답 공개 칩 */
+  .q-reveal { font-size: var(--fs-md); font-weight: 900; color: var(--danger);
+    background: var(--cream); border: 4px solid var(--danger); border-radius: var(--r-pill);
+    padding: 8px 30px; box-shadow: var(--shadow); }
+  .q-reveal[hidden] { display: none; }
+
+  /* 진행 CTA — 생성한 작업표 raster 몸체(--cta-body)로 통일 */
+  .c-ticketButton {
+    --cta-body: url("assets/cta-activity-mural-worktag.webp");
+    background: var(--cta-body) center/100% 100% no-repeat;
+    border: none; border-radius: 0; box-shadow: none;
+    min-width: 360px; min-height: 150px; padding: 30px 96px;
+    font-size: var(--fs-md);
+  }
+  .c-ticketButton:active { transform: translateY(3px); box-shadow: none; }
+  .adv-cta { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%);
+    z-index: var(--z-interactive); }
+  .adv-cta[hidden] { display: none; }
+
+  /* 페이지 캐러셀(수리 이야기) */
+  .page { position: absolute; inset: 0; z-index: var(--z-content); display: none;
+    flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    padding: 40px 200px 130px; text-align: center; }
+  .page.active { display: flex; }
+  .page-panel {
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 56px 90px 64px; max-width: 1220px; min-width: 760px;
+  }
+  .page-q { font-size: var(--fs-2xl); font-weight: 900; color: var(--plate-ink); }
+  .page-glyph { font-size: 92px; letter-spacing: 24px; line-height: 1; }
+  .sign-img { height: 340px; object-fit: contain; filter: var(--ds-lg); }
+  .page-body {
+    font-size: var(--fs-md); font-weight: 400; line-height: 1.5; color: var(--plate-ink);
+    max-width: 1040px; word-break: keep-all;
+  }
+  .page-nav { position: absolute; right: 70px; bottom: 70px; z-index: var(--z-interactive); }
+  .page-nav[hidden] { display: none; }
+  .c-pageNext { font-size: var(--fs-md); font-weight: 900; color: var(--plate-ink);
+    background: url("assets/cta-activity-mural-worktag.webp") center/100% 100% no-repeat;
+    border: none; border-radius: 0; padding: 30px 70px; min-width: 300px; min-height: 132px;
+    cursor: pointer; transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease); }
+  .c-pageNext:hover { filter: var(--filter-hover); transform: translateY(-2px); }
+  .c-pageNext:active { transform: translateY(3px); }
+
+  /* random-practice: 네 문제를 한 줄로 펼치고 '다음 문제'로 하나씩 더 연다.
+     검증기는 장을 모두 넘긴 뒤(각 문제가 열린 뒤) 네 문제를 차례로 답하므로, 답할 시점에
+     네 문제가 모두 눌러질 수 있어야 한다. 그래서 스왑 캐러셀이 아니라 누적 노출로 둔다.
+     키패드는 페이지 전역에서 '보이는 키'를 집는 검증기와 맞추기 위해 화면에 하나만 둔다.
+     문제 표시창을 누르면 그 공용 키패드가 그 문제로 입력을 보낸다. */
+  .rp-stage { position: absolute; left: 50%; top: 116px; transform: translateX(-50%);
+    z-index: var(--z-interactive); width: 1840px;
+    display: flex; flex-direction: row; align-items: flex-start; justify-content: center; gap: 14px; }
+  .rp-card { flex: 1 1 0; max-width: 448px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.16); border-radius: var(--r-md); padding: 12px 12px 14px;
+    animation: activityFade var(--dur) var(--ease) both; }
+  .rp-card.is-hidden { display: none; }
+  .rp-card.rp-active { outline: 5px solid var(--accent); outline-offset: 3px; }
+  .rp-head { font-size: var(--fs-sm); font-weight: 900; color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 8px 26px 12px; min-width: 220px; text-align: center; }
+  .rp-sub { font-size: var(--fs-2xs); font-weight: 700; color: var(--ink); opacity: .82; }
+  .rp-hint { font-size: var(--fs-2xs); color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 10px 24px 12px; min-width: 200px; text-align: center; white-space: pre-line; }
+  .rp-card .q-prompt { font-size: var(--fs-sm); padding: 10px 24px 12px; min-width: 200px; }
+  .rp-card .c-choice { min-width: 280px; font-size: var(--fs-xs); padding: 8px 20px; }
+  /* 각 문제 카드의 답 표시창(공용 키패드가 지금 연결된 곳). 누르면 이 문제를 활성으로 만든다. */
+  .rp-display { min-width: 220px; height: 62px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: var(--fs-lg); font-weight: 900; color: var(--plate-ink);
+    background: rgba(255,255,255,.55); border: 4px solid var(--plate-ink); border-radius: var(--r-sm); }
+  .rp-keypad { position: absolute; left: 50%; top: 600px; transform: translateX(-50%);
+    z-index: var(--z-interactive); width: 430px;
+    background: url("assets/keypad-console-paint-counter.webp") center/100% 100% no-repeat;
+    padding: 40px 42px 36px; }
+  .rp-keypad .c-keypad { gap: 13px; }
+  .rp-keypad .c-key { height: 64px; }
+  .rp-nav { position: absolute; right: 70px; bottom: 60px; z-index: var(--z-interactive); }
+  .rp-nav[hidden] { display: none; }
+
+  /* keypad: 콘솔 raster 몸체 위에 동적 숫자만 얹고, 전체가 화면 안에 들어오게 축소 */
+  .q-input.c-keypadWrap { position: static; margin: 0 auto; }
+  .c-keypadWrap {
+    width: 452px; padding: 46px 46px 42px;
+    background: url("assets/keypad-console-paint-counter.webp") center/100% 100% no-repeat;
+    border: none; box-shadow: none; border-radius: 0;
+  }
+  .c-answerDisplay { height: 88px; margin-bottom: 16px; background: transparent; border: none;
+    color: var(--plate-ink); }
+  .c-keypad { gap: 15px; }
+  .c-key { height: 72px; }
+
+  /* 계산 장면: 도형은 좌측 열, 계수기는 우측 열 → 세로로 쌓여 잘리지 않게 한다 */
+  .keypad-scene .q-wrap { top: 292px; width: auto; }
+  .keypad-scene .q-card {
+    display: grid; grid-template-columns: minmax(300px, 560px) 452px;
+    grid-template-areas: "shapes pad" "prompt pad"; align-items: center; justify-items: center;
+    column-gap: 64px; row-gap: 22px;
+  }
+  .keypad-scene .q-card .shape-row { grid-area: shapes; }
+  .keypad-scene .q-card .q-prompt { grid-area: prompt; }
+  .keypad-scene .q-card .c-keypadWrap { grid-area: pad; }
+  .keypad-scene .q-card .q-reveal { grid-column: 1 / -1; }
+  /* grid 규칙이 is-hidden(display:none)을 소스 순서로 덮지 않도록 명시도를 올린다 */
+  .keypad-scene .q-card.is-hidden { display: none; }
+
+  /* 상태 반응: 정답/오답을 시각적으로 구분한다 */
+  .buzz { animation: buzzShake .34s ease; }
+  @keyframes buzzShake {
+    0%, 100% { transform: translateX(0); } 20% { transform: translateX(-9px); }
+    40% { transform: translateX(9px); } 60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+  .correct-glow { animation: correctGlow .7s ease; }
+  @keyframes correctGlow {
+    0% { box-shadow: 0 0 0 0 rgba(59,178,107,.6); }
+    100% { box-shadow: 0 0 0 26px rgba(59,178,107,0); }
+  }
+
+  /* 대사(말풍선)는 활동 위에 겹쳐 재생된다. 제목·범례·문제·도구는 장면 진입 즉시 읽혀야 하므로
+     (functional_test는 조작 없이 진입 문구를 검증한다) 대사 진행으로 가리지 않는다. */
+  @keyframes activityFade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* 그리기 도구(free-draw): 교사 오른쪽으로 옮겨 얼굴을 가리지 않게 한다 */
+  .draw-tools { position: absolute; left: 330px; top: 300px; z-index: var(--z-interactive);
+    display: flex; flex-direction: column; gap: 16px;
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 40px 34px 46px; }
+  .draw-tools h3 { margin: 0 0 4px; font-size: var(--fs-sm); color: var(--plate-ink); text-align: center; }
+  .tool-row { display: flex; gap: 12px; justify-content: center; }
+  .tool-btn { width: 82px; height: 82px; border: 4px solid var(--plate-ink); border-radius: 14px;
+    background: var(--cream); cursor: pointer; display: grid; place-items: center; font-size: var(--fs-lg);
+    transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease); }
+  .tool-btn:hover { transform: translateY(-2px); filter: var(--filter-hover); }
+  .tool-btn:active { transform: translateY(2px); }
+  .tool-btn.active { outline: 5px solid var(--accent); }
+  .color-btn { width: 62px; height: 62px; border-radius: var(--r-circle); border: 4px solid var(--white);
+    cursor: pointer; transition: transform var(--dur-fast) var(--ease); }
+  .color-btn:hover { transform: translateY(-2px); }
+  .color-btn.active { outline: 5px solid var(--plate-ink); }
+  .draw-canvas { position: absolute; left: 620px; top: 296px; z-index: var(--z-interactive);
+    width: 1120px; height: 500px; background: rgba(255,255,255,.28);
+    border: 5px dashed var(--surface); border-radius: var(--r-md); overflow: hidden; cursor: crosshair; }
+  .draw-canvas .shape { position: absolute; transform: translate(-50%, -50%); }
+
+  /* 완료/확인: 캔버스 아래로 분리한다 */
+  .confirm-box { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%);
+    z-index: var(--z-interactive); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .confirm-q { font-size: var(--fs-lg); font-weight: 900; color: var(--plate-ink);
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 22px 60px 26px; min-width: 460px; text-align: center; }
+  .confirm-row { display: flex; gap: 26px; }
+  .confirm-row .c-ticketButton { min-width: 300px; }
+
+  .completion-panel { position: absolute; inset: 0; z-index: var(--z-content);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; }
+  .done-title { font-size: var(--fs-hero); font-weight: 900; color: var(--plate-ink);
+    text-shadow: 0 4px 0 var(--white), 0 8px 20px rgba(0,0,0,.2); }
+  .done-row { display: flex; gap: 30px; }
+  .done-row .c-ticketButton { min-width: 360px; }
+
+  /* 전역 피드백 */
+  .fx { position: absolute; inset: 0; z-index: var(--z-effect); pointer-events: none; }
+  .fb-mark { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; opacity: 0; display: none; }
+  .fb-mark.on { display: block; }
+  .fb-text { position: absolute; left: 50%; top: 26%; transform: translateX(-50%);
+    font-size: var(--fs-2xl); font-weight: 900; color: #1f8a5a;
+    background: var(--white); border: 6px solid #1f8a5a; border-radius: var(--r-pill);
+    padding: 12px 48px; box-shadow: var(--shadow); opacity: 0; display: none; }
+  .fb-text.on { display: block; opacity: 1; animation: fbPop var(--dur) var(--ease-back) both; }
+  @keyframes fbPop { 0% { transform: translateX(-50%) scale(.6); } 100% { transform: translateX(-50%) scale(1); } }
+  /* 오답 설명은 정답과 색을 달리해 무엇이 일어났는지 바로 읽히게 한다 */
+  .fb-text.wrong { color: var(--danger); border-color: var(--danger); }
+
+  /* random-practice 문항별 로컬 키패드: 활성 카드에서만 보인다.
+     retry_available 검증기는 [data-qa-key]를 문항 root 안에서 찾으므로 키패드를 카드 안에 둔다.
+     화면 전환 중(leaving)에도 뜨지 않도록 .active scene 안에서만 활성 카드에 보인다. */
+  .rp-localpad { display: none; width: 306px; margin-top: 6px;
+    background: url("assets/keypad-console-paint-counter.webp") center/100% 100% no-repeat;
+    border: none; box-shadow: none; border-radius: 0; padding: 26px 28px 24px; }
+  .scene.active .rp-card.rp-active .rp-localpad { display: block; }
+  .rp-localpad .c-answerDisplay { display: none; }
+  .rp-localpad .c-keypad { gap: 9px; }
+  .rp-localpad .c-key { height: 48px; }
+
+  /* 보조 설명(힌트) 패널: 캐릭터를 누르거나 첫 오답에 열린다. 학습자가 닫을 수 있다.
+     패널 몸체는 pointer-events를 받지 않아 아래 문항 입력을 가리지 않는다(검증기의 재시도 클릭 보존). */
+  .char.hint-trigger { pointer-events: auto; cursor: pointer; }
+  .hint-panel { position: absolute; left: 40px; bottom: 40px; z-index: var(--z-drawer);
+    width: 560px; display: flex; flex-direction: column; gap: 14px; pointer-events: none;
+    background: url("assets/surface-info-board-mural.webp") center/100% 100% no-repeat;
+    padding: 40px 48px 46px; }
+  .hint-panel.is-hidden { display: none; }
+  .hint-panel .hint-title { font-size: var(--fs-md); font-weight: 900; color: var(--plate-ink); text-align: center; }
+  .hint-panel .hint-body { font-size: var(--fs-sm); font-weight: 700; color: var(--plate-ink);
+    line-height: 1.45; word-break: keep-all; text-align: center; white-space: pre-line; }
+  .hint-panel .hint-close { align-self: center; pointer-events: auto; cursor: pointer;
+    font-size: var(--fs-sm); font-weight: 900; color: var(--plate-ink);
+    background: var(--cream); border: 4px solid var(--plate-ink); border-radius: var(--r-pill); padding: 8px 34px; }
+
+  /* 그리기: 배치한 모양을 선택·이동·삭제할 수 있다 */
+  .draw-canvas .shape { cursor: grab; }
+  .draw-canvas .shape.selected { outline: 5px solid var(--accent); outline-offset: 4px; }
+  .tool-btn.trash { font-size: var(--fs-lg); }
+
+  /* 완료 화면: 자유 그리기 결과를 담장에 다시 렌더해 학습자의 작업과 완료를 잇는다 */
+  .done-mural { position: absolute; left: 620px; top: 300px; width: 1120px; height: 500px;
+    z-index: var(--z-scenery); pointer-events: none; }
+  .done-mural .shape { position: absolute; transform: translate(-50%, -50%); }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+
+    <!-- 상단 HUD (topbar) -->
+    <header class="c-topbar" data-component="topbar" data-state="visible">
+      <div class="c-topbarLeft">
+        <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false">
+          <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="c-topbarMenuLabel">목록</span>
+        </button>
+        <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+          <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+            <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+            <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+          </svg>
+        </button>
+        <span class="c-topbarStep" data-slot="step" hidden></span>
+      </div>
+      <span class="c-topbarProgress">
+        <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+          <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+          <span class="c-lessonBarPct" data-slot="pct">0%</span>
+        </span>
+      </span>
+      <div class="c-topbarTitle" data-slot="title"></div>
+    </header>
+
+    <div class="c-courseMenu" data-component="course-menu">
+      <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+        <div class="c-courseMenuHead">
+          <span class="c-courseMenuGrade" data-slot="grade"></span>
+          <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+        </div>
+        <div class="c-courseMenuList" data-slot="list"></div>
+        <div class="c-courseMenuFoot">
+          <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 씬 컨테이너 (내용은 스크립트가 채운다) -->
+    <div id="scenes"></div>
+
+    <!-- 전역 피드백 레이어 -->
+    <div class="fx" aria-hidden="true">
+      <img class="c-feedbackStamp" data-component="feedback-stamp"
+           data-correct-src="assets/stamp-correct.webp" data-wrong-src="assets/stamp-wrong.webp" alt="">
+      <span class="fb-mark" data-qa-feedback="correct"></span>
+      <span class="fb-mark" data-qa-feedback="wrong"></span>
+      <div class="fb-text" data-slot="fbtext"></div>
+    </div>
+
+    <!-- Debug Jumper (backquote 로만 열림) -->
+    <aside class="c-debugPanel" data-component="debug-jumper" hidden>
+      <div class="c-debugHead">
+        <strong>Scenes</strong>
+        <button type="button" data-action="close" aria-label="닫기">×</button>
+      </div>
+      <div class="c-debugCurrent" data-slot="current"></div>
+      <div class="c-debugList" data-slot="scene-list"></div>
+    </aside>
+
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var A = "assets/";
+  var SHAPE_COLOR = { circle: "var(--shape-circle)", square: "var(--shape-square)", triangle: "var(--shape-triangle)" };
+  // 자유 그리기에서 '예'로 확정한 벽화를 완료 화면이 다시 렌더한다(학습자 작업 ↔ 완료 연결).
+  var FINAL_DRAWING = [];
+
+  function el(tag, props) {
+    var n = document.createElement(tag);
+    if (props) {
+      for (var k in props) {
+        if (!Object.prototype.hasOwnProperty.call(props, k)) continue;
+        var v = props[k];
+        if (v == null) continue;
+        if (k === "class") n.className = v;
+        else if (k === "text") n.textContent = v;
+        else if (k === "html") n.innerHTML = v;
+        else if (k === "style") n.setAttribute("style", v);
+        else n.setAttribute(k, v);
+      }
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var kids = arguments[i];
+      if (kids == null) continue;
+      if (!Array.isArray(kids)) kids = [kids];
+      for (var j = 0; j < kids.length; j++) {
+        var c = kids[j];
+        if (c == null) continue;
+        n.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+      }
+    }
+    return n;
+  }
+  function shapeEl(kind, faded) {
+    return el("span", { class: "shape " + kind + (faded ? " faded" : "") });
+  }
+  function shapeRow(kind, count) {
+    var row = el("div", { class: "shape-row" });
+    for (var i = 0; i < count; i++) row.appendChild(shapeEl(kind, false));
+    return row;
+  }
+
+  /* ── 전역 피드백 (정답/오답을 서로 다른 연출로 구분) ─────────── */
+  var stamp = document.querySelector("[data-component='feedback-stamp']");
+  var markCorrect = document.querySelector(".fb-mark[data-qa-feedback='correct']");
+  var markWrong = document.querySelector(".fb-mark[data-qa-feedback='wrong']");
+  var fbText = document.querySelector("[data-slot='fbtext']");
+  var fbTimer = 0, fbTextTimer = 0;
+  function pulse(node, cls) {
+    if (!node) return;
+    node.classList.remove(cls);
+    void node.offsetWidth;
+    node.classList.add(cls);
+  }
+  // fbText 한 곳에 정답/오답 설명을 띄운다. pointer-events:none이라 입력을 가리지 않는다.
+  function flashFbText(msg, wrong) {
+    if (!msg || !fbText) return;
+    fbText.textContent = msg;
+    fbText.classList.toggle("wrong", !!wrong);
+    fbText.classList.add("on");
+    clearTimeout(fbTextTimer);
+    fbTextTimer = setTimeout(function () { fbText.classList.remove("on"); }, 2600);
+  }
+  function showFeedback(type, text, q) {
+    try { if (stamp && window.CommonFeedbackLayer) CommonFeedbackLayer.showStamp(stamp, type, { hold: false }); } catch (e) {}
+    var mk = type === "correct" ? markCorrect : markWrong;
+    if (mk) {
+      mk.classList.add("on");
+      clearTimeout(fbTimer);
+      fbTimer = setTimeout(function () { mk.classList.remove("on"); }, 1300);
+    }
+    var scene = q && q.scene && q.scene.el && q.scene.el.scene;
+    if (type === "correct") {
+      // 정답 문구(planner 원문)를 그대로 두고 그 뒤에 계산 관계 설명을 잇는다.
+      var msg = text || "";
+      if (q && q.whyCorrect) msg = msg ? (msg + " " + q.whyCorrect) : q.whyCorrect;
+      flashFbText(msg, false);
+      // 정답: 대상 표면 glow + 캐릭터 환호
+      pulse(q && (q.disp || q.input), "correct-glow");
+      if (scene) {
+        var ch = scene.querySelector(".char.right") || scene.querySelector(".char");
+        pulse(ch, "cheer");
+      }
+    } else {
+      // 오답: 다음에 할 행동을 설명하고 대상 입력기를 흔든다(정답과 다른 반응)
+      if (q && q.tryAgain) flashFbText(q.tryAgain, true);
+      pulse(q && q.input, "buzz");
+    }
+  }
+
+  // 정답 시 이어지는 대사(on_correct)를 씬 말풍선에 얹는다.
+  function showOnCorrect(q) {
+    if (!q.onCorrectTexts || !q.scene || !q.scene.el.bubble) return;
+    try {
+      CommonSpeechBubble.show(q.scene.el.bubble, q.onCorrectTexts.join("\n"), { next: null });
+    } catch (e) {}
+  }
+
+  /* ── 데이터 모델 ─────────────────────────────── */
+  var scenesRoot = document.getElementById("scenes");
+  var sceneMap = {}, questionMap = {}, scenesOrder = [];
+
+  // 씬 정의
+  var CONFIG = [
+    {
+      id: "intro", order: 1, label: "도입", bg: "bg-school-gate.png",
+      scenery: [{ src: "overlay-damaged-school-wall.png", style: "left:500px;top:252px;width:950px" }],
+      chars: [{ src: "worker-apologizing.png", cls: "left" }, { src: "boy-helping.png", cls: "right small" }],
+      head: {
+        series: ["수리가 필요해요", "와글와글, 운동회를 도와요!", "알록달록, 학교 담장 색칠하기"],
+        step: "수리력 +", title: "알록달록, 학교 담장 색칠하기",
+        goal: "[모양과 덧셈의 힘으로 담장 색칠하기!]"
+      },
+      bubbleFaceY: 604, bubbleSideX: 336, bubbleSideXR: 336,
+      beatNextLabel: "시작하기",
+      beats: [
+        { type: "dialogue", text: "공사 중에 실수로 담장을 무너뜨렸어요.\n죄송합니다!" },
+        { type: "dialogue", text: "① 휴, 담장은 다 고쳤어요.\n② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!" },
+        { type: "dialogue", side: "right", text: "저희가 도와드릴게요!" },
+        { type: "advance", label: "모양의 힘으로 색칠하기", to: "shape-find" }
+      ]
+    },
+    {
+      id: "shape-find", order: 2, label: "수리가 필요해요 1", bg: "bg-wall-activity.png",
+      chars: [{ src: "teacher-explaining.png", cls: "left" }],
+      head: { step: "수리가 필요해요 1", title: "수리가 필요해요 1" },
+      storyGate: true, hotspotOverlay: "overlay-shape-find-school-objects.png",
+      bubbleFaceY: 560,
+      beats: [
+        { type: "dialogue", text: "벽화를 어떻게 그려야 되지?" },
+        { type: "dialogue", text: "여러 가지 모양으로 그리면 좋겠어요." },
+        { type: "dialogue", text: "저와 학교에서 모양을 찾아 보아요." },
+        { type: "dialogue", side: "right", text: "네!" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        {
+          id: "q-find-shape", type: "hotspot", prompt: "모양 2개를 찾아 봅시다.",
+          feedbackCorrect: "정답입니다.", maxAttempts: 3, need: 2,
+          tryAgain: "그 물건은 찾는 모양이 아니에요. 다른 물건에서 같은 모양을 찾아 봐요.",
+          // 정답 자리는 정확히 2개다(planner answer="2" → correct_target_count 검증). 가운데 위 자리는
+          // 정답에서 뺀다 — 프롬프트 판 아래에 들어가는 자리라 정답 경로가 그 겹침에 기대지 않게 한다.
+          spots: [
+            { correct: true, x: 250, y: 78, w: 236, h: 232 },
+            { correct: false, x: 812, y: 96, w: 300, h: 236 },
+            { correct: true, x: 1432, y: 74, w: 250, h: 248 },
+            { correct: false, x: 150, y: 430, w: 520, h: 246 },
+            { correct: false, x: 832, y: 380, w: 268, h: 308 },
+            { correct: false, x: 1400, y: 432, w: 328, h: 300 },
+            { correct: false, x: 192, y: 720, w: 400, h: 328 },
+            { correct: false, x: 716, y: 762, w: 468, h: 246 },
+            { correct: false, x: 1362, y: 716, w: 400, h: 330 }
+          ]
+        },
+        {
+          id: "q-find-triangle", type: "hotspot", prompt: "▲모양 2개를 찾아 봅시다.",
+          feedbackCorrect: "정답입니다.", maxAttempts: 3, need: 2,
+          tryAgain: "그 물건은 세모가 아니에요. 뾰족한 세모 모양을 다시 찾아 봐요.",
+          spots: [
+            { correct: false, x: 250, y: 78, w: 236, h: 232 },
+            { correct: false, x: 812, y: 96, w: 300, h: 236 },
+            { correct: false, x: 1432, y: 74, w: 250, h: 248 },
+            { correct: true, x: 150, y: 430, w: 520, h: 246 },
+            { correct: true, x: 832, y: 380, w: 268, h: 308 },
+            { correct: false, x: 1400, y: 432, w: 328, h: 300 },
+            { correct: false, x: 192, y: 720, w: 400, h: 328 },
+            { correct: false, x: 716, y: 762, w: 468, h: 246 },
+            { correct: false, x: 1362, y: 716, w: 400, h: 330 }
+          ]
+        }
+      ],
+      advance: { to: "shape-count", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "shape-count", order: 3, label: "모양 세기", bg: "bg-wall-activity.png",
+      chars: [{ src: "teacher-idle.png", cls: "left" }],
+      head: { step: "수리가 필요해요 1" },
+      legend: "● ■ ▲ 모양",
+      storyGate: true, keypadScene: true,
+      paintCan: { style: "left:352px;top:452px;width:250px" },
+      beats: [
+        { type: "dialogue", text: "잘 찾았어요!" },
+        { type: "dialogue", text: "페인트 색깔마다 모양이 달라요" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        { id: "q-count-circle", type: "keypad", prompt: "●모양은 몇 개 인가요?", answer: "3", maxAttempts: 0, shapes: { kind: "circle", count: 3 }, whyCorrect: "초록 원을 하나씩 세면 3개예요.", tryAgain: "동그란 초록 모양만 하나씩 다시 세어 봐요." },
+        { id: "q-count-triangle", type: "keypad", prompt: "▲모양은 몇 개 인가요?", answer: "2", maxAttempts: 0, shapes: { kind: "triangle", count: 2 }, whyCorrect: "빨간 세모를 세면 2개예요.", tryAgain: "세모 모양만 하나씩 다시 세어 봐요." },
+        { id: "q-count-square", type: "keypad", prompt: "■모양은 몇 개 인가요?", answer: "4", maxAttempts: 0, shapes: { kind: "square", count: 4 }, whyCorrect: "파란 네모를 세면 4개예요.", tryAgain: "네모 모양만 하나씩 다시 세어 봐요." }
+      ],
+      advance: { to: "shape-transition", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "shape-transition", order: 4, label: "다음 활동 연결", bg: "bg-wall-activity.png",
+      chars: [{ src: "teacher-explaining.png", cls: "left" }],
+      paintCan: { style: "left:830px;top:430px;width:280px", color: "circle" },
+      beats: [
+        { type: "dialogue", text: "① 잘했어요.\n이제 벽화를 색칠해봐요!\n② 페인트 소개를 부탁해요!" },
+        { type: "advance", label: "모양으로 세 수의 덧셈과 뺄셈하기", to: "ten-intro" }
+      ]
+    },
+    {
+      id: "ten-intro", order: 5, label: "수리가 필요해요 2", bg: "bg-wall-activity.png",
+      chars: [{ src: "worker-explaining.png", cls: "left" }],
+      head: { step: "수리가 필요해요 2" },
+      boardTitle: "세 수의 덧셈과 뺄셈",
+      storyGate: true, keypadScene: true,
+      paintCan: { style: "left:352px;top:452px;width:250px", color: "circle" },
+      beats: [
+        { type: "dialogue", text: "①페인트 소개는 저희가 할게요.\n②이것을 페인트라고 해요.\n초록색부터 알려드릴게요." },
+        { type: "dialogue", text: "1통에 모양을 10개씩 그릴 수 있어요!" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        { id: "q-total-ten", type: "keypad", prompt: "모양은 모두 몇 개인가요?", answer: "10", maxAttempts: 0, shapes: { kind: "circle", count: 10 }, whyCorrect: "5개씩 두 줄이면 모두 10개예요.", tryAgain: "원을 5개, 5개로 묶어 다시 세어 봐요." }
+      ],
+      advance: { to: "addition", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "addition", order: 6, label: "세 수의 덧셈", bg: "bg-wall-activity.png",
+      chars: [{ src: "worker-explaining.png", cls: "left" }, { src: "girl-helping.png", cls: "right small" }],
+      boardTitle: "세 수의 덧셈과 뺄셈",
+      storyGate: true, keypadScene: true,
+      paintCan: { style: "left:352px;top:452px;width:250px", color: "circle" },
+      beats: [
+        { type: "dialogue", text: "7개에서 3개를 더 색칠하면 몇 개일까요?" },
+        { type: "dialogue", text: "2개를 더 색칠해주세요." },
+        { type: "dialogue", side: "right", text: "네" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        { id: "q-add-to-ten", type: "keypad", prompt: "7 + 3 = (   )", answer: "10", maxAttempts: 0, shapes: { kind: "circle", count: 10 }, onCorrectTexts: ["페인트 1통을 다 썼어요", "1통을 더 준비했어요."], whyCorrect: "7에 3을 더하면 10이 돼요.", tryAgain: "7개에서 3개를 더 세어 몇 개인지 세어 봐요." },
+        { id: "q-add-two", type: "keypad", prompt: "10 + 2 = (   )", answer: "12", maxAttempts: 0, shapes: { kind: "circle", count: 12 }, whyCorrect: "10에 2를 더하면 12예요.", tryAgain: "10개에 2개를 더 놓고 세어 봐요." }
+      ],
+      advance: { to: "subtraction-intro", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "subtraction-intro", order: 7, label: "덧셈에서 뺄셈으로", bg: "bg-wall-activity.png",
+      chars: [{ src: "worker-explaining.png", cls: "left" }],
+      boardTitle: "세 수의 덧셈과 뺄셈",
+      storyGate: true, keypadScene: true,
+      beats: [
+        { type: "dialogue", text: "고마워요!\n다른 담장으로 가요." },
+        { type: "dialogue", side: "right", text: "네!" },
+        { type: "dialogue", text: "잘못 그린 2개를 지워주세요!" },
+        { type: "dialogue", text: "모양 12개에서 2개를 지우면 몇 개일까요?" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        { id: "q-add-three", type: "keypad", prompt: "7 + 3 + 2 = (   )", answer: "12", maxAttempts: 0, feedbackCorrect: "정답입니다.", shapes: { kind: "square", count: 12 }, whyCorrect: "7과 3으로 10을 먼저 만들고 2를 더하면 12예요.", tryAgain: "먼저 7+3=10을 만들고 남은 2를 더해 봐요." },
+        { id: "q-subtract-two", type: "keypad", prompt: "12 - 2 = (   )", answer: "10", maxAttempts: 0, shapes: { kind: "square", count: 12, fadeLast: 2 }, whyCorrect: "12에서 2를 지우면 10이 돼요.", tryAgain: "12개에서 연해진 2개를 빼고 세어 봐요." }
+      ],
+      advance: { to: "subtraction", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "subtraction", order: 8, label: "세 수의 뺄셈", bg: "bg-wall-activity.png",
+      chars: [{ src: "worker-explaining.png", cls: "left" }, { src: "boy-helping.png", cls: "right small" }],
+      boardTitle: "세 수의 덧셈과 뺄셈",
+      storyGate: true, keypadScene: true,
+      // planner의 beat 노출 순서를 그대로 따른다(0,1,2,3). "잘했어요!"는 planner에서 on_correct라
+      // 문항 q-subtract-all의 onCorrectTexts로 옮긴다.
+      beats: [
+        { type: "dialogue", text: "3개를 더 지우고 싶어요. 지워주세요." },
+        { type: "dialogue", text: "모양 10개에서 3개를 더 지우면 몇 개 일까요?" },
+        { type: "dialogue", side: "right", text: "네!" },
+        { type: "advance", label: "덧셈, 뺄셈의 힘으로 담장 색칠하기", to: "random-practice" }
+      ],
+      questionsMode: "sequential",
+      questions: [
+        { id: "q-subtract-three", type: "keypad", prompt: "10 - 3 = (   )", answer: "7", maxAttempts: 0, shapes: { kind: "square", count: 10, fadeLast: 3 }, whyCorrect: "10에서 3을 지우면 7이 남아요.", tryAgain: "10개에서 연해진 3개를 빼고 세어 봐요." },
+        { id: "q-subtract-all", type: "keypad", prompt: "12 – 2 – 3 = (   )", answer: "7", maxAttempts: 0, feedbackCorrect: "정답입니다.", shapes: { kind: "square", count: 12, fadeLast: 5 }, onCorrectTexts: ["잘했어요!\n더 많은 담장을\n색칠해야해요!"], whyCorrect: "12에서 2를 빼 10을 만들고 다시 3을 빼면 7이에요.", tryAgain: "먼저 12-2로 10을 만들고 3을 더 빼 봐요." }
+      ]
+    },
+    {
+      id: "random-practice", order: 9, label: "수리로 해결해요", bg: "bg-wall-activity.png",
+      chars: [{ src: "boy-idle.png", cls: "left small" }, { src: "girl-idle.png", cls: "right small" }],
+      head: { step: "수리로 해결해요" },
+      carousel: true,
+      questionsMode: "all",
+      questions: [
+        {
+          id: "q-random-a", type: "choice", head: "무작위 문제 A", sub: "덧셈과 뺄셈",
+          prompt: "10이 되는 덧셈식을 찾아 보세요.", maxAttempts: 3,
+          whyCorrect: "6과 4를 더하면 10이 돼요.", tryAgain: "6에 얼마를 더해야 10이 되는지 찾아 봐요.",
+          help: "두 수를 더해서 10이 되는 식을 찾아요.\n6에 얼마를 더하면 10이 될까요?",
+          choices: [
+            { label: "6 + 3 = 10", correct: false },
+            { label: "6 + 4 = 10", correct: true },
+            { label: "6 + 5 = 10", correct: false }
+          ]
+        },
+        { id: "q-random-b", type: "keypad", head: "무작위 문제 B", sub: "덧셈과 뺄셈", prompt: "10 - 4=(   )", answer: "6", maxAttempts: 3, whyCorrect: "10에서 4를 빼면 6이에요.", tryAgain: "10개에서 4개를 덜어내고 남은 수를 세어 봐요.", help: "10에서 빼는 문제예요.\n10개 중에서 4개를 덜어내면 몇 개가 남을까요?" },
+        { id: "q-random-c", type: "keypad", head: "무작위 문제 C", sub: "덧셈과 뺄셈", prompt: "6 + 4 + 3=(   )", answer: "13", maxAttempts: 3, hint: "6 + 4 = (  )\n얼마일까요?", instr: "세 수의 덧셈을 해 보세요", whyCorrect: "6과 4로 10을 만들고 3을 더하면 13이에요.", tryAgain: "먼저 10이 되는 두 수(6과 4)를 찾아 봐요.", help: "먼저 10이 되는 두 수를 찾아요.\n6과 4를 더하면 10, 남은 3을 더해요." },
+        { id: "q-random-d", type: "keypad", head: "무작위 문제 D", sub: "덧셈과 뺄셈", prompt: "13 - 3 - 6=(   )", answer: "4", maxAttempts: 3, hint: "13 - 3 = (  )\n얼마일까요?", instr: "세 수의 뺄셈을 해 보세요", whyCorrect: "13에서 3을 빼 10을 만들고 6을 더 빼면 4예요.", tryAgain: "먼저 13-3으로 10을 만들어 봐요.", help: "먼저 10을 만들어요.\n13에서 3을 빼면 10, 거기서 6을 더 빼요." }
+      ],
+      advance: { to: "free-draw", label: "다음 ▸", gate: "questions" }
+    },
+    {
+      id: "free-draw", order: 10, label: "모양으로 자유 그리기", bg: "bg-wall-activity.png",
+      chars: [{ src: "teacher-explaining.png", cls: "left" }],
+      storyGate: true,
+      bubbleFaceY: 560,
+      beats: [
+        { type: "dialogue", text: "담장 색칠이 끝나가요!" },
+        { type: "dialogue", text: "마지막 담장은 자유롭게 그려주세요." }
+      ],
+      drawTool: true,
+      confirm: { q: "그림을 완성했나요?", yes: "예", no: "아니오", to: "math-story" }
+    },
+    {
+      id: "math-story", order: 11, label: "수리 이야기", bg: "bg-school-street.png",
+      head: { step: "수리 이야기" },
+      pages: [
+        { texts: ["<span class='page-q'>수리 이야기</span>", "<span class='page-q'>모양을 길에서 본 적이 있나요?</span>", "<span class='page-glyph'>● ■ ▲</span>"] },
+        { img: "road-sign-round.png", texts: ["<span class='page-q'>무슨 표지판일까요?</span>", "<div class='page-body'>● 모양 표지판은 어떤 것이 있을까요?<br><br>자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.</div>"], alt: "청록색 원형 판에 자동차 그림이 표시된 자동차 전용 도로 표지판" },
+        { img: "road-sign-square.png", texts: ["<span class='page-q'>무슨 표지판일까요?</span>", "<div class='page-body'>■ 모양 표지판은 어떤 것이 있을까요?<br><br>주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요.</div>"], alt: "청록색 사각 판에 흰색 P 기호가 표시된 주차 표지판" },
+        { img: "road-sign-triangle.png", texts: ["<span class='page-q'>무슨 표지판일까요?</span>", "<div class='page-body'>▲ 모양 표지판은 어떤 것이 있을까요?<br><br>공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.<br><br>앞으로 표지판을 보며 안전하게 다녀요.</div>"], alt: "노란색 삼각 판에 삽으로 작업하는 사람 그림이 표시된 공사 주의 표지판" }
+      ],
+      advance: { to: "completion", label: "다음 ▸", gate: "page" }
+    },
+    {
+      id: "completion", order: 12, label: "차시 완료", bg: "bg-school-gate.png",
+      completion: true
+    }
+  ];
+
+  /* ── 씬 빌드 ─────────────────────────────── */
+  function buildScene(sc) {
+    var scene = el("section", { class: "scene", id: sc.id });
+    scene.setAttribute("data-qa-scene", sc.id);
+    scene.setAttribute("data-qa-order", String(sc.order));
+    scene.setAttribute("data-qa-label", sc.label);
+    if (sc.order === 1) scene.classList.add("active");
+    if (sc.storyGate) scene.classList.add("has-story");
+    if (sc.keypadScene) scene.classList.add("keypad-scene");
+    sc.el = { scene: scene };
+
+    if (sc.bg) scene.appendChild(el("img", { class: "c-bg", src: A + sc.bg, alt: "" }));
+
+    // 장면 속 물건 overlay (손상 담장 등)
+    (sc.scenery || []).forEach(function (s) {
+      scene.appendChild(el("img", { class: "c-scenery", src: A + s.src, alt: "", style: s.style }));
+    });
+
+    (sc.chars || []).forEach(function (c) {
+      var charImg = el("img", { class: "char " + c.cls, src: A + c.src, alt: "" });
+      // random-practice: 캐릭터를 누르면 현재 문제의 10 만들기 보조 설명이 열린다(planner random-hint).
+      if (sc.carousel) {
+        charImg.classList.add("hint-trigger");
+        charImg.addEventListener("click", function () { openHint(sc, null); });
+      }
+      scene.appendChild(charImg);
+    });
+
+    // 페인트통 작업대
+    if (sc.paintCan) {
+      var pstage = el("div", { class: "paint-stage", style: sc.paintCan.style });
+      pstage.appendChild(el("img", { class: "paint-can", src: A + "paint-can-body.png", alt: "학교 담장 색칠용 페인트통" }));
+      var fill = el("div", { class: "paint-fill" });
+      if (sc.paintCan.color) fill.style.background = SHAPE_COLOR[sc.paintCan.color] || "";
+      pstage.appendChild(fill);
+      scene.appendChild(pstage);
+      sc.el.paintFill = fill;
+    }
+
+    // 헤더
+    if (sc.head) {
+      var head = el("div", { class: "stage-head" });
+      if (sc.head.series) {
+        var list = el("div", { class: "series-list" });
+        sc.head.series.forEach(function (s) { list.appendChild(el("div", { class: "series-item", text: s })); });
+        head.appendChild(list);
+      }
+      if (sc.head.step) head.appendChild(el("div", { class: "series-item", text: sc.head.step }));
+      if (sc.head.title) head.appendChild(el("div", { class: "scene-title", text: sc.head.title }));
+      if (sc.head.goal) head.appendChild(el("div", { class: "goal-caption", text: sc.head.goal }));
+      scene.appendChild(head);
+    }
+    if (sc.boardTitle) scene.appendChild(el("div", { class: "board-title", text: sc.boardTitle }));
+    if (sc.legend) scene.appendChild(el("div", { class: "legend", text: sc.legend }));
+
+    // 말풍선
+    if ((sc.beats && sc.beats.length) || (sc.tailBeats && sc.tailBeats.length)) {
+      var bubble = el("div", { class: "c-speechBubble left-speaker", "data-component": "speech-bubble", "data-state": "hidden" });
+      var txt = el("span", { "data-slot": "text" });
+      var nav = el("span", { class: "c-speechBubbleNav", "data-slot": "nav", hidden: "hidden" });
+      var navBtn = el("button", { class: "c-speechBubbleNext", type: "button", "data-action": "next" });
+      navBtn.setAttribute("data-qa-beat-next", "");
+      nav.appendChild(navBtn);
+      bubble.appendChild(txt); bubble.appendChild(nav);
+      scene.appendChild(bubble);
+      sc.el.bubble = bubble;
+    }
+
+    // 관찰형(hotspot) 문제: 생활 소품 overlay + 투명 hotspot
+    if (sc.hotspotOverlay) {
+      scene.appendChild(el("img", { class: "obj-overlay", src: A + sc.hotspotOverlay, alt: "학교 담장 앞에 놓인 화분·깃발·상자 등 여러 가지 모양의 생활 소품" }));
+      sc.questions.forEach(function (q) { scene.appendChild(buildHotspotCard(sc, q)); });
+    }
+    // 캐러셀형(무작위 연습): 한 문제씩
+    else if (sc.carousel) {
+      var rpStage = el("div", { class: "rp-stage" });
+      sc.el.rpCards = [];
+      sc.questions.forEach(function (q, i) {
+        var card = buildRandomCard(sc, q, i);
+        if (i !== 0) card.classList.add("is-hidden");
+        rpStage.appendChild(card);
+        sc.el.rpCards.push(card);
+      });
+      scene.appendChild(rpStage);
+      var rpNav = el("div", { class: "rp-nav" });
+      var rpBtn = el("button", { class: "c-pageNext", type: "button", text: "다음 문제 ▸" });
+      rpBtn.setAttribute("data-qa-page-next", "");
+      rpNav.appendChild(rpBtn);
+      scene.appendChild(rpNav);
+      sc.el.rpNav = rpNav;
+
+      // 보조 설명(힌트) 패널: random-hint. 캐릭터 클릭·첫 오답에 열린다.
+      var hint = el("div", { class: "hint-panel is-hidden" });
+      hint.appendChild(el("div", { class: "hint-title", text: "10을 먼저 만들어요" }));
+      var hbody = el("div", { class: "hint-body" });
+      hint.appendChild(hbody);
+      var hclose = el("button", { class: "hint-close", type: "button", text: "닫기" });
+      hclose.addEventListener("click", function () { closeHint(sc); });
+      hint.appendChild(hclose);
+      scene.appendChild(hint);
+      sc.el.hint = hint; sc.el.hintBody = hbody;
+    }
+    // 일반 문제(키패드/보기)
+    else if (sc.questions && sc.questions.length) {
+      var qwrap = el("div", { class: "q-wrap" });
+      sc.questions.forEach(function (q) { qwrap.appendChild(buildQuestionCard(sc, q)); });
+      scene.appendChild(qwrap);
+    }
+
+    // 페이지 캐러셀
+    if (sc.pages) {
+      sc.el.pages = [];
+      sc.pages.forEach(function (p, i) {
+        var page = el("div", { class: "page" + (i === 0 ? " active" : "") });
+        if (p.img) page.appendChild(el("img", { class: "sign-img", src: A + p.img, alt: p.alt || "" }));
+        var panel = el("div", { class: "page-panel" });
+        (p.texts || []).forEach(function (t) { panel.appendChild(el("div", { html: t })); });
+        page.appendChild(panel);
+        scene.appendChild(page);
+        sc.el.pages.push(page);
+      });
+      var pnav = el("div", { class: "page-nav" });
+      var pbtn = el("button", { class: "c-pageNext", type: "button", text: "다음 장 ▸" });
+      pbtn.setAttribute("data-qa-page-next", "");
+      pnav.appendChild(pbtn);
+      scene.appendChild(pnav);
+      sc.el.pageNav = pnav;
+    }
+
+    // 그리기 도구
+    if (sc.drawTool) buildDrawTool(sc, scene);
+
+    // 확인창
+    if (sc.confirm) {
+      var cb = el("div", { class: "confirm-box" });
+      cb.appendChild(el("div", { class: "confirm-q", text: sc.confirm.q }));
+      var row = el("div", { class: "confirm-row" });
+      var yes = mkTicket(sc.confirm.to, sc.confirm.yes);
+      yes.style.position = "static";
+      // '예': 그리기 결과를 저장한 뒤(완료 화면이 다시 그린다) 다음 장면으로 넘어간다.
+      yes.addEventListener("click", function () { if (sc.getDrawing) FINAL_DRAWING = sc.getDrawing(); });
+      var no = el("button", { class: "c-ticketButton", type: "button", "data-component": "ticket-button" }, el("span", { "data-slot": "label", text: sc.confirm.no }));
+      no.style.position = "static";
+      no.addEventListener("click", function () { /* 그리기로 돌아감: 아무 것도 지우지 않는다 */ });
+      row.appendChild(yes); row.appendChild(no);
+      cb.appendChild(row);
+      scene.appendChild(cb);
+    }
+
+    // 완료 화면
+    if (sc.completion) {
+      // 자유 그리기 결과가 담장에 다시 나타난다(배경 위, 완료 문구 아래).
+      var mural = el("div", { class: "done-mural" });
+      scene.appendChild(mural);
+      sc.el.mural = mural;
+      var panel = el("div", { class: "completion-panel" });
+      panel.appendChild(el("div", { class: "done-title", text: "3차시 수리 완료!" }));
+      var drow = el("div", { class: "done-row" });
+      var dl = el("button", { class: "c-ticketButton", type: "button", "data-component": "ticket-button" }, el("span", { "data-slot": "label", text: "인증서 다운로드" }));
+      dl.style.position = "static";
+      dl.addEventListener("click", downloadCertificate);
+      var ex = el("button", { class: "c-ticketButton", type: "button", "data-component": "ticket-button" }, el("span", { "data-slot": "label", text: "나가기" }));
+      ex.style.position = "static"; ex.style.filter = "saturate(.7)";
+      ex.addEventListener("click", function () { try { CommonTopbar.openMenu(document.querySelector("[data-component='course-menu']"), document.querySelector("[data-component='topbar']")); } catch (e) {} });
+      drow.appendChild(dl); drow.appendChild(ex);
+      panel.appendChild(drow);
+      scene.appendChild(panel);
+    }
+
+    // 진행 CTA (beat-advance 또는 question/page-gate)
+    var advTo = null, advLabel = null;
+    var allBeats = (sc.beats || []).concat(sc.tailBeats || []);
+    allBeats.forEach(function (b) { if (b.type === "advance") { advTo = b.to; advLabel = b.label; } });
+    if (!advTo && sc.advance) { advTo = sc.advance.to; advLabel = sc.advance.label; }
+    if (advTo) {
+      var adv = mkTicket(advTo, advLabel);
+      adv.classList.add("adv-cta"); adv.style.position = "absolute";
+      adv.hidden = true;
+      scene.appendChild(adv);
+      sc.el.advance = adv;
+    }
+
+    scenesRoot.appendChild(scene);
+    sceneMap[sc.id] = sc;
+    scenesOrder.push(sc);
+  }
+
+  function mkTicket(to, label) {
+    var b = el("button", { class: "c-ticketButton", type: "button", "data-component": "ticket-button" },
+      el("span", { "data-slot": "label", text: label }));
+    if (to) b.setAttribute("data-qa-advance", to);
+    return b;
+  }
+
+  function setPaint(sc, kind) {
+    if (sc.el && sc.el.paintFill && SHAPE_COLOR[kind]) sc.el.paintFill.style.background = SHAPE_COLOR[kind];
+  }
+
+  /* ── 문제 카드 ─────────────────────────────── */
+  function buildQuestionCard(sc, q) {
+    q.scene = sc;
+    var card = el("div", { class: "q-card" });
+    card.setAttribute("data-qa-question", q.id);
+    card.setAttribute("data-question-type", q.type);
+    q.card = card;
+    questionMap[q.id] = q;
+
+    if (q.shapes) {
+      var sr = shapeRow(q.shapes.kind, q.shapes.count);
+      q.shapeRow = sr;
+      card.appendChild(sr);
+    }
+    card.appendChild(el("div", { class: "q-prompt", text: q.prompt }));
+
+    if (q.type === "keypad") card.appendChild(buildKeypad(q));
+    else if (q.type === "choice") card.appendChild(buildChoices(q));
+
+    var reveal = el("div", { class: "q-reveal", hidden: "hidden" });
+    q.reveal = reveal;
+    card.appendChild(reveal);
+    return card;
+  }
+
+  function buildHotspotCard(sc, q) {
+    q.scene = sc;
+    var card = el("div", { class: "hot-card" });
+    card.setAttribute("data-qa-question", q.id);
+    card.setAttribute("data-question-type", q.type);
+    q.card = card;
+    questionMap[q.id] = q;
+
+    card.appendChild(el("div", { class: "q-prompt", text: q.prompt }));
+
+    var layer = el("div", { class: "hot-layer" });
+    q.input = layer;
+    q.spots.forEach(function (s, i) {
+      var btn = el("button", { class: "c-hotspot", type: "button",
+        style: "left:" + s.x + "px;top:" + s.y + "px;width:" + s.w + "px;height:" + s.h + "px" });
+      btn.setAttribute("data-qa-choice", String(i));
+      btn.setAttribute("data-qa-correct", s.correct ? "true" : "false");
+      btn.setAttribute("aria-label", "모양 찾기 선택 영역 " + (i + 1));
+      btn.addEventListener("click", function () { onHotspot(q, btn); });
+      layer.appendChild(btn);
+    });
+    card.appendChild(layer);
+
+    var reveal = el("div", { class: "q-reveal", hidden: "hidden" });
+    q.reveal = reveal;
+    card.appendChild(reveal);
+    return card;
+  }
+
+  function buildRandomCard(sc, q, i) {
+    q.scene = sc; q.rpIndex = i;
+    var card = el("div", { class: "rp-card" });
+    card.setAttribute("data-qa-question", q.id);
+    card.setAttribute("data-question-type", q.type);
+    q.card = card;
+    questionMap[q.id] = q;
+
+    if (q.head) card.appendChild(el("div", { class: "rp-head", text: q.head }));
+    if (q.sub) card.appendChild(el("div", { class: "rp-sub", text: q.sub }));
+    if (q.instr) card.appendChild(el("div", { class: "rp-sub", text: q.instr }));
+    card.appendChild(el("div", { class: "q-prompt", text: q.prompt }));
+    if (q.hint) card.appendChild(el("div", { class: "rp-hint", text: q.hint }));
+
+    if (q.type === "keypad") {
+      // 답 표시창(빈칸)과 이 문항 전용 키패드를 카드 안에 둔다. retry_available 검증기는
+      // [data-qa-key]를 문항 root 안에서 찾으므로 키패드가 카드 밖(공용)에 있으면 재시도 입력을
+      // 못 찾아 hook_missing이 된다. 활성 카드의 키패드만 보이므로 페이지 전역 '보이는 키' 선택과
+      // 충돌하지 않는다(누른 표시창이 그 카드를 활성으로 만든다).
+      var disp = el("div", { class: "rp-display", "data-slot": "display" });
+      disp.setAttribute("data-qa-blank", "0");
+      disp.setAttribute("role", "button");
+      disp.setAttribute("tabindex", "0");
+      disp.setAttribute("aria-label", "답 입력 칸");
+      disp.addEventListener("click", function () { setActiveRandom(sc, q); });
+      q.disp = disp; q.input = disp;
+      card.appendChild(disp);
+      card.appendChild(buildLocalKeypad(sc, q));
+    } else if (q.type === "choice") {
+      card.appendChild(buildChoices(q));
+    }
+
+    var reveal = el("div", { class: "q-reveal", hidden: "hidden" });
+    q.reveal = reveal;
+    card.appendChild(reveal);
+    return card;
+  }
+
+  // 문항 전용 키패드: 카드 안에 둔다. 이 문항으로만 입력을 보내고, 활성 카드에서만 보인다.
+  function buildLocalKeypad(sc, q) {
+    var wrap = el("div", { class: "c-keypadWrap rp-localpad", "data-component": "keypad" });
+    var keys = el("div", { class: "c-keypad", "data-slot": "keys" });
+    wrap.appendChild(keys);
+    try {
+      CommonKeypad.build(keys, function (key) {
+        setActiveRandom(sc, q);
+        onKey(q, key);
+      });
+    } catch (e) {}
+    var ks = keys.querySelectorAll(".c-key");
+    for (var i = 0; i < ks.length; i++) {
+      var k = ks[i];
+      if (k.classList.contains("enter")) k.setAttribute("data-qa-key", "submit");
+      else if (k.classList.contains("del")) k.setAttribute("data-qa-key", "del");
+      else k.setAttribute("data-qa-key", (k.textContent || "").trim());
+    }
+    q.localPad = wrap;
+    return wrap;
+  }
+
+  function setActiveRandom(sc, q) {
+    sc.activeRandomQ = (q && q.type === "keypad") ? q : null;
+    if (!sc.el || !sc.el.rpCards) return;
+    sc.el.rpCards.forEach(function (c) { c.classList.remove("rp-active"); });
+    if (q && q.card && q.type === "keypad") q.card.classList.add("rp-active");
+  }
+
+  // 보조 설명(힌트): 캐릭터 클릭·첫 오답에 현재 문제의 10 만들기 설명을 연다.
+  function openHint(sc, q) {
+    if (!sc.el || !sc.el.hint) return;
+    q = q || sc.activeRandomQ || (sc.questions && sc.questions[(sc.state && sc.state.rpIndex) || 0]);
+    if (q && q.help && sc.el.hintBody) sc.el.hintBody.textContent = q.help;
+    sc.el.hint.classList.remove("is-hidden");
+  }
+  function closeHint(sc) {
+    if (sc.el && sc.el.hint) sc.el.hint.classList.add("is-hidden");
+  }
+
+  function buildKeypad(q) {
+    var wrap = el("div", { class: "c-keypadWrap q-input", "data-component": "keypad" });
+    var disp = el("div", { class: "c-answerDisplay", "data-slot": "display" });
+    disp.setAttribute("data-qa-blank", "0");
+    // 입력을 시작하면 그 씬의 대사 말풍선을 접는다. 대사 위에 활동이 겹쳐 보이던 씬에서
+    // 말풍선의 진행 버튼이 키패드 키를 가려 클릭이 막히지 않게 한다(키 입력 전에 접는다).
+    disp.addEventListener("click", function () { if (q.scene) enterActivity(q.scene); });
+    var keys = el("div", { class: "c-keypad", "data-slot": "keys" });
+    wrap.appendChild(disp); wrap.appendChild(keys);
+    q.disp = disp; q.input = wrap;
+    try {
+      CommonKeypad.build(keys, function (key) { onKey(q, key); });
+    } catch (e) {}
+    var ks = keys.querySelectorAll(".c-key");
+    for (var i = 0; i < ks.length; i++) {
+      var k = ks[i];
+      if (k.classList.contains("enter")) k.setAttribute("data-qa-key", "submit");
+      else if (k.classList.contains("del")) k.setAttribute("data-qa-key", "del");
+      else k.setAttribute("data-qa-key", (k.textContent || "").trim());
+    }
+    return wrap;
+  }
+
+  function buildChoices(q) {
+    var box = el("div", { class: "q-choices q-input" });
+    q.input = box;
+    q.choices.forEach(function (c, i) {
+      var btn = el("button", { class: "c-choice", type: "button", text: c.label });
+      btn.setAttribute("data-qa-choice", String(i));
+      btn.setAttribute("data-qa-correct", c.correct ? "true" : "false");
+      btn.addEventListener("click", function () { onChoice(q, btn); });
+      box.appendChild(btn);
+    });
+    return box;
+  }
+
+  /* ── 입력 핸들러 ─────────────────────────────── */
+  function onKey(q, key) {
+    if (!q.state) return;
+    if (key === "enter") { submitKeypad(q); return; }
+    if (key === "del") q.state.buffer = q.state.buffer.slice(0, -1);
+    else if (q.state.buffer.length < 2) q.state.buffer += key;
+    q.disp.textContent = q.state.buffer;
+    try { CommonKeypad.displayTick(q.disp); } catch (e) {}
+  }
+  function submitKeypad(q) {
+    if (!q.state || q.state.solved) return;
+    var val = q.state.buffer;
+    if (val === "") return;
+    if (val === q.answer) {
+      showFeedback("correct", q.feedbackCorrect, q);
+      showOnCorrect(q);
+      onSolved(q.scene, q);
+    } else {
+      q.state.attempts++;
+      showFeedback("wrong", "", q);
+      q.state.buffer = ""; q.disp.textContent = "";
+      if (q.scene && q.scene.carousel && q.state.attempts === 1) openHint(q.scene, q);
+      if (q.maxAttempts > 0 && q.state.attempts >= q.maxAttempts) revealKeypad(q);
+    }
+  }
+  function revealKeypad(q) {
+    q.disp.textContent = q.answer;
+    q.reveal.textContent = "정답은 " + q.answer;
+    q.reveal.hidden = false;
+    q.card.setAttribute("data-qa-revealed", "true");
+    finishQuestion(q.scene, q);
+  }
+
+  function onChoice(q, btn) {
+    if (!q.state || q.state.solved) return;
+    if (btn.getAttribute("data-qa-correct") === "true") {
+      showFeedback("correct", q.feedbackCorrect, q);
+      onSolved(q.scene, q);
+    } else {
+      q.state.attempts++;
+      showFeedback("wrong", "", q);
+      if (q.scene && q.scene.carousel && q.state.attempts === 1) openHint(q.scene, q);
+      if (q.maxAttempts > 0 && q.state.attempts >= q.maxAttempts) revealChoiceOrSpot(q);
+    }
+  }
+  function onHotspot(q, btn) {
+    if (!q.state || q.state.solved) return;
+    if (btn.getAttribute("data-qa-correct") === "true") {
+      if (q.state.picked.indexOf(btn) === -1) { q.state.picked.push(btn); btn.classList.add("picked"); }
+      var need = q.need || q.card.querySelectorAll("[data-qa-choice][data-qa-correct='true']").length;
+      if (q.state.picked.length >= need) {
+        showFeedback("correct", q.feedbackCorrect, q);
+        onSolved(q.scene, q);
+      }
+    } else {
+      q.state.attempts++;
+      showFeedback("wrong", "", q);
+      if (q.maxAttempts > 0 && q.state.attempts >= q.maxAttempts) revealChoiceOrSpot(q);
+    }
+  }
+  function revealChoiceOrSpot(q) {
+    var marks = q.card.querySelectorAll("[data-qa-choice][data-qa-correct='true']");
+    for (var i = 0; i < marks.length; i++) {
+      marks[i].setAttribute("data-qa-revealed", "true");
+      marks[i].classList.add("revealed");
+    }
+    var wrongs = q.card.querySelectorAll("[data-qa-choice][data-qa-correct='false']");
+    for (var j = 0; j < wrongs.length; j++) wrongs[j].classList.add("dim");
+    q.card.setAttribute("data-qa-revealed", "true");
+    finishQuestion(q.scene, q);
+  }
+
+  function onSolved(sc, q) {
+    if (q.state.solved) return;
+    q.state.solved = true;
+    finishQuestion(sc, q);
+  }
+
+  // 문항 종료(정답 또는 정답 공개) 후 진행 처리
+  function finishQuestion(sc, q) {
+    if (q.state.counted) return;
+    q.state.counted = true;
+    sc.state.solvedCount++;
+
+    if (sc.carousel) {
+      // 방금 푼 문항이 지금까지 열린 마지막 문항이면 다음 문항도 연다(수동 '다음 문제'로도 열린다).
+      var solvedIdx = sc.questions.indexOf(q);
+      if (solvedIdx >= (sc.state.rpIndex || 0) && solvedIdx < sc.questions.length - 1) {
+        sc.state.rpIndex = solvedIdx + 1;
+        renderRp(sc);
+        setActiveRandom(sc, sc.questions[sc.state.rpIndex]);
+      }
+      if (sc.state.solvedCount >= sc.questions.length) {
+        revealAdvance(sc);
+        if (sc.el.rpNav) sc.el.rpNav.hidden = true;
+      }
+      return;
+    }
+    if (sc.questionsMode === "all") {
+      if (q.input) q.input.classList.add("is-hidden");
+      if (sc.state.solvedCount >= sc.questions.length) revealAdvance(sc);
+      return;
+    }
+    // sequential
+    q.card.classList.add("is-hidden");
+    var idx = sc.questions.indexOf(q);
+    var next = sc.questions[idx + 1];
+    if (next) {
+      next.card.classList.remove("is-hidden");
+      if (sc.paintCan && next.shapes) setPaint(sc, next.shapes.kind);
+    } else {
+      if (sc.tailBeats && sc.tailBeats.length) startTailBeats(sc);
+      else revealAdvance(sc);
+    }
+  }
+
+  function revealAdvance(sc) {
+    if (sc.el && sc.el.advance) sc.el.advance.hidden = false;
+  }
+
+  /* ── beat / 활동 전환 ─────────────────────────────── */
+  function positionBubble(sc, b) {
+    var bubble = sc.el.bubble;
+    if (!bubble) return;
+    var side = (b && b.side) || "left";
+    bubble.classList.toggle("left-speaker", side === "left");
+    bubble.classList.toggle("right-speaker", side === "right");
+    var sx = side === "right" ? (sc.bubbleSideXR || 390) : (sc.bubbleSideX || 390);
+    bubble.style.setProperty("--speech-side-x", sx + "px");
+    bubble.style.setProperty("--speech-face-y", (sc.bubbleFaceY || 492) + "px");
+  }
+
+  function renderBeat(sc) {
+    var beats = sc.activeBeats || sc.beats;
+    var b = beats[sc.state.beat];
+    var bubble = sc.el.bubble;
+    if (!b) return;
+    if (b.type === "advance") {
+      try { CommonSpeechBubble.hide(bubble); } catch (e) {}
+      revealAdvance(sc);
+      return;
+    }
+    positionBubble(sc, b);
+    // 마지막 대사에서도, storyGate 씬의 도입 대사 단계면 활동으로 넘어가는 진행 버튼을 준다.
+    var lastIdx = beats.length - 1;
+    var inLeading = (beats === sc.beats);
+    var hasNext = sc.state.beat < lastIdx || (sc.storyGate && inLeading && sc.state.beat === lastIdx);
+    try {
+      CommonSpeechBubble.show(bubble, b.text, { next: hasNext ? (sc.beatNextLabel || "다음 ▸") : null });
+    } catch (e) {}
+  }
+  function advanceBeat(sc) {
+    var beats = sc.activeBeats || sc.beats;
+    if (!beats) return;
+    var inLeading = (beats === sc.beats);
+    if (sc.state.beat < beats.length - 1) {
+      sc.state.beat++;
+      renderBeat(sc);
+    } else if (sc.storyGate && inLeading) {
+      enterActivity(sc);
+    }
+  }
+
+  function enterActivity(sc) {
+    if (sc.state.activity) return;
+    sc.state.activity = true;
+    try { CommonSpeechBubble.hide(sc.el.bubble); } catch (e) {}
+    sc.el.scene.classList.add("activity-on");
+  }
+
+  // subtraction 처럼 문제 뒤에 다시 대사가 오는 씬: 문제 완료 후 꼬리 대사 재생
+  function startTailBeats(sc) {
+    sc.activeBeats = sc.tailBeats;
+    sc.state.beat = 0;
+    renderBeat(sc);
+  }
+
+  function renderPage(sc) {
+    sc.el.pages.forEach(function (p, i) { p.classList.toggle("active", i === sc.state.page); });
+    var last = sc.state.page >= sc.pages.length - 1;
+    if (sc.el.pageNav) sc.el.pageNav.hidden = last;
+    if (last) revealAdvance(sc);
+  }
+  function advancePage(sc) {
+    if (!sc.pages) return;
+    if (sc.state.page < sc.pages.length - 1) {
+      sc.state.page++;
+      renderPage(sc);
+    }
+  }
+
+  function renderRp(sc) {
+    // rpIndex = 지금까지 연 마지막 문항. 0..rpIndex를 모두 보여 준다(누적 노출).
+    var i = sc.state.rpIndex || 0;
+    sc.el.rpCards.forEach(function (c, k) { c.classList.toggle("is-hidden", k > i); });
+    // '다음 문제'는 풀지 않아도 열 수 있다(검증기가 각 문항에 도달하는 통로다). 마지막 문항이면 감춘다.
+    if (sc.el.rpNav) sc.el.rpNav.hidden = (i >= sc.questions.length - 1);
+  }
+  function advanceRp(sc) {
+    if (sc.state.rpIndex < sc.questions.length - 1) {
+      sc.state.rpIndex++;
+      renderRp(sc);
+      setActiveRandom(sc, sc.questions[sc.state.rpIndex]);
+    }
+  }
+
+  /* ── 씬 리셋 ─────────────────────────────── */
+  function resetQuestion(q) {
+    q.state = { buffer: "", attempts: 0, solved: false, counted: false, picked: [] };
+    if (q.disp) q.disp.textContent = "";
+    if (q.reveal) { q.reveal.hidden = true; q.reveal.textContent = ""; }
+    if (q.card) q.card.removeAttribute("data-qa-revealed");
+    if (q.input) q.input.classList.remove("is-hidden");
+    var marks = q.card ? q.card.querySelectorAll("[data-qa-revealed='true'], .revealed, .picked, .dim") : [];
+    for (var i = 0; i < marks.length; i++) {
+      marks[i].removeAttribute("data-qa-revealed");
+      marks[i].classList.remove("revealed"); marks[i].classList.remove("picked"); marks[i].classList.remove("dim");
+    }
+    if (q.shapes && q.shapeRow) applyFade(q);
+  }
+  function applyFade(q) {
+    var kids = q.shapeRow.querySelectorAll(".shape");
+    var fadeFrom = q.shapes.fadeLast ? kids.length - q.shapes.fadeLast : kids.length;
+    for (var i = 0; i < kids.length; i++) kids[i].classList.toggle("faded", i >= fadeFrom);
+  }
+
+  function resetScene(sc) {
+    sc.state = { beat: 0, page: 0, solvedCount: 0, rpIndex: 0, activity: false };
+    sc.activeBeats = sc.beats;
+    sc.el.scene.classList.remove("activity-on");
+    (sc.questions || []).forEach(resetQuestion);
+    if (sc.questions) {
+      if (sc.carousel) {
+        setActiveRandom(sc, null);
+        renderRp(sc);
+        closeHint(sc);
+      } else if (sc.questionsMode === "sequential") {
+        sc.questions.forEach(function (q, i) { q.card.classList.toggle("is-hidden", i !== 0); });
+        if (sc.paintCan && sc.questions[0] && sc.questions[0].shapes) setPaint(sc, sc.questions[0].shapes.kind);
+      } else {
+        sc.questions.forEach(function (q) { q.card.classList.remove("is-hidden"); });
+      }
+    }
+    if (sc.el.advance) sc.el.advance.hidden = true;
+    // rpNav 표시 여부는 carousel일 때 renderRp가 소유한다(여기서 덮지 않는다).
+    // storyGate가 아니면서 questions가 있으면 바로 활동 상태로 둔다(별도 잠금 없음)
+    if (sc.beats && sc.el.bubble) renderBeat(sc);
+    if (sc.pages) renderPage(sc);
+    if (sc.completion) renderMural(sc);
+  }
+
+  /* ── 그리기 도구 ─────────────────────────────── */
+  // 배치(빈 곳 클릭) · 선택(도형 클릭) · 이동(드래그) · 삭제(🗑)를 지원하고,
+  // 배치 결과를 sc.drawRecords에 남겨 완료 화면이 같은 벽화를 다시 그릴 수 있게 한다.
+  function buildDrawTool(sc, scene) {
+    sc.drawRecords = [];
+    var current = { shape: "circle", color: "#3bb26b" };
+    var selected = null; // { el, rec }
+
+    var tools = el("div", { class: "draw-tools" });
+    tools.appendChild(el("h3", { text: "그리기 툴" }));
+    var shapeRowEl = el("div", { class: "tool-row" });
+    [["circle", "●"], ["triangle", "▲"], ["square", "■"]].forEach(function (s, i) {
+      var b = el("button", { class: "tool-btn" + (i === 0 ? " active" : ""), type: "button", text: s[1] });
+      b.addEventListener("click", function () {
+        current.shape = s[0];
+        shapeRowEl.querySelectorAll(".tool-btn").forEach(function (x) { x.classList.remove("active"); });
+        b.classList.add("active");
+      });
+      shapeRowEl.appendChild(b);
+    });
+    tools.appendChild(shapeRowEl);
+    var colorRow = el("div", { class: "tool-row" });
+    ["#3bb26b", "#3b82d6", "#e0574a", "#ffd23e"].forEach(function (col, i) {
+      var b = el("button", { class: "color-btn" + (i === 0 ? " active" : ""), type: "button", style: "background:" + col });
+      b.addEventListener("click", function () {
+        current.color = col;
+        colorRow.querySelectorAll(".color-btn").forEach(function (x) { x.classList.remove("active"); });
+        b.classList.add("active");
+      });
+      colorRow.appendChild(b);
+    });
+    tools.appendChild(colorRow);
+    var utilRow = el("div", { class: "tool-row" });
+    var trash = el("button", { class: "tool-btn trash", type: "button", text: "🗑", "aria-label": "선택한 모양 지우기" });
+    trash.addEventListener("click", function () { deleteSelected(); });
+    utilRow.appendChild(trash);
+    tools.appendChild(utilRow);
+    scene.appendChild(tools);
+
+    var canvas = el("div", { class: "draw-canvas" });
+
+    function select(shEl, rec) {
+      if (selected) selected.el.classList.remove("selected");
+      selected = shEl ? { el: shEl, rec: rec } : null;
+      if (shEl) shEl.classList.add("selected");
+    }
+    function deleteSelected() {
+      if (!selected) return;
+      var idx = sc.drawRecords.indexOf(selected.rec);
+      if (idx >= 0) sc.drawRecords.splice(idx, 1);
+      if (selected.el.parentNode) selected.el.parentNode.removeChild(selected.el);
+      selected = null;
+    }
+    function paintShape(sh, shape, color) {
+      if (shape === "triangle") sh.style.borderBottomColor = color;
+      else sh.style.background = color;
+    }
+    function addShape(shape, color, x, y) {
+      var rec = { shape: shape, color: color, x: x, y: y };
+      sc.drawRecords.push(rec);
+      var sh = shapeEl(shape, false);
+      paintShape(sh, shape, color);
+      sh.style.left = x + "px"; sh.style.top = y + "px";
+      // 도형 위 mousedown: 선택 + 드래그 이동. 클릭 배치와 겹치지 않게 전파를 막는다.
+      sh.addEventListener("mousedown", function (ev) {
+        ev.stopPropagation();
+        select(sh, rec);
+        var rect = canvas.getBoundingClientRect();
+        var scale = rect.width / 1120;
+        var startX = ev.clientX, startY = ev.clientY, origX = rec.x, origY = rec.y, moved = false;
+        function onMove(mv) {
+          moved = true;
+          rec.x = origX + (mv.clientX - startX) / scale;
+          rec.y = origY + (mv.clientY - startY) / scale;
+          sh.style.left = rec.x + "px"; sh.style.top = rec.y + "px";
+        }
+        function onUp() {
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+          void moved;
+        }
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+      canvas.appendChild(sh);
+      return sh;
+    }
+    canvas.addEventListener("click", function (ev) {
+      if (ev.target !== canvas) return; // 도형을 누른 것은 선택으로 처리한다
+      select(null);
+      var rect = canvas.getBoundingClientRect();
+      var scale = rect.width / 1120;
+      addShape(current.shape, current.color, (ev.clientX - rect.left) / scale, (ev.clientY - rect.top) / scale);
+    });
+    scene.appendChild(canvas);
+
+    sc.getDrawing = function () { return sc.drawRecords.slice(); };
+  }
+
+  // 완료 화면에 자유 그리기 결과를 다시 렌더한다.
+  function renderMural(sc) {
+    var layer = sc.el && sc.el.mural;
+    if (!layer) return;
+    layer.innerHTML = "";
+    FINAL_DRAWING.forEach(function (rec) {
+      var sh = shapeEl(rec.shape, false);
+      if (rec.shape === "triangle") sh.style.borderBottomColor = rec.color;
+      else sh.style.background = rec.color;
+      sh.style.left = rec.x + "px"; sh.style.top = rec.y + "px";
+      layer.appendChild(sh);
+    });
+  }
+
+  function downloadCertificate() {
+    try {
+      var c = document.createElement("canvas");
+      c.width = 800; c.height = 500;
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff6dd"; ctx.fillRect(0, 0, 800, 500);
+      ctx.fillStyle = "#16406a"; ctx.font = "bold 48px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("3차시 수리 완료!", 400, 260);
+      var url = c.toDataURL("image/png");
+      var a = document.createElement("a");
+      a.href = url; a.download = "certificate.png";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    } catch (e) {}
+  }
+
+  /* ── 조립 ─────────────────────────────── */
+  CONFIG.forEach(buildScene);
+
+  var stage = document.getElementById("stage");
+
+  function doScale() { try { CommonSceneController.scaleStage(stage); } catch (e) {} }
+  doScale();
+  window.addEventListener("resize", doScale);
+  window.addEventListener("orientationchange", doScale);
+
+  var controller = CommonSceneController.createSceneController(stage);
+
+  // 진행률은 화면 순서에 따라 갱신한다. 고정 8%는 실제 진행과 어긋난다.
+  var topbarEl = document.querySelector("[data-component='topbar']");
+  function updateProgress(sc) {
+    if (!topbarEl || !sc || !scenesOrder.length) return;
+    var pct = Math.round((sc.order / scenesOrder.length) * 100);
+    try { CommonTopbar.setProgress(topbarEl, pct); } catch (e) {}
+  }
+
+  window.addEventListener("common:scenechange", function (ev) {
+    var id = ev.detail && ev.detail.sceneId;
+    var sc = sceneMap[id];
+    if (sc) { resetScene(sc); updateProgress(sc); }
+  });
+
+  // QA: 문항 지목 통로
+  window.__contentHarnessShowQuestion = function (qid) {
+    var q = questionMap[qid];
+    if (!q) return;
+    var sc = q.scene;
+    controller.showScene(sc.id);
+    // storyGate 씬이면 활동 상태로 전환해 문제를 노출한다(보여 주기만; 정답 처리는 하지 않는다).
+    if (sc.storyGate && !sc.state.activity) enterActivity(sc);
+    if (sc.carousel) {
+      var qi = q.rpIndex || 0;
+      if ((sc.state.rpIndex || 0) < qi) sc.state.rpIndex = qi;
+      renderRp(sc);
+      setActiveRandom(sc, q);
+      return;
+    }
+    sc.questions.forEach(function (other) {
+      other.card.classList.toggle("is-hidden", other.id !== qid);
+      if (other.id === qid && other.input) other.input.classList.remove("is-hidden");
+    });
+    if (sc.paintCan && q.shapes) setPaint(sc, q.shapes.kind);
+  };
+
+  // 위임 핸들러: beat / page / advance
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    if (!t || !t.closest) return;
+    var bn = t.closest("[data-qa-beat-next]");
+    if (bn) {
+      var s1 = bn.closest(".scene");
+      if (s1 && sceneMap[s1.getAttribute("data-qa-scene")]) advanceBeat(sceneMap[s1.getAttribute("data-qa-scene")]);
+      return;
+    }
+    var pn = t.closest("[data-qa-page-next]");
+    if (pn) {
+      var s2 = pn.closest(".scene");
+      var sc2 = s2 && sceneMap[s2.getAttribute("data-qa-scene")];
+      if (sc2) { if (sc2.carousel) advanceRp(sc2); else advancePage(sc2); }
+      return;
+    }
+    var adv = t.closest("[data-qa-advance]");
+    if (adv) {
+      var to = adv.getAttribute("data-qa-advance");
+      if (to) controller.showScene(to);
+    }
+  });
+
+  // 초기 활성 씬 리셋
+  var first = controller.currentScene();
+  if (first && sceneMap[first.id]) { resetScene(sceneMap[first.id]); updateProgress(sceneMap[first.id]); }
+
+  // topbar
+  try {
+    var topbar = document.querySelector("[data-component='topbar']");
+    CommonTopbar.init(topbar, {
+      title: "알록달록, 학교 담장 색칠하기",
+      step: "수리력 +",
+      progress: 8,
+      soundOn: true,
+      course: {
+        gradeLabel: "1학년 차시 목록",
+        current: "08",
+        lessons: [
+          { no: 6, id: "06", title: "와글와글, 운동회를 도와요!" },
+          { no: 8, id: "08", title: "알록달록, 학교 담장 색칠하기" },
+          { no: 9, title: "준비 중" }
+        ]
+      },
+      onHome: function () { controller.showScene("intro"); },
+      onNavigate: function () { /* 형제 차시 이동은 이 단일 파일 범위 밖 */ },
+      followScenes: true
+    });
+  } catch (e) {}
+
+  // debug jumper
+  try {
+    var panel = document.querySelector("[data-component='debug-jumper']");
+    if (panel) CommonDebugJumper.init(panel, controller, {});
+  } catch (e) {}
+
+})();
+</script>
+</body>
+</html>

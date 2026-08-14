@@ -1,0 +1,2891 @@
+{
+  "page": {
+    "goal": "초등학교 1학년 학습자가 생활 속 원·삼각형·사각형을 찾고 개수를 센 뒤, 10 만들기와 10에서 빼기를 발판으로 세 수의 덧셈과 뺄셈을 익혀 학교 담장 벽화를 완성한다.",
+    "audience": "도형 찾기와 두 자리 수 범위의 덧셈·뺄셈을 배우는 초등학교 1학년 학습자",
+    "tone": "맑은 학교 풍경 속에서 교사·작업자·어린이들이 함께 해결하는 밝고 친근한 분위기이며, 한 화면에 한 가지 판단만 요구하는 차분한 진행"
+  },
+  "art_direction": {
+    "style_name": "맑은 한낮의 학교 벽화 교과서 일러스트",
+    "palette": "실제 참조에서 관찰한 밝은 하늘색, 잎사귀 초록, 따뜻한 크림, 밝은 목재·모래색을 넓은 면에 사용하고 청록·파랑·산호·노랑을 활동 포인트로 쓴다. 배경은 중간 이상의 밝기와 선명하지만 자극적이지 않은 채도, 캐릭터는 배경보다 또렷한 국소 대비, 소품은 짙은 남색 테두리와 밝은 크림 면으로 계층을 나눈다. 오답 도장의 문구·심볼만 경고 빨강을 예외로 허용한다.",
+    "line_style": "배경은 외곽선 없이 면의 색 경계와 얕은 명암으로 형태를 만들고, 캐릭터는 짙은 갈색 계열의 균일한 중간 두께 외곽선, 소품·장면 속 안내 표면은 캐릭터보다 굵은 짙은 남색 외곽선을 사용한다. 형상은 저학년이 즉시 구별하도록 모서리와 실루엣을 단순하고 깨끗하게 유지한다.",
+    "lighting": "실제 참조처럼 화면 좌상단에서 들어오는 맑은 한낮 광원을 고정한다. 배경은 밝은 면과 한 단계 어두운 면을 중심으로 공간을 나누고, 캐릭터와 소품은 2~3단계 플랫 셰이딩과 한 줄의 광택 하이라이트를 사용한다. 그림자는 대상 아래 오른쪽에 바탕색보다 어두운 색으로 부드럽게 한 겹만 둔다.",
+    "character_rules": "큰 타원 눈의 흰 하이라이트 1~2점, 옅은 볼 홍조, 단순한 입 선을 공통 언어로 사용한다. 감정은 눈썹 각도와 입꼬리, 팔의 방향으로 읽히게 하며 당황·칭찬도 과장된 데포르메 없이 부드럽게 표현한다. 손가락과 손동작은 설명 대상이 분명히 보이는 수준으로 단순화하고, 성인과 어린이가 함께 있을 때 관계와 시선 방향이 즉시 읽히게 배치한다.",
+    "component_rules": "반복 페인트통은 뚜껑·손잡이·원통 몸체의 형태와 비율, 정면에 가까운 3/4 시점, 금속성 하이라이트 위치를 고정하며 내부 색과 색상 표시는 asset에 굽지 않고 HTML/CSS 오버레이로 바꾼다. 원·정삼각형·정사각형의 색, 개수, 흐려짐 상태는 모두 HTML/CSS로 생성·변경한다. 장면 속 문제 표면은 굵은 남색 테두리, 얇은 두께, 크림색 빈 면과 작은 고정부를 유지하고 문제·수식·보기는 코드로 얹는다. 정답·오답 도장은 서로 별개 asset으로 만들며 몸체는 세계관 팔레트, 판정 신호는 중앙 문구·심볼에만 사용한다.",
+    "background_rules": "16:9 불투명 raster를 기준으로 학교 건물·나무·담장·보도는 가장자리에 배치하고, 중앙 활동 면은 넓게 비운다. 담장 근경은 좌우가 안쪽으로 접히는 약한 원근과 낮은 재질 밀도를 사용하고, 원경은 구름과 나뭇잎을 큰 덩어리로 묶어 디테일을 줄인다. 주요 캐릭터, 반복 페인트통, 문제 문구, 도형 정답 상태는 배경에 포함하지 않는다.",
+    "continuity_rules": "모든 장면의 하늘 밝기, 좌상단 광원, 크림색 담장 재질, 보도 높이와 학교의 공간 방향을 고정한다. 배경·캐릭터·소품의 외곽선 계층을 모든 batch에서 유지하고, 같은 캐릭터는 characters의 identity와 reference_asset_id를 기준으로 일치시킨다. 활동 장면은 동일한 담장 클로즈업을 재사용하고 도형·수식·페인트 색만 코드로 바꾸며, 도입과 완료는 같은 학교 입구 방향을 사용해 시작과 해결이 연결되게 한다.",
+    "forbidden_styles": [
+      "사진실사",
+      "3D 렌더",
+      "배경까지 동일하게 두꺼운 외곽선을 두른 화풍",
+      "거친 종이결·붓자국·노이즈 텍스처",
+      "고대비 역광·석양·드라마틱 조명",
+      "과장된 만화 표정과 극단적 데포르메",
+      "SVG 패널·flat icon illustration·UI mockup kit처럼 보이는 소품",
+      "참조 캐릭터의 얼굴·헤어·의상을 복제하는 표현",
+      "참조 이미지의 교실 책상 배열이나 학교 담장 구도를 그대로 복제하는 표현",
+      "batch마다 다른 선 굵기·채도·명암 체계"
+    ]
+  },
+  "characters": [
+    {
+      "id": "teacher",
+      "name": "여 교사",
+      "role": "생활 속 모양 찾기와 활동 전환을 안내하고 학습자의 성공을 격려하는 조력자",
+      "identity": {
+        "face": "부드러운 역삼각형 얼굴, 따뜻한 베이지 피부, 짙은 자주색의 큰 타원 눈, 가는 아치형 눈썹, 작은 둥근 코, 왼쪽 눈 아래 작은 점",
+        "hair": "짙은 흑갈색의 긴 머리를 낮은 하나 묶음으로 정리하고 이마 오른쪽에 짧은 옆머리 두 가닥을 둔다.",
+        "outfit": "산호색 둥근 카라 카디건, 아이보리 블라우스, 남색 종아리 길이 주름치마, 짙은 갈색 로퍼, 얇은 청록색 목걸이",
+        "palette": "산호색, 아이보리, 남색, 짙은 갈색, 소량의 청록",
+        "proportions": "성인 여성, 약 7등신의 길고 안정적인 체형, 어린이보다 머리 하나 이상 크게 보이는 키",
+        "distinctive_features": "왼쪽 눈 아래 작은 점과 청록색 물방울형 목걸이"
+      },
+      "reference_asset_id": "teacher-idle"
+    },
+    {
+      "id": "worker",
+      "name": "공사 작업자",
+      "role": "담장 사고를 설명하고 페인트와 색칠·지우기 상황을 제시하는 성인 안내자",
+      "identity": {
+        "face": "각이 완만한 사각형 얼굴, 햇볕에 그을린 황갈색 피부, 짙은 갈색 타원 눈, 굵고 수평에 가까운 눈썹, 둥근 코끝",
+        "hair": "짧은 검은 곱슬머리로 옆머리는 단정하게 정리한다.",
+        "outfit": "남색 안전모, 아이보리 긴팔 작업 셔츠, 산호색 안전 조끼, 올리브색 작업 바지, 짙은 남색 작업화",
+        "palette": "남색, 아이보리, 산호색, 올리브색, 짙은 갈색",
+        "proportions": "성인 남성, 약 7.5등신의 넓은 어깨와 단순화된 직선형 체형",
+        "distinctive_features": "오른쪽 눈썹 끝의 짧은 흉터와 안전 조끼 왼쪽 가슴의 원형 학교 배지"
+      },
+      "reference_asset_id": "worker-explaining"
+    },
+    {
+      "id": "boy",
+      "name": "남자 어린이",
+      "role": "도형을 찾고 수 계산과 담장 색칠을 함께 수행하는 학습자 대리인",
+      "identity": {
+        "face": "둥근 얼굴, 밝은 복숭아색 피부, 청남색의 크고 둥근 눈, 짧은 곡선 눈썹, 작은 들창코",
+        "hair": "푸른 기가 도는 검은색 짧은 머리, 왼쪽으로 넘긴 사선 앞머리와 정수리의 짧은 삐침 한 가닥",
+        "outfit": "아이보리 맨투맨, 가슴의 청록색 삼각형 천 배지, 남색 반바지, 흰 양말, 산호색 벨크로 운동화",
+        "palette": "아이보리, 청록, 남색, 산호색, 흰색",
+        "proportions": "초등학교 1학년 남아, 약 4등신의 큰 머리와 짧은 팔다리",
+        "distinctive_features": "가슴의 청록색 삼각형 배지와 정수리의 한 가닥 삐침"
+      },
+      "reference_asset_id": "boy-idle"
+    },
+    {
+      "id": "girl",
+      "name": "여자 어린이",
+      "role": "남자 어린이와 함께 도움을 약속하고 도형·계산·자유 그리기에 참여하는 학습자 대리인",
+      "identity": {
+        "face": "둥근 얼굴, 따뜻한 베이지 피부, 짙은 갈색의 크고 둥근 눈, 부드러운 곡선 눈썹, 작은 둥근 코",
+        "hair": "밤색 머리를 양쪽 낮은 땋은 머리로 묶고 짧고 반듯한 앞머리를 둔다.",
+        "outfit": "연보라색 반팔 티셔츠, 가슴의 노란 원형 천 배지, 청록색 치마형 반바지, 흰 레깅스, 노란 벨크로 운동화",
+        "palette": "연보라, 노랑, 청록, 흰색, 밤색",
+        "proportions": "초등학교 1학년 여아, 약 4.5등신의 큰 머리와 둥근 실루엣",
+        "distinctive_features": "노란 원형 배지와 양쪽 낮은 땋은 머리 끝의 청록색 고무줄"
+      },
+      "reference_asset_id": "girl-idle"
+    }
+  ],
+  "sections": [
+    {
+      "id": "intro",
+      "title": "도입",
+      "purpose": "무너진 학교 담장과 벽화를 다시 그려야 하는 문제를 제시하고 학습자가 도움을 약속하게 한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "공사중 학교 담장이 무너지고 벽화를 새로 그려야 할 상황 제시",
+          "rendered_text": [],
+          "notes": "무너진 담장 일부가 보이는 학교 입구 전경에서 시작해 인물 대화가 시작되면 담장 쪽으로 천천히 가까워진다.",
+          "refs": [
+            "bg-school-gate"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "수리가 필요해요 / 와글와글, 운동회를 도와요! / 알록달록, 학교 담장 색칠하기",
+          "rendered_text": [
+            "수리가 필요해요",
+            "와글와글, 운동회를 도와요!",
+            "알록달록, 학교 담장 색칠하기"
+          ],
+          "notes": "상단 목록과 현재 차시 제목의 시각 위계를 분리한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "수리력 +",
+          "rendered_text": [
+            "수리력 +"
+          ],
+          "notes": "상단 단계 라벨로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "화면 하단 중앙에 [모양과 덧셈의 힘으로 담장 색칠하기!] 버튼 배치. 버튼 활성화 시 반짝이는 글로우(Glow) 이펙트 적용, 터치/클릭 시 활동2 화면으로 부드럽게 트랜지션.",
+          "rendered_text": [
+            "[모양과 덧셈의 힘으로 담장 색칠하기!]"
+          ],
+          "notes": "목표 안내 문구로 먼저 읽히게 하고 시작 CTA보다 낮은 위계로 둔다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "알록달록, 학교 담장 색칠하기",
+          "rendered_text": [
+            "알록달록, 학교 담장 색칠하기"
+          ],
+          "notes": "담장과 겹치지 않는 중앙 상단에 크게 등장한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "시작하기",
+          "rendered_text": [
+            "시작하기"
+          ],
+          "notes": "누르면 타이틀을 정리하고 문제 상황 대사를 시작한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "등장인물 오디오",
+          "rendered_text": [],
+          "notes": "공사 작업자가 사과하는 자세로 화면 왼쪽에 등장한다. 오디오는 구현 범위에서 제외한다.",
+          "refs": [
+            "worker-apologizing"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "공사 중에 실수로 담장을 무너뜨렸어요.<br>죄송합니다!",
+          "rendered_text": [
+            "공사 중에 실수로 담장을 무너뜨렸어요.",
+            "죄송합니다!"
+          ],
+          "notes": "작업자의 미안한 표정과 함께 짧은 두 줄 말풍선으로 표시한다.",
+          "refs": [
+            "worker-apologizing"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "① 휴, 담장은 다 고쳤어요.<br>② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!",
+          "rendered_text": [
+            "① 휴, 담장은 다 고쳤어요.",
+            "② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!"
+          ],
+          "notes": "①을 보여 준 뒤 같은 말풍선을 지우고 ②로 교체한다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "저희가 도와드릴게요!",
+          "rendered_text": [
+            "저희가 도와드릴게요!"
+          ],
+          "notes": "두 어린이가 화면 오른쪽에서 안쪽을 보며 손을 들어 대답한다.",
+          "refs": [
+            "boy-helping",
+            "girl-helping"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "모양의 힘으로 색칠하기",
+          "rendered_text": [
+            "모양의 힘으로 색칠하기"
+          ],
+          "notes": "마지막 대사가 끝난 뒤 하단 중앙에 활성화한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "학교 입구 배경→타이틀과 목표 안내→시작 CTA 순으로 등장한다.",
+        "시작 조작 후 작업자 사과→작업자 설명→어린이 응답 순으로 말풍선을 교체한다.",
+        "마지막 CTA를 누르면 담장 클로즈업 화면으로 부드럽게 확대 전환한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "intro-story",
+        "intro-advance"
+      ],
+      "asset_ids": [
+        "bg-school-gate",
+        "worker-apologizing",
+        "worker-explaining",
+        "boy-helping",
+        "girl-helping",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "cta-activity-mural-worktag",
+        "overlay-damaged-school-wall"
+      ],
+      "advance": {
+        "interaction_id": "intro-advance",
+        "to_section_id": "shape-find"
+      }
+    },
+    {
+      "id": "shape-find",
+      "title": "수리가 필요해요 1 — 생활 속 모양 찾기",
+      "purpose": "학교 장면에서 원·삼각형·사각형과 닮은 물건을 직접 찾아 모양 분류의 기초를 확인한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "수리가 필요해요 1",
+          "rendered_text": [
+            "수리가 필요해요 1"
+          ],
+          "notes": "상단 단계 라벨을 변경한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "background",
+          "content": "모양을 생활 속에서 찾음.",
+          "rendered_text": [],
+          "notes": "담장 위에 학교 실내 관찰 창을 물리적인 게시판처럼 배치하되 클릭 대상은 HTML hotspot으로 올린다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "벽화를 어떻게 그려야 되지?",
+          "rendered_text": [
+            "벽화를 어떻게 그려야 되지?"
+          ],
+          "notes": "어린이가 담장을 바라보며 혼잣말하듯 말한다.",
+          "refs": [
+            "boy-idle"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "여러 가지 모양으로 그리면 좋겠어요.",
+          "rendered_text": [
+            "여러 가지 모양으로 그리면 좋겠어요."
+          ],
+          "notes": "교사가 화면 왼쪽에서 등장해 담장을 가리킨다.",
+          "refs": [
+            "teacher-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "저와 학교에서 모양을 찾아 보아요.",
+          "rendered_text": [
+            "저와 학교에서 모양을 찾아 보아요."
+          ],
+          "notes": "교사의 시선을 관찰 창으로 향하게 한다.",
+          "refs": [
+            "teacher-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "네!",
+          "rendered_text": [
+            "네!"
+          ],
+          "notes": "두 어린이가 교사를 향해 대답한다.",
+          "refs": [
+            "boy-helping",
+            "girl-helping"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "입력창: 클릭 방식(정답 2개). 알맞지 않은 곳을 누르면 오답 효과음. 3번 오답인 경우, 숫자가 정답인 모양이 뜸.",
+          "rendered_text": [],
+          "notes": "첫 관찰 장면과 두 번째 관찰 장면을 순차로 제공하며, 선택된 두 hotspot을 시각적으로 유지한다.",
+          "refs": [
+            "q-find-shape",
+            "q-find-triangle"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정답 효과: 효과음: 딩동 / 내레이션: “정답입니다.” / 표기: O 표기",
+          "rendered_text": [
+            "정답입니다."
+          ],
+          "notes": "정답 도장을 짧게 찍고 다음 관찰 장면을 연다. 효과음은 제외한다.",
+          "refs": [
+            "stamp-correct",
+            "q-find-shape"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-find-shape"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-find-shape",
+          "prompt": "모양 2개를 찾아 봅시다.",
+          "input_type": "hotspot",
+          "choices": [],
+          "answer": "2",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-find-triangle",
+          "prompt": "▲모양 2개를 찾아 봅시다.",
+          "input_type": "hotspot",
+          "choices": [],
+          "answer": "2",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        }
+      ],
+      "staging_notes": [
+        "대사 전개가 끝난 뒤 관찰 창과 첫 문제를 보여 준다.",
+        "첫 모양 찾기를 완료하면 정답 도장 후 두 번째 모양 찾기로 장면 내부를 전환한다.",
+        "두 문항을 모두 마치면 다음 CTA를 활성화한다."
+      ],
+      "interaction_ids": [
+        "shape-find-hotspots",
+        "shape-find-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-explaining",
+        "boy-idle",
+        "boy-helping",
+        "girl-helping",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "cta-activity-mural-worktag",
+        "overlay-shape-find-school-objects"
+      ],
+      "advance": {
+        "interaction_id": "shape-find-advance",
+        "to_section_id": "shape-count"
+      }
+    },
+    {
+      "id": "shape-count",
+      "title": "수리가 필요해요 1 — 모양 세기",
+      "purpose": "페인트 색마다 대응하는 모양을 확인하고 원·삼각형·사각형의 개수를 세어 숫자로 입력한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "도입",
+          "rendered_text": [],
+          "notes": "같은 담장 활동 배경과 관찰판을 유지해 새 공간 학습 부담을 줄인다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "잘 찾았어요!",
+          "rendered_text": [
+            "잘 찾았어요!"
+          ],
+          "notes": "교사가 칭찬 동작으로 짧게 말한다.",
+          "refs": [
+            "teacher-idle"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "페인트 색깔마다 모양이 달라요",
+          "rendered_text": [
+            "페인트 색깔마다 모양이 달라요"
+          ],
+          "notes": "교사가 세 페인트통이 놓일 자리를 차례로 가리킨다.",
+          "refs": [
+            "teacher-explaining",
+            "paint-can-body"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "● ■ ▲ 모양",
+          "rendered_text": [
+            "● ■ ▲ 모양"
+          ],
+          "notes": "초록 원, 파랑 사각형, 빨강 삼각형의 대응 범례를 상단에 고정한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양, 색깔 순서로 등장",
+          "rendered_text": [],
+          "notes": "색 표식이 먼저 나타난 뒤 해당 도형이 나타나도록 한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "페인트와 모양이 초록, 파랑, 빨강 순으로 등장<br>예)초록 페인트-> 원 모양 3개 등장 순",
+          "rendered_text": [],
+          "notes": "페인트통 몸체는 재사용하고 초록·파랑·빨강 색상과 도형 개수는 코드로 바꾼다.",
+          "refs": [
+            "paint-can-body"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "키패드 입력(정답, 오답 효과)",
+          "rendered_text": [],
+          "notes": "원→삼각형→사각형 순서로 한 문항씩 보여 주고 이전 문항의 도형은 정리한다.",
+          "refs": [
+            "q-count-circle",
+            "q-count-triangle",
+            "q-count-square"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "원 -> 사각형 -> 삼각형 순으로 모양 변경",
+          "rendered_text": [],
+          "notes": "스토리보드의 모양 변경 효과를 유지하되 문제 대사의 원문 순서와 대응하도록 현재 도형을 명확히 강조한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "모양은 몇 개 인가요?  (     )",
+          "rendered_text": [
+            "모양은 몇 개 인가요?"
+          ],
+          "notes": "현재 도형 기호를 문장 앞에 코드로 붙이고 빈칸은 실제 입력 표시창으로 제공한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-count-circle",
+          "prompt": "●모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "3",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-count-triangle",
+          "prompt": "▲모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "2",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-count-square",
+          "prompt": "■모양은 몇 개 인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "4",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "교사 칭찬→색과 모양 대응 설명→세기 문항 순으로 진행한다.",
+        "각 문항은 현재 도형과 같은 색의 페인트통만 강조하고 키패드는 같은 위치를 유지한다.",
+        "세 문항을 완료하면 모양들이 한 화면에 다시 모여 다음 장면으로 이어진다."
+      ],
+      "interaction_ids": [
+        "shape-count-keypad",
+        "shape-count-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-idle",
+        "teacher-explaining",
+        "paint-can-body",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "shape-count-advance",
+        "to_section_id": "shape-transition"
+      }
+    },
+    {
+      "id": "shape-transition",
+      "title": "다음 활동 연결",
+      "purpose": "모양 찾기와 세기에서 세 수의 덧셈·뺄셈을 이용한 담장 색칠로 학습 초점을 전환한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "다음 활동 연결을 위한 스토리 장면",
+          "rendered_text": [],
+          "notes": "세 종류 도형이 담장 위에 정돈된 상태를 보여 준다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "① 잘했어요.<br>이제 벽화를 색칠해봐요!<br>② 페인트 소개를 부탁해요!",
+          "rendered_text": [
+            "① 잘했어요.",
+            "이제 벽화를 색칠해봐요!",
+            "② 페인트 소개를 부탁해요!"
+          ],
+          "notes": "① 문장을 보여 준 뒤 말풍선을 지우고 ② 문장으로 교체한다.",
+          "refs": [
+            "teacher-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "모양으로 세 수의 덧셈과 뺄셈하기",
+          "rendered_text": [
+            "모양으로 세 수의 덧셈과 뺄셈하기"
+          ],
+          "notes": "교사의 두 번째 대사가 끝나면 하단 중앙에 활성화한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "완성된 모양 배열 위로 교사 대사를 순차 전개한다.",
+        "CTA를 누르면 페인트통을 중심으로 화면이 확대되며 다음 단계로 넘어간다."
+      ],
+      "interaction_ids": [
+        "shape-transition-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-explaining",
+        "surface-speech-bubble-school",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "shape-transition-advance",
+        "to_section_id": "ten-intro"
+      }
+    },
+    {
+      "id": "ten-intro",
+      "title": "수리가 필요해요 2 — 10 만들기 도입",
+      "purpose": "페인트 한 통으로 모양 10개를 그릴 수 있다는 상황을 통해 10을 기준으로 계산할 준비를 한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "수리가 필요해요 2",
+          "rendered_text": [
+            "수리가 필요해요 2"
+          ],
+          "notes": "상단 단계 라벨을 변경한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "세 수의 덧셈과 뺄셈",
+          "rendered_text": [
+            "세 수의 덧셈과 뺄셈"
+          ],
+          "notes": "문제판 상단의 고정 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "background",
+          "content": "페인트 1통으로 모양 10개를 쓸 수 있음.(10이 되는 덧셈과 10에서 빼기를 위한 도입)",
+          "rendered_text": [],
+          "notes": "담장 활동판 중앙을 비우고 페인트통과 도형이 놓일 공간을 확보한다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "①페인트 소개는 저희가 할게요.<br>②이것을 페인트라고 해요.<br>초록색부터 알려드릴게요.",
+          "rendered_text": [
+            "①페인트 소개는 저희가 할게요.",
+            "②이것을 페인트라고 해요.",
+            "초록색부터 알려드릴게요."
+          ],
+          "notes": "①을 보여 준 뒤 삭제하고 ②와 다음 문장을 이어서 보여 준다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "페인트통 등장",
+          "rendered_text": [],
+          "notes": "재사용 페인트통 몸체가 중앙 오른쪽에 놓이고 초록색 내용물 오버레이가 채워진다.",
+          "refs": [
+            "paint-can-body"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "1통에 모양을 10개씩 그릴 수 있어요!",
+          "rendered_text": [
+            "1통에 모양을 10개씩 그릴 수 있어요!"
+          ],
+          "notes": "작업자가 페인트통과 열 개의 원을 차례로 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 10개 등장",
+          "rendered_text": [],
+          "notes": "초록 원 열 개를 5개씩 두 줄로 나타낸다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "입력창: 키패드 입력",
+          "rendered_text": [],
+          "notes": "열 개의 원을 유지한 채 한 자리·두 자리 공용 키패드로 답을 입력한다.",
+          "refs": [
+            "q-total-ten"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "(    )",
+          "rendered_text": [],
+          "notes": "빈칸은 실제 입력 표시창으로 제공한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-total-ten",
+          "prompt": "모양은 모두 몇 개인가요?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "작업자 설명→페인트통→원 10개→문제와 키패드 순으로 등장한다.",
+        "정답 후 열 개의 원 배열을 유지해 다음 덧셈 장면의 기준량으로 사용한다."
+      ],
+      "interaction_ids": [
+        "ten-keypad",
+        "ten-intro-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "worker-explaining",
+        "paint-can-body",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "ten-intro-advance",
+        "to_section_id": "addition"
+      }
+    },
+    {
+      "id": "addition",
+      "title": "세 수의 덧셈",
+      "purpose": "7개에 3개를 더해 10을 먼저 만든 뒤 2개를 더하는 과정을 수식과 도형 변화로 연결한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "세 수의 덧셈과 뺄셈",
+          "rendered_text": [
+            "세 수의 덧셈과 뺄셈"
+          ],
+          "notes": "이전 화면과 같은 위치에 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 3개 추가 등장",
+          "rendered_text": [],
+          "notes": "기존 7개와 구분되는 짧은 낙하 모션으로 3개를 더해 10개를 완성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "7개에서 3개를 더 색칠하면 몇 개일까요?",
+          "rendered_text": [
+            "7개에서 3개를 더 색칠하면 몇 개일까요?"
+          ],
+          "notes": "작업자가 비어 있는 세 자리를 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "입력창: 키패드 입력 방식",
+          "rendered_text": [],
+          "notes": "첫 계산을 맞혀야 10개 묶음과 다음 페인트통이 강조된다.",
+          "refs": [
+            "q-add-to-ten",
+            "q-add-two"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "페인트 1통을 다 썼어요",
+          "rendered_text": [
+            "페인트 1통을 다 썼어요"
+          ],
+          "notes": "첫 문항 정답 후 어린이 쪽 말풍선으로 표시한다.",
+          "refs": [
+            "boy-idle",
+            "girl-idle"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-add-to-ten"
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "페인트통 등장",
+          "rendered_text": [],
+          "notes": "두 번째 페인트통 몸체가 첫 통 옆에 놓인다.",
+          "refs": [
+            "paint-can-body"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "1통을 더 준비했어요.",
+          "rendered_text": [
+            "1통을 더 준비했어요."
+          ],
+          "notes": "작업자가 새 페인트통을 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-add-to-ten"
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "2개를 더 색칠해주세요.",
+          "rendered_text": [
+            "2개를 더 색칠해주세요."
+          ],
+          "notes": "작업자가 담장의 빈 두 자리를 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "네",
+          "rendered_text": [
+            "네"
+          ],
+          "notes": "두 어린이가 작업자를 보며 대답한다.",
+          "refs": [
+            "boy-helping",
+            "girl-helping"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 2개 추가",
+          "rendered_text": [],
+          "notes": "10개 묶음 오른쪽에 두 개를 순서대로 추가한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-add-to-ten",
+          "prompt": "7 + 3 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-add-two",
+          "prompt": "10 + 2 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "12",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "7개→3개 추가→첫 계산→10개 묶음 확인→새 페인트통→2개 추가→두 번째 계산 순으로 진행한다.",
+        "두 문제 사이에 화면을 바꾸지 않고 도형 수와 말풍선만 갱신해 계산의 연속성을 보존한다."
+      ],
+      "interaction_ids": [
+        "addition-keypad",
+        "addition-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "worker-explaining",
+        "boy-idle",
+        "boy-helping",
+        "girl-idle",
+        "girl-helping",
+        "paint-can-body",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "addition-advance",
+        "to_section_id": "subtraction-intro"
+      }
+    },
+    {
+      "id": "subtraction-intro",
+      "title": "세 수의 덧셈에서 뺄셈으로",
+      "purpose": "완성한 12개를 세 수의 덧셈식으로 확인하고 잘못 그린 2개를 지워 10으로 돌아가는 과정을 익힌다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "세 수의 덧셈과 뺄셈",
+          "rendered_text": [
+            "세 수의 덧셈과 뺄셈"
+          ],
+          "notes": "문제판 상단에 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 3개 -> 모양 2개 순으로 등장",
+          "rendered_text": [],
+          "notes": "7개에 더한 3개와 2개를 서로 다른 짧은 화살표로 다시 강조한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "입력창: 키패드 입력 방식",
+          "rendered_text": [],
+          "notes": "세 수의 덧셈식 확인 후 같은 12개 배열을 뺄셈 장면으로 넘긴다.",
+          "refs": [
+            "q-add-three",
+            "q-subtract-two"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정답 효과: 효과음: 딩동 / 내레이션: “정답입니다.” / 표기: O 표기",
+          "rendered_text": [
+            "정답입니다."
+          ],
+          "notes": "첫 계산 정답 시 도장을 찍고 대화 장면으로 전환한다. 효과음은 제외한다.",
+          "refs": [
+            "stamp-correct",
+            "q-add-three"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-add-three"
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "고마워요!<br>다른 담장으로 가요.",
+          "rendered_text": [
+            "고마워요!",
+            "다른 담장으로 가요."
+          ],
+          "notes": "작업자가 어린이에게 감사하며 옆 담장을 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "네!",
+          "rendered_text": [
+            "네!"
+          ],
+          "notes": "두 어린이가 대답한다.",
+          "refs": [
+            "boy-helping",
+            "girl-helping"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "잘못 그린 2개를 지워주세요!",
+          "rendered_text": [
+            "잘못 그린 2개를 지워주세요!"
+          ],
+          "notes": "새 담장의 12개 사각형 중 오른쪽 두 개를 작업자가 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 2개를 연한 색으로 변하는 모션 효과(삭제한 느낌)",
+          "rendered_text": [],
+          "notes": "대상 두 개의 채도를 낮추고 외곽을 흐리게 하되 원래 위치는 남겨 12-2를 시각화한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "모양 12개에서 2개를 지우면 몇 개일까요?",
+          "rendered_text": [
+            "모양 12개에서 2개를 지우면 몇 개일까요?"
+          ],
+          "notes": "연해진 두 모양 아래에 문제를 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-add-three",
+          "prompt": "7 + 3 + 2 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "12",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-subtract-two",
+          "prompt": "12 - 2 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "세 수의 덧셈 확인→정답 도장→다른 담장 대화→12개 사각형→2개 흐리기→뺄셈 입력 순으로 진행한다.",
+        "도형 배열 위치를 유지하고 색만 흐리게 해 삭제 전후의 수량을 비교하게 한다."
+      ],
+      "interaction_ids": [
+        "subtraction-intro-keypad",
+        "subtraction-intro-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "worker-explaining",
+        "boy-helping",
+        "girl-helping",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "subtraction-intro-advance",
+        "to_section_id": "subtraction"
+      }
+    },
+    {
+      "id": "subtraction",
+      "title": "세 수의 뺄셈",
+      "purpose": "10개에서 3개를 더 지우고, 전체 과정 12-2-3을 하나의 식으로 연결한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "세 수의 덧셈과 뺄셈",
+          "rendered_text": [
+            "세 수의 덧셈과 뺄셈"
+          ],
+          "notes": "문제판 상단에 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "3개를 더 지우고 싶어요. 지워주세요.",
+          "rendered_text": [
+            "3개를 더 지우고 싶어요. 지워주세요."
+          ],
+          "notes": "작업자가 남은 10개 중 오른쪽 세 개를 가리킨다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 3개를 연한 색으로 변하는 모션 효과(삭제한 느낌)",
+          "rendered_text": [],
+          "notes": "세 개를 한 번에 흐리지 않고 짧은 간격으로 순차 변경한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "모양 10개에서 3개를 더 지우면 몇 개 일까요?",
+          "rendered_text": [
+            "모양 10개에서 3개를 더 지우면 몇 개 일까요?"
+          ],
+          "notes": "현재 10개 기준임을 도형 묶음과 함께 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "키패드 입력",
+          "rendered_text": [],
+          "notes": "단계 뺄셈과 전체 세 수 뺄셈을 같은 키패드로 순차 입력한다.",
+          "refs": [
+            "q-subtract-three",
+            "q-subtract-all"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "모양 5개를 2개, 3개 순으로 연한 색으로 변하는 모션 효과(삭제한 느낌)",
+          "rendered_text": [],
+          "notes": "전체 식 확인에서는 처음 지운 2개와 다음에 지운 3개를 두 묶음으로 순차 강조한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정답 효과: 효과음: 딩동 / 내레이션: “정답입니다.” / 표기: O 표기",
+          "rendered_text": [
+            "정답입니다."
+          ],
+          "notes": "전체 식 정답 후 정답 도장을 찍는다. 효과음은 제외한다.",
+          "refs": [
+            "stamp-correct",
+            "q-subtract-all"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-subtract-all"
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "잘했어요!<br>더 많은 담장을<br>색칠해야해요!",
+          "rendered_text": [
+            "잘했어요!",
+            "더 많은 담장을",
+            "색칠해야해요!"
+          ],
+          "notes": "정답 도장 뒤 작업자의 말풍선으로 표시한다.",
+          "refs": [
+            "worker-explaining"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-subtract-all"
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "네!",
+          "rendered_text": [
+            "네!"
+          ],
+          "notes": "두 어린이가 힘차게 대답한다.",
+          "refs": [
+            "boy-helping",
+            "girl-helping"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "덧셈, 뺄셈의 힘으로 담장 색칠하기",
+          "rendered_text": [
+            "덧셈, 뺄셈의 힘으로 담장 색칠하기"
+          ],
+          "notes": "대화가 끝난 뒤 하단 중앙에 활성화한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-subtract-three",
+          "prompt": "10 - 3 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "7",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-subtract-all",
+          "prompt": "12 – 2 – 3 = (   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "7",
+          "feedback": {
+            "correct": "정답입니다.",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "10개에서 3개 흐리기→단계 계산→처음부터 지운 두 묶음 재강조→전체 식 계산 순으로 진행한다.",
+        "전체 식 정답 후 피드백과 대사를 마친 다음 연습 문제 CTA를 연다."
+      ],
+      "interaction_ids": [
+        "subtraction-keypad",
+        "subtraction-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "worker-explaining",
+        "boy-helping",
+        "girl-helping",
+        "stamp-correct",
+        "stamp-wrong",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "subtraction-advance",
+        "to_section_id": "random-practice"
+      }
+    },
+    {
+      "id": "random-practice",
+      "title": "수리로 해결해요 — 무작위 문제",
+      "purpose": "10 만들기, 10에서 빼기, 세 수의 덧셈, 세 수의 뺄셈을 네 유형으로 연습하고 필요할 때만 보조 설명을 사용한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "수리로 해결해요",
+          "rendered_text": [
+            "수리로 해결해요"
+          ],
+          "notes": "상단 단계 라벨을 변경한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "background",
+          "content": "무작위 문제 유형",
+          "rendered_text": [],
+          "notes": "담장 중앙에 장면 속 연습 게시판을 배치하고 문제·보기·입력은 HTML로 얹는다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "무작위 문제 A / 덧셈과 뺄셈",
+          "rendered_text": [
+            "무작위 문제 A",
+            "덧셈과 뺄셈"
+          ],
+          "notes": "첫 번째 문제 페이지 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "입력: 정답 클릭 방식. 정답 효과음과 오답 효과음. 3번 오답을 입력하면 자동 정답 제시.",
+          "rendered_text": [],
+          "notes": "A는 보기 선택, B·C·D는 키패드 입력으로 구현하고 모든 문항에 3회 오답 후 정답 제시를 적용한다.",
+          "refs": [
+            "q-random-a",
+            "q-random-b",
+            "q-random-c",
+            "q-random-d"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "손가락이 반짝임 클릭하는 모션 효과<br>등장인물 클릭하면 보조 설명창 등장<br>(누르지 않아도 문제 해결 가능, 오답을 누르는 경우 보조설명창이 자동으로 뜨기)",
+          "rendered_text": [],
+          "notes": "어린이 캐릭터 옆에 짧은 반짝임을 한 번만 보여 주며, 캐릭터를 누르면 현재 유형의 10 만들기 전략을 설명한다.",
+          "refs": [
+            "boy-idle",
+            "girl-idle"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "무작위 문제 B / 덧셈과 뺄셈",
+          "rendered_text": [
+            "무작위 문제 B",
+            "덧셈과 뺄셈"
+          ],
+          "notes": "두 번째 문제 페이지 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "무작위 문제 C / 덧셈과 뺄셈",
+          "rendered_text": [
+            "무작위 문제 C",
+            "덧셈과 뺄셈"
+          ],
+          "notes": "세 번째 문제 페이지 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "6 + 4 = (  )<br>얼마일까요?",
+          "rendered_text": [
+            "6 + 4 = (  )",
+            "얼마일까요?"
+          ],
+          "notes": "세 수의 덧셈에서 먼저 10이 되는 두 수를 찾도록 돕는 보조 설명창에 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "세 수의 덧셈을 해 보세요",
+          "rendered_text": [
+            "세 수의 덧셈을 해 보세요"
+          ],
+          "notes": "세 번째 문제의 지시문으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "무작위 문제 D / 덧셈과 뺄셈",
+          "rendered_text": [
+            "무작위 문제 D",
+            "덧셈과 뺄셈"
+          ],
+          "notes": "네 번째 문제 페이지 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "13 - 3 = (  )<br>얼마일까요?",
+          "rendered_text": [
+            "13 - 3 = (  )",
+            "얼마일까요?"
+          ],
+          "notes": "세 수의 뺄셈에서 먼저 10을 만드는 첫 뺄셈을 보조 설명창에 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "세 수의 뺄셈을 해 보세요",
+          "rendered_text": [
+            "세 수의 뺄셈을 해 보세요"
+          ],
+          "notes": "네 번째 문제의 지시문으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "generation_rule",
+          "content": "문제 생성 규칙을 제시하였으나, 더 다양하고 괜찮은 규칙이 있다면 다른 형태로 개발해주셔도 좋습니다.",
+          "rendered_text": [],
+          "notes": "난수 생성은 아래 네 유형의 수 범위와 10 만들기 구조를 벗어나지 않게 한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "generation_rule",
+          "content": "무작위 문제A ‘10이 되는 덧셈 찾기’: 문제의 정답 보기는 3개씩 제시. 1. 정답) A + B = 10. 2. 오답) A + 무작위 (B 제외). 생성 규칙: A + B = 10 ( A: 1~9 무작위 수 / B= 10 – A ). 문제 예시 예) 6+3=10, 6+4=10, 6+5=10",
+          "rendered_text": [],
+          "notes": "보기 세 개 중 정답은 하나만 생성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "generation_rule",
+          "content": "무작위 문제B ‘10에서 빼기’: 10-A=(   ). A는 1~9까지의 무작위 수 제시",
+          "rendered_text": [],
+          "notes": "결과가 1~9가 되는 한 자리 수 뺄셈으로 생성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "generation_rule",
+          "content": "무작위 문제C ’세 수의 덧셈하기’: 세 수의 덧셈 A + B + C = D. ‘A + B = 10’이 되는 세 수의 덧셈 문제 출제. 생성 규칙 A + B + C = D, A는 무작위 수(1~9), B = 10 - A, C는 1~9 무작위 수. 문제 예시 6 + 4 + 3 = ( 13 ), 8 + 2 + 2 = ( 12 ). ‘A + B = 10’이 되는 경우 외에 ‘B + C = 10’이나 ‘A + C = 10’이 되는 무작위 문제가 출제 가능하면 해주시면 감사합니다.",
+          "rendered_text": [],
+          "notes": "10이 되는 두 수의 위치가 달라져도 해당 두 항을 시각적으로 묶을 수 있게 한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "generation_rule",
+          "content": "무작위 문제D ’세 수의 뺄셈하기’: 세 수의 뺄셈 A – B – C = D. ‘A - B = 10’이 되는 세 수의 뺄셈 문제 출제. 생성 규칙 A – B – C = D, B는 무작위 수(1~9), A = B + 10, C는 무작위 수(1~8). 문제 예시 13 - 3 - 6 = ( 4 ), 11 - 1 - 8 = ( 2 )",
+          "rendered_text": [],
+          "notes": "첫 뺄셈에서 10이 된 뒤 두 번째 수를 빼는 구조를 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-random-a",
+          "prompt": "10이 되는 덧셈식을 찾아 보세요.",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "6 + 3 = 10",
+              "correct": false
+            },
+            {
+              "label": "6 + 4 = 10",
+              "correct": true
+            },
+            {
+              "label": "6 + 5 = 10",
+              "correct": false
+            }
+          ],
+          "answer": "6 + 4 = 10",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-random-b",
+          "prompt": "10 - 4=(   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "6",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-random-c",
+          "prompt": "6 + 4 + 3=(   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "13",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        },
+        {
+          "id": "q-random-d",
+          "prompt": "13 - 3 - 6=(   )",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "4",
+          "feedback": {
+            "correct": "",
+            "wrong": ""
+          },
+          "attempt_policy": {
+            "max_attempts": 3,
+            "on_exhausted": [
+              "reveal_answer"
+            ]
+          }
+        }
+      ],
+      "staging_notes": [
+        "A→B→C→D 네 문제를 한 장씩 넘기는 캐러셀로 제시한다.",
+        "각 문제에서 문제판과 캐릭터 위치는 고정하고 보기 영역 또는 키패드만 바꾼다.",
+        "오답 시 현재 유형의 보조 설명창을 자동으로 열고 세 번째 오답 뒤 정답을 제시한다.",
+        "네 유형을 마치면 자유 그리기 CTA를 활성화한다."
+      ],
+      "interaction_ids": [
+        "random-practice-quiz",
+        "random-hint",
+        "random-practice-advance"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "boy-idle",
+        "girl-idle",
+        "paint-can-body",
+        "stamp-correct",
+        "stamp-wrong",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "random-practice-advance",
+        "to_section_id": "free-draw"
+      }
+    },
+    {
+      "id": "free-draw",
+      "title": "모양으로 자유 그리기",
+      "purpose": "원·정삼각형·정사각형과 색을 선택해 마지막 담장 벽화를 자유롭게 구성하며 배운 모양을 창작에 적용한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "모양으로 자유 그리기 활동",
+          "rendered_text": [],
+          "notes": "담장 중앙 전체를 비어 있는 그리기 면으로 사용한다.",
+          "refs": [
+            "bg-wall-activity"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "담장 색칠이 끝나가요!",
+          "rendered_text": [
+            "담장 색칠이 끝나가요!"
+          ],
+          "notes": "교사가 완성 중인 담장을 바라보며 말한다.",
+          "refs": [
+            "teacher-idle"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "마지막 담장은 자유롭게 그려주세요.",
+          "rendered_text": [
+            "마지막 담장은 자유롭게 그려주세요."
+          ],
+          "notes": "교사가 빈 담장 면을 가리킨다.",
+          "refs": [
+            "teacher-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "drawing_tool",
+          "content": "그리기 툴: 툴 기능 원, 정삼각형, 정사각형 모양. 색깔 변경 가능",
+          "rendered_text": [
+            "그리기 툴"
+          ],
+          "notes": "모양과 색을 큰 버튼으로 선택하고 담장을 누르면 선택한 도형이 배치되게 한다. 자유 활동이므로 평가 문항으로 만들지 않는다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "버튼",
+          "rendered_text": [],
+          "notes": "오른쪽 아래 진행 화살표로 완성 확인창을 연다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "confirmation",
+          "content": "내레이션 선택창: 그림을 완성했나요? / 예 / 아니오",
+          "rendered_text": [
+            "그림을 완성했나요?",
+            "예",
+            "아니오"
+          ],
+          "notes": "예는 다음 장면으로 진행하고 아니오는 그리기 화면으로 돌아간다. 정답이 없는 자기 확인이므로 문항으로 만들지 않는다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "교사 대사 후 그리기 도구를 열고 담장 면을 활성화한다.",
+        "완성 확인에서 아니오를 선택하면 기존 그림을 보존한 채 도구로 돌아간다.",
+        "예를 선택하면 완성된 벽화 위에 짧은 반짝임을 보여 주고 수리 이야기로 전환한다."
+      ],
+      "interaction_ids": [
+        "free-draw-tool",
+        "free-draw-confirm"
+      ],
+      "asset_ids": [
+        "bg-wall-activity",
+        "teacher-idle",
+        "teacher-explaining",
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "free-draw-confirm",
+        "to_section_id": "math-story"
+      }
+    },
+    {
+      "id": "math-story",
+      "title": "수리 이야기",
+      "purpose": "길에서 볼 수 있는 원·사각형·삼각형 표지판을 살펴보고 모양 인식과 생활 안전을 연결한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "수리 이야기",
+          "rendered_text": [
+            "수리 이야기"
+          ],
+          "notes": "상단 단계 라벨과 장면 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "background",
+          "content": "도로 표지판을 이용하여 모양과 관련된 수리 이야기",
+          "rendered_text": [],
+          "notes": "학교 주변 도로 배경 중앙에 표지판 한 개씩 놓일 여백을 확보한다.",
+          "refs": [
+            "bg-school-street"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "수리 이야기<br><br>모양을 길에서 본 적이 있나요?",
+          "rendered_text": [
+            "수리 이야기",
+            "모양을 길에서 본 적이 있나요?"
+          ],
+          "notes": "첫 페이지 중앙 질문으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "● ■ ▲",
+          "rendered_text": [
+            "● ■ ▲"
+          ],
+          "notes": "세 모양을 실제 표지판 페이지로 넘어가는 선택·페이지 표시로 사용한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "무슨 표지판일까요?",
+          "rendered_text": [
+            "무슨 표지판일까요?"
+          ],
+          "notes": "각 표지판 페이지 상단에 반복한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "narration",
+          "content": "● 모양 표지판은 어떤 것이 있을까요?<br><br>“자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.”",
+          "rendered_text": [
+            "● 모양 표지판은 어떤 것이 있을까요?",
+            "자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요."
+          ],
+          "notes": "원형 자동차 전용 표지판과 설명을 함께 보여 준다.",
+          "refs": [
+            "road-sign-round"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "narration",
+          "content": "■ 모양 표지판은 어떤 것이 있을까요?<br><br>“주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요.”",
+          "rendered_text": [
+            "■ 모양 표지판은 어떤 것이 있을까요?",
+            "주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요."
+          ],
+          "notes": "사각형 주차 표지판과 설명을 함께 보여 준다.",
+          "refs": [
+            "road-sign-square"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "narration",
+          "content": "▲ 모양 표지판은 어떤 것이 있을까요?<br><br>“공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.<br><br>앞으로 표지판을 보며 안전하게 다녀요.”",
+          "rendered_text": [
+            "▲ 모양 표지판은 어떤 것이 있을까요?",
+            "공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.",
+            "앞으로 표지판을 보며 안전하게 다녀요."
+          ],
+          "notes": "삼각형 공사 표지판과 두 문장의 설명을 함께 보여 준다.",
+          "refs": [
+            "road-sign-triangle"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "도입 질문→원형 표지판→사각형 표지판→삼각형 표지판 순으로 페이지를 넘긴다.",
+        "표지판은 같은 크기와 바닥선에 맞추고 설명은 한 번에 두 문장을 넘지 않게 나눈다.",
+        "마지막 안전 문장을 읽은 뒤 완료 화면 CTA를 연다."
+      ],
+      "interaction_ids": [
+        "math-story-carousel",
+        "math-story-advance"
+      ],
+      "asset_ids": [
+        "bg-school-street",
+        "road-sign-round",
+        "road-sign-square",
+        "road-sign-triangle",
+        "cta-activity-mural-worktag"
+      ],
+      "advance": {
+        "interaction_id": "math-story-advance",
+        "to_section_id": "completion"
+      }
+    },
+    {
+      "id": "completion",
+      "title": "차시 완료",
+      "purpose": "담장 벽화 완성과 차시 종료를 명확히 알리고 인증서 다운로드와 나가기 출구를 제공한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "차시 완료",
+          "rendered_text": [],
+          "notes": "도입과 같은 방향의 학교 담장에 학습자가 만든 도형 벽화를 HTML 레이어로 합성해 해결된 상태를 보여 준다.",
+          "refs": [
+            "bg-school-gate"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "수리 완료 효과: 경쾌한 효과음, 반짝임 효과",
+          "rendered_text": [],
+          "notes": "화면 중앙과 완성 벽화 가장자리에 짧은 반짝임을 보여 준다. 효과음은 제외한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "3차시 수리 완료!",
+          "rendered_text": [
+            "3차시 수리 완료!"
+          ],
+          "notes": "완료 장면의 최상위 문구로 크게 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "인증서 다운로드",
+          "rendered_text": [
+            "인증서 다운로드"
+          ],
+          "notes": "인증서 저장 기능을 실행하는 완료 화면의 주 CTA로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "나가기",
+          "rendered_text": [
+            "나가기"
+          ],
+          "notes": "다운로드 버튼보다 낮은 위계의 보조 CTA로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "완성된 담장→반짝임→완료 문구→인증서 다운로드와 나가기 버튼 순으로 등장한다.",
+        "마지막 화면이므로 내부 다음 섹션 전환은 두지 않는다."
+      ],
+      "interaction_ids": [
+        "download-certificate",
+        "exit-content"
+      ],
+      "asset_ids": [
+        "bg-school-gate"
+      ],
+      "advance": {
+        "interaction_id": "",
+        "to_section_id": ""
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "topbar-controls",
+      "type": "button",
+      "description": "모든 학습 화면에서 차시 목록을 열고 닫거나 소리 상태 표시를 토글한다. 오디오는 본 콘텐츠 구현 범위에서 제외하므로 소리 버튼은 상태 UI만 유지한다."
+    },
+    {
+      "id": "intro-story",
+      "type": "button_sequence",
+      "description": "[시작하기]를 누르면 타이틀을 정리하고 작업자와 어린이의 말풍선을 순서대로 전개한다."
+    },
+    {
+      "id": "intro-advance",
+      "type": "button",
+      "description": "[모양의 힘으로 색칠하기]를 누르면 shape-find 섹션으로 이동한다."
+    },
+    {
+      "id": "shape-find-hotspots",
+      "type": "quiz",
+      "description": "학교 관찰 장면에서 정답 hotspot 두 곳을 선택한다. 오답 세 번이면 정답 위치를 드러내며, 키보드·누르기 방식으로도 선택할 수 있게 한다."
+    },
+    {
+      "id": "shape-find-advance",
+      "type": "button",
+      "description": "두 모양 찾기 문항을 완료하면 shape-count 섹션으로 이동한다."
+    },
+    {
+      "id": "shape-count-keypad",
+      "type": "quiz",
+      "description": "원·삼각형·사각형의 개수를 한 문항씩 숫자 키패드로 입력하고 확인한다."
+    },
+    {
+      "id": "shape-count-advance",
+      "type": "button",
+      "description": "세 개수 세기 문항을 완료하면 shape-transition 섹션으로 이동한다."
+    },
+    {
+      "id": "shape-transition-advance",
+      "type": "button",
+      "description": "[모양으로 세 수의 덧셈과 뺄셈하기]를 누르면 ten-intro 섹션으로 이동한다."
+    },
+    {
+      "id": "ten-keypad",
+      "type": "quiz",
+      "description": "페인트 한 통에 대응하는 도형 10개의 전체 개수를 키패드로 입력한다."
+    },
+    {
+      "id": "ten-intro-advance",
+      "type": "button",
+      "description": "10개 확인을 마치면 addition 섹션으로 이동한다."
+    },
+    {
+      "id": "addition-keypad",
+      "type": "quiz",
+      "description": "7+3과 10+2를 순서대로 입력하며 도형 추가 애니메이션과 계산 단계를 동기화한다."
+    },
+    {
+      "id": "addition-advance",
+      "type": "button",
+      "description": "두 덧셈 문항을 완료하면 subtraction-intro 섹션으로 이동한다."
+    },
+    {
+      "id": "subtraction-intro-keypad",
+      "type": "quiz",
+      "description": "7+3+2를 확인한 뒤 12-2를 입력하며 흐려지는 도형 두 개와 계산을 연결한다."
+    },
+    {
+      "id": "subtraction-intro-advance",
+      "type": "button",
+      "description": "두 문항을 완료하면 subtraction 섹션으로 이동한다."
+    },
+    {
+      "id": "subtraction-keypad",
+      "type": "quiz",
+      "description": "10-3과 12-2-3을 순서대로 입력하고 지운 두 묶음의 시각 상태를 유지한다."
+    },
+    {
+      "id": "subtraction-advance",
+      "type": "button",
+      "description": "[덧셈, 뺄셈의 힘으로 담장 색칠하기]를 누르면 random-practice 섹션으로 이동한다."
+    },
+    {
+      "id": "random-practice-quiz",
+      "type": "quiz_carousel",
+      "description": "A 선택형과 B·C·D 키패드형을 한 장씩 제시한다. 각 문항은 세 번째 오답 뒤 정답을 공개한다."
+    },
+    {
+      "id": "random-hint",
+      "type": "button",
+      "description": "어린이 캐릭터를 누르면 현재 문제의 10 만들기 보조 설명을 열며, 첫 오답 시에도 자동으로 연다."
+    },
+    {
+      "id": "random-practice-advance",
+      "type": "button",
+      "description": "네 문제 유형을 완료하면 free-draw 섹션으로 이동한다."
+    },
+    {
+      "id": "free-draw-tool",
+      "type": "drawing",
+      "description": "원·정삼각형·정사각형과 색을 선택해 빈 담장을 눌러 도형을 배치하고, 선택·이동·삭제로 벽화를 구성한다."
+    },
+    {
+      "id": "free-draw-confirm",
+      "type": "confirmation",
+      "description": "그림을 완성했나요?에서 아니오를 선택하면 그림을 보존한 채 돌아가고, 예를 선택하면 math-story 섹션으로 이동한다."
+    },
+    {
+      "id": "math-story-carousel",
+      "type": "carousel",
+      "description": "도입과 원·사각형·삼각형 표지판 이야기를 순서대로 넘기며 각 페이지의 설명을 읽는다."
+    },
+    {
+      "id": "math-story-advance",
+      "type": "button",
+      "description": "마지막 안전 이야기를 읽으면 completion 섹션으로 이동한다."
+    },
+    {
+      "id": "download-certificate",
+      "type": "button",
+      "description": "현재 차시의 인증서를 학습자 기기에 다운로드한다."
+    },
+    {
+      "id": "exit-content",
+      "type": "button",
+      "description": "단일 HTML 학습 콘텐츠를 종료하거나 상위 차시 목록으로 돌아간다."
+    }
+  ],
+  "asset_plan": [
+    {
+      "id": "bg-school-gate",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg-school-gate.webp",
+      "purpose": "무너진 담장 문제 상황과 완료된 담장을 같은 방향에서 보여 주는 학교 입구 배경",
+      "prompt_brief": "맑은 한낮의 학교 입구와 보도, 학교 건물 일부, 중앙의 넓은 크림색 담장 면을 그린 16:9 raster 배경. 담장 한쪽은 수리 흔적을 얕게 남기되 벽화와 인물은 넣지 않는다.",
+      "visual_role": "도입의 문제 상황과 완료 장면을 연결하는 학교 입구 전경",
+      "style_constraints": "실제 배경 참조의 선명한 파란 하늘, 덩어리진 초록 나뭇잎, 외곽선 없는 면 경계, 원근에 따른 디테일 감소를 따른다.",
+      "composition_notes": "중앙 담장 면과 오른쪽 인물 배치 영역을 넓게 비우고 학교 건물과 나무는 상단·좌우 가장자리에 둔다. 16:9 불투명 배경이며 HTML 제목과 완성 벽화가 올라갈 중앙 safe zone을 확보한다.",
+      "negative_prompt": "주요 캐릭터, 페인트통, 완성 벽화, 글자, 숫자, 버튼, 문제판, 교실 책상, 사진실사, 3D 렌더, 배경 외곽선, 과도한 텍스처, flat vector UI",
+      "usage_section_ids": [
+        "intro",
+        "completion"
+      ]
+    },
+    {
+      "id": "bg-wall-activity",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg-wall-activity.webp",
+      "purpose": "도형 찾기부터 자유 그리기까지 반복 사용하는 담장 클로즈업 활동 무대",
+      "prompt_brief": "중앙에 넓고 깨끗한 크림색 벽면이 있는 학교 담장 근경, 얕은 벽돌 이음과 낮은 보도, 상단 가장자리의 하늘과 나뭇잎을 포함한 16:9 raster 배경.",
+      "visual_role": "도형·수식·그리기 상호작용이 놓이는 실제 담장 활동 면",
+      "style_constraints": "참조의 중앙을 크게 비우고 좌우로 원근을 접는 구도, 외곽선 없는 배경, 노이즈 없이 색 경계와 얕은 명암으로 벽 재질을 표현한다.",
+      "composition_notes": "화면 중앙 70%를 빈 담장 면으로 두고 하단 보도는 캐릭터 발이 놓일 높이를 일정하게 유지한다. HTML 도형, 문제 표면, 키패드가 올라갈 safe zone을 남긴다.",
+      "negative_prompt": "주요 캐릭터, 페인트통, 도형, 벽화, 글자, 숫자, 문제판, 표지판, 버튼, 사진실사, 3D 렌더, 굵은 배경 외곽선, 종이결, UI mockup",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "bg-school-street",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg-school-street.webp",
+      "purpose": "도로 표지판의 모양과 안전 이야기를 보여 주는 학교 주변 거리 배경",
+      "prompt_brief": "맑은 한낮의 학교 주변 보도와 도로, 멀리 보이는 학교 건물과 나무를 그린 16:9 raster 배경. 중앙에는 표지판 한 개와 설명이 놓일 넓은 빈 공간을 둔다.",
+      "visual_role": "원·사각형·삼각형 표지판 이야기를 연결하는 생활 주변 원경",
+      "style_constraints": "참조의 청명한 하늘 채도, 둥근 구름, 나뭇잎 덩어리, 노면과 보도의 단순한 명암 단계를 따른다.",
+      "composition_notes": "중앙과 오른쪽 전경을 비우고 도로는 하단에서 멀어지는 완만한 원근으로 배치한다. HTML 설명과 별도 표지판 asset을 위한 safe zone을 확보한다.",
+      "negative_prompt": "주요 캐릭터, 도로 표지판, 글자, 숫자, 차량 밀집, 횡단보도 중심 구도, 사진실사, 3D 렌더, 배경 외곽선, 과도한 세부 묘사",
+      "usage_section_ids": [
+        "math-story"
+      ]
+    },
+    {
+      "id": "teacher-idle",
+      "kind": "image",
+      "character_id": "teacher",
+      "intended_path": "output/assets/teacher-idle.webp",
+      "purpose": "교사의 중립적인 안내와 자유 그리기 도입에 사용하는 기준 포즈",
+      "prompt_brief": "교사 캐릭터의 전신 정면 기본 대기 포즈, 양손을 편안히 내린 상태, 투명 배경.",
+      "visual_role": "교사 정체성의 source of truth이자 차분한 안내 상태",
+      "style_constraints": "부드러운 미소, 정면 시선, 긴장을 풀고 곧게 선 자세만 적용한다.",
+      "composition_notes": "전신이 잘리지 않는 세로 2:3 투명 배경, 발밑 그림자 없이 화면 왼쪽 배치에 맞추고 시선은 화면 안쪽을 향하게 한다.",
+      "negative_prompt": "배경, 가구, 손에 든 소품, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "shape-count",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "teacher-explaining",
+      "kind": "image",
+      "character_id": "teacher",
+      "intended_path": "output/assets/teacher-explaining.webp",
+      "purpose": "도형 찾기, 페인트 대응, 활동 전환을 설명하는 교사 포즈",
+      "prompt_brief": "교사 캐릭터가 한 손바닥을 펴 화면 오른쪽의 활동 대상을 안내하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "담장·도형·그리기 도구를 가리키는 설명 상태",
+      "style_constraints": "한 손은 허리 높이에서 펼치고 다른 손은 자연스럽게 내리며, 친절한 미소와 화면 오른쪽 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 왼쪽 배치 기준, 손끝 오른쪽에 말풍선과 활동 대상을 위한 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과도한 손가락 묘사, 과장된 표정, 사진실사, 3D 렌더, 글자",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "worker-apologizing",
+      "kind": "image",
+      "character_id": "worker",
+      "intended_path": "output/assets/worker-apologizing.webp",
+      "purpose": "담장을 무너뜨린 상황을 사과하는 작업자 포즈",
+      "prompt_brief": "공사 작업자가 양손을 배 앞에서 모으고 상체를 조금 숙여 사과하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "도입의 문제 상황과 미안한 감정을 전달하는 캐릭터 상태",
+      "style_constraints": "눈썹을 안쪽으로 조금 기울이고 입꼬리를 낮추되 감정을 과장하지 않으며, 시선은 화면 오른쪽 어린이 쪽을 향한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 왼쪽 배치, 머리와 발이 잘리지 않으며 오른쪽에 말풍선 여백을 둔다.",
+      "negative_prompt": "배경, 공구, 손에 든 소품, 과장된 울음, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro"
+      ]
+    },
+    {
+      "id": "worker-explaining",
+      "kind": "image",
+      "character_id": "worker",
+      "intended_path": "output/assets/worker-explaining.webp",
+      "purpose": "페인트 사용량과 색칠·지우기 계산 상황을 설명하는 작업자 기준 포즈",
+      "prompt_brief": "공사 작업자가 한 팔을 뻗어 화면 오른쪽의 담장과 도형을 가리키는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "작업자 정체성의 source of truth이자 계산 상황 제시 상태",
+      "style_constraints": "검지를 과도하게 세우지 않고 손바닥 방향으로 대상을 안내하며, 차분한 미소와 화면 오른쪽 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 왼쪽 배치 기준, 가리키는 팔 오른쪽에 문제와 말풍선 safe zone을 둔다.",
+      "negative_prompt": "배경, 공구, 손에 든 소품, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction"
+      ]
+    },
+    {
+      "id": "boy-idle",
+      "kind": "image",
+      "character_id": "boy",
+      "intended_path": "output/assets/boy-idle.webp",
+      "purpose": "문제를 듣고 생각하거나 보조 설명을 여는 남자 어린이 기준 포즈",
+      "prompt_brief": "남자 어린이 캐릭터의 전신 정면 기본 대기 포즈, 양손을 자연스럽게 내린 상태, 투명 배경.",
+      "visual_role": "남자 어린이 정체성의 source of truth이자 문제 풀이 대기 상태",
+      "style_constraints": "호기심 있는 작은 미소, 정면 또는 화면 안쪽 시선, 안정적으로 선 자세를 적용한다.",
+      "composition_notes": "전신이 잘리지 않는 세로 2:3 투명 배경, 발밑 그림자 없이 오른쪽 배치에 맞춘다.",
+      "negative_prompt": "배경, 손에 든 소품, 페인트 얼룩, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "shape-find",
+        "addition",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "boy-helping",
+      "kind": "image",
+      "character_id": "boy",
+      "intended_path": "output/assets/boy-helping.webp",
+      "purpose": "도움을 약속하고 계산·색칠 활동에 응답하는 남자 어린이 포즈",
+      "prompt_brief": "남자 어린이 캐릭터가 한 손을 어깨 높이로 들고 자신 있게 대답하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "도전 시작과 긍정 응답을 보여 주는 어린이 상태",
+      "style_constraints": "밝은 미소, 살짝 올라간 눈썹, 화면 왼쪽 성인 캐릭터를 향한 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 오른쪽 배치, 든 손 위와 왼쪽에 말풍선 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과장된 점프, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "addition",
+        "subtraction-intro",
+        "subtraction"
+      ]
+    },
+    {
+      "id": "girl-idle",
+      "kind": "image",
+      "character_id": "girl",
+      "intended_path": "output/assets/girl-idle.webp",
+      "purpose": "문제를 듣고 생각하거나 보조 설명을 여는 여자 어린이 기준 포즈",
+      "prompt_brief": "여자 어린이 캐릭터의 전신 정면 기본 대기 포즈, 양손을 자연스럽게 모은 상태, 투명 배경.",
+      "visual_role": "여자 어린이 정체성의 source of truth이자 문제 풀이 대기 상태",
+      "style_constraints": "차분한 미소, 정면 또는 화면 안쪽 시선, 안정적으로 선 자세를 적용한다.",
+      "composition_notes": "전신이 잘리지 않는 세로 2:3 투명 배경, 발밑 그림자 없이 오른쪽 배치에 맞춘다.",
+      "negative_prompt": "배경, 손에 든 소품, 페인트 얼룩, 과장된 표정, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "addition",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "girl-helping",
+      "kind": "image",
+      "character_id": "girl",
+      "intended_path": "output/assets/girl-helping.webp",
+      "purpose": "도움을 약속하고 계산·색칠 활동에 응답하는 여자 어린이 포즈",
+      "prompt_brief": "여자 어린이 캐릭터가 한 손을 가슴 앞에서 펼쳐 자신 있게 대답하는 전신 준정면 포즈, 투명 배경.",
+      "visual_role": "도전 시작과 긍정 응답을 보여 주는 어린이 상태",
+      "style_constraints": "밝은 미소, 부드럽게 올라간 눈썹, 화면 왼쪽 성인 캐릭터를 향한 시선을 적용한다.",
+      "composition_notes": "세로 2:3 투명 배경, 화면 오른쪽 배치, 손과 얼굴 주변에 말풍선 여백을 둔다.",
+      "negative_prompt": "배경, 손에 든 소품, 과장된 점프, 사진실사, 3D 렌더, 다른 캐릭터, 글자",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "addition",
+        "subtraction-intro",
+        "subtraction"
+      ]
+    },
+    {
+      "id": "paint-can-body",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/paint-can-body.webp",
+      "purpose": "초록·파랑·빨강 페인트와 여러 계산 장면에서 재사용하는 페인트통 고정 몸체",
+      "prompt_brief": "뚜껑이 반쯤 열린 원통형 금속 페인트통의 빈 몸체, 굵은 짙은 남색 외곽선과 한 줄의 밝은 광택, 투명 배경. 내부 색과 라벨은 비워 둔다.",
+      "visual_role": "색과 사용량이 바뀌는 페인트 한 통의 재사용 가능한 실제 소품",
+      "style_constraints": "금속 재질은 플랫한 밝은 회청색 면과 선명한 하이라이트로만 표현하고, 손잡이와 테두리 두께를 모든 사용처에서 고정한다.",
+      "composition_notes": "정사각 투명 배경, 정면에 가까운 3/4 시점, 내부 타원과 몸체 정면에 색 오버레이 safe zone을 확보하고 중심축을 이미지 중앙에 맞춘다.",
+      "negative_prompt": "페인트 색, 내용물 색, 글자, 숫자, 라벨, 로고, 캐릭터, 배경, 사진실사, 3D 렌더, SVG style, icon kit",
+      "usage_section_ids": [
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "road-sign-round",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/road-sign-round.webp",
+      "purpose": "원 모양과 자동차 전용 도로 표지판을 연결하는 수리 이야기 삽화",
+      "prompt_brief": "둥근 판과 지지대가 있는 자동차 전용 도로 표지판을 장면 속 실제 물건처럼 그린 정사각 투명 raster 소품. 자동차 전용 의미가 아이콘으로 명확히 보이게 한다.",
+      "visual_role": "원 모양 생활 사례와 안전 설명의 핵심 표지판",
+      "style_constraints": "두꺼운 짙은 남색 외곽선, 판의 얇은 두께, 플랫한 면 분할과 한 줄 하이라이트를 사용한다.",
+      "composition_notes": "정사각 투명 배경, 표지판 전체와 지지대가 잘리지 않는 정면 시점, 화면 중앙 배치 기준으로 좌우 여백을 둔다.",
+      "negative_prompt": "추가 설명 문장, 가변 숫자, 배경 풍경, 사진실사, 3D 렌더, flat icon 단독 표현, 교통 표지 참조 이미지의 구도 복제",
+      "usage_section_ids": [
+        "math-story"
+      ]
+    },
+    {
+      "id": "road-sign-square",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/road-sign-square.webp",
+      "purpose": "사각형 모양과 주차 표지판을 연결하는 수리 이야기 삽화",
+      "prompt_brief": "모서리가 약간 둥근 사각 판과 지지대가 있는 주차 표지판을 장면 속 실제 물건처럼 그린 정사각 투명 raster 소품. 주차 의미가 고정 심볼로 명확히 보이게 한다.",
+      "visual_role": "사각형 생활 사례와 주차장 안전 설명의 핵심 표지판",
+      "style_constraints": "두꺼운 짙은 남색 외곽선, 판의 얇은 두께, 플랫한 면 분할과 한 줄 하이라이트를 사용한다.",
+      "composition_notes": "정사각 투명 배경, 표지판 전체와 지지대가 잘리지 않는 정면 시점, 원형·삼각형 표지판과 화면상 높이를 맞춘다.",
+      "negative_prompt": "추가 설명 문장, 가변 숫자, 배경 풍경, 사진실사, 3D 렌더, flat icon 단독 표현, 참조 소재 복제",
+      "usage_section_ids": [
+        "math-story"
+      ]
+    },
+    {
+      "id": "road-sign-triangle",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/road-sign-triangle.webp",
+      "purpose": "삼각형 모양과 공사 표지판을 연결하는 수리 이야기 삽화",
+      "prompt_brief": "삼각 판과 지지대가 있는 공사 주의 표지판을 장면 속 실제 물건처럼 그린 정사각 투명 raster 소품. 공사 주의 의미가 고정 심볼로 명확히 보이게 한다.",
+      "visual_role": "삼각형 생활 사례와 공사장 안전 설명의 핵심 표지판",
+      "style_constraints": "두꺼운 짙은 남색 외곽선, 판의 얇은 두께, 플랫한 면 분할과 한 줄 하이라이트를 사용한다.",
+      "composition_notes": "정사각 투명 배경, 표지판 전체와 지지대가 잘리지 않는 정면 시점, 다른 두 표지판과 중심 높이를 맞춘다.",
+      "negative_prompt": "추가 설명 문장, 가변 숫자, 배경 풍경, 사진실사, 3D 렌더, flat icon 단독 표현, 참조 공사 표지판의 글자와 구도 복제",
+      "usage_section_ids": [
+        "math-story"
+      ]
+    },
+    {
+      "id": "stamp-correct",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp-correct.webp",
+      "purpose": "feedback-layer가 정답 판정을 찍어 보여 주기 위해 반드시 사용하는 정답 도장",
+      "prompt_brief": "학교 미술 준비실에서 쓰는 눌러 찍는 원형 도장 물건. 크림색 손잡이와 청록·남색 테두리, 도장 면 중앙에 원문 ‘정답입니다.’와 둥근 O 심볼을 한 덩어리로 새긴 정사각 투명 raster.",
+      "visual_role": "정답 판정을 즉시 읽히게 하는 물리적인 피드백 도장",
+      "style_constraints": "도장 몸체·테두리는 콘텐츠 팔레트를 따르고 문구·O 심볼에만 긍정 청록색을 사용한다. 눌림 상태는 별도 프레임 없이 CSS transform으로 표현한다.",
+      "composition_notes": "정사각 투명 배경, 도장 면이 정면에 가깝게 보이는 약한 3/4 시점, 문구와 심볼이 작은 화면에서도 읽히며 가장자리가 잘리지 않게 한다.",
+      "negative_prompt": "오답 문구, X 심볼, 스프라이트 시트, 여러 상태 프레임, 사진실사, 3D 렌더, flat vector UI, CSS component, 배경 장면",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "stamp-wrong",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp-wrong.webp",
+      "purpose": "feedback-layer가 오답 판정을 찍어 보여 주기 위해 반드시 사용하는 별도의 오답 도장",
+      "prompt_brief": "학교 미술 준비실에서 쓰는 눌러 찍는 사각 도장 물건. 크림색 손잡이와 청록·남색 테두리, 도장 면 중앙에 큰 X 심볼을 새긴 정사각 투명 raster. 정답 도장과 완전히 별개의 형태로 그린다.",
+      "visual_role": "오답을 즉시 알리되 재시도를 방해하지 않는 물리적인 피드백 도장",
+      "style_constraints": "도장 몸체·테두리는 콘텐츠 팔레트를 따르고 중앙 X 심볼만 경고 빨강으로 유지한다. 눌림 상태는 별도 프레임 없이 CSS transform으로 표현한다.",
+      "composition_notes": "정사각 투명 배경, 도장 면이 정면에 가깝게 보이는 약한 3/4 시점, X 심볼이 작은 화면에서도 분명하고 가장자리가 잘리지 않게 한다.",
+      "negative_prompt": "정답 문구, O 심볼, 정답 도장의 색상 필터 복제, 스프라이트 시트, 여러 상태 프레임, 사진실사, 3D 렌더, flat vector UI, CSS component, 배경 장면",
+      "usage_section_ids": [
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "surface-speech-bubble-school",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/surface-speech-bubble-school.webp",
+      "purpose": "동적 대사를 얹는 학교 벽화 세계관의 물리적 대사판 몸체",
+      "prompt_brief": "밝은 한낮 학교 벽화 세계관의 가로형 빈 대사판. 짙은 남색 굵은 외곽선, 크림색 완전 빈 내부 면, 얇은 판 두께, 좌측 화자 방향 꼬리 또는 연결 브래킷, 작은 나사 고정부. 글자와 버튼 라벨은 그리지 않는다.",
+      "visual_role": "캐릭터 대사를 장면 속 안내 물건으로 흡수하는 공용 표면",
+      "style_constraints": "참조 surface-info-board의 두께·하이라이트·고정부 밀도를 따르고 좌상단 광원과 한 겹 우하단 그림자를 사용한다.",
+      "composition_notes": "투명 배경, 가로 약 3:1, 내부 82%를 장식 없는 safe zone으로 두고 하단 우측에 작은 진행 탭을 얹을 빈 자리 확보.",
+      "negative_prompt": "글자, 숫자, baked-in 라벨, 캐릭터, 배경, SVG, flat UI, 흰 웹 카드, 과도한 텍스처, 3D 렌더",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "surface-info-board-mural",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/surface-info-board-mural.webp",
+      "purpose": "동적 제목·문제·수식을 얹는 공용 담장 안내판",
+      "prompt_brief": "학교 담장에 고정하는 가로형 빈 안내판. 짙은 남색 굵은 프레임, 밝은 크림색 내부, 얇은 판 두께, 작은 청록 고정부와 한 줄 광택. 내부에는 아무 글자도 넣지 않는다.",
+      "visual_role": "웹 카드로 흩어진 제목과 수식을 하나의 장면 표면 언어로 통일",
+      "style_constraints": "참조 surface-info-board의 선·면 분할과 고정부를 따르되 이 차시의 청록·산호 포인트를 사용한다.",
+      "composition_notes": "투명 배경, 가로 4:1, 내부 텍스트 safe zone 86%, 1~2줄 큰 한글과 수식이 들어가도록 중앙 장식을 비운다.",
+      "negative_prompt": "글자, 숫자, 로고, 캐릭터, 배경, SVG, flat icon, 흰 rounded web card, 복잡한 장식",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "free-draw"
+      ]
+    },
+    {
+      "id": "keypad-console-paint-counter",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/keypad-console-paint-counter.webp",
+      "purpose": "동적 답 표시와 12개 키를 얹는 페인트 계수기 몸체",
+      "prompt_brief": "벽화 작업용 휴대형 금속 계수기 console. 상단에 넓은 빈 display 홈 하나, 아래 3열×4행의 완전히 빈 키 슬롯 12개, 짙은 남색 프레임, 회청색 금속 면, 청록 고정부, 한 줄 하이라이트. 글자와 숫자는 그리지 않는다.",
+      "visual_role": "일반 웹 keypad를 장면 속 실제 계산 장치로 변환",
+      "style_constraints": "prop-paint-can의 금속 하이라이트와 surface-info-board의 굵은 선 계층을 결합한다.",
+      "composition_notes": "투명 배경, 세로형이되 1920×1080에서 높이 460px 이하로 사용할 수 있는 비율, 모든 슬롯 중심과 간격을 균일하게 한다.",
+      "negative_prompt": "숫자, 확인 문구, 화살표, baked-in label, 캐릭터, 배경, SVG, calculator icon, 3D photorealism",
+      "usage_section_ids": [
+        "shape-count",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice"
+      ]
+    },
+    {
+      "id": "cta-activity-mural-worktag",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/cta-activity-mural-worktag.webp",
+      "purpose": "동적 진행 라벨을 얹는 벽화 작업표형 CTA 몸체",
+      "prompt_brief": "학교 벽화 작업표 또는 페인트 견본표 모양의 빈 CTA 몸체. 청록 프레임, 노란 강조 면, 얕은 두께, 좌상단 하이라이트, 눌림이 가능한 하단 그림자. 라벨은 그리지 않는다.",
+      "visual_role": "일반 웹 버튼을 현장 조작물로 통일",
+      "style_constraints": "참조 cta-activity-body의 두께와 상태 위계를 따르되 이 차시의 청록·파랑·산호·노랑 팔레트를 사용한다.",
+      "composition_notes": "투명 배경, 가로 3.2:1, 중앙 75%를 동적 라벨 safe zone으로 비우고 양끝 장식은 작게 제한한다.",
+      "negative_prompt": "글자, 화살표, baked-in label, 캐릭터, 배경, SVG, flat pill button, 과도한 광택, 3D 렌더",
+      "usage_section_ids": [
+        "intro",
+        "shape-find",
+        "shape-count",
+        "shape-transition",
+        "ten-intro",
+        "addition",
+        "subtraction-intro",
+        "subtraction",
+        "random-practice",
+        "free-draw",
+        "math-story"
+      ]
+    },
+    {
+      "id": "overlay-shape-find-school-objects",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/overlay-shape-find-school-objects.webp",
+      "purpose": "원·삼각형·사각형을 발견할 수 있는 학교 생활 소품 overlay",
+      "prompt_brief": "학교 담장 앞에 놓을 서로 분리된 생활 소품 묶음: 둥근 화분 받침, 삼각 깃발 또는 삼각 장식, 사각 안내 상자 등. 각 물건은 실제 학교 소품으로 먼저 읽히고 기본 도형 실루엣도 분명해야 한다. 글자는 넣지 않는다.",
+      "visual_role": "투명 hotspot의 실제 관찰 대상",
+      "style_constraints": "소품은 짙은 남색 굵은 외곽선, 2~3단계 플랫 셰이딩, 좌상단 광원, 한 줄 하이라이트를 사용한다.",
+      "composition_notes": "1920×1080 담장 중앙에 배치 가능한 투명 overlay. 정답과 오답 후보를 화면 전역에 균형 있게 분산하고 각 물건 사이 충분한 hotspot 여백을 둔다.",
+      "negative_prompt": "도형만 단독으로 떠 있는 구성, 글자, 숫자, 캐릭터, 배경 전체, flat icon kit, SVG, 복잡한 패턴",
+      "usage_section_ids": [
+        "shape-find"
+      ]
+    },
+    {
+      "id": "overlay-damaged-school-wall",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/overlay-damaged-school-wall.webp",
+      "purpose": "기존 bg-school-gate 위에 얹는 손상 담장 상태 overlay",
+      "prompt_brief": "크림색 학교 담장의 일부 벽돌이 빠지고 낮은 균열이 난 복구 전 상태. 바닥에는 안전하게 정돈된 벽돌 조각 몇 개와 작은 작업 차단 표시. 글자와 캐릭터는 넣지 않는다.",
+      "visual_role": "도입 사건의 시각적 원인",
+      "style_constraints": "기존 배경과 같은 외곽선 없는 면 경계, 낮은 재질 밀도, 좌상단 한낮 광원, 부드러운 우하단 그림자를 사용한다.",
+      "composition_notes": "투명 배경, 중앙 하단 담장 약 x=700..1250 영역에 맞는 가로형 overlay, 대사판과 제목 safe zone은 침범하지 않는다.",
+      "negative_prompt": "캐릭터, 글자, 버튼, 과도한 파괴, 위험한 날카로운 잔해, драмatic lighting, 사진실사, 3D 렌더",
+      "usage_section_ids": [
+        "intro"
+      ]
+    }
+  ],
+  "asset_groups": [
+    {
+      "id": "school-backgrounds",
+      "asset_ids": [
+        "bg-school-gate",
+        "bg-wall-activity",
+        "bg-school-street"
+      ],
+      "grouping_reason": "같은 학교 공간의 한낮 조명, 하늘·나무 팔레트, 담장 재질과 원근 깊이를 맞춰야 하는 배경들이다."
+    },
+    {
+      "id": "teacher-poses",
+      "asset_ids": [
+        "teacher-idle",
+        "teacher-explaining"
+      ],
+      "grouping_reason": "같은 교사의 기준 포즈와 설명 포즈를 한 batch에서 생성해 정체성과 선·명암을 일치시킨다."
+    },
+    {
+      "id": "worker-poses",
+      "asset_ids": [
+        "worker-apologizing",
+        "worker-explaining"
+      ],
+      "grouping_reason": "같은 작업자의 사과와 설명 포즈를 함께 생성해 얼굴·의상·체형의 연속성을 유지한다."
+    },
+    {
+      "id": "boy-poses",
+      "asset_ids": [
+        "boy-idle",
+        "boy-helping"
+      ],
+      "grouping_reason": "같은 남자 어린이의 대기와 도움 응답 포즈를 함께 생성해 정체성을 유지한다."
+    },
+    {
+      "id": "girl-poses",
+      "asset_ids": [
+        "girl-idle",
+        "girl-helping"
+      ],
+      "grouping_reason": "같은 여자 어린이의 대기와 도움 응답 포즈를 함께 생성해 정체성을 유지한다."
+    },
+    {
+      "id": "activity-props",
+      "asset_ids": [
+        "paint-can-body",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "grouping_reason": "담장 색칠 세계관의 실제 미술 소품으로서 굵은 남색 외곽선, 크림·청록 팔레트와 광택 재질을 공유한다."
+    },
+    {
+      "id": "road-signs",
+      "asset_ids": [
+        "road-sign-round",
+        "road-sign-square",
+        "road-sign-triangle"
+      ],
+      "grouping_reason": "수리 이야기의 세 표지판을 동일한 시점·크기·판 두께·지지대 재질로 맞춰 페이지 전환의 연속성을 유지한다."
+    },
+    {
+      "id": "asset_revision_001",
+      "asset_ids": [
+        "surface-speech-bubble-school",
+        "surface-info-board-mural",
+        "keypad-console-paint-counter",
+        "cta-activity-mural-worktag",
+        "overlay-shape-find-school-objects",
+        "overlay-damaged-school-wall"
+      ],
+      "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction."
+    }
+  ]
+}

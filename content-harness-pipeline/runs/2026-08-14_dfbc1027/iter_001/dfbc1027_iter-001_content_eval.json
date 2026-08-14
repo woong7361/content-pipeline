@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 1,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.02
+  },
+  "axis_rationales": {
+    "content_fidelity": "`grep -cF`로 비어 있지 않은 체크리스트 문자열 130개를 전수 대조한 결과 문자열 누락은 0개였고, 문항·보기·정답도 planner와 일치했다. 그러나 순서·완료 흐름 불일치 총 9개가 확인됐다: intro에서 첫 대사가 시작하기 조작 전에 노출됨, shape-find·shape-count·ten-intro·addition에서 도입 대사 완료 전 문항이 노출됨, subtraction-intro에서 q-add-three 정답 전 후속 대화가 노출됨, subtraction에서 두 문항 완료 전 다음 CTA가 활성화됨, random-practice의 A~D가 순차 페이지가 아니라 동시에 노출됨, free-draw의 완성 확인이 대사·그리기 완료 전에 노출됨. 4개 이상 불일치에 해당한다.",
+    "learning_goal_alignment": "생활 속 원·삼각형·사각형 찾기와 세기, 10 만들기, 10에서 빼기, 세 수 계산, 도형 자유 배치가 목표를 직접 다룬다. 다만 덧셈·뺄셈 장면의 도형 변화가 단계 조작과 동기화되지 않고 최종 수량이 먼저 제시되어 구체물로 계산 과정을 확인하는 연결은 약하다.",
+    "feedback_scaffolding": "16개 문항 모두 O/X 도장 형태의 결과 피드백은 있으나, 오답 이유와 다음 계산 행동을 설명하는 문항은 없다. 일부 문항만 '정답입니다.'를 표시하고, 무작위 C·D의 보조식은 항상 노출되며 A·B에는 보조 설명이 없다. 대부분 결과만 통보하는 1점 기준에 해당한다.",
+    "interaction_flow_clarity": "문항 프롬프트와 기본 다음 버튼으로 전체 흐름은 진행 가능하다. 그러나 대사와 문항이 동시에 진행되고, subtraction의 CTA가 풀이와 독립적으로 열리며, random-practice의 '다음 문제' 버튼은 아무 변화가 없고 네 문항이 한꺼번에 보이며, 자유 그리기 확인창도 처음부터 노출되어 단계와 다음 행동에 시행착오가 필요하다.",
+    "functional_integrity": "깨진 필수 기능 6개가 확인됐다: intro-story의 시작 조작 이전 대사 노출, subtraction 완료 게이트의 문항 우회, random-practice 캐러셀의 무동작 다음 버튼, random-hint의 캐릭터 클릭·오답 자동 열기 부재, free-draw-tool의 선택·이동·삭제 부재, free-draw-confirm을 여는 진행 조작 부재. 정답 경로로 completion까지 도달했고 런타임 오류는 없었으며 인증서 다운로드도 동작했지만, 필수 상호작용 미도달과 완료 조건 우회가 존재한다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "content_fidelity는 문자열 존재 여부만으로 상향하지 않고 rubric의 순서·완료 흐름 불일치를 함께 계수했다. weighted_total 2.02가 4.2 미만이고 네 축이 min_axis 미만이며, random-hint 미도달과 subtraction 완료 조건 우회가 하드 게이트에도 해당한다."
+}

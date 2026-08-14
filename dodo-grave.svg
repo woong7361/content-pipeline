@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="도도 죽다 라고 새겨진 묘비와 날아오르는 도도 유령">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b1b3a"/>
+      <stop offset="55%" stop-color="#3b2f5e"/>
+      <stop offset="100%" stop-color="#6b4a6b"/>
+    </linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b9bcc4"/>
+      <stop offset="45%" stop-color="#8f939d"/>
+      <stop offset="100%" stop-color="#666a75"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2f3d2c"/>
+      <stop offset="100%" stop-color="#1a2119"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff6d8" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#fff6d8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="mist" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <!-- 하늘 -->
+  <rect width="800" height="600" fill="url(#sky)"/>
+
+  <!-- 별 -->
+  <g fill="#fdfbe8">
+    <circle cx="92" cy="78" r="2.1" opacity=".9"/>
+    <circle cx="168" cy="142" r="1.5" opacity=".7"/>
+    <circle cx="248" cy="62" r="1.8" opacity=".8"/>
+    <circle cx="404" cy="108" r="1.4" opacity=".6"/>
+    <circle cx="486" cy="52" r="2" opacity=".85"/>
+    <circle cx="702" cy="196" r="1.6" opacity=".7"/>
+    <circle cx="738" cy="92" r="1.3" opacity=".55"/>
+    <circle cx="58" cy="212" r="1.5" opacity=".6"/>
+    <circle cx="322" cy="176" r="1.2" opacity=".5"/>
+  </g>
+
+  <!-- 달 -->
+  <circle cx="646" cy="112" r="120" fill="url(#moonGlow)"/>
+  <circle cx="646" cy="112" r="52" fill="#fdf3cf"/>
+  <circle cx="628" cy="98" r="9" fill="#eadfb4" opacity=".7"/>
+  <circle cx="662" cy="128" r="12" fill="#eadfb4" opacity=".55"/>
+  <circle cx="664" cy="90" r="5" fill="#eadfb4" opacity=".5"/>
+
+  <!-- 먼 언덕 -->
+  <path d="M0 452 C 120 414, 210 446, 320 438 C 440 430, 520 400, 640 424 C 720 440, 760 446, 800 438 L800 600 L0 600 Z"
+        fill="#241f38" opacity=".85"/>
+
+  <!-- 땅 안개 -->
+  <ellipse cx="380" cy="486" rx="330" ry="30" fill="#cfd6e6" opacity=".16" filter="url(#mist)"/>
+
+  <!-- 땅 -->
+  <path d="M0 470 C 160 458, 300 468, 420 462 C 560 455, 690 468, 800 460 L800 600 L0 600 Z" fill="url(#ground)"/>
+
+  <!-- 무덤 봉분 -->
+  <ellipse cx="300" cy="500" rx="186" ry="40" fill="#26301f"/>
+  <ellipse cx="300" cy="494" rx="170" ry="34" fill="#33402a"/>
+  <ellipse cx="286" cy="488" rx="120" ry="20" fill="#3d4c30" opacity=".8"/>
+
+  <!-- 묘비 그림자 -->
+  <ellipse cx="306" cy="474" rx="118" ry="18" fill="#000" opacity=".35"/>
+
+  <!-- 묘비 -->
+  <g>
+    <path d="M200 340 A 100 100 0 0 1 400 340 L400 470 L200 470 Z" fill="#4c505b"/>
+    <path d="M206 338 A 94 94 0 0 1 394 338 L394 466 L206 466 Z" fill="url(#stone)"/>
+    <!-- 표면 얼룩/이끼 -->
+    <ellipse cx="232" cy="430" rx="20" ry="30" fill="#5c6b4a" opacity=".35"/>
+    <ellipse cx="378" cy="300" rx="12" ry="20" fill="#5c6b4a" opacity=".25"/>
+    <path d="M214 452 q 26 -10 52 -2 q 24 8 46 0" stroke="#5c6b4a" stroke-width="5" fill="none" opacity=".3" stroke-linecap="round"/>
+    <!-- 금 -->
+    <path d="M330 262 l -12 34 l 14 12 l -8 26" stroke="#5b5f69" stroke-width="2.4" fill="none" opacity=".55"/>
+
+    <!-- 새김 문구 (음각: 어두운 선 + 밝은 하이라이트) -->
+    <g font-family="'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif" text-anchor="middle" font-weight="700">
+      <text x="300" y="372" font-size="38" fill="#3d414b">도도 죽다</text>
+      <text x="301" y="370.6" font-size="38" fill="#d3d7de" opacity=".55">도도 죽다</text>
+      <text x="300" y="412" font-size="17" fill="#40444e" letter-spacing="1.5">1598 — 1681</text>
+      <text x="300.6" y="411" font-size="17" fill="#ced2d9" opacity=".45" letter-spacing="1.5">1598 — 1681</text>
+    </g>
+  </g>
+
+  <!-- 묘비 받침 -->
+  <rect x="182" y="458" width="236" height="26" rx="7" fill="#5a5f6a"/>
+  <rect x="182" y="458" width="236" height="10" rx="5" fill="#7e838e"/>
+
+  <!-- 봉분 (묘비 앞으로 솟은 흙더미) -->
+  <path d="M120 534 C 150 468, 240 442, 302 442 C 366 442, 452 470, 482 534 Z" fill="#26311e"/>
+  <path d="M132 534 C 162 476, 244 452, 302 452 C 362 452, 442 478, 470 534 Z" fill="#38472c"/>
+  <path d="M158 522 C 184 480, 246 462, 296 462 C 274 476, 226 490, 188 522 Z" fill="#465834" opacity=".75"/>
+  <ellipse cx="302" cy="534" rx="182" ry="18" fill="#1e2718"/>
+  <!-- 봉분 위 풀 -->
+  <g stroke="#5a7040" stroke-width="2.6" stroke-linecap="round" fill="none" opacity=".8">
+    <path d="M214 486 q 4 -14 0 -22"/>
+    <path d="M258 468 q 6 -14 3 -22"/>
+    <path d="M340 470 q -5 -14 -1 -22"/>
+    <path d="M392 492 q -6 -14 -2 -22"/>
+    <path d="M300 460 q 3 -14 0 -20"/>
+  </g>
+
+  <!-- 풀 -->
+  <g stroke="#4a5c36" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M150 492 q 6 -20 2 -32"/>
+    <path d="M162 494 q 12 -16 20 -22"/>
+    <path d="M438 486 q -8 -18 -4 -30"/>
+    <path d="M452 490 q 10 -14 20 -18"/>
+    <path d="M96 516 q 8 -18 4 -28"/>
+    <path d="M520 508 q -10 -16 -8 -26"/>
+    <path d="M620 524 q 8 -20 4 -30"/>
+  </g>
+
+  <!-- 무덤에서 빠져나와 날아오른 궤적 -->
+  <path d="M336 446 C 388 424, 418 380, 452 336 C 486 292, 520 268, 552 252"
+        fill="none" stroke="#dcebff" stroke-width="3" stroke-linecap="round"
+        stroke-dasharray="2 14" opacity=".35" filter="url(#softGlow)"/>
+  <g fill="#e8f2ff">
+    <ellipse cx="352" cy="440" rx="6" ry="8" opacity=".18" transform="rotate(-30 352 440)"/>
+    <ellipse cx="396" cy="404" rx="8" ry="11" opacity=".24" transform="rotate(-30 396 404)"/>
+    <ellipse cx="438" cy="362" rx="10" ry="14" opacity=".32" transform="rotate(-30 438 362)"/>
+    <ellipse cx="478" cy="322" rx="13" ry="18" opacity=".4" transform="rotate(-30 478 322)"/>
+    <ellipse cx="514" cy="290" rx="16" ry="22" opacity=".46" transform="rotate(-30 514 290)"/>
+  </g>
+
+  <!-- 도도 유령 -->
+  <g transform="translate(586 240) rotate(-15)" filter="url(#softGlow)">
+    <g opacity=".78">
+      <!-- 몸통 + 꼬리 자락 -->
+      <path d="M-44 18
+               C -70 66, -74 118, -60 166
+               q 15 26 30 0 q 15 -26 30 0 q 15 26 30 0 q 14 -24 26 -2
+               C 70 116, 68 64, 44 18 Z"
+            fill="#eef6ff"/>
+      <!-- 머리 -->
+      <circle cx="0" cy="-2" r="47" fill="#eef6ff"/>
+      <!-- 머리 깃 -->
+      <path d="M-22 -44 q 8 -18 22 -22 q -6 12 -4 20" fill="#eef6ff"/>
+      <!-- 부리 -->
+      <path d="M30 -14 C 64 -20, 96 -8, 101 8 C 104 24, 90 34, 79 29 C 66 22, 46 16, 28 14 Z" fill="#cfe0f2"/>
+      <path d="M92 6 C 98 12, 98 22, 88 26" fill="none" stroke="#a9c2dc" stroke-width="3" stroke-linecap="round"/>
+      <!-- 부리 경계 -->
+      <path d="M30 2 C 52 4, 74 8, 92 14" fill="none" stroke="#b6cde2" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- 날개 -->
+      <path d="M40 58 C 66 62, 78 84, 70 104 C 58 92, 46 78, 34 72 Z" fill="#dceaf8"/>
+      <path d="M-42 62 C -66 68, -74 88, -66 106 C -54 94, -46 82, -34 76 Z" fill="#dceaf8"/>
+      <!-- 눈 -->
+      <circle cx="6" cy="-12" r="6" fill="#4a5a72"/>
+      <circle cx="8.4" cy="-14.2" r="2" fill="#ffffff"/>
+      <!-- 볼 -->
+      <circle cx="-20" cy="8" r="8" fill="#cfe0f2" opacity=".7"/>
+    </g>
+  </g>
+
+  <!-- 유령 주변 반딧불 -->
+  <g fill="#ffffff">
+    <circle cx="690" cy="200" r="3" opacity=".55"/>
+    <circle cx="520" cy="236" r="2.4" opacity=".45"/>
+    <circle cx="660" cy="360" r="2.6" opacity=".4"/>
+    <circle cx="558" cy="150" r="2" opacity=".4"/>
+  </g>
+
+  <!-- 바닥 비네트 -->
+  <rect width="800" height="600" fill="none"/>
+  <radialGradient id="vig" cx="50%" cy="50%" r="72%">
+    <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000" stop-opacity=".45"/>
+  </radialGradient>
+  <rect width="800" height="600" fill="url(#vig)"/>
+</svg>

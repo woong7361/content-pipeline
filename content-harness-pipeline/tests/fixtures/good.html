@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>fixture: good</title>
+<style>
+  body { font-family: sans-serif; margin: 0; padding: 24px; }
+  .feedback[hidden] { display: none; }
+  .choice, .block { padding: 12px 20px; margin-right: 8px; font-size: 18px; }
+  .choice.picked, .block.picked { outline: 3px solid #06c; }
+  .slot { display: inline-block; min-width: 64px; min-height: 32px; border: 2px dashed #888; margin-right: 8px; text-align: center; }
+  .blank { display: inline-block; min-width: 48px; border-bottom: 3px solid #333; text-align: center; }
+  .blank.active { background: #ffe; }
+  .key { width: 48px; height: 40px; margin: 2px; }
+</style>
+</head>
+<body>
+<section data-qa-scene="fixture-scene" data-qa-order="1" data-qa-label="고정 검증 화면">
+  <p data-qa-beat="0">시계를 함께 고쳐보자!</p>
+  <p data-qa-beat="1" hidden>먼저 모양부터 살펴보자!</p>
+  <button type="button" data-qa-beat-next>다음 대사</button>
+  <button type="button" data-qa-advance="fixture-scene-2">[시작하기]</button>
+
+  <div data-qa-page="0">첫 번째 장이에요</div>
+  <div data-qa-page="1" hidden>두 번째 장이에요</div>
+  <button type="button" data-qa-page-next>다음 장</button>
+
+  <div id="starNote" hidden>담장에 별이 붙었어요</div>
+
+  <div data-qa-question="fx-choice">
+    <p>지금 몇 시일까요?</p>
+    <button type="button" class="choice" data-qa-choice="0" data-qa-correct="true">3시</button>
+    <button type="button" class="choice" data-qa-choice="1" data-qa-correct="false">4시</button>
+    <button type="button" class="choice" data-qa-choice="2" data-qa-correct="false">5시</button>
+  </div>
+
+  <div data-qa-question="fx-keypad">
+    <p>11시 30분에서 30분 뒤는 몇 시 몇 분일까요?</p>
+    <span class="blank" data-qa-blank="0"></span>시
+    <span class="blank" data-qa-blank="1"></span>분
+    <div id="keypad"></div>
+    <button type="button" data-qa-key="submit">확인하기</button>
+  </div>
+
+  <div data-qa-question="fx-drag-choice">
+    <p>동그란 모양을 담장에 옮겨 볼까요?</p>
+    <button type="button" class="choice" data-qa-choice="0" data-qa-correct="true" draggable="true">원</button>
+    <button type="button" class="choice" data-qa-choice="1" data-qa-correct="false" draggable="true">세모</button>
+    <button type="button" class="choice" data-qa-choice="2" data-qa-correct="false" draggable="true">네모</button>
+    <span class="slot" data-qa-slot="0"></span>
+  </div>
+
+  <div data-qa-question="fx-drag-values">
+    <p>숫자 블록을 빈칸에 순서대로 넣어 보세요.</p>
+    <button type="button" class="block" data-qa-block="1" draggable="true">1</button>
+    <button type="button" class="block" data-qa-block="2" draggable="true">2</button>
+    <button type="button" class="block" data-qa-block="3" draggable="true">3</button>
+    <span class="slot" data-qa-slot="0"></span>
+    <span class="slot" data-qa-slot="1"></span>
+  </div>
+
+  <div data-qa-question="fx-attempts">
+    <p>세모는 몇 개일까요?</p>
+    <button type="button" class="choice" data-qa-choice="0" data-qa-correct="true">2개</button>
+    <button type="button" class="choice" data-qa-choice="1" data-qa-correct="false">3개</button>
+    <button type="button" class="choice" data-qa-choice="2" data-qa-correct="false">4개</button>
+  </div>
+
+  <div data-qa-question="fx-hotspot">
+    <p>그림에서 네모 모양 2개를 찾아 보세요.</p>
+    <span class="hotspot" data-qa-choice="wall-left" data-qa-correct="true">■</span>
+    <span class="hotspot" data-qa-choice="wall-right" data-qa-correct="true">■</span>
+    <span class="hotspot" data-qa-choice="sun" data-qa-correct="false">●</span>
+  </div>
+
+</section>
+
+<section data-qa-scene="fixture-scene-2" data-qa-order="2" data-qa-label="도착 화면" hidden>
+  <p>잘 도착했어요!</p>
+
+  <!-- 문항을 하나씩 내보낸다. 두 번째는 첫 번째를 풀어야 나타나므로, 검증기는
+       __contentHarnessShowQuestion 통로로만 바로 확인할 수 있다. -->
+  <div data-qa-question="fx-seq-first">
+    <p>첫 번째 문제예요. 동그라미는 몇 개일까요?</p>
+    <button type="button" class="choice" data-qa-choice="0" data-qa-correct="true">2개</button>
+    <button type="button" class="choice" data-qa-choice="1" data-qa-correct="false">3개</button>
+  </div>
+  <div data-qa-question="fx-seq-second" hidden>
+    <p>두 번째 문제예요. 세모는 몇 개일까요?</p>
+    <button type="button" class="choice" data-qa-choice="0" data-qa-correct="true">1개</button>
+    <button type="button" class="choice" data-qa-choice="1" data-qa-correct="false">4개</button>
+  </div>
+</section>
+
+<div class="feedback" data-qa-feedback="correct" hidden><span></span></div>
+<div class="feedback" data-qa-feedback="wrong" hidden><span></span></div>
+
+<script>
+  var ANSWERS = { 'fx-keypad': ['12', '0'], 'fx-drag-values': ['1', '2'] };
+  var MESSAGES = {
+    'fx-choice':      { correct: '잘했어요!',    wrong: '다시 생각해보세요' },
+    'fx-keypad':      { correct: '정확해요!',    wrong: '다시 해볼까요?' },
+    'fx-drag-choice': { correct: '딱 맞아요!',   wrong: '다른 모양이에요' },
+    'fx-drag-values': { correct: '순서가 맞아요!', wrong: '순서를 다시 볼까요?' },
+    'fx-attempts':    { correct: '맞았어요!',     wrong: '다시 세어볼까요?' },
+    'fx-hotspot':     { correct: '둘 다 찾았어요!', wrong: '거기는 네모가 아니에요' },
+    'fx-seq-first':   { correct: '맞아요!',       wrong: '다시 세어볼까요?' },
+    'fx-seq-second':  { correct: '정확해요!',     wrong: '한 번 더 볼까요?' }
+  };
+
+  function hideFeedback() {
+    document.querySelectorAll('[data-qa-feedback]').forEach(function (surface) {
+      surface.hidden = true;
+    });
+  }
+
+  function judge(questionId, isCorrect) {
+    hideFeedback();
+    var state = isCorrect ? 'correct' : 'wrong';
+    var surface = document.querySelector('[data-qa-feedback="' + state + '"]');
+    surface.querySelector('span').textContent = MESSAGES[questionId][state];
+    surface.hidden = false;
+  }
+
+  function inQuestion(questionId, selector) {
+    return document.querySelectorAll('[data-qa-question="' + questionId + '"] ' + selector);
+  }
+
+  // --- 화면 전환 ---
+  document.querySelectorAll('[data-qa-advance]').forEach(function (control) {
+    control.addEventListener('click', function () {
+      window.__contentHarnessShowScene(control.getAttribute('data-qa-advance'));
+    });
+  });
+
+  // --- 순차 대사와 페이지 넘김 ---
+  var beat = 0;
+  document.querySelector('[data-qa-beat-next]').addEventListener('click', function () {
+    var next = document.querySelector('[data-qa-beat="' + (beat + 1) + '"]');
+    if (!next) { return; }
+    document.querySelector('[data-qa-beat="' + beat + '"]').hidden = true;
+    next.hidden = false;
+    beat += 1;
+  });
+
+  var page = 0;
+  document.querySelector('[data-qa-page-next]').addEventListener('click', function () {
+    var next = document.querySelector('[data-qa-page="' + (page + 1) + '"]');
+    if (!next) { return; }
+    document.querySelector('[data-qa-page="' + page + '"]').hidden = true;
+    next.hidden = false;
+    page += 1;
+  });
+
+  // --- 보기 선택 ---
+  inQuestion('fx-choice', '[data-qa-choice]').forEach(function (choice) {
+    choice.addEventListener('click', function () {
+      var isCorrect = choice.getAttribute('data-qa-correct') === 'true';
+      judge('fx-choice', isCorrect);
+      // reveal.when=on_correct 로 이 문항에 매달린 문구
+      document.getElementById('starNote').hidden = !isCorrect;
+    });
+  });
+
+  // --- 그림 위 여러 자리 찾기: 정답 자리를 다 눌러야 정답 ---
+  var foundTargets = {};
+  var hotspotTotal = inQuestion('fx-hotspot', '[data-qa-correct="true"]').length;
+  inQuestion('fx-hotspot', '[data-qa-choice]').forEach(function (spot) {
+    spot.addEventListener('click', function () {
+      if (spot.getAttribute('data-qa-correct') !== 'true') {
+        judge('fx-hotspot', false);
+        return;
+      }
+      foundTargets[spot.getAttribute('data-qa-choice')] = true;
+      spot.classList.add('picked');
+      if (Object.keys(foundTargets).length === hotspotTotal) {
+        judge('fx-hotspot', true);
+      }
+    });
+  });
+
+  // --- 시도 횟수 정책: 3번 틀리면 정답을 공개하고 넘어간다 ---
+  var attemptsUsed = 0;
+  var attemptsRoot = document.querySelector('[data-qa-question="fx-attempts"]');
+  inQuestion('fx-attempts', '[data-qa-choice]').forEach(function (choice) {
+    choice.addEventListener('click', function () {
+      var isCorrect = choice.getAttribute('data-qa-correct') === 'true';
+      judge('fx-attempts', isCorrect);
+      if (isCorrect) { return; }
+      attemptsUsed += 1;
+      if (attemptsUsed >= 3) {
+        // 정답 자리를 표시해 학습자가 어느 것이 답인지 알게 한다
+        attemptsRoot.querySelector('[data-qa-correct="true"]').setAttribute('data-qa-revealed', 'true');
+        attemptsRoot.hidden = true;
+      }
+    });
+  });
+
+  // --- 키패드 ---
+  var keypad = document.getElementById('keypad');
+  for (var digit = 0; digit <= 9; digit += 1) {
+    var key = document.createElement('button');
+    key.type = 'button';
+    key.className = 'key';
+    key.setAttribute('data-qa-key', String(digit));
+    key.textContent = String(digit);
+    keypad.appendChild(key);
+  }
+
+  var activeBlank = null;
+  inQuestion('fx-keypad', '[data-qa-blank]').forEach(function (blank) {
+    blank.addEventListener('click', function () {
+      inQuestion('fx-keypad', '[data-qa-blank]').forEach(function (other) { other.classList.remove('active'); });
+      blank.classList.add('active');
+      blank.textContent = '';
+      activeBlank = blank;
+    });
+  });
+  document.querySelectorAll('[data-qa-key]').forEach(function (key) {
+    var value = key.getAttribute('data-qa-key');
+    if (value === 'submit') {
+      key.addEventListener('click', function () {
+        var entered = Array.prototype.map.call(inQuestion('fx-keypad', '[data-qa-blank]'), function (blank) {
+          return blank.textContent.trim();
+        });
+        judge('fx-keypad', sameValues(entered, ANSWERS['fx-keypad']));
+      });
+      return;
+    }
+    key.addEventListener('click', function () {
+      if (activeBlank) { activeBlank.textContent += value; }
+    });
+  });
+
+  // --- 옮기기: 보기 기반 ---
+  // 끌기와 누르기 두 경로를 모두 제공한다. 끌기 전용으로 만들면 접근성 장벽이 되고,
+  // driver도 native DnD를 합성 이벤트로 밀 수 없다.
+  var pickedChoice = null;
+  inQuestion('fx-drag-choice', '[data-qa-choice]').forEach(function (choice) {
+    choice.addEventListener('dragstart', function () { pickedChoice = choice; });
+    choice.addEventListener('click', function () {
+      inQuestion('fx-drag-choice', '[data-qa-choice]').forEach(function (other) { other.classList.remove('picked'); });
+      choice.classList.add('picked');
+      pickedChoice = choice;
+    });
+  });
+  inQuestion('fx-drag-choice', '[data-qa-slot]').forEach(function (slot) {
+    slot.addEventListener('click', function () {
+      if (!pickedChoice) { return; }
+      slot.textContent = pickedChoice.textContent;
+      judge('fx-drag-choice', pickedChoice.getAttribute('data-qa-correct') === 'true');
+      pickedChoice = null;
+    });
+  });
+
+  // --- 옮기기: 값 기반 ---
+  var pickedBlock = null;
+  inQuestion('fx-drag-values', '[data-qa-block]').forEach(function (block) {
+    block.addEventListener('dragstart', function () { pickedBlock = block; });
+    block.addEventListener('click', function () {
+      inQuestion('fx-drag-values', '[data-qa-block]').forEach(function (other) { other.classList.remove('picked'); });
+      block.classList.add('picked');
+      pickedBlock = block;
+    });
+  });
+  inQuestion('fx-drag-values', '[data-qa-slot]').forEach(function (slot) {
+    slot.addEventListener('click', function () {
+      if (!pickedBlock) { return; }
+      slot.textContent = pickedBlock.getAttribute('data-qa-block');
+      pickedBlock = null;
+      var placed = Array.prototype.map.call(inQuestion('fx-drag-values', '[data-qa-slot]'), function (item) {
+        return item.textContent.trim();
+      });
+      if (placed.every(function (item) { return item !== ''; })) {
+        judge('fx-drag-values', sameValues(placed, ANSWERS['fx-drag-values']));
+      }
+    });
+  });
+
+  function sameValues(entered, expected) {
+    return entered.length === expected.length && entered.every(function (item, index) {
+      return item === expected[index];
+    });
+  }
+
+  // --- 순차 문항 ---
+  var SEQ = ['fx-seq-first', 'fx-seq-second'];
+  SEQ.forEach(function (questionId, index) {
+    inQuestion(questionId, '[data-qa-choice]').forEach(function (choice) {
+      choice.addEventListener('click', function () {
+        var isCorrect = choice.getAttribute('data-qa-correct') === 'true';
+        judge(questionId, isCorrect);
+        var next = SEQ[index + 1];
+        if (isCorrect && next) {
+          document.querySelector('[data-qa-question="' + next + '"]').hidden = false;
+        }
+      });
+    });
+  });
+
+  // QA 통로. 보여 주기만 하고 정답 처리나 진행 상태는 건드리지 않는다.
+  window.__contentHarnessShowQuestion = function (questionId) {
+    var target = document.querySelector('[data-qa-question="' + questionId + '"]');
+    if (target) { target.hidden = false; }
+  };
+
+  window.__contentHarnessShowScene = function (sceneId) {
+    document.querySelectorAll('[data-qa-scene]').forEach(function (scene) {
+      scene.hidden = scene.getAttribute('data-qa-scene') !== sceneId;
+    });
+  };
+</script>
+</body>
+</html>

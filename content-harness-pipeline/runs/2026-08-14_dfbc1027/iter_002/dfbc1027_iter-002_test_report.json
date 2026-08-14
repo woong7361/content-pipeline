@@ -1,0 +1,1572 @@
+{
+  "spec_version": "1",
+  "source_planner": "dfbc1027_planner.json",
+  "total": 96,
+  "passed": 93,
+  "failed": 3,
+  "hook_missing": 3,
+  "unsupported": 0,
+  "questions_total": 16,
+  "questions_covered": 16,
+  "verdict": "REJECT",
+  "underivable": [],
+  "scenarios": [
+    {
+      "case_id": "case_intro_text",
+      "kind": "scene",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [],
+      "then": [
+        "'수리가 필요해요' 가 화면에 보인다",
+        "'와글와글, 운동회를 도와요!' 가 화면에 보인다",
+        "'알록달록, 학교 담장 색칠하기' 가 화면에 보인다",
+        "'수리력 +' 가 화면에 보인다",
+        "'[모양과 덧셈의 힘으로 담장 색칠하기!]' 가 화면에 보인다",
+        "'시작하기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_intro_beat_0",
+      "kind": "scene",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [],
+      "then": [
+        "'공사 중에 실수로 담장을 무너뜨렸어요.' 가 화면에 보인다",
+        "'죄송합니다!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_intro_beat_1",
+      "kind": "scene",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'① 휴, 담장은 다 고쳤어요.' 가 화면에 보인다",
+        "'② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_intro_beat_2",
+      "kind": "scene",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'저희가 도와드릴게요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_intro_beat_3",
+      "kind": "scene",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3"
+      ],
+      "then": [
+        "'모양의 힘으로 색칠하기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_intro_advance",
+      "kind": "flow",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3",
+        "shape-find 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "shape-find 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_text",
+      "kind": "scene",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [],
+      "then": [
+        "'수리가 필요해요 1' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_beat_0",
+      "kind": "scene",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [],
+      "then": [
+        "'벽화를 어떻게 그려야 되지?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_beat_1",
+      "kind": "scene",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'여러 가지 모양으로 그리면 좋겠어요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_beat_2",
+      "kind": "scene",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'저와 학교에서 모양을 찾아 보아요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_beat_3",
+      "kind": "scene",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3"
+      ],
+      "then": [
+        "'네!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-shape_correct",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-shape 문항에서",
+      "when": [
+        "정답 자리를 모두 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "정답 자리가 2개다",
+        "'정답입니다.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-shape_wrong",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-shape 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-shape_attempts",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-shape 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-triangle_correct",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-triangle 문항에서",
+      "when": [
+        "정답 자리를 모두 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "정답 자리가 2개다",
+        "'정답입니다.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-triangle_wrong",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-triangle 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-find-triangle_attempts",
+      "kind": "question",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면의 q-find-triangle 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-find_advance",
+      "kind": "flow",
+      "section_id": "shape-find",
+      "status": "PASS",
+      "given": "shape-find 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3",
+        "정답 자리를 모두 고른다 x2",
+        "shape-count 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "shape-count 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-count_text",
+      "kind": "scene",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면에서",
+      "when": [],
+      "then": [
+        "'● ■ ▲ 모양' 가 화면에 보인다",
+        "'모양은 몇 개 인가요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-count_beat_0",
+      "kind": "scene",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면에서",
+      "when": [],
+      "then": [
+        "'잘 찾았어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-count_beat_1",
+      "kind": "scene",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'페인트 색깔마다 모양이 달라요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-circle_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-circle 문항에서",
+      "when": [
+        "정답 값을 입력한다 (3)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-circle_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-circle 문항에서",
+      "when": [
+        "오답 값을 입력한다 (4)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-triangle_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-triangle 문항에서",
+      "when": [
+        "정답 값을 입력한다 (2)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-triangle_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-triangle 문항에서",
+      "when": [
+        "오답 값을 입력한다 (3)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-square_correct",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-square 문항에서",
+      "when": [
+        "정답 값을 입력한다 (4)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-count-square_wrong",
+      "kind": "question",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면의 q-count-square 문항에서",
+      "when": [
+        "오답 값을 입력한다 (5)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-count_advance",
+      "kind": "flow",
+      "section_id": "shape-count",
+      "status": "PASS",
+      "given": "shape-count 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "정답 값을 입력한다 (3)",
+        "정답 값을 입력한다 (2)",
+        "정답 값을 입력한다 (4)",
+        "shape-transition 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "shape-transition 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-transition_beat_0",
+      "kind": "scene",
+      "section_id": "shape-transition",
+      "status": "PASS",
+      "given": "shape-transition 화면에서",
+      "when": [],
+      "then": [
+        "'① 잘했어요.' 가 화면에 보인다",
+        "'이제 벽화를 색칠해봐요!' 가 화면에 보인다",
+        "'② 페인트 소개를 부탁해요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-transition_beat_1",
+      "kind": "scene",
+      "section_id": "shape-transition",
+      "status": "PASS",
+      "given": "shape-transition 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'모양으로 세 수의 덧셈과 뺄셈하기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_shape-transition_advance",
+      "kind": "flow",
+      "section_id": "shape-transition",
+      "status": "PASS",
+      "given": "shape-transition 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "ten-intro 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "ten-intro 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_ten-intro_text",
+      "kind": "scene",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면에서",
+      "when": [],
+      "then": [
+        "'수리가 필요해요 2' 가 화면에 보인다",
+        "'세 수의 덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_ten-intro_beat_0",
+      "kind": "scene",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면에서",
+      "when": [],
+      "then": [
+        "'①페인트 소개는 저희가 할게요.' 가 화면에 보인다",
+        "'②이것을 페인트라고 해요.' 가 화면에 보인다",
+        "'초록색부터 알려드릴게요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_ten-intro_beat_1",
+      "kind": "scene",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'1통에 모양을 10개씩 그릴 수 있어요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-total-ten_correct",
+      "kind": "question",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면의 q-total-ten 문항에서",
+      "when": [
+        "정답 값을 입력한다 (10)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-total-ten_wrong",
+      "kind": "question",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면의 q-total-ten 문항에서",
+      "when": [
+        "오답 값을 입력한다 (11)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_ten-intro_advance",
+      "kind": "flow",
+      "section_id": "ten-intro",
+      "status": "PASS",
+      "given": "ten-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "정답 값을 입력한다 (10)",
+        "addition 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "addition 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_addition_text",
+      "kind": "scene",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면에서",
+      "when": [],
+      "then": [
+        "'세 수의 덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_addition_beat_0",
+      "kind": "scene",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면에서",
+      "when": [],
+      "then": [
+        "'7개에서 3개를 더 색칠하면 몇 개일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_addition_beat_1",
+      "kind": "scene",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'2개를 더 색칠해주세요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_addition_beat_2",
+      "kind": "scene",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'네' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-to-ten_correct",
+      "kind": "question",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면의 q-add-to-ten 문항에서",
+      "when": [
+        "정답 값을 입력한다 (10)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'페인트 1통을 다 썼어요' 가 화면에 보인다",
+        "'1통을 더 준비했어요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-to-ten_wrong",
+      "kind": "question",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면의 q-add-to-ten 문항에서",
+      "when": [
+        "오답 값을 입력한다 (11)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-two_correct",
+      "kind": "question",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면의 q-add-two 문항에서",
+      "when": [
+        "정답 값을 입력한다 (12)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-two_wrong",
+      "kind": "question",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면의 q-add-two 문항에서",
+      "when": [
+        "오답 값을 입력한다 (13)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_addition_advance",
+      "kind": "flow",
+      "section_id": "addition",
+      "status": "PASS",
+      "given": "addition 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2",
+        "정답 값을 입력한다 (10)",
+        "정답 값을 입력한다 (12)",
+        "subtraction-intro 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "subtraction-intro 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_text",
+      "kind": "scene",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [],
+      "then": [
+        "'세 수의 덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_beat_0",
+      "kind": "scene",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [],
+      "then": [
+        "'고마워요!' 가 화면에 보인다",
+        "'다른 담장으로 가요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_beat_1",
+      "kind": "scene",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'네!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_beat_2",
+      "kind": "scene",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'잘못 그린 2개를 지워주세요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_beat_3",
+      "kind": "scene",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3"
+      ],
+      "then": [
+        "'모양 12개에서 2개를 지우면 몇 개일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-three_correct",
+      "kind": "question",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면의 q-add-three 문항에서",
+      "when": [
+        "정답 값을 입력한다 (12)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'정답입니다.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-add-three_wrong",
+      "kind": "question",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면의 q-add-three 문항에서",
+      "when": [
+        "오답 값을 입력한다 (13)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-two_correct",
+      "kind": "question",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면의 q-subtract-two 문항에서",
+      "when": [
+        "정답 값을 입력한다 (10)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-two_wrong",
+      "kind": "question",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면의 q-subtract-two 문항에서",
+      "when": [
+        "오답 값을 입력한다 (11)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction-intro_advance",
+      "kind": "flow",
+      "section_id": "subtraction-intro",
+      "status": "PASS",
+      "given": "subtraction-intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3",
+        "정답 값을 입력한다 (12)",
+        "정답 값을 입력한다 (10)",
+        "subtraction 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "subtraction 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_text",
+      "kind": "scene",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [],
+      "then": [
+        "'세 수의 덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_beat_0",
+      "kind": "scene",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [],
+      "then": [
+        "'3개를 더 지우고 싶어요. 지워주세요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_beat_1",
+      "kind": "scene",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'모양 10개에서 3개를 더 지우면 몇 개 일까요?' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_beat_2",
+      "kind": "scene",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x2"
+      ],
+      "then": [
+        "'네!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_beat_3",
+      "kind": "scene",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3"
+      ],
+      "then": [
+        "'덧셈, 뺄셈의 힘으로 담장 색칠하기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-three_correct",
+      "kind": "question",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면의 q-subtract-three 문항에서",
+      "when": [
+        "정답 값을 입력한다 (7)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-three_wrong",
+      "kind": "question",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면의 q-subtract-three 문항에서",
+      "when": [
+        "오답 값을 입력한다 (8)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-all_correct",
+      "kind": "question",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면의 q-subtract-all 문항에서",
+      "when": [
+        "정답 값을 입력한다 (7)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "'정답입니다.' 가 화면에 보인다",
+        "'잘했어요!' 가 화면에 보인다",
+        "'더 많은 담장을' 가 화면에 보인다",
+        "'색칠해야해요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-subtract-all_wrong",
+      "kind": "question",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면의 q-subtract-all 문항에서",
+      "when": [
+        "오답 값을 입력한다 (8)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_subtraction_advance",
+      "kind": "flow",
+      "section_id": "subtraction",
+      "status": "PASS",
+      "given": "subtraction 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3",
+        "정답 값을 입력한다 (7) x2",
+        "random-practice 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "random-practice 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_text",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [],
+      "then": [
+        "'수리로 해결해요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_on_page_0",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [],
+      "then": [
+        "'무작위 문제 A' 가 화면에 보인다",
+        "'덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_on_page_1",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'무작위 문제 B' 가 화면에 보인다",
+        "'덧셈과 뺄셈' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_on_page_2",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'무작위 문제 C' 가 화면에 보인다",
+        "'덧셈과 뺄셈' 가 화면에 보인다",
+        "'6 + 4 = (  )' 가 화면에 보인다",
+        "'얼마일까요?' 가 화면에 보인다",
+        "'세 수의 덧셈을 해 보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_on_page_3",
+      "kind": "scene",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3"
+      ],
+      "then": [
+        "'무작위 문제 D' 가 화면에 보인다",
+        "'덧셈과 뺄셈' 가 화면에 보인다",
+        "'13 - 3 = (  )' 가 화면에 보인다",
+        "'얼마일까요?' 가 화면에 보인다",
+        "'세 수의 뺄셈을 해 보세요' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-a_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-a 문항에서",
+      "when": [
+        "정답 보기를 고른다"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-a_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-a 문항에서",
+      "when": [
+        "오답 보기를 고른다"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-a_attempts",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-a 문항에서",
+      "when": [
+        "오답 보기를 고른다 x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-b_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-b 문항에서",
+      "when": [
+        "정답 값을 입력한다 (6)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-b_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "REJECT",
+      "given": "random-practice 화면의 q-random-b 문항에서",
+      "when": [
+        "오답 값을 입력한다 (7)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": [
+        "다시 시도할 입력 요소가 없다"
+      ]
+    },
+    {
+      "case_id": "case_q-random-b_attempts",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-b 문항에서",
+      "when": [
+        "오답 값을 입력한다 (7) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-c_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-c 문항에서",
+      "when": [
+        "정답 값을 입력한다 (13)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-c_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "REJECT",
+      "given": "random-practice 화면의 q-random-c 문항에서",
+      "when": [
+        "오답 값을 입력한다 (14)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": [
+        "다시 시도할 입력 요소가 없다"
+      ]
+    },
+    {
+      "case_id": "case_q-random-c_attempts",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-c 문항에서",
+      "when": [
+        "오답 값을 입력한다 (14) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-d_correct",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-d 문항에서",
+      "when": [
+        "정답 값을 입력한다 (4)"
+      ],
+      "then": [
+        "정답 피드백이 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_q-random-d_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "REJECT",
+      "given": "random-practice 화면의 q-random-d 문항에서",
+      "when": [
+        "오답 값을 입력한다 (5)"
+      ],
+      "then": [
+        "오답 피드백이 보인다",
+        "다시 시도할 수 있다",
+        "오류가 없다"
+      ],
+      "problems": [
+        "다시 시도할 입력 요소가 없다"
+      ]
+    },
+    {
+      "case_id": "case_q-random-d_attempts",
+      "kind": "question",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면의 q-random-d 문항에서",
+      "when": [
+        "오답 값을 입력한다 (5) x3"
+      ],
+      "then": [
+        "정답이 공개된다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_random-practice_advance",
+      "kind": "flow",
+      "section_id": "random-practice",
+      "status": "PASS",
+      "given": "random-practice 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (6)",
+        "정답 값을 입력한다 (13)",
+        "정답 값을 입력한다 (4)",
+        "free-draw 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "free-draw 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_free-draw_text",
+      "kind": "scene",
+      "section_id": "free-draw",
+      "status": "PASS",
+      "given": "free-draw 화면에서",
+      "when": [],
+      "then": [
+        "'그리기 툴' 가 화면에 보인다",
+        "'그림을 완성했나요?' 가 화면에 보인다",
+        "'예' 가 화면에 보인다",
+        "'아니오' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_free-draw_beat_0",
+      "kind": "scene",
+      "section_id": "free-draw",
+      "status": "PASS",
+      "given": "free-draw 화면에서",
+      "when": [],
+      "then": [
+        "'담장 색칠이 끝나가요!' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_free-draw_beat_1",
+      "kind": "scene",
+      "section_id": "free-draw",
+      "status": "PASS",
+      "given": "free-draw 화면에서",
+      "when": [
+        "다음 대사로 넘긴다"
+      ],
+      "then": [
+        "'마지막 담장은 자유롭게 그려주세요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_free-draw_advance",
+      "kind": "flow",
+      "section_id": "free-draw",
+      "status": "PASS",
+      "given": "free-draw 화면에서",
+      "when": [
+        "다음 대사로 넘긴다",
+        "math-story 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "math-story 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_text",
+      "kind": "scene",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [],
+      "then": [
+        "'수리 이야기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_on_page_0",
+      "kind": "scene",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [],
+      "then": [
+        "'수리 이야기' 가 화면에 보인다",
+        "'모양을 길에서 본 적이 있나요?' 가 화면에 보인다",
+        "'● ■ ▲' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_on_page_1",
+      "kind": "scene",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [
+        "다음 장으로 넘긴다"
+      ],
+      "then": [
+        "'무슨 표지판일까요?' 가 화면에 보인다",
+        "'● 모양 표지판은 어떤 것이 있을까요?' 가 화면에 보인다",
+        "'자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_on_page_2",
+      "kind": "scene",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x2"
+      ],
+      "then": [
+        "'■ 모양 표지판은 어떤 것이 있을까요?' 가 화면에 보인다",
+        "'주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_on_page_3",
+      "kind": "scene",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3"
+      ],
+      "then": [
+        "'▲ 모양 표지판은 어떤 것이 있을까요?' 가 화면에 보인다",
+        "'공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.' 가 화면에 보인다",
+        "'앞으로 표지판을 보며 안전하게 다녀요.' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_math-story_advance",
+      "kind": "flow",
+      "section_id": "math-story",
+      "status": "PASS",
+      "given": "math-story 화면에서",
+      "when": [
+        "다음 장으로 넘긴다 x3",
+        "completion 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "completion 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_completion_text",
+      "kind": "scene",
+      "section_id": "completion",
+      "status": "PASS",
+      "given": "completion 화면에서",
+      "when": [],
+      "then": [
+        "'3차시 수리 완료!' 가 화면에 보인다",
+        "'인증서 다운로드' 가 화면에 보인다",
+        "'나가기' 가 화면에 보인다",
+        "오류가 없다"
+      ],
+      "problems": []
+    },
+    {
+      "case_id": "case_journey",
+      "kind": "scenario",
+      "section_id": "intro",
+      "status": "PASS",
+      "given": "intro 화면에서",
+      "when": [
+        "다음 대사로 넘긴다 x3",
+        "shape-find 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x3",
+        "정답 자리를 모두 고른다 x2",
+        "shape-count 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다",
+        "정답 값을 입력한다 (3)",
+        "정답 값을 입력한다 (2)",
+        "정답 값을 입력한다 (4)",
+        "shape-transition 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다",
+        "ten-intro 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다",
+        "정답 값을 입력한다 (10)",
+        "addition 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x2",
+        "정답 값을 입력한다 (10)",
+        "정답 값을 입력한다 (12)",
+        "subtraction-intro 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x3",
+        "정답 값을 입력한다 (12)",
+        "정답 값을 입력한다 (10)",
+        "subtraction 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다 x3",
+        "정답 값을 입력한다 (7) x2",
+        "random-practice 로 가는 진행 조작을 누른다",
+        "다음 장으로 넘긴다 x3",
+        "정답 보기를 고른다",
+        "정답 값을 입력한다 (6)",
+        "정답 값을 입력한다 (13)",
+        "정답 값을 입력한다 (4)",
+        "free-draw 로 가는 진행 조작을 누른다",
+        "다음 대사로 넘긴다",
+        "math-story 로 가는 진행 조작을 누른다",
+        "다음 장으로 넘긴다 x3",
+        "completion 로 가는 진행 조작을 누른다"
+      ],
+      "then": [
+        "completion 화면이 열린다",
+        "오류가 없다"
+      ],
+      "problems": []
+    }
+  ],
+  "failures": [
+    {
+      "case_id": "case_q-random-b_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-b",
+      "reason": "hook_missing",
+      "subject": "data-qa-choice",
+      "detail": "다시 시도할 입력 요소가 없다",
+      "screenshot": "case_q-random-b_wrong.png"
+    },
+    {
+      "case_id": "case_q-random-c_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-c",
+      "reason": "hook_missing",
+      "subject": "data-qa-choice",
+      "detail": "다시 시도할 입력 요소가 없다",
+      "screenshot": "case_q-random-c_wrong.png"
+    },
+    {
+      "case_id": "case_q-random-d_wrong",
+      "kind": "question",
+      "section_id": "random-practice",
+      "question_id": "q-random-d",
+      "reason": "hook_missing",
+      "subject": "data-qa-choice",
+      "detail": "다시 시도할 입력 요소가 없다",
+      "screenshot": "case_q-random-d_wrong.png"
+    }
+  ]
+}

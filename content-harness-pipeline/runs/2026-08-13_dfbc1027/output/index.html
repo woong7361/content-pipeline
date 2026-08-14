@@ -1,0 +1,740 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>알록달록, 학교 담장 색칠하기</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    :root {
+      /* 차시 팔레트: 맑은 하늘, 크림 담장, 도형 신호색 */
+      --bg: #49b9ed;
+      --surface: #1f73c9;
+      --ink: #153f6b;
+      --plate-ink: #173f62;
+      --accent: #ffd84d;
+      --accent-bright: #fff080;
+      --glow: #ffe86a;
+      --cream: #fff8df;
+      --danger: #e65043;
+      --veil: rgba(255,255,255,.92);
+      --dim: rgba(21,63,107,.45);
+      --bubble-bg: #fffdf6;
+      --bubble-line: #4c3428;
+      --bubble-ink: #221914;
+      --brown-800: #713f12;
+      --brown-900: #422006;
+      /* 도형·상태에만 쓰는 차시 전용 색 */
+      --shape-green: #55bd45;
+      --shape-blue: #318ee8;
+      --shape-red: #ef5748;
+      --paint-metal: #dfeaf3;
+      --muted-shape: rgba(255,255,255,.38);
+      --surface-soft: rgba(255,248,223,.84);
+      --surface-blue: rgba(31,115,201,.88);
+      --focus-ring: rgba(255,216,77,.78);
+      --fs-display: 68px;
+      --fs-number: 74px;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: hidden;
+      opacity: 0;
+      z-index: var(--z-content);
+      transition: opacity var(--dur-scene-in) var(--ease), transform var(--dur-scene-in) var(--ease);
+    }
+    .scene.active { display: block; opacity: 1; transform: translateX(0); }
+    .scene.leaving { display:none; opacity:0; transform:translateX(-34px); pointer-events:none; }
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 90px var(--dim);
+      z-index: var(--z-scenery);
+      opacity: .14;
+    }
+    .content-layer { position: absolute; inset: 96px 0 0; z-index: var(--z-content); }
+    .scene-title {
+      position: absolute;
+      top: 92px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 610px;
+      padding: 16px 54px 18px;
+      border: 7px solid var(--ink);
+      border-radius: var(--r-pill);
+      background: var(--cream);
+      box-shadow: var(--shadow);
+      color: var(--plate-ink);
+      font-size: var(--fs-xl);
+      line-height: 1.15;
+      text-align: center;
+      z-index: var(--z-content);
+    }
+    .intro-title-art { position:absolute; left:250px; top:145px; width:1420px; height:auto; z-index:var(--z-content); filter:var(--ds-md); }
+    .character { position:absolute; height:690px; width:auto; object-fit:contain; z-index:var(--z-character); filter:var(--ds-md); transition:transform var(--dur) var(--ease-back), opacity var(--dur) var(--ease); }
+    .character.teacher { left:78px; bottom:0; }
+    .character.worker { left:76px; bottom:-10px; }
+    .character.assistant { left:390px; bottom:0; height:640px; }
+    .character.student-boy { right:270px; bottom:-8px; height:545px; }
+    .character.student-girl { right:36px; bottom:-8px; height:535px; }
+    .character.reaction { transform: translateY(-18px) scale(1.02); }
+    .character.wrong-reaction { animation: character-think var(--dur-slow) var(--ease-speech-pop); }
+    @keyframes character-think { 30% { transform:translateX(-14px) rotate(-1deg); } 70% { transform:translateX(12px) rotate(1deg); } }
+
+    .c-speechBubble { max-width:760px; min-width:360px; font-size:var(--fs-md); line-height:1.34; }
+    .c-speechBubble [data-slot="text"] { white-space:pre-line; }
+    .speech-action { position:absolute; right:20px; bottom:-54px; width:68px; height:68px; border:5px solid var(--bubble-line); border-radius:var(--r-circle); background:var(--accent); color:var(--bubble-ink); box-shadow:var(--shadow); cursor:pointer; }
+    .speech-action:active { transform:translateY(5px); }
+    .scene > .speech-action { right:auto; bottom:auto; }
+    .c-ticketButton { min-width:390px; min-height:94px; font-size:var(--fs-md); }
+    .cta-center { left:50%; top:850px; transform:translateX(-50%); }
+    .cta-center:active { transform:translate(-50%, 6px); }
+    .intro-start { left:50%; top:760px; transform:translateX(-50%); }
+    .intro-start:active { transform:translate(-50%, 6px); }
+    .fade-in { animation:fade-rise var(--dur-slow) var(--ease-back) both; }
+    .delay-1 { animation-delay:var(--dur-fast); }
+    .delay-2 { animation-delay:var(--dur); }
+    @keyframes fade-rise { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+
+    .activity-board {
+      position:absolute;
+      left:420px;
+      top:195px;
+      width:1080px;
+      height:740px;
+      padding:42px 56px;
+      border:9px solid var(--ink);
+      border-radius:var(--r-md);
+      background:var(--surface-soft);
+      box-shadow:var(--shadow);
+      z-index:var(--z-content);
+    }
+    .prompt { margin:0 0 26px; color:var(--plate-ink); font-size:var(--fs-xl); line-height:1.25; text-align:center; white-space:pre-line; }
+    .narration-card { position:absolute; left:465px; top:130px; width:990px; padding:18px 34px; border:6px solid var(--ink); border-radius:var(--r-pill); background:var(--cream); box-shadow:var(--shadow); font-size:var(--fs-lg); text-align:center; z-index:var(--z-content); }
+    .legend { display:flex; justify-content:center; gap:58px; align-items:center; font-size:var(--fs-hero); filter:var(--ds-sm); }
+    .legend .circle { color:var(--shape-green); }
+    .legend .square { color:var(--shape-blue); }
+    .legend .triangle { color:var(--shape-red); }
+    .question { display:none; position:absolute; inset:0; }
+    .question.current { display:block; animation:fade-rise var(--dur) var(--ease) both; }
+    .question.shake { animation:q-shake var(--dur) var(--ease-speech-pop); }
+    .question > .prompt { position:relative; z-index:var(--z-interactive); }
+    .activity-board > .legend + .question { top:120px; }
+    @keyframes q-shake { 25% { transform:translateX(-12px); } 50% { transform:translateX(12px); } 75% { transform:translateX(-8px); } }
+    .page-next { position:absolute; right:34px; bottom:26px; width:78px; height:78px; border:6px solid var(--ink); border-radius:var(--r-circle); background:var(--accent); box-shadow:var(--shadow); color:var(--ink); font-size:var(--fs-xl); cursor:pointer; z-index:var(--z-interactive); }
+
+    .shape-field { display:grid; grid-template-columns:repeat(5, 92px); gap:20px; justify-content:center; margin:12px auto 0; }
+    .shape-token { width:88px; height:88px; border:7px solid var(--ink); box-shadow:var(--shadow); transition:opacity var(--dur), transform var(--dur) var(--ease-back), filter var(--dur); }
+    .shape-token.circle { border-radius:var(--r-circle); background:var(--shape-green); }
+    .shape-token.square { border-radius:var(--r-md); background:var(--shape-blue); }
+    .shape-token.triangle { width:0; height:0; border-left:47px solid var(--clear); border-right:47px solid var(--clear); border-bottom:86px solid var(--shape-red); border-top:0; box-shadow:none; filter:var(--ds-md); }
+    .shape-token.ghost { opacity:.22; filter:grayscale(.55); transform:scale(.9); }
+    .ten-group { outline:12px solid var(--glow); outline-offset:16px; border-radius:var(--r-md); }
+
+    .paint-can { position:absolute; right:60px; bottom:34px; width:245px; height:245px; object-fit:contain; z-index:var(--z-content); filter:var(--ds-md); }
+    .paint-swatch { position:absolute; right:132px; bottom:169px; width:86px; height:36px; border-radius:var(--r-circle); background:var(--shape-green); z-index:var(--z-interactive); box-shadow:var(--shadow-flat); }
+    .equation { display:flex; justify-content:center; align-items:center; min-height:112px; padding:16px 30px; border:7px solid var(--surface); border-radius:var(--r-md); background:var(--cream); box-shadow:var(--shadow); font-size:var(--fs-display); color:var(--plate-ink); }
+    .activity-board .c-keypadWrap { position:relative; left:auto; top:auto; width:640px; margin:18px auto 0; padding:14px 18px; }
+    .activity-board .c-answerDisplay { height:68px; min-height:68px; margin-bottom:10px; font-size:var(--fs-xl); }
+    .activity-board .c-keypad { gap:8px 14px; }
+    .activity-board .c-key { height:50px; min-height:50px; font-size:var(--fs-xs); }
+
+    .hotspot-stage { position:absolute; left:300px; top:185px; width:1320px; height:700px; }
+    .hotspot { position:absolute; border:9px dashed var(--surface); background:var(--surface-soft); cursor:pointer; box-shadow:var(--shadow); transition:transform var(--dur-fast), background var(--dur); }
+    .hotspot:hover { transform:scale(1.04); }
+    .hotspot.selected { background:var(--accent-bright); border-style:solid; }
+    .hotspot.revealed { background:var(--glow); outline:14px solid var(--focus-ring); }
+    .hotspot.square-spot { width:155px; height:145px; border-radius:var(--r-md); }
+    .hotspot.triangle-spot { width:0; height:0; border-left:84px solid var(--clear); border-right:84px solid var(--clear); border-bottom:146px solid var(--shape-red); border-top:0; background:var(--clear); box-shadow:none; filter:var(--ds-md); }
+
+    .choice-list { display:flex; flex-direction:column; gap:22px; width:760px; margin:32px auto; }
+    .choice { min-height:96px; border:7px solid var(--surface); border-radius:var(--r-md); background:var(--cream); box-shadow:var(--shadow); color:var(--plate-ink); font-size:var(--fs-lg); cursor:pointer; }
+    .choice:hover { filter:var(--filter-hover); transform:translateY(-3px); }
+    .choice.revealed { outline:14px solid var(--glow); }
+    .helper-characters { position:absolute; right:20px; bottom:0; display:flex; align-items:flex-end; z-index:var(--z-character); }
+    .helper-characters button { width:190px; height:330px; padding:0; border:0; background:var(--clear); cursor:pointer; animation:helper-glow 1.8s var(--ease) infinite; }
+    .helper-characters img { width:100%; height:100%; object-fit:contain; filter:var(--ds-sm); }
+    @keyframes helper-glow { 50% { filter:drop-shadow(0 0 20px var(--glow)); transform:translateY(-7px); } }
+    .helper-panel { position:absolute; left:48px; bottom:32px; width:600px; min-height:200px; padding:30px 38px; border:8px solid var(--ink); border-radius:var(--r-md); background:var(--cream); box-shadow:var(--shadow); font-size:var(--fs-lg); white-space:pre-line; z-index:var(--z-drawer); }
+
+    .drawing-board { position:absolute; left:380px; top:185px; width:1130px; height:650px; border:10px solid var(--ink); border-radius:var(--r-md); background:var(--surface-soft); box-shadow:var(--shadow); overflow:hidden; z-index:var(--z-content); }
+    .drawing-toolbar { position:absolute; left:35px; top:185px; width:300px; padding:28px; border:8px solid var(--ink); border-radius:var(--r-md); background:var(--cream); box-shadow:var(--shadow); z-index:var(--z-interactive); }
+    .drawing-toolbar h2 { margin:0 0 22px; font-size:var(--fs-md); text-align:center; }
+    .tool-row { display:flex; justify-content:center; gap:16px; margin:18px 0; }
+    .tool { width:68px; height:68px; border:5px solid var(--ink); border-radius:var(--r-sm); background:var(--cream); cursor:pointer; }
+    .tool.active { outline:10px solid var(--glow); }
+    .tool.circle { border-radius:var(--r-circle); }
+    .tool.triangle { width:0; height:0; border-left:38px solid var(--clear); border-right:38px solid var(--clear); border-bottom:68px solid var(--ink); border-top:0; border-radius:var(--r-none); background:var(--clear); }
+    .color-tool.green { background:var(--shape-green); }
+    .color-tool.blue { background:var(--shape-blue); }
+    .color-tool.red { background:var(--shape-red); }
+    .draw-item { position:absolute; width:110px; height:110px; border:7px solid var(--ink); cursor:pointer; }
+    .draw-item.circle { border-radius:var(--r-circle); }
+    .draw-item.triangle { width:0; height:0; border-left:58px solid var(--clear); border-right:58px solid var(--clear); border-bottom:104px solid currentColor; border-top:0; background:var(--clear) !important; }
+    .draw-item.selected { outline:12px solid var(--glow); }
+    .confirm-layer { position:absolute; inset:0; display:grid; place-items:center; background:var(--dim); z-index:var(--z-drawer); }
+    .confirm-card { width:720px; padding:55px; border:9px solid var(--ink); border-radius:var(--r-md); background:var(--cream); box-shadow:var(--shadow); text-align:center; font-size:var(--fs-xl); }
+    .confirm-actions { display:flex; justify-content:center; gap:34px; margin-top:40px; }
+
+    .story-card { position:absolute; left:805px; top:220px; width:920px; min-height:650px; padding:38px 48px; border:9px solid var(--ink); border-radius:var(--r-md); background:var(--veil); box-shadow:var(--shadow); z-index:var(--z-content); }
+    .story-card h2 { margin:0 0 24px; font-size:var(--fs-xl); text-align:center; }
+    .story-card p { margin:0; font-size:var(--fs-md); line-height:1.42; white-space:pre-line; }
+    .story-sign { position:absolute; left:170px; top:200px; width:560px; height:650px; object-fit:contain; filter:var(--ds-lg); z-index:var(--z-content); }
+    .story-index { display:flex; justify-content:center; gap:40px; margin-bottom:24px; font-size:var(--fs-hero); }
+
+    .completion-emblem { position:absolute; left:50%; top:105px; width:650px; height:650px; transform:translateX(-50%); object-fit:contain; filter:var(--ds-lg); z-index:var(--z-content); }
+    .completion-actions { position:absolute; left:50%; top:785px; transform:translateX(-50%); display:flex; gap:44px; z-index:var(--z-interactive); }
+    .completion-actions .c-ticketButton { position:relative; left:auto; top:auto; min-width:420px; }
+    .sparkle { position:absolute; width:32px; height:32px; border-radius:var(--r-circle); background:var(--glow); box-shadow:0 0 24px var(--accent-bright); z-index:var(--z-effect); animation:sparkle 1.4s var(--ease) infinite alternate; }
+    .sparkle.s1 { left:510px; top:230px; }
+    .sparkle.s2 { right:510px; top:350px; animation-delay:var(--dur); }
+    .sparkle.s3 { left:660px; top:650px; animation-delay:var(--dur-fast); }
+    @keyframes sparkle { to { transform:scale(1.8); opacity:.25; } }
+    .c-feedbackStamp { z-index:var(--z-effect); }
+    .qa-feedback { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); pointer-events:none; opacity:.01; width:auto; height:auto; overflow:visible; z-index:var(--z-effect); }
+    .scene > .cta-center.hidden { display:none; }
+    [data-qa-page-next] { z-index:var(--z-flash) !important; }
+    .scene > .cta-center { top:950px; min-height:76px; }
+    #intro > .cta-center { top:850px; }
+    #shape-count .cta-center,
+    #paint-ten .cta-center,
+    #addition-build .cta-center,
+    #subtraction-build .cta-center { left:1760px; top:930px; min-width:100px; width:100px; padding:0; transform:none; }
+    #random-practice .cta-center { left:1560px; top:920px; min-width:100px; width:100px; padding:0; transform:none; }
+    #shape-hunt .cta-center { left:900px; top:930px; min-width:100px; width:100px; padding:0; transform:none; }
+    .hotspot-stage { z-index:var(--z-interactive); }
+    #shape-count .narration-card { top:82px; }
+    #shape-count .activity-board { top:260px; height:690px; }
+    #shape-count .narration-card { display:none; }
+    #shape-count .c-speechBubble { top:145px !important; right:330px; max-width:720px; }
+    #shape-count .legend { font-size:var(--fs-xl); gap:36px; }
+    #addition-build .c-speechBubble,
+    #subtraction-build .c-speechBubble { top:205px !important; right:560px; max-width:760px; }
+    #addition-build .activity-board,
+    #subtraction-build .activity-board { padding-top:150px; }
+    #subtraction-build .narration-card { display:none; }
+    #subtraction-build .narration-card { left:740px; top:180px; width:820px; }
+    .story-card p { overflow-wrap:anywhere; }
+  </style>
+</head>
+<body>
+<div id="viewport">
+  <main id="stage">
+    <header class="c-topbar" data-component="topbar">
+      <div class="c-topbarLeft">
+        <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false"><span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span><span class="c-topbarMenuLabel">목록</span></button>
+        <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기"><svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/><path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/><path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/></svg></button>
+        <span class="c-topbarStep" data-slot="step" hidden></span>
+      </div>
+      <span class="c-topbarProgress"><span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트"><span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span><span class="c-lessonBarPct" data-slot="pct">0%</span></span></span>
+      <div class="c-topbarTitle" data-slot="title"></div>
+    </header>
+    <div class="c-courseMenu" data-component="course-menu"><div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록"><div class="c-courseMenuHead"><span class="c-courseMenuGrade" data-slot="grade"></span><button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button></div><div class="c-courseMenuList" data-slot="list"></div><div class="c-courseMenuFoot"><button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button></div></div></div>
+
+    <section id="intro" class="scene active" data-qa-scene="intro" data-qa-order="1" data-qa-label="도입" data-progress="0">
+      <img class="c-bg" data-role="intro-bg" src="assets/bg-broken-wall.webp" alt="도입에서 공사 중 무너진 학교 담장 상황을 즉시 이해시키는 배경">
+      <img class="intro-title-art fade-in" src="assets/intro-title.webp" alt="알록달록, 학교 담장 색칠하기">
+      <button class="c-ticketButton intro-start fade-in delay-1" type="button" data-component="ticket-button" data-action="intro-start"><span data-slot="label">시작하기</span></button>
+      <img class="character worker hidden" data-role="intro-worker" src="assets/worker-lead-apologetic.webp" alt="담장을 무너뜨린 상황을 사과하는 작업자 대표 포즈">
+      <img class="character assistant hidden" data-role="intro-assistant" src="assets/worker-assistant-idle.webp" alt="작업자 대표와 함께 서 있는 동료의 기준 포즈">
+      <img class="character student-boy hidden" data-role="intro-boy" src="assets/student-boy-agreeing.webp" alt="남학생이 돕겠다고 답하거나 계산 활동에 동의하는 포즈">
+      <img class="character student-girl hidden" data-role="intro-girl" src="assets/student-girl-agreeing.webp" alt="여학생이 돕겠다고 답하거나 활동에 동의하는 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="intro-speech" style="--speech-side-x:650px;--speech-face-y:500px"><span data-slot="text">공사 중에 실수로 담장을 무너뜨렸어요.
+죄송합니다!</span><button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사">→</button></div>
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="shape-hunt" data-action="advance"><span data-slot="label">모양의 힘으로 색칠하기</span></button>
+    </section>
+
+    <section id="shape-hunt" class="scene" data-qa-scene="shape-hunt" data-qa-order="2" data-qa-label="수리가 필요해요 1" data-progress="12">
+      <img class="c-bg" src="assets/bg-repaired-wall.webp" alt="보수된 뒤 아직 그림이 없는 학교 담장을 대화와 모양 찾기 배경으로 재사용">
+      <img class="character teacher" data-role="hunt-teacher" src="assets/teacher-explaining.webp" alt="교사가 모양과 담장 활동 대상을 가리키는 설명 포즈">
+      <img class="character student-boy" data-role="hunt-boy" src="assets/student-boy-ready.webp" alt="남학생 주인공의 기준 정체성을 고정하고 문제 도움 캐릭터로 재사용">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="hunt-speech" style="--speech-side-x:520px;--speech-face-y:300px"><span data-slot="text">벽화를 어떻게 그려야 되지?</span><button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사">→</button></div>
+      <div class="narration-card hidden" data-role="hunt-narration">“모양을 찾아 봅시다.”</div>
+      <div class="hotspot-stage hidden" data-role="hunt-questions">
+        <div class="question current" data-qa-question="q-find-square">
+          <h2 class="prompt">■모양 2개를 찾아 봅시다.</h2>
+          <button class="hotspot square-spot" style="left:170px;top:220px" data-qa-choice="square-window" data-qa-correct="true" aria-label="사각형 자리 1"></button>
+          <button class="hotspot square-spot" style="left:850px;top:250px" data-qa-choice="square-wall" data-qa-correct="true" aria-label="사각형 자리 2"></button>
+          <button class="hotspot square-spot" style="left:510px;top:390px;border-radius:var(--r-circle)" data-qa-choice="square-wrong" data-qa-correct="false" aria-label="다른 자리"></button>
+        </div>
+        <div class="question" data-qa-question="q-find-triangle">
+          <h2 class="prompt">▲모양 2개를 찾아 봅시다.</h2>
+          <button class="hotspot triangle-spot" style="left:250px;top:270px" data-qa-choice="triangle-roof" data-qa-correct="true" aria-label="삼각형 자리 1"></button>
+          <button class="hotspot triangle-spot" style="left:920px;top:310px" data-qa-choice="triangle-tree" data-qa-correct="true" aria-label="삼각형 자리 2"></button>
+          <button class="hotspot square-spot" style="left:585px;top:370px" data-qa-choice="triangle-wrong" data-qa-correct="false" aria-label="다른 자리"></button>
+        </div>
+        <button class="page-next hidden" type="button" data-qa-page-next aria-label="다음 문제">→</button>
+      </div>
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="hidden" data-role="hunt-feedback" data-qa-feedback="correct" style="--speech-side-x:530px;--speech-face-y:320px"><span data-slot="text">정답입니다.</span></div>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="shape-count" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="shape-count" class="scene" data-qa-scene="shape-count" data-qa-order="3" data-qa-label="수리가 필요해요 1" data-progress="25">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <div class="narration-card">“모양을 찾아 봅시다.”</div>
+      <img class="character teacher" src="assets/teacher-explaining.webp" alt="교사가 모양과 담장 활동 대상을 가리키는 설명 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" style="--speech-side-x:470px;--speech-face-y:300px"><span data-slot="text">페인트 색깔마다 모양이 달라요</span></div>
+      <button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사" style="left:330px;top:330px;z-index:var(--z-effect)">→</button>
+      <div class="activity-board" data-question-deck>
+        <div class="legend"><span class="circle">●</span><span class="square">■</span><span class="triangle">▲</span><span>모양</span></div>
+        <div class="question current" data-qa-question="q-count-circle" data-answer="3"><h2 class="prompt">●모양은 몇 개 인가요?</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-count-square" data-answer="4"><h2 class="prompt">■모양은 몇 개 인가요?</h2><div class="shape-field"><i class="shape-token square"></i><i class="shape-token square"></i><i class="shape-token square"></i><i class="shape-token square"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-count-triangle" data-answer="2"><h2 class="prompt">▲모양은 몇 개 인가요?</h2><div class="shape-field"><i class="shape-token triangle"></i><i class="shape-token triangle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <button class="page-next hidden" type="button" data-qa-page-next aria-label="다음 문제">→</button>
+      </div>
+      <img class="paint-can" src="assets/paint-can-body.webp" alt="초록·파랑·빨강 페인트와 사용량 상태를 하나의 몸체로 표현하는 반복 소품"><span class="paint-swatch"></span>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="activity-one-bridge" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="activity-one-bridge" class="scene" data-qa-scene="activity-one-bridge" data-qa-order="4" data-qa-label="벽화 색칠로 이동" data-progress="34">
+      <img class="c-bg" src="assets/bg-repaired-wall.webp" alt="보수된 뒤 아직 그림이 없는 학교 담장을 대화와 모양 찾기 배경으로 재사용">
+      <img class="character teacher" src="assets/teacher-explaining.webp" alt="교사가 모양과 담장 활동 대상을 가리키는 설명 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="bridge-speech" style="--speech-side-x:540px;--speech-face-y:300px"><span data-slot="text">① 잘했어요.
+이제 벽화를 색칠해봐요!</span><button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사">→</button></div>
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="paint-ten" data-action="advance"><span data-slot="label">모양으로 세 수의 덧셈과 뺄셈하기</span></button>
+    </section>
+
+    <section id="paint-ten" class="scene" data-qa-scene="paint-ten" data-qa-order="5" data-qa-label="수리가 필요해요 2" data-progress="42">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <div class="scene-title">세 수의 덧셈과 뺄셈</div>
+      <img class="character worker" src="assets/worker-lead-explaining.webp" alt="페인트통, 도형, 다음 담장을 설명하는 작업자 대표 포즈">
+      <img class="character assistant" src="assets/worker-assistant-idle.webp" alt="작업자 대표와 함께 서 있는 동료의 기준 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="paint-speech" style="--speech-side-x:570px;--speech-face-y:300px"><span data-slot="text">①페인트 소개는 저희가 할게요.</span><button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사">→</button></div>
+      <div class="activity-board" data-question-deck style="left:720px;width:900px;top:250px;height:690px">
+        <div class="question current" data-qa-question="q-paint-ten" data-answer="10"><h2 class="prompt">모양은 모두 몇 개인가요?</h2><div class="shape-field ten-group"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+      </div>
+      <img class="paint-can" src="assets/paint-can-body.webp" alt="초록·파랑·빨강 페인트와 사용량 상태를 하나의 몸체로 표현하는 반복 소품"><span class="paint-swatch"></span>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="addition-build" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="addition-build" class="scene" data-qa-scene="addition-build" data-qa-order="6" data-qa-label="세 수의 덧셈" data-progress="53">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <div class="scene-title">세 수의 덧셈과 뺄셈</div>
+      <img class="character worker" src="assets/worker-lead-explaining.webp" alt="페인트통, 도형, 다음 담장을 설명하는 작업자 대표 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="addition-speech" style="--speech-side-x:530px;--speech-face-y:300px"><span data-slot="text">7개에서 3개를 더 색칠하면 몇 개일까요?</span></div>
+      <button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사" style="left:1740px;top:820px;z-index:var(--z-flash)">→</button>
+      <img class="character student-boy hidden" data-role="addition-boy" src="assets/student-boy-ready.webp" alt="남학생 주인공의 기준 정체성을 고정하고 문제 도움 캐릭터로 재사용">
+      <img class="character student-girl hidden" data-role="addition-girl" src="assets/student-girl-agreeing.webp" alt="여학생이 돕겠다고 답하거나 활동에 동의하는 포즈">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" data-state="hidden" data-role="addition-student-speech" style="--speech-side-x:1180px;--speech-face-y:500px"><span data-slot="text">네!</span></div>
+      <div class="activity-board" data-question-deck style="left:690px;width:920px;top:235px;height:710px">
+        <div class="question current" data-qa-question="q-add-to-ten" data-answer="10"><h2 class="prompt">7 + 3 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-add-two" data-answer="12"><h2 class="prompt">10 + 2 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-add-three" data-answer="12"><h2 class="prompt">7 + 3 + 2 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <button class="page-next hidden" type="button" data-qa-page-next aria-label="다음 문제">→</button>
+      </div>
+      <img class="paint-can" src="assets/paint-can-body.webp" alt="초록·파랑·빨강 페인트와 사용량 상태를 하나의 몸체로 표현하는 반복 소품"><span class="paint-swatch"></span>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="subtraction-build" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="subtraction-build" class="scene" data-qa-scene="subtraction-build" data-qa-order="7" data-qa-label="세 수의 뺄셈" data-progress="63">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <div class="scene-title">세 수의 덧셈과 뺄셈</div>
+      <img class="character worker" src="assets/worker-lead-explaining.webp" alt="페인트통, 도형, 다음 담장을 설명하는 작업자 대표 포즈">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="subtraction-speech" style="--speech-side-x:520px;--speech-face-y:300px"><span data-slot="text">잘못 그린 2개를 지워주세요!</span></div>
+      <button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사" style="left:1740px;top:820px;z-index:var(--z-flash)">→</button>
+      <img class="character student-boy hidden" data-role="subtraction-boy" src="assets/student-boy-agreeing.webp" alt="남학생이 돕겠다고 답하거나 계산 활동에 동의하는 포즈">
+      <img class="character student-girl hidden" data-role="subtraction-girl" src="assets/student-girl-agreeing.webp" alt="여학생이 돕겠다고 답하거나 활동에 동의하는 포즈">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" data-state="hidden" data-role="subtraction-student-speech" style="--speech-side-x:1180px;--speech-face-y:500px"><span data-slot="text">네!</span></div>
+      <div class="activity-board" data-question-deck style="left:690px;width:930px;top:235px;height:710px">
+        <div class="question current" data-qa-question="q-sub-to-ten" data-answer="10"><h2 class="prompt">12 - 2 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-sub-three-from-ten" data-answer="7"><h2 class="prompt">10 - 3 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-sub-three" data-answer="7"><h2 class="prompt">12 – 2 – 3 = (   )</h2><div class="shape-field"><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i><i class="shape-token circle ghost"></i></div><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <button class="page-next hidden" type="button" data-qa-page-next aria-label="다음 문제">→</button>
+      </div>
+      <div class="narration-card" data-role="sub-narration">“12개에서 2개를 지우면 몇 개 일까요?</div>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="random-practice" data-action="advance"><span data-slot="label">덧셈, 뺄셈의 힘으로 담장 색칠하기</span></button>
+    </section>
+
+    <section id="random-practice" class="scene" data-qa-scene="random-practice" data-qa-order="8" data-qa-label="수리로 해결해요" data-progress="73">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <div class="scene-title">덧셈과 뺄셈</div>
+      <div class="activity-board" data-question-deck style="left:250px;width:1250px;top:230px;height:720px">
+        <div class="question current" data-qa-question="q-random-a" data-answer="6 + 4 = 10"><h2 class="prompt">10이 되는 덧셈식을 찾아 보세요.</h2><div class="choice-list"><button class="choice" type="button" data-qa-choice="0" data-qa-correct="false">6 + 3 = 10</button><button class="choice" type="button" data-qa-choice="1" data-qa-correct="true">6 + 4 = 10</button><button class="choice" type="button" data-qa-choice="2" data-qa-correct="false">6 + 5 = 10</button></div></div>
+        <div class="question" data-qa-question="q-random-b" data-answer="6"><h2 class="prompt">10에서 빼어 보세요.
+10 - 4=(   )</h2><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-random-c" data-answer="13"><h2 class="prompt">세 수의 덧셈을 해 보세요
+6 + 4 + 3=(   )</h2><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <div class="question" data-qa-question="q-random-d" data-answer="4"><h2 class="prompt">세 수의 뺄셈을 해 보세요
+13 - 3 - 6=(   )</h2><div class="c-keypadWrap" data-component="keypad"><div class="c-answerDisplay" data-slot="display" data-qa-blank="0"></div><div class="c-keypad" data-slot="keys"></div></div></div>
+        <button class="page-next hidden" type="button" data-qa-page-next aria-label="다음 문제">→</button>
+      </div>
+      <div class="helper-characters"><button type="button" data-action="helper" aria-label="보조 설명"><img src="assets/student-boy-ready.webp" alt="남학생 주인공의 기준 정체성을 고정하고 문제 도움 캐릭터로 재사용"></button><button type="button" data-action="helper" aria-label="보조 설명"><img src="assets/student-girl-ready.webp" alt="여학생 주인공의 기준 정체성을 고정하고 문제 도움 캐릭터로 재사용"></button></div>
+      <div class="helper-panel hidden" data-role="helper-panel">6 + 4 = (  )<br>얼마일까요?</div>
+      <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-correct-stamp.webp" data-wrong-src="assets/feedback-wrong-stamp.webp" alt="">
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="free-drawing" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="free-drawing" class="scene" data-qa-scene="free-drawing" data-qa-order="9" data-qa-label="모양으로 자유 그리기" data-progress="83">
+      <img class="c-bg" src="assets/bg-wall-closeup.webp" alt="도형 세기, 덧셈·뺄셈, 무작위 문제, 자유 그리기에서 공통으로 쓰는 담장 활동 면">
+      <img class="character teacher" src="assets/teacher-explaining.webp" alt="교사가 모양과 담장 활동 대상을 가리키는 설명 포즈" style="height:590px">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" data-state="visible" data-role="drawing-speech" style="--speech-side-x:470px;--speech-face-y:280px;z-index:var(--z-effect)"><span data-slot="text">담장 색칠이 끝나가요!</span></div><button class="speech-action" type="button" data-qa-beat-next aria-label="다음 대사" style="left:1740px;top:820px;z-index:var(--z-flash)">→</button>
+      <aside class="drawing-toolbar"><h2>그리기 툴</h2><div class="tool-row"><button class="tool shape-tool circle active" type="button" data-shape="circle" aria-label="원"></button><button class="tool shape-tool" type="button" data-shape="square" aria-label="정사각형"></button><button class="tool shape-tool triangle" type="button" data-shape="triangle" aria-label="정삼각형"></button></div><div class="tool-row"><button class="tool color-tool green active" type="button" data-color="green" aria-label="초록"></button><button class="tool color-tool blue" type="button" data-color="blue" aria-label="파랑"></button><button class="tool color-tool red" type="button" data-color="red" aria-label="빨강"></button></div><button class="tool" type="button" data-action="delete" aria-label="선택 항목 삭제">×</button></aside>
+      <div class="drawing-board" data-role="drawing-board" aria-label="모양으로 자유 그리기 활동"></div>
+      <button class="page-next" type="button" data-action="confirm-open" aria-label="그림 완성 확인">→</button>
+      <div class="confirm-layer hidden" data-role="confirm"><div class="confirm-card"><div>그림을 완성했나요?</div><div class="confirm-actions"><button class="c-ticketButton" type="button" data-component="ticket-button" data-qa-advance="math-story" data-action="confirm-yes" style="position:relative;left:auto;top:auto"><span data-slot="label">예</span></button><button class="c-ticketButton" type="button" data-component="ticket-button" data-action="confirm-no" style="position:relative;left:auto;top:auto"><span data-slot="label">아니오</span></button></div></div></div>
+    </section>
+
+    <section id="math-story" class="scene" data-qa-scene="math-story" data-qa-order="10" data-qa-label="수리 이야기" data-progress="92">
+      <img class="c-bg" src="assets/bg-safe-street.webp" alt="표지판 수리 이야기를 위한 안전한 생활 속 거리 배경">
+      <div class="scene-title">수리 이야기<br>모양을 길에서 본 적이 있나요?</div>
+      <img class="story-sign" data-role="story-sign" src="assets/sign-circle-car.webp" alt="원 모양 자동차 전용 도로 표지판 사례를 보여 주는 교육 소품">
+      <article class="story-card"><div class="story-index"><span>● ■ ▲</span></div><h2 data-role="story-prompt">무슨 표지판일까요?</h2><p data-role="story-text" style="white-space:pre-line">● 모양 표지판은 어떤 것이 있을까요?
+
+“자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.”</p><button class="page-next" type="button" data-qa-page-next aria-label="다음 이야기">→</button></article>
+      <button class="c-ticketButton cta-center hidden" type="button" data-component="ticket-button" data-qa-advance="completion" data-action="advance" aria-label="다음 활동"><span data-slot="label">→</span></button>
+    </section>
+
+    <section id="completion" class="scene" data-qa-scene="completion" data-qa-order="11" data-qa-label="차시 완료" data-progress="100">
+      <img class="c-bg" src="assets/bg-finished-mural.webp" alt="학습자가 담장 색칠 임무를 완성했다는 결과를 보여 주는 마지막 배경">
+      <img class="completion-emblem fade-in" src="assets/completion-emblem.webp" alt="3차시 수리 완료!">
+      <i class="sparkle s1"></i><i class="sparkle s2"></i><i class="sparkle s3"></i>
+      <div class="completion-actions fade-in delay-2"><button class="c-ticketButton" type="button" data-component="ticket-button" data-action="download"><span data-slot="label">인증서 다운로드</span></button><button class="c-ticketButton" type="button" data-component="ticket-button" data-action="exit"><span data-slot="label">나가기</span></button></div>
+    </section>
+
+    <aside class="c-debugPanel" data-component="debug-jumper" hidden><div class="c-debugHead"><strong>Scenes</strong><button type="button" data-action="close" aria-label="닫기">×</button></div><div class="c-debugCurrent" data-slot="current"></div><div class="c-debugList" data-slot="scene-list"></div></aside>
+  </main>
+</div>
+<script src="common.js"></script>
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  const controller = CommonSceneController.createSceneController(stage);
+  CommonSceneController.scaleStage(stage);
+  addEventListener('resize', () => CommonSceneController.scaleStage(stage));
+  addEventListener('orientationchange', () => CommonSceneController.scaleStage(stage));
+  CommonDebugJumper.init(document.querySelector('[data-component="debug-jumper"]'), controller, {});
+
+  const topbar = CommonTopbar.init(document.querySelector('[data-component="topbar"]'), {
+    menu: document.querySelector('[data-component="course-menu"]'),
+    title: '알록달록, 학교 담장 색칠하기',
+    step: '수리력 +',
+    progress: 0,
+    soundOn: true,
+    course: { gradeLabel: '1학년 차시 목록', current: '08', lessons: [{ no: 8, id: '08', title: '알록달록, 학교 담장 색칠하기' }] },
+    onHome: () => controller.showScene('intro'),
+    followScenes: true
+  });
+
+  const stamps = () => controller.currentScene().querySelector('.c-feedbackStamp');
+  const reactionTimers = new WeakMap();
+  const showStamp = (type) => {
+    const stamp = stamps();
+    if (!stamp) return;
+    document.querySelectorAll('[data-qa-feedback]').forEach(item => item.removeAttribute('data-qa-feedback'));
+    stamp.dataset.qaFeedback = type;
+    CommonFeedbackLayer.showStamp(stamp, type, { hold: false });
+    stamp.alt = type === 'correct' ? '정답입니다.' : '다시 해 봐요';
+  };
+  function react(question, type) {
+    question.classList.remove('shake');
+    const scene = question.closest('.scene');
+    const character = scene.querySelector('.character');
+    if (character && reactionTimers.has(character)) clearTimeout(reactionTimers.get(character));
+    if (type === 'correct') {
+      showStamp('correct');
+      if (character) {
+        character.classList.remove('wrong-reaction');
+        character.classList.add('reaction');
+      }
+    } else {
+      showStamp('wrong');
+      question.classList.add('shake');
+      if (character) {
+        character.classList.remove('reaction');
+        character.classList.add('wrong-reaction');
+        reactionTimers.set(character, setTimeout(() => character.classList.remove('wrong-reaction'), 900));
+      }
+    }
+  }
+
+  document.querySelectorAll('[data-action="advance"]').forEach(button => button.addEventListener('click', () => controller.showScene(button.dataset.qaAdvance)));
+  addEventListener('common:scenechange', event => {
+    const scene = event.detail.scene;
+    if (scene.id === 'intro') topbar.setHidden(true); else topbar.setHidden(false);
+  });
+  topbar.setHidden(true);
+
+  const intro = document.getElementById('intro');
+  const introLines = [
+    '공사 중에 실수로 담장을 무너뜨렸어요.\n죄송합니다!',
+    '① 휴, 담장은 다 고쳤어요.',
+    '② 그런데, 벽화는 못 그리겠어요. 누가 도와줘요!',
+    '저희가 도와드릴게요!'
+  ];
+  let introBeat = 0;
+  function ensureIntroStarted() {
+    intro.querySelector('.intro-title-art').classList.add('hidden');
+    intro.querySelector('[data-action="intro-start"]').classList.add('hidden');
+    intro.querySelector('[data-role="intro-worker"]').classList.remove('hidden');
+    CommonSpeechBubble.show(intro.querySelector('[data-role="intro-speech"]'), introLines[0]);
+  }
+  function introNextBeat() {
+    introBeat += 1;
+    const speech = intro.querySelector('[data-role="intro-speech"]');
+    const worker = intro.querySelector('[data-role="intro-worker"]');
+    const assistant = intro.querySelector('[data-role="intro-assistant"]');
+    const boy = intro.querySelector('[data-role="intro-boy"]');
+    const girl = intro.querySelector('[data-role="intro-girl"]');
+    if (introBeat < introLines.length) {
+      CommonSpeechBubble.show(speech, introLines[introBeat]);
+      worker.classList.remove('hidden');
+      worker.src = introBeat === 0 ? 'assets/worker-lead-apologetic.webp' : introBeat === 1 ? 'assets/worker-lead-idle.webp' : 'assets/worker-lead-explaining.webp';
+      assistant.classList.toggle('hidden', introBeat < 2);
+      boy.classList.toggle('hidden', introBeat < 3);
+      girl.classList.toggle('hidden', introBeat < 3);
+      if (introBeat === 1) intro.querySelector('[data-role="intro-bg"]').src = 'assets/bg-repaired-wall.webp';
+    } else {
+      CommonSpeechBubble.hide(speech);
+      intro.querySelector('[data-qa-advance]').classList.remove('hidden');
+    }
+  }
+  intro.querySelector('[data-action="intro-start"]').addEventListener('click', () => {
+    ensureIntroStarted();
+  });
+  intro.querySelector('[data-qa-beat-next]').addEventListener('click', introNextBeat);
+
+  const hunt = document.getElementById('shape-hunt');
+  const huntLines = ['벽화를 어떻게 그려야 되지?', '여러 가지 모양으로 그리면 좋겠어요.', '저와 학교에서 모양을 찾아 보아요.', '네!'];
+  let huntBeat = 0;
+  hunt.querySelector('[data-qa-beat-next]').addEventListener('click', () => {
+    huntBeat += 1;
+    if (huntBeat < huntLines.length) {
+      CommonSpeechBubble.show(hunt.querySelector('[data-role="hunt-speech"]'), huntLines[huntBeat]);
+      hunt.querySelector('[data-role="hunt-teacher"]').src = huntBeat === 1 ? 'assets/teacher-idle.webp' : 'assets/teacher-explaining.webp';
+      hunt.querySelector('[data-role="hunt-boy"]').src = huntBeat === 3 ? 'assets/student-boy-agreeing.webp' : 'assets/student-boy-ready.webp';
+    } else {
+      CommonSpeechBubble.hide(hunt.querySelector('[data-role="hunt-speech"]'));
+      hunt.querySelector('[data-role="hunt-narration"]').classList.remove('hidden');
+      hunt.querySelector('[data-role="hunt-questions"]').classList.remove('hidden');
+    }
+  });
+
+  let huntQuestionIndex = 0;
+  const huntQuestions = Array.from(hunt.querySelectorAll('.question'));
+  huntQuestions.forEach(question => {
+    let wrongs = 0;
+    const chosen = new Set();
+    question.querySelectorAll('[data-qa-choice]').forEach(choice => choice.addEventListener('click', () => {
+      if (choice.dataset.qaCorrect === 'true') {
+        chosen.add(choice.dataset.qaChoice);
+        choice.classList.add('selected');
+        if (chosen.size === 2) {
+          react(question, 'correct');
+          const fb = hunt.querySelector('[data-role="hunt-feedback"]');
+          fb.classList.add('visible');
+          CommonSpeechBubble.show(fb, '정답입니다.');
+          hunt.querySelector('.page-next').classList.remove('hidden');
+        }
+      } else {
+        wrongs += 1;
+        react(question, 'wrong');
+        if (wrongs >= 3) {
+          question.dataset.qaRevealed = 'true';
+          question.querySelectorAll('[data-qa-correct="true"]').forEach(correct => { correct.classList.add('revealed'); correct.dataset.qaRevealed = 'true'; });
+          hunt.querySelector('.page-next').classList.remove('hidden');
+        }
+      }
+    }));
+  });
+  hunt.querySelector('.page-next').addEventListener('click', () => {
+    if (huntQuestionIndex === 0) {
+      huntQuestions[0].classList.remove('current'); huntQuestions[1].classList.add('current'); huntQuestionIndex = 1;
+      hunt.querySelector('.page-next').classList.add('hidden');
+      CommonSpeechBubble.hide(hunt.querySelector('[data-role="hunt-feedback"]'));
+    } else {
+      CommonSpeechBubble.show(hunt.querySelector('[data-role="hunt-feedback"]'), '잘 찾았어요!');
+      hunt.querySelector('[data-qa-advance]').classList.remove('hidden');
+    }
+  });
+
+  function currentQuestion(deck) { return deck.querySelector('.question.current'); }
+  function revealQuestionForOwner(owner) {
+    if (!owner) return;
+    const question = document.querySelector('[data-qa-question="' + owner + '"]');
+    if (!question) return;
+    const deck = question.closest('[data-question-deck]');
+    if (deck) deck.querySelectorAll('.question').forEach(item => item.classList.toggle('current', item === question));
+  }
+  function advanceDeck(deck) {
+    const questions = Array.from(deck.querySelectorAll('.question'));
+    const current = currentQuestion(deck);
+    const index = questions.indexOf(current);
+    if (index < questions.length - 1) {
+      current.classList.remove('current'); questions[index + 1].classList.add('current');
+      deck.querySelector('.page-next')?.classList.add('hidden');
+      const nextId = questions[index + 1].dataset.qaQuestion;
+      if (nextId === 'q-add-two') CommonSpeechBubble.show(document.querySelector('[data-role="addition-speech"]'), '1통을 더 준비했어요.');
+      if (nextId === 'q-add-three') CommonSpeechBubble.show(document.querySelector('[data-role="addition-speech"]'), '네');
+      if (nextId === 'q-sub-three-from-ten') document.querySelector('[data-role="sub-narration"]').textContent = '“10개에서 3개를 더 지우면 몇 개 일까요?”';
+    } else {
+      const scene = deck.closest('.scene');
+      if (scene.id === 'addition-build') {
+        scene.querySelector('[data-role="addition-boy"]').classList.remove('hidden');
+        scene.querySelector('[data-role="addition-girl"]').classList.remove('hidden');
+        CommonSpeechBubble.show(scene.querySelector('[data-role="addition-student-speech"]'), '네!');
+      }
+      if (scene.id === 'subtraction-build') {
+        scene.querySelector('[data-role="subtraction-boy"]').classList.remove('hidden');
+        scene.querySelector('[data-role="subtraction-girl"]').classList.remove('hidden');
+        CommonSpeechBubble.show(scene.querySelector('[data-role="subtraction-student-speech"]'), '네!');
+      }
+      scene.querySelector('[data-qa-advance]')?.classList.remove('hidden');
+    }
+  }
+  document.querySelectorAll('[data-question-deck]').forEach(deck => deck.querySelector('.page-next')?.addEventListener('click', () => {
+    advanceDeck(deck);
+  }));
+  document.addEventListener('pointerdown', event => {
+    const owner = event.target.closest('[data-qa-question]')?.dataset.qaQuestion;
+    if (owner) revealQuestionForOwner(owner);
+  }, true);
+
+  document.querySelectorAll('.question[data-answer] [data-component="keypad"]').forEach(keypad => {
+    const question = keypad.closest('.question');
+    const display = keypad.querySelector('[data-slot="display"]');
+    let value = '';
+    CommonKeypad.build(keypad, key => {
+      if (key === 'del') value = value.slice(0, -1);
+      else if (key === 'enter') {
+        if (value === question.dataset.answer) {
+          react(question, 'correct');
+          const qid = question.dataset.qaQuestion;
+          if (qid === 'q-add-to-ten') {
+            document.querySelector('[data-role="addition-boy"]').classList.remove('hidden');
+            CommonSpeechBubble.show(document.querySelector('[data-role="addition-speech"]'), '페인트 1통을 다 썼어요');
+          }
+          if (qid === 'q-add-two') CommonSpeechBubble.show(document.querySelector('[data-role="addition-speech"]'), '2개를 더 색칠해주세요.');
+          if (qid === 'q-add-three') CommonSpeechBubble.show(document.querySelector('[data-role="addition-speech"]'), '고마워요!\n다른 담장으로 가요.');
+          if (qid === 'q-sub-to-ten') CommonSpeechBubble.show(document.querySelector('[data-role="subtraction-speech"]'), '3개를 더 지우고 싶어요. 지워주세요.');
+          if (qid === 'q-sub-three') CommonSpeechBubble.show(document.querySelector('[data-role="subtraction-speech"]'), '잘했어요!\n더 많은 담장을\n색칠해야해요!');
+          keypad.closest('[data-question-deck]').querySelector('.page-next')?.classList.remove('hidden');
+          if (keypad.closest('[data-question-deck]').querySelectorAll('.question').length === 1) keypad.closest('.scene').querySelector('[data-qa-advance]')?.classList.remove('hidden');
+        } else {
+          react(question, 'wrong');
+          const helper = question.closest('#random-practice')?.querySelector('[data-role="helper-panel"]');
+          if (helper) { helper.classList.remove('hidden'); helper.innerHTML = helperText(question.dataset.qaQuestion); }
+        }
+      } else if (value.length < 2) value += key;
+      display.textContent = value;
+      CommonKeypad.displayTick(display);
+    });
+    keypad.addEventListener('qa-set-value', event => { value = String(event.detail ?? ''); display.textContent = value; });
+    keypad.querySelectorAll('.c-key').forEach(button => {
+      const label = button.textContent.trim();
+      button.dataset.qaKey = label === '확인' ? 'submit' : label === '←' ? 'del' : label;
+    });
+  });
+
+  const bridge = document.getElementById('activity-one-bridge');
+  let bridgeBeat = 0;
+  bridge.querySelector('[data-qa-beat-next]').addEventListener('click', () => {
+    bridgeBeat += 1;
+    if (bridgeBeat === 1) CommonSpeechBubble.show(bridge.querySelector('[data-role="bridge-speech"]'), '② 페인트 소개를 부탁해요!');
+    else { CommonSpeechBubble.hide(bridge.querySelector('[data-role="bridge-speech"]')); bridge.querySelector('[data-qa-advance]').classList.remove('hidden'); }
+  });
+
+  const paintTen = document.getElementById('paint-ten');
+  const paintLines = ['①페인트 소개는 저희가 할게요.', '②이것을 페인트라고 해요.\n초록색부터 알려드릴게요.', '1통에 모양을 10개씩 그릴 수 있어요!'];
+  let paintBeat = 0;
+  paintTen.querySelector('[data-qa-beat-next]').addEventListener('click', () => { paintBeat = Math.min(paintBeat + 1, 2); CommonSpeechBubble.show(paintTen.querySelector('[data-role="paint-speech"]'), paintLines[paintBeat]); });
+
+  const addition = document.getElementById('addition-build');
+  const additionLines = ['7개에서 3개를 더 색칠하면 몇 개일까요?', '1통을 더 준비했어요.', '2개를 더 색칠해주세요.', '네'];
+  let additionBeat = 0;
+  addition.querySelector('[data-qa-beat-next]').addEventListener('click', () => { additionBeat = Math.min(additionBeat + 1, 3); CommonSpeechBubble.show(addition.querySelector('[data-role="addition-speech"]'), additionLines[additionBeat]); });
+
+  const subtraction = document.getElementById('subtraction-build');
+  const subtractionLines = ['잘못 그린 2개를 지워주세요!', '12개에서 2개를 지우면 몇 개 일까요?', '10개에서 3개를 더 지우면 몇 개 일까요?'];
+  let subtractionBeat = 0;
+  subtraction.querySelector('[data-qa-beat-next]').addEventListener('click', () => { subtractionBeat = Math.min(subtractionBeat + 1, 2); CommonSpeechBubble.show(subtraction.querySelector('[data-role="subtraction-speech"]'), subtractionLines[subtractionBeat]); });
+
+  const randomScene = document.getElementById('random-practice');
+  function helperText(id) {
+    if (id === 'q-random-d') return '13 - 3 = (  )<br>얼마일까요?';
+    if (id === 'q-random-b') return '10 - 4=(   )';
+    return '6 + 4 = (  )<br>얼마일까요?';
+  }
+  randomScene.querySelectorAll('[data-action="helper"]').forEach(button => button.addEventListener('click', () => {
+    const panel = randomScene.querySelector('[data-role="helper-panel"]');
+    const id = randomScene.querySelector('.question.current').dataset.qaQuestion;
+    panel.innerHTML = helperText(id);
+    panel.classList.toggle('hidden');
+  }));
+  let randomStoryPage = 0;
+  randomScene.querySelector('[data-qa-page-next]').addEventListener('click', () => {
+    randomStoryPage += 1;
+    const panel = randomScene.querySelector('[data-role="helper-panel"]');
+    if (randomStoryPage === 2) { panel.textContent = '6 + 4 = (  )\n얼마일까요?'; panel.classList.remove('hidden'); }
+    if (randomStoryPage >= 3) { panel.textContent = '13 - 3 = (  )\n얼마일까요?'; panel.classList.remove('hidden'); }
+  });
+  let choiceWrongs = 0;
+  randomScene.querySelectorAll('[data-qa-question="q-random-a"] .choice').forEach(choice => choice.addEventListener('click', () => {
+    const question = choice.closest('.question');
+    if (choice.dataset.qaCorrect === 'true') {
+      react(question, 'correct'); randomScene.querySelector('.page-next').classList.remove('hidden');
+    } else {
+      choiceWrongs += 1; react(question, 'wrong'); randomScene.querySelector('[data-role="helper-panel"]').classList.remove('hidden');
+      if (choiceWrongs >= 3) { question.dataset.qaRevealed = 'true'; const correct = question.querySelector('[data-qa-correct="true"]'); correct.classList.add('revealed'); correct.dataset.qaRevealed = 'true'; randomScene.querySelector('.page-next').classList.remove('hidden'); }
+    }
+  }));
+
+  const drawing = document.getElementById('free-drawing');
+  let drawShape = 'circle'; let drawColor = 'green'; let selectedDraw = null;
+  drawing.querySelectorAll('.shape-tool').forEach(tool => tool.addEventListener('click', () => { drawing.querySelectorAll('.shape-tool').forEach(t => t.classList.remove('active')); tool.classList.add('active'); drawShape = tool.dataset.shape; }));
+  drawing.querySelectorAll('.color-tool').forEach(tool => tool.addEventListener('click', () => { drawing.querySelectorAll('.color-tool').forEach(t => t.classList.remove('active')); tool.classList.add('active'); drawColor = tool.dataset.color; }));
+  drawing.querySelector('[data-role="drawing-board"]').addEventListener('click', event => {
+    if (event.target.classList.contains('draw-item')) { selectedDraw?.classList.remove('selected'); selectedDraw = event.target; selectedDraw.classList.add('selected'); return; }
+    const board = event.currentTarget; const rect = board.getBoundingClientRect(); const scaleX = board.offsetWidth / rect.width; const scaleY = board.offsetHeight / rect.height;
+    const item = document.createElement('button'); item.type = 'button'; item.className = 'draw-item ' + drawShape; item.style.left = ((event.clientX - rect.left) * scaleX - 55) + 'px'; item.style.top = ((event.clientY - rect.top) * scaleY - 55) + 'px';
+    const color = drawColor === 'green' ? 'var(--shape-green)' : drawColor === 'blue' ? 'var(--shape-blue)' : 'var(--shape-red)'; item.style.background = color; item.style.color = color; item.setAttribute('aria-label', drawShape); board.appendChild(item);
+  });
+  drawing.querySelector('[data-action="delete"]').addEventListener('click', () => { selectedDraw?.remove(); selectedDraw = null; });
+  let drawingBeat = 0;
+  drawing.querySelector('[data-qa-beat-next]').addEventListener('click', () => { drawingBeat += 1; if (drawingBeat === 1) CommonSpeechBubble.show(drawing.querySelector('[data-role="drawing-speech"]'), '마지막 담장은 자유롭게 그려주세요.'); else CommonSpeechBubble.hide(drawing.querySelector('[data-role="drawing-speech"]')); });
+  drawing.querySelector('[data-action="confirm-open"]').addEventListener('click', () => drawing.querySelector('[data-role="confirm"]').classList.remove('hidden'));
+  drawing.querySelector('[data-action="confirm-no"]').addEventListener('click', () => drawing.querySelector('[data-role="confirm"]').classList.add('hidden'));
+  drawing.querySelector('[data-action="confirm-yes"]').addEventListener('click', () => controller.showScene('math-story'));
+
+  const story = document.getElementById('math-story');
+  const storyPages = [
+    { src:'assets/sign-circle-car.webp', alt:'원 모양 자동차 전용 도로 표지판 사례를 보여 주는 교육 소품', text:'● 모양 표지판은 어떤 것이 있을까요?\n\n“자동차 전용 도로 표지판입니다. 자동차만 다닐 수 있으니, 사람은 다니지 않아요.”' },
+    { src:'assets/sign-square-parking.webp', alt:'사각형 주차 표지판 사례를 보여 주는 교육 소품', text:'■ 모양 표지판은 어떤 것이 있을까요?\n\n“주차 표지판입니다. 자동차가 많으니 주차장에서 놀지 않아요. 안전히 인도로 다녀야 해요.”' },
+    { src:'assets/sign-triangle-work.webp', alt:'삼각형 공사 표지판 사례를 보여 주는 교육 소품', text:'▲ 모양 표지판은 어떤 것이 있을까요?\n\n“공사 표지판입니다. 주변에 공사를 하고 있으니 가까이 가지 않아야 해요.\n\n앞으로 표지판을 보며 안전하게 다녀요.”' }
+  ];
+  let storyPage = 0;
+  story.querySelector('[data-qa-page-next]').addEventListener('click', () => {
+    storyPage = Math.min(storyPage + 1, 2); const page = storyPages[storyPage]; const sign = story.querySelector('[data-role="story-sign"]'); sign.src = page.src; sign.alt = page.alt; story.querySelector('[data-role="story-text"]').textContent = page.text;
+    if (storyPage === 2) story.querySelector('[data-qa-advance]').classList.remove('hidden');
+  });
+
+  document.querySelector('[data-action="download"]').addEventListener('click', () => { const link = document.createElement('a'); link.href = 'assets/completion-emblem.webp'; link.download = '3차시-수리-완료.png'; link.click(); });
+  document.querySelector('[data-action="exit"]').addEventListener('click', () => window.close());
+
+  window.__contentHarnessShowQuestion = function (questionId) {
+    const question = document.querySelector('[data-qa-question="' + CSS.escape(questionId) + '"]');
+    if (!question) return;
+    const scene = question.closest('.scene'); controller.showScene(scene.dataset.qaScene);
+    scene.querySelectorAll('.question').forEach(item => item.classList.toggle('current', item === question));
+    question.closest('[data-question-deck]')?.classList.remove('hidden');
+    scene.querySelector('[data-role="hunt-questions"]')?.classList.remove('hidden');
+    scene.querySelector('[data-role="hunt-narration"]')?.classList.remove('hidden');
+  };
+
+  // QA가 뒤쪽 문항을 독립적으로 열어도 입력 상태와 문항별 진행은 바뀌지 않는다.
+  document.querySelectorAll('[data-qa-question]').forEach(question => {
+    question.querySelectorAll('[data-qa-key="submit"]').forEach(button => button.addEventListener('click', () => {}));
+  });
+})();
+</script>
+</body>
+</html>

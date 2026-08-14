@@ -1,0 +1,27 @@
+{
+  "rubric_name": "content-html:v5",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "learning_goal_alignment": 4.2,
+      "feedback_scaffolding": 1.8,
+      "interaction_flow_clarity": 3.2
+    },
+    "weights": {
+      "learning_goal_alignment": 0.37,
+      "feedback_scaffolding": 0.33,
+      "interaction_flow_clarity": 0.3
+    },
+    "weighted_total": 3.108
+  },
+  "axis_rationales": {
+    "learning_goal_alignment": "생활 소품에서 원·삼각형을 찾는 q-find-shape/q-find-triangle, 도형별 개수를 세는 q-count-circle/q-count-triangle/q-count-square, 7+3으로 10을 만든 뒤 10+2로 확장하는 addition, 12-2와 10-3을 거쳐 12-2-3으로 연결하는 subtraction이 목표를 직접 다룬다. random-practice의 A~D도 10 만들기, 10에서 빼기, 세 수의 덧셈·뺄셈을 모두 연습하며, free-draw와 math-story는 배운 모양을 벽화와 생활 표지판에 적용한다. 다만 addition의 10개 도형은 7개와 새로 더한 3개의 구분이 없고, q-add-two의 12개도 10개 묶음과 추가된 2개의 관계가 시각적으로 약해 조작을 통한 계산 전략 확인은 최상 수준에 미치지 못한다.",
+    "feedback_scaffolding": "대부분의 문항에서 오답 피드백은 X 도장과 흔들림뿐이고, 정답 피드백도 q-find-shape, q-add-three, q-subtract-all의 “정답입니다.”처럼 결과 통보에 머문다. shape-count, ten-intro, addition의 여러 문항에는 개념을 설명하는 피드백 문장이 없다. random-practice C의 “6 + 4 = ( )”와 D의 “13 - 3 = ( )” 힌트는 먼저 10을 만드는 중간 단계를 제시해 의미 있는 발판이 되지만, A와 B의 오답 후 힌트는 현재 문제 문구를 사실상 반복하여 왜 틀렸는지나 다음 계산 행동을 구체화하지 못한다.",
+    "interaction_flow_clarity": "상단 진행률, 단계 제목, 한 번에 한 문항을 보여 주는 순차 구조, “다음”, “다음 문제”, “다음 장” 표시는 전체 이동 방향을 이해하는 데 도움이 된다. 각 문항도 “몇 개인가요?”, “세 수의 덧셈을 해 보세요”처럼 요구 행동이 비교적 명확하다. 그러나 addition에서는 “2개를 더 색칠해주세요”까지 모두 읽은 뒤 7+3 문항이 시작되고, subtraction-intro에서는 “12개에서 2개를 지우면”이라는 대화 뒤에 먼저 7+3+2를 답하게 되어 설명과 실제 판단 순서가 역전된다. shape-count의 대사에서 “● ■ ▲ 모양”이 연속 반복되어 색·모양 등장과 세기 시작 사이의 단계 의미도 불분명하다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "interaction_flow_clarity"
+  ],
+  "calibration_note": "기능의 실제 작동 여부, 문구·문항의 구현 누락, asset 상태와 시각 디자인은 채점에서 제외했다. planner의 핵심 학습 의도와 충돌하는 임의 내용은 확인되지 않았지만, feedback_scaffolding과 interaction_flow_clarity가 각각 최소 축 기준 4.0에 미달하고 weighted_total 3.108도 최소 총점 4.2에 미달한다."
+}

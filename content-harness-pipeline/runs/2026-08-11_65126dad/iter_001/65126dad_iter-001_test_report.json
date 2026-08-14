@@ -1,0 +1,719 @@
+{
+  "spec_version": "1",
+  "source_planner": "65126dad_planner.json",
+  "total": 39,
+  "passed": 0,
+  "failed": 39,
+  "hook_missing": 28,
+  "verdict": "REJECT",
+  "underivable": [
+    {
+      "kind": "attempt_policy",
+      "section_id": "activity2-type-a",
+      "ref": "feedback",
+      "reason": "'3회' 시도 규칙이 산문에만 있고 questions[] 어느 항목에도 연결되어 있지 않다"
+    }
+  ],
+  "failures": [
+    {
+      "case_id": "case_activity1-title_text",
+      "kind": "scene",
+      "section_id": "activity1-title",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity1-title_text.png"
+    },
+    {
+      "case_id": "case_activity1-problem_text",
+      "kind": "scene",
+      "section_id": "activity1-problem",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!",
+      "screenshot": "case_activity1-problem_text.png"
+    },
+    {
+      "case_id": "case_activity1-problem_text",
+      "kind": "scene",
+      "section_id": "activity1-problem",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity1-problem_text.png"
+    },
+    {
+      "case_id": "case_activity1-tutorial_text",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!",
+      "screenshot": "case_activity1-tutorial_text.png"
+    },
+    {
+      "case_id": "case_activity1-tutorial_text",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?",
+      "screenshot": "case_activity1-tutorial_text.png"
+    },
+    {
+      "case_id": "case_activity1-tutorial_text",
+      "kind": "scene",
+      "section_id": "activity1-tutorial",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity1-tutorial_text.png"
+    },
+    {
+      "case_id": "case_tutorial-clock-reading_correct",
+      "kind": "question",
+      "section_id": "activity1-tutorial",
+      "question_id": "tutorial-clock-reading",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"tutorial-clock-reading\"] 를 찾지 못했다",
+      "screenshot": "case_tutorial-clock-reading_correct.png"
+    },
+    {
+      "case_id": "case_tutorial-clock-reading_wrong",
+      "kind": "question",
+      "section_id": "activity1-tutorial",
+      "question_id": "tutorial-clock-reading",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"tutorial-clock-reading\"] 를 찾지 못했다",
+      "screenshot": "case_tutorial-clock-reading_wrong.png"
+    },
+    {
+      "case_id": "case_activity1-success_text",
+      "kind": "scene",
+      "section_id": "activity1-success",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [3시]",
+      "screenshot": "case_activity1-success_text.png"
+    },
+    {
+      "case_id": "case_activity1-success_text",
+      "kind": "scene",
+      "section_id": "activity1-success",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!",
+      "screenshot": "case_activity1-success_text.png"
+    },
+    {
+      "case_id": "case_activity1-success_text",
+      "kind": "scene",
+      "section_id": "activity1-success",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [좋아요! 본격적으로 수리하러 가기 →]",
+      "screenshot": "case_activity1-success_text.png"
+    },
+    {
+      "case_id": "case_activity1-success_text",
+      "kind": "scene",
+      "section_id": "activity1-success",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [STEP 2. 수리로 해결해요]",
+      "screenshot": "case_activity1-success_text.png"
+    },
+    {
+      "case_id": "case_activity1-success_text",
+      "kind": "scene",
+      "section_id": "activity1-success",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity1-success_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-a_text",
+      "kind": "scene",
+      "section_id": "activity2-type-a",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?",
+      "screenshot": "case_activity2-type-a_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-a_text",
+      "kind": "scene",
+      "section_id": "activity2-type-a",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 다시 생각해보세요",
+      "screenshot": "case_activity2-type-a_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-a_text",
+      "kind": "scene",
+      "section_id": "activity2-type-a",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity2-type-a_text.png"
+    },
+    {
+      "case_id": "case_time-a-1_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-1",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-1\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-1_correct.png"
+    },
+    {
+      "case_id": "case_time-a-1_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-1",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-1\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-1_wrong.png"
+    },
+    {
+      "case_id": "case_time-a-2_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-2",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-2\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-2_correct.png"
+    },
+    {
+      "case_id": "case_time-a-2_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-2",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-2\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-2_wrong.png"
+    },
+    {
+      "case_id": "case_time-a-3_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-3",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-3\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-3_correct.png"
+    },
+    {
+      "case_id": "case_time-a-3_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-3",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-3\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-3_wrong.png"
+    },
+    {
+      "case_id": "case_time-a-4_correct",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-4",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-4\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-4_correct.png"
+    },
+    {
+      "case_id": "case_time-a-4_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-a",
+      "question_id": "time-a-4",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-a-4\"] 를 찾지 못했다",
+      "screenshot": "case_time-a-4_wrong.png"
+    },
+    {
+      "case_id": "case_activity2-type-b_text",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?",
+      "screenshot": "case_activity2-type-b_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-b_text",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [30분 후 →]",
+      "screenshot": "case_activity2-type-b_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-b_text",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [확인하기]",
+      "screenshot": "case_activity2-type-b_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-b_text",
+      "kind": "scene",
+      "section_id": "activity2-type-b",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity2-type-b_text.png"
+    },
+    {
+      "case_id": "case_time-b-5_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-5",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-5\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-5_correct.png"
+    },
+    {
+      "case_id": "case_time-b-5_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-5",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-5\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-5_wrong.png"
+    },
+    {
+      "case_id": "case_time-b-6_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-6",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-6\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-6_correct.png"
+    },
+    {
+      "case_id": "case_time-b-6_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-6",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-6\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-6_wrong.png"
+    },
+    {
+      "case_id": "case_time-b-7_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-7",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-7\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-7_correct.png"
+    },
+    {
+      "case_id": "case_time-b-7_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-7",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-7\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-7_wrong.png"
+    },
+    {
+      "case_id": "case_time-b-8_correct",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-8",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-8\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-8_correct.png"
+    },
+    {
+      "case_id": "case_time-b-8_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-b",
+      "question_id": "time-b-8",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-b-8\"] 를 찾지 못했다",
+      "screenshot": "case_time-b-8_wrong.png"
+    },
+    {
+      "case_id": "case_activity2-type-c_text",
+      "kind": "scene",
+      "section_id": "activity2-type-c",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!",
+      "screenshot": "case_activity2-type-c_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-c_text",
+      "kind": "scene",
+      "section_id": "activity2-type-c",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [시스템 재부팅 완료!]",
+      "screenshot": "case_activity2-type-c_text.png"
+    },
+    {
+      "case_id": "case_activity2-type-c_text",
+      "kind": "scene",
+      "section_id": "activity2-type-c",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity2-type-c_text.png"
+    },
+    {
+      "case_id": "case_time-c-9_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-9",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-9\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-9_correct.png"
+    },
+    {
+      "case_id": "case_time-c-9_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-9",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-9\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-9_wrong.png"
+    },
+    {
+      "case_id": "case_time-c-10_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-10",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-10\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-10_correct.png"
+    },
+    {
+      "case_id": "case_time-c-10_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-10",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-10\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-10_wrong.png"
+    },
+    {
+      "case_id": "case_time-c-11_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-11",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-11\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-11_correct.png"
+    },
+    {
+      "case_id": "case_time-c-11_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-11",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-11\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-11_wrong.png"
+    },
+    {
+      "case_id": "case_time-c-12_correct",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-12",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-12\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-12_correct.png"
+    },
+    {
+      "case_id": "case_time-c-12_wrong",
+      "kind": "question",
+      "section_id": "activity2-type-c",
+      "question_id": "time-c-12",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"time-c-12\"] 를 찾지 못했다",
+      "screenshot": "case_time-c-12_wrong.png"
+    },
+    {
+      "case_id": "case_activity2-outro_text",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 해냈다! 시간의 규칙을 모두 풀었어요!",
+      "screenshot": "case_activity2-outro_text.png"
+    },
+    {
+      "case_id": "case_activity2-outro_text",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!",
+      "screenshot": "case_activity2-outro_text.png"
+    },
+    {
+      "case_id": "case_activity2-outro_text",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [3. 수리 이야기 보러 가기 →]",
+      "screenshot": "case_activity2-outro_text.png"
+    },
+    {
+      "case_id": "case_activity2-outro_text",
+      "kind": "scene",
+      "section_id": "activity2-outro",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity2-outro_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: ◀",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: ▶",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지.",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-gallery_text",
+      "kind": "scene",
+      "section_id": "activity3-gallery",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity3-gallery_text.png"
+    },
+    {
+      "case_id": "case_activity3-quiz_text",
+      "kind": "scene",
+      "section_id": "activity3-quiz",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 맞았어! 24시간은 1일과 같지!",
+      "screenshot": "case_activity3-quiz_text.png"
+    },
+    {
+      "case_id": "case_activity3-quiz_text",
+      "kind": "scene",
+      "section_id": "activity3-quiz",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity3-quiz_text.png"
+    },
+    {
+      "case_id": "case_final-popup-quiz_correct",
+      "kind": "question",
+      "section_id": "activity3-quiz",
+      "question_id": "final-popup-quiz",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"final-popup-quiz\"] 를 찾지 못했다",
+      "screenshot": "case_final-popup-quiz_correct.png"
+    },
+    {
+      "case_id": "case_final-popup-quiz_wrong",
+      "kind": "question",
+      "section_id": "activity3-quiz",
+      "question_id": "final-popup-quiz",
+      "reason": "hook_missing",
+      "subject": "data-qa-question",
+      "detail": "[data-qa-question=\"final-popup-quiz\"] 를 찾지 못했다",
+      "screenshot": "case_final-popup-quiz_wrong.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 마을 수리대원 인증서 (도서관 편)",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 맞힌 문제 수",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 클리어 소요 시간",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [내 사진첩에 저장하기]",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 정말 고마워! 네 덕분에 도서관이 완벽해졌어!",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: 언제든 제 수학실력이 필요하면 불러주세요!",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "text_visible",
+      "detail": "화면에 없는 문구: [마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]",
+      "screenshot": "case_activity3-certificate_text.png"
+    },
+    {
+      "case_id": "case_activity3-certificate_text",
+      "kind": "scene",
+      "section_id": "activity3-certificate",
+      "question_id": "",
+      "reason": "expect_failed",
+      "subject": "no_console_error",
+      "detail": "Failed to load resource: net::ERR_FILE_NOT_FOUND",
+      "screenshot": "case_activity3-certificate_text.png"
+    }
+  ]
+}
