@@ -6,6 +6,8 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+from stages.scripts import agent_audit
+
 def resolve_executable(name: str) -> str:
     """이름만 넘기지 않고 셸이 고르는 것과 같은 실행 파일을 찾아 준다.
 
@@ -58,6 +60,7 @@ class CodexClient:
         output_schema: Path,
         output_path: Path,
         model: str | None = None,
+        stage: str | None = None,
     ) -> dict | None:
         command = self.build_command(
             output_schema=output_schema,
@@ -81,6 +84,9 @@ class CodexClient:
                 f"command: {command}\n"
                 f"timeout_seconds: {self.timeout_seconds}"
             ) from exc
+
+        # 실패해도 남긴다 — 명령은 이미 실행됐고, 죽은 stage가 무엇을 열었는지가 더 중요하다.
+        agent_audit.record_codex(stage, completed.stdout)
 
         if completed.returncode != 0:
             raise RuntimeError(
@@ -142,8 +148,11 @@ class ClaudeClient:
         output_schema: Path,
         output_path: Path,
         model: str | None = None,
+        stage: str | None = None,
     ) -> dict | None:
         command = self.build_command(output_schema=output_schema, model=model)
+        # `--output-format json` 에는 도구 호출 기록이 없다. 감사되지 않았다는 사실만 남긴다.
+        agent_audit.record_claude_unaudited(stage)
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         try:

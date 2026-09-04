@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!</title>
+<link rel="stylesheet" href="common.css">
+<style>
+  /* ── 팔레트 토큰: art_direction(따뜻한 도서관, 크림·황금목재·짙은 청록·버건디·금빛) ── */
+  :root {
+    --bg: #e7d8bb;            /* 레터박스 배경: 따뜻한 크림 */
+    --surface: #1f6f78;       /* 무대·판 표면: 짙은 청록 */
+    --ink: #123a4a;           /* 어두운 잉크(스트로크) */
+    --plate-ink: #16414f;     /* 판 위 텍스트 */
+    --accent: #f2b02e;        /* 주강조: 금빛 */
+    --accent-bright: #ffd977; /* 밝은 금빛 하이라이트 */
+    --glow: #ffe07a;          /* 성공 글로우 */
+    --cream: #fff7e6;         /* 밝은 표면 */
+    --danger: #e0503f;        /* 오답/경고 */
+    --veil: rgba(255,250,240,.92);
+    --dim: rgba(18,58,74,.42);
+    --bubble-bg: #fffdf4;
+    --bubble-line: #4c3428;
+    --bubble-ink: #24160f;
+    --brown-800: #713f12;
+    --brown-900: #422006;
+    /* 확장 named 토큰 */
+    --burgundy: #8a2f3b;      /* 도서관 구조색 버건디 */
+    --teal-deep: #164250;
+    --wood: #b7823f;
+  }
+
+  /* 콘텐츠 공통 레이아웃 헬퍼 (구조·기하만. 재질감은 asset이 소유) */
+  .layer { position: absolute; }
+  .char { position: absolute; bottom: 0; height: 640px; z-index: var(--z-character);
+          filter: var(--ds-md); pointer-events: none; user-select: none; }
+  .char.small { height: 470px; }
+
+  /* 캐릭터 pose 전환 */
+  .char.pose-swap { transition: transform var(--dur) var(--ease); }
+  .char.cheer { animation: cheerJump .6s var(--ease-back); }
+  @keyframes cheerJump { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-42px)} }
+
+  /* ── 원형 시계: asset 몸체 + HTML/CSS 바늘 ── */
+  .clock { position: relative; display: inline-block; }
+  .clock .clock-face { display: block; width: 100%; height: 100%; }
+  .clock .hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%;
+                 border-radius: var(--r-pill); background: var(--ink); }
+  .clock .hand.hour { width: 3.0%; height: 24%; margin-left: -1.5%; }
+  .clock .hand.minute { width: 2.2%; height: 34%; margin-left: -1.1%; background: var(--teal-deep); }
+  .clock .hub { position: absolute; left: 50%; top: 50%; width: 5.4%; height: 5.4%;
+                border-radius: 50%; background: var(--ink); transform: translate(-50%,-50%);
+                box-shadow: 0 0 0 3px var(--accent); }
+  .clock.spinning .hand.minute { animation: spinHand .5s linear infinite; }
+  .clock.spinning .hand.hour { animation: spinHand 1.8s linear infinite; }
+  @keyframes spinHand { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .clock.glow { filter: drop-shadow(0 0 22px var(--glow)) drop-shadow(0 0 44px var(--accent)); }
+
+  /* ── CTA(공용 ticket-button) : 생성된 raster 티켓 몸체를 --cta-body 대신 스프라이트로 얹는다.
+       한 장에 normal/hover/pressed 3상태가 가로로 정렬돼 있어 background-position 으로 프레임을 고른다.
+       라벨은 HTML overlay(place-items:center)라 프레임을 바꿔도 어긋나지 않는다. ── */
+  .c-ticketButton.cta-raster {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    background-image: url('assets/cta-library-ticket-states.png');
+    background-repeat: no-repeat;
+    background-size: 325% 319%;
+    background-position: 3% 50%;   /* frame 1: normal */
+    min-height: 150px;
+    filter: var(--ds-sm);
+  }
+  .c-ticketButton.cta-raster:hover { background-position: 50% 50%; transform: translateY(-3px); filter: var(--ds-md); box-shadow: none; }
+  .c-ticketButton.cta-raster:active { background-position: 98% 50%; transform: translateY(3px); box-shadow: none; }
+
+  /* 펄스는 크기(transform)가 아니라 글로우로 낸다. transform으로 매 프레임 bounding box를
+     바꾸면 자동화 클릭이 "요소가 안정될 때까지" 기다리다 시간 초과된다(실측: CTA 클릭 실패). */
+  .cta-pulse { animation: ctaPulse 1.3s ease-in-out infinite; }
+  @keyframes ctaPulse { 0%,100%{filter:var(--ds-sm) drop-shadow(0 0 0 var(--clear))} 50%{filter:var(--ds-sm) drop-shadow(0 0 24px var(--glow))} }
+  .blink { animation: blinkSoft 1.1s ease-in-out infinite; }
+  @keyframes blinkSoft { 0%,100%{filter:var(--ds-sm) brightness(1)} 50%{filter:var(--ds-sm) brightness(1.1) drop-shadow(0 0 16px var(--glow))} }
+
+  /* ── beat 진행 버튼(대사 탭 스킵) — QA hook. 중앙 CTA와 겹치지 않게 우하단 코너로 뺀다 ── */
+  .beat-next {
+    position: absolute; left: auto; right: 44px; bottom: 40px; transform: none;
+    z-index: var(--z-hud);
+    padding: 10px 26px; border: 4px solid var(--bubble-line); border-radius: var(--r-pill);
+    background: linear-gradient(var(--accent-bright), var(--accent));
+    color: var(--bubble-ink); font-family: var(--font-body); font-size: var(--fs-2xs);
+    box-shadow: 0 5px 0 rgba(122,82,34,.4); cursor: pointer;
+    animation: speechNextPulse 1.8s ease-in-out infinite;
+  }
+  .beat-next:active { transform: translateY(3px); }
+
+  /* ── 보이지 않는 자동 전환 hook (학습자에겐 자동, QA에겐 클릭 대상) ── */
+  .auto-exit {
+    position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+    width: 360px; height: 96px; z-index: var(--z-drawer);
+    opacity: 0; border: 0; background: transparent; cursor: pointer;
+  }
+
+  /* ── 장면 표면(전광판·게시판·모니터·인증서) : asset 위에 텍스트 얹기 ── */
+  .surface { position: absolute; z-index: var(--z-content); }
+  .surface > img { display: block; width: 100%; height: 100%; }
+  .surface .surface-text { position: absolute; inset: 0; display: grid; place-items: center;
+    padding: 4%; text-align: center; color: var(--plate-ink); font-weight: 800;
+    word-break: keep-all; }
+  .surface.swap-dim > img { transition: opacity .18s ease; }
+
+  /* 전광판 문구 */
+  .board-text { color: var(--accent-bright); font-size: var(--fs-xl);
+    text-shadow: 0 0 12px rgba(242,176,46,.6); letter-spacing: .01em; }
+
+  /* 성공 시각 판독창(시계 아래 작은 중립 상태판) */
+  .status-plate { background: var(--cream); border: 5px solid var(--surface);
+    border-radius: var(--r-md); color: var(--surface); font-size: var(--fs-2xl); font-weight: 900;
+    box-shadow: var(--shadow); }
+
+  /* 유형 A·B·C 도입 대사 말풍선은 보기·입력 위에 겹쳐도 그 아래의 클릭을 막지 않는다.
+     학습자가 첫 문항에 답하면 컨트롤러가 이 말풍선을 숨긴다. */
+  #a-bubble, #b-bubble, #c-bubble { pointer-events: none; }
+
+  /* ── 보기(choice) ── */
+  .choices { position: absolute; z-index: var(--z-interactive); display: flex; gap: 46px;
+    align-items: flex-end; justify-content: center; }
+  .choice { display: flex; flex-direction: column; align-items: center; gap: 14px;
+    padding: 20px 22px; border: 5px solid var(--surface); border-radius: var(--r-md);
+    background: var(--veil); box-shadow: var(--shadow); cursor: pointer;
+    font-family: var(--font-body); color: var(--plate-ink);
+    transition: transform var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+    animation: choiceRise .42s var(--ease-back) both; }
+  @keyframes choiceRise { 0%{opacity:0; transform:translateY(60px) scale(.9)} 100%{opacity:1; transform:translateY(0) scale(1)} }
+  .choice:hover { transform: translateY(-6px); filter: var(--filter-hover); }
+  .choice.pop { animation: choicePop .3s var(--ease-back); }
+  @keyframes choicePop { 0%{transform:translateY(0)} 50%{transform:translateY(-22px)} 100%{transform:translateY(0)} }
+  .choice.shake { animation: shakeX .45s var(--ease); border-color: var(--danger); }
+  @keyframes shakeX { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-14px)} 40%{transform:translateX(12px)} 60%{transform:translateX(-9px)} 80%{transform:translateX(6px)} }
+  .choice.revealed { animation: revealBlink .5s ease-in-out 3; }
+  @keyframes revealBlink { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.35) drop-shadow(0 0 20px var(--glow))} }
+  .choice-label { font-size: var(--fs-sm); font-weight: 800; }
+  .choice .clock { width: 220px; height: 220px; }
+
+  /* 짧은 텍스트 보기 = 도서 대출 카드형 compact plaque(생성 asset). 흰 CSS 카드를 대체한다. */
+  .choice.plaque-compact {
+    border: none; background: transparent; box-shadow: none; padding: 0;
+    width: 340px; height: 150px; display: grid; place-items: center;
+    background-image: url('assets/compact-choice-plaque-surface.png');
+    background-repeat: no-repeat; background-size: 100% 100%;
+    filter: var(--ds-sm);
+  }
+  .choice.plaque-compact .choice-label { padding: 0 12%; text-align: center; word-break: keep-all;
+    transform: translateY(-5px); }
+  .choice.plaque-compact.revealed { filter: var(--ds-sm) drop-shadow(0 0 22px var(--glow)); }
+
+  /* 시계 보기 = 전광판 정렬대의 세로형 시계 plaque(생성 asset). 상단 원형 홈에 시계, 하단에 라벨. */
+  .choice.plaque-clock {
+    position: relative; border: none; background: transparent; box-shadow: none; padding: 0;
+    width: 300px; height: 418px; gap: 0;
+    background-image: url('assets/clock-choice-plaque-surface.png');
+    background-repeat: no-repeat; background-size: 100% 100%;
+    filter: var(--ds-md);
+  }
+  .choice.plaque-clock .clock {
+    position: absolute; top: 9.5%; left: 50%; transform: translateX(-50%);
+    width: 71%; height: auto; aspect-ratio: 1 / 1;
+  }
+  /* 라벨은 plaque가 마련한 하단 빈 면(높이 76%~94% 밴드) 안에 완전히 들어가야 한다.
+     bottom 고정 대신 하단 label-zone을 grid로 잡고 그 중앙에 넣어 경계 이탈을 막는다. */
+  .choice.plaque-clock .choice-label {
+    position: absolute; left: 7%; right: 7%; top: 76%; bottom: 6%;
+    display: grid; place-items: center; text-align: center;
+    font-size: var(--fs-2xs); line-height: 1.12; word-break: keep-all;
+  }
+  .choice.plaque-clock.revealed { filter: var(--ds-md) drop-shadow(0 0 24px var(--glow)); }
+
+  /* ── 빈칸(keypad) ── */
+  .blanks { position: absolute; z-index: var(--z-interactive); display: flex; gap: 18px;
+    align-items: center; justify-content: center; flex-wrap: wrap; }
+  .blank-group { display: inline-flex; align-items: baseline; gap: 8px;
+    font-size: var(--fs-xl); font-weight: 800; color: var(--plate-ink); }
+  .blank { min-width: 96px; height: 108px; padding: 0 14px; display: inline-grid; place-items: center;
+    border: 5px solid var(--surface); border-radius: var(--r-md); background: var(--cream);
+    font-size: var(--fs-2xl); font-weight: 900; color: var(--ink); cursor: pointer;
+    box-shadow: var(--shadow); }
+  .blank.sel { border-color: var(--accent); box-shadow: 0 0 0 5px var(--glow); }
+  /* 형식 안내: 좁은 pill에 밀어넣지 않고 두 행 grid로 고정한다(줄바꿈 붕괴 방지) */
+  .format-legend { position: absolute; z-index: var(--z-content); display: grid; gap: 10px;
+    padding: 14px 26px; border-radius: var(--r-md);
+    background: var(--dim); color: var(--cream); font-size: var(--fs-2xs); font-weight: 700; }
+  .format-legend .fl-row { display: flex; gap: 24px; align-items: center; white-space: nowrap; }
+  .format-legend b { color: var(--accent-bright); }
+
+  /* ── 유형 B 키패드: 흰 웹 폼 대신 도서관 대출 등록기 몸체(raster) 위에 키를 얹는다 ──
+     공용 keypad의 flat veil 패널/흰 키를 콘텐츠 style에서 소스 순서로 오버라이드한다
+     (common.css 뒤에 오므로 이긴다). c- prefix·slot·JS 계약은 그대로 두고 표면 재질만 바꾼다. */
+  .c-keypadWrap {
+    background-color: transparent; border: none; box-shadow: none;
+    background-image: url('assets/keypad-library-console-surface.png');
+    background-repeat: no-repeat; background-size: 100% 100%;
+    width: 520px; padding: 30px 46px 44px; filter: var(--ds-md);
+  }
+  .c-answerDisplay { background: rgba(255,248,223,.9); border-color: var(--surface); color: var(--plate-ink); }
+  .c-key { background: rgba(255,248,223,.92); border-color: var(--surface); color: var(--plate-ink);
+    box-shadow: 0 4px 0 rgba(22,66,80,.5), 0 8px 16px rgba(0,0,0,.14); }
+  .c-key.del { background: rgba(255,240,220,.94); border-color: var(--surface); color: var(--burgundy);
+    box-shadow: 0 4px 0 rgba(22,66,80,.45), 0 8px 16px rgba(0,0,0,.14); }
+  .c-key.enter { background: var(--burgundy); border-color: var(--burgundy); color: var(--cream);
+    box-shadow: 0 4px 0 rgba(80,26,40,.55), 0 8px 16px rgba(0,0,0,.14); }
+
+  /* ── 블록(drag) ── */
+  .blocks { position: absolute; z-index: var(--z-interactive); display: flex; gap: 22px;
+    flex-wrap: wrap; align-items: center; justify-content: center; max-width: 900px; }
+  .block { min-width: 96px; height: 96px; padding: 0 18px; display: grid; place-items: center;
+    border: 5px solid var(--teal-deep); border-radius: var(--r-md);
+    background: linear-gradient(180deg, var(--accent-bright), var(--accent));
+    color: var(--plate-ink); font-size: var(--fs-xl); font-weight: 900; cursor: pointer;
+    box-shadow: var(--shadow); transition: transform var(--dur-fast) var(--ease); }
+  .block:hover { transform: translateY(-5px); filter: var(--filter-hover); }
+  .block:active { transform: translateY(2px); }
+  .block.sel { outline: 5px solid var(--cream); box-shadow: 0 0 0 6px var(--glow), var(--shadow); }
+  .block.placed { visibility: hidden; }
+  .slot { min-width: 92px; min-height: 92px; padding: 0 12px; display: inline-grid; place-items: center;
+    border: 4px dashed var(--accent); border-radius: var(--r-md); background: rgba(255,255,255,.28);
+    color: var(--cream); font-size: var(--fs-2xl); font-weight: 900; cursor: pointer; }
+  .slot.filled { border-style: solid; background: rgba(255,255,255,.9); color: var(--ink); }
+  .slot.bounce { animation: shakeX .4s var(--ease); border-color: var(--danger); }
+
+  /* 튜토리얼 시간 등록 슬롯 = compact plaque(빈 표면). 흰 CSS 카드 대체 */
+  .slot.plaque-slot { border: none; background: transparent; color: var(--plate-ink);
+    background-image: url('assets/compact-choice-plaque-surface.png');
+    background-repeat: no-repeat; background-size: 100% 100%; filter: var(--ds-sm);
+    padding-bottom: 10px; /* 빈 면 광학 중심에 맞춰 [?]를 약 5px 위로 */ }
+  .slot.plaque-slot.filled { color: var(--surface); }
+
+  /* ── 타임라인(유형 C 낮/밤) : 다이어그램 기하 ── */
+  .timeline { position: absolute; z-index: var(--z-content); display: flex; align-items: stretch;
+    border-radius: var(--r-md); overflow: hidden; box-shadow: inset 0 0 0 3px var(--teal-deep); }
+  .tl-half { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 12px 8px; color: var(--plate-ink); font-weight: 800; font-size: var(--fs-2xs); }
+  .tl-half.am { background: linear-gradient(180deg,#bfe4f2,#e9f6fb); }
+  .tl-half.pm { background: linear-gradient(180deg,#2b3a63,#4a5a88); color: var(--cream); }
+  .tl-mark { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; }
+  .tl-mark.sun { background: radial-gradient(circle at 50% 45%, #ffe27a, #f2a72e);
+    box-shadow: 0 0 0 4px rgba(255,214,92,.5); }
+  .tl-mark.moon { background: #f5f3da; clip-path: path('M23 2a21 21 0 1 0 0 42 16 16 0 0 1 0-42z'); }
+  .tl-nums { font-size: var(--fs-2xs); letter-spacing: .04em; }
+
+  /* ── 피드백 표면: 생성된 raster 도장(정답/오답 별개 asset) 위에 동적 문구만 얹는다 ── */
+  .fx { position: absolute; inset: 0; z-index: var(--z-effect); display: grid; place-items: center;
+    pointer-events: none; }
+  .fx[hidden] { display: none; }
+  .fx-stamp { position: relative; width: 600px; height: 300px; background-repeat: no-repeat;
+    background-position: center; background-size: contain; filter: var(--ds-md);
+    animation: stampIn .35s var(--ease-back); }
+  .fx-stamp-correct { background-image: url('assets/feedback-correct-stamp.png'); }
+  .fx-stamp-wrong { background-image: url('assets/feedback-wrong-stamp.png'); }
+  .fx-stamp .fx-stamp-text { position: absolute; top: 0; bottom: 0; left: 17%; right: 6%;
+    display: grid; place-items: center; text-align: center; color: var(--plate-ink);
+    font-weight: 900; font-size: var(--fs-xl); line-height: 1.15; word-break: keep-all; }
+  .fx-correct .fx-glow { position: absolute; width: 520px; height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,224,122,.5), rgba(255,224,122,0) 70%);
+    animation: glowPulse .9s var(--ease); }
+  @keyframes stampIn { 0%{transform:scale(1.6) rotate(-6deg);opacity:0} 60%{transform:scale(.92) rotate(1deg)} 100%{transform:scale(1) rotate(0);opacity:1} }
+  @keyframes glowPulse { 0%{transform:scale(.5);opacity:.9} 100%{transform:scale(1.4);opacity:0} }
+
+  /* 정답 공개 배너(문항 root 밖) */
+  .reveal-banner { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+    z-index: var(--z-drawer); padding: 22px 48px; border-radius: var(--r-md);
+    background: var(--veil); border: 6px solid var(--accent); color: var(--plate-ink);
+    font-size: var(--fs-xl); font-weight: 900; box-shadow: var(--shadow); text-align: center;
+    word-break: keep-all; pointer-events: none; }
+  .reveal-banner[hidden] { display: none; }
+
+  /* ── 설명 칩: 왜 맞고 틀렸는지·다음에 확인할 것을 담는 별도 카드 ──
+     짧은 도장(fx-stamp) 위에 겹치지 않도록 화면 하단 중앙에 둔다.
+     가변 길이 개념 설명은 말풍선이 아니라 별도 칩/카드로 분리한다(channel 계약). */
+  .explain-chip { position: absolute; left: 50%; bottom: 40px; transform: translateX(-50%);
+    z-index: var(--z-drawer); max-width: 1160px; padding: 18px 34px; border-radius: var(--r-md);
+    background: var(--veil); border: 4px solid var(--surface); color: var(--plate-ink);
+    font-size: var(--fs-sm); font-weight: 800; line-height: 1.4; text-align: center;
+    box-shadow: var(--shadow); word-break: keep-all; pointer-events: none;
+    animation: chipIn .3s var(--ease-back); }
+  .explain-chip.wrong { border-color: var(--danger); }
+  .explain-chip[hidden] { display: none; }
+  @keyframes chipIn { 0%{opacity:0; transform:translateX(-50%) translateY(20px)} 100%{opacity:1; transform:translateX(-50%) translateY(0)} }
+
+  /* 조작 순서 안내: 드래그·클릭 두 경로를 알려 주는 작은 힌트(학습 내용 아님) */
+  .op-hint { position: absolute; z-index: var(--z-content); padding: 10px 22px; border-radius: var(--r-pill);
+    background: var(--dim); color: var(--cream); font-size: var(--fs-2xs); font-weight: 700;
+    white-space: nowrap; pointer-events: none; }
+
+  /* 시도 소진 후 정답으로 완성된 자리 강조 */
+  .blank.revealed, .slot.revealed { border-color: var(--accent);
+    box-shadow: 0 0 0 5px var(--glow), var(--shadow); animation: revealBlink .5s ease-in-out 3; }
+
+  /* 드래그 대상 강조 */
+  .slot.dragover { border-color: var(--accent); background: rgba(255,224,122,.4); }
+  .block[draggable="true"], .choice[draggable="true"] { cursor: grab; }
+  .block.dragging, .choice.dragging { opacity: .5; }
+
+  /* 오븐 팝업북 타이머 표시값(30분) — asset은 빈 타이머, 값은 HTML로 얹는다 */
+  .oven-timer { position: absolute; right: 12%; top: 34%; z-index: var(--z-content);
+    padding: 10px 24px; border-radius: var(--r-pill); background: var(--cream);
+    border: 4px solid var(--surface); color: var(--burgundy); font-size: var(--fs-lg);
+    font-weight: 900; box-shadow: var(--shadow); }
+
+  /* 물음표 군중 표식(문제 발생 장면 익명 학생) */
+  .q-crowd { position: absolute; z-index: var(--z-content); pointer-events: none; }
+  .q-crowd span { position: absolute; font-size: var(--fs-2xl); font-weight: 900; color: var(--surface);
+    animation: floatQ 2.2s ease-in-out infinite; }
+  @keyframes floatQ { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
+
+  /* ── 타이틀 화면 ── */
+  #activity1_title .c-bg { filter: blur(3px) brightness(.92); }
+  .title-art { position: absolute; left: 50%; top: 300px; transform: translateX(-50%);
+    width: 1280px; z-index: var(--z-content); animation: titleIn .8s var(--ease-back); filter: var(--ds-md); }
+  @keyframes titleIn { 0%{opacity:0; transform:translateX(-50%) scale(.7)} 100%{opacity:1; transform:translateX(-50%) scale(1)} }
+  .title-trace { position: absolute; left: 50%; top: 300px; transform: translateX(-50%);
+    width: 1280px; height: 360px; z-index: var(--z-scenery); pointer-events: none; }
+
+  /* ── 유형 C 완료/모니터 부팅 ── */
+  .monitor-boot { position: absolute; inset: 6% 8%; z-index: var(--z-effect); border-radius: 12px;
+    background: radial-gradient(circle, rgba(255,224,122,.85), rgba(255,224,122,0) 72%);
+    display: grid; place-items: center; pointer-events: none; animation: bootFlash .6s var(--ease); }
+  .monitor-boot[hidden] { display: none; }
+  @keyframes bootFlash { 0%{opacity:0} 40%{opacity:1} 100%{opacity:0} }
+
+  /* ── 팝업북 ── */
+  .book { position: absolute; left: 50%; top: 158px; transform: translateX(-50%);
+    width: 1000px; height: 720px; z-index: var(--z-content); }
+  .book-page { position: absolute; inset: 0; display: grid; place-items: center; }
+  .book-page[hidden] { display: none; }
+  .book-page img { max-width: 100%; max-height: 100%; filter: var(--ds-md);
+    animation: popRise .5s var(--ease-back); }
+  @keyframes popRise { 0%{transform:perspective(1200px) rotateY(26deg) translateY(52px) scaleY(.66); opacity:0}
+    100%{transform:perspective(1200px) rotateY(0) translateY(0) scaleY(1); opacity:1} }
+  /* 책장 넘김: 나가는 장 접힘 → 새 장 펼침 (motion_review scene_transition) */
+  .book-page.folding img { animation: pageFoldOut .28s var(--ease-out) forwards; }
+  @keyframes pageFoldOut { 0%{transform:perspective(1200px) rotateY(0) scaleY(1); opacity:1}
+    100%{transform:perspective(1200px) rotateY(-24deg) translateY(26px) scaleY(.72); opacity:0} }
+  .book-page.unfolding img { animation: pageUnfoldIn .42s var(--ease-back); }
+  @keyframes pageUnfoldIn { 0%{transform:perspective(1200px) rotateY(22deg) scaleY(.7); opacity:0}
+    100%{transform:perspective(1200px) rotateY(0) scaleY(1); opacity:1} }
+  /* 설명 원문은 팝업북 오른쪽 종이 면 위에 얹는다(별도 말풍선 대신) */
+  /* 오른쪽 읽기 면 하단 중앙으로 내려 왼쪽 팝업 삽화와의 상단 중첩을 줄인다.
+     (오른쪽 safe zone 확대는 asset 재생성 몫이고, 여기서는 텍스트를 면 중앙에 맞춘다) */
+  .page-copy { position: absolute; top: 42%; bottom: 12%; left: 55%; right: 7%;
+    z-index: var(--z-content); display: flex; align-items: center; }
+  .page-copy p { margin: 0; font-size: var(--fs-xs); line-height: 1.45; color: var(--plate-ink);
+    font-weight: 700; word-break: keep-all; text-align: left; }
+  .page-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: var(--z-interactive);
+    width: 96px; height: 96px; border-radius: 50%; border: 5px solid var(--surface);
+    background: var(--veil); color: var(--surface); font-size: var(--fs-2xl); font-weight: 900; cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,.2); transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease); }
+  .page-arrow:hover { transform: translateY(-50%) translateY(-3px); filter: var(--filter-hover); }
+  .page-arrow:active { transform: translateY(-50%) translateY(3px); box-shadow: var(--shadow-flat); }
+  .page-arrow.prev { left: 392px; }
+  .page-arrow.next { right: 392px; }
+  .page-arrow[hidden] { display: none; }
+
+  /* ── 인증서 ── */
+  .certificate { position: absolute; left: 50%; top: 70px; transform: translateX(-50%);
+    width: 760px; height: 940px; z-index: var(--z-content); }
+  .certificate > img { width: 100%; height: 100%; display: block; filter: var(--ds-lg); }
+  .cert-body { position: absolute; inset: 16% 12% 20%; display: flex; flex-direction: column;
+    align-items: center; gap: 22px; text-align: center; color: var(--plate-ink); word-break: keep-all; }
+  .cert-title { font-size: var(--fs-2xl); font-weight: 900; color: var(--burgundy); }
+  .cert-text { font-size: var(--fs-sm); line-height: 1.5; }
+  .cert-record { display: flex; gap: 40px; margin-top: 8px; }
+  .cert-record div { font-size: var(--fs-md); font-weight: 800; }
+  .cert-record b { display: block; color: var(--surface); font-size: var(--fs-lg); }
+
+  /* 파티클(폭죽) */
+  .party { position: absolute; inset: 0; z-index: var(--z-flash); pointer-events: none; overflow: hidden; }
+  .party[hidden] { display: none; }
+  .party i { position: absolute; width: 16px; height: 16px; border-radius: 3px;
+    animation: confetti 2.4s linear infinite; }
+  @keyframes confetti { 0%{transform:translateY(-40px) rotate(0); opacity:1} 100%{transform:translateY(1120px) rotate(540deg); opacity:.2} }
+
+  /* STEP 전환 화면 : 위치 wrapper와 animation body를 분리해 stampIn이 translate를 덮지 않게 한다 */
+  .step-title-wrap { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%);
+    z-index: var(--z-content); width: 920px; max-width: 920px; }
+  /* 단색 CSS 사각형 대신 장면 속 수리 작업 지시판(raster) 위에 STEP 문구를 얹는다.
+     재질·두께·고정구는 asset이 소유하고, CSS는 위치·문구 배치만 담당한다. */
+  .step-title { position: relative; display: grid; place-items: center;
+    width: 920px; height: 330px; padding: 0 12%;
+    background-image: url('assets/step2-title-banner-surface.png');
+    background-repeat: no-repeat; background-size: 100% 100%;
+    color: var(--plate-ink); font-size: var(--fs-2xl); font-weight: 900;
+    filter: var(--ds-md); animation: stepIn .5s var(--ease-back); word-break: keep-all; text-align: center; }
+  @keyframes stepIn { 0%{transform:scale(1.5);opacity:0} 60%{transform:scale(.94)} 100%{transform:scale(1);opacity:1} }
+
+  /* 유형 B 문제 쪽지 교체: 게시판 전체 흐림 대신 문구가 떼어지고 다시 꽂히는 연출
+     (schedule-note surface asset이 아직 없어 문구 블록 자체에 적용한다) */
+  #board-b-text.note-peel { animation: notePeelOut .22s var(--ease-out) forwards; }
+  @keyframes notePeelOut { 0%{transform:rotate(0) translateY(0); opacity:1}
+    100%{transform:rotate(-4deg) translateY(28px); opacity:0} }
+  #board-b-text.note-pin { animation: notePinIn .36s var(--ease-back); }
+  @keyframes notePinIn { 0%{transform:translateY(-38px) rotate(2deg); opacity:0}
+    60%{transform:translateY(4px) rotate(-1deg); opacity:1} 100%{transform:translateY(0) rotate(0); opacity:1} }
+
+  /* 시각 보조: 시작시각 시계 + 화살표 + 빈 시계(유형 B) */
+  .clock-flow { position: absolute; z-index: var(--z-interactive); display: flex; align-items: center; gap: 22px; }
+  .clock-flow .clock { width: 200px; height: 200px; }
+  /* 게시판 안에 들어가는 유형 B 레일은 코르크 면을 넘지 않도록 지름을 줄인다 */
+  #b-flow .clock { width: 168px; height: 168px; }
+  .flow-arrow { font-size: var(--fs-lg); font-weight: 900; color: var(--burgundy); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+
+    <!-- ================= 상단 HUD (topbar 공용 컴포넌트) ================= -->
+    <header class="c-topbar" data-component="topbar" data-state="hidden">
+      <div class="c-topbarLeft">
+        <button class="c-topbarMenu" type="button" data-action="menu" aria-haspopup="true" aria-expanded="false">
+          <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="c-topbarMenuLabel">목록</span>
+        </button>
+        <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+          <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+            <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"/>
+            <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"/>
+            <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"/>
+          </svg>
+        </button>
+        <span class="c-topbarStep" data-slot="step" hidden></span>
+      </div>
+      <span class="c-topbarProgress">
+        <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+          <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+          <span class="c-lessonBarPct" data-slot="pct">0%</span>
+        </span>
+      </span>
+      <div class="c-topbarTitle" data-slot="title"></div>
+    </header>
+
+    <!-- ================= 활동 1 Scene 1. 타이틀 ================= -->
+    <section class="scene active" id="activity1_title" data-qa-scene="activity1_title" data-qa-order="1" data-qa-label="타이틀">
+      <img class="c-bg" src="assets/bg-library-messy.png" alt="크림색 벽과 황금빛 나무 바닥의 어질러진 마을 도서관 로비">
+      <div class="title-trace" aria-hidden="true"></div>
+      <img class="title-art" src="assets/title-mission-lettering.png"
+           alt="금빛 시곗바늘 궤적이 얽힌 두 줄 타이틀. 시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!">
+      <!-- 시작 CTA (ticket-button). beat 2에서 노출, 활동1 문제 발생으로 전환 -->
+      <button class="c-ticketButton cta-raster blink" type="button" data-component="ticket-button"
+              id="btn-start" data-qa-advance="activity1_problem"
+              style="left:50%; top:830px; transform:translateX(-50%); min-width:520px;" hidden>
+        <span data-slot="label">[시작하기]</span>
+      </button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 활동 1 Scene 2. 문제 발생 ================= -->
+    <section class="scene" id="activity1_problem" data-qa-scene="activity1_problem" data-qa-order="2" data-qa-label="문제 발생">
+      <img class="c-bg" src="assets/bg-library-messy.png" alt="시간이 뒤죽박죽이 된 어질러진 도서관 로비">
+      <div class="q-crowd" style="left:150px; top:360px; width:360px; height:260px;">
+        <span style="left:20px; top:20px;">?</span>
+        <span style="left:150px; top:0; animation-delay:.4s;">?</span>
+        <span style="left:260px; top:60px; animation-delay:.8s;">?</span>
+      </div>
+      <!-- 중앙 대형 시계 (바늘 미친듯이 회전) -->
+      <div class="clock spinning" id="problem-clock" style="position:absolute; left:50%; top:180px; transform:translateX(-50%); width:440px; height:440px; z-index:var(--z-content);">
+        <img class="clock-face" src="assets/library-clock-body.png" alt="도서관 대형 벽시계">
+        <span class="hand hour"></span><span class="hand minute"></span><span class="hub"></span>
+      </div>
+      <img class="char" id="problem-teacher" src="assets/librarian-distressed.png"
+           alt="고장 난 시계를 보며 머리를 감싸 쥐고 당황한 사서 선생님" style="right:180px; height:700px;">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="problem-bubble"
+           data-state="hidden" style="--speech-side-x:300px; --speech-face-y:300px; max-width:760px;">
+        <span data-slot="text"></span>
+      </div>
+      <button class="c-ticketButton cta-raster cta-pulse" type="button" data-component="ticket-button"
+              id="problem-cta" data-qa-advance="activity1_tutorial"
+              style="left:50%; top:890px; transform:translateX(-50%); min-width:520px;" hidden>
+        <span data-slot="label">[제가 도와드릴게요!]</span>
+      </button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 활동 1 Scene 3. 튜토리얼 ================= -->
+    <section class="scene" id="activity1_tutorial" data-qa-scene="activity1_tutorial" data-qa-order="3" data-qa-label="튜토리얼">
+      <img class="c-bg" src="assets/bg-library-messy.png" alt="어질러진 도서관 로비">
+      <!-- 멈춘 탁상시계 3시 + 빈칸 -->
+      <div class="clock" id="tut-clock" style="position:absolute; left:50%; top:150px; transform:translateX(-50%); width:340px; height:340px; z-index:var(--z-content);">
+        <img class="clock-face" src="assets/library-clock-body.png" alt="3시를 가리키는 탁상시계">
+        <span class="hand hour"></span><span class="hand minute"></span><span class="hub"></span>
+      </div>
+      <div class="q-root" id="tut-question" data-qa-question="q_tutorial_clock"
+           style="position:absolute; left:0; right:0; top:530px; z-index:var(--z-interactive);">
+        <div style="display:flex; justify-content:center;">
+          <div class="slot plaque-slot" id="tut-slot" data-qa-slot="0" data-qa-blank="0" style="min-width:340px; min-height:150px; font-size:var(--fs-2xl);">[?]</div>
+        </div>
+        <div class="choices" id="tut-cards" style="position:static; margin-top:40px;"></div>
+      </div>
+      <img class="char small" id="tut-child" src="assets/child-idle.png"
+           alt="자신 있게 한 손을 든 꼬마 사서" style="left:120px; bottom:0;">
+      <img class="char" id="tut-teacher" src="assets/librarian-explaining.png"
+           alt="돋보기를 들고 시계를 가리키며 설명하는 사서 선생님" style="right:120px; height:660px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="tut-child-bubble"
+           data-state="hidden" style="--speech-side-x:300px; --speech-face-y:470px; max-width:470px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="tut-teacher-bubble"
+           data-state="hidden" style="--speech-side-x:340px; --speech-face-y:400px; max-width:600px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="reveal-banner" data-qa-reveal hidden></div>
+      <button class="auto-exit" data-qa-advance="activity1_success" type="button" hidden></button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 활동 1 Scene 4. 성공 ================= -->
+    <section class="scene" id="activity1_success" data-qa-scene="activity1_success" data-qa-order="4" data-qa-label="수리 성공">
+      <img class="c-bg" src="assets/bg-library-messy.png" alt="어질러진 도서관 로비">
+      <div class="clock glow" id="success-clock" style="position:absolute; left:50%; top:160px; transform:translateX(-50%); width:340px; height:340px; z-index:var(--z-content);">
+        <img class="clock-face" src="assets/library-clock-body.png" alt="3시로 수리된 시계">
+        <span class="hand hour"></span><span class="hand minute"></span><span class="hub"></span>
+      </div>
+      <!-- 성공 시각 판독창: 시계 문자판을 가리지 않도록 시계 아래에 둔다 -->
+      <div class="surface" style="left:50%; top:530px; transform:translateX(-50%); width:260px; height:100px; z-index:var(--z-content);">
+        <div class="surface-text status-plate">[3시]</div>
+      </div>
+      <img class="char small" id="success-child" src="assets/child-success.png"
+           alt="양팔을 벌리고 만세하며 뛰어오른 꼬마 사서" style="left:150px; bottom:0;">
+      <img class="char" id="success-teacher" src="assets/librarian-praising.png"
+           alt="환하게 웃으며 박수 치는 사서 선생님" style="right:150px; height:660px;">
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="success-bubble"
+           data-state="hidden" style="--speech-side-x:150px; --speech-face-y:240px; max-width:590px;">
+        <span data-slot="text"></span>
+      </div>
+      <button class="c-ticketButton cta-raster cta-pulse" type="button" data-component="ticket-button"
+              id="success-cta" data-qa-advance="activity2_global_rules"
+              style="left:50%; top:900px; transform:translateX(-50%); min-width:640px;" hidden>
+        <span data-slot="label">[좋아요! 본격적으로 수리하러 가기 →]</span>
+      </button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 활동 2 공통 설정 (STEP 2 전환) ================= -->
+    <section class="scene" id="activity2_global_rules" data-qa-scene="activity2_global_rules" data-qa-order="5" data-qa-label="STEP 2 수리로 해결해요">
+      <img class="c-bg" src="assets/bg-library-messy.png" alt="도서관 로비">
+      <img class="char small" src="assets/child-idle.png" alt="대기 중인 꼬마 사서" style="left:120px; bottom:0;">
+      <div class="step-title-wrap"><div class="step-title">[STEP 2. 수리로 해결해요]</div></div>
+      <button class="auto-exit" data-qa-advance="activity2_type_a" type="button"></button>
+    </section>
+
+    <!-- ================= 활동 2 Scene 1. 유형 A ================= -->
+    <section class="scene" id="activity2_type_a" data-qa-scene="activity2_type_a" data-qa-order="6" data-qa-label="유형 A 몇 분 전 시각">
+      <img class="c-bg" src="assets/bg-type-a-desk.png" alt="도서관 안내 데스크 구역">
+      <div class="surface swap-dim" id="board-a" style="left:50%; top:80px; transform:translateX(-50%); width:1000px; height:230px;">
+        <img src="assets/display-board-surface.png" alt="도서관 대형 전광판">
+        <div class="surface-text"><div class="board-text" id="board-a-text"></div></div>
+      </div>
+      <div class="mount" id="mount-a" style="position:absolute; inset:0; z-index:var(--z-interactive);"></div>
+      <img class="char small" id="a-child" src="assets/child-idle.png" alt="대기 중인 꼬마 사서" style="left:70px; bottom:0; height:420px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="a-bubble"
+           data-state="hidden" style="--speech-side-x:80px; --speech-face-y:436px; max-width:520px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="reveal-banner" data-qa-reveal hidden></div>
+      <button class="auto-exit" data-qa-advance="activity2_type_b" type="button" hidden></button>
+    </section>
+
+    <!-- ================= 활동 2 Scene 2. 유형 B ================= -->
+    <section class="scene" id="activity2_type_b" data-qa-scene="activity2_type_b" data-qa-order="7" data-qa-label="유형 B 시간표 복구">
+      <img class="c-bg" src="assets/bg-type-b-wall.png" alt="도서관 독서 교실 앞 벽면">
+      <div class="surface swap-dim" id="board-b" style="left:50%; top:56px; transform:translateX(-50%); width:1040px; height:568px;">
+        <img src="assets/schedule-corkboard-surface.png" alt="도서관 코르크 게시판">
+        <div class="surface-text" style="align-items:flex-start; padding:6% 8% 0;"><div class="board-text" id="board-b-text" style="color:var(--plate-ink); text-shadow:none; font-size:var(--fs-md);"></div></div>
+      </div>
+      <!-- 시작 시각 시계 + 경과 화살표 + 빈 시계: 코르크 게시판 하단 safe zone 안에 통합한다 -->
+      <div class="clock-flow" id="b-flow" style="left:50%; top:372px; transform:translateX(-50%);">
+        <div class="clock" id="b-clock-start"><img class="clock-face" src="assets/library-clock-body.png" alt="시작 시각 시계"><span class="hand hour"></span><span class="hand minute"></span><span class="hub"></span></div>
+        <span class="flow-arrow" id="b-flow-arrow">[30분 후 →]</span>
+        <div class="clock" id="b-clock-end"><img class="clock-face" src="assets/library-clock-body.png" alt="끝나는 시각을 채울 빈 시계"><span class="hand hour" hidden></span><span class="hand minute" hidden></span><span class="hub"></span></div>
+      </div>
+      <div class="format-legend" style="left:360px; top:868px;">
+        <div class="fl-row"><span>빈칸 형식:</span><b>[?]시간</b><b>[?]시 [?]분</b><b>[?]분</b></div>
+        <div class="fl-row"><span>경과 예</span><b>[30분 후 →]</b><span>입력 후</span><b>[확인하기]</b></div>
+      </div>
+      <div class="mount" id="mount-b" style="position:absolute; inset:0; z-index:var(--z-interactive);"></div>
+      <!-- 키패드는 keypad 문항 root 안에 문항마다 생성한다(검증기가 root에서 입력을 찾는다) -->
+      <img class="char small" id="b-child" src="assets/child-idle.png" alt="대기 중인 꼬마 사서" style="left:60px; bottom:0; height:400px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="b-bubble"
+           data-state="hidden" style="--speech-side-x:60px; --speech-face-y:560px; max-width:350px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="reveal-banner" data-qa-reveal hidden></div>
+      <button class="auto-exit" data-qa-advance="activity2_type_c" type="button" hidden></button>
+    </section>
+
+    <!-- ================= 활동 2 Scene 3. 유형 C ================= -->
+    <section class="scene" id="activity2_type_c" data-qa-scene="activity2_type_c" data-qa-order="8" data-qa-label="유형 C 하루의 시간">
+      <img class="c-bg" src="assets/bg-type-c-desk.png" alt="도서관 대출 데스크">
+      <div class="surface swap-dim" id="board-c" style="left:50%; top:60px; transform:translateX(-50%); width:1120px; height:620px;">
+        <img src="assets/loan-monitor-surface.png" alt="도서관 대출 시스템 모니터">
+        <div class="surface-text" style="align-items:flex-start; padding:9% 9% 6%; flex-direction:column; gap:26px;">
+          <div id="c-prompt" style="width:100%; text-align:center; color:var(--plate-ink); font-weight:800; font-size:var(--fs-md); word-break:keep-all;"></div>
+          <div class="timeline" id="c-timeline" style="position:static; width:96%; height:120px;">
+            <div class="tl-half am"><div class="tl-mark sun" aria-hidden="true"></div><div>오전</div><div class="tl-nums">1 2 3 4 5 6 7 8 9 10 11 12</div></div>
+            <div class="tl-half pm"><div class="tl-mark moon" aria-hidden="true"></div><div>오후</div><div class="tl-nums">1 2 3 4 5 6 7 8 9 10 11 12</div></div>
+          </div>
+        </div>
+        <div class="monitor-boot" id="c-boot" hidden></div>
+      </div>
+      <div class="mount" id="mount-c" style="position:absolute; inset:0; z-index:var(--z-interactive);"></div>
+      <img class="char small" id="c-child" src="assets/child-idle.png" alt="대기 중인 꼬마 사서" style="left:40px; bottom:0; height:380px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="c-bubble"
+           data-state="hidden" style="--speech-side-x:40px; --speech-face-y:600px; max-width:330px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="reveal-banner" data-qa-reveal hidden></div>
+      <button class="auto-exit" data-qa-advance="activity2_outro" type="button" hidden></button>
+    </section>
+
+    <!-- ================= 활동 2 Scene 4. 수리 완료 (Outro) ================= -->
+    <section class="scene" id="activity2_outro" data-qa-scene="activity2_outro" data-qa-order="9" data-qa-label="수리 완료">
+      <img class="c-bg" id="outro-bg" src="assets/bg-library-messy.png" alt="아직 어질러진 도서관 로비">
+      <img class="c-bg" id="outro-bg-clean" src="assets/bg-library-clean.png" alt="" aria-hidden="true"
+           style="opacity:0; transition:opacity .7s ease; z-index:var(--z-bg);">
+      <div class="party" id="outro-party" hidden></div>
+      <img class="char small" id="outro-child" src="assets/child-proud.png" alt="허리에 손을 얹고 브이를 그리는 꼬마 사서" style="left:180px; bottom:0;">
+      <img class="char" id="outro-teacher" src="assets/librarian-praising.png" alt="박수 치며 기뻐하는 사서 선생님" style="right:180px; height:680px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="outro-child-bubble"
+           data-state="hidden" style="--speech-side-x:400px; --speech-face-y:340px; max-width:700px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="outro-teacher-bubble"
+           data-state="hidden" style="--speech-side-x:400px; --speech-face-y:340px; max-width:820px;">
+        <span data-slot="text"></span>
+      </div>
+      <button class="c-ticketButton cta-raster cta-pulse" type="button" data-component="ticket-button"
+              id="outro-cta" data-qa-advance="activity3_storybook"
+              style="left:50%; top:900px; transform:translateX(-50%); min-width:700px;" hidden>
+        <span data-slot="label">[3. 수리 이야기 보러 가기 →]</span>
+      </button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 활동 3 Scene 1. 팝업북 ================= -->
+    <section class="scene" id="activity3_storybook" data-qa-scene="activity3_storybook" data-qa-order="10" data-qa-label="실생활 이야기">
+      <img class="c-bg" src="assets/bg-library-clean.png" alt="깨끗하게 정리된 도서관 로비">
+      <div class="book" id="book">
+        <div class="book-page" data-page="0">
+          <img src="assets/storybook-page-convenience.png" alt="펼쳐진 팝업북 위에 '24시간' 간판이 있는 동네 편의점 종이 모형">
+        </div>
+        <div class="book-page" data-page="1" hidden>
+          <img src="assets/storybook-page-sundial.png" alt="펼쳐진 팝업북 위에 해와 영침, 오목한 앙부일구와 그림자가 솟아오른 장면">
+        </div>
+        <div class="book-page" data-page="2" hidden>
+          <img src="assets/storybook-page-oven.png" alt="펼쳐진 팝업북 위에 김이 오르는 빵 오븐과 '30분' 요리 타이머 종이 모형">
+          <div class="oven-timer">30분</div>
+        </div>
+        <!-- 설명 원문을 오른쪽 종이 면에 얹는다(별도 말풍선 대신) -->
+        <div class="page-copy" id="story-copy"><p data-slot="copy"></p></div>
+      </div>
+      <button class="page-arrow prev" id="book-prev" type="button" aria-label="이전 장">◀</button>
+      <button class="page-arrow next" id="book-next" type="button" data-qa-page-next aria-label="다음 장">▶</button>
+      <img class="char" id="story-teacher" src="assets/librarian-explaining.png" alt="돋보기를 들고 그림을 가리키며 설명하는 사서 선생님" style="right:60px; height:620px;">
+      <button class="auto-exit" data-qa-advance="activity3_quiz" type="button" hidden></button>
+    </section>
+
+    <!-- ================= 활동 3 Scene 2. 마무리 퀴즈 ================= -->
+    <section class="scene" id="activity3_quiz" data-qa-scene="activity3_quiz" data-qa-order="11" data-qa-label="마무리 퀴즈">
+      <img class="c-bg" src="assets/bg-library-clean.png" alt="정리된 도서관 로비">
+      <img class="char" id="quiz-child" src="assets/child-idle.png" alt="화면 앞으로 나온 꼬마 사서" style="left:120px; bottom:0; height:560px;">
+      <div class="mount" id="mount-quiz" style="position:absolute; inset:0; z-index:var(--z-interactive);"></div>
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="quiz-bubble"
+           data-state="hidden" style="--speech-side-x:520px; --speech-face-y:400px; max-width:820px;">
+        <span data-slot="text"></span>
+      </div>
+      <button class="auto-exit" data-qa-advance="activity3_certificate" type="button" hidden></button>
+    </section>
+
+    <!-- ================= 활동 3 Scene 3. 인증서 ================= -->
+    <section class="scene" id="activity3_certificate" data-qa-scene="activity3_certificate" data-qa-order="12" data-qa-label="최종 인증">
+      <img class="c-bg" src="assets/bg-library-clean.png" alt="정리된 도서관 로비">
+      <div class="party" id="cert-party" hidden></div>
+      <div class="certificate">
+        <img src="assets/certificate-paper.png" alt="청록·버건디 테두리와 금빛 봉인의 마을 수리대원 인증서 종이">
+        <div class="cert-body">
+          <div class="cert-title">마을 수리대원 인증서 (도서관 편)</div>
+          <div class="cert-text">위 대원은 정확한 시간 계산으로 도서관 안내문을 완벽하게 수리하였기에 이 증서를 수여합니다.</div>
+          <div class="cert-record">
+            <div>맞힌 문제 수<b id="cert-score">0/13</b></div>
+            <div>클리어 소요 시간<b id="cert-time">00:00</b></div>
+          </div>
+          <button class="c-ticketButton" type="button" data-component="ticket-button" id="cert-save"
+                  style="position:static; min-width:360px; min-height:88px; margin-top:8px;">
+            <span data-slot="label">[내 사진첩에 저장하기]</span>
+          </button>
+        </div>
+      </div>
+      <img class="char small" id="cert-child" src="assets/child-proud.png" alt="자랑스럽게 브이를 그리는 꼬마 사서" style="left:120px; bottom:0;">
+      <img class="char" id="cert-teacher" src="assets/librarian-praising.png" alt="환하게 웃는 사서 선생님" style="right:120px; height:620px;">
+      <div class="c-speechBubble left-speaker" data-component="speech-bubble" id="cert-child-bubble"
+           data-state="hidden" style="--speech-side-x:360px; --speech-face-y:340px; max-width:600px;">
+        <span data-slot="text"></span>
+      </div>
+      <div class="c-speechBubble right-speaker" data-component="speech-bubble" id="cert-teacher-bubble"
+           data-state="hidden" style="--speech-side-x:360px; --speech-face-y:340px; max-width:600px;">
+        <span data-slot="text"></span>
+      </div>
+      <button class="c-ticketButton cta-raster" type="button" data-component="ticket-button" id="next-mission"
+              style="left:50%; top:960px; transform:translateX(-50%); min-width:820px;">
+        <span data-slot="label">[마을 공원 의자 만들기, 딱 맞는 길이를 찾아라! 하러 가기 →]</span>
+      </button>
+      <button class="beat-next" data-qa-beat-next type="button" hidden>다음 ▸</button>
+    </section>
+
+    <!-- ================= 전역 정오답 피드백 오버레이 =================
+         검증기(page.wait_for_selector)는 [data-qa-feedback] 첫 매칭 요소의 가시성만 본다.
+         화면마다 하나씩 두면 첫 매칭이 늘 숨은 화면의 것이라 지금 뜬 피드백을 못 본다.
+         그래서 화면 밖 stage 레벨에 하나만 두고 모든 문항이 공유한다.
+         CSS badge 대신 생성된 raster 도장 위에 동적 문구만 얹는다. -->
+    <div class="fx fx-correct" id="g-fx-correct" data-qa-feedback="correct" hidden>
+      <span class="fx-glow"></span>
+      <div class="fx-stamp fx-stamp-correct"><span class="fx-stamp-text" id="g-fx-correct-badge">딩동댕!</span></div>
+    </div>
+    <div class="fx fx-wrong" id="g-fx-wrong" data-qa-feedback="wrong" hidden>
+      <div class="fx-stamp fx-stamp-wrong"><span class="fx-stamp-text" id="g-fx-wrong-text">다시 생각해보세요</span></div>
+    </div>
+
+    <!-- 왜 맞고 틀렸는지·다음에 확인할 것을 설명하는 별도 칩(짧은 도장과 분리). 모든 문항이 공유한다. -->
+    <div class="explain-chip" id="g-explain" hidden></div>
+
+    <!-- ================= 차시 목록 드로어 (topbar) ================= -->
+    <div class="c-courseMenu" data-component="course-menu">
+      <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+        <div class="c-courseMenuHead">
+          <span class="c-courseMenuGrade" data-slot="grade"></span>
+          <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+        </div>
+        <div class="c-courseMenuList" data-slot="list"></div>
+        <div class="c-courseMenuFoot">
+          <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= Debug Jumper (QA 전용) ================= -->
+    <aside class="c-debugPanel" data-component="debug-jumper" hidden>
+      <div class="c-debugHead"><strong>Scenes</strong>
+        <button type="button" data-action="close" aria-label="닫기">×</button></div>
+      <div class="c-debugCurrent" data-slot="current"></div>
+      <div class="c-debugList" data-slot="scene-list"></div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- 코드가 만든 공용 CSS/JS. 순서 계약: common.css는 콘텐츠 style 앞, common.js는 콘텐츠 controller 앞 -->
+<script src="common.js"></script>
+<script>
+(function () {
+  "use strict";
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+  var $$ = function (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); };
+  var el = function (tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; };
+
+  var stage = document.getElementById("stage");
+  function rescale() { window.CommonSceneController.scaleStage(stage); }
+  rescale();
+  window.addEventListener("resize", rescale);
+  window.addEventListener("orientationchange", rescale);
+
+  var scenes = window.CommonSceneController.createSceneController(stage);
+
+  /* ── 전역 정오답 피드백 오버레이 (모든 문항이 공유하는 하나뿐인 표면) ── */
+  var gFxCorrect = document.getElementById("g-fx-correct");
+  var gFxWrong = document.getElementById("g-fx-wrong");
+  var gFxCorrectBadge = document.getElementById("g-fx-correct-badge");
+  var gFxWrongText = document.getElementById("g-fx-wrong-text");
+  var gFxTimer = null;
+  function showFeedback(kind, text) {
+    if (gFxTimer) clearTimeout(gFxTimer);
+    var isCorrect = kind === "correct";
+    var show = isCorrect ? gFxCorrect : gFxWrong;
+    var other = isCorrect ? gFxWrong : gFxCorrect;
+    if (other) other.hidden = true;
+    if (!show) return;
+    if (isCorrect) { if (gFxCorrectBadge) gFxCorrectBadge.textContent = text || "딩동댕!"; }
+    else { if (gFxWrongText) gFxWrongText.textContent = text || "다시 생각해보세요"; }
+    show.hidden = false;
+    gFxTimer = setTimeout(function () { if (show) show.hidden = true; }, isCorrect ? 1300 : 1900);
+  }
+  function hideFeedback() {
+    if (gFxTimer) clearTimeout(gFxTimer);
+    if (gFxCorrect) gFxCorrect.hidden = true;
+    if (gFxWrong) gFxWrong.hidden = true;
+  }
+
+  /* ── 설명 칩: 왜 맞고 틀렸는지 + 다음에 확인할 것을 담는 별도 표면 ──
+     짧은 도장이 결과를, 이 칩이 근거를 맡는다. 가변 길이 설명은 칩으로 분리(channel 계약). */
+  var gExplain = document.getElementById("g-explain");
+  var gExplainTimer = null;
+  function showExplain(kind, text) {
+    if (!gExplain || !text) { hideExplain(); return; }
+    if (gExplainTimer) clearTimeout(gExplainTimer);
+    gExplain.textContent = text;
+    gExplain.classList.toggle("wrong", kind === "wrong");
+    gExplain.hidden = false;
+    gExplainTimer = setTimeout(function () { if (gExplain) gExplain.hidden = true; },
+      kind === "wrong" ? 2600 : 2000);
+  }
+  function hideExplain() {
+    if (gExplainTimer) clearTimeout(gExplainTimer);
+    if (gExplain) gExplain.hidden = true;
+  }
+
+  /* ── 시계 바늘 ── */
+  function setClock(clockEl, h, m) {
+    if (!clockEl) return;
+    var hour = clockEl.querySelector(".hand.hour");
+    var minute = clockEl.querySelector(".hand.minute");
+    var ha = ((h % 12) * 30) + (m * 0.5);
+    var ma = m * 6;
+    if (hour) { hour.hidden = false; hour.style.transform = "rotate(" + ha + "deg)"; }
+    if (minute) { minute.hidden = false; minute.style.transform = "rotate(" + ma + "deg)"; }
+  }
+  function makeClock(h, m) {
+    var wrap = el("div", "clock");
+    var img = el("img", "clock-face");
+    img.src = "assets/library-clock-body.png";
+    img.alt = h + "시 " + m + "분을 가리키는 시계";
+    wrap.appendChild(img);
+    var hour = el("span", "hand hour"), min = el("span", "hand minute"), hub = el("span", "hub");
+    wrap.appendChild(hour); wrap.appendChild(min); wrap.appendChild(hub);
+    setClock(wrap, h, m);
+    return wrap;
+  }
+
+  /* ── topbar ── */
+  var topbarEl = $("[data-component='topbar']");
+  var lessons = [];
+  for (var i = 1; i <= 10; i++) {
+    lessons.push(i === 8
+      ? { no: 8, id: "08", title: "시간이 뒤죽박죽! 도서관 시계를 수리하라!" }
+      : { no: i, title: "준비 중" });
+  }
+  var topbar = window.CommonTopbar.init(topbarEl, {
+    title: "시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!",
+    step: "", progress: 0, soundOn: true, followScenes: false,
+    course: { gradeLabel: "2학년 차시 목록", current: "08", lessons: lessons },
+    onHome: function () { scenes.showScene("activity1_title"); }
+  });
+
+  var dbgPanel = $("[data-component='debug-jumper']");
+  if (dbgPanel) window.CommonDebugJumper.init(dbgPanel, scenes, {});
+
+  /* ── 진행 상태 ── */
+  var progress = 0, correctCount = 0;
+  var startTime = Date.now();
+  function bumpProgress(p) { progress = Math.max(progress, p); topbar.setProgress(progress); }
+
+  /* ── beat helper ── */
+  function setupBeats(sceneEl, reveals) {
+    var idx = 0;
+    var next = sceneEl.querySelector(".beat-next");
+    function apply() { reveals[idx](); }
+    function advance() {
+      if (idx < reveals.length - 1) { idx++; apply(); }
+      if (idx >= reveals.length - 1 && next) next.hidden = true;
+    }
+    idx = 0; apply();
+    if (next) {
+      next.hidden = reveals.length <= 1;
+      next.onclick = advance;
+    }
+    return { advance: advance };
+  }
+  /* 실제 CTA가 노출된 화면에서는 QA용 beat-next를 숨겨 두 진행 표면이 겹치지 않게 한다 */
+  function hideBeatNext(sceneEl) { var n = sceneEl.querySelector(".beat-next"); if (n) n.hidden = true; }
+
+  function bubble(id, text) {
+    var b = document.getElementById(id);
+    if (b) window.CommonSpeechBubble.show(b, text);
+  }
+  function hideBubble(id) { var b = document.getElementById(id); if (b) window.CommonSpeechBubble.hide(b); }
+
+  /* ── 공용 문항 컨트롤러 ── */
+  function QuestionController(cfg) {
+    var idx = 0, attempts = 0, done = false;
+    var scene = cfg.sceneEl;
+    var reveal = scene.querySelector(".reveal-banner");
+    var exit = scene.querySelector(".auto-exit[data-qa-advance='" + cfg.exitTarget + "']");
+    var wrongTimer = null, correctTimer = null, autoTimer = null;
+
+    function q() { return cfg.questions[idx]; }
+    function setChild(pose) {
+      if (!cfg.childImg) return;
+      var map = { idle: "child-idle", success: "child-success", think: "child-thinking" };
+      cfg.childImg.src = "assets/" + (map[pose] || "child-idle") + ".png";
+    }
+
+    function showCorrectFx(text) { showFeedback("correct", text); }
+    function showWrongFx(text) {
+      showFeedback("wrong", text);
+      if (wrongTimer) clearTimeout(wrongTimer);
+      wrongTimer = setTimeout(function () { setChild("idle"); }, 1900);
+    }
+
+    // 문항 교체 연출: 장치 표면을 짧게 소등(dim)/재부팅 flash 한 뒤 새 문항을 얹는다.
+    function swapEffect() {
+      if (cfg.noteEl) {
+        // 유형 B: 문제 쪽지가 떼어졌다(peel) 새로 꽂히는(pin) 연출
+        var note = cfg.noteEl;
+        note.classList.remove("note-pin");
+        note.classList.add("note-peel");
+        setTimeout(function () {
+          note.classList.remove("note-peel");
+          void note.offsetWidth;
+          note.classList.add("note-pin");
+        }, 220);
+      } else if (cfg.boardEl) {
+        cfg.boardEl.style.opacity = "0.4";
+        setTimeout(function () { cfg.boardEl.style.opacity = "1"; }, 190);
+      }
+      if (cfg.bootEl) {
+        cfg.bootEl.hidden = false;
+        setTimeout(function () { if (cfg.bootEl) cfg.bootEl.hidden = true; }, 520);
+      }
+    }
+
+    function render(keepCorrectFx) {
+      if (gFxWrong) gFxWrong.hidden = true;
+      if (reveal) reveal.hidden = true;
+      if (!keepCorrectFx) { hideFeedback(); hideExplain(); }
+      attempts = 0;
+      if (cfg.introBubbleId && idx > 0) hideBubble(cfg.introBubbleId);
+      if (idx > 0) swapEffect();
+      cfg.mount.innerHTML = "";
+      var cur = q();
+      if (cfg.setSurface) cfg.setSurface(cur);
+      var root = el("div", "q-root");
+      root.dataset.qaQuestion = cur.id;
+      if (cur.type === "choice") buildChoice(root, cur);
+      else if (cur.type === "keypad") buildKeypad(root, cur);
+      else if (cur.type === "drag") buildDrag(root, cur);
+      cfg.mount.appendChild(root);
+    }
+
+    /* choice */
+    function buildChoice(root, cur) {
+      var wrap = el("div", "choices");
+      wrap.style.left = "0"; wrap.style.right = "0";
+      wrap.style.top = (cfg.layout && cfg.layout.choicesTop || 430) + "px";
+      if (cfg.layout && cfg.layout.choicesZ) wrap.style.zIndex = cfg.layout.choicesZ;
+      cur.choices.forEach(function (c, ci) {
+        var btn = el("button", "choice");
+        btn.type = "button";
+        btn.dataset.qaChoice = String(ci);
+        btn.dataset.qaCorrect = String(!!c.correct);
+        btn.style.animationDelay = (0.08 * ci) + "s";
+        // 시계 보기는 세로형 시계 plaque, 텍스트 보기는 compact 대출카드 plaque로 렌더한다.
+        if (c.clock) { btn.classList.add("plaque-clock"); var ck = makeClock(c.clock.h, c.clock.m); btn.appendChild(ck); }
+        else { btn.classList.add("plaque-compact"); }
+        var lbl = el("span", "choice-label"); lbl.textContent = c.label; btn.appendChild(lbl);
+        btn.addEventListener("click", function () {
+          if (done) return;
+          btn.classList.add("pop");
+          setTimeout(function () { btn.classList.remove("pop"); }, 320);
+          if (c.correct) onCorrect(cur);
+          else onWrong(cur, btn);
+        });
+        wrap.appendChild(btn);
+      });
+      root.appendChild(wrap);
+    }
+
+    /* keypad */
+    var curBlanks = null, selBlank = 0, curDisplay = null;
+    function buildKeypad(root, cur) {
+      var group = el("div", "blanks");
+      group.style.left = "0"; group.style.right = "0";
+      group.style.top = (cfg.layout && cfg.layout.blanksTop || 700) + "px";
+      curBlanks = [];
+      cur.blanks.forEach(function (bk, bi) {
+        var g = el("span", "blank-group");
+        var slot = el("span", "blank");
+        slot.dataset.qaBlank = String(bi);
+        slot.textContent = "";
+        slot._buf = "";
+        slot.addEventListener("click", function () { selectBlank(bi); });
+        g.appendChild(slot);
+        if (bk.suffix) { var s = document.createTextNode(bk.suffix); g.appendChild(s); }
+        group.appendChild(g);
+        curBlanks.push({ el: slot, correct: bk.value });
+      });
+      root.appendChild(group);
+      var kp = el("div", "c-keypadWrap");
+      kp.dataset.component = "keypad";
+      kp.style.right = "60px"; kp.style.bottom = "56px";
+      var disp = el("div", "c-answerDisplay"); disp.dataset.slot = "display";
+      var keys = el("div", "c-keypad"); keys.dataset.slot = "keys";
+      kp.appendChild(disp); kp.appendChild(keys);
+      root.appendChild(kp);
+      window.CommonKeypad.build(kp, function (key) { keypadInput(key); });
+      $$(".c-key", kp).forEach(function (k) {
+        if (k.classList.contains("enter")) k.dataset.qaKey = "submit";
+        else if (k.classList.contains("del")) k.dataset.qaKey = "del";
+        else k.dataset.qaKey = k.textContent.trim();
+      });
+      curDisplay = disp;
+      selBlank = 0;
+      selectBlank(0);
+    }
+    function selectBlank(bi) {
+      selBlank = bi;
+      if (!curBlanks) return;
+      curBlanks.forEach(function (b, i) { b.el.classList.toggle("sel", i === bi); });
+      if (curDisplay) curDisplay.textContent = curBlanks[bi].el._buf;
+    }
+    function keypadInput(key) {
+      if (done || !curBlanks) return;
+      var b = curBlanks[selBlank]; if (!b) return;
+      if (key === "del") { b.el._buf = b.el._buf.slice(0, -1); }
+      else if (key === "enter") { submitKeypad(); return; }
+      else { if (b.el._buf.length < 2) b.el._buf += key; }
+      b.el.textContent = b.el._buf;
+      if (curDisplay) { curDisplay.textContent = b.el._buf; window.CommonKeypad.displayTick(curDisplay); }
+    }
+    function submitKeypad() {
+      if (done || !curBlanks) return;
+      var cur = q();
+      var ok = curBlanks.every(function (b) { return b.el._buf === b.correct; });
+      if (ok) onCorrect(cur);
+      else {
+        onWrong(cur, null);
+        curBlanks.forEach(function (b) { b.el._buf = ""; b.el.textContent = ""; });
+        selectBlank(0);
+      }
+    }
+
+    /* drag */
+    var curSlots = null, selBlock = null;
+    function buildDrag(root, cur) {
+      var slotRow = el("div"); slotRow.style.position = "absolute";
+      slotRow.style.left = "0"; slotRow.style.right = "0";
+      slotRow.style.top = (cfg.layout && cfg.layout.slotsTop || 430) + "px";
+      slotRow.style.display = "flex"; slotRow.style.gap = "24px";
+      slotRow.style.alignItems = "center"; slotRow.style.justifyContent = "center"; slotRow.style.flexWrap = "wrap";
+      curSlots = [];
+      cur.slots.forEach(function (s, si) {
+        var g = el("span", "blank-group"); g.style.color = "var(--plate-ink)";
+        var slot = el("span", "slot");
+        slot.dataset.qaSlot = String(si);
+        slot.textContent = "[?]";
+        slot.addEventListener("click", function () { placeBlock(si); });
+        // 네이티브 드래그 앤 드롭: 빈칸이 드롭 대상
+        slot.addEventListener("dragover", function (ev) {
+          if (done || !selBlock) return;
+          ev.preventDefault(); slot.classList.add("dragover");
+        });
+        slot.addEventListener("dragleave", function () { slot.classList.remove("dragover"); });
+        slot.addEventListener("drop", function (ev) {
+          ev.preventDefault(); slot.classList.remove("dragover");
+          placeBlock(si);
+        });
+        g.appendChild(slot);
+        if (s.suffix) g.appendChild(document.createTextNode(s.suffix));
+        slotRow.appendChild(g);
+        curSlots.push({ el: slot, correct: s.correct, filled: false });
+      });
+      root.appendChild(slotRow);
+      // 조작 순서 안내(드래그 + 클릭 두 경로)
+      var hint = el("div", "op-hint");
+      hint.textContent = "블록을 빈칸으로 끌어다 놓거나, 블록을 누른 뒤 빈칸을 누르세요.";
+      hint.style.left = "0"; hint.style.right = "0"; hint.style.textAlign = "center";
+      hint.style.margin = "0 auto"; hint.style.width = "fit-content";
+      hint.style.top = ((cfg.layout && cfg.layout.blocksTop || 770) - 62) + "px";
+      root.appendChild(hint);
+      var host = el("div", "blocks");
+      host.style.left = "0"; host.style.right = "0"; host.style.margin = "0 auto";
+      host.style.top = (cfg.layout && cfg.layout.blocksTop || 770) + "px";
+      selBlock = null;
+      cur.blocks.forEach(function (val) {
+        var b = el("button", "block");
+        b.type = "button";
+        b.dataset.qaBlock = String(val);
+        b.textContent = val;
+        b.setAttribute("draggable", "true");
+        b.addEventListener("click", function () { selectBlock(b, val); });
+        b.addEventListener("dragstart", function (ev) {
+          if (done) { ev.preventDefault(); return; }
+          selectBlock(b, val); b.classList.add("dragging");
+          if (ev.dataTransfer) { ev.dataTransfer.effectAllowed = "move"; ev.dataTransfer.setData("text/plain", String(val)); }
+        });
+        b.addEventListener("dragend", function () { b.classList.remove("dragging"); });
+        host.appendChild(b);
+      });
+      root.appendChild(host);
+    }
+    function selectBlock(btn, val) {
+      if (done) return;
+      selBlock = { btn: btn, val: val };
+      $$(".block", scene).forEach(function (b) { b.classList.remove("sel"); });
+      btn.classList.add("sel");
+    }
+    function placeBlock(si) {
+      if (done || !curSlots) return;
+      var slot = curSlots[si];
+      if (!selBlock || slot.filled) return;
+      var val = selBlock.val;
+      if (val === slot.correct) {
+        slot.el.textContent = val;
+        slot.el.classList.add("filled");
+        slot.filled = true;
+        selBlock.btn.classList.remove("sel");
+        selBlock = null;
+        if (curSlots.every(function (s) { return s.filled; })) onCorrect(q());
+      } else {
+        slot.el.classList.add("bounce");
+        setTimeout(function () { slot.el.classList.remove("bounce"); }, 420);
+        if (selBlock) selBlock.btn.classList.remove("sel");
+        selBlock = null;
+        onWrong(q(), null);
+      }
+    }
+
+    /* 판정 공통 */
+    function onCorrect(cur) {
+      if (done) return;
+      done = true;
+      setChild("success");
+      if (cfg.childImg) cfg.childImg.classList.add("cheer");
+      showCorrectFx(cur.correctText || "딩동댕!");
+      showExplain("correct", cur.reason);
+      if (cfg.onCorrectExtra) cfg.onCorrectExtra(cur);
+      var last = idx >= cfg.questions.length - 1;
+      correctCount++;
+      bumpProgress(cfg.progressFor ? cfg.progressFor(idx) : progress);
+      if (last) {
+        if (exit) { exit.hidden = false; }
+        autoTimer = setTimeout(function () {
+          if (scene.classList.contains("active")) scenes.showScene(cfg.exitTarget);
+        }, 1700);
+        if (cfg.onComplete) cfg.onComplete();
+      } else {
+        correctTimer = setTimeout(function () {
+          done = false; idx++; if (cfg.childImg) cfg.childImg.classList.remove("cheer");
+          render(true);
+        }, 200);
+      }
+    }
+    function onWrong(cur, target) {
+      if (done) return;
+      attempts++;
+      setChild("think");
+      showWrongFx(cur.wrongText || "");
+      if (cur.maxAttempts > 0 && attempts >= cur.maxAttempts) { exhaust(cur); return; }
+      // 남은 시도가 있으면 다음에 확인할 것을 구체적으로 안내한다
+      showExplain("wrong", cur.hint);
+      if (target) { target.classList.add("shake"); setTimeout(function () { target.classList.remove("shake"); }, 460); }
+    }
+    function exhaust(cur) {
+      done = true;
+      var root = cfg.mount.querySelector("[data-qa-question='" + cur.id + "']");
+      if (root) root.dataset.qaRevealed = "true";
+      // 시도 소진 시: 정답 보기를 강조하는 데 그치지 않고 실제 입력 영역을 정답 상태로 완성한다.
+      if (cur.type === "choice") {
+        cur.choices.forEach(function (c, ci) {
+          if (c.correct && root) {
+            var b = root.querySelector("[data-qa-choice='" + ci + "']");
+            if (b) { b.dataset.qaRevealed = "true"; b.classList.add("revealed"); }
+          }
+        });
+      } else if (cur.type === "keypad" && curBlanks) {
+        curBlanks.forEach(function (b) {
+          b.el._buf = b.correct; b.el.textContent = b.correct;
+          b.el.classList.add("filled", "revealed");
+          b.el.dataset.qaRevealed = "true";
+        });
+        if (curDisplay) curDisplay.textContent = curBlanks[curBlanks.length - 1].correct;
+      } else if (cur.type === "drag" && curSlots) {
+        curSlots.forEach(function (s) {
+          s.el.textContent = s.correct; s.el.classList.add("filled", "revealed");
+          s.filled = true; s.el.dataset.qaRevealed = "true";
+        });
+        $$(".block", scene).forEach(function (b) { b.classList.add("placed"); });
+      }
+      if (reveal) { reveal.textContent = "정답: " + cur.answer; reveal.hidden = false; }
+      // 완성된 식·시간 관계를 설명한다(왜 그 값인지). 결과 통보로 끝내지 않는다.
+      showExplain("correct", cur.reason);
+      var last = idx >= cfg.questions.length - 1;
+      // 채워진 정답을 읽을 시간을 준 뒤 넘어간다. 입력 영역은 지우지 않는다.
+      setTimeout(function () {
+        if (reveal) reveal.hidden = true;
+        if (last) {
+          if (exit) exit.hidden = false;
+          if (scene.classList.contains("active")) scenes.showScene(cfg.exitTarget);
+          if (cfg.onComplete) cfg.onComplete();
+        } else { done = false; idx++; render(); }
+      }, 2600);
+    }
+
+    function goto(qid) {
+      var found = -1;
+      cfg.questions.forEach(function (x, i) { if (x.id === qid) found = i; });
+      if (found < 0) return;
+      done = false; idx = found; render();
+    }
+    function reset() {
+      done = false; idx = 0;
+      if (correctTimer) clearTimeout(correctTimer);
+      if (autoTimer) clearTimeout(autoTimer);
+      if (wrongTimer) clearTimeout(wrongTimer);
+      if (exit) exit.hidden = true;
+      if (cfg.childImg) { cfg.childImg.classList.remove("cheer"); setChild("idle"); }
+      render();
+    }
+    return { reset: reset, goto: goto, keypadInput: keypadInput, ownsQuestion: function (qid) {
+      return cfg.questions.some(function (x) { return x.id === qid; }); } };
+  }
+
+  /* ── 문항 데이터 ── */
+  var Q_A = [
+    { id: "q1", type: "choice", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "2시 55분 시계", prompt: "전광판에 [3시 5분 전]이라고 적혀 있어요. 알맞은 시계를 찾아주세요!",
+      reason: "'3시 5분 전'은 3시가 되기 5분 전이에요. 3시에서 5분을 거꾸로 세면 2시 55분이 돼요.",
+      hint: "'몇 시 몇 분 전'은 그 시각에서 거꾸로 세요. 3시에서 5분 전이 몇 시 몇 분인지 확인해 보세요.",
+      choices: [ { label: "2시 55분 시계", correct: true, clock: { h: 2, m: 55 } },
+                 { label: "3시 5분 시계", correct: false, clock: { h: 3, m: 5 } },
+                 { label: "3시 55분 시계", correct: false, clock: { h: 3, m: 55 } } ] },
+    { id: "q2", type: "choice", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "12시 10분 전", prompt: "멈춰버린 시계가 [11시 50분]을 가리키고 있어요. 다른 말로 어떻게 읽을까요?",
+      reason: "11시 50분은 12시가 되기까지 10분이 남았어요. 그래서 '12시 10분 전'이라고 읽어요.",
+      hint: "다음 시각인 12시까지 몇 분이 남았는지 세어 보세요.",
+      choices: [ { label: "11시 10분 전", correct: false },
+                 { label: "12시 10분 전", correct: true },
+                 { label: "12시 50분 전", correct: false } ] },
+    { id: "q3", type: "choice", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "7시 45분 시계", prompt: "다음 중 [8시 15분 전]을 가리키는 시계는 어느 것인가요?",
+      reason: "'8시 15분 전'은 8시가 되기 15분 전이에요. 8시에서 15분을 거꾸로 세면 7시 45분이에요.",
+      hint: "8시에서 15분을 거꾸로 세면 몇 시 몇 분이 되는지 시곗바늘로 확인해 보세요.",
+      choices: [ { label: "7시 45분 시계", correct: true, clock: { h: 7, m: 45 } },
+                 { label: "8시 15분 시계", correct: false, clock: { h: 8, m: 15 } },
+                 { label: "8시 45분 시계", correct: false, clock: { h: 8, m: 45 } } ] },
+    { id: "q4", type: "choice", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "5시 5분 전", prompt: "시계가 [4시 55분]에 멈췄어요. 바르게 읽은 것을 고르세요.",
+      reason: "4시 55분은 5시가 되기까지 5분이 남았어요. 그래서 '5시 5분 전'이에요.",
+      hint: "다음 시각인 5시까지 몇 분이 남았는지 세어 보세요.",
+      choices: [ { label: "4시 5분 전", correct: false },
+                 { label: "5시 5분 전", correct: true },
+                 { label: "5시 55분 전", correct: false } ] }
+  ];
+
+  var Q_B = [
+    { id: "q5", type: "keypad", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "1", prompt: "첫 번째 독서 교실은 8시에 시작해서 9시에 끝났어요. 걸린 시간은 얼마인가요?",
+      reason: "8시에서 9시까지는 1시간이 지났어요. 그래서 걸린 시간은 1시간이에요.",
+      hint: "시작 시각 8시에서 끝 시각 9시까지 시간이 얼마나 지났는지 세어 보세요.",
+      startClock: { h: 8, m: 0 }, endClock: { h: 9, m: 0 }, flow: "[1시간 후 →]",
+      blanks: [ { value: "1", suffix: "시간" } ] },
+    { id: "q6", type: "keypad", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "[12]시 [0]분", prompt: "두 번째 독서 교실은 11시 30분에 시작해서 30분 동안 진행돼요. 끝나는 시각은 언제일까요?",
+      reason: "11시 30분에서 30분이 더 지나면 12시가 돼요. 그래서 끝나는 시각은 12시 0분이에요.",
+      hint: "11시 30분에 30분을 더하면 몇 시가 되는지 시곗바늘을 움직여 보세요.",
+      startClock: { h: 11, m: 30 }, endClock: { h: 12, m: 0 }, flow: "[30분 후 →]",
+      blanks: [ { value: "12", suffix: "시" }, { value: "0", suffix: "분" } ] },
+    { id: "q7", type: "choice", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "오후 3시", prompt: "책 정리 봉사활동을 오후 2시에 시작해서 1시간 동안 했어요. 봉사활동이 끝난 시각은 언제일까요?",
+      reason: "오후 2시에서 1시간이 지나면 오후 3시가 돼요.",
+      hint: "시작 시각 오후 2시에 걸린 시간 1시간을 더해 보세요.",
+      startClock: { h: 2, m: 0 }, endClock: { h: 3, m: 0 }, flow: "[1시간 후 →]",
+      choices: [ { label: "오후 2시 30분", correct: false },
+                 { label: "오후 3시", correct: true },
+                 { label: "오후 4시", correct: false } ] },
+    { id: "q8", type: "keypad", correctText: "", wrongText: "다시 생각해보세요", maxAttempts: 3,
+      answer: "30", prompt: "꼬마 사서가 4시 30분부터 5시까지 책을 읽었어요. 책을 읽은 시간은 모두 몇 분일까요?",
+      reason: "4시 30분에서 5시까지는 30분이 지났어요. 그래서 책을 읽은 시간은 30분이에요.",
+      hint: "4시 30분에서 5시까지 몇 분이 지났는지 10분씩 세어 보세요.",
+      startClock: { h: 4, m: 30 }, endClock: { h: 5, m: 0 }, flow: "[30분 후 →]",
+      blanks: [ { value: "30", suffix: "분" } ] }
+  ];
+
+  var Q_C = [
+    { id: "q9", type: "drag", correctText: "[시스템 재부팅 완료!]", wrongText: "", maxAttempts: 3,
+      answer: "1", prompt: "도서관 대출 시스템을 켜려면 암호가 필요해요. 24시간은 며칠과 같을까요?",
+      reason: "하루는 24시간이에요. 그래서 24시간은 1일과 같아요.",
+      hint: "하루가 모두 몇 시간인지 떠올려 보세요.",
+      blocks: ["0","1","2","3","4","5","6","7","8","9"], slots: [ { correct: "1", suffix: "일" } ] },
+    { id: "q10", type: "drag", correctText: "[시스템 재부팅 완료!]", wrongText: "", maxAttempts: 3,
+      answer: "[12]시간 [12]시간", prompt: "하루는 오전 [?]시간과 오후 [?]시간으로 이루어져 있어요. 빈칸에 알맞은 수를 넣으세요.",
+      reason: "하루는 오전 12시간과 오후 12시간을 합쳐 24시간이에요. 그래서 두 칸 모두 12예요.",
+      hint: "타임라인에서 오전과 오후 칸을 각각 세어 보세요. 각각 몇 시간일까요?",
+      blocks: ["12","24","6"], slots: [ { correct: "12", suffix: "시간" }, { correct: "12", suffix: "시간" } ] },
+    { id: "q11", type: "choice", correctText: "[시스템 재부팅 완료!]", wrongText: "", maxAttempts: 3,
+      answer: "오후 3시", prompt: "오늘 오후 3시에 책을 빌렸어요. 하루(1일)가 지나면 내일 언제일까요?",
+      reason: "하루(1일)가 지나면 시각은 그대로예요. 오후 3시에서 하루 뒤도 오후 3시예요.",
+      hint: "하루가 지나면 시각은 바뀌지 않아요. 오전인지 오후인지만 확인해 보세요.",
+      choices: [ { label: "오전 3시", correct: false },
+                 { label: "오후 3시", correct: true },
+                 { label: "오후 4시", correct: false } ] },
+    { id: "q12", type: "drag", correctText: "[시스템 재부팅 완료!]", wrongText: "", maxAttempts: 3,
+      answer: "24", prompt: "이 마법 책은 딱 1일 동안만 빌릴 수 있어요. 1일은 모두 몇 시간인가요?",
+      reason: "1일은 24시간이에요. 오전 12시간과 오후 12시간을 더한 값이에요.",
+      hint: "하루가 오전과 오후 각각 몇 시간인지 더해 보세요.",
+      blocks: ["24","12","60"], slots: [ { correct: "24", suffix: "시간" } ] }
+  ];
+
+  var Q_QUIZ = [
+    { id: "q_popup_day", type: "choice", correctText: "맞았어! 24시간은 1일과 같지!", wrongText: "", maxAttempts: 0,
+      answer: "[1일]", prompt: "그럼 하루 종일 문을 여는 도서관이 있다면, 그 도서관은 며칠 동안 문을 여는 걸까요?",
+      reason: "하루 종일은 24시간이고, 24시간은 1일이에요.",
+      hint: "24시간이 며칠인지 생각해 보세요.",
+      choices: [ { label: "[1일]", correct: true },
+                 { label: "[1시간]", correct: false },
+                 { label: "[24일]", correct: false } ] }
+  ];
+
+  /* ── 진행도 배분 (튜토리얼 10% → 문항 12개 → 90%) ── */
+  function coreProgress(base, i, per) { return base + (i + 1) * per; }
+
+  /* ── 컨트롤러 인스턴스 ── */
+  var ctrlA = QuestionController({
+    sceneEl: $("#activity2_type_a"), questions: Q_A, mount: $("#mount-a"),
+    childImg: $("#a-child"), exitTarget: "activity2_type_b",
+    introBubbleId: "a-bubble", boardEl: $("#board-a"),
+    layout: { choicesTop: 448 },
+    setSurface: function (q) { $("#board-a-text").textContent = q.prompt; },
+    progressFor: function (i) { return coreProgress(10, i, 6.6); }
+  });
+
+  var ctrlB = QuestionController({
+    sceneEl: $("#activity2_type_b"), questions: Q_B, mount: $("#mount-b"),
+    childImg: $("#b-child"), exitTarget: "activity2_type_c",
+    introBubbleId: "b-bubble", boardEl: $("#board-b"), noteEl: $("#board-b-text"),
+    layout: { blanksTop: 648, choicesTop: 640 },
+    setSurface: function (q) {
+      $("#board-b-text").textContent = q.prompt;
+      if (q.startClock) setClock(document.getElementById("b-clock-start"), q.startClock.h, q.startClock.m);
+      var arrow = document.getElementById("b-flow-arrow");
+      if (arrow) arrow.textContent = q.flow || "";
+      var end = document.getElementById("b-clock-end");
+      if (end) { var hh = end.querySelector(".hand.hour"), mm = end.querySelector(".hand.minute");
+        if (hh) hh.hidden = true; if (mm) mm.hidden = true; }
+    },
+    onCorrectExtra: function (q) {
+      if (q.endClock) setClock(document.getElementById("b-clock-end"), q.endClock.h, q.endClock.m);
+    },
+    progressFor: function (i) { return coreProgress(36.4, i, 6.6); }
+  });
+
+  var ctrlC = QuestionController({
+    sceneEl: $("#activity2_type_c"), questions: Q_C, mount: $("#mount-c"),
+    childImg: $("#c-child"), exitTarget: "activity2_outro",
+    introBubbleId: "c-bubble", boardEl: $("#board-c"), bootEl: $("#c-boot"),
+    /* slot row는 timeline(~y518) 아래 모니터 하단 영역으로 내려 겹침을 없앤다.
+       q11(choice)은 모니터 밖 데스크 위로 내려 타임라인과 분리한다. */
+    layout: { slotsTop: 540, blocksTop: 792, choicesTop: 706 },
+    setSurface: function (q) {
+      var pr = document.getElementById("c-prompt");
+      if (pr) pr.textContent = q.prompt;
+    },
+    progressFor: function (i) { return coreProgress(62.8, i, 6.6); }
+  });
+
+  var ctrlQuiz = QuestionController({
+    sceneEl: $("#activity3_quiz"), questions: Q_QUIZ, mount: $("#mount-quiz"),
+    childImg: $("#quiz-child"), exitTarget: "activity3_certificate",
+    layout: { choicesTop: 660, choicesZ: "var(--z-hud)" },
+    setSurface: function (q) {
+      bubble("quiz-bubble", q.prompt);
+    },
+    progressFor: function () { return 100; }
+  });
+
+  /* ── 튜토리얼 (drag, underivable — 학습용 구현) ── */
+  var tutState = { done: false, attempts: 0, unlocked: false };
+  function tutUnlock() { tutState.unlocked = true; }
+  function initTutorialQuestion() {
+    setClock(document.getElementById("tut-clock"), 3, 0);
+    var cardsHost = document.getElementById("tut-cards");
+    var slot = document.getElementById("tut-slot");
+    if (!cardsHost || !slot) return;
+    cardsHost.innerHTML = ""; slot.textContent = "[?]"; slot.classList.remove("filled");
+    // 질문 대사가 끝나기 전에는 입력을 잠근다(sceneInit의 두 번째 beat에서 tutUnlock).
+    tutState = { done: false, attempts: 0, sel: null, unlocked: false };
+    // 조작 순서 안내(드래그 + 클릭 두 경로)
+    var qroot = document.getElementById("tut-question");
+    var oldHint = qroot ? qroot.querySelector(".op-hint") : null;
+    if (oldHint) oldHint.remove();
+    if (qroot) {
+      var hint = el("div", "op-hint");
+      hint.textContent = "카드를 빈칸으로 끌어다 놓거나, 카드를 누른 뒤 빈칸을 누르세요.";
+      hint.style.position = "static"; hint.style.margin = "18px auto 0"; hint.style.width = "fit-content";
+      qroot.appendChild(hint);
+    }
+    var cards = [ { label: "[3시]", correct: true }, { label: "[4시]", correct: false }, { label: "[5시]", correct: false } ];
+    cards.forEach(function (c, ci) {
+      var b = el("button", "choice plaque-compact");
+      b.type = "button";
+      b.dataset.qaChoice = String(ci); b.dataset.qaCorrect = String(c.correct);
+      b.dataset.qaBlock = c.label;
+      b.style.animationDelay = (0.08 * ci) + "s";
+      b.setAttribute("draggable", "true");
+      var lbl = el("span", "choice-label"); lbl.textContent = c.label; b.appendChild(lbl);
+      function selectCard() {
+        if (tutState.done || !tutState.unlocked) return;
+        $$(".choice", cardsHost).forEach(function (x) { x.classList.remove("sel"); });
+        b.classList.add("sel"); tutState.sel = { btn: b, c: c };
+      }
+      b.addEventListener("click", selectCard);
+      b.addEventListener("dragstart", function (ev) {
+        if (tutState.done || !tutState.unlocked) { ev.preventDefault(); return; }
+        selectCard(); b.classList.add("dragging");
+        if (ev.dataTransfer) { ev.dataTransfer.effectAllowed = "move"; ev.dataTransfer.setData("text/plain", c.label); }
+      });
+      b.addEventListener("dragend", function () { b.classList.remove("dragging"); });
+      cardsHost.appendChild(b);
+    });
+    function placeTut() {
+      if (tutState.done || !tutState.unlocked || !tutState.sel) return;
+      var sel = tutState.sel;
+      if (sel.c.correct) {
+        tutState.done = true;
+        slot.textContent = sel.c.label; slot.classList.add("filled");
+        sel.btn.classList.add("placed");
+        showFeedback("correct", "딩동댕!");
+        showExplain("correct", "짧은바늘이 3, 긴바늘이 12를 가리키니 지금은 3시예요.");
+        var child = document.getElementById("tut-child");
+        if (child) { child.src = "assets/child-success.png"; child.classList.add("cheer"); }
+        bumpProgress(10);
+        // 정답 처리 뒤에만 출구를 연다(QA가 전환을 확인하는 조작). 그 전에는 어떤 출구도 열지 않는다.
+        var tutExit = $("#activity1_tutorial .auto-exit"); if (tutExit) tutExit.hidden = false;
+        setTimeout(function () { scenes.showScene("activity1_success"); }, 1600);
+      } else {
+        tutState.attempts++;
+        slot.classList.add("bounce"); setTimeout(function () { slot.classList.remove("bounce"); }, 420);
+        showFeedback("wrong", "다시 해볼까요?");
+        showExplain("wrong", "짧은바늘이 어떤 숫자를 가리키는지 보세요.");
+        sel.btn.classList.remove("sel"); tutState.sel = null;
+        if (tutState.attempts >= 3) {
+          var correctCard = cardsHost.querySelector("[data-qa-correct='true']");
+          if (correctCard) { correctCard.dataset.qaRevealed = "true"; correctCard.classList.add("revealed"); }
+        }
+      }
+    }
+    slot.onclick = placeTut;
+    slot.ondragover = function (ev) {
+      if (tutState.done || !tutState.unlocked || !tutState.sel) return;
+      ev.preventDefault(); slot.classList.add("dragover");
+    };
+    slot.ondragleave = function () { slot.classList.remove("dragover"); };
+    slot.ondrop = function (ev) {
+      ev.preventDefault(); slot.classList.remove("dragover"); placeTut();
+    };
+  }
+
+  /* ── 팝업북 ── */
+  var storyPages = [
+    { text: "우리 동네 편의점 간판에 왜 '24'가 적혀 있을까? 1일은 24시간이기 때문에, 하루 종일 쉬지 않고 문을 연다는 뜻이란다!" },
+    { text: "시계가 없던 아주 옛날 사람들은 어떻게 시간을 알았을까? 바로 해의 그림자가 움직이는 길이를 보고 시간을 알았어!" },
+    { text: "오븐에 빵을 넣고 '30분 후'에 꺼내야 해! 맛있는 요리를 할 때도, 재미있는 만화가 시작할 때까지 기다릴 때도 시간 계산이 꼭 필요하지." }
+  ];
+  var storyIdx = 0;
+  var storyExitTimer = null;
+  function setStoryCopy(text) {
+    var copyEl = document.querySelector("#story-copy [data-slot='copy']");
+    if (copyEl) copyEl.textContent = text;
+  }
+  function showStoryPage(n) {
+    var prevIdx = storyIdx;
+    storyIdx = Math.max(0, Math.min(2, n));
+    // 책장 넘김 연출: 나가는 장은 접혀 내려가고(pageFoldOut) 새 장은 펼쳐 선다(pageUnfoldIn).
+    // 즉시 hidden 스왑 대신, 나가는 장을 잠깐 유지해 넘김 과정을 보이게 한다. 흐름 로직은 그대로.
+    var doAnim = prevIdx !== storyIdx;
+    $$("#book .book-page").forEach(function (p) {
+      var isTarget = String(storyIdx) === p.dataset.page;
+      var isPrev = String(prevIdx) === p.dataset.page;
+      p.classList.remove("folding", "unfolding");
+      if (isTarget) {
+        p.hidden = false;
+        if (doAnim) { void p.offsetWidth; p.classList.add("unfolding"); }
+      } else if (isPrev && doAnim) {
+        p.classList.add("folding");
+        (function (el) { setTimeout(function () { el.hidden = true; el.classList.remove("folding"); }, 280); })(p);
+      } else {
+        p.hidden = true;
+      }
+    });
+    // 설명 원문을 팝업북 오른쪽 페이지 면에 얹는다(별도 말풍선 대신)
+    setStoryCopy(storyPages[storyIdx].text);
+    var prev = document.getElementById("book-prev");
+    var next = document.getElementById("book-next");
+    var exit = $("#activity3_storybook .auto-exit");
+    if (prev) { prev.hidden = false; prev.disabled = storyIdx === 0; }
+    if (storyExitTimer) { clearTimeout(storyExitTimer); storyExitTimer = null; }
+    if (storyIdx >= 2) {
+      if (next) next.hidden = true;
+      if (exit) exit.hidden = false;
+      // 마지막 페이지 설명을 읽을 시간을 준 뒤 마무리 퀴즈로 자동 전환한다(planner: storybook_complete).
+      storyExitTimer = setTimeout(function () {
+        var cur = scenes.currentScene();
+        if (cur && cur.id === "activity3_storybook") scenes.showScene("activity3_quiz");
+      }, 3600);
+    } else {
+      if (next) { next.hidden = false; }
+      if (exit) exit.hidden = true;
+    }
+  }
+  (function bindStory() {
+    var prev = document.getElementById("book-prev");
+    var next = document.getElementById("book-next");
+    if (prev) prev.addEventListener("click", function () { showStoryPage(storyIdx - 1); });
+    if (next) next.addEventListener("click", function () { if (storyIdx < 2) showStoryPage(storyIdx + 1); });
+  })();
+
+  /* ── 파티클 ── */
+  function fillParty(host) {
+    if (!host || host._filled) return;
+    var colors = ["var(--accent)", "var(--accent-bright)", "var(--surface)", "var(--burgundy)", "var(--glow)"];
+    for (var i = 0; i < 60; i++) {
+      var c = el("i");
+      c.style.left = (Math.random() * 100) + "%";
+      c.style.background = colors[i % colors.length];
+      c.style.animationDelay = (Math.random() * 2) + "s";
+      c.style.animationDuration = (1.8 + Math.random() * 1.4) + "s";
+      host.appendChild(c);
+    }
+    host._filled = true;
+  }
+
+  /* ── 씬별 초기화 ── */
+  var sceneInit = {
+    activity1_title: function () {
+      // 타이틀에는 대사 beat가 없다. beat-next(웹 알약 버튼)와 티켓 CTA가 경쟁하지 않도록
+      // 진행 표면을 티켓 CTA 하나로 고정하고 beat-next는 숨긴 채로 둔다.
+      var start = document.getElementById("btn-start");
+      var titleScene = $("#activity1_title");
+      hideBeatNext(titleScene);
+      if (start) start.hidden = false;
+    },
+    activity1_problem: function () {
+      var clk = document.getElementById("problem-clock");
+      if (clk) clk.classList.add("spinning");
+      var teacher = document.getElementById("problem-teacher");
+      if (teacher) teacher.src = "assets/librarian-distressed.png";
+      hideBubble("problem-bubble");
+      var cta = document.getElementById("problem-cta"); if (cta) cta.hidden = true;
+      var pScene = $("#activity1_problem");
+      setupBeats(pScene, [
+        function () { /* beat0: 시계 회전 + 당황 pose */ },
+        function () { bubble("problem-bubble", "큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!"); },
+        function () { if (cta) cta.hidden = false; hideBeatNext(pScene); }
+      ]);
+    },
+    activity1_tutorial: function () {
+      hideBubble("tut-child-bubble"); hideBubble("tut-teacher-bubble");
+      var exit = $("#activity1_tutorial .auto-exit"); if (exit) exit.hidden = true;
+      var child = document.getElementById("tut-child");
+      if (child) { child.src = "assets/child-idle.png"; child.classList.remove("cheer"); }
+      initTutorialQuestion();
+      setupBeats($("#activity1_tutorial"), [
+        function () { bubble("tut-child-bubble", "걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!"); },
+        function () {
+          hideBubble("tut-child-bubble");
+          bubble("tut-teacher-bubble", "다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?");
+          // 질문 대사가 끝나는 이 시점에만 입력을 연다. 출구는 정답 처리 전까지 열지 않는다.
+          tutUnlock();
+        }
+      ]);
+    },
+    activity1_success: function () {
+      setClock(document.getElementById("success-clock"), 3, 0);
+      hideBubble("success-bubble");
+      var cta = document.getElementById("success-cta"); if (cta) cta.hidden = true;
+      var child = document.getElementById("success-child"); if (child) child.classList.add("cheer");
+      var sScene = $("#activity1_success");
+      setupBeats(sScene, [
+        function () { bumpProgress(10); bubble("success-bubble", "와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!"); },
+        function () { if (cta) cta.hidden = false; hideBeatNext(sScene); }
+      ]);
+    },
+    activity2_global_rules: function () {
+      var exit = $("#activity2_global_rules .auto-exit");
+      if (exit) exit.hidden = false;
+      setTimeout(function () {
+        if (scenes.currentScene() && scenes.currentScene().id === "activity2_global_rules")
+          scenes.showScene("activity2_type_a");
+      }, 1800);
+    },
+    activity2_type_a: function () {
+      ctrlA.reset();
+      bubble("a-bubble", "전광판의 시간이 다 깨져버렸어. '몇 분 전'인지 잘 읽어보고, 똑같은 시각을 가리키는 알맞은 시계를 찾아줄래?");
+    },
+    activity2_type_b: function () {
+      ctrlB.reset();
+      bubble("b-bubble", "독서 교실 시간표가 지워져서 언제 끝나는지 알 수가 없다. 시계를 보고 걸린 시간을 계산해서 빈칸을 채워줄 수 있겠니?");
+    },
+    activity2_type_c: function () {
+      ctrlC.reset();
+      var boot = document.getElementById("c-boot"); if (boot) boot.hidden = true;
+      bubble("c-bubble", "도서 대출 시스템을 다시 켜려면 시간의 규칙을 풀어야 해! 1일과 24시간의 관계를 잘 생각해서 블록을 알맞게 넣어주렴!");
+    },
+    activity2_outro: function () {
+      var bg = document.getElementById("outro-bg"); if (bg) bg.src = "assets/bg-library-messy.png";
+      var bgClean = document.getElementById("outro-bg-clean"); if (bgClean) bgClean.style.opacity = "0";
+      var party = document.getElementById("outro-party"); if (party) party.hidden = true;
+      hideBubble("outro-child-bubble"); hideBubble("outro-teacher-bubble");
+      var cta = document.getElementById("outro-cta"); if (cta) cta.hidden = true;
+      var oScene = $("#activity2_outro");
+      bumpProgress(90);
+      setupBeats(oScene, [
+        function () { bubble("outro-child-bubble", "해냈다! 시간의 규칙을 모두 풀었어요!"); },
+        function () { hideBubble("outro-child-bubble"); bubble("outro-teacher-bubble", "우리 수리 대원 정말 대단해! 수학 실력이 최고인걸? 이제 네가 모은 수학의 힘으로 도서관을 원래대로 되돌려보자!"); },
+        function () {
+          // 어질러진 로비 → 정돈된 로비 crossfade (즉시 src 교체 대신 두 겹 opacity 전환)
+          if (bgClean) bgClean.style.opacity = "1";
+          fillParty(party); if (party) party.hidden = false;
+          if (cta) cta.hidden = false;
+          hideBeatNext(oScene);
+        }
+      ]);
+    },
+    activity3_storybook: function () {
+      var exit = $("#activity3_storybook .auto-exit"); if (exit) exit.hidden = true;
+      showStoryPage(0);
+    },
+    activity3_quiz: function () {
+      ctrlQuiz.reset();
+    },
+    activity3_certificate: function () {
+      var party = document.getElementById("cert-party");
+      fillParty(party); if (party) party.hidden = false;
+      var score = document.getElementById("cert-score");
+      if (score) score.textContent = Math.min(correctCount, 13) + "/13";
+      var t = document.getElementById("cert-time");
+      if (t) {
+        var sec = Math.floor((Date.now() - startTime) / 1000);
+        var mm = String(Math.floor(sec / 60)).padStart(2, "0");
+        var ss = String(sec % 60).padStart(2, "0");
+        t.textContent = mm + ":" + ss;
+      }
+      bumpProgress(100);
+      hideBubble("cert-child-bubble"); hideBubble("cert-teacher-bubble");
+      setupBeats($("#activity3_certificate"), [
+        function () { bubble("cert-teacher-bubble", "정말 고마워! 네 덕분에 도서관이 완벽해졌어!"); },
+        function () { hideBubble("cert-teacher-bubble"); bubble("cert-child-bubble", "언제든 제 수학실력이 필요하면 불러주세요!"); }
+      ]);
+    }
+  };
+
+  /* 인증서/다음 미션 버튼은 범위 제외: 표시·포커스만, 동작 없음 */
+  (function inertButtons() {
+    ["cert-save", "next-mission"].forEach(function (id) {
+      var b = document.getElementById(id);
+      if (b) b.addEventListener("click", function (e) { e.preventDefault(); });
+    });
+  })();
+
+  /* ── scenechange: HUD + 초기화 ── */
+  window.addEventListener("common:scenechange", function (e) {
+    var id = e.detail.sceneId;
+    $$(".beat-next", stage).forEach(function (b) { b.hidden = true; });
+    hideFeedback();
+    topbar.setHidden(id === "activity1_title");
+    var stepMap = {
+      activity1_problem: "수리 준비", activity1_tutorial: "튜토리얼", activity1_success: "수리력 +",
+      activity2_global_rules: "STEP 2", activity2_type_a: "유형 A", activity2_type_b: "유형 B",
+      activity2_type_c: "유형 C", activity2_outro: "수리 완료", activity3_storybook: "수리 이야기",
+      activity3_quiz: "마무리 퀴즈", activity3_certificate: "완료"
+    };
+    topbar.setStep(stepMap[id] || "");
+    if (sceneInit[id]) sceneInit[id]();
+  });
+
+  /* ── QA 통로: 문항 지목 ── */
+  var allCtrls = [ctrlA, ctrlB, ctrlC, ctrlQuiz];
+  var qToScene = {};
+  Q_A.forEach(function (q) { qToScene[q.id] = "activity2_type_a"; });
+  Q_B.forEach(function (q) { qToScene[q.id] = "activity2_type_b"; });
+  Q_C.forEach(function (q) { qToScene[q.id] = "activity2_type_c"; });
+  Q_QUIZ.forEach(function (q) { qToScene[q.id] = "activity3_quiz"; });
+  qToScene["q_tutorial_clock"] = "activity1_tutorial";
+
+  window.__contentHarnessShowQuestion = function (qid) {
+    var sceneId = qToScene[qid];
+    if (!sceneId) return;
+    scenes.showScene(sceneId);
+    ["a-bubble", "b-bubble", "c-bubble", "quiz-bubble"].forEach(hideBubble);
+    // 튜토리얼은 대사 뒤에 입력이 열리므로, QA가 직접 지목하면 바로 조작 가능하게 잠금을 푼다.
+    if (qid === "q_tutorial_clock") tutUnlock();
+    allCtrls.forEach(function (c) { if (c.ownsQuestion(qid)) c.goto(qid); });
+  };
+
+  /* ── 전환 조작: data-qa-advance 를 가진 모든 출구(실제 CTA · 자동전환 hook)를 배선 ── */
+  $$("[data-qa-advance]").forEach(function (b) {
+    var target = b.getAttribute("data-qa-advance");
+    if (!target) return;
+    b.addEventListener("click", function () { scenes.showScene(target); });
+  });
+
+  /* ── 초기 상태 ── */
+  topbar.setHidden(true);
+  sceneInit.activity1_title();
+})();
+</script>
+</body>
+</html>

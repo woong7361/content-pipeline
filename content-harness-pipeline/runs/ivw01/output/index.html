@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    #viewport {
+      /* 따뜻한 도서관 팔레트: 이 콘텐츠 안에서만 공용 팔레트 토큰을 재정의한다. */
+      --bg: #173f62;
+      --surface: #267f78;
+      --ink: #112f52;
+      --plate-ink: #173f62;
+      --accent: #e8b94f;
+      --accent-bright: #ffe799;
+      --glow: #f7cf62;
+      --cream: #fff5d8;
+      --danger: #c94843;
+      --veil: rgba(255, 248, 223, .94);
+      --dim: rgba(17, 47, 82, .5);
+      --bubble-bg: #fffaf0;
+      --bubble-line: #713f34;
+      --bubble-ink: #2d211b;
+      --brown-800: #713f34;
+      --brown-900: #4a2923;
+      --burgundy: #8e233f;
+      --teal-soft: #bfe3da;
+      /* scene entrance choreography tokens */
+      --scene-stagger-1: .14s;
+      --scene-stagger-2: .3s;
+      --scene-stagger-3: .44s;
+      --scene-stagger-4: .56s;
+      --scene-repeat-delay: 1.07s;
+      --clock-glow-loop: 1.2s;
+      --celebrate-loop: 1.05s;
+      --applause-loop: .72s;
+    }
+
+    button:focus-visible,
+    [role="button"]:focus-visible {
+      outline: 8px solid var(--accent-bright);
+      outline-offset: 6px;
+    }
+
+    .scene {
+      background: var(--cream);
+    }
+
+    .scene .c-bg {
+      object-position: center;
+    }
+
+    .scene-shade {
+      position: absolute;
+      inset: 0;
+      z-index: var(--z-scenery);
+      background: var(--dim);
+      pointer-events: none;
+      transition: opacity var(--dur-slow) var(--ease);
+    }
+
+    .title-bg {
+      filter: blur(5px) saturate(.88);
+      transition: filter var(--dur-slow) var(--ease);
+    }
+
+    .title-leaving .title-bg {
+      filter: blur(0) saturate(1);
+    }
+
+    .title-leaving .scene-shade {
+      opacity: 0;
+    }
+
+    .main-title {
+      position: absolute;
+      left: 50%;
+      top: 140px;
+      z-index: var(--z-content);
+      width: 1380px;
+      height: auto;
+      transform: translateX(-50%);
+      filter: none;
+      opacity: 0;
+      animation: riseIn var(--dur-slow) var(--ease-back) .3s forwards;
+    }
+
+    .asset-cta {
+      border: 0;
+      padding: 0;
+      min-width: 0;
+      min-height: 0;
+      background-color: var(--clear);
+      background-size: contain;
+      box-shadow: none;
+      filter: var(--ds-md);
+    }
+
+    .asset-cta:hover {
+      filter: var(--ds-lg) var(--filter-hover);
+    }
+
+    .asset-cta:active {
+      box-shadow: none;
+      filter: var(--ds-sm);
+    }
+
+    .start-cta {
+      left: 50%;
+      top: 765px;
+      width: 600px;
+      height: 175px;
+      opacity: 0;
+      animation: riseIn var(--dur-slow) var(--ease-back) .75s forwards, slowPulse 2.8s var(--ease) 1.5s infinite;
+    }
+
+    .start-cta:hover {
+      filter: var(--ds-md);
+    }
+
+    .a11y-asset-label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .world-clock {
+      position: absolute;
+      z-index: var(--z-scenery);
+      width: 470px;
+      aspect-ratio: 1;
+      filter: var(--ds-lg);
+    }
+
+    .world-clock > img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .clock-hand {
+      position: absolute;
+      left: 50%;
+      bottom: 50%;
+      z-index: var(--z-content);
+      border-radius: var(--r-pill);
+      background: var(--ink);
+      transform-origin: 50% 100%;
+      filter: var(--ds-sm);
+    }
+
+    .clock-hand.hour {
+      width: 20px;
+      height: 112px;
+      margin-left: -10px;
+    }
+
+    .clock-hand.minute {
+      width: 14px;
+      height: 158px;
+      margin-left: -7px;
+    }
+
+    .clock-pin {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: var(--z-interactive);
+      width: 38px;
+      height: 38px;
+      border: 8px solid var(--ink);
+      border-radius: var(--r-circle);
+      background: var(--accent);
+      transform: translate(-50%, -50%);
+    }
+
+    .broken-clock {
+      left: 725px;
+      top: 105px;
+    }
+
+    #activity1-problem.active .broken-clock {
+      animation: problemClockIn var(--dur) var(--ease-back) both;
+    }
+
+    .broken-clock .hour {
+      animation: spinHand 1.15s linear infinite;
+    }
+
+    .broken-clock .minute {
+      animation: spinHand .72s linear reverse infinite;
+    }
+
+    .character,
+    .student-group {
+      position: absolute;
+      z-index: var(--z-character);
+      object-fit: contain;
+      filter: var(--ds-md);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .problem-students {
+      left: 120px;
+      top: 560px;
+      width: 460px;
+      height: 400px;
+    }
+
+    .problem-librarian {
+      right: 35px;
+      bottom: -35px;
+      width: 430px;
+      height: 760px;
+    }
+
+    #activity1-problem.active .problem-students {
+      animation: problemStudentsIn var(--dur-slow) var(--ease-back) .14s both;
+    }
+
+    #activity1-problem.active .problem-librarian {
+      animation: problemLibrarianIn var(--dur-slow) var(--ease-back) .28s both,
+        worriedSway 1.2s var(--ease) .93s infinite alternate;
+    }
+
+    .problem-speech,
+    .tutorial-speech,
+    .success-speech {
+      right: auto;
+      translate: none;
+      z-index: var(--z-content);
+      width: 1050px;
+      height: 300px;
+      max-width: none;
+      padding: 0;
+      border: 0;
+      border-radius: var(--r-none);
+      background: center / 100% 100% no-repeat url("assets/library-dialogue-board.png");
+      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .problem-speech::before,
+    .problem-speech::after,
+    .tutorial-speech::before,
+    .tutorial-speech::after,
+    .success-speech::before,
+    .success-speech::after {
+      display: none;
+    }
+
+    .problem-speech [data-slot="text"],
+    .tutorial-speech [data-slot="text"],
+    .success-speech [data-slot="text"] {
+      position: absolute;
+      left: 92px;
+      top: 82px;
+      width: 866px;
+      height: 136px;
+      display: grid;
+      place-items: center;
+      color: var(--plate-ink);
+      font-size: var(--fs-2xs);
+      line-height: 1.35;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    .problem-speech [data-slot="text"] {
+      transform: translateY(-7px);
+    }
+
+    .tutorial-speech [data-slot="text"] {
+      transform: translate(-9px, -8px);
+    }
+
+    .success-speech [data-slot="text"] {
+      transform: translate(-5px, -11px);
+    }
+
+    .c-speechBubble.problem-speech {
+      left: 435px;
+      right: auto;
+      top: 520px;
+      translate: none;
+    }
+
+    #activity1-problem.active .problem-speech {
+      animation: problemBoardIn var(--dur-slow) var(--ease-speech-pop) .44s both;
+    }
+
+    .tutorial-clock {
+      left: 760px;
+      top: 70px;
+      width: 400px;
+    }
+
+    .tutorial-clock .hour,
+    .success-clock .hour {
+      transform: rotate(90deg);
+    }
+
+    .tutorial-clock .minute,
+    .success-clock .minute {
+      transform: rotate(0deg);
+    }
+
+    .tutorial-junior {
+      left: 70px;
+      bottom: -35px;
+      width: 330px;
+      height: 570px;
+    }
+
+    .tutorial-librarian {
+      right: 45px;
+      bottom: -35px;
+      width: 430px;
+      height: 730px;
+    }
+
+    .c-speechBubble.tutorial-speech {
+      left: 445px;
+      right: auto;
+      top: 400px;
+      translate: none;
+      width: 1030px;
+    }
+
+    #activity1-tutorial.active .tutorial-clock {
+      animation: tutorialClockEnter var(--dur-slow) var(--ease-back) both;
+    }
+
+    #activity1-tutorial.active .tutorial-junior {
+      animation: tutorialJuniorEnter var(--dur-slow) var(--ease-back) var(--scene-stagger-1) both;
+    }
+
+    #activity1-tutorial.active .tutorial-librarian {
+      animation: tutorialLibrarianEnter var(--dur-slow) var(--ease-back) var(--scene-stagger-2) both;
+    }
+
+    #activity1-tutorial.active .tutorial-speech[data-state="visible"] {
+      animation: tutorialBoardEnter var(--dur-slow) var(--ease-speech-pop) var(--scene-stagger-3) both;
+    }
+
+    .question-root {
+      position: absolute;
+      inset: 56px 0 0;
+      z-index: var(--z-interactive);
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+    }
+
+    .question-root.is-active {
+      pointer-events: auto;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity var(--dur) var(--ease), visibility 0s;
+    }
+
+    .answer-slot {
+      position: absolute;
+      left: 825px;
+      top: 585px;
+      width: 220px;
+      height: 125px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-bottom: 8px solid var(--surface);
+      border-radius: var(--r-none);
+      background: var(--clear);
+      color: var(--surface);
+      font-size: var(--fs-2xl);
+      font-weight: 900;
+      box-shadow: none;
+      transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
+      cursor: pointer;
+    }
+
+    .answer-slot.is-target {
+      transform: scale(1.06);
+      filter: brightness(1.08);
+    }
+
+    .answer-slot.is-correct {
+      border-bottom-color: var(--accent);
+      color: var(--burgundy);
+      animation: correctGlow 1.2s var(--ease) infinite alternate;
+    }
+
+    .answer-slot.is-wrong {
+      border-bottom-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .answer-slot[hidden] {
+      display: none;
+    }
+
+    .card-tray {
+      position: absolute;
+      left: 570px;
+      top: 750px;
+      display: flex;
+      gap: 38px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .interaction-guide {
+      position: absolute;
+      left: 460px;
+      top: 690px;
+      width: 1000px;
+      margin: 0;
+      color: var(--plate-ink);
+      font-size: var(--fs-2xs);
+      line-height: 1.35;
+      text-align: center;
+      text-wrap: balance;
+      word-break: keep-all;
+    }
+
+    .time-card {
+      position: relative;
+      width: 220px;
+      height: 230px;
+      padding: 0;
+      border: 0;
+      background: var(--clear);
+      cursor: grab;
+      transition: transform var(--dur-fast) var(--ease), filter var(--dur-fast) var(--ease);
+    }
+
+    .time-card:hover,
+    .time-card.is-selected {
+      transform: translateY(-12px) scale(1.04);
+      filter: brightness(1.06) var(--ds-md);
+    }
+
+    .time-card:active {
+      cursor: grabbing;
+    }
+
+    .time-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      filter: var(--ds-sm);
+      pointer-events: none;
+    }
+
+    .time-card span {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: var(--z-content);
+      color: var(--burgundy);
+      font-size: var(--fs-xl);
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    .time-card.returning {
+      animation: wrongReturn var(--dur) var(--ease-back);
+    }
+
+    .question-feedback {
+      position: absolute;
+      left: 410px;
+      top: 500px;
+      z-index: var(--z-effect);
+      width: 1100px;
+      height: 380px;
+      padding: 0;
+      border: 0;
+      border-radius: var(--r-none);
+      background: center / contain no-repeat url("assets/library-feedback-board.png");
+      color: var(--plate-ink);
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .question-feedback.wrong {
+      top: 500px;
+    }
+
+    .question-feedback[data-qa-advance] {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .feedback-copy {
+      position: absolute;
+      left: 290px;
+      top: 108px;
+      width: 700px;
+      height: 154px;
+      display: grid;
+      place-items: center;
+      font-size: var(--fs-xs);
+      line-height: 1.35;
+      text-align: center;
+      text-wrap: balance;
+      word-break: keep-all;
+    }
+
+    .question-feedback .c-feedbackStamp {
+      left: 168px;
+      top: 50%;
+      width: 225px;
+      height: 225px;
+    }
+
+    .hidden-keypad {
+      display: none;
+    }
+
+    .success-clock {
+      left: 780px;
+      top: 65px;
+      width: 360px;
+    }
+
+    .success-answer {
+      position: absolute;
+      left: 885px;
+      top: 650px;
+      z-index: var(--z-interactive);
+      width: 150px;
+      height: 157px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: var(--r-none);
+      background: var(--clear);
+      color: var(--burgundy);
+      font-size: var(--fs-xl);
+      font-weight: 900;
+      box-shadow: none;
+      transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+    }
+
+    .success-answer img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      filter: var(--ds-sm);
+      pointer-events: none;
+    }
+
+    .success-answer span {
+      position: relative;
+      z-index: var(--z-content);
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 70%;
+      white-space: nowrap;
+    }
+
+    .success-junior {
+      left: 40px;
+      bottom: -20px;
+      width: 360px;
+      height: 600px;
+    }
+
+    .success-students {
+      left: 385px;
+      top: 640px;
+      width: 420px;
+      height: 280px;
+      transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+    }
+
+    .success-librarian {
+      right: 35px;
+      bottom: -25px;
+      width: 445px;
+      height: 735px;
+    }
+
+    .c-speechBubble.success-speech {
+      left: 455px;
+      right: auto;
+      top: 385px;
+      translate: none;
+      width: 1010px;
+      height: 300px;
+    }
+
+    #activity1-success.active .success-clock {
+      animation: successClockEnter var(--dur-slow) var(--ease-back) both,
+        correctGlow var(--clock-glow-loop) var(--ease) var(--dur-slow) infinite alternate;
+    }
+
+    #activity1-success.active .success-answer {
+      animation: answerReveal var(--dur-slow) var(--ease-back) var(--scene-stagger-1) both;
+    }
+
+    #activity1-success.active .success-students {
+      animation: successStudentsEnter var(--dur-slow) var(--ease-back) calc(var(--scene-stagger-1) * 2) both;
+    }
+
+    #activity1-success.active .success-junior {
+      animation: successCharacterEnter var(--dur-slow) var(--ease-back) calc(var(--scene-stagger-1) * 3) both,
+        celebrateJump var(--celebrate-loop) var(--ease) var(--scene-repeat-delay) infinite;
+    }
+
+    #activity1-success.active .success-librarian {
+      animation: successCharacterEnter var(--dur-slow) var(--ease-back) calc(var(--scene-stagger-1) * 3) both,
+        applause var(--applause-loop) var(--ease) var(--scene-repeat-delay) infinite alternate;
+    }
+
+    #activity1-success.active .success-speech[data-state="visible"] {
+      animation: successBoardEnter var(--dur-slow) var(--ease-speech-pop) var(--scene-stagger-4) both;
+    }
+
+    #activity1-success.active .success-answer.is-exiting,
+    #activity1-success.active .success-students.is-exiting {
+      animation: none;
+      opacity: 0;
+      transform: translateY(12px) scale(.96);
+      pointer-events: none;
+    }
+
+    .repair-cta {
+      left: 535px;
+      top: 800px;
+      width: 850px;
+      height: 190px;
+      background-size: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .repair-cta .a11y-asset-label {
+      left: 0;
+      top: -60px;
+      width: 850px;
+      height: 370px;
+      margin: 0;
+      clip: auto;
+      overflow: visible;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .repair-cta.ready {
+      opacity: 1;
+      pointer-events: auto;
+      animation: heartPulse 1.7s var(--ease) infinite;
+    }
+
+    .repair-step-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: var(--z-flash);
+      display: grid;
+      place-items: center;
+      padding: 150px;
+      background: var(--veil);
+      color: var(--burgundy);
+      font-size: var(--fs-hero);
+      font-weight: 900;
+      line-height: 1.25;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--dur-slow) var(--ease);
+    }
+
+    .repair-step-overlay.show {
+      opacity: 1;
+    }
+
+    .c-topbar {
+      background: var(--clear);
+      border-color: var(--clear);
+    }
+
+    .c-topbarMenuLabel,
+    .c-lessonBarPct,
+    .c-topbarTitle,
+    .c-topbarStep,
+    .c-topbarSound,
+    .c-courseMenuTitle {
+      display: none;
+    }
+
+    /* 잠긴 차시의 공용 상태 문구는 숨기지 않아 빈 메뉴 항목으로 보이지 않게 한다. */
+    .c-courseMenuSoon {
+      display: inline;
+    }
+
+    .tutorial-clock .clock-hand.hour.is-emphasized {
+      background: var(--danger);
+    }
+
+    .c-topbarMenu {
+      min-width: 62px;
+      height: 48px;
+      border-color: var(--burgundy);
+      background: var(--cream);
+      color: var(--burgundy);
+    }
+
+    .c-topbarProgress {
+      border-color: var(--burgundy);
+      background: var(--cream);
+    }
+
+    .c-lessonBarTrack {
+      background: var(--teal-soft);
+    }
+
+    .c-lessonBarFill {
+      background: var(--surface);
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translate(-50%, 36px) scale(.94); }
+      to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    }
+
+    @keyframes slowPulse {
+      0%, 100% { filter: var(--ds-md) brightness(1); }
+      50% { filter: var(--ds-lg) brightness(1.09); }
+    }
+
+    @keyframes spinHand {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes worriedSway {
+      from { transform: rotate(-1.3deg); }
+      to { transform: rotate(1.3deg); }
+    }
+
+    @keyframes problemClockIn {
+      from { transform: scale(.96); }
+      to { transform: scale(1); }
+    }
+
+    @keyframes problemStudentsIn {
+      from { transform: translateY(24px); }
+      to { transform: translateY(0); }
+    }
+
+    @keyframes problemLibrarianIn {
+      from { transform: translateX(36px); }
+      to { transform: translateX(0); }
+    }
+
+    @keyframes problemBoardIn {
+      from { transform: scale(.92); }
+      to { transform: scale(1); }
+    }
+
+    @keyframes tutorialClockEnter {
+      from { opacity: .88; transform: translateY(-18px) scale(.94); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes tutorialJuniorEnter {
+      from { opacity: .88; transform: translateX(120px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes tutorialLibrarianEnter {
+      from { opacity: .88; transform: translateX(48px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes tutorialBoardEnter {
+      from { opacity: .88; transform: translateY(20px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes wrongReturn {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-22px) rotate(-2deg); }
+      75% { transform: translateX(22px) rotate(2deg); }
+    }
+
+    @keyframes correctGlow {
+      from { filter: var(--ds-md) drop-shadow(0 0 8px var(--glow)); }
+      to { filter: var(--ds-lg) drop-shadow(0 0 30px var(--glow)); }
+    }
+
+    @keyframes answerReveal {
+      from { opacity: .88; transform: translateY(20px) scale(.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes successClockEnter {
+      from { opacity: .88; transform: scale(.94); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes successStudentsEnter {
+      from { opacity: .88; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes successCharacterEnter {
+      from { opacity: .88; }
+      to { opacity: 1; }
+    }
+
+    @keyframes successBoardEnter {
+      from { opacity: .88; transform: translateY(18px) scale(.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes celebrateJump {
+      0%, 100% { transform: translateY(0); }
+      45% { transform: translateY(-28px); }
+      65% { transform: translateY(0); }
+    }
+
+    @keyframes applause {
+      from { transform: translateY(0); }
+      to { transform: translateY(-5px); }
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { filter: var(--ds-md) brightness(1); }
+      45% { filter: var(--ds-lg) brightness(1.09); }
+      60% { filter: var(--ds-md) brightness(1); }
+      75% { filter: var(--ds-lg) brightness(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <main id="stage" data-transition="fade">
+      <section class="scene active" id="activity1-title" data-qa-scene="activity1-title" data-qa-order="1" data-qa-label="활동 1 Scene 1. 타이틀 화면 (도입)" data-progress="0">
+        <img class="c-bg title-bg" src="assets/library-lobby-messy.png" alt="크림색 벽과 꿀빛 나무 바닥, 양쪽 책장과 안내 데스크가 있는 살짝 어질러진 마을 도서관 로비">
+        <div class="scene-shade" aria-hidden="true"></div>
+        <img class="main-title" src="assets/main-title-lettering.png" alt="시간이 뒤죽박죽! 수학의 힘으로 도서관 시계를 수리하라!">
+        <button class="c-ticketButton asset-cta start-cta" type="button" data-component="ticket-button" data-interaction-id="start-mission" data-qa-advance="activity1-problem" style="--cta-body:url('assets/cta-start.png')">
+          <img class="a11y-asset-label" src="assets/cta-start.png" alt="[시작하기]">
+          <span data-slot="label" hidden></span>
+        </button>
+      </section>
+
+      <section class="scene" id="activity1-problem" data-qa-scene="activity1-problem" data-qa-order="2" data-qa-label="활동 1 Scene 2. INTRO &amp; PROBLEM (문제 발생)" data-progress="0">
+        <img class="c-bg" src="assets/library-lobby-messy.png" alt="크림색 벽과 꿀빛 나무 바닥, 양쪽 책장과 안내 데스크가 있는 살짝 어질러진 마을 도서관 로비">
+        <div class="world-clock broken-clock" aria-label="시곗바늘이 빠르게 회전하는 고장 난 대형 시계">
+          <img src="assets/analog-clock-body.png" alt="버건디색 둥근 테두리와 크림색 문자판, 남색 눈금 12개와 중앙축 구멍이 있는 바늘 없는 원형 시계 몸체">
+          <span class="clock-hand hour" aria-hidden="true"></span>
+          <span class="clock-hand minute" aria-hidden="true"></span>
+          <span class="clock-pin" aria-hidden="true"></span>
+        </div>
+        <img class="student-group problem-students" src="assets/students-puzzled.png" alt="물음표를 띄운 채 서로 다른 방향을 바라보며 어리둥절해하는 도서관 이용 학생 세 명">
+        <img class="character problem-librarian" src="assets/librarian-worried.png" alt="고장 난 시계를 올려다보며 양손으로 머리 옆을 감싸고 걱정하는 사서 선생님">
+        <div class="c-speechBubble right-speaker problem-speech" data-component="speech-bubble" data-state="visible" data-qa-beat-next data-qa-advance="activity1-tutorial" role="button" tabindex="0" aria-label="다음 장면으로 이동">
+          <span data-slot="text">큰일 났어! 도서관 시계가 고장 나서 시간이 뒤죽박죽이야! 당장 독서 교실을 시작해야 하는데 언제인지 알 수가 없어. 누가 좀 도와주세요!</span>
+        </div>
+      </section>
+
+      <section class="scene" id="activity1-tutorial" data-qa-scene="activity1-tutorial" data-qa-order="3" data-qa-label="활동 1 Scene 3. TUTORIAL (조력자 등장 및 튜토리얼)" data-progress="0">
+        <img class="c-bg" src="assets/library-lobby-messy.png" alt="크림색 벽과 꿀빛 나무 바닥, 양쪽 책장과 안내 데스크가 있는 살짝 어질러진 마을 도서관 로비">
+        <div class="world-clock tutorial-clock" aria-label="짧은바늘이 3, 긴바늘이 12를 가리키는 탁상시계">
+          <img src="assets/desk-clock-body.png" alt="버건디색 받침대와 크림색 문자판, 남색 눈금 12개와 중앙축 구멍이 있는 바늘 없는 탁상시계 몸체">
+          <span class="clock-hand hour" aria-hidden="true"></span>
+          <span class="clock-hand minute" aria-hidden="true"></span>
+          <span class="clock-pin" aria-hidden="true"></span>
+        </div>
+        <img class="character tutorial-junior" src="assets/junior-confident.png" alt="가슴을 펴고 한 손을 높이 들어 자신 있게 미소 짓는 꼬마 사서">
+        <img class="character tutorial-librarian" src="assets/librarian-explaining.png" alt="작은 돋보기를 들고 열린 손으로 학습 대상을 안내하는 사서 선생님">
+
+        <div class="c-speechBubble left-speaker tutorial-speech junior-speech" data-component="speech-bubble" data-state="visible" data-beat="0" data-qa-beat-next role="button" tabindex="0">
+          <span data-slot="text">걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!</span>
+        </div>
+        <div class="c-speechBubble right-speaker tutorial-speech librarian-speech" data-component="speech-bubble" data-state="hidden" data-beat="1" data-qa-beat-next role="button" tabindex="0">
+          <span data-slot="text">다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?</span>
+        </div>
+
+        <div class="question-root" data-qa-question="tutorial-clock-question" aria-label="그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?">
+          <button class="answer-slot" type="button" data-qa-blank="0" data-qa-slot="0" aria-label="[?]">[?]</button>
+          <p class="interaction-guide">드래그 앤 드롭: 하단의 숫자 카드를 `[?]` 빈칸으로 드래그.<br>누르기 후 빈칸 누르기도 지원한다.</p>
+          <div class="card-tray">
+            <button class="time-card" type="button" draggable="true" data-qa-choice="0" data-qa-correct="true" data-qa-block="[3시]" data-value="[3시]">
+              <img src="assets/number-card-face.png" alt="중앙이 비어 있고 가장자리에 12개 눈금이 있는 크림색 세로형 보기 카드 면">
+              <span>[3시]</span>
+            </button>
+            <button class="time-card" type="button" draggable="true" data-qa-choice="1" data-qa-correct="false" data-qa-block="[4시]" data-value="[4시]">
+              <img src="assets/number-card-face.png" alt="중앙이 비어 있고 가장자리에 12개 눈금이 있는 크림색 세로형 보기 카드 면">
+              <span>[4시]</span>
+            </button>
+            <button class="time-card" type="button" draggable="true" data-qa-choice="2" data-qa-correct="false" data-qa-block="[5시]" data-value="[5시]">
+              <img src="assets/number-card-face.png" alt="중앙이 비어 있고 가장자리에 12개 눈금이 있는 크림색 세로형 보기 카드 면">
+              <span>[5시]</span>
+            </button>
+          </div>
+          <div class="question-feedback correct" data-qa-feedback="correct" data-qa-advance="activity1-success" role="button" tabindex="0" aria-label="다음 장면으로 이동" aria-live="polite" hidden>
+            <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-stamp-correct.png" data-wrong-src="assets/feedback-stamp-wrong.png" alt="">
+            <span class="feedback-copy">맞았어! 긴바늘이 12를 가리키면 짧은바늘이 가리키는 숫자 그대로 3시 정각이야.</span>
+          </div>
+          <div class="question-feedback wrong" data-qa-feedback="wrong" aria-live="polite" hidden>
+            <img class="c-feedbackStamp" data-component="feedback-stamp" data-correct-src="assets/feedback-stamp-correct.png" data-wrong-src="assets/feedback-stamp-wrong.png" alt="">
+            <span class="feedback-copy">다시 볼까? 긴바늘이 12에 있으니까, 짧은바늘이 가리키는 숫자를 읽으면 돼.</span>
+          </div>
+        </div>
+
+        <div class="c-keypadWrap hidden-keypad" data-component="keypad" hidden aria-hidden="true">
+          <div class="c-answerDisplay" data-slot="display"></div>
+          <div class="c-keypad" data-slot="keys"></div>
+        </div>
+      </section>
+
+      <section class="scene" id="activity1-success" data-qa-scene="activity1-success" data-qa-order="4" data-qa-label="활동 1 Scene 4. SUCCESS (수리 성공 및 다음 단계 전환)" data-progress="10">
+        <img class="c-bg" src="assets/library-lobby-messy.png" alt="크림색 벽과 꿀빛 나무 바닥, 양쪽 책장과 안내 데스크가 있는 살짝 어질러진 마을 도서관 로비">
+        <div class="world-clock success-clock" aria-label="짧은바늘이 3, 긴바늘이 12를 가리키며 빛나는 수리된 시계">
+          <img src="assets/analog-clock-body.png" alt="버건디색 둥근 테두리와 크림색 문자판, 남색 눈금 12개와 중앙축 구멍이 있는 바늘 없는 원형 시계 몸체">
+          <span class="clock-hand hour" aria-hidden="true"></span>
+          <span class="clock-hand minute" aria-hidden="true"></span>
+          <span class="clock-pin" aria-hidden="true"></span>
+        </div>
+        <div class="success-answer">
+          <img src="assets/number-card-face.png" alt="중앙이 비어 있고 가장자리에 12개 눈금이 있는 크림색 정답 인증 플레이트">
+          <span>[3시]</span>
+        </div>
+        <img class="character success-junior" src="assets/junior-success.png" alt="두 팔을 들고 작게 뛰어오르며 기뻐하는 꼬마 사서">
+        <img class="student-group success-students" src="assets/students-happy.png" alt="웃는 얼굴 기호를 띄운 채 밝게 웃으며 수리 성공을 기뻐하는 동일한 도서관 이용 학생 세 명">
+        <img class="character success-librarian" src="assets/librarian-celebrating.png" alt="버건디 조끼와 짙은 숲색 치마를 입은 사서 선생님이 가슴 앞에서 박수 치며 환하게 웃는 전신 모습">
+        <div class="c-speechBubble right-speaker success-speech" data-component="speech-bubble" data-state="visible" data-qa-beat-next role="button" tabindex="0" aria-label="다음 단계 버튼 보기">
+          <span data-slot="text">와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!</span>
+        </div>
+        <button class="c-ticketButton asset-cta repair-cta" type="button" data-component="ticket-button" data-interaction-id="go-to-repair" style="--cta-body:url('assets/cta-to-repair.png')">
+          <img class="a11y-asset-label" src="assets/cta-to-repair.png" alt="[좋아요! 본격적으로 수리하러 가기 →]">
+          <span data-slot="label" hidden></span>
+        </button>
+        <div class="repair-step-overlay" aria-live="polite">[STEP 2. 수리로 해결해요]</div>
+      </section>
+
+      <header class="c-topbar" data-component="topbar" data-state="hidden">
+        <div class="c-topbarLeft">
+          <button class="c-topbarMenu" type="button" data-action="menu" data-interaction-id="open-lesson-menu" aria-haspopup="true" aria-expanded="false">
+            <span class="c-topbarBurger" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="c-topbarMenuLabel">목록</span>
+          </button>
+          <button class="c-topbarSound" type="button" data-action="sound" aria-pressed="true" aria-label="소리 끄기" title="소리 끄기">
+            <svg class="c-topbarSoundIcon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+              <path class="c-topbarSpeaker" d="M7 20.5h7.4L24 13.4v21.2l-9.6-7.1H7z"></path>
+              <path class="c-topbarWave" d="M29.2 19.1c1.8 3 1.8 6.8 0 9.8"></path>
+              <path class="c-topbarWave" d="M33.7 15.5c3.6 5.3 3.6 12.7 0 18"></path>
+            </svg>
+          </button>
+          <span class="c-topbarStep" data-slot="step" hidden></span>
+        </div>
+        <span class="c-topbarProgress">
+          <span class="c-lessonBar" data-slot="bar" role="img" aria-label="학습 진행률 0퍼센트">
+            <span class="c-lessonBarTrack"><span class="c-lessonBarFill" data-slot="fill"></span></span>
+            <span class="c-lessonBarPct" data-slot="pct">0%</span>
+          </span>
+        </span>
+        <div class="c-topbarTitle" data-slot="title"></div>
+      </header>
+
+      <div class="c-courseMenu" data-component="course-menu">
+        <div class="c-courseMenuPanel" role="dialog" aria-modal="true" aria-label="차시 목록">
+          <div class="c-courseMenuHead">
+            <span class="c-courseMenuGrade" data-slot="grade"></span>
+            <button class="c-courseMenuClose" type="button" data-action="close" aria-label="닫기">×</button>
+          </div>
+          <div class="c-courseMenuList" data-slot="list"></div>
+          <div class="c-courseMenuFoot">
+            <button class="c-courseMenuHome" type="button" data-action="home">↺ 처음으로</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="c-debugPanel" data-component="debug-jumper" data-interaction-id="debug-jump-scenes" hidden>
+        <div class="c-debugHead">
+          <strong>Scenes</strong>
+          <button type="button" data-action="close" aria-label="닫기">×</button>
+        </div>
+        <div class="c-debugCurrent" data-slot="current"></div>
+        <div class="c-debugList" data-slot="scene-list"></div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="common.js"></script>
+  <script>
+    (() => {
+      const STAGE_SCALE_EVENTS = ["resize", "orientationchange"];
+      const stage = document.getElementById("stage");
+      const titleScene = document.getElementById("activity1-title");
+      const problemScene = document.getElementById("activity1-problem");
+      const tutorialScene = document.getElementById("activity1-tutorial");
+      const successScene = document.getElementById("activity1-success");
+      const tutorialQuestion = tutorialScene.querySelector("[data-qa-question='tutorial-clock-question']");
+      const answerSlot = tutorialQuestion.querySelector("[data-qa-slot='0']");
+      const cards = Array.from(tutorialQuestion.querySelectorAll("[data-qa-block]"));
+      const correctFeedback = tutorialQuestion.querySelector("[data-qa-feedback='correct']");
+      const wrongFeedback = tutorialQuestion.querySelector("[data-qa-feedback='wrong']");
+      const correctStamp = correctFeedback.querySelector("[data-component='feedback-stamp']");
+      const wrongStamp = wrongFeedback.querySelector("[data-component='feedback-stamp']");
+      const juniorSpeech = tutorialScene.querySelector("[data-beat='0']");
+      const librarianSpeech = tutorialScene.querySelector("[data-beat='1']");
+      const tutorialLibrarian = tutorialScene.querySelector(".tutorial-librarian");
+      const startButton = titleScene.querySelector("[data-interaction-id='start-mission']");
+      const problemSpeech = problemScene.querySelector("[data-qa-beat-next]");
+      const successSpeech = successScene.querySelector("[data-qa-beat-next]");
+      const repairButton = successScene.querySelector("[data-interaction-id='go-to-repair']");
+      const repairStepOverlay = successScene.querySelector(".repair-step-overlay");
+      const successAnswer = successScene.querySelector(".success-answer");
+      const successStudents = successScene.querySelector(".success-students");
+      const hiddenKeypad = tutorialScene.querySelector("[data-component='keypad']");
+      const tutorialHourHand = tutorialScene.querySelector(".tutorial-clock .clock-hand.hour");
+      const CTA_REVEAL_DELAY_MS = 150;
+      const TITLE_EXIT_DELAY_MS = 420;
+      const PROBLEM_AUTO_ADVANCE_MS = 9000;
+      const TUTORIAL_FIRST_BEAT_MS = 4700;
+      const TUTORIAL_SECOND_BEAT_MS = 6500;
+      const WRONG_FEEDBACK_HOLD_MS = 5200;
+      const CORRECT_FEEDBACK_HOLD_MS = 6500;
+      const SUCCESS_SPEECH_HOLD_MS = 9000;
+      const REPAIR_OVERLAY_HOLD_MS = 1800;
+      let selectedCard = null;
+      let tutorialBeat = 0;
+      let flowTimer = null;
+
+      CommonSceneController.scaleStage(stage);
+      STAGE_SCALE_EVENTS.forEach(eventName => addEventListener(eventName, () => CommonSceneController.scaleStage(stage)));
+      const sceneController = CommonSceneController.createSceneController(stage);
+      CommonDebugJumper.init(stage.querySelector("[data-component='debug-jumper']"), sceneController);
+
+      const topbar = CommonTopbar.init(stage.querySelector("[data-component='topbar']"), {
+        menu: stage.querySelector("[data-component='course-menu']"),
+        title: "",
+        step: "",
+        progress: 0,
+        soundOn: true,
+        course: {
+          gradeLabel: "",
+          current: "01",
+          lessons: Array.from({ length: 10 }, (_, index) => index === 0
+            ? { no: 1, id: "01", title: "시간이 뒤죽박죽!" }
+            : { no: index + 1, title: "" })
+        },
+        onHome: () => sceneController.showScene("activity1-title"),
+        onNavigate: () => {},
+        followScenes: false
+      });
+
+      CommonKeypad.build(hiddenKeypad, () => {});
+      CommonKeypad.setEnabled(hiddenKeypad, false);
+
+      function showScene(sceneId) {
+        sceneController.showScene(sceneId);
+      }
+
+      function cancelFlowTimer() {
+        if (flowTimer === null) return;
+        clearTimeout(flowTimer);
+        flowTimer = null;
+      }
+
+      function scheduleFlow(callback, delay) {
+        cancelFlowTimer();
+        flowTimer = setTimeout(() => {
+          flowTimer = null;
+          callback();
+        }, delay);
+      }
+
+      function setTopbarForScene(sceneId) {
+        topbar.setHidden(sceneId === "activity1-title");
+        topbar.setProgress(sceneId === "activity1-success" ? 10 : 0);
+      }
+
+      function enterProblem() {
+        titleScene.classList.add("title-leaving");
+        scheduleFlow(() => showScene("activity1-problem"), TITLE_EXIT_DELAY_MS);
+      }
+
+      function enterTutorial() {
+        showScene("activity1-tutorial");
+      }
+
+      function resetTutorialPresentation() {
+        tutorialBeat = 0;
+        selectedCard = null;
+        tutorialQuestion.classList.remove("is-active");
+        clearFeedback();
+        CommonSpeechBubble.show(juniorSpeech, "걱정 마세요! 시계 보는 법을 잘 아는 제가 도와드릴게요!");
+        CommonSpeechBubble.hide(librarianSpeech);
+        cards.forEach(card => {
+          card.hidden = false;
+          card.classList.remove("is-selected", "returning");
+          card.disabled = false;
+        });
+        answerSlot.textContent = "[?]";
+        answerSlot.hidden = false;
+        answerSlot.classList.remove("is-correct", "is-wrong", "is-target");
+        answerSlot.disabled = false;
+        tutorialHourHand.classList.remove("is-emphasized");
+        tutorialLibrarian.src = "assets/librarian-explaining.png";
+        tutorialLibrarian.alt = "작은 돋보기를 들고 열린 손으로 학습 대상을 안내하는 사서 선생님";
+        scheduleFlow(advanceTutorialBeat, TUTORIAL_FIRST_BEAT_MS);
+      }
+
+      function advanceTutorialBeat() {
+        cancelFlowTimer();
+        if (tutorialBeat === 0) {
+          tutorialBeat = 1;
+          CommonSpeechBubble.hide(juniorSpeech);
+          CommonSpeechBubble.show(librarianSpeech, "다행이다! 그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?");
+          scheduleFlow(advanceTutorialBeat, TUTORIAL_SECOND_BEAT_MS);
+          return;
+        }
+        activateTutorialQuestion();
+      }
+
+      function activateTutorialQuestion() {
+        cancelFlowTimer();
+        tutorialBeat = 2;
+        CommonSpeechBubble.hide(juniorSpeech);
+        CommonSpeechBubble.show(librarianSpeech, "그럼 지금 멈춰있는 이 시계가 몇 시인지 먼저 확인해 줄래?");
+        tutorialQuestion.classList.add("is-active");
+      }
+
+      function selectCard(card) {
+        if (!tutorialQuestion.classList.contains("is-active") || card.disabled) return;
+        if (!wrongFeedback.hidden) {
+          cancelFlowTimer();
+          clearFeedback();
+          answerSlot.textContent = "[?]";
+          answerSlot.classList.remove("is-wrong");
+          tutorialLibrarian.src = "assets/librarian-explaining.png";
+          tutorialLibrarian.alt = "작은 돋보기를 들고 열린 손으로 학습 대상을 안내하는 사서 선생님";
+        }
+        selectedCard = card;
+        cards.forEach(item => item.classList.toggle("is-selected", item === card));
+        answerSlot.classList.add("is-target");
+      }
+
+      function clearFeedback() {
+        correctFeedback.hidden = true;
+        wrongFeedback.hidden = true;
+        CommonFeedbackLayer.hideStamp(correctStamp);
+        CommonFeedbackLayer.hideStamp(wrongStamp);
+        tutorialHourHand.classList.remove("is-emphasized");
+      }
+
+      function resetAfterWrong() {
+        if (wrongFeedback.hidden) return;
+        clearFeedback();
+        answerSlot.textContent = "[?]";
+        answerSlot.classList.remove("is-wrong");
+        cards.forEach(item => item.classList.remove("is-selected", "returning"));
+        selectedCard = null;
+        tutorialLibrarian.src = "assets/librarian-explaining.png";
+        tutorialLibrarian.alt = "작은 돋보기를 들고 열린 손으로 학습 대상을 안내하는 사서 선생님";
+      }
+
+      function evaluateCard(card) {
+        if (!card || card.disabled) return;
+        clearFeedback();
+        answerSlot.classList.remove("is-target");
+        cards.forEach(item => item.classList.remove("is-selected"));
+        selectedCard = null;
+
+        if (card.dataset.qaCorrect === "true") {
+          answerSlot.textContent = card.dataset.value;
+          answerSlot.classList.add("is-correct");
+          answerSlot.disabled = true;
+          cards.forEach(item => {
+            item.disabled = true;
+            item.hidden = item !== card;
+          });
+          card.hidden = true;
+          correctFeedback.hidden = false;
+          CommonFeedbackLayer.showStamp(correctStamp, "correct", { hold: true });
+          tutorialLibrarian.src = "assets/librarian-explaining.png";
+          tutorialLibrarian.alt = "작은 돋보기를 들고 열린 손으로 학습 대상을 안내하는 사서 선생님";
+          scheduleFlow(enterSuccessFromFeedback, CORRECT_FEEDBACK_HOLD_MS);
+          return;
+        }
+
+        answerSlot.textContent = card.dataset.value;
+        answerSlot.classList.add("is-wrong");
+        selectedCard = card;
+        card.classList.add("is-selected");
+        wrongFeedback.hidden = false;
+        CommonFeedbackLayer.showStamp(wrongStamp, "wrong", { hold: true });
+        tutorialHourHand.classList.add("is-emphasized");
+        tutorialLibrarian.src = "assets/librarian-idle.png";
+        tutorialLibrarian.alt = "버건디 조끼와 초록색 치마를 입고 편안하게 미소 짓는 사서 선생님의 전신 모습";
+        card.classList.remove("returning");
+        void card.offsetWidth;
+        card.classList.add("returning");
+        scheduleFlow(resetAfterWrong, WRONG_FEEDBACK_HOLD_MS);
+      }
+
+      function enterSuccessFromFeedback() {
+        if (correctFeedback.hidden) return;
+        cancelFlowTimer();
+        showScene("activity1-success");
+      }
+
+      function revealRepairButton() {
+        cancelFlowTimer();
+        if (repairButton.classList.contains("ready")) return;
+        CommonSpeechBubble.hide(successSpeech);
+        successAnswer.classList.add("is-exiting");
+        successStudents.classList.add("is-exiting");
+        setTimeout(() => repairButton.classList.add("ready"), CTA_REVEAL_DELAY_MS);
+      }
+
+      startButton.addEventListener("click", enterProblem);
+      problemSpeech.addEventListener("click", enterTutorial);
+      problemSpeech.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          enterTutorial();
+        }
+      });
+      [juniorSpeech, librarianSpeech].forEach(bubble => {
+        bubble.addEventListener("click", advanceTutorialBeat);
+        bubble.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            advanceTutorialBeat();
+          }
+        });
+      });
+
+      cards.forEach(card => {
+        card.addEventListener("click", () => selectCard(card));
+        card.addEventListener("dragstart", event => {
+          selectCard(card);
+          event.dataTransfer.setData("text/plain", card.dataset.value);
+          event.dataTransfer.effectAllowed = "move";
+        });
+      });
+
+      answerSlot.addEventListener("click", () => evaluateCard(selectedCard));
+      answerSlot.addEventListener("dragover", event => {
+        event.preventDefault();
+        answerSlot.classList.add("is-target");
+        event.dataTransfer.dropEffect = "move";
+      });
+      answerSlot.addEventListener("dragleave", () => answerSlot.classList.remove("is-target"));
+      answerSlot.addEventListener("drop", event => {
+        event.preventDefault();
+        const value = event.dataTransfer.getData("text/plain");
+        evaluateCard(cards.find(card => card.dataset.value === value));
+      });
+
+      correctFeedback.addEventListener("click", enterSuccessFromFeedback);
+      correctFeedback.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          enterSuccessFromFeedback();
+        }
+      });
+
+      successSpeech.addEventListener("click", revealRepairButton);
+      successSpeech.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          revealRepairButton();
+        }
+      });
+
+      repairButton.addEventListener("click", () => {
+        repairButton.disabled = true;
+        repairStepOverlay.classList.add("show");
+        stage.dispatchEvent(new CustomEvent("content:repairrequested", {
+          bubbles: true,
+          detail: { interactionId: "go-to-repair" }
+        }));
+        scheduleFlow(() => {
+          repairStepOverlay.classList.remove("show");
+          repairButton.disabled = false;
+          repairButton.focus();
+        }, REPAIR_OVERLAY_HOLD_MS);
+      });
+
+      addEventListener("common:scenechange", event => {
+        const sceneId = event.detail.sceneId;
+        cancelFlowTimer();
+        setTopbarForScene(sceneId);
+        if (sceneId === "activity1-problem") {
+          scheduleFlow(enterTutorial, PROBLEM_AUTO_ADVANCE_MS);
+        }
+        if (sceneId === "activity1-tutorial") {
+          resetTutorialPresentation();
+        }
+        if (sceneId === "activity1-success") {
+          repairButton.classList.remove("ready");
+          successAnswer.classList.remove("is-exiting");
+          successStudents.classList.remove("is-exiting");
+          repairStepOverlay.classList.remove("show");
+          repairButton.disabled = false;
+          CommonSpeechBubble.show(successSpeech, "와, 정답이야! 시계를 아주 잘 보는구나. 고마워, 덕분에 첫 번째 시계를 고쳤어. 이제부터 우리 도서관을 수학으로 구해줄거라 믿어!!");
+          scheduleFlow(revealRepairButton, SUCCESS_SPEECH_HOLD_MS);
+        }
+      });
+
+      window.__contentHarnessShowQuestion = function (questionId) {
+        if (questionId !== "tutorial-clock-question") return;
+        showScene("activity1-tutorial");
+        activateTutorialQuestion();
+      };
+
+      setTopbarForScene("activity1-title");
+    })();
+  </script>
+</body>
+</html>

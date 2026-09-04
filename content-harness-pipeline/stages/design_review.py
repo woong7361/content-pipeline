@@ -5,6 +5,7 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from stages.scripts.prompt_parts import downstream_input_view
 from stages.scripts.codex_client import CodexClient
 from stages.scripts.style_references import build_style_reference_prompt
 from stages.visual_qa import run_visual_qa
@@ -66,6 +67,7 @@ def review_design(
             output_schema=schema_path,
             output_path=model_output_path,
             model=model,
+            stage="design_review",
         )
         model_output = load_json(model_output_path)
 
@@ -158,7 +160,7 @@ SCREENSHOT_FILES:
 {json.dumps(screenshot_paths, ensure_ascii=False, indent=2)}
 
 INPUT_JSON:
-{json.dumps(input_data, ensure_ascii=False, indent=2)}
+{json.dumps(downstream_input_view(input_data), ensure_ascii=False, indent=2)}
 
 STYLE_REFERENCE_SET_JSON:
 {style_reference_json}

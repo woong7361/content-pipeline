@@ -7,7 +7,7 @@ from pathlib import Path
 from stages.scripts.source_resolve import teacher_root_from_input
 from stages.scripts.codex_client import PROVIDER_CODEX, create_prompt_client
 from stages.scripts.common_components import build_common_components_section
-from stages.scripts.prompt_parts import with_common_html_contract
+from stages.scripts.prompt_parts import downstream_input_view, with_common_html_contract
 from stages.scripts.style_references import build_style_reference_prompt
 
 
@@ -62,6 +62,7 @@ def refine_design(
         output_schema=output_schema_path or BUILDER_OUTPUT_SCHEMA,
         output_path=output_path,
         model=model,
+        stage="design_refine",
     )
 
 
@@ -131,7 +132,7 @@ OUTPUT_CONTRACT:
 {build_common_components_section(teacher_root_from_input(input_data))}
 
 INPUT_JSON:
-{json.dumps(input_data, ensure_ascii=False, indent=2)}
+{json.dumps(downstream_input_view(input_data), ensure_ascii=False, indent=2)}
 
 STYLE_REFERENCE_SET_JSON:
 {style_reference_json}

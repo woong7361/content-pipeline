@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 5,
+      "learning_goal_alignment": 5,
+      "feedback_scaffolding": 3,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 4
+  },
+  "axis_rationales": {
+    "content_fidelity": "grep -cF로 확인한 필수 체크리스트 106개 중 누락·불일치 0개다. 14개 문항의 prompt·choices·answer·비어 있지 않은 feedback과 elements[].rendered_text가 모두 원문 그대로 존재하며, 문항·장면 순서와 정답 처리도 planner와 일치한다.",
+    "learning_goal_alignment": "유형 A는 몇 분 전 시각, 유형 B는 걸린 시간과 끝나는 시각, 유형 C와 마무리 퀴즈는 1일·24시간 관계를 직접 다룬다. 팝업북도 편의점, 해시계, 요리 상황으로 개념의 실생활 적용을 연결하므로 모든 핵심 활동이 학습 목표에 직접 정렬된다.",
+    "feedback_scaffolding": "피드백이 전혀 없는 문항은 0개이며 오답 재선택, 3회 오답 후 정답 공개, 완료 메시지는 제공된다. 그러나 대부분의 정답 피드백은 '딩동댕!' 또는 '[시스템 재부팅 완료!]', 오답 피드백은 '다시 생각해보세요' 수준으로 결과와 다음 행동만 알리고 시간 계산 원리나 오답 이유를 설명하지 않아 3점이다.",
+    "interaction_flow_clarity": "도입부터 세 문제 유형, 복구, 팝업북까지 현재 조작과 단계 전환은 대체로 명확하다. 다만 팝업북 세 번째 페이지에서는 ▶가 사라진 뒤 퀴즈로 자동 전환되지 않고, 텍스트와 접근 가능한 이름이 없는 투명 버튼만 남아 사용자가 다음 행동을 알 수 없으므로 전체 흐름이 완료되지 않는다.",
+    "functional_integrity": "깨진 필수 기능 1개는 storybook_complete다. 데스크톱 브라우저 실측에서 마지막 팝업북 페이지를 본 뒤 2.2초가 지나도 activity3_storybook에 머물렀고 ▶는 숨겨졌으며 남은 출구는 opacity 0의 빈 버튼이었다. 객관식, 키패드, 숫자 블록, 마무리 퀴즈의 대표 경로는 정상 전환되었고 해당 검사에서 blocking page error는 없었다."
+  },
+  "weak_axes": [
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total 4.0으로 최소 총점 4.2에 미달하고 feedback_scaffolding·interaction_flow_clarity·functional_integrity가 각 최소 축 점수 4.0보다 낮다. 또한 필수 팝업북 완료 전환이 실제 사용자 흐름에서 도달 불가능해 required_interactions_reachable 하드 게이트를 충족하지 못한다. 평가는 데스크톱 학습 흐름에 한정했으며 디자인·asset 품질은 반영하지 않았다."
+}

@@ -51,6 +51,7 @@ def evaluate_content(
         output_schema=CONTENT_EVAL_OUTPUT_SCHEMA,
         output_path=output_path,
         model=model,
+        stage="content_eval",
     )
 
 

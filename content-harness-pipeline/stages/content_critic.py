@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from stages.scripts.prompt_parts import downstream_input_view
 from stages.scripts.codex_client import CodexClient
 
 
@@ -46,6 +47,7 @@ def critique_content(
         output_schema=CONTENT_CRITIQUE_OUTPUT_SCHEMA,
         output_path=output_path,
         model=model,
+        stage="content_critique",
     )
 
 
@@ -64,7 +66,7 @@ def build_prompt(
     rubric: dict,
 ) -> str:
     system_prompt = CONTENT_CRITIQUE_SYSTEM_PROMPT.read_text(encoding="utf-8")
-    input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
+    input_json = json.dumps(downstream_input_view(input_data), ensure_ascii=False, indent=2)
     planner_json = json.dumps(planner_output, ensure_ascii=False, indent=2)
     asset_json = json.dumps(asset_output, ensure_ascii=False, indent=2)
     builder_json = json.dumps(builder_output, ensure_ascii=False, indent=2)

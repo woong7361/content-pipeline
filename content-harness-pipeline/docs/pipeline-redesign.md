@@ -533,3 +533,30 @@ python -B ./runner.py --bootstrap-teacher teacher-b --from-run 2026-07-31_dfbc10
 - teacher 팔레트와 생성 asset 색의 일치를 누가 보증하는가. 지금은 `art_direction`이 asset과 CSS의 공통 출처인데, teacher가 팔레트를 덮으면 asset은 여전히 `art_direction`을 따른다.
 
 마지막 항목이 가장 큰 구멍이다. 8단계 전에 결정해야 한다.
+
+---
+
+## 2026-08-20 — 결정적 검증 층 되돌림
+
+이 문서가 확정했던 test spec 파생 + `functional_test` + FAIL-skip(5.4) + eval 3축 축소(5.5)를 **되돌렸다.**
+설계가 틀렸다기보다 **부작용이 이득보다 컸다.**
+
+관측:
+
+- `content_eval` 실행 횟수가 run당 4~5회(7월) → 0~1회(8월)로 떨어졌다. FAIL-skip 때문이다
+- builder 첫 HTML은 기능이 깨져 있는 것이 정상이라(`33/76`, `80/92`, `75/96`) FAIL-skip이 거의 항상 발동했다
+- 결과적으로 iteration 예산이 전부 기능 수리로 갔고 품질 축은 refine을 못 받았다
+- `2026-08-19_7c829ae6`: `functional 76/76 PASS` / `content_eval 3.08` / `design_review 11건`
+
+BDD 계약 + 생성 테스트로 대체하는 안도 실측했다. 계약 56개를 인터뷰에서 뽑아 Playwright 테스트를
+1회 생성해 돌린 결과 **27건 미통과 중 21건이 오탐**이었다(2단계 드롭, `data-qa-key="submit"`,
+hidden CTA 같은 관례를 생성기가 매번 다시 추측한다). 진짜 결함 5~6건은 전부 `design_review`·
+`content_eval`이 독립적으로 이미 지적한 것이었다. 산출물은 `runs/2026-08-19_7c829ae6/`의
+`7c829ae6_contract.md` · `7c829ae6_test.py` · `7c829ae6_contract_report.json`에 남아 있다.
+
+다시 도입한다면 지켜야 할 것:
+
+- **iteration 예산을 품질 루프와 나눠 쓰지 않는다.** 기능 수리 루프를 따로 돌리고, 품질 루프가
+  자기 예산을 새로 센다. 이번 실패의 직접 원인이 이 하나다
+- **FAIL-skip을 다시 넣지 않는다.** design·content 축은 버튼이 눌리는지와 대체로 무관하다
+- eval 축을 줄일 때는 **줄인 축을 판정할 곳이 실제로 있는지** 확인한다

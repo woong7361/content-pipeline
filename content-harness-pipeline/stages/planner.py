@@ -35,6 +35,7 @@ def plan(
         output_schema=PLANNER_OUTPUT_SCHEMA,
         output_path=output_path,
         model=model,
+        stage="planner",
     )
 
 

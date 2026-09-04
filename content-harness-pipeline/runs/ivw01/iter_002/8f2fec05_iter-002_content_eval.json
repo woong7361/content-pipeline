@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 5,
+      "learning_goal_alignment": 2,
+      "feedback_scaffolding": 5,
+      "interaction_flow_clarity": 2,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.56
+  },
+  "axis_rationales": {
+    "content_fidelity": "누락·불일치 0개. grep -cF로 rendered_text 13개와 tutorial-clock-question의 prompt·answer·정답 피드백·오답 피드백 4개를 대조한 결과 17개 모두 HTML에 원문 그대로 존재했다. questions[].choices는 빈 배열이며, 화면용 보기 [3시]·[4시]·[5시]도 rendered_text와 일치한다. 정답 처리는 [3시]로 일치하고 장면 순서도 activity1-title→problem→tutorial→success로 보존되었다.",
+    "learning_goal_alignment": "구현된 문항은 긴바늘이 12일 때 3시 정각을 읽는 기초 연습 하나뿐이다. page.goal의 핵심인 ‘몇 분 전’ 시각 읽기, 걸린 시간과 끝나는 시각, 1일과 24시간의 관계 및 12개 본 활동 문제는 실제 학습 활동으로 이어지지 않아 전체 학습 목표와의 정렬이 크게 부족하다.",
+    "feedback_scaffolding": "피드백이 없는 문항 0개. 유일한 문항에 정답과 오답 피드백이 모두 있으며, 긴바늘이 12일 때 짧은바늘의 숫자를 읽는 이유를 설명한다. 오답 후 재선택이 가능하고 정답 뒤 성공 대사와 다음 단계 CTA도 제공되어 개념 이해와 다음 행동을 구체적으로 지원한다.",
+    "interaction_flow_clarity": "시작 CTA와 카드 드래그·누르기 안내는 명확하지만, 도입·튜토리얼·성공 장면의 대사판 자체를 클릭해야 진행된다는 가시적 안내가 없다. 특히 성공 대사판을 클릭해야 수리 CTA가 나타나며, CTA를 눌러도 STEP 2 오버레이에서 멈춰 이후 활동이나 완료 흐름을 확인할 수 없어 사용자가 다음 행동을 추측하게 된다.",
+    "functional_integrity": "깨진 필수 기능 1개: go-to-repair. 1920×1080 데스크톱 실행에서 시작, 메뉴, 도입 전환, 튜토리얼 대사, 오답·재시도, 정답, 성공 장면 및 10% 진행 상태는 정상 동작했고 blocking runtime error도 없었다. 그러나 go-to-repair 클릭은 버튼을 비활성화하고 [STEP 2. 수리로 해결해요] 오버레이만 표시하며, 활동 2나 12개 본 문제로 전환하지 않는다."
+  },
+  "weak_axes": [
+    "learning_goal_alignment",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total 3.56으로 4.2 미만이며 learning_goal_alignment, interaction_flow_clarity, functional_integrity도 각 min_axis 4.0 미만이다. 또한 planner가 명시한 12개 본 활동과 완료 흐름에 도달할 수 없어 필수 학습 내용 및 required_interactions_reachable 하드 게이트를 충족하지 못한다. content_fidelity 5점은 정의된 문자열 체크리스트의 기계적 대조 결과이며 전체 page.goal 달성을 의미하지 않는다."
+}

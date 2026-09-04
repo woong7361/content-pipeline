@@ -1,0 +1,890 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-08-26T13:34:28+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_002/design_review/desktop.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_activity1_problem",
+      "path": "iter_002/design_review/desktop__01_activity1_problem.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__01_activity1_problem.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_activity1_tutorial",
+      "path": "iter_002/design_review/desktop__02_activity1_tutorial.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__02_activity1_tutorial.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_activity1_success",
+      "path": "iter_002/design_review/desktop__03_activity1_success.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__03_activity1_success.webp",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "무대 채움, 도서관 세계관, 시계·안내판 표면 통합은 전반적으로 좋다. 그러나 must_follow 참조와 비교하면 메인 타이틀과 캐릭터군의 선·명암·재질 언어가 명백히 다르고, 성공 씬의 정답 값은 물리 표면 없이 바닥 위 HTML 라벨처럼 떠 있다. 이 high severity 문제들 때문에 다음 refine 전에는 REJECT를 권고한다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop.webp",
+      "scene_purpose": "도서관 시계 수리 미션을 소개하고 시작 CTA를 제시한다.",
+      "overall_assessment": "화면을 가득 채우는 대문 구도와 CTA 위계는 명확하지만, 메인 타이틀의 깊은 압출·다중 베벨이 참조와 planner 계약을 정면으로 위반한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 수리 의뢰소 대문",
+        "rationale": "현재 책·시계·대출표 은유는 충분히 강하므로 구조를 바꾸기보다 타이틀을 얕은 실물 간판처럼 정리하는 편이 적합하다.",
+        "core_metaphor": "도서관 입구에 걸린 시계 수리 의뢰 간판과 대출표",
+        "visual_language": "짙은 남색 단일 외곽선, 버건디 기본 면, 금색 소량 강조, 2~3단계의 얕은 명암",
+        "layout_strategy": "현재 중앙 타이틀과 하단 CTA 위치를 유지하되 타이틀의 시각 깊이와 장식 밀도를 낮춘다.",
+        "interaction_surfaces": [
+          "하단 대출표형 시작 CTA"
+        ],
+        "implementation_notes": [
+          "현재 타이틀과 CTA의 크기·중앙축은 유지한다.",
+          "타이틀 재생성 후 기존 .main-title 배치에 교체한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#activity1-title .start-cta; asset_id=cta-start; screenshot approx x=670..1250 y=789..951",
+            "issue": "구워진 CTA 라벨이 표면 중심보다 약 2px 위에 있으나 실질적인 가독성 결함은 아니다.",
+            "evidence": "대출표 표면 약 580×162px의 시각중심 대비 라벨 중심이 (0px, -2px) 치우쳐 있다.",
+            "suggested_fix": "CTA asset은 유지하고 재배치 시 현재 중심축을 보존하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -2,
+              "surface_w": 580,
+              "surface_h": 162
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=main-title-lettering; #activity1-title .main-title; screenshot approx x=270..1650 y=140..555",
+            "issue": "타이틀이 깊은 압출 로고와 다중 베벨·겹그림자로 표현되어 must_follow 참조 및 기존 negative_prompt와 명백히 다르다.",
+            "evidence": "실제 화면에는 글자마다 여러 겹의 버건디·남색 돌출층과 강한 음영이 보인다. 참조 surface-title-banner는 단일 굵은 테두리와 얕은 면·그림자만 사용하며, planner도 깊은 압출과 다중 베벨을 금지한다.",
+            "suggested_fix": "현재 문구와 외곽 실루엣은 유지하되 단일 남색 외곽선, 버건디 기본 면, 얕은 한 겹 그림자, 짧은 흰 하이라이트만 남긴 래스터 타이틀로 재생성하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "asset_id=cta-start; #activity1-title .start-cta",
+            "issue": "CTA의 물리적 티켓 형태와 위계는 적절하지만 광택·베벨 단계가 참조 CTA보다 과도하다.",
+            "evidence": "실제 CTA는 금색 면에 다중 내부 테두리와 넓은 광택 띠가 있어 얕은 두께와 단순한 상태 언어를 가진 cta-activity-body보다 게임 로고 부품처럼 보인다.",
+            "suggested_fix": "이번 라운드에는 asset을 유지하고 hover·press 상태에서 추가 광택을 늘리지 말라. 다음 CTA 재생성 시 명암을 2~3단계로 제한하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=main-title-lettering; #activity1-title .main-title",
+          "issue": "must_follow 참조와 금지 조건을 위반한 깊은 압출 타이틀이다.",
+          "evidence": "참조의 얕은 단일 표면과 달리 실제 화면에는 다중 베벨·돌출·겹그림자가 명확하다.",
+          "suggested_fix": "문구는 그대로 두고 얕은 2~3단계 명암의 도서관 간판 타이틀로 재생성하라."
+        }
+      ],
+      "refine_suggestions": [
+        "재생성한 main-title-lettering을 기존 .main-title 위치와 1380px 폭에 그대로 교체하라.",
+        "타이틀과 CTA 사이의 현재 수직 간격 및 중앙 정렬은 유지하라."
+      ]
+    },
+    {
+      "scene_id": "01_activity1_problem",
+      "capture_label": "01_activity1_problem",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__01_activity1_problem.webp",
+      "scene_purpose": "고장 난 대형 시계와 도서관 이용자들의 혼란을 보여 주고 도움을 요청한다.",
+      "overall_assessment": "시계, 학생, 사서, 안내판의 시선 흐름과 무대 점유율은 좋다. 다만 캐릭터 렌더링이 참조보다 가늘고 섬세한 만화풍이며 공용 topbar는 장면 밖 웹 UI처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 시간 관제대 고장 경보",
+        "rationale": "중앙 대형 시계와 하단 안내판만으로 문제 상황이 즉시 읽히므로 은유를 교체할 필요는 없다.",
+        "core_metaphor": "고장 난 중앙 시계 아래의 도서관 관제 안내판",
+        "visual_language": "배경은 따뜻하고 낮은 대비, 시계·안내판은 굵은 남색 외곽선, 인물은 참조의 중간 굵기 갈색 선",
+        "layout_strategy": "현재 삼각 구도를 유지하고 캐릭터 작화와 topbar 재질만 통일한다.",
+        "interaction_surfaces": [
+          "중앙 하단 library-dialogue-board",
+          "좌상단 메뉴 버튼"
+        ],
+        "implementation_notes": [
+          "안내판과 시계 위치는 유지한다.",
+          "사서와 학생 asset을 참조 렌더링 언어로 교체한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#activity1-problem .problem-speech [data-slot='text']; asset_id=library-dialogue-board",
+            "issue": "대사 블록이 안내판 내부 시각중심보다 약 7px 아래에 있다.",
+            "evidence": "크림색 표시 면 약 870×116px 기준으로 텍스트 bbox 중심이 표면중심 대비 (0px, +7px)이다. 경계 이탈이나 겹침은 없다.",
+            "suggested_fix": "텍스트 슬롯을 translateY(-7px) 하거나 top을 75px로 조정하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 7,
+              "surface_w": 870,
+              "surface_h": 116
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=librarian-worried, students-puzzled; #activity1-problem .problem-librarian, .problem-students",
+            "issue": "캐릭터의 선과 명암이 must_follow 캐릭터 참조의 작화 계약과 명백히 다르다.",
+            "evidence": "teacher-idle·teacher-praising 참조는 짙은 갈색 중간 굵기 외곽선과 단순한 2~3단계 명암을 사용한다. 실제 사서와 학생은 얇은 세피아 선, 섬세한 주름선, 부드러운 그라데이션이 강한 만화 일러스트로 보인다.",
+            "suggested_fix": "인물 정체성은 유지하고 참조의 외곽선 굵기, 눈·표정 단순화, 2~3단계 명암만 엄격히 적용해 두 asset을 재생성하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "#activity1-problem .c-topbarMenu .c-topbarBurger",
+            "issue": "햄버거 기호 정렬은 정확하지만 표면은 장면형 소품이 아닌 일반 웹 버튼이다.",
+            "evidence": "62×48px 버튼 중심 대비 기호 중심 오프셋은 (0px, 0px)이다. 문제는 정렬이 아니라 크림 단색 pill과 얇은 선만으로 된 재질 부재다.",
+            "suggested_fix": "이번 라운드에는 위치와 정렬을 유지하고, 다음 asset 라운드에서 도서관 책갈피 탭 형태의 topbar 표면을 적용하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 62,
+              "surface_h": 48
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#activity1-problem ~ .c-topbar; .c-topbarMenu; .c-topbarProgress",
+            "issue": "상단 메뉴와 진행률이 도서관 무대와 분리된 일반 웹 toolbar처럼 보인다.",
+            "evidence": "화면 상단 56px가 평면 크림 띠, rounded menu, capsule progress로 구성되어 안내판·시계의 굵은 프레임 및 물리적 두께 언어와 연결되지 않는다.",
+            "suggested_fix": "현재 기능과 좌표는 유지하되 다음 asset 라운드에서 책등형 메뉴 탭과 대출 기록 레일형 진행 표면을 제공하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_activity1_problem",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=librarian-worried, students-puzzled",
+          "issue": "must_follow 캐릭터 작화 계약과 다른 얇은 선·그라데이션 만화풍이다.",
+          "evidence": "참조보다 외곽선이 가늘고 주름·그라데이션 밀도가 높다.",
+          "suggested_fix": "캐릭터 정체성은 보존하고 참조의 선·명암·표정 단순화만 적용해 재생성하라."
+        },
+        {
+          "scene_id": "01_activity1_problem",
+          "severity": "medium",
+          "axis": "card_button_panel_style",
+          "target": ".c-topbar, .c-topbarMenu, .c-topbarProgress",
+          "issue": "공용 topbar가 장면과 분리된 웹 UI처럼 보인다.",
+          "evidence": "장면의 두꺼운 물리 프레임과 달리 상단은 단색 띠와 일반 capsule로 구성된다.",
+          "suggested_fix": "다음 asset 라운드에서 책갈피 탭과 대출 기록 레일 표면으로 교체하라."
+        }
+      ],
+      "refine_suggestions": [
+        "문제 씬 안내판 텍스트 슬롯을 7px 위로 이동하라.",
+        "librarian-worried와 students-puzzled를 참조 렌더링 언어로 재생성해 동일 좌표에 교체하라.",
+        "시계·안내판·배경의 현재 크기와 위치는 유지하라."
+      ]
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "capture_label": "02_activity1_tutorial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__02_activity1_tutorial.webp",
+      "scene_purpose": "꼬마 사서와 사서가 정각 시계 읽기 튜토리얼을 시작한다.",
+      "overall_assessment": "탁상시계와 안내판이 중심 학습 대상으로 잘 읽히지만, 두 캐릭터의 참조 화풍 불일치와 성인 대비 지나치게 큰 어린이 스케일이 세계의 비례감을 약화한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "꼬마 사서의 시각 판독 데스크",
+        "rationale": "탁상시계-안내판-두 조력자의 구조가 이미 학습 목표와 잘 연결되어 있어 스케일과 등장 순서 보정이 핵심이다.",
+        "core_metaphor": "도서관 데스크에서 수행하는 첫 시계 판독 훈련",
+        "visual_language": "탁상시계와 안내판은 굵고 선명하게, 캐릭터는 참조의 단순한 선과 명암으로 보조한다.",
+        "layout_strategy": "중앙 학습 장치를 유지하고 꼬마 사서를 성인 높이의 약 70~75%로 축소한다.",
+        "interaction_surfaces": [
+          "중앙 library-dialogue-board",
+          "좌상단 메뉴 버튼"
+        ],
+        "implementation_notes": [
+          "꼬마 사서의 바닥 접점은 유지하며 폭과 높이만 축소한다.",
+          "시계·꼬마 사서·사서·안내판을 순차 등장시킨다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#activity1-tutorial .tutorial-speech [data-slot='text']; asset_id=library-dialogue-board",
+            "issue": "한 줄 대사 중심이 안내판 표시 면보다 오른쪽 9px, 아래 8px 치우쳐 있다.",
+            "evidence": "표시 면 약 1000×122px의 시각중심 대비 텍스트 bbox 중심은 (+9px, +8px)이다.",
+            "suggested_fix": "텍스트 슬롯에 translate(-9px, -8px)를 적용하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 9,
+              "dy_px": 8,
+              "surface_w": 1000,
+              "surface_h": 122
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=junior-confident, librarian-explaining; #activity1-tutorial .tutorial-junior, .tutorial-librarian",
+            "issue": "두 캐릭터 모두 must_follow 참조보다 외곽선이 가늘고 그라데이션·의복 주름이 많다.",
+            "evidence": "student-idle과 teacher-idle 참조는 굵기가 안정된 외곽선과 단순한 면 명암을 사용하지만 실제 asset은 섬세한 세피아 선과 부드러운 음영을 사용한다.",
+            "suggested_fix": "정체성과 현재 포즈·시선은 유지하고 참조의 선 굵기, 2~3단계 명암, 단순한 손·표정 언어로 재생성하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#activity1-tutorial .tutorial-junior; .tutorial-librarian",
+            "issue": "같은 전경 평면에 선 두 캐릭터 중 어린이가 성인 높이의 약 85%로 보여 planner의 어린이/성인 비례가 약해진다.",
+            "evidence": "픽셀상 꼬마 사서의 가시 높이는 약 504px, 사서는 약 592px이다. 4.25등신 어린이가 7.25등신 성인과 거의 같은 키로 보인다.",
+            "suggested_fix": ".tutorial-junior를 width 약 330px, height 약 570px로 축소하고 발 접점은 현재 위치에 유지하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#activity1-tutorial .c-topbarMenu .c-topbarBurger",
+            "issue": "메뉴 기호는 중앙 정렬됐지만 물리적 도서관 표면과 통합되지 않았다.",
+            "evidence": "62×48px 표면 중심 대비 기호 중심 오프셋은 (0px, 0px)이다.",
+            "suggested_fix": "정렬은 유지하고 다음 라운드의 topbar 표면 asset에 동일한 기호를 오버레이하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 62,
+              "surface_h": 48
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#activity1-tutorial ~ .c-topbar; .c-topbarMenu; .c-topbarProgress",
+            "issue": "topbar가 튜토리얼 무대 위에 붙은 일반 웹 toolbar처럼 보인다.",
+            "evidence": "도서관 안내판·시계의 두께와 리벳 언어가 상단 메뉴·진행 바에는 없다.",
+            "suggested_fix": "다음 asset 라운드에서 물리적인 책갈피 메뉴 탭과 대출 기록 레일 표면으로 교체하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=junior-confident, librarian-explaining",
+          "issue": "must_follow 캐릭터 작화 언어와 다른 결과물이다.",
+          "evidence": "참조보다 선이 가늘고 음영·주름 디테일이 많다.",
+          "suggested_fix": "현재 정체성과 포즈를 보존해 참조 선·명암 언어로 재생성하라."
+        },
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": ".tutorial-junior",
+          "issue": "꼬마 사서가 성인과 거의 같은 키로 보여 세계 비례가 흔들린다.",
+          "evidence": "가시 높이 비율이 약 504:592로 어린이가 성인의 약 85%다.",
+          "suggested_fix": "발 접점을 고정한 채 약 18% 축소하라."
+        },
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "medium",
+          "axis": "motion",
+          "target": "#activity1-tutorial.active; .tutorial-clock; .tutorial-junior; .tutorial-librarian; .tutorial-speech",
+          "issue": "튜토리얼 핵심 요소의 등장 순서가 충분히 분리되지 않는다.",
+          "evidence": ".tutorial-junior만 walkIn을 사용하고 시계·사서·안내판에는 scene 진입용 stagger delay가 없다.",
+          "suggested_fix": "시계 0ms, 꼬마 사서 140ms, 사서 300ms, 안내판 440ms 순으로 500~650ms entrance를 적용하라."
+        }
+      ],
+      "refine_suggestions": [
+        ".tutorial-junior의 폭을 약 330px, 높이를 약 570px로 줄이고 발 위치는 유지하라.",
+        "안내판 텍스트를 왼쪽 9px, 위쪽 8px 이동하라.",
+        "시계-꼬마 사서-사서-안내판 순으로 entrance delay를 추가하라."
+      ]
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "capture_label": "03_activity1_success",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_002\\design_review\\desktop__03_activity1_success.webp",
+      "scene_purpose": "첫 시계 수리 성공을 축하하고 본 수리 단계로 연결한다.",
+      "overall_assessment": "성공 감정과 중심 시계는 명확하지만, 정답 값이 물리 표면 없이 바닥에 떠 있고 학생의 웃는 기호가 안내판 하단 프레임과 충돌한다. 캐릭터 화풍도 참조 계약을 따르지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "첫 시계 수리 인증대",
+        "rationale": "현재 성공 장면은 캐릭터 축하와 대사판은 강하지만 정답 인증 장치가 빠져 있어 웹 결과 화면처럼 분리된다.",
+        "core_metaphor": "수리된 시계 아래에 인증 시간표가 꽂히는 도서관 수리 검수대",
+        "visual_language": "기존 number-card-face를 작은 인증 플레이트로 재사용하고 동적 [3시]를 중앙에 얹는다.",
+        "layout_strategy": "안내판 아래 중앙에 인증 플레이트를 두고 학생군은 프레임 아래로 내린다. CTA 전환 시 인증 플레이트와 학생군을 페이드아웃한다.",
+        "interaction_surfaces": [
+          "library-dialogue-board",
+          "number-card-face를 재사용한 정답 인증 플레이트",
+          "후속 cta-to-repair"
+        ],
+        "implementation_notes": [
+          "새 asset 없이 number-card-face를 재사용한다.",
+          "repair CTA가 ready가 될 때 정답 플레이트와 학생군을 먼저 180ms 페이드아웃한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "low",
+            "target": "#activity1-success .success-speech [data-slot='text']; asset_id=library-dialogue-board",
+            "issue": "성공 대사 블록이 안내판 표시 면보다 오른쪽 5px, 아래 11px 치우쳐 있다.",
+            "evidence": "표시 면 약 995×131px의 시각중심 대비 텍스트 bbox 중심은 (+5px, +11px)이다. 경계 이탈은 없다.",
+            "suggested_fix": "텍스트 슬롯에 translate(-5px, -11px)를 적용하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 5,
+              "dy_px": 11,
+              "surface_w": 995,
+              "surface_h": 131
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": "#activity1-success .success-answer; reuse asset_id=number-card-face; screenshot approx x=835..1085 y=650..755",
+            "issue": "동적 정답 [3시]가 asset 표면 없이 투명 배경과 CSS 밑줄 위에 떠 있어 장면 속 수리 결과로 통합되지 않는다.",
+            "evidence": "텍스트는 250×105px DOM 박스 중심에는 (+2px, -3px)로 정렬되지만, 실제로 보이는 표면은 CSS border-bottom 한 줄뿐이다. 따라서 일반 웹 정답 라벨처럼 보인다.",
+            "suggested_fix": "number-card-face를 약 150×157px 인증 플레이트로 재사용해 .success-answer의 배경에 배치하고 [3시]는 중앙 HTML 오버레이로 유지하라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 2,
+              "dy_px": -3,
+              "surface_w": 250,
+              "surface_h": 105
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=junior-success, librarian-celebrating, students-happy; #activity1-success .success-junior, .success-librarian, .success-students",
+            "issue": "성공 캐릭터군의 얇은 선과 부드러운 그라데이션이 must_follow 참조 화풍과 다르다.",
+            "evidence": "참조는 중간 굵기 갈색 외곽선과 제한된 명암을 사용하지만 실제 asset은 섬세한 만화선, 의복 주름, 넓은 그라데이션 음영을 사용한다.",
+            "suggested_fix": "현재 인물 정체성·박수·점프·표정은 유지하고 참조 선·명암 언어로 재생성하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#activity1-success .success-answer; asset_id=number-card-face",
+            "issue": "정답 표시가 시계 수리 무대의 물리적 interaction surface와 결합되지 않았다.",
+            "evidence": "중앙 하단에는 [3시]와 단일 밑줄만 있으며 주변 시계·안내판의 굵은 프레임, 두께, 그림자 언어가 전혀 없다.",
+            "suggested_fix": "기존 number-card-face를 정답 인증 플레이트로 배치하고 텍스트를 그 빈 면 중앙에 얹어라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 2,
+              "dy_px": -3,
+              "surface_w": 250,
+              "surface_h": 105
+            }
+          },
+          {
+            "severity": "medium",
+            "target": "#activity1-success .success-students; .success-speech; screenshot approx x=445..735 y=585..850",
+            "issue": "students-happy의 세 웃는 기호가 dialogue board 하단 프레임과 같은 y축에 걸려 우연한 장식처럼 충돌한다.",
+            "evidence": "안내판 하단 프레임은 약 y=600..630이고 웃는 기호 중심도 약 y=608에 놓인다.",
+            "suggested_fix": ".success-students의 top을 585px에서 약 640px로 내려 기호 상단이 안내판 아래에서 시작하게 하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#activity1-success .c-topbarMenu .c-topbarBurger",
+            "issue": "메뉴 기호는 중앙 정렬됐지만 표면 재질은 장면과 통합되지 않았다.",
+            "evidence": "62×48px 표면 중심 대비 기호 중심 오프셋은 (0px, 0px)이다.",
+            "suggested_fix": "현재 정렬은 유지하고 차후 topbar 표면 asset 위에 같은 기호를 얹어라.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 62,
+              "surface_h": 48
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "medium",
+            "target": "#activity1-success ~ .c-topbar; .c-topbarMenu; .c-topbarProgress",
+            "issue": "topbar가 성공 장면의 물리적 도서관 장치 언어와 연결되지 않는다.",
+            "evidence": "단색 띠와 일반 capsule progress가 시계·안내판의 두께, 나사, 테두리 언어와 다르다.",
+            "suggested_fix": "다음 asset 라운드에서 책갈피 메뉴 탭과 대출 기록 레일형 진행 표면으로 교체하라.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".success-answer; asset_id=number-card-face",
+          "issue": "정답 값이 물리 표면 없이 CSS 밑줄 위에 떠 있다.",
+          "evidence": "주변의 래스터 시계·안내판과 달리 [3시] 영역에는 asset 표면이 없다.",
+          "suggested_fix": "number-card-face를 소형 인증 플레이트로 재사용하고 동적 값을 중앙 오버레이하라."
+        },
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=junior-success, librarian-celebrating, students-happy",
+          "issue": "must_follow 참조와 다른 캐릭터 선·명암 언어다.",
+          "evidence": "참조보다 외곽선이 가늘고 그라데이션·주름 밀도가 높다.",
+          "suggested_fix": "정체성과 포즈를 유지해 참조 화풍으로 재생성하라."
+        },
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": ".success-students, .success-speech",
+          "issue": "웃는 기호가 안내판 하단 프레임과 충돌한다.",
+          "evidence": "기호 중심과 프레임이 모두 y≈608에 놓인다.",
+          "suggested_fix": "학생군을 약 55px 아래로 이동하라."
+        },
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "medium",
+          "axis": "motion",
+          "target": "#activity1-success.active; .success-clock; .success-answer; .success-students; .success-junior; .success-librarian; .success-speech",
+          "issue": "성공 장면의 요소들이 순차적 보상 연출 없이 거의 동시에 나타난다.",
+          "evidence": ".success-answer만 answerReveal을 사용하며 다른 요소에는 entrance delay가 없다. junior와 librarian의 반복 애니메이션은 진입 즉시 시작된다.",
+          "suggested_fix": "시계 글로우 0ms, 정답 플레이트 140ms, 학생 280ms, 두 캐릭터 420ms, 안내판 560ms 순으로 등장시켜라."
+        }
+      ],
+      "refine_suggestions": [
+        ".success-answer의 CSS 밑줄을 제거하고 number-card-face를 약 150×157px 배경 표면으로 재사용하라.",
+        "[3시] 텍스트는 새 표면 중앙에 HTML 오버레이로 유지하라.",
+        ".success-students의 top을 약 640px로 내려 안내판과 분리하라.",
+        "repair CTA가 ready가 될 때 정답 플레이트와 학생군을 180ms 동안 페이드아웃한 뒤 CTA를 표시하라.",
+        "성공 요소에 140ms 간격의 stagger entrance를 적용하라."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "공용 scene controller는 stageFadeIn/stageFadeOut을 사용하므로 즉시 스왑 결함은 없다. 문제 씬은 시계·학생·사서·안내판에 delay가 있어 양호하고, 정오답도 O/X asset, wrongReturn, correctGlow로 구분된다. 다만 튜토리얼과 성공 씬의 핵심 요소는 충분한 순차 등장 없이 한꺼번에 나타난다.",
+    "findings": [
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "02_activity1_tutorial",
+        "severity": "medium",
+        "target": "#activity1-tutorial.active; .tutorial-clock; .tutorial-junior; .tutorial-librarian; .tutorial-speech; @keyframes walkIn",
+        "issue": "튜토리얼 시계·두 캐릭터·안내판의 등장 순서가 분리되지 않는다.",
+        "evidence": "코드에는 `.tutorial-junior { animation: walkIn ... }`만 있고 `.tutorial-clock`, `.tutorial-librarian`, `.tutorial-speech`에는 scene 진입용 animation-delay가 없다.",
+        "suggested_fix": "시계 0ms, 꼬마 사서 140ms, 사서 300ms, 안내판 440ms 순으로 opacity+translate/scale entrance를 적용하라."
+      },
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "03_activity1_success",
+        "severity": "medium",
+        "target": "#activity1-success.active; .success-clock; .success-answer; .success-students; .success-junior; .success-librarian; .success-speech; @keyframes answerReveal",
+        "issue": "성공 보상 요소가 단계적으로 누적되지 않고 진입 직후 동시에 보인다.",
+        "evidence": "`.success-answer { animation: answerReveal ... }`, `.success-junior { animation: celebrateJump ... infinite }`, `.success-librarian { animation: applause ... infinite }`만 있으며 요소별 entrance delay가 없다.",
+        "suggested_fix": "시계 글로우 0ms, 정답 140ms, 학생 280ms, 캐릭터 420ms, 안내판 560ms로 stagger하고 반복 모션은 각 entrance 종료 뒤 시작하라."
+      }
+    ]
+  },
+  "asset_review": {
+    "overall_asset_fit": "배경, 시계, 안내판, 카드면, 피드백 도장, CTA 몸체는 도서관 세계관과 기능 표면에 대체로 적합하다. 예산 9개는 must_follow 계약을 크게 위반한 타이틀 1개와 캐릭터 pose 8개 재생성에 우선 사용한다.",
+    "keep_assets": [
+      {
+        "asset_id": "library-lobby-messy",
+        "reason": "참조 실내의 따뜻한 확산광, 중앙 safe zone, 하단 가구 crop을 잘 따른다.",
+        "suggested_action": "현재 crop과 크기를 유지한다."
+      },
+      {
+        "asset_id": "analog-clock-body",
+        "reason": "굵은 남색 외곽선, 크림 문자판, 빈 바늘 영역이 학습 조작물 계약에 적합하다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "desk-clock-body",
+        "reason": "analog-clock-body와 재질·선·정면 시점이 일관된다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "library-dialogue-board",
+        "reason": "동적 텍스트를 수용하는 빈 물리 표면과 지지 구조가 충분하다.",
+        "suggested_action": "asset은 유지하고 텍스트 슬롯 오프셋만 장면별 보정한다."
+      },
+      {
+        "asset_id": "library-feedback-board",
+        "reason": "도장 홈과 동적 문구 영역이 명확하게 분리돼 있다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "number-card-face",
+        "reason": "빈 중앙 safe zone과 시계 눈금 장식이 동적 값 오버레이에 적합하다.",
+        "suggested_action": "튜토리얼 카드뿐 아니라 성공 씬 정답 인증 플레이트로 재사용한다."
+      },
+      {
+        "asset_id": "feedback-stamp-correct",
+        "reason": "필수 정답 도장이 별도 래스터 물체로 제공된다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "feedback-stamp-wrong",
+        "reason": "필수 오답 도장이 별도 래스터 물체로 제공된다.",
+        "suggested_action": "현재 asset을 유지한다."
+      },
+      {
+        "asset_id": "cta-start",
+        "reason": "대출표형 CTA의 형태와 라벨 가독성이 적절하다.",
+        "suggested_action": "현재 asset을 유지하고 추가 광택 효과를 늘리지 않는다."
+      },
+      {
+        "asset_id": "cta-to-repair",
+        "reason": "긴 고정 문구를 수용하는 물리적 도서관 표면이다.",
+        "suggested_action": "현재 asset을 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "students-happy",
+        "reason": "웃는 기호가 성공 안내판 하단 프레임과 충돌한다.",
+        "suggested_action": "성공 씬에서 top을 약 640px로 내려 안내판 아래에 배치한다."
+      },
+      {
+        "asset_id": "junior-confident",
+        "reason": "성인 사서와 같은 평면에서 지나치게 크게 보인다.",
+        "suggested_action": "발 접점을 고정한 채 표시 크기를 약 18% 줄인다."
+      },
+      {
+        "asset_id": "junior-success",
+        "reason": "성공 씬에서도 어린이와 성인의 세계 비례를 더 명확히 할 필요가 있다.",
+        "suggested_action": "현재 좌측 앵커를 유지하며 성인 가시 높이의 약 70~75%가 되도록 축소한다."
+      },
+      {
+        "asset_id": "number-card-face",
+        "reason": "성공 정답 값이 물리 표면 없이 노출된다.",
+        "suggested_action": "성공 씬 중앙 하단에 약 150×157px 인증 플레이트로 재사용한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [
+      {
+        "asset_id": "main-title-lettering",
+        "priority": 1,
+        "impact": "첫 화면의 must_follow 계약 위반을 직접 해결하며 전체 콘텐츠의 첫인상을 교정한다.",
+        "reason": "현재 결과가 기존 style_constraints와 negative_prompt가 금지한 깊은 압출·다중 베벨을 사용한다.",
+        "suggested_action": "동일 문구와 도서관·시계 모티프를 유지하되 기존 얕은 명암 계약을 엄격히 준수해 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "librarian-worried",
+        "priority": 2,
+        "impact": "문제 발생 씬의 주요 감정 전달 캐릭터를 참조 화풍에 맞춘다.",
+        "reason": "현재 asset의 가는 선과 그라데이션 음영이 캐릭터 참조 및 art_direction과 다르다.",
+        "suggested_action": "characters의 librarian 정체성과 현재 걱정 pose를 유지한 채 기존 계약을 엄격히 적용해 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "librarian-explaining",
+        "priority": 3,
+        "impact": "튜토리얼의 핵심 조력자를 참조 화풍에 맞춰 시계·안내판과 통일한다.",
+        "reason": "현재 asset이 참조보다 섬세한 만화선과 복잡한 음영을 사용한다.",
+        "suggested_action": "characters의 identity와 현재 안내 pose를 유지한 채 기존 계약으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "librarian-celebrating",
+        "priority": 4,
+        "impact": "성공 씬의 대표 보상 캐릭터를 참조 화풍에 맞춘다.",
+        "reason": "현재 asset의 외곽선·주름·그라데이션이 teacher-praising 참조의 단순한 표현 범위를 벗어난다.",
+        "suggested_action": "characters의 identity와 박수 pose를 유지한 채 기존 계약으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "junior-confident",
+        "priority": 5,
+        "impact": "튜토리얼 주인공의 작화 언어를 student-idle 참조와 통일한다.",
+        "reason": "현재 asset이 참조보다 선이 가늘고 음영 단계가 많다.",
+        "suggested_action": "junior-librarian identity와 자신감 pose를 유지한 채 기존 계약으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "junior-success",
+        "priority": 6,
+        "impact": "성공 반응의 주인공 asset을 같은 캐릭터 및 참조 렌더링 언어로 통일한다.",
+        "reason": "현재 asset이 student-idle 참조보다 부드러운 그라데이션과 섬세한 선을 사용한다.",
+        "suggested_action": "junior-librarian identity와 점프 pose를 유지한 채 기존 계약으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "students-puzzled",
+        "priority": 7,
+        "impact": "문제 씬의 배경 인물군을 주인공 캐릭터와 동일한 선·명암 체계에 맞춘다.",
+        "reason": "현재 학생군도 참조보다 가는 선과 넓은 그라데이션을 사용한다.",
+        "suggested_action": "현재 세 학생의 수·배치·표정을 유지하고 기존 art_direction으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "students-happy",
+        "priority": 8,
+        "impact": "문제/성공 학생군의 상태 연속성과 must_follow 화풍을 함께 회복한다.",
+        "reason": "students-puzzled와 인물 연속성은 있으나 두 asset 모두 참조 선·명암 계약과 다르다.",
+        "suggested_action": "students-puzzled와 같은 인물·위치·복장을 유지하고 기존 art_direction으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "librarian-idle",
+        "priority": 9,
+        "impact": "오답 피드백에서 교체되는 기준 pose까지 동일 화풍으로 맞춰 상태 전환 시 이질감을 방지한다.",
+        "reason": "기준 pose도 다른 사서 pose와 같은 가는 선·그라데이션 문제를 공유한다.",
+        "suggested_action": "characters의 librarian identity와 중립 pose를 유지한 채 기존 계약으로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      }
+    ],
+    "new_asset_requests": [],
+    "deferred_asset_candidates": [
+      {
+        "target": ".c-topbar, .c-topbarMenu, .c-topbarProgress용 도서관 장치 표면",
+        "why_beneficial": "책갈피형 메뉴 탭과 대출 기록 레일을 래스터 표면으로 제공하면 반복되는 일반 웹 toolbar 인상을 제거할 수 있다.",
+        "why_deferred": "이번 ASSET_BUDGET 9개는 must_follow 계약을 위반한 타이틀과 캐릭터군 재생성에 우선 배정했다."
+      }
+    ]
+  },
+  "priority_findings": [
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_id=main-title-lettering; #activity1-title .main-title",
+      "issue": "must_follow 참조 및 planner 금지 조건과 다른 깊은 압출·다중 베벨 타이틀이다.",
+      "evidence": "실제 타이틀은 여러 겹의 돌출층과 강한 겹그림자를 사용하지만 참조는 단일 프레임과 얕은 명암을 사용한다.",
+      "suggested_fix": "문구를 보존한 채 단일 남색 외곽선과 2~3단계 얕은 명암의 래스터 간판으로 재생성하라."
+    },
+    {
+      "scene_id": "01_activity1_problem",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_id=librarian-worried, librarian-explaining, librarian-celebrating, librarian-idle, junior-confident, junior-success, students-puzzled, students-happy",
+      "issue": "반복 캐릭터군의 선·명암 언어가 must_follow 참조와 다르다.",
+      "evidence": "세 장면 모두 참조보다 가는 세피아 선, 복잡한 의복 주름, 부드러운 그라데이션이 반복된다.",
+      "suggested_fix": "정체성과 pose를 유지하고 참조의 중간 굵기 외곽선, 단순한 표정, 2~3단계 명암으로 재생성하라."
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": "#activity1-success .success-answer; reuse asset_id=number-card-face",
+      "issue": "동적 정답 [3시]가 물리 표면 없이 CSS 밑줄 위에 떠 있다.",
+      "evidence": "정렬은 DOM 박스 중심에 맞지만 실제 장면형 표면이 전혀 없다.",
+      "suggested_fix": "number-card-face를 소형 인증 플레이트로 재사용하고 동적 텍스트를 중앙에 얹어라."
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "severity": "medium",
+      "axis": "asset_component_fit",
+      "target": "#activity1-success .success-students, .success-speech",
+      "issue": "학생의 웃는 기호가 안내판 하단 프레임과 충돌한다.",
+      "evidence": "웃는 기호 중심과 프레임이 y≈608에서 겹친다.",
+      "suggested_fix": "학생군을 약 55px 아래로 이동하라."
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "severity": "medium",
+      "axis": "asset_component_fit",
+      "target": "#activity1-tutorial .tutorial-junior",
+      "issue": "꼬마 사서가 성인 사서 높이의 약 85%로 보여 비례가 불안정하다.",
+      "evidence": "픽셀 가시 높이가 약 504px 대 592px이다.",
+      "suggested_fix": "발 접점을 유지하며 꼬마 사서를 약 18% 축소하라."
+    },
+    {
+      "scene_id": "01_activity1_problem",
+      "severity": "medium",
+      "axis": "card_button_panel_style",
+      "target": ".c-topbar, .c-topbarMenu, .c-topbarProgress",
+      "issue": "공용 topbar가 도서관 장면과 분리된 일반 웹 UI처럼 보인다.",
+      "evidence": "단색 크림 띠와 capsule 형태가 안내판·시계의 물리 프레임 언어를 사용하지 않는다.",
+      "suggested_fix": "다음 asset 라운드에서 책갈피 메뉴 탭과 대출 기록 레일 표면으로 교체하라."
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "severity": "medium",
+      "axis": "motion",
+      "target": "#activity1-tutorial.active; .tutorial-clock; .tutorial-junior; .tutorial-librarian; .tutorial-speech",
+      "issue": "튜토리얼 요소의 순차 등장 연출이 부족하다.",
+      "evidence": "junior의 walkIn 외에 요소별 stagger delay가 없다.",
+      "suggested_fix": "0/140/300/440ms 순으로 시계·꼬마 사서·사서·안내판을 등장시켜라."
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "severity": "medium",
+      "axis": "motion",
+      "target": "#activity1-success.active; .success-clock; .success-answer; .success-students; .success-junior; .success-librarian; .success-speech",
+      "issue": "성공 보상 요소가 거의 동시에 나타난다.",
+      "evidence": "answerReveal 외에는 entrance delay가 없고 반복 동작이 즉시 시작된다.",
+      "suggested_fix": "140ms 간격으로 시계-정답-학생-캐릭터-안내판을 순차 등장시켜라."
+    }
+  ],
+  "refine_suggestions": [
+    "main-title-lettering을 기존 문구 그대로 얕은 단일 프레임의 도서관 간판으로 재생성하라.",
+    "사서 4 pose, 꼬마 사서 2 pose, 학생 2 상태를 캐릭터 정체성은 유지한 채 must_follow 참조의 선·명암 언어로 재생성하라.",
+    "성공 씬의 .success-answer에 number-card-face를 재사용하고 CSS 밑줄을 제거하라.",
+    "성공 씬의 students-happy를 약 55px 아래로 이동하라.",
+    "튜토리얼 꼬마 사서를 발 접점 기준으로 약 18% 축소하라.",
+    "문제·튜토리얼·성공 안내판 텍스트를 각각 약 7px 위, 9px 왼쪽/8px 위, 5px 왼쪽/11px 위로 보정하라.",
+    "튜토리얼과 성공 씬의 요소에 140~160ms 간격의 entrance stagger를 추가하라."
+  ]
+}

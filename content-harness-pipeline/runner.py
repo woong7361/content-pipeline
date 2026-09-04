@@ -22,13 +22,11 @@ from stages.content_evaluator import evaluate_content
 from stages.content_refiner import refine_content
 from stages.design_review import review_design
 from stages.design_refiner import refine_design
-from stages.functional_test import run_functional_test
 from stages.planner import plan
 from stages.planner_refine import format_review, refine_plan, review_refined
-from stages.scenario_author import to_cases
+from stages.scripts import agent_audit
 from stages.scripts.component_bundle import check_html_links, emit_common
 from stages.scripts.planner_check import check_planner, format_violations
-from stages.scripts.test_spec_derive import derive_test_spec, format_decision_report
 from validate import validate_file, validate_schema, write_result
 
 # Windows 콘솔 기본 인코딩(cp949)은 이 파이프라인이 쓰는 문장 부호를 못 실어 print에서
@@ -360,22 +358,6 @@ class RunContext:
         return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_content_eval.validation.json"
 
     @property
-    def test_spec_path(self) -> Path:
-        return self.run_dir / f"{self.brief_hash}_test_spec.json"
-
-    @property
-    def scenarios_path(self) -> Path:
-        return self.run_dir / f"{self.brief_hash}_scenarios.json"
-
-    @property
-    def test_report_path(self) -> Path:
-        return self.iter_dir / f"{self.brief_hash}_iter-{self.iteration}_test_report.json"
-
-    @property
-    def functional_screenshots_dir(self) -> Path:
-        return self.iter_dir / "functional_test"
-
-    @property
     def output_dir(self) -> Path:
         return self.run_dir / "output"
 
@@ -393,12 +375,25 @@ def load_json(path: Path) -> dict:
 
 
 def create_run_context(args: argparse.Namespace, brief_hash: str, iteration: str) -> RunContext:
-    return RunContext.create(
+    context = RunContext.create(
         brief_hash=brief_hash,
         iteration=iteration,
         runs_dir=args.runs_dir,
         run_id=getattr(args, "run_id", None),
     )
+    configure_agent_audit(context)
+    return context
+
+
+def configure_agent_audit(context: RunContext) -> Path:
+    """에이전트가 실제로 연 파일을 run 디렉토리에 기록하게 한다.
+
+    정보 차단 표는 페이로드 계약이지 격리가 아니다 — stage는 프로젝트 디렉토리를 cwd로 두고
+    샌드박스 없이 돌아서 다른 stage 산출물을 직접 열 수 있다. 막기 전에 **일어나는지부터** 본다.
+    """
+    audit_path = context.run_dir / f"{context.brief_hash}_agent_audit.jsonl"
+    agent_audit.configure(audit_path)
+    return audit_path
 
 
 def write_json(path: Path, data: dict, overwrite: bool = False) -> None:
@@ -1926,77 +1921,12 @@ def run_content_review_set(
     return design_review_result, critique_result, eval_result
 
 
-def run_test_spec_derive_stage(
-    *,
-    args: argparse.Namespace,
-    progress: ProgressReporter,
-    context: RunContext,
-) -> dict:
-    """planner 직후에 test spec을 파생한다. asset을 굽기 전에 사람이 결정할 수 있는 자리다.
-
-    spec은 planner의 결정적 파생물이라 코드 소유다 — common.css처럼 언제든 다시 만들 수 있으므로
-    덮어쓴다. 저작 시나리오 파일이 run 디렉토리에 있으면 합친다(경로는 runner가 정한다).
-    """
-    planner_output = load_json(context.planner_path)
-    spec = derive_test_spec(planner_output, source_name=context.planner_path.name)
-
-    if context.scenarios_path.exists():
-        authored = load_json(context.scenarios_path)
-        added = to_cases(authored)
-        spec["cases"].extend(added)
-        spec["coverage"]["authored_scenarios"] = len(added)
-        progress.line(f"test_spec 자유 시나리오 {len(added)}건 합침 ({context.scenarios_path.name})")
-
-    write_json(context.test_spec_path, spec, overwrite=True)
-    coverage = spec["coverage"]
-    progress.line(
-        f"test_spec cases={len(spec['cases'])} "
-        f"questions={coverage['questions_covered']}/{coverage['questions_total']} "
-        f"underivable={coverage['underivable_total']}"
-    )
-
-    if spec["underivable"] and not args.accept_test_gaps:
-        progress.line(format_decision_report(spec))
-        raise RuntimeError(
-            "test spec을 전부 파생하지 못했다. 위 보고를 보고 정한 뒤 "
-            "--accept-test-gaps 로 넘어가거나 planner/실행기를 고쳐 다시 돌린다"
-        )
-    if spec["underivable"]:
-        progress.line(
-            f"--accept-test-gaps: 문항 {coverage['questions_uncovered']}개는 검증되지 않은 채 진행한다"
-        )
-    return {"test_spec": str(context.test_spec_path), "coverage": coverage}
-
-
-def run_functional_test_stage(
-    *,
-    args: argparse.Namespace,
-    progress: ProgressReporter,
-    context: RunContext,
-) -> dict:
-    """굳은 spec을 현재 HTML에 실행한다. LLM 0회라 매 iteration 돌려도 게이트가 흔들리지 않는다."""
-    with progress.step(f"iter {context.iteration} functional_test", live=True):
-        report = run_functional_test(
-            spec_path=context.test_spec_path,
-            html_path=context.html_path,
-            output_path=context.test_report_path,
-            screenshots_dir=context.functional_screenshots_dir,
-        )
-    progress.line(
-        f"iter {context.iteration} functional_test {report['verdict']} "
-        f"passed={report['passed']}/{report['total']} hook_missing={report['hook_missing']} "
-        f"unsupported={report['unsupported']}"
-    )
-    return report
-
-
 def run_content_refine_stage(
     *,
     args: argparse.Namespace,
     progress: ProgressReporter,
     input_path: Path,
     context: RunContext,
-    test_report_path: Path | None = None,
 ) -> dict:
     agent_models = resolve_agent_models(args)
     agent_providers = resolve_agent_providers(args)
@@ -2018,7 +1948,6 @@ def run_content_refine_stage(
                 content_critique_path=context.content_critique_path,
                 run_dir=context.run_dir,
                 output_path=temp_builder_output_path,
-                test_report_path=test_report_path,
                 codex_bin=args.codex_bin,
                 claude_bin=args.claude_bin,
                 llm_provider=agent_providers[AGENT_CONTENT_REFINE],
@@ -2341,10 +2270,6 @@ def run(args: argparse.Namespace) -> dict:
             "planner": str(context.planner_path),
         }
 
-    # planner 직후·asset 이전에 파생한다. 파생 못 한 것이 있으면 이미지 수십 장을 굽기 전에
-    # 사람이 결정한다(run_test_spec_derive_stage가 멈춘다).
-    run_test_spec_derive_stage(args=args, progress=progress, context=context)
-
     if args.start_at in ("planner", "asset"):
         asset_result = run_asset_generator_only(args)
     else:
@@ -2392,7 +2317,6 @@ def run(args: argparse.Namespace) -> dict:
     latest_design_review_result: dict = {}
     latest_critique_result: dict = {}
     latest_eval_result: dict = {}
-    latest_functional_report: dict = {}
     status = "REJECT"
 
     for iteration_number in range(1, args.content_max_iterations + 1):
@@ -2400,32 +2324,6 @@ def run(args: argparse.Namespace) -> dict:
         context = create_run_context(args, brief_hash, iteration)
         context.iter_dir.mkdir(parents=True, exist_ok=True)
         progress.line(f"content quality loop iter {iteration}/{args.content_max_iterations:03d} start")
-
-        # 기능 축은 LLM 판정보다 먼저 돈다. 결정적이고 싸며, 그 관찰 기록이 content_refine의
-        # 입력이 되기 때문이다.
-        latest_functional_report = run_functional_test_stage(args=args, progress=progress, context=context)
-        functional_status = latest_functional_report.get("verdict", "REJECT")
-
-        # FAIL이면 그 iteration의 LLM 리뷰 3종을 건너뛴다(docs/pipeline-redesign.md 5.4).
-        # 기능이 깨진 HTML을 세 LLM이 읽어 봐야 같은 결함을 세 번 다른 말로 반복할 뿐이고,
-        # 그 토큰이 통째로 낭비된다. 깨진 것부터 고치고 다음 iteration에서 품질을 본다.
-        if functional_status != "PASS":
-            status = "REJECT"
-            if iteration_number >= args.content_max_iterations:
-                progress.line(
-                    f"content run REJECT terminal_reason=max_content_iterations "
-                    f"last_iteration={iteration} total_elapsed={format_duration(time.perf_counter() - started_at)}"
-                )
-                break
-            progress.line(f"iter {iteration} functional REJECT — LLM 리뷰를 건너뛰고 content_refine으로 간다")
-            builder_result = run_content_refine_stage(
-                args=args,
-                progress=progress,
-                input_path=input_path,
-                context=context,
-                test_report_path=context.test_report_path,
-            )
-            continue
 
         latest_design_review_result, latest_critique_result, latest_eval_result = run_content_review_set(
             args=args,
@@ -2491,15 +2389,12 @@ def run(args: argparse.Namespace) -> dict:
         # content 축: design_refine이 HTML을 다시 썼을 수 있으므로 그 뒤에 순차로 돈다.
         # content_refine이 마지막인 이유는 더 보수적인 stage이기 때문이다(CSS·레이아웃을
         # 건드리지 않는다). 반대로 두면 design_refine의 통짜 재작성이 content 수정을 지운다.
-        # (이 분기에 왔다는 것은 functional PASS라는 뜻이다 — REJECT면 위에서 리뷰를 건너뛰고
-        # content_refine으로 갔다.)
         if eval_status != "PASS":
             builder_result = run_content_refine_stage(
                 args=args,
                 progress=progress,
                 input_path=input_path,
                 context=context,
-                test_report_path=context.test_report_path,
             )
 
     progress.line(f"content run {status} total_elapsed={format_duration(time.perf_counter() - started_at)}")
@@ -2516,10 +2411,6 @@ def run(args: argparse.Namespace) -> dict:
         "content_critique": latest_critique_result.get("content_critique"),
         "content_eval": latest_eval_result.get("content_eval"),
         "threshold_errors": latest_eval_result.get("threshold_errors", []),
-        "functional_status": latest_functional_report.get("verdict"),
-        "functional_passed": latest_functional_report.get("passed"),
-        "functional_total": latest_functional_report.get("total"),
-        "test_spec": str(context.test_spec_path),
         "html": builder_result.get("html"),
         "output": builder_result.get("output"),
     }
@@ -2673,11 +2564,6 @@ def main() -> int:
             f"{DEFAULT_DESIGN_REVIEW_TIMEOUT_SECONDS}, because reading the full HTML and every asset takes longer "
             "than other stages."
         ),
-    )
-    parser.add_argument(
-        "--accept-test-gaps",
-        action="store_true",
-        help="test spec을 전부 파생하지 못해도 진행한다. 그 문항은 검증되지 않고 리포트에 unsupported로 남는다.",
     )
     parser.add_argument("--overwrite", action="store_true", help="Overwrite existing artifacts for the same run.")
     args = parser.parse_args()

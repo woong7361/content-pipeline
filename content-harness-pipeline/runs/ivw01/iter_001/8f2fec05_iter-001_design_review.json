@@ -1,0 +1,785 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-08-26T13:06:14+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_001/design_review/desktop.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_activity1_problem",
+      "path": "iter_001/design_review/desktop__01_activity1_problem.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__01_activity1_problem.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_activity1_tutorial",
+      "path": "iter_001/design_review/desktop__02_activity1_tutorial.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__02_activity1_tutorial.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_activity1_success",
+      "path": "iter_001/design_review/desktop__03_activity1_success.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__03_activity1_success.webp",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "배경·시계·어린이 캐릭터·대출표 CTA는 도서관 수리 모험을 충분히 전달하지만, 세 장면의 핵심 대사가 재질 asset 없는 대형 CSS 말풍선으로 떠 있고 시계 하단을 가린다. 튜토리얼 답 슬롯·정오답 피드백과 성공 시각판도 일반 웹 패널에 머물러 장면형 학습 경험의 통합도가 무너진다. must-follow 참조보다 과도하게 입체적인 타이틀과 성공 pose의 사서 정체성 변화도 재생성이 필요하므로 REJECT한다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop.webp",
+      "scene_purpose": "도서관 시계 수리 미션을 제시하고 시작 CTA를 선택하게 한다.",
+      "overall_assessment": "배경을 가득 채운 대문 구도와 대출표 CTA의 위계는 명확하다. 다만 타이틀의 깊은 압출·다중 베벨·강한 광택이 must-follow 참조의 단순한 면 명암과 선 위계에서 크게 벗어나 별도 게임 로고처럼 보인다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "도서관 대문 현판",
+        "rationale": "현재 대문 구도와 대출표 CTA는 유지하면서 타이틀만 도서관 벽에 걸린 얕은 현판처럼 정리하면 세계관 통일성이 회복된다.",
+        "core_metaphor": "수리 모험의 입장 현판과 대출표",
+        "visual_language": "버건디·남색 프레임, 크림 글자 면, 금색 한 단계 강조, 짧은 흰 하이라이트 한 줄",
+        "layout_strategy": "현재 타이틀과 CTA 중심축을 유지하고 배경의 중앙 벽 safe zone을 그대로 사용한다.",
+        "interaction_surfaces": [
+          "기존 cta-start 대출표 몸체"
+        ],
+        "implementation_notes": [
+          "타이틀 크기와 위치는 유지한다.",
+          "깊은 압출과 다중 그림자만 제거하고 2~3단계 면 명암으로 재생성한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=main-title-lettering; .main-title; screenshot approx x=275..1650 y=145..560",
+            "issue": "타이틀이 must-follow 참조 및 art_direction의 2~3단계 명암보다 훨씬 깊은 3D 압출 로고로 보인다.",
+            "evidence": "실제 screenshot에서 글자마다 두꺼운 돌출 옆면, 여러 겹의 검은 그림자와 금속성 광택이 반복된다. surface-title-banner와 prop 참조는 얕은 두께, 단순한 면 분할, 하이라이트 한 줄을 사용한다.",
+            "suggested_fix": "main-title-lettering을 같은 문구·팔레트·구도로 재생성하되 짙은 남색 외곽선, 기본 면, 얕은 그림자만 사용하고 깊은 압출·다중 베벨·강한 금속 광택을 제거한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "initial",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=main-title-lettering; .main-title",
+          "issue": "대문 타이틀의 강한 3D 표현이 must-follow 화풍 계약과 충돌한다.",
+          "evidence": "참조 UI 표면의 얕은 두께와 달리 깊은 압출·다중 베벨·강한 그림자가 화면의 가장 큰 면적을 차지한다.",
+          "suggested_fix": "문구와 현재 크기는 유지하고 타이틀을 참조의 외곽선·면 명암·하이라이트 밀도로 재생성한다."
+        }
+      ],
+      "refine_suggestions": [
+        "재생성한 main-title-lettering을 현재 .main-title 좌표와 폭 1380px에 그대로 교체한다.",
+        "배경 blur와 shade는 유지하되 타이틀 교체 후에도 CTA가 두 번째 위계로 읽히는지 확인한다."
+      ]
+    },
+    {
+      "scene_id": "01_activity1_problem",
+      "capture_label": "01_activity1_problem",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__01_activity1_problem.webp",
+      "scene_purpose": "고장 난 시계와 혼란스러운 이용자들을 보여 주어 도움의 필요성을 만든다.",
+      "overall_assessment": "고장 난 대형 시계, 걱정하는 사서, 학생 군집의 삼각 구도는 상황을 즉시 전달한다. 그러나 대사가 일반 웹 말풍선으로 중앙을 가로지르며 시계 하단과 장면의 깊이를 가려 장면 속 사건보다 UI 패널이 먼저 보인다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "도서관 시간 고장 신고판",
+        "rationale": "대사를 벽에 설치된 물리 안내판으로 흡수하면 고장 난 시계와 캐릭터 반응을 가리지 않으면서 문제 상황을 장면 안에서 전달할 수 있다.",
+        "core_metaphor": "시계 아래에 급히 켜진 도서관 고장 신고 안내판",
+        "visual_language": "남색 두께 프레임, 버건디 모서리, 크림 표시 면, 나사와 얕은 받침 구조",
+        "layout_strategy": "시계는 중앙 상단에 유지하고 안내판은 시계 외곽선 아래인 y=520 이후에 시작한다. 학생은 좌측, 사서는 우측을 유지한다.",
+        "interaction_surfaces": [
+          "빈 내부 면을 가진 library-dialogue-board",
+          "시계와 안내판 사이 최소 20px 간격"
+        ],
+        "implementation_notes": [
+          ".problem-speech의 CSS 배경·테두리를 제거하고 신규 안내판 asset을 배경으로 사용한다.",
+          "동적 대사 span은 안내판 내부 inset 48px에 HTML로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": ".problem-speech and .problem-speech [data-slot='text']; screenshot surface x=518..1490 y=518..652",
+            "issue": "미션 대사가 장면 속 안내물 대신 일반 CSS 말풍선으로 떠 있고 대형 시계 하단을 가린다.",
+            "evidence": "픽셀에서 흰 둥근 사각형과 단순 꼬리가 중앙 폭 972px을 차지한다. 내부 텍스트 중심은 표면 중심보다 약 (-34px, 0px) 치우쳤다.",
+            "suggested_fix": "library-dialogue-board를 x≈470..1490, y≈520..690에 배치하되 시계 외곽과 겹치지 않게 높이를 조정하고, 텍스트는 내부 크림 면에 48px inset으로 오버레이한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -33.9,
+              "dy_px": -0.3,
+              "surface_w": 972,
+              "surface_h": 133.2
+            }
+          }
+        ],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".broken-clock + .problem-speech; screenshot central clock/board overlap around y=518",
+            "issue": "대사 표면이 핵심 학습 소품인 대형 시계의 하단 외곽과 그림자를 덮어 시계가 벽에 설치된 물체가 아니라 패널 뒤에 잘린 이미지처럼 보인다.",
+            "evidence": "시계는 약 y=135..515를 차지하고 말풍선은 y≈518부터 시작하지만 두 요소의 그림자와 외곽선이 접촉해 깊이 분리가 사라진다.",
+            "suggested_fix": "안내판 상단을 시계 그림자 아래로 20~28px 내리고 두 요소의 z-index를 분리한다. 시계는 안내판보다 뒤가 아니라 같은 벽면의 상단 물체로 읽히게 한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".c-speechBubble.problem-speech; common.css .c-speechBubble",
+            "issue": "대사 표면이 background-image 없는 흰 CSS rounded panel이다.",
+            "evidence": "common.css의 `.c-speechBubble`은 `background: var(--bubble-bg); border: 6px solid; border-radius: 28px; box-shadow`로만 표면을 만든다. must-follow surface-info-board의 두께·나사·지지 구조가 없다.",
+            "suggested_fix": "CSS는 위치·inset·그림자만 담당하고 정적 프레임과 재질은 library-dialogue-board 래스터 asset으로 교체한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "01_activity1_problem",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".problem-speech; asset request library-dialogue-board",
+          "issue": "핵심 문제 대사가 웹 말풍선으로 떠서 시계와 장면 깊이를 훼손한다.",
+          "evidence": "972px 폭의 CSS 패널이 중앙 시계 바로 아래를 가로지르며 참조 안내판의 물리 디테일이 없다.",
+          "suggested_fix": "빈 표시 면을 가진 도서관 고장 신고판 asset으로 교체하고 텍스트를 내부 면에 오버레이한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".problem-speech의 기존 background, border, pseudo-element 꼬리를 제거한다.",
+        "library-dialogue-board를 시계 아래 벽면에 배치하고 텍스트 span을 내부 safe zone에 유지한다.",
+        "시계 외곽과 안내판 사이에 최소 20px의 빈 벽면을 확보한다."
+      ]
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "capture_label": "02_activity1_tutorial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__02_activity1_tutorial.webp",
+      "scene_purpose": "꼬마 사서와 함께 정각 시계 읽기 및 카드 이동 조작을 연습한다.",
+      "overall_assessment": "시계와 두 조력자의 좌우 배치는 저학년에게 명료하고, 실제 문항 상태의 number-card-face와 보기 문구는 정확히 중앙 정렬된다. 반면 초기 대사판은 시계 절반을 가리고, 답 슬롯·정오답 피드백은 재질 asset 없는 CSS 상자이며 필수 정답·오답 도장도 없다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "시계 대출·반납 판독대",
+        "rationale": "보기를 도서관 대출표처럼 책상 위에 놓고 정답을 중앙 수리 소켓에 꽂는 구조로 통합하면 기존 드래그 의도를 유지하면서 조작이 장면 속 행동이 된다.",
+        "core_metaphor": "시간표 카드를 시계 수리 소켓에 반납해 작동을 확인하는 판독대",
+        "visual_language": "버건디·남색 카드 테두리, 크림 카드 면, 금색 소켓 표시, 정오답 O/X 도장",
+        "layout_strategy": "시계는 상단 중앙, 대사 안내판은 시계 아래 벽면, 답 소켓은 중앙, 세 카드는 안내 데스크 전면에 같은 간격으로 배치한다.",
+        "interaction_surfaces": [
+          "library-dialogue-board",
+          "clock-answer-socket",
+          "number-card-face 3장",
+          "library-feedback-board",
+          "feedback-stamp-correct",
+          "feedback-stamp-wrong"
+        ],
+        "implementation_notes": [
+          "기존 카드 DOM과 드래그 이벤트는 유지한다.",
+          "정답·오답 도장은 별개 image asset으로 상태에 따라 교체한다.",
+          "피드백 문구는 빈 feedback board 위 HTML 오버레이로 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [
+          {
+            "severity": "high",
+            "target": ".junior-speech, .librarian-speech and descendant [data-slot='text']; screenshot initial surface x=430..1280 y=456..604",
+            "issue": "튜토리얼 대사판이 시계 하단을 크게 가리고 짧은 문구에 비해 지나치게 넓어 우측이 비어 보인다.",
+            "evidence": "초기 대사 텍스트 중심은 850×147px 표면 중심보다 약 (-182px, 0px) 치우쳤고, 문항 대사 상태도 약 (-172px, 0px) 편향된다.",
+            "suggested_fix": "library-dialogue-board의 내부 폭을 문구가 2줄로 안정적으로 들어가는 약 760~820px로 제한하고 시계 아래에 간격을 두어 배치한다. 문구는 바꾸지 말고 padding과 판 폭만 조정한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -182.4,
+              "dy_px": -0.3,
+              "surface_w": 850,
+              "surface_h": 147.2
+            }
+          }
+        ],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".answer-slot; question state surface x=825..1045 y=626..776",
+            "issue": "정답 투입부가 시계 수리 장치가 아니라 점선 테두리의 일반 웹 drop zone으로 보인다.",
+            "evidence": "`background-image` 없이 `border: 8px dashed`, 단색 veil 배경, radius로 구성된다. 문구 중심 자체는 표면 중심과 거의 일치해 오프셋은 (0px, 0px)이다.",
+            "suggested_fix": "220×150px 범위의 clock-answer-socket 래스터 몸체를 배경으로 사용하고 `[?]`와 선택된 시각은 빈 중앙 면에 그대로 오버레이한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 220,
+              "surface_h": 150
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": ".question-feedback.correct, .question-feedback.wrong, evaluateCard(); asset requests feedback-stamp-correct/feedback-stamp-wrong",
+            "issue": "정답·오답 피드백이 CSS 알림 패널과 색 변화만으로 구성되고 필수 재질 도장 asset이 없다.",
+            "evidence": "실제 재생 상태에서 정답은 청록 테두리 흰 상자, 오답은 빨간 테두리 흰 상자로 나타난다. HTML에는 `.question-feedback` div만 있고 별도 정답·오답 도장 이미지가 없다.",
+            "suggested_fix": "정답 O 도장과 오답 X 도장을 별개 래스터 asset으로 추가하고, library-feedback-board의 도장 홈에 160~190ms scale/rotate 스탬프 모션으로 표시한다. 기존 피드백 문구는 보드 빈 면에 유지한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".tutorial-clock + .tutorial-speech; screenshot overlap around y=452..485",
+            "issue": "대사판이 정각 읽기의 핵심 학습 대상인 시계 문자판 하단을 덮는다.",
+            "evidence": "스크린샷에서 시계의 5~7시 방향 외곽과 받침대가 말풍선 뒤로 사라진다.",
+            "suggested_fix": "대사 표면의 상단을 시계 최하단보다 최소 20px 아래로 내리고, 필요하면 판 높이를 줄여 시계 전체 실루엣을 항상 노출한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          },
+          {
+            "severity": "low",
+            "target": ".time-card span over .time-card img; three card surfaces x=570/828/1086 y=816",
+            "issue": "세 보기 카드의 텍스트 정렬은 양호하므로 재배치 시 이 중심 관계를 보존해야 한다.",
+            "evidence": "각 220×230px 카드에서 `[3시]`, `[4시]`, `[5시]` 중심 오프셋이 모두 (0px, 0px)로 측정됐다.",
+            "suggested_fix": "카드 DOM의 `inset:0; display:grid; place-items:center`를 유지하고 카드 크기만 변경하지 않는다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 220,
+              "surface_h": 230
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".answer-slot, .question-feedback.correct, .question-feedback.wrong",
+            "issue": "핵심 조작과 채점 표면이 흰색 CSS rounded card 중심이라 장면형 수리 장치로 읽히지 않는다.",
+            "evidence": "answer-slot은 점선 drop zone, 피드백은 단색 테두리 알림 카드이며 모두 래스터 표면 asset이 없다.",
+            "suggested_fix": "답 슬롯은 clock-answer-socket으로, 피드백은 library-feedback-board와 별도 O/X 도장 asset으로 교체한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".question-feedback; evaluateCard(); feedback-stamp-correct/feedback-stamp-wrong",
+          "issue": "필수 정답·오답 도장이 없고 채점 상태가 CSS 알림 카드로만 표시된다.",
+          "evidence": "correct/wrong 상태 모두 흰 패널과 테두리 색만 달라 재질 있는 채점 도장 계약을 충족하지 못한다.",
+          "suggested_fix": "O/X 도장 asset 두 개를 우선 생성해 각각의 채점 상태에 연결한다."
+        },
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".junior-speech, .librarian-speech; library-dialogue-board",
+          "issue": "대사판이 시계를 가리고 짧은 문구 대비 과도하게 넓다.",
+          "evidence": "초기 대사 텍스트가 표면 중심보다 182px 왼쪽에 치우치며 시계 하단이 패널 뒤로 잘린다.",
+          "suggested_fix": "대사를 물리 안내판 asset에 넣고 판 폭·위치를 조정해 시계 전체를 노출한다."
+        },
+        {
+          "scene_id": "02_activity1_tutorial",
+          "severity": "high",
+          "axis": "card_button_panel_style",
+          "target": ".answer-slot; clock-answer-socket",
+          "issue": "답 투입부가 일반 점선 drop zone이다.",
+          "evidence": "CSS border, 단색 배경, radius만 사용하고 도서관 시계 수리 장치의 표면·두께가 없다.",
+          "suggested_fix": "동적 값 safe zone이 있는 수리 소켓 asset을 배경으로 사용한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".junior-speech와 .librarian-speech를 같은 library-dialogue-board 몸체로 교체하고 문구 길이에 맞춰 내부 폭만 조정한다.",
+        ".answer-slot의 점선 테두리와 단색 배경을 제거하고 clock-answer-socket을 사용한다.",
+        "정답·오답 피드백에 별개 O/X 도장 이미지를 추가하고 library-feedback-board의 고정 홈에 표시한다.",
+        "세 .time-card의 현재 220×230px 크기와 span 중심 정렬은 유지한다."
+      ]
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "capture_label": "03_activity1_success",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\ivw01\\iter_001\\design_review\\desktop__03_activity1_success.webp",
+      "scene_purpose": "튜토리얼 성공을 축하하고 본격적인 수리 문제로 연결한다.",
+      "overall_assessment": "점프하는 꼬마 사서, 학생 반응, 박수 pose와 대출표 CTA가 축하 위계를 만든다. 그러나 성공 대사판이 시계를 가리고 `[3시]`가 CSS 카드에 떠 있으며, celebrating pose의 얼굴·헤어가 기준 사서와 달라 연속 장면의 동일 인물감이 약하다.",
+      "creative_direction": {
+        "recommendation_level": "strong",
+        "concept_name": "첫 수리 인증대",
+        "rationale": "수리된 시계 아래에 작은 인증 소켓과 도서관 확인판을 배치하면 성공 결과·대사·다음 CTA가 하나의 물리적 보상 장치로 연결된다.",
+        "core_metaphor": "수리 완료 시각이 찍히고 다음 수리표가 배출되는 인증대",
+        "visual_language": "금빛 수리 완료 광택, 버건디 인증 프레임, 크림 표시 면, 대출표 CTA",
+        "layout_strategy": "시계 전체를 상단에 노출하고 그 아래에 시각 소켓, 하단 데스크 전면에 CTA를 둔다. 대사판은 시계와 겹치지 않는 별도 벽면 영역을 사용한다.",
+        "interaction_surfaces": [
+          "library-dialogue-board",
+          "clock-answer-socket",
+          "기존 cta-to-repair"
+        ],
+        "implementation_notes": [
+          "success-answer는 튜토리얼과 동일한 소켓 asset을 재사용한다.",
+          "students-happy는 현재보다 약 25~35% 확대해 축하 반응을 읽히게 한다.",
+          "CTA 위치와 크기는 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": ".success-answer; screenshot x=825..1065 y=590..725",
+            "issue": "수리 결과 `[3시]`가 시계 장치와 연결되지 않은 흰 CSS 카드에 표시된다.",
+            "evidence": "240×135px 표면의 문구 정렬은 (0px, 0px)로 정확하지만, 배경은 단색 veil·금색 border·radius·box-shadow뿐이다.",
+            "suggested_fix": "튜토리얼과 같은 clock-answer-socket asset을 재사용하고 `[3시]` 텍스트는 중앙 HTML 오버레이로 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 240,
+              "surface_h": 135
+            }
+          }
+        ],
+        "action_feedback_text": [
+          {
+            "severity": "high",
+            "target": ".success-speech and .success-speech [data-slot='text']; screenshot surface x=510..1490 y=393..587",
+            "issue": "성공 대사가 일반 CSS 말풍선으로 떠 있고 수리된 시계 하단을 가린다.",
+            "evidence": "980×195px 패널의 텍스트 중심은 표면 중심보다 약 (-114px, 0px) 치우치며, 시계의 하단 눈금과 외곽선이 말풍선 뒤로 사라진다.",
+            "suggested_fix": "library-dialogue-board로 교체하고 시계 최하단과 판 상단 사이에 최소 20px 간격을 둔다. 문구는 변경하지 않고 내부 inset과 판 폭으로 맞춘다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -114.2,
+              "dy_px": -0.3,
+              "surface_w": 980,
+              "surface_h": 194.8
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [
+          {
+            "severity": "high",
+            "target": "asset_id=librarian-celebrating; compare librarian-idle/librarian-explaining reference_asset_id=librarian-idle",
+            "issue": "성공 pose의 얼굴형·앞머리 흐름·머리색이 앞 장면 사서 pose와 달라 같은 인물의 연속성이 약하다.",
+            "evidence": "success screenshot의 사서는 더 둥근 얼굴과 밝은 갈색 머리, 별도 곱슬 앞머리로 보인다. idle/explaining pose는 길고 안정된 얼굴, 짙은 적갈색 머리와 고정된 낮은 번을 공유한다.",
+            "suggested_fix": "librarian-celebrating만 reference_asset_id `librarian-idle`을 직접 기준으로 재생성한다. 정체성 정의는 변경하지 말고 현재 박수 pose와 학습자 시선만 유지한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": ".success-clock + .success-speech; screenshot central overlap y≈393..505",
+            "issue": "성공 대사판이 수리 결과의 핵심인 시계 하단을 가려 완료 장면의 보상 초점을 약화한다.",
+            "evidence": "시계의 5~7시 방향과 하단 프레임이 대사판 뒤에 숨고, `[3시]` 결과판은 다시 별도 CSS 카드로 분리된다.",
+            "suggested_fix": "시계·시각 소켓·대사 안내판을 수직으로 분리하고 서로 겹치지 않게 배치한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": [
+          {
+            "severity": "high",
+            "target": ".success-answer, .success-speech",
+            "issue": "성공 결과와 피드백의 두 핵심 표면이 모두 일반 웹 카드/말풍선이다.",
+            "evidence": "두 요소 모두 래스터 표면 없이 CSS 배경·테두리·radius로만 만들어졌다. 반면 하단 CTA는 물리적인 대출표 asset이라 같은 화면 안에서도 재질 격차가 크다.",
+            "suggested_fix": "success-answer는 clock-answer-socket으로, success-speech는 library-dialogue-board로 교체해 하단 CTA와 같은 물성 수준을 맞춘다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ]
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "high",
+          "axis": "text_surface_fit",
+          "target": ".success-speech; library-dialogue-board",
+          "issue": "성공 대사판이 수리된 시계를 가리는 일반 웹 말풍선이다.",
+          "evidence": "980×195px CSS 패널이 시계 하단을 덮고 텍스트 중심도 114px 왼쪽으로 치우친다.",
+          "suggested_fix": "물리 안내판 asset으로 교체하고 시계 아래 간격을 확보한다."
+        },
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": ".success-answer; clock-answer-socket",
+          "issue": "수리 결과가 장치와 분리된 CSS 카드에 떠 있다.",
+          "evidence": "텍스트 정렬은 정확하지만 표면 재질과 장면 연결이 없다.",
+          "suggested_fix": "튜토리얼과 동일한 수리 소켓 asset을 재사용한다."
+        },
+        {
+          "scene_id": "03_activity1_success",
+          "severity": "high",
+          "axis": "asset_quality",
+          "target": "asset_id=librarian-celebrating; reference_asset_id=librarian-idle",
+          "issue": "사서 선생님의 성공 pose가 기준 pose와 다른 인물처럼 보인다.",
+          "evidence": "얼굴형·머리색·앞머리 실루엣이 앞 장면 pose와 달라 continuity_rules를 위반한다.",
+          "suggested_fix": "기준 pose를 직접 참조해 celebrating pose만 재생성한다."
+        }
+      ],
+      "refine_suggestions": [
+        ".success-speech를 시계와 겹치지 않는 library-dialogue-board로 교체한다.",
+        ".success-answer에 clock-answer-socket을 적용하고 현재 중앙 정렬은 유지한다.",
+        "students-happy를 약 25~35% 확대하되 CTA와 겹치지 않게 x=400..740 범위에서 재배치한다.",
+        "librarian-celebrating을 librarian-idle 기준으로 재생성한다."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "공용 scene controller에는 stageFadeIn/stageFadeOut 전환이 있고, CTA hover·press·pulse, 카드 hover·선택, 오답 흔들림, 정답 glow, 성공 캐릭터 점프와 박수 등 상태별 반응도 구분되어 있다. 다만 문제 발생 장면은 시계·학생·사서가 전환 직후 동시에 나타나 사건 전개의 순차성이 약하다.",
+    "findings": [
+      {
+        "aspect": "entrance_choreography",
+        "scene_id": "01_activity1_problem",
+        "severity": "medium",
+        "target": "enterProblem(); #activity1-problem .broken-clock, .problem-students, .problem-librarian, .problem-speech",
+        "issue": "문제 발생 장면의 핵심 요소가 stagger 없이 한꺼번에 노출된다.",
+        "evidence": "`enterProblem()`은 `setTimeout(() => showScene('activity1-problem'), 420)`만 실행한다. `.broken-clock`의 spinHand, `.problem-librarian`의 worriedSway, `.problem-speech`의 speechPop은 개별 진입 delay 없이 동시에 시작되고 `.problem-students`에는 entrance animation이 없다.",
+        "suggested_fix": "scene active 시 시계 0ms, 학생 140ms, 사서 280ms, 안내판 440ms 순으로 420~560ms entrance를 적용한다. 시계는 0.96→1 scale, 학생은 24px rise, 사서는 36px side-in, 안내판은 짧은 speechPop을 사용한다."
+      }
+    ]
+  },
+  "asset_review": {
+    "overall_asset_fit": "library-lobby-messy, 두 시계 몸체, number-card-face, junior pose, 학생 군집, 대출표 CTA는 세계관과 기능에 잘 맞는다. 보완 우선순위는 필수 O/X 도장, 공용 대사 안내판, 피드백 보드, 수리 답 소켓이며, main-title-lettering과 librarian-celebrating은 재생성이 필요하다. 실제 요청 7건으로 ASSET_BUDGET 9 이내다.",
+    "keep_assets": [
+      {
+        "asset_id": "library-lobby-messy",
+        "reason": "참조 실내와 같은 따뜻한 크림 벽·목재 바닥·상부 확산광을 사용하고 중앙 활동 면을 넓게 비운다.",
+        "suggested_action": "현 카메라와 object-position을 유지한다."
+      },
+      {
+        "asset_id": "analog-clock-body",
+        "reason": "굵은 남색 외곽선, 크림 문자판, 단순 눈금, 짧은 광택선이 prop-wall-clock의 시각 계약과 잘 맞는다.",
+        "suggested_action": "대형 시계와 성공 시계에 계속 재사용한다."
+      },
+      {
+        "asset_id": "desk-clock-body",
+        "reason": "analog-clock-body와 테두리·문자판·눈금이 일관되고 받침대만 추가되어 역할 구분이 명확하다.",
+        "suggested_action": "튜토리얼 시계에 유지한다."
+      },
+      {
+        "asset_id": "number-card-face",
+        "reason": "물리 두께와 빈 중앙 safe zone이 있고 세 보기 문구가 각각 (0px, 0px) 중심 정렬된다.",
+        "suggested_action": "현재 카드 크기와 텍스트 overlay 구조를 유지한다."
+      },
+      {
+        "asset_id": "junior-confident",
+        "reason": "저학년 어린이 비율과 큰 눈, 명료한 손동작이 참조 character 언어에 부합한다.",
+        "suggested_action": "현재 튜토리얼 배치를 유지한다."
+      },
+      {
+        "asset_id": "junior-success",
+        "reason": "junior-confident와 인물 정체성이 이어지고 성공 반응이 즉시 읽힌다.",
+        "suggested_action": "현재 점프 모션에 유지한다."
+      },
+      {
+        "asset_id": "students-puzzled",
+        "reason": "세 학생의 개별 실루엣과 물음표가 문제 상황을 효과적으로 확장한다.",
+        "suggested_action": "현재 문제 장면 배치를 유지한다."
+      },
+      {
+        "asset_id": "students-happy",
+        "reason": "students-puzzled와 같은 인물·순서·의상을 유지해 상태 전환이 명확하다.",
+        "suggested_action": "성공 화면에서 약 25~35% 확대해 반응 가독성을 높인다."
+      },
+      {
+        "asset_id": "cta-start",
+        "reason": "도서관 대출표 메타포와 고정 문구가 한 몸체로 통합되어 일반 웹 버튼처럼 보이지 않는다.",
+        "suggested_action": "현재 중앙 배치와 pulse 상태를 유지한다."
+      },
+      {
+        "asset_id": "cta-to-repair",
+        "reason": "긴 고정 문구가 물리적인 대출표 표면 안에 안정적으로 들어가고 성공 화면의 최종 위계를 형성한다.",
+        "suggested_action": "현재 배치와 ready pulse를 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "students-happy",
+        "reason": "성공 screenshot에서 300×200px로 축소되어 문제 장면 학생 군집보다 반응이 지나치게 작다.",
+        "suggested_action": "약 420×280px로 확대하고 x=390..760, y=570..820 안에서 CTA·시각 소켓과 겹치지 않게 배치한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [
+      {
+        "asset_id": "main-title-lettering",
+        "priority": 5,
+        "impact": "첫 화면의 가장 큰 시각 요소가 must-follow 화풍을 이탈하는 문제를 해결해 전체 asset 세계관을 통일한다.",
+        "reason": "깊은 3D 압출, 다중 베벨, 강한 광택이 참조 UI 표면과 art_direction의 2~3단계 명암 계약에서 벗어난다.",
+        "suggested_action": "원문과 현재 가로 구도는 유지하고 얕은 물리 현판 스타일로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "버건디·남색 몸체와 금색 강조, 크림색 글자 면을 유지하고 글자 형태를 과도하게 비틀지 않는다. 참조 surface-title-banner와 prop 계열처럼 짙은 남색 외곽선, 기본 면, 얕은 그림자의 2~3단계 명암과 짧은 흰 하이라이트 한 줄만 사용한다. 깊은 압출과 다중 베벨을 사용하지 않는다.",
+        "composition_notes": "",
+        "negative_prompt": "다른 문구, 오탈자, 학교 모티프, 네온사인, 실사, 3D 렌더, flat vector logo, 깊은 압출 타이포그래피, 다중 베벨, 금속성 과광택, 여러 겹의 검은 그림자",
+        "usage_section_ids": []
+      },
+      {
+        "asset_id": "librarian-celebrating",
+        "priority": 6,
+        "impact": "성공 장면에서 동일 조력자가 다른 인물처럼 보이는 continuity 위반을 해결한다.",
+        "reason": "얼굴형·머리색·앞머리 실루엣이 characters의 reference_asset_id `librarian-idle` 및 explaining pose와 불일치한다.",
+        "suggested_action": "librarian-idle을 직접 기준 이미지로 사용해 동일 인물의 박수 pose로 재생성한다.",
+        "revised_prompt_brief": "",
+        "visual_role": "",
+        "style_constraints": "",
+        "composition_notes": "",
+        "negative_prompt": "",
+        "usage_section_ids": []
+      }
+    ],
+    "new_asset_requests": [
+      {
+        "suggested_id": "feedback-stamp-correct",
+        "character_id": "",
+        "priority": 1,
+        "impact": "모든 정답 채점 상태에 필요한 필수 재질 피드백을 제공하고 CSS 색상 알림을 장면 속 도장 반응으로 바꾼다.",
+        "kind": "image",
+        "intended_path": "output/assets/feedback-stamp-correct.png",
+        "usage_section_ids": [
+          "activity1-tutorial"
+        ],
+        "purpose": "정답 상태에 찍히는 별도 O 도장 asset",
+        "prompt_brief": "따뜻한 마을 도서관 수리대에서 사용하는 정답 인증 도장. 중앙의 큰 O 기호를 아트와 한 몸으로 그리고 크림색 종이 인주 면, 청록 테두리, 작은 금색 책갈피 장식을 사용한다. O 외의 문구는 넣지 않는다. HTML에서는 alt를 ‘정답 O 도장’으로 제공한다.",
+        "visual_role": "정답 피드백을 즉시 읽히게 하는 물리 인증 도장",
+        "style_constraints": "짙은 남색 굵은 외곽선, 2~3단계 면 명암, 짧은 흰 하이라이트 한 줄, 낮은 대비의 얕은 그림자만 사용한다.",
+        "composition_notes": "정사각 투명 배경, 도장 전체가 잘리지 않게 중앙 배치하며 180px 표시에서도 O가 명확해야 한다.",
+        "negative_prompt": "X 기호, 추가 문구, 여러 도장, CSS 아이콘, SVG, flat vector icon, 실사, 3D 렌더",
+        "why_needed": "현재 정답 상태는 흰 CSS 패널과 glow뿐이며 필수 정답 도장 asset이 없다."
+      },
+      {
+        "suggested_id": "feedback-stamp-wrong",
+        "character_id": "",
+        "priority": 1,
+        "impact": "오답 상태를 정답과 다른 물리 반응으로 구분하고 필수 오답 도장 계약을 충족한다.",
+        "kind": "image",
+        "intended_path": "output/assets/feedback-stamp-wrong.png",
+        "usage_section_ids": [
+          "activity1-tutorial"
+        ],
+        "purpose": "오답 상태에 찍히는 별도 X 도장 asset",
+        "prompt_brief": "따뜻한 마을 도서관 수리대에서 사용하는 재확인 도장. 중앙의 큰 X 기호를 아트와 한 몸으로 그리고 크림색 종이 인주 면, 버건디 테두리, 작은 책갈피 모서리 장식을 사용한다. X 외의 문구는 넣지 않는다. HTML에서는 alt를 ‘오답 X 도장’으로 제공한다.",
+        "visual_role": "오답 피드백을 부드럽지만 즉시 읽히게 하는 물리 재확인 도장",
+        "style_constraints": "짙은 남색 굵은 외곽선, 2~3단계 면 명암, 짧은 흰 하이라이트 한 줄, 낮은 대비의 얕은 그림자만 사용한다.",
+        "composition_notes": "정사각 투명 배경, 도장 전체가 잘리지 않게 중앙 배치하며 180px 표시에서도 X가 명확해야 한다.",
+        "negative_prompt": "O 기호, 추가 문구, 여러 도장, 공포스러운 경고, CSS 아이콘, SVG, flat vector icon, 실사, 3D 렌더",
+        "why_needed": "현재 오답 상태는 빨간 CSS 테두리와 카드 흔들림뿐이며 별도 오답 도장 asset이 없다."
+      },
+      {
+        "suggested_id": "library-dialogue-board",
+        "character_id": "",
+        "priority": 2,
+        "impact": "문제·튜토리얼·성공 세 장면의 가장 큰 반복 결함인 웹 말풍선을 하나의 물리 도서관 안내판으로 교체한다.",
+        "kind": "image",
+        "intended_path": "output/assets/library-dialogue-board.png",
+        "usage_section_ids": [
+          "activity1-problem",
+          "activity1-tutorial",
+          "activity1-success"
+        ],
+        "purpose": "동적 대사를 장면 속 물체로 수용하는 공용 빈 안내판",
+        "prompt_brief": "도서관 벽면에 설치하는 가로형 대사 안내판. 짙은 남색과 버건디의 두께 있는 프레임, 크림색의 완전히 빈 내부 표시 면, 작은 금색 나사와 얕은 하단 받침 구조를 그린다. 읽을 수 있는 글자와 말풍선 꼬리는 넣지 않는다.",
+        "visual_role": "사서와 꼬마 사서의 동적 대사를 장면 속 안내물로 통합하는 표면",
+        "style_constraints": "surface-info-board 참조의 두께·나사·지지 구조와 선 위계를 따르고 도서관 버건디·남색·금색 팔레트를 사용한다.",
+        "composition_notes": "투명 배경의 긴 가로형 단일 판. 내부 80% 이상을 HTML 텍스트 safe zone으로 비우고 장식이 문자 영역을 침범하지 않게 한다.",
+        "negative_prompt": "읽을 수 있는 글자, 말풍선 꼬리, 흰 CSS 카드, 여러 판, SVG, flat vector UI, 실사, 3D 렌더",
+        "why_needed": "현재 세 장면의 대사가 asset 없는 `.c-speechBubble`로 표시되고 핵심 시계를 가린다."
+      },
+      {
+        "suggested_id": "library-feedback-board",
+        "character_id": "",
+        "priority": 3,
+        "impact": "정오답 설명 문구를 흰 웹 알림 카드에서 도장과 결합된 장면 속 피드백 장치로 바꾼다.",
+        "kind": "image",
+        "intended_path": "output/assets/library-feedback-board.png",
+        "usage_section_ids": [
+          "activity1-tutorial"
+        ],
+        "purpose": "동적 정오답 설명과 O/X 도장을 함께 수용하는 빈 피드백 보드",
+        "prompt_brief": "도서관 수리대의 가로형 피드백 보드. 왼쪽에는 O/X 도장 asset이 놓일 빈 원형 홈, 오른쪽에는 동적 피드백 문구가 들어갈 넓은 크림색 빈 표시 면을 둔다. 남색 외곽선, 버건디 얕은 옆면, 금색 나사로 물리 두께를 표현한다.",
+        "visual_role": "채점 결과와 설명을 한 장치로 묶는 상태 표시판",
+        "style_constraints": "surface-info-board 참조처럼 단순한 2~3단계 명암과 굵은 남색 외곽선을 사용하며 correct/wrong 색은 도장 asset이 담당하게 중립 표면으로 만든다.",
+        "composition_notes": "투명 배경, 가로형 단일 판. 좌측 20%는 도장 홈, 우측 70% 이상은 HTML 문구 safe zone으로 비운다.",
+        "negative_prompt": "정답 또는 오답 문구, O/X 기호, 여러 상태 스프라이트, 흰 CSS 카드, SVG, flat vector UI, 실사, 3D 렌더",
+        "why_needed": "현재 `.question-feedback`은 색만 다른 CSS 패널이며 별도 도장과 결합할 물리 표면이 없다."
+      },
+      {
+        "suggested_id": "clock-answer-socket",
+        "character_id": "",
+        "priority": 4,
+        "impact": "튜토리얼의 `[?]` 투입부와 성공 화면 `[3시]` 결과를 같은 수리 장치로 연결해 학습 행동의 연속성을 만든다.",
+        "kind": "image",
+        "intended_path": "output/assets/clock-answer-socket.png",
+        "usage_section_ids": [
+          "activity1-tutorial",
+          "activity1-success"
+        ],
+        "purpose": "동적 시각 값을 수용하는 시계 수리 소켓 표면",
+        "prompt_brief": "도서관 시계 수리대에 고정된 작은 가로형 카드 소켓. 버건디 몸체, 굵은 남색 외곽선, 금색 얕은 고정쇠, 크림색의 완전히 빈 중앙 화면을 그린다. 숫자·시각·물음표는 넣지 않는다.",
+        "visual_role": "보기 카드를 투입하고 수리 결과 시각을 표시하는 공용 장치",
+        "style_constraints": "analog-clock-body와 같은 외곽선 굵기·버건디·크림·남색·금색 팔레트, 정면 시점, 2~3단계 명암을 사용한다.",
+        "composition_notes": "투명 배경, 약 8:5 가로 비율. 중앙 70% 이상을 `[?]` 또는 `[3시]` HTML overlay safe zone으로 비운다.",
+        "negative_prompt": "읽을 수 있는 글자, 숫자, 물음표, 시곗바늘, 여러 슬롯, 점선 CSS 테두리, SVG, flat vector UI, 실사, 3D 렌더",
+        "why_needed": "현재 answer-slot과 success-answer가 장면과 분리된 CSS 상자이며 같은 수리 행동으로 이어지지 않는다."
+      }
+    ],
+    "deferred_asset_candidates": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "02_activity1_tutorial",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".question-feedback; evaluateCard(); feedback-stamp-correct/feedback-stamp-wrong",
+      "issue": "필수 정답·오답 도장이 없고 채점 상태가 CSS 알림 카드로만 표시된다.",
+      "evidence": "correct/wrong 상태 모두 흰 패널과 테두리 색만 달라 재질 있는 채점 도장 계약을 충족하지 못한다.",
+      "suggested_fix": "O/X 도장 asset 두 개를 최우선 생성해 각각의 채점 상태에 연결한다."
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "severity": "high",
+      "axis": "text_surface_fit",
+      "target": ".junior-speech, .librarian-speech, .problem-speech, .success-speech; library-dialogue-board",
+      "issue": "세 내용 장면의 대사가 CSS 말풍선으로 떠 있고 핵심 시계 일부를 가린다.",
+      "evidence": "문제·튜토리얼·성공 screenshot 모두 흰 둥근 패널이 시계 하단과 접하거나 덮는다. 튜토리얼 텍스트 중심은 표면 중심보다 182px 왼쪽에 있다.",
+      "suggested_fix": "세 장면이 공유하는 빈 library-dialogue-board를 만들고 문구별 폭과 inset만 코드로 조정한다."
+    },
+    {
+      "scene_id": "02_activity1_tutorial",
+      "severity": "high",
+      "axis": "card_button_panel_style",
+      "target": ".answer-slot; clock-answer-socket",
+      "issue": "튜토리얼 답 투입부가 일반 점선 drop zone이다.",
+      "evidence": "asset 없이 border·background·radius로만 그려져 시계 수리 행동과 연결되지 않는다.",
+      "suggested_fix": "동적 값 safe zone을 가진 수리 소켓 asset으로 교체한다."
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": ".success-answer; clock-answer-socket",
+      "issue": "성공 시각이 장치와 분리된 CSS 카드에 표시된다.",
+      "evidence": "문구 중심은 정확하지만 재질 없는 흰 카드라 장면 속 결과창으로 보이지 않는다.",
+      "suggested_fix": "튜토리얼과 동일한 수리 소켓 asset을 재사용한다."
+    },
+    {
+      "scene_id": "initial",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_id=main-title-lettering; .main-title",
+      "issue": "타이틀의 강한 3D 압출 표현이 must-follow 참조와 충돌한다.",
+      "evidence": "깊은 돌출·다중 베벨·강한 그림자가 참조의 얕은 두께와 2~3단계 명암보다 현저히 강하다.",
+      "suggested_fix": "문구·구도는 유지하고 참조의 선·명암·하이라이트 밀도로 재생성한다."
+    },
+    {
+      "scene_id": "03_activity1_success",
+      "severity": "high",
+      "axis": "asset_quality",
+      "target": "asset_id=librarian-celebrating; reference_asset_id=librarian-idle",
+      "issue": "성공 pose의 사서 정체성이 앞 장면 pose와 불일치한다.",
+      "evidence": "얼굴형·머리색·앞머리 실루엣이 idle/explaining pose와 다르다.",
+      "suggested_fix": "librarian-idle을 직접 참조해 박수 pose만 재생성한다."
+    },
+    {
+      "scene_id": "01_activity1_problem",
+      "severity": "medium",
+      "axis": "motion",
+      "target": "enterProblem(); #activity1-problem child entrance animations",
+      "issue": "문제 발생 장면의 요소가 순차 연출 없이 동시에 등장한다.",
+      "evidence": "showScene 호출 후 모든 요소가 즉시 active 되고 개별 animation-delay가 없다.",
+      "suggested_fix": "시계→학생→사서→안내판 순으로 140ms 간격의 stagger를 적용한다."
+    }
+  ],
+  "refine_suggestions": [
+    "library-dialogue-board를 문제·튜토리얼·성공 장면에 공용 적용하고 기존 대사 문구는 변경하지 않는다.",
+    "clock-answer-socket을 `.answer-slot`과 `.success-answer`에 공용 적용한다.",
+    "정답 O 도장과 오답 X 도장을 별개 asset으로 생성해 `.question-feedback` 상태와 연결한다.",
+    "library-feedback-board의 좌측 도장 홈과 우측 텍스트 safe zone에 도장 및 기존 피드백 문구를 각각 배치한다.",
+    "main-title-lettering을 must-follow 참조의 얕은 두께와 2~3단계 명암으로 재생성한다.",
+    "librarian-celebrating을 reference_asset_id `librarian-idle` 기준으로 재생성한다.",
+    "문제 장면의 시계→학생→사서→안내판에 140ms 간격의 entrance stagger를 적용한다.",
+    "number-card-face와 대출표 CTA의 현재 크기·중심 정렬·상태 모션은 유지한다."
+  ]
+}

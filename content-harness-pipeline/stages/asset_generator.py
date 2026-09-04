@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from stages.scripts.source_resolve import teacher_root_from_input
+from stages.scripts.prompt_parts import downstream_input_view
 from stages.scripts.codex_client import CodexClient
 from stages.scripts.craft_examples import build_craft_examples_section
 from stages.scripts.style_references import build_style_reference_prompt
@@ -36,12 +37,13 @@ def generate_assets(
         output_schema=ASSET_GENERATOR_OUTPUT_SCHEMA,
         output_path=output_path,
         model=model,
+        stage="asset_generator",
     )
 
 
 def build_prompt(input_data: dict, planner_output: dict, run_dir: Path) -> str:
     system_prompt = ASSET_GENERATOR_SYSTEM_PROMPT.read_text(encoding="utf-8")
-    input_json = json.dumps(input_data, ensure_ascii=False, indent=2)
+    input_json = json.dumps(downstream_input_view(input_data), ensure_ascii=False, indent=2)
     planner_json = json.dumps(planner_output, ensure_ascii=False, indent=2)
     style_reference_json = build_style_reference_prompt(input_data, PROJECT_DIR)
     return f"""{system_prompt}

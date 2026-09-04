@@ -6,6 +6,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from stages.scripts.screenshot_encode import capture_screenshot
+
 
 KST = timezone(timedelta(hours=9))
 # 콘텐츠는 1920x1080 고정 캔버스를 통짜로 스케일하는 구조다. desktop 뷰포트를 그 비율에 맞춰야
@@ -243,9 +245,13 @@ def capture_inspected_state(
     height: int,
     label: str,
 ) -> None:
-    filename = f"{viewport}.png" if label == "initial" else f"{viewport}__{sanitize_capture_label(label)}.png"
-    screenshot_path = screenshots_dir / filename
-    page.screenshot(path=str(screenshot_path), full_page=True)
+    filename_stem = viewport if label == "initial" else f"{viewport}__{sanitize_capture_label(label)}"
+    screenshot_path = capture_screenshot(
+        page=page,
+        dest_dir=screenshots_dir,
+        filename_stem=filename_stem,
+        full_page=True,
+    )
     metrics = page.evaluate(build_inspection_script())
 
     render_checks["broken_images"].extend(build_selector_findings(viewport, metrics["brokenImages"], "high"))

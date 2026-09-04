@@ -52,6 +52,19 @@
 
 <!-- 새 항목은 이 아래에 추가한다. -->
 
+### [component-overridden-by-asset-surface] design_review가 새 asset을 요청해 input이 지정한 공용 컴포넌트의 시각을 통째로 덮음
+
+- 대상: content-harness-pipeline/runs/ivw01/output/index.html, content-harness-pipeline/stages/design_review.py, prompts/design_review_system.md
+- 분류 태그: component-overridden-by-asset-surface
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-26
+- 최근 발생일: 2026-08-26
+- 사례:
+  - 2026-08-26: "내가 말풍선 형식 component로 주어졌지 않나? 왜 이렇게 나온거지?" run ivw01에서 `input.metadata.components`에 `speech-bubble`을 지정했고 builder도 그 컴포넌트를 썼다(`data-component="speech-bubble"`, `CommonSpeechBubble` API, `common.css`는 컴포넌트 원본과 바이트 일치). 그런데 iter_001 design_review가 `new_asset_requests`로 *"도서관 벽면에 설치하는 가로형 대사 안내판 … 말풍선 꼬리는 넣지 않는다"* 를 요청했고, runner가 그것을 `planner.json`의 `asset_plan`에 병합했으며(계획 asset 15 → 19), design_refine이 인라인 CSS로 `border: 0` · `border-radius: var(--r-none)` · `box-shadow: none` · `::before/::after { display: none }` · `width/height` 고정 · `background: url(library-dialogue-board.png)`를 넣어 말풍선의 시각 정체성을 전부 제거했다. 컴포넌트가 `Avoid`로 금지한 "화면 하단 자막 카드"가 정확히 그 결과다. iter_002 design_review는 자기가 요청한 그 asset을 `keep_assets`로 승인했다.
+- 조치(2026-08-26): `prompts/design_review_system.md`에 "선택된 공용 컴포넌트는 건드리지 않습니다(중요)" 절을 추가했다. `INPUT_JSON.metadata.components`의 이름과 HTML의 `data-component` 속성으로 소유를 판정하게 하고, **그 요소의 형태 자체를 대신하는 표면 asset을 요청하지 않는다**는 금지와, 컴포넌트가 비워 둔 자리를 채우는 표면은 허용한다는 구분(그 asset이 들어간 뒤에도 컴포넌트의 형태가 남는가)을 함께 넣었다. 컴포넌트가 소유한 요소의 결함은 `refine_suggestions`로 보내게 했다. design_review는 이미 `downstream_input_view`로 `metadata.components`를 받고 HTML의 `data-component`를 보므로 새 payload는 필요 없었다. 기계 게이트는 넣지 않았다 — 1회차이므로 프롬프트 층에서 먼저 본다.
+- 규칙화 메모: 1회이므로 아직 rule로 올리지 않는다. 관찰된 구조적 구멍은 **선택된 공용 컴포넌트가 design_review에게는 구속이 아니라는 것**이다. `common_html_contract.md`는 builder에게 "`INPUT_JSON.metadata.components`가 있으면 그 컴포넌트를 반드시 씁니다"라고 하지만, design_review는 그 컴포넌트를 무력화하는 asset을 요청할 수 있고 그 요청을 검사하는 게이트가 없다. 관련 항목 [asset-native-ui-design-reject](15회)가 만드는 "웹 패널 말고 asset 표면에 결합하라"는 압력이 여기서 컴포넌트를 밟고 지나간 형태다. 두 번째 사례가 나오면 두 항목을 함께 본다.
+
 ### [planner-sequence-and-staging-underspecified] planner가 "무엇이 있는가"만 적고 "어떤 순서로 어디에 나타나는가"를 판정 가능한 자리에 안 적음
 
 - 대상: content-harness-pipeline/schemas/planner_output.schema.json (`sections[].elements[].reveal`, `staging_notes`, `questions[].answer`), prompts/planner_system.md (산출: runs/2026-08-14_dfbc1027/dfbc1027_planner.json)
@@ -69,6 +82,30 @@
 - 규칙화 메모: 1회. [planner-storyboard-detail-loss]와 대상은 같지만 성격이 다르다 — 그쪽은 원문 **문구·보기·정답**을 잃는 것이고, 이쪽은 원문이 명시한 **순서**를 typed 자리로 못 내리는 것이다. 같은 태그로 묶지 말 것. 초안 후보 세 가지: (A) `planner_system.md`에 "`reveal`은 dialogue 전용이 아니다 — 한 화면 안에서 시점이 다른 모든 요소가 자기 시점을 갖는다. 같은 화면의 요소가 전부 `scene_enter`면 그 화면은 전부 동시에 나타난다고 선언한 것이다." (B) `builder_system.md`에 `reveal`을 타임라인 계약으로 명시(현재 언급 자체가 없다). (C) `test_spec_derive.build_question_cases`가 문항을 참조하는 element의 `reveal`에서 lead step을 파생. (A)(B)는 프롬프트, (C)는 코드이며 셋 다 LLM 호출을 안 늘린다.
 - 정정(2026-08-14): 최초 기록에서 "스토리보드가 말하지 않은 순서를 planner가 지어내야 하므로 `planner_refine_system.md`의 '스토리보드에 없는 것을 만들지 않는다'와 부딪힌다"고 적었으나 **원문 대조 결과 틀렸다.** 스토리보드는 순서를 명시하고 있다 — "모양, 색깔 순서로 등장", "페인트와 모양이 초록, 파랑, 빨강 순으로 등장. 예) 초록 페인트 -> 원 모양 3개 등장 순", "원 -> 사각형 -> 삼각형 순으로 모양 변경", "① 대화창 전개 후 삭제한 다음 ② 순으로". 즉 순서 축은 **지어내기가 아니라 손실**이고 그 금지 조항과 충돌하지 않는다. 지어내기인 것은 공간 배치(어느 asset의 어디에 앉는지)뿐이다.
 - 부수 발견(2026-08-14): `shape-count` 한 섹션 안에 순서 주장이 **세 개** 있고 서로 다르다 — `elements[].notes`는 원→삼각형→사각형, 원문 `content`는 원→사각형→삼각형, `questions[]` 배열은 원→삼각형→사각형. 원문 자체가 어긋난 자리다(내레이션 #8은 ●▲■ 순, UI 요소 #9는 원→사각형→삼각형). 어느 것도 typed 자리가 아니라 `planner_check`가 못 잡는다. planner가 이런 원문 모순을 조용히 한쪽으로 정하지 말고 드러내야 하는지는 별도 판단이 필요하다.
+
+### [functional-test-net-value] functional_test를 쓴 산출물이 test 없이 자연어 eval/critique만 쓰던 때보다 나쁨
+
+- 대상: content-harness-pipeline/stages/functional_test.py, stages/scripts/test_spec_derive.py, runner.py 품질 루프
+- 분류 태그: functional-test-net-value
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-08-20
+- 최근 발생일: 2026-08-20
+- 사례:
+  - 2026-08-20: 사용자가 `runs/2026-08-19_7c829ae6` 산출물을 직접 보고 "실제로 실행해보면 문제가 좀 많다. 기존에 test를 안 쓰고 자연어 content-eval/critique를 쓰던 것보다 못하다"고 지적. 이 run의 계기판은 `functional_test 76/76 PASS`였고, 같은 iteration에서 `content_eval 3.08/5 REJECT`(feedback_scaffolding 1점), `design_review 11건 REJECT`였다. **계기판과 실물이 정반대 방향을 가리킨 사례.**
+- 조치(2026-08-20): **결정적 검증 층을 삭제하고 7월 구성으로 되돌렸다.** 근거 3가지를 실측했다.
+  ① `content_eval` 실행 횟수가 run당 4~5회(7월) → 0~1회(8월)로 떨어졌다. `functional_test` REJECT 시
+  LLM 리뷰 3종을 건너뛰는 FAIL-skip 때문이고, builder 첫 HTML은 거의 항상 기능이 깨져 있어(`33/76`,
+  `80/92`, `75/96`) 거의 항상 발동했다. run `2026-08-12_65126dad-v3`은 `content_eval` **0회**.
+  ② 계기판과 실물이 반대를 가리켰다 — `2026-08-19_7c829ae6`은 `functional 76/76 PASS`인 채로
+  `content_eval 3.08/5`(feedback_scaffolding 1점), `design_review 11건 REJECT`.
+  ③ BDD 계약 + 생성 테스트 대체안도 실측했다. 인터뷰에서 계약 56개를 뽑아 Playwright 테스트를 1회
+  생성해 돌리니 **27건 미통과 중 21건이 오탐(78%)** 이었다. 관례(2단계 드롭, `data-qa-key="submit"`,
+  hidden CTA)를 생성기가 매번 다시 추측하기 때문이다. 진짜 결함 5~6건은 전부 `design_review`·
+  `content_eval`이 이미 지적한 것이었다.
+  삭제 범위와 함께 되돌린 것(rubric v4 5축 복원, critique 금지 조항 해제)은
+  `content-harness-pipeline/CLAUDE.md`의 "삭제된 결정적 검증 층 (2026-08-20)"에 있다.
+- 규칙화 메모: 1회. 기존 [planner-sequence-and-staging-underspecified]의 "부수 발견 2"(builder가 게이트 통과용 텔레포트 훅을 넣어 학습 흐름을 약화시킴, 2026-08-14)와 **방향이 같다** — 그쪽은 한 사례 관찰이고 이쪽은 산출물 전체 품질 비교다. 같은 태그로 묶지 말되, 2회째가 나오면 두 항목을 함께 놓고 "functional_test가 산출물을 왜곡하는가"로 승격 검토할 것. 판단에 필요한 것: test 없이 돌린 run과 test 있는 run의 **실물 비교** — 계기판 수치로는 판정할 수 없다(이번 사례가 그 증거).
 
 ### [redesign-doc-not-reflected] 설계 문서에 확정된 변경이 구현에 반영되지 않음 (eval 5축 유지 · FAIL-skip 미구현)
 
