@@ -1,0 +1,33 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 5,
+      "interaction_flow_clarity": 5,
+      "functional_integrity": 5
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.66
+  },
+  "axis_rationales": {
+    "content_fidelity": "planner의 263개 필수 문자열을 grep -cF로 대조하고 장면·문항 순서를 확인한 결과 누락·불일치가 총 16개다. prompt 13개: q-10000-9000 '10000은 9000보다 [ ] 큰 수', q-10000-9900 '10000은 9900보다 [ ] 큰 수', q-10000-9990 '10000은 9990보다 [ ] 큰 수', q-10000-9999 '10000은 9999보다 [ ] 큰 수', q-write-150000 '십오만 → ?', q-write-38077 '삼만팔천칠십칠명 → ?', q-place-7 '이번 달 관람객 수는 175013', q-eok-count '1000만이 [?] 개인 수', q-eok-3659 '1억이 3659개인 수 → ?', q-moon-jar-price '41억 2500만원 → ?', q-buddha-price '32억 → ?', q-jo-count '1000억이 [?] 개인 수', q-jo-3659 '1조가 3659개인 수 → ?'. answer 1개: q-skip-30000 '[60000] [90000] [120000]'. rendered_text 1개: s5-true-false '정답이야!'. 순서 불일치 1개: s3-read-ox의 자릿값 체험대가 두 번째 오답 힌트가 아니라 문항 진입 직후부터 노출된다. 일부 prompt는 HTML 태그로 분할되어 화면상 유사하게 보이지만 원문 문자열은 HTML에 그대로 존재하지 않는다. 4개 이상이므로 결정적 척도에 따라 1점이다.",
+    "learning_goal_alignment": "24개 문항이 10000 구성, 만·억·조의 관계, 큰 수 읽기와 쓰기, 자릿값 및 뛰어 세기를 직접 연습하게 한다. 입장료·관람객·유물 가격·생활 사례도 큰 수가 필요한 맥락과 연결된다. 다만 목표에 포함된 큰 수 비교는 독립적인 대소 비교 활동으로 충분히 다뤄지지 않고, 수리 미션 개념은 주로 단계명에 머물며, 조회수 장면은 판매액 사례를 반복해 해당 생활 맥락과의 연결이 약하다.",
+    "feedback_scaffolding": "24개 문항 모두 정답·오답 피드백을 갖추고 있다. 두 번째 오답에서는 합계와 목표액의 차이, 자릿값 표, 10배 연결, 네 자리 묶기, 틀린 빈칸 표시, 이웃한 수의 차 계산 등 문항별 근거와 재시도 단서를 제공한다. 정답 피드백도 계산·자리·단위 관계를 설명하며 완료 화면과 동적 성적·인증서 보상까지 피드백 흐름이 닫힌다.",
+    "interaction_flow_clarity": "타이틀부터 8단계 HUD가 유지되고, 연속 문항에는 현재 문항 수와 완료 상태가 표시된다. 대사는 확인 순서대로 진행되고 마지막 대사 또는 정답 뒤에만 전환 버튼이 열리며, 화폐·카드·다중 빈칸 활동에는 선택·드래그·삭제·제출 방법이 안내된다. 빈 입력과 미완성 제출도 개념 오답과 구분되어 다음 행동과 단계 전환이 명확하다.",
+    "functional_integrity": "깨진 필수 기능은 0개다. 데스크톱 브라우저 점검에서 29개 장면과 8개 단계 점이 로드되었고 runtime error가 없었다. 시작·대사 CTA, 화폐 10000원 판정, 카드 문항 전환, 키패드 정답 처리, 선택형 정답 처리, 인증서 열기·닫기가 정상 동작했다. 코드상 드래그 제거, 두 번째 오답 힌트, 무작위 문항, 완료 성적, 인증서 저장, 나가기 및 다음 차시 이벤트도 의도한 흐름에 연결되어 있다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "learning_goal_alignment"
+  ],
+  "calibration_note": "content_fidelity의 누락·불일치가 16개여서 필수 축 기준 5.0과 no_missing_required_content 하드 게이트를 충족하지 못한다. weighted_total 3.66도 최소 총점 4.2보다 낮으므로 다른 네 축의 기준 충족과 관계없이 REJECT다."
+}

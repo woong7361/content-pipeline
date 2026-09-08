@@ -806,6 +806,10 @@ def merge_asset_outputs(asset_outputs: list[dict], planner_output: dict) -> dict
 
 ASSET_SUFFIXES = (".png", ".webp", ".jpg", ".jpeg")
 
+# WebP로 바꿀 입력 포맷. 이미 .webp인 것은 다시 인코딩하지 않는다.
+ASSET_COMPRESS_SUFFIXES = (".png", ".jpg", ".jpeg")
+ASSET_WEBP_QUALITY = 80
+
 
 def resolve_existing_asset(run_dir: Path, intended_path: str) -> Path | None:
     """계획된 경로의 파일을 찾되 **확장자는 따지지 않는다.**
@@ -1034,6 +1038,10 @@ def run_asset_generator_only(args: argparse.Namespace) -> dict:
         if asset_plan_errors:
             raise ValueError("; ".join(asset_plan_errors))
 
+        stage = "asset_compress"
+        compressed = compress_asset_files(context.run_dir, asset_output)
+        progress.line(f"asset_compress webp={compressed}")
+
         stage = "asset_files_validate"
         asset_file_errors = validate_asset_files(context.run_dir, asset_output)
         if asset_file_errors:
@@ -1159,6 +1167,9 @@ def run_asset_generator_for_asset_ids(
     if asset_plan_errors:
         raise ValueError("; ".join(asset_plan_errors))
 
+    compressed = compress_asset_files(context.run_dir, asset_output)
+    progress.line(f"asset_revision asset_compress webp={compressed}")
+
     asset_file_errors = validate_asset_files(context.run_dir, asset_output)
     if asset_file_errors:
         raise FileNotFoundError("; ".join(asset_file_errors))
@@ -1274,6 +1285,45 @@ def run_builder_only(args: argparse.Namespace) -> dict:
         failed_path = write_failed(context.run_dir, brief_hash, context.run_id, stage, exc, lineage, config)
         progress.line(f"builder-only failed artifact={failed_path}")
         raise RuntimeError(f"builder-only failed at {stage}; wrote {failed_path}") from exc
+
+
+def compress_asset_files(run_dir: Path, asset_output: dict) -> int:
+    """생성된 이미지 asset을 WebP로 압축하고 `path`를 새 확장자로 고친다.
+
+    이미지 생성 도구는 PNG를 쓴다. 무손실 PNG는 장당 2MB를 넘고 그대로 저장소에 남으므로,
+    산출물 규격은 이 자리에서 코드가 강제한다. 프롬프트에 "webp로 저장하라"고 적는 방식은
+    경로 예시의 확장자가 사실상의 기본값이 되어 조용히 되돌아간다.
+
+    압축은 부가 기능이다. Pillow가 없거나 인코딩이 실패하면 원본을 그대로 두고 넘어간다.
+    `resolve_existing_asset`이 확장자를 따지지 않으므로 재사용 조회는 어느 쪽이든 성립한다.
+    """
+    try:
+        from PIL import Image
+    except ModuleNotFoundError:
+        return 0
+
+    converted = 0
+    for asset in asset_output.get("assets", []):
+        if not isinstance(asset, dict):
+            continue
+        path = asset.get("path")
+        if not isinstance(path, str) or Path(path).suffix.lower() not in ASSET_COMPRESS_SUFFIXES:
+            continue
+        source = run_dir / path
+        if not source.exists():
+            continue
+        dest = source.with_suffix(".webp")
+        try:
+            with Image.open(source) as image:
+                if image.mode not in ("RGB", "RGBA"):
+                    image = image.convert("RGB")
+                image.save(dest, format="WEBP", quality=ASSET_WEBP_QUALITY, method=6)
+        except OSError:
+            continue
+        source.unlink()
+        asset["path"] = dest.relative_to(run_dir).as_posix()
+        converted += 1
+    return converted
 
 
 def validate_asset_files(run_dir: Path, asset_output: dict) -> list[str]:

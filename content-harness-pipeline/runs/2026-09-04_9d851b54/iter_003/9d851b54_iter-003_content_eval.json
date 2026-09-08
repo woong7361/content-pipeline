@@ -1,0 +1,35 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 5,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.24
+  },
+  "axis_rationales": {
+    "content_fidelity": "263개 체크리스트 문자열을 grep -cF로 대조한 결과 누락·불일치가 총 15개다. prompt 13개: q-10000-9000 '10000은 9000보다 [ ] 큰 수', q-10000-9900 '10000은 9900보다 [ ] 큰 수', q-10000-9990 '10000은 9990보다 [ ] 큰 수', q-10000-9999 '10000은 9999보다 [ ] 큰 수', q-write-150000 '십오만 → ?', q-write-38077 '삼만팔천칠십칠명 → ?', q-place-7 '이번 달 관람객 수는 175013', q-eok-count '1000만이 [?] 개인 수', q-eok-3659 '1억이 3659개인 수 → ?', q-moon-jar-price '41억 2500만원 → ?', q-buddha-price '32억 → ?', q-jo-count '1000억이 [?] 개인 수', q-jo-3659 '1조가 3659개인 수 → ?'. answer 1개: q-skip-30000 '[60000] [90000] [120000]'. rendered_text 1개: s5-true-false '정답이야!'. 일부 prompt는 태그로 분할되어 화면상 유사하게 렌더링되지만 HTML 원문에는 체크리스트 문자열 그대로 존재하지 않는다. 4개 이상이므로 결정적 척도에 따라 1점이다.",
+    "learning_goal_alignment": "입장료 10000원 구성에서 만·억·조의 관계, 수 읽기와 쓰기, 자릿값, 수의 구성 및 뛰어 세기까지 핵심 활동이 학습 목표와 직접 연결된다. 다만 목표에 명시된 큰 수 비교는 두 큰 수의 높은 자리부터 크기를 판단하는 독립 활동으로 충분히 다뤄지지 않으며, 조회수 장면은 판매액 사례 문장을 반복해 해당 생활 맥락과 부분적으로 어긋난다.",
+    "feedback_scaffolding": "24개 문항 모두 정답과 오답 피드백이 있으며, 차이 계산, 네 자리씩 끊기, 자릿값, 0의 개수, 일정한 증가량 등 판단 근거와 재시도 단서를 제공한다. 지정된 두 번째 오답에서는 합계창, 자릿값 표, 10배 연결, 숫자 강조 또는 큐레이터 힌트가 실제로 연결되고 완료·인증서 피드백도 존재한다.",
+    "interaction_flow_clarity": "대사 확인 후 전환 버튼이 열리고, 화폐·카드·다중 빈칸 활동에는 조작 순서 안내가 제공된다. 빈 입력과 미완성 제출도 일반 오답과 구분되며 정답 후 다음 행동이 명확하다. 다만 첫 화면에서 상단 HUD가 숨겨지고 8단계 계약과 달리 7개 점만 표시되어 시작 위치와 전체 단계 구조의 안내가 완전하지 않다.",
+    "functional_integrity": "브라우저 점검에서 29개 장면이 로드되었고 대사 확인 후 CTA 활성화, 입장료 10000원 정답 처리와 다음 화면 활성화가 동작했으며 blocking runtime error는 발견되지 않았다. 깨진 필수 기능은 1개로, topbar-controls가 요구된 8단계 고정 HUD 대신 7개 점을 만들고 타이틀 화면에서 HUD를 숨긴다. 결정적 척도에 따라 3점이다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "learning_goal_alignment",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "content_fidelity는 누락·불일치 15개로 필수 5.0에 미달하고 functional_integrity도 필수 기능 1개 결함으로 최소 4.0에 미달한다. weighted_total 3.24가 기준 4.2보다 낮으며 no_missing_required_content 하드 게이트도 충족하지 못해 REJECT로 판정했다."
+}

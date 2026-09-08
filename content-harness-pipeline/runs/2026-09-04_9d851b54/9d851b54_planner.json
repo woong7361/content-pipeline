@@ -1,0 +1,3978 @@
+{
+  "page": {
+    "goal": "경주 박물관에서 만·억·조 단위의 큰 수를 찾고, 자릿값을 이해하여 큰 수를 읽고 쓰고 비교하며 뛰어 셀 수 있게 한다.",
+    "audience": "태블릿과 PC를 사용하는 초등학교 4학년 학습자",
+    "tone": "박물관 탐험의 호기심을 살린 밝고 친근한 분위기이며, 큰 본문 글자와 단순한 화면 전환으로 인지 부담을 낮춘다."
+  },
+  "art_direction": {
+    "style_name": "따뜻한 경주 박물관 탐험 동화",
+    "palette": "옅은 석재 베이지와 한지 아이보리를 바탕으로 청록과 남색을 주요색으로 사용하고, 분홍색은 아이와 기사 강조에 제한한다. 초록은 억·조와 정답 신호에, 경고 빨강은 오답 도장의 문구·심볼에만 예외적으로 사용한다.",
+    "line_style": "둥글고 안정적인 중간 굵기 외곽선과 단순화한 형태를 사용한다. 유물과 건축물은 특징을 알아볼 수 있을 정도의 세부만 남기고 작은 장식선은 줄인다.",
+    "lighting": "낮의 부드러운 확산광을 기본으로 하며 외부는 맑은 자연광, 내부는 따뜻한 전시 조명을 사용한다. 명암은 2~3단계로 단순화하고 그림자는 짧고 부드럽게 처리한다.",
+    "character_rules": "눈썹·눈·입의 방향을 명확히 해 작은 화면에서도 표정을 즉시 읽게 한다. 감탄·궁금함·설명 동작은 손짓과 상체 기울기로 분명하게 표현하되 과도한 만화식 왜곡은 피한다.",
+    "component_rules": "반복되는 자릿값 표는 박물관 체험대 형태의 고정 몸체와 정면 시점을 유지하고 단위 이름·숫자·강조색은 HTML로 얹는다. 숫자 키패드, 상단 진행 표시, 말풍선과 버튼 상태도 코드로 구현한다. 동일한 몸체를 쓰는 컴포넌트의 값·선택·정오 상태는 이미지에 굽지 않는다. 상단 HUD에는 헤더 배경 패널을 두지 않는다.",
+    "background_rules": "외부 전경은 박물관 건축과 입구 동선을 알아볼 수 있는 중간 밀도로, 내부 전시실은 유리 진열장과 관람객 실루엣을 낮은 대비로 배치한다. 문제와 대사가 놓일 중앙·하단에는 넓은 여백을 두며 주요 캐릭터와 분리된 반복 소품은 배경에 포함하지 않는다.",
+    "continuity_rules": "모든 배경과 소품에 같은 선 굵기, 석재·목재 질감, 확산광과 청록·남색 강조색을 유지한다. 외부에서 내부로 이동할 때 채도와 광원만 자연스럽게 바꾸며 캐릭터 정체성, 자릿값 체험대와 판정 도장의 형태는 장면마다 바꾸지 않는다.",
+    "forbidden_styles": [
+      "실사 사진풍",
+      "극사실적 3D 렌더",
+      "채도가 과도한 네온 색상",
+      "가느다란 장식선이 많은 화풍",
+      "어두운 공포 분위기",
+      "flat vector UI",
+      "SVG 아이콘 키트",
+      "CSS 컴포넌트처럼 보이는 순수 기하 패널",
+      "배치마다 달라지는 캐릭터 디자인"
+    ]
+  },
+  "characters": [
+    {
+      "id": "child",
+      "name": "초등학생 아이",
+      "role": "학습자를 대신해 질문하고 감탄하며 박물관 탐험을 이끄는 주인공",
+      "identity": {
+        "face": "둥근 얼굴, 짙은 갈색의 큰 타원형 눈, 작은 둥근 코와 또렷한 미소, 밝은 중간 피부톤",
+        "hair": "짙은 갈색의 어깨 길이 머리를 양쪽 귀 아래에서 같은 높이로 묶은 양갈래와 짧은 앞머리",
+        "outfit": "분홍색 단추 가디건, 흰색 둥근 칼라 셔츠, 무릎 길이 남색 주름치마, 흰 양말과 짙은 남색 운동화",
+        "palette": "분홍·남색·흰색과 짙은 갈색",
+        "proportions": "초등학생 연령감의 4.5등신, 작은 키와 둥근 손발",
+        "distinctive_features": "양갈래 끝의 작은 남색 리본과 가디건의 둥근 노란 단추"
+      },
+      "reference_asset_id": "child-idle"
+    },
+    {
+      "id": "curator",
+      "name": "큐레이터",
+      "role": "박물관과 큰 수를 설명하고 두 번째 오답에서 힌트를 주는 성인 조력자",
+      "identity": {
+        "face": "부드러운 타원형 얼굴, 짙은 갈색의 가늘고 둥근 눈, 곧은 코와 차분한 미소, 밝은 중간 피부톤, 얇은 타원형 안경",
+        "hair": "짙은 갈색의 짧고 단정한 옆가르마 머리",
+        "outfit": "청록색 박물관 조끼, 아이보리 셔츠, 남색 일자 바지, 갈색 단화, 목에 직사각형 명찰",
+        "palette": "청록·아이보리·남색·갈색",
+        "proportions": "성인 연령감의 6.5등신, 아이보다 머리 하나 반 이상 큰 안정적인 체형",
+        "distinctive_features": "얇은 타원형 안경과 청록색 테두리의 박물관 명찰"
+      },
+      "reference_asset_id": "curator-idle"
+    }
+  ],
+  "sections": [
+    {
+      "id": "s1-title",
+      "title": "슬라이드 1 화면 1 — 타이틀",
+      "purpose": "박물관에서 큰 수를 찾는 탐험의 목표와 시작점을 제시한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "배경: 외부에서 바라본 경주 박물관",
+          "rendered_text": [],
+          "notes": "제목이 읽히도록 중앙과 하단의 대비를 낮춘다.",
+          "refs": [
+            "bg-museum-exterior"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "navigation",
+          "content": "상단 진행 네비게이션은 수리가 필요해요 / 수리로 해결해요 1~5 / 수리 이야기 8단계로 고정 노출한다.",
+          "rendered_text": [
+            "수리가 필요해요",
+            "수리로 해결해요 1",
+            "수리로 해결해요 2",
+            "수리로 해결해요 3",
+            "수리로 해결해요 4",
+            "수리로 해결해요 5",
+            "수리 이야기"
+          ],
+          "notes": "좌측 목록 버튼과 소리 아이콘, 우측 8단계 점을 이후 모든 화면에 고정한다. 현재 단계는 빨간 점으로 표시한다. 헤더 배경 패널은 두지 않는다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "title",
+          "content": "메인 타이틀 `박물관에 숨은 큰 수를 찾아라!` / 부제 `- 다섯 자리의 수 -`",
+          "rendered_text": [
+            "박물관에 숨은 큰 수를 찾아라!",
+            "- 다섯 자리의 수 -"
+          ],
+          "notes": "박물관 문패를 연상시키는 타이틀 아트를 화면 중앙에 배치한다.",
+          "refs": [
+            "title-lockup"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "노란색 `[시작하기]` 버튼. 1학년 4차시(보건실)처럼 조금 커졌다가 작아졌다가 하는 애니메이션을 반복한다",
+          "rendered_text": [
+            "[시작하기]"
+          ],
+          "notes": "버튼이 천천히 확대·축소되며 최소 터치 영역을 충분히 확보한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "박물관 외부 배경 뒤에 타이틀과 시작 버튼을 차례로 페이드인한다.",
+        "상단 HUD는 이 화면부터 마지막 화면까지 유지한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "start-button"
+      ],
+      "asset_ids": [
+        "bg-museum-exterior",
+        "title-lockup"
+      ],
+      "advance": {
+        "interaction_id": "start-button",
+        "to_section_id": "s1-greeting"
+      }
+    },
+    {
+      "id": "s1-greeting",
+      "title": "슬라이드 1 화면 2 — 아이 등장",
+      "purpose": "아이와 함께 큰 수를 찾는 탐험이라는 학습 맥락을 형성한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "박물관 외부 전경 그림. **경주 박물관에 작게 입장료 안내표가 있음**",
+          "rendered_text": [],
+          "notes": "입장료 안내표는 다음 화면의 확대 위치와 일치하게 입구 옆에 작게 둔다.",
+          "refs": [
+            "bg-museum-exterior",
+            "admission-sign"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "등장인물: 초등학생 아이",
+          "rendered_text": [],
+          "notes": "아이가 화면 왼쪽에서 걸어 들어와 멈춘다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "아이가 등장하고 말풍선이 뜬다. `안녕~ 오늘 나와 박물관을 구경하며 큰 수를 찾아보자!`",
+          "rendered_text": [
+            "안녕~ 오늘 나와 박물관을 구경하며 큰 수를 찾아보자!"
+          ],
+          "notes": "아이의 시선 옆에 큰 글자의 말풍선을 배치한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리가 필요해요 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리가 필요해요 시작하기]"
+          ],
+          "notes": "대사가 끝난 뒤 하단 중앙에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "아이 등장 후 말풍선, 전환 버튼 순으로 보여 준다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-exterior",
+        "admission-sign",
+        "child-idle",
+        "child-speaking"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s1-admission"
+      }
+    },
+    {
+      "id": "s1-admission",
+      "title": "슬라이드 1 화면 3 — 입장료 안내판 확대",
+      "purpose": "실생활에서 10000이 필요한 입장료 상황을 관찰하게 한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "`1. 입장료를 볼까?`",
+          "rendered_text": [
+            "1. 입장료를 볼까?"
+          ],
+          "notes": "안내판을 바라보는 아이 옆에서 첫 번째로 나타난다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "`2. 특별전시도 보고 싶은데 10000원이구나.`",
+          "rendered_text": [
+            "2. 특별전시도 보고 싶은데 10000원이구나."
+          ],
+          "notes": "첫 대사 다음에 교체되어 나타난다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "멀리 작게 보이던 입장료 안내판이 확대되며 화면에 위치한다.<br>표: 구분 / 성인 / 어린이, 기본 전시 = 무료 / 무료, 특별전시 = 10000 / 6000",
+          "rendered_text": [
+            "구분",
+            "성인",
+            "어린이",
+            "기본 전시",
+            "무료",
+            "특별전시",
+            "10000",
+            "6000"
+          ],
+          "notes": "외부 배경의 안내표 위치에서 확대되어 중앙 오른쪽에 정착한다.",
+          "refs": [
+            "admission-sign"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리로 해결해요1 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리로 해결해요1 시작하기]"
+          ],
+          "notes": "두 번째 대사가 끝난 뒤 하단에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "배경 속 작은 안내판을 확대하고 두 대사를 순서대로 전개한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-exterior",
+        "admission-sign",
+        "child-speaking"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s1-fare"
+      }
+    },
+    {
+      "id": "s1-fare",
+      "title": "슬라이드 1 화면 4 — 입장료 10000원 내기",
+      "purpose": "여러 화폐를 구성해 합계 10000원의 크기를 직접 경험하게 한다.",
+      "elements": [
+        {
+          "channel": "question_group",
+          "content": "refs의 입장료 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "문제 문구는 큰 글자로 상단에 고정한다.",
+          "refs": [
+            "q-fare-10000"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "왼쪽은 학생 지갑, 오른쪽은 지갑에서 꺼낸 돈을 배치하는 곳이다.<br>• 지갑에서 드래그하여 오른쪽으로 옮긴다. 지갑에 있는 돈은 사라지지 않는다(돈이 겹겹이 쌓여 있는 듯 드래그해서 가져가도 그대로 있음)<br>• 오른쪽에는 돈의 개수가 잘 보이게 펼쳐진다<br>• 오른쪽에 놓인 돈 삭제 방법: 더블클릭 또는 왼쪽으로 드래그하여 옮김",
+          "rendered_text": [],
+          "notes": "화폐는 드래그뿐 아니라 터치 선택 후 배치 영역 터치로도 옮길 수 있게 한다. 배치된 화폐는 겹치지 않게 자동 정렬한다.",
+          "refs": [
+            "wallet-money-kit"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[확인]` 버튼을 누르면 펼쳐진 돈의 합이 만 원이 되는지 체크한다",
+          "rendered_text": [
+            "[확인]"
+          ],
+          "notes": "배치 영역 아래에 큰 확인 버튼을 둔다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "제출 후 판정 도장을 피드백 레이어에 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong",
+            "q-fare-10000"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 합계창이 등장해 오른쪽에 올려놓은 돈의 합계가 표시된다",
+          "rendered_text": [],
+          "notes": "두 번째 오답부터 현재 합계를 코드 텍스트로 표시한다.",
+          "refs": [
+            "q-fare-10000"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-fare-10000"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-fare-10000",
+          "prompt": "입장료 10000원을 내 봅시다.",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "10000",
+          "feedback": {
+            "correct": "맞아요! 1000원짜리 10장을 모으면 10000원이 돼요.",
+            "wrong": "합계를 다시 세어 볼까요? 10000원이 되려면 1000원짜리가 10장 필요해요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "문제 문구 다음에 지갑과 배치 영역을 동시에 보여 주고 제출 후 피드백 레이어를 연다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "money-drag-drop",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint"
+      ],
+      "asset_ids": [
+        "bg-museum-exterior",
+        "wallet-money-kit",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-payment-counter",
+        "museum-question-board"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s2-ten-thousand"
+      }
+    },
+    {
+      "id": "s2-ten-thousand",
+      "title": "슬라이드 2 화면 1 — 10000을 더 알아 봅시다",
+      "purpose": "10000과 네 수의 차이를 자릿값 단위로 연결한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "제목 `10000을 더 알아 봅시다.`",
+          "rendered_text": [
+            "10000을 더 알아 봅시다."
+          ],
+          "notes": "태블릿에서 한눈에 읽히는 큰 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 네 문항을 한 문장씩 제시한다.",
+          "rendered_text": [],
+          "notes": "이전 문장의 응답이 끝나면 다음 문장을 같은 위치에 보여 준다.",
+          "refs": [
+            "q-10000-9000",
+            "q-10000-9900",
+            "q-10000-9990",
+            "q-10000-9999"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "하단에 `1000` `100` `10` `1` 카드. 드래그하여 빈칸에 넣는다",
+          "rendered_text": [
+            "1000",
+            "100",
+            "10",
+            "1"
+          ],
+          "notes": "보기 카드는 처음부터 모두 제시하며 사용 후에도 사라지지 않는다.",
+          "refs": [
+            "place-value-rack"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "예시는 처음부터 모두 제시하고, 문제는 한 문장씩 등장한다",
+          "rendered_text": [],
+          "notes": "문항 진행 상태와 무관하게 보기 네 장을 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "드래그하여 푸는 문제이나 **예시(보기 카드)는 사라지지 않는다.** 예시가 드래그될 때마다 사라지면 뒤로 갈수록 남는 것을 옮기는 것이 되기 때문이다",
+          "rendered_text": [],
+          "notes": "터치로 카드를 선택한 뒤 빈칸을 눌러 놓는 대체 조작을 제공한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "각 문장 제출 직후 정오 창을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-10000-9000",
+          "prompt": "10000은 9000보다 [ ] 큰 수",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "1000",
+          "feedback": {
+            "correct": "맞아요! 9000에 1000을 더하면 10000이 돼요.",
+            "wrong": "9000에서 10000까지 얼마나 남았는지 세어 볼까요? 1000이 더 필요해요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-10000-9900",
+          "prompt": "10000은 9900보다 [ ] 큰 수",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "100",
+          "feedback": {
+            "correct": "맞아요! 9900에 100을 더하면 10000이 돼요.",
+            "wrong": "9900에서 10000까지 100이 더 필요해요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-10000-9990",
+          "prompt": "10000은 9990보다 [ ] 큰 수",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "맞아요! 9990에 10을 더하면 10000이 돼요.",
+            "wrong": "9990에서 10000까지 10이 더 필요해요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-10000-9999",
+          "prompt": "10000은 9999보다 [ ] 큰 수",
+          "input_type": "drag_drop",
+          "choices": [],
+          "answer": "1",
+          "feedback": {
+            "correct": "맞아요! 9999에 1을 더하면 10000이 돼요.",
+            "wrong": "9999에서 10000까지 1이 더 필요해요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "보기 카드 네 장을 먼저 보여 준 뒤 문제 문장을 한 개씩 교체한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "card-drag-drop",
+        "quiz-submit",
+        "feedback-layer"
+      ],
+      "asset_ids": [
+        "bg-museum-exterior",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-question-board",
+        "museum-answer-tile",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s2-interior"
+      }
+    },
+    {
+      "id": "s2-interior",
+      "title": "슬라이드 2 화면 2 — 박물관 내부 진입",
+      "purpose": "배경을 전시실로 전환하고 큰 수를 안내할 큐레이터를 소개한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "박물관 내부이고 멀리서 희미하게 많은 사람들이 관람하는 모습이다.",
+          "rendered_text": [],
+          "notes": "관람객은 낮은 대비의 익명 실루엣으로 처리한다.",
+          "refs": [
+            "bg-museum-interior"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "character_motion",
+          "content": "아이가 걸어 들어오며",
+          "rendered_text": [],
+          "notes": "아이가 왼쪽에서 중앙 쪽으로 걸어 들어온다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "아이 `사람들이 많구나!`",
+          "rendered_text": [
+            "사람들이 많구나!"
+          ],
+          "notes": "주변 관람객을 둘러보는 표정으로 말한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `안녕, 나는 박물관에 대해 소개하는 큐레이터야. 그동안 우리 박물관에 많은 관람객이 다녀갔단다.`",
+          "rendered_text": [
+            "안녕, 나는 박물관에 대해 소개하는 큐레이터야. 그동안 우리 박물관에 많은 관람객이 다녀갔단다."
+          ],
+          "notes": "큐레이터가 오른쪽에서 등장한 뒤 말풍선을 연다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리로 해결해요2 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리로 해결해요2 시작하기]"
+          ],
+          "notes": "두 대화가 끝난 뒤 하단 중앙에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "외부 장면을 페이드아웃하고 내부 배경, 아이, 큐레이터 순으로 등장시킨다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "child-idle",
+        "child-speaking",
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s2-newspaper"
+      }
+    },
+    {
+      "id": "s2-newspaper",
+      "title": "슬라이드 2 화면 3 — 신문 기사 읽기",
+      "purpose": "박물관 관람객 수에 쓰인 큰 수 표현을 문맥 속에서 살핀다.",
+      "elements": [
+        {
+          "channel": "visual_aid",
+          "content": "제목 `신문 기사를 읽어 봅시다.`<br>기사: `박물관에 추석 연휴 6일간 약 십오만명이 방문, 하루 삼만팔천칠십칠명이 다녀가다!` `-인터넷 기사-`",
+          "rendered_text": [
+            "신문 기사를 읽어 봅시다.",
+            "박물관에 추석 연휴 6일간 약 십오만명이 방문, 하루 삼만팔천칠십칠명이 다녀가다!",
+            "-인터넷 기사-"
+          ],
+          "notes": "신문을 전시실 체험대 위에 놓인 실제 인쇄물처럼 확대한다.",
+          "refs": [
+            "museum-newspaper"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "기사 안 `6일간 약` 부분에 분홍색 색상자가 등장한다",
+          "rendered_text": [],
+          "notes": "분홍색 반투명 강조 상자가 해당 구절 뒤에 나타난다.",
+          "refs": [
+            "museum-newspaper"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "신문 전체를 보여 준 뒤 ‘6일간 약’ 위치를 강조한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "museum-newspaper",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s2-write-150000"
+      }
+    },
+    {
+      "id": "s2-write-150000",
+      "title": "슬라이드 2 화면 4 — 숫자로 써 봅시다 (십오만)",
+      "purpose": "한글로 읽은 십오만을 숫자로 바꾸어 쓴다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "상단에 문제 `숫자로 써 봅시다.`와 기사",
+          "rendered_text": [
+            "숫자로 써 봅시다."
+          ],
+          "notes": "신문 기사는 상단에 작게 유지하고 제목과 입력 영역은 크게 표시한다.",
+          "refs": [
+            "museum-newspaper"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 십오만 입력 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "하단에 `십오만`과 빈 입력창, 오른쪽에 숫자 키패드·지우기·확인을 배치한다.",
+          "refs": [
+            "q-write-150000"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "확인 후 입력 영역 위에 판정 도장을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: `십오만은 만이 15개`. 자릿값 표(천 백 십 일 / 만)에 `1 5 0 0 0 0`을 채워 보여준다",
+          "rendered_text": [
+            "십오만은 만이 15개",
+            "천",
+            "백",
+            "십",
+            "일",
+            "만",
+            "1",
+            "5",
+            "0"
+          ],
+          "notes": "두 번째 오답 시 자릿값 체험대를 펼치고 각 숫자를 자리별로 채운다.",
+          "refs": [
+            "place-value-rack",
+            "q-write-150000"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-write-150000"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-write-150000",
+          "prompt": "십오만 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "150000",
+          "feedback": {
+            "correct": "맞아요! 십오만은 만이 15개니까 150000이에요.",
+            "wrong": "십오만은 만이 15개"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "신문과 문제를 위아래로 분리하고, 두 번째 오답에서 자릿값 표를 입력창 옆에 연다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "museum-newspaper",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-question-board",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s3-write-38077"
+      }
+    },
+    {
+      "id": "s3-write-38077",
+      "title": "슬라이드 3 화면 1 — 숫자로 써 봅시다 (삼만팔천칠십칠)",
+      "purpose": "한글로 읽은 삼만팔천칠십칠을 숫자로 바꾸어 쓴다.",
+      "elements": [
+        {
+          "channel": "visual_aid",
+          "content": "같은 기사에서 색상자 위치를 `방문, 하루`로 옮긴다.",
+          "rendered_text": [],
+          "notes": "신문 기사 속 강조 상자를 ‘방문, 하루’ 위치로 이동시킨다.",
+          "refs": [
+            "museum-newspaper"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 삼만팔천칠십칠명 입력 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "입력창은 가능한 한 한 줄로 배치하고 오른쪽에 계산기를 둔다.",
+          "refs": [
+            "q-write-38077"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "확인 후 판정 도장을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 자릿값 표(천 백 십 일 / 만)에 `3 8 0 7 7`을 채워 보여준다",
+          "rendered_text": [
+            "천",
+            "백",
+            "십",
+            "일",
+            "만",
+            "3",
+            "8",
+            "0",
+            "7"
+          ],
+          "notes": "두 번째 오답 시 자리표를 열어 숫자를 차례대로 채운다.",
+          "refs": [
+            "place-value-rack",
+            "q-write-38077"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-write-38077"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-write-38077",
+          "prompt": "삼만팔천칠십칠명 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "38077",
+          "feedback": {
+            "correct": "맞아요! 삼만팔천칠십칠은 만이 3개, 천이 8개, 십이 7개, 일이 7개니까 38077이에요.",
+            "wrong": "자리마다 나누어 볼까요? 삼만은 30000, 팔천은 8000, 칠십은 70, 칠은 7이에요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "신문 강조 위치가 이동한 뒤 입력창과 키패드를 보여 준다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "museum-newspaper",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-question-board",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s3-read-ox"
+      }
+    },
+    {
+      "id": "s3-read-ox",
+      "title": "슬라이드 3 화면 2 — 수를 읽어 봅시다",
+      "purpose": "숫자와 한글 읽기가 일치하는지 판별한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "`수를 읽어 봅시다.`",
+          "rendered_text": [
+            "수를 읽어 봅시다."
+          ],
+          "notes": "화면 상단에 큰 제목으로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 큰 수 읽기 O/X 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "숫자와 읽기를 같은 카드 안에 두고 O/X 버튼을 크게 벌려 배치한다.",
+          "refs": [
+            "q-read-3089753"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "선택 직후 정오 창을 연다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 수 자리표를 띄워 주어 보면서 풀도록 한다",
+          "rendered_text": [],
+          "notes": "두 번째 오답 시 자리표를 숫자 뒤에 펼친다.",
+          "refs": [
+            "place-value-rack",
+            "q-read-3089753"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-read-3089753"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 10만 ~ 1000만 사이의 수 제시",
+          "rendered_text": [],
+          "notes": "예시 구조를 유지하며 지정 범위에서 숫자와 읽기 조합을 생성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-read-3089753",
+          "prompt": "이번 달 관람객 수 : 3089753\n삼백팔만 구천칠백오십삼",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "O",
+              "correct": true
+            },
+            {
+              "label": "X",
+              "correct": false
+            }
+          ],
+          "answer": "O",
+          "feedback": {
+            "correct": "맞아요! 3089753을 만 단위로 끊으면 308|9753이니까 삼백팔만 구천칠백오십삼이에요.",
+            "wrong": "오른쪽에서 네 자리씩 끊어 볼까요? 308만과 9753으로 나뉘어요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "숫자와 읽기를 먼저 보여 주고 O/X 선택지를 아래에 나타낸다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "choice-quiz",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-question-board",
+        "museum-answer-tile",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "choice-quiz",
+        "to_section_id": "s3-place-value"
+      }
+    },
+    {
+      "id": "s3-place-value",
+      "title": "슬라이드 3 화면 3 — 빨간색 숫자의 값은?",
+      "purpose": "큰 수 안에서 특정 숫자의 자릿값을 찾는다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "`빨간색 숫자의 값은?`",
+          "rendered_text": [
+            "빨간색 숫자의 값은?"
+          ],
+          "notes": "제목을 상단에 크게 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 빨간색 숫자 자릿값 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "175013의 7만 빨간색으로 표시하고 네 보기를 세로 또는 2×2로 배치한다.",
+          "refs": [
+            "q-place-7"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "선택 직후 판정 도장을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: `175013` 아래로 `70000` 수 카드가 펼쳐진다",
+          "rendered_text": [
+            "175013",
+            "70000"
+          ],
+          "notes": "두 번째 오답 시 숫자 아래에서 수 카드가 펼쳐지게 한다.",
+          "refs": [
+            "q-place-7"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-place-7"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 10만 ~ 1000만 사이의 수 제시, 자릿값은 만자리 ~ 1000만 자리 랜덤. 예시는 1000만, 100만, 10만, 만 자리로 제시",
+          "rendered_text": [],
+          "notes": "지정 범위에서 목표 자리와 보기 순서를 무작위로 구성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-place-7",
+          "prompt": "이번 달 관람객 수는 175013",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "70000000",
+              "correct": false
+            },
+            {
+              "label": "7000000",
+              "correct": false
+            },
+            {
+              "label": "700000",
+              "correct": false
+            },
+            {
+              "label": "70000",
+              "correct": true
+            }
+          ],
+          "answer": "70000",
+          "feedback": {
+            "correct": "맞아요! 7은 만의 자리에 있으니까 70000을 나타내요.",
+            "wrong": "7이 어느 자리에 있는지 세어 볼까요? 오른쪽에서 다섯 번째, 만의 자리예요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "목표 숫자를 빨간색으로 강조한 뒤 보기 네 개를 나타낸다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "choice-quiz",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-question-board",
+        "museum-answer-tile",
+        "museum-header-plaque"
+      ],
+      "advance": {
+        "interaction_id": "choice-quiz",
+        "to_section_id": "s4-dialogue"
+      }
+    },
+    {
+      "id": "s4-dialogue",
+      "title": "슬라이드 4 화면 1 — 억 도입 대화",
+      "purpose": "관람객 수보다 더 큰 억 단위가 필요한 문화재 가격 상황을 소개한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "아이 `1. 정말 많은 사람들이 다녀갔네요.`",
+          "rendered_text": [
+            "1. 정말 많은 사람들이 다녀갔네요."
+          ],
+          "notes": "아이가 놀란 표정으로 말한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "아이 `2. 한 해 동안 방문한 관람객 수가 박물관에서 찾은 가장 큰 수군요!`",
+          "rendered_text": [
+            "2. 한 해 동안 방문한 관람객 수가 박물관에서 찾은 가장 큰 수군요!"
+          ],
+          "notes": "아이가 자신 있게 말하는 표정으로 전환한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `3. 아니. 많은 사람들이 방문했지만 더 큰 수가 있어.`",
+          "rendered_text": [
+            "3. 아니. 많은 사람들이 방문했지만 더 큰 수가 있어."
+          ],
+          "notes": "큐레이터가 부드럽게 손을 들어 설명한다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `4. 미국에서 조선시대 달 항아리가 41억에 팔린 적이 있는데, 여기 있는 유물들도 그만큼 가치가 있단다.`",
+          "rendered_text": [
+            "4. 미국에서 조선시대 달 항아리가 41억에 팔린 적이 있는데, 여기 있는 유물들도 그만큼 가치가 있단다."
+          ],
+          "notes": "달 항아리 전시 방향을 가리키며 말한다.",
+          "refs": [
+            "curator-explaining",
+            "moon-jar"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리로 해결해요3 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리로 해결해요3 시작하기]"
+          ],
+          "notes": "네 번째 대화 뒤 하단에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 4,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "아이와 큐레이터의 말풍선을 한 번에 하나씩 교체한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "child-idle",
+        "child-speaking",
+        "curator-idle",
+        "curator-explaining",
+        "moon-jar"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s4-eok"
+      }
+    },
+    {
+      "id": "s4-eok",
+      "title": "슬라이드 4 화면 2 — 억을 알아 봅시다",
+      "purpose": "1000만과 1억의 관계를 알고 1억의 배수를 숫자로 쓴다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "제목 `억을 알아 봅시다.` (`억`은 초록색 강조)",
+          "rendered_text": [
+            "억을 알아 봅시다."
+          ],
+          "notes": "억 글자만 초록색으로 강조한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 억 단위 두 문항을 순서대로 제시한다.",
+          "rendered_text": [],
+          "notes": "첫 문항 뒤 두 번째 입력 문항을 같은 체험대에서 제시한다.",
+          "refs": [
+            "q-eok-count",
+            "q-eok-3659"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "오른쪽에 계산기(숫자 키패드 + 지우기 + 확인)",
+          "rendered_text": [],
+          "notes": "두 번째 문항에서 키패드를 활성화한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "각 문항 제출 후 정오 창을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: `1만(10000) → 10만(100000) → 100만(1000000) → 1000만(10000000) → 1억(100000000)`을 `10배` 화살표로 잇는 그림을 띄워 준다",
+          "rendered_text": [
+            "1만(10000)",
+            "10만(100000)",
+            "100만(1000000)",
+            "1000만(10000000)",
+            "1억(100000000)",
+            "10배"
+          ],
+          "notes": "첫 문항의 두 번째 오답 시 단계 그림을 펼친다.",
+          "refs": [
+            "place-value-rack",
+            "q-eok-count"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-eok-count"
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 자릿값 표(천 백 십 일 / 억 · 만)를 띄워 준다",
+          "rendered_text": [
+            "천",
+            "백",
+            "십",
+            "일",
+            "억",
+            "만"
+          ],
+          "notes": "두 번째 문항의 두 번째 오답 시 자릿값 체험대를 연다.",
+          "refs": [
+            "place-value-rack",
+            "q-eok-3659"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-eok-3659"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 두 번째는 랜덤 문제, `1억이 #~###개`",
+          "rendered_text": [],
+          "notes": "1억의 개수를 지정 범위에서 무작위로 뽑는다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-eok-count",
+          "prompt": "1000만이 [?] 개인 수",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "맞아요! 1000만이 10개면 1억이에요.",
+            "wrong": "1000만을 10배 하면 얼마가 되는지 볼까요? 1억이에요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-eok-3659",
+          "prompt": "1억이 3659개인 수 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "365900000000",
+          "feedback": {
+            "correct": "맞아요! 1억이 3659개면 365900000000, 삼천육백오십구억이에요.",
+            "wrong": "1억은 0이 8개예요. 3659 뒤에 0을 8개 붙여 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "제목과 첫 문항을 제시하고 정답 처리 뒤 두 번째 문항으로 교체한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s4-moon-jar"
+      }
+    },
+    {
+      "id": "s4-moon-jar",
+      "title": "슬라이드 4 화면 3 — 달 항아리",
+      "purpose": "41억 2500만원을 숫자로 바꾸어 쓴다.",
+      "elements": [
+        {
+          "channel": "visual_aid",
+          "content": "`41억 2500만원에 팔린 달 항아리` + 달 항아리 그림",
+          "rendered_text": [
+            "41억 2500만원에 팔린 달 항아리"
+          ],
+          "notes": "달 항아리를 왼쪽 전시대에 크게 배치한다.",
+          "refs": [
+            "moon-jar"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 41억 2500만원 입력 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "문구 아래 화살표와 빈 입력창을 두고 오른쪽에 계산기를 배치한다.",
+          "refs": [
+            "q-moon-jar-price"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "확인 후 판정 도장을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "production_note",
+          "content": "두 번 틀릴 때 힌트: chatgpt에서 `달 항아리를 그림으로` 입력해 얻은 그림을 사용한다",
+          "rendered_text": [],
+          "notes": "달 항아리 그림은 처음부터 유지하며 두 번째 오답에서 강조한다.",
+          "refs": [
+            "moon-jar"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "자릿값 표(천 백 십 일 / 억 · 만)를 힌트로 띄운다",
+          "rendered_text": [
+            "천",
+            "백",
+            "십",
+            "일",
+            "억",
+            "만"
+          ],
+          "notes": "두 번째 오답 시 입력창 아래에 자릿값 표를 펼친다.",
+          "refs": [
+            "place-value-rack",
+            "q-moon-jar-price"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-moon-jar-price"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-moon-jar-price",
+          "prompt": "41억 2500만원 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "4125000000",
+          "feedback": {
+            "correct": "맞아요! 41억 2500만원은 4125000000원이에요.",
+            "wrong": "41억은 4100000000, 2500만은 25000000이에요. 두 수를 더해 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "달 항아리 전시와 입력 영역을 좌우로 나누고 힌트 표는 하단에서 펼친다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "moon-jar",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s4-buddha"
+      }
+    },
+    {
+      "id": "s4-buddha",
+      "title": "슬라이드 4 화면 4 — 불상 감정가",
+      "purpose": "32억을 숫자로 바꾸어 쓰고 감정가의 뜻을 문맥으로 이해한다.",
+      "elements": [
+        {
+          "channel": "visual_aid",
+          "content": "`감정가 32억인 불상` + 불상 그림",
+          "rendered_text": [
+            "감정가 32억인 불상"
+          ],
+          "notes": "불상은 왼쪽 전시대에 안정적으로 배치한다.",
+          "refs": [
+            "buddha-statue"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 32억 입력 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "32억 아래에 화살표와 입력창을 두고 오른쪽에 계산기를 배치한다.",
+          "refs": [
+            "q-buddha-price"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "오른쪽 상단에 큐레이터와 말풍선 `얼마일지 예상한 가격을 감정가라고 해~` 등장",
+          "rendered_text": [
+            "얼마일지 예상한 가격을 감정가라고 해~"
+          ],
+          "notes": "입력 전에 짧게 나타나며 문제 영역을 가리지 않는다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "확인 후 판정 도장을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 화면 2의 2)와 같음(자릿값 표)",
+          "rendered_text": [],
+          "notes": "두 번째 오답 시 억·만 자릿값 표를 펼친다.",
+          "refs": [
+            "place-value-rack",
+            "q-buddha-price"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-buddha-price"
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-buddha-price",
+          "prompt": "32억 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "3200000000",
+          "feedback": {
+            "correct": "맞아요! 32억은 3200000000이에요.",
+            "wrong": "1억은 0이 8개예요. 32 뒤에 0을 8개 붙여 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "불상과 입력 영역을 먼저 보여 주고 큐레이터 말풍선을 겹치지 않게 띄운다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "buddha-statue",
+        "curator-idle",
+        "curator-explaining",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s5-dialogue-intro"
+      }
+    },
+    {
+      "id": "s5-dialogue-intro",
+      "title": "슬라이드 5 화면 1 — 조 도입 대화",
+      "purpose": "억보다 큰 조 단위의 필요성을 대화로 도입한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "아이 `1. 억이 정말 큰 수네요.`",
+          "rendered_text": [
+            "1. 억이 정말 큰 수네요."
+          ],
+          "notes": "아이가 놀란 표정으로 말한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `2. 우리나라의 문화재의 가치를 모두 합하면 얼마나 될까?`",
+          "rendered_text": [
+            "2. 우리나라의 문화재의 가치를 모두 합하면 얼마나 될까?"
+          ],
+          "notes": "큐레이터가 전시실 전체를 가리킨다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "아이 `3. 1000억보다 클 것 같아요.`",
+          "rendered_text": [
+            "3. 1000억보다 클 것 같아요."
+          ],
+          "notes": "아이가 생각한 뒤 답하는 표정을 보인다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `4. 억보다 큰 조가 있어.` (`억`·`조` 초록색 강조)",
+          "rendered_text": [
+            "4. 억보다 큰 조가 있어."
+          ],
+          "notes": "말풍선 안 억과 조만 초록색으로 강조한다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리로 해결해요4 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리로 해결해요4 시작하기]"
+          ],
+          "notes": "네 번째 대화가 끝난 뒤 하단에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 4,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "아이와 큐레이터를 대사 차례에 맞춰 번갈아 강조한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "child-idle",
+        "child-speaking",
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s5-jo"
+      }
+    },
+    {
+      "id": "s5-jo",
+      "title": "슬라이드 5 화면 2 — 조를 알아보기",
+      "purpose": "1000억과 1조의 관계를 알고 1조의 배수를 숫자로 쓴다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "제목 `조를 알아보기` (`조`는 초록색 강조)",
+          "rendered_text": [
+            "조를 알아보기"
+          ],
+          "notes": "조 글자만 초록색으로 강조한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 조 단위 두 문항을 순서대로 제시한다.",
+          "rendered_text": [],
+          "notes": "첫 문항 처리 뒤 두 번째 입력 문항으로 교체한다.",
+          "refs": [
+            "q-jo-count",
+            "q-jo-3659"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "오른쪽에 계산기",
+          "rendered_text": [],
+          "notes": "숫자 키패드, 지우기와 확인을 큰 터치 크기로 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "각 문항 제출 후 정오 창을 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: `1억 → 10억 → 100억 → 1000억 → 1조`를 `10배` 화살표로 잇는 그림을 띄워 준다",
+          "rendered_text": [
+            "1억",
+            "10억",
+            "100억",
+            "1000억",
+            "1조",
+            "10배"
+          ],
+          "notes": "첫 문항의 두 번째 오답 시 단계 그림을 펼친다.",
+          "refs": [
+            "place-value-rack",
+            "q-jo-count"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-jo-count"
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트: 자릿값 표(천 백 십 일 / 조 · 억 · 만)를 띄워 준다",
+          "rendered_text": [
+            "천",
+            "백",
+            "십",
+            "일",
+            "조",
+            "억",
+            "만"
+          ],
+          "notes": "두 번째 문항의 두 번째 오답 시 자리표를 연다.",
+          "refs": [
+            "place-value-rack",
+            "q-jo-3659"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-jo-3659"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 두 번째는 랜덤 문제, `1조가 #~###개`",
+          "rendered_text": [],
+          "notes": "1조의 개수를 지정 범위에서 무작위로 뽑는다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-jo-count",
+          "prompt": "1000억이 [?] 개인 수",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "10",
+          "feedback": {
+            "correct": "맞아요! 1000억이 10개면 1조예요.",
+            "wrong": "1000억을 10배 하면 1조가 돼요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-jo-3659",
+          "prompt": "1조가 3659개인 수 → ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "3659000000000000",
+          "feedback": {
+            "correct": "맞아요! 1조가 3659개면 3659000000000000, 삼천육백오십구조예요.",
+            "wrong": "1조는 0이 12개예요. 3659 뒤에 0을 12개 붙여 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "첫 문항과 두 번째 문항을 같은 위치에서 교체하고 힌트는 하단에서 펼친다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s5-check-dialogue"
+      }
+    },
+    {
+      "id": "s5-check-dialogue",
+      "title": "슬라이드 5 화면 3 — 확인 활동 도입",
+      "purpose": "억과 조 학습을 마치고 이해 확인 활동으로 전환한다.",
+      "elements": [
+        {
+          "channel": "dialogue",
+          "content": "아이 `이제, 큰 수를 알 것 같아요.`",
+          "rendered_text": [
+            "이제, 큰 수를 알 것 같아요."
+          ],
+          "notes": "아이가 자신감 있는 표정으로 말한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `큰 수를 얼마나 잘 이해하고 있는지 확인해볼까?`",
+          "rendered_text": [
+            "큰 수를 얼마나 잘 이해하고 있는지 확인해볼까?"
+          ],
+          "notes": "큐레이터가 다음 활동 방향을 가리킨다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리로 해결해요5 시작하기]` 버튼 등장",
+          "rendered_text": [
+            "[수리로 해결해요5 시작하기]"
+          ],
+          "notes": "두 번째 대사 후 하단 중앙에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "두 말풍선을 순서대로 전개한 후 전환 버튼을 표시한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "child-idle",
+        "child-speaking",
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s5-true-false"
+      }
+    },
+    {
+      "id": "s5-true-false",
+      "title": "슬라이드 5 화면 4 — 바르게 말한 것 찾기",
+      "purpose": "큰 수의 구성과 읽기에 관한 문장이 바른지 판별한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "`바르게 말한 것을 찾아 보세요.` 각 문항 오른쪽에 `O` / `X` 버튼",
+          "rendered_text": [
+            "바르게 말한 것을 찾아 보세요.",
+            "O",
+            "X"
+          ],
+          "notes": "문장은 한 번에 하나씩 크게 제시하고 O/X 버튼을 오른쪽에 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 기본 세 문항과 랜덤 후보 네 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "기본 문항 또는 랜덤 후보 중 선택된 문항을 한 장씩 표시한다.",
+          "refs": [
+            "q-tf-30",
+            "q-tf-2458",
+            "q-tf-3924580000",
+            "q-random-3000",
+            "q-random-9trillion",
+            "q-random-5678900120",
+            "q-random-7120300000"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 문제마다 1학년 1학기 또는 2학년 1학기와 같은 형태의 정오 창이 뜬다. 정답 시 `정답이야!` 배지가 뜬다.",
+          "rendered_text": [
+            "정답이야!"
+          ],
+          "notes": "각 문항에 응답한 직후 별도의 정답·오답 판정 도장을 피드백 레이어에 표시한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong",
+            "q-tf-30",
+            "q-tf-2458",
+            "q-tf-3924580000",
+            "q-random-3000",
+            "q-random-9trillion",
+            "q-random-5678900120",
+            "q-random-7120300000"
+          ],
+          "reveal": {
+            "when": "on_correct",
+            "index": 0,
+            "question_id": "q-tf-30"
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "두 번 틀릴 때 힌트 제시",
+          "rendered_text": [],
+          "notes": "각 문항의 두 번째 오답 시 자릿값을 분리해 보여 주는 힌트를 연다.",
+          "refs": [
+            "place-value-rack"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 랜덤이 어려우면 위 보기와 아래 문제 중 랜덤으로 제시한다",
+          "rendered_text": [],
+          "notes": "정해진 일곱 문항 풀 안에서 무작위 순서를 사용한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-tf-30",
+          "prompt": "10000이 30개는 30000",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "O",
+              "correct": false
+            },
+            {
+              "label": "X",
+              "correct": true
+            }
+          ],
+          "answer": "X",
+          "feedback": {
+            "correct": "10000이 30개면 300000이에요. 30000이 아니니까 X가 맞아요.",
+            "wrong": "10000을 30번 더해 볼까요? 300000이 돼요. 0의 개수를 세어 보세요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-tf-2458",
+          "prompt": "만이 2458개면 24580000",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "O",
+              "correct": true
+            },
+            {
+              "label": "X",
+              "correct": false
+            }
+          ],
+          "answer": "O",
+          "feedback": {
+            "correct": "맞아요! 만이 2458개면 2458 뒤에 0이 4개 붙어서 24580000이에요.",
+            "wrong": "만은 0이 4개예요. 2458 뒤에 0을 4개 붙여 볼까요?"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-tf-3924580000",
+          "prompt": "3924580000는 삼십구억 이천사백오십팔만",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "O",
+              "correct": true
+            },
+            {
+              "label": "X",
+              "correct": false
+            }
+          ],
+          "answer": "O",
+          "feedback": {
+            "correct": "맞아요! 3924580000을 네 자리씩 끊으면 39|2458|0000이니까 삼십구억 이천사백오십팔만이에요.",
+            "wrong": "오른쪽에서 네 자리씩 끊어 볼까요? 39억과 2458만으로 나뉘어요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-random-3000",
+          "prompt": "10000이 3000개는 30000000(O) or 3000000(X)",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "30000000(O)",
+              "correct": true
+            },
+            {
+              "label": "3000000(X)",
+              "correct": false
+            }
+          ],
+          "answer": "30000000(O)",
+          "feedback": {
+            "correct": "맞아요! 10000이 3000개면 0이 모두 7개, 30000000이에요.",
+            "wrong": "10000은 0이 4개, 3000은 0이 3개예요. 합치면 0이 7개가 돼요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-random-9trillion",
+          "prompt": "9000000000000는 구조(O) or 구억(X)",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "구조(O)",
+              "correct": true
+            },
+            {
+              "label": "구억(X)",
+              "correct": false
+            }
+          ],
+          "answer": "구조(O)",
+          "feedback": {
+            "correct": "맞아요! 9000000000000은 9|0000|0000|0000이니까 구조예요.",
+            "wrong": "네 자리씩 끊어 볼까요? 만·억·조 순서로 세면 조 자리예요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-random-5678900120",
+          "prompt": "5678900120는 오십육억칠천팔백구십만백이십(O) or 오십육조칠천팔백구십만백이십(X)",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "오십육억칠천팔백구십만백이십(O)",
+              "correct": true
+            },
+            {
+              "label": "오십육조칠천팔백구십만백이십(X)",
+              "correct": false
+            }
+          ],
+          "answer": "오십육억칠천팔백구십만백이십(O)",
+          "feedback": {
+            "correct": "맞아요! 5678900120을 끊으면 56|7890|0120이니까 오십육억 칠천팔백구십만 백이십이에요.",
+            "wrong": "오른쪽에서 네 자리씩 끊어 볼까요? 56억 7890만 120이에요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        },
+        {
+          "id": "q-random-7120300000",
+          "prompt": "7120300000는 칠십일억이천삼십만(O) or 칠천백이십억삼십만(X)",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "칠십일억이천삼십만(O)",
+              "correct": true
+            },
+            {
+              "label": "칠천백이십억삼십만(X)",
+              "correct": false
+            }
+          ],
+          "answer": "칠십일억이천삼십만(O)",
+          "feedback": {
+            "correct": "맞아요! 7120300000을 끊으면 71|2030|0000이니까 칠십일억 이천삼십만이에요.",
+            "wrong": "오른쪽에서 네 자리씩 끊어 볼까요? 71억 2030만이에요."
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "한 문항씩 같은 위치에 제시하고 응답 후 다음 문항으로 넘긴다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "choice-quiz",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "place-value-rack",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-answer-tile"
+      ],
+      "advance": {
+        "interaction_id": "choice-quiz",
+        "to_section_id": "s6-skip-ten-thousand"
+      }
+    },
+    {
+      "id": "s6-skip-ten-thousand",
+      "title": "슬라이드 6 화면 1 — 뛰어 세기 (만 단위)",
+      "purpose": "30000씩 증가하는 큰 수의 계열을 완성한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "제목 `뛰어 세기`",
+          "rendered_text": [
+            "뛰어 세기"
+          ],
+          "notes": "화면 상단에 크게 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "`한 달간 관람객이 매 주 30000씩 늘어납니다.`",
+          "rendered_text": [
+            "한 달간 관람객이 매 주 30000씩 늘어납니다."
+          ],
+          "notes": "박물관 관람객 맥락을 설명하는 문장으로 제목 아래에 둔다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 30000씩 뛰어 세기 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "30000에서 시작하는 세 개의 빈칸과 더하기 화살표를 가로로 배치한다.",
+          "refs": [
+            "q-skip-30000"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "세 칸을 모두 채운 뒤 판정한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "두 번 틀릴 때 힌트: 큐레이터가 등장해 말풍선 `만의 자리가 얼마씩 늘어나는지 살펴봐`. 만 자리를 빨간색으로 표시한다",
+          "rendered_text": [
+            "만의 자리가 얼마씩 늘어나는지 살펴봐"
+          ],
+          "notes": "두 번째 오답 시 큐레이터가 오른쪽에 나타나고 각 수의 만 자리를 빨간색으로 바꾼다.",
+          "refs": [
+            "curator-explaining",
+            "q-skip-30000"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-skip-30000"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 만 단위로 늘어남",
+          "rendered_text": [],
+          "notes": "증가량과 시작 수를 만 단위 범위에서 무작위로 구성한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-skip-30000",
+          "prompt": "30000 위에 30000씩 더하는 화살표가 이어지고 이후 칸은 ? ? ?",
+          "input_type": "keypad",
+          "choices": [],
+          "answer": "[60000] [90000] [120000]",
+          "feedback": {
+            "correct": "맞아요! 30000씩 뛰어 세면 30000 - 60000 - 90000 - 120000이 돼요.",
+            "wrong": "만의 자리가 얼마씩 늘어나는지 살펴봐"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "문맥 문장 뒤에 수 계열과 입력칸을 보여 주고 힌트 캐릭터는 오답 때만 등장시킨다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "keypad-entry",
+        "quiz-submit",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "curator-idle",
+        "curator-explaining",
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "advance": {
+        "interaction_id": "quiz-submit",
+        "to_section_id": "s6-skip-eok"
+      }
+    },
+    {
+      "id": "s6-skip-eok",
+      "title": "슬라이드 6 화면 2 — 얼마씩 뛰어 세었나요?",
+      "purpose": "억 단위 수열에서 일정한 증가량을 찾는다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "제목 `뛰어 세기`",
+          "rendered_text": [
+            "뛰어 세기"
+          ],
+          "notes": "화면 상단에 유지한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "question_group",
+          "content": "refs의 억 단위 뛰어 세기 문항을 제시한다.",
+          "rendered_text": [],
+          "notes": "네 수를 가로 화살표로 연결하고 아래에 세 보기를 배치한다.",
+          "refs": [
+            "q-skip-eok"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "feedback",
+          "content": "정오 표시: 1학년 1학기 또는 2학년 1학기처럼 정오 창이 뜬다",
+          "rendered_text": [],
+          "notes": "보기 선택 직후 판정한다.",
+          "refs": [
+            "stamp-correct",
+            "stamp-wrong"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "두 번 틀릴 때 힌트: 뛰어 센 자리 숫자를 빨간색으로 표시하고, 큐레이터가 등장해 말풍선 `빨간색 숫자를 잘 살펴봐!`",
+          "rendered_text": [
+            "빨간색 숫자를 잘 살펴봐!"
+          ],
+          "notes": "두 번째 오답 시 십억 자리 숫자를 빨간색으로 강조한다.",
+          "refs": [
+            "curator-explaining",
+            "q-skip-eok"
+          ],
+          "reveal": {
+            "when": "on_wrong",
+            "index": 0,
+            "question_id": "q-skip-eok"
+          }
+        },
+        {
+          "channel": "interaction_rule",
+          "content": "**랜덤 문제**: 1000억, 100억, 10억, 1억씩 뛰어 세는 문제",
+          "rendered_text": [],
+          "notes": "네 증가 단위 중 하나를 무작위로 사용한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-skip-eok",
+          "prompt": "얼마씩 뛰어 세었나요?\n2127억 - 2137억 - 2147억 - 2157억",
+          "input_type": "choice",
+          "choices": [
+            {
+              "label": "100억",
+              "correct": false
+            },
+            {
+              "label": "10억",
+              "correct": true
+            },
+            {
+              "label": "1억",
+              "correct": false
+            }
+          ],
+          "answer": "10억",
+          "feedback": {
+            "correct": "맞아요! 2127억에서 2137억으로 10억이 늘었으니 10억씩 뛰어 세었어요.",
+            "wrong": "빨간색 숫자를 잘 살펴봐!"
+          },
+          "attempt_policy": {
+            "max_attempts": 0,
+            "on_exhausted": []
+          }
+        }
+      ],
+      "staging_notes": [
+        "수열을 먼저 제시한 뒤 보기 세 개를 나타낸다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "choice-quiz",
+        "feedback-layer",
+        "second-wrong-hint",
+        "randomize-question"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "curator-idle",
+        "curator-explaining",
+        "stamp-correct",
+        "stamp-wrong",
+        "museum-answer-tile"
+      ],
+      "advance": {
+        "interaction_id": "choice-quiz",
+        "to_section_id": "s6-wrap-dialogue"
+      }
+    },
+    {
+      "id": "s6-wrap-dialogue",
+      "title": "슬라이드 6 화면 3 — 마무리 대화",
+      "purpose": "큰 수가 박물관과 생활을 이해하는 데 도움 된다는 학습 의미를 정리한다.",
+      "elements": [
+        {
+          "channel": "character_motion",
+          "content": "아이와 큐레이터 등장",
+          "rendered_text": [],
+          "notes": "아이를 왼쪽, 큐레이터를 오른쪽에 배치한다.",
+          "refs": [
+            "child-speaking",
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "아이 `큰 수를 알고 나니 박물관이 다르게 보여요. 전시된 유물이 얼마나 소중한지 알겠어요.`",
+          "rendered_text": [
+            "큰 수를 알고 나니 박물관이 다르게 보여요. 전시된 유물이 얼마나 소중한지 알겠어요."
+          ],
+          "notes": "아이가 전시물을 바라보며 말한다.",
+          "refs": [
+            "child-speaking"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "큐레이터 `맞아요~ 큰 수를 알면 우리 생활 주변을 더 잘 이해할 수 있어요.`",
+          "rendered_text": [
+            "맞아요~ 큰 수를 알면 우리 생활 주변을 더 잘 이해할 수 있어요."
+          ],
+          "notes": "큐레이터가 고개를 끄덕이며 답한다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[수리 이야기 시작하기]` 버튼",
+          "rendered_text": [
+            "[수리 이야기 시작하기]"
+          ],
+          "notes": "두 번째 대사 뒤 하단 중앙에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 2,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "두 인물을 함께 보여 준 뒤 말풍선을 차례로 전개한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "child-idle",
+        "child-speaking",
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s6-story-entry"
+      }
+    },
+    {
+      "id": "s6-story-entry",
+      "title": "슬라이드 6 화면 4 — 수리 이야기 진입",
+      "purpose": "박물관 밖의 생활 사례를 살펴보는 다음 단계로 안내한다.",
+      "elements": [
+        {
+          "channel": "character_motion",
+          "content": "큐레이터 + 말풍선",
+          "rendered_text": [],
+          "notes": "큐레이터를 화면 오른쪽에 배치한다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "dialogue",
+          "content": "`오늘은 박물관에서 큰 수를 찾았어요.. 우리 주변에는 큰 수가 쓰이는 곳이 많답니다. 어떻게 사용되는지 더 알아 볼까요?`",
+          "rendered_text": [
+            "오늘은 박물관에서 큰 수를 찾았어요.. 우리 주변에는 큰 수가 쓰이는 곳이 많답니다. 어떻게 사용되는지 더 알아 볼까요?"
+          ],
+          "notes": "큰 말풍선을 중앙에 배치한다.",
+          "refs": [
+            "curator-explaining"
+          ],
+          "reveal": {
+            "when": "beat",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "말풍선 안에 `[다음 ▸]` 버튼",
+          "rendered_text": [
+            "[다음 ▸]"
+          ],
+          "notes": "말풍선 오른쪽 아래에 충분한 터치 크기로 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "beat",
+            "index": 1,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "큐레이터 말풍선 안에서 다음 버튼이 마지막에 나타난다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "scene-next"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "advance": {
+        "interaction_id": "scene-next",
+        "to_section_id": "s7-population"
+      }
+    },
+    {
+      "id": "s7-population",
+      "title": "슬라이드 7 화면 1 — 인구수를 알아볼 때",
+      "purpose": "인구수와 관람객 수에 큰 수가 사용됨을 사례로 확인한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "라벨 `인구수를 알아볼 때`",
+          "rendered_text": [
+            "인구수를 알아볼 때"
+          ],
+          "notes": "상단의 초록색 라벨로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "관련 그림 + 사례 `올해 우리나라 인구수는 5,160만 9,121명`",
+          "rendered_text": [
+            "올해 우리나라 인구수는 5,160만 9,121명"
+          ],
+          "notes": "가운데 파란 박스 안에 사례 문장과 인구 관련 그림을 함께 배치한다.",
+          "refs": [
+            "story-population"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "explanation",
+          "content": "`우리나라에 사는 사람의 수, 콘서트 관람객수를 나타낼 때 큰 수를 사용해요.`",
+          "rendered_text": [
+            "우리나라에 사는 사람의 수, 콘서트 관람객수를 나타낼 때 큰 수를 사용해요."
+          ],
+          "notes": "그림 아래에 큰 본문 글자로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "공통 사례 레이아웃의 첫 페이지로 표시한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "story-carousel-next"
+      ],
+      "asset_ids": [
+        "story-population"
+      ],
+      "advance": {
+        "interaction_id": "story-carousel-next",
+        "to_section_id": "s7-distance"
+      }
+    },
+    {
+      "id": "s7-distance",
+      "title": "슬라이드 7 화면 2 — 거리를 표현할 때",
+      "purpose": "도시 사이 거리를 나타낼 때 큰 수가 사용됨을 확인한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "라벨 `거리를 표현할 때`",
+          "rendered_text": [
+            "거리를 표현할 때"
+          ],
+          "notes": "상단의 초록색 라벨로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "관련 그림 + 사례 `서울과 부산의 거리는 약 400km, 즉 400000m`",
+          "rendered_text": [
+            "서울과 부산의 거리는 약 400km, 즉 400000m"
+          ],
+          "notes": "가운데 파란 박스 안에 서울과 부산 사이의 이동 거리를 보여 주는 그림과 사례 문장을 함께 배치한다.",
+          "refs": [
+            "story-distance"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "explanation",
+          "content": "`도시와 도시 사이의 거리를 나타낼 때 큰 수를 사용해요.`",
+          "rendered_text": [
+            "도시와 도시 사이의 거리를 나타낼 때 큰 수를 사용해요."
+          ],
+          "notes": "그림 아래에 큰 본문 글자로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 1,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "이전 사례를 옆으로 밀고 동일한 레이아웃에 두 번째 사례를 넣는다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "story-carousel-next"
+      ],
+      "asset_ids": [
+        "story-distance"
+      ],
+      "advance": {
+        "interaction_id": "story-carousel-next",
+        "to_section_id": "s7-sales"
+      }
+    },
+    {
+      "id": "s7-sales",
+      "title": "슬라이드 7 화면 3 — 판매 금액을 표현할 때",
+      "purpose": "큰 판매 금액을 나타낼 때 큰 수가 필요함을 확인한다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "라벨 `판매 금액을 표현할 때`",
+          "rendered_text": [
+            "판매 금액을 표현할 때"
+          ],
+          "notes": "상단의 초록색 라벨로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "관련 그림 + 사례 `국립중앙박물관의 굿즈 브랜드 '뮷즈(MU:DS)'의 2025년 연간 매출이 약 413억원을 기록했습니다.`",
+          "rendered_text": [
+            "국립중앙박물관의 굿즈 브랜드 '뮷즈(MU:DS)'의 2025년 연간 매출이 약 413억원을 기록했습니다."
+          ],
+          "notes": "가운데 파란 박스 안에 박물관 굿즈와 판매 장면, 사례 문장을 함께 배치한다.",
+          "refs": [
+            "story-sales"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "explanation",
+          "content": "`가격이 큰 물건이나 판매 금액이 클 때 큰 수가 필요해요.`",
+          "rendered_text": [
+            "가격이 큰 물건이나 판매 금액이 클 때 큰 수가 필요해요."
+          ],
+          "notes": "그림 아래에 큰 본문 글자로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 2,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "동일한 사례 레이아웃에 세 번째 내용을 교체한다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "story-carousel-next"
+      ],
+      "asset_ids": [
+        "story-sales"
+      ],
+      "advance": {
+        "interaction_id": "story-carousel-next",
+        "to_section_id": "s7-views"
+      }
+    },
+    {
+      "id": "s7-views",
+      "title": "슬라이드 7 화면 4 — 조회수를 나타낼 때",
+      "purpose": "SNS나 영상을 본 사람 수에 큰 수가 사용됨을 확인하되 비어 있는 조회수 사례는 임의로 보충하지 않는다.",
+      "elements": [
+        {
+          "channel": "title",
+          "content": "라벨 `조회수를 나타낼 때`",
+          "rendered_text": [
+            "조회수를 나타낼 때"
+          ],
+          "notes": "상단의 초록색 라벨로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "visual_aid",
+          "content": "기획서의 박스에는 화면 3과 같은 뮷즈 매출 문장이 그대로 들어가 있다. 조회수 사례 문장이 비어 있는 상태다",
+          "rendered_text": [
+            "국립중앙박물관의 굿즈 브랜드 '뮷즈(MU:DS)'의 2025년 연간 매출이 약 413억원을 기록했습니다."
+          ],
+          "notes": "가운데 파란 박스에 원문 상태를 보존해 화면 3의 사례 문장을 동일하게 표시하고 새로운 조회수 수치는 만들지 않는다.",
+          "refs": [
+            "story-views"
+          ],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "explanation",
+          "content": "`sns이나 영상을 본 사람 수를 나타내요.`",
+          "rendered_text": [
+            "sns이나 영상을 본 사람 수를 나타내요."
+          ],
+          "notes": "그림 아래에 큰 본문 글자로 표시한다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[다음]` 버튼 등장",
+          "rendered_text": [
+            "[다음]"
+          ],
+          "notes": "네 번째 사례의 설명 아래에 나타난다.",
+          "refs": [],
+          "reveal": {
+            "when": "on_page",
+            "index": 3,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "네 번째 사례를 표시하며 비어 있는 조회수 사례를 새 내용으로 채우지 않는다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "story-carousel-next"
+      ],
+      "asset_ids": [
+        "story-views"
+      ],
+      "advance": {
+        "interaction_id": "story-carousel-next",
+        "to_section_id": "s8-complete"
+      }
+    },
+    {
+      "id": "s8-complete",
+      "title": "슬라이드 8 화면 1 — 완료",
+      "purpose": "박물관 큰 수 탐험의 완료를 알리고 인증서 받기와 외부 이동 선택지를 제공한다.",
+      "elements": [
+        {
+          "channel": "background",
+          "content": "1학년 4차시처럼 표현하되 이 차시의 배경은 박물관이다.",
+          "rendered_text": [],
+          "notes": "박물관 내부를 밝게 블러 처리하고 중앙 보상 요소에 시선을 모은다.",
+          "refs": [
+            "bg-museum-interior"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "completion",
+          "content": "화면 중앙에 `박물관에서 큰 수 찾기 완료`",
+          "rendered_text": [
+            "박물관에서 큰 수 찾기 완료"
+          ],
+          "notes": "완료 문구가 박물관 메달 장식과 결합된 고정 타이틀로 등장한다.",
+          "refs": [
+            "completion-badge"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[🏅 인증서 받기]`",
+          "rendered_text": [
+            "[🏅 인증서 받기]"
+          ],
+          "notes": "완료 타이틀 아래에 크게 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "좌측 `[나가기]`, 우측 `[다음 차시]`",
+          "rendered_text": [
+            "[나가기]",
+            "[다음 차시]"
+          ],
+          "notes": "하단 양쪽에 동일한 크기로 배치하며 인증서 버튼보다 낮은 계층으로 표현한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "박물관 배경 위에 완료 타이틀, 인증서 버튼, 하단 버튼 순으로 나타낸다."
+      ],
+      "interaction_ids": [
+        "topbar-controls",
+        "debug-jumper",
+        "certificate-open",
+        "exit-lesson",
+        "next-lesson"
+      ],
+      "asset_ids": [
+        "bg-museum-interior",
+        "completion-badge"
+      ],
+      "advance": {
+        "interaction_id": "certificate-open",
+        "to_section_id": "s8-certificate"
+      }
+    },
+    {
+      "id": "s8-certificate",
+      "title": "슬라이드 8 화면 2 — 인증서 모달",
+      "purpose": "학습 결과와 이름을 담은 인증서를 저장하게 한다.",
+      "elements": [
+        {
+          "channel": "modal",
+          "content": "제목 `학교 수리대원 인증서`, 부제 `이름을 적고 저장하면 나만의 인증서가 완성돼요.`",
+          "rendered_text": [
+            "학교 수리대원 인증서",
+            "이름을 적고 저장하면 나만의 인증서가 완성돼요."
+          ],
+          "notes": "박물관 인증서 용지 위에 제목과 안내를 코드 텍스트로 올린다.",
+          "refs": [
+            "certificate-paper"
+          ],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "summary",
+          "content": "`맞힌 문제 9 / 9 전체 시간 12분 46초` 형태",
+          "rendered_text": [
+            "맞힌 문제 9 / 9 전체 시간 12분 46초"
+          ],
+          "notes": "실제 실행 시 맞힌 문제 수와 전체 시간은 같은 형태의 동적 텍스트로 갱신한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "input",
+          "content": "`이름을 입력하세요` 입력창",
+          "rendered_text": [
+            "이름을 입력하세요"
+          ],
+          "notes": "태블릿 키보드가 열려도 저장 버튼이 보이도록 중앙에 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        },
+        {
+          "channel": "cta",
+          "content": "`[★ 갤러리에 저장하기 ★]`, 아래 `[닫기]`",
+          "rendered_text": [
+            "[★ 갤러리에 저장하기 ★]",
+            "[닫기]"
+          ],
+          "notes": "저장 버튼을 주 행동으로, 닫기를 보조 행동으로 배치한다.",
+          "refs": [],
+          "reveal": {
+            "when": "scene_enter",
+            "index": 0,
+            "question_id": ""
+          }
+        }
+      ],
+      "questions": [],
+      "staging_notes": [
+        "완료 화면 위에 인증서 모달을 열고 배경은 어둡게 낮춘다."
+      ],
+      "interaction_ids": [
+        "certificate-save",
+        "certificate-close"
+      ],
+      "asset_ids": [
+        "certificate-paper"
+      ],
+      "advance": {
+        "interaction_id": "",
+        "to_section_id": ""
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "topbar-controls",
+      "type": "button",
+      "description": "모든 화면에 헤더 배경 패널 없이 목록 버튼, 소리 아이콘과 현재 단계를 빨간 점으로 표시하는 8단계 상단 HUD를 고정한다."
+    },
+    {
+      "id": "debug-jumper",
+      "type": "debug-jumper",
+      "description": "개발 검증 시 29개 실제 화면 사이를 이동하되 비어 있는 슬라이드 3 화면 4와 슬라이드 8 화면 3~4는 만들지 않는다."
+    },
+    {
+      "id": "start-button",
+      "type": "button",
+      "description": "확대·축소 애니메이션이 반복되는 [시작하기] 버튼으로 첫 대화 화면을 연다."
+    },
+    {
+      "id": "scene-next",
+      "type": "button",
+      "description": "현재 화면의 대사나 안내가 끝난 뒤 라벨이 있는 전환 버튼으로 다음 화면을 연다."
+    },
+    {
+      "id": "money-drag-drop",
+      "type": "drag_drop",
+      "description": "지갑의 화폐를 복제해 배치 영역으로 옮기고, 더블클릭이나 역방향 드래그로 배치된 화폐를 제거한다. 터치 선택 방식도 지원한다."
+    },
+    {
+      "id": "card-drag-drop",
+      "type": "drag_drop",
+      "description": "1000·100·10·1 카드를 빈칸으로 옮기며 원본 보기 카드는 사라지지 않는다."
+    },
+    {
+      "id": "keypad-entry",
+      "type": "keypad",
+      "description": "큰 숫자를 입력하고 지우기와 확인을 수행하는 태블릿용 숫자 키패드다."
+    },
+    {
+      "id": "choice-quiz",
+      "type": "quiz",
+      "description": "O/X 또는 제시된 값 중 하나를 터치해 답하고 마지막 문항의 정답 처리 뒤 다음 화면으로 이동한다."
+    },
+    {
+      "id": "quiz-submit",
+      "type": "quiz",
+      "description": "드래그 결과나 키패드 입력을 확인하고 해당 화면의 마지막 문항이 맞으면 다음 화면으로 이동한다."
+    },
+    {
+      "id": "feedback-layer",
+      "type": "feedback",
+      "description": "정답과 오답에 서로 다른 판정 도장을 띄우고 정답일 때 정답이야! 메시지를 보여 준다."
+    },
+    {
+      "id": "second-wrong-hint",
+      "type": "feedback",
+      "description": "같은 문항에서 두 번째 오답이 발생할 때 지정된 자리표·합계·강조 또는 큐레이터 힌트를 표시한다."
+    },
+    {
+      "id": "randomize-question",
+      "type": "quiz",
+      "description": "스토리보드가 지정한 수 범위나 후보 문항 안에서 문제의 값 또는 순서를 무작위로 정한다."
+    },
+    {
+      "id": "story-carousel-next",
+      "type": "button",
+      "description": "수리 이야기의 사례를 순서대로 넘기고 네 번째 화면의 [다음]에서 완료 화면으로 이동한다."
+    },
+    {
+      "id": "certificate-open",
+      "type": "button",
+      "description": "[🏅 인증서 받기]를 눌러 인증서 모달을 연다."
+    },
+    {
+      "id": "certificate-save",
+      "type": "button",
+      "description": "입력한 이름과 동적 성적 요약을 포함한 인증서를 갤러리에 저장한다."
+    },
+    {
+      "id": "certificate-close",
+      "type": "button",
+      "description": "[닫기]를 눌러 인증서 모달을 닫고 완료 화면으로 돌아간다."
+    },
+    {
+      "id": "exit-lesson",
+      "type": "button",
+      "description": "[나가기]로 콘텐츠를 종료한다."
+    },
+    {
+      "id": "next-lesson",
+      "type": "button",
+      "description": "[다음 차시]로 외부의 다음 차시 이동 동작을 요청한다."
+    }
+  ],
+  "asset_plan": [
+    {
+      "id": "bg-museum-exterior",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg_museum_exterior.webp",
+      "purpose": "도입과 입장료 활동에 공통으로 사용하는 경주 박물관 외부 배경",
+      "prompt_brief": "맑은 낮의 국립경주박물관 외부 전경을 실물에 가깝게 어린이 교육용 래스터 일러스트로 그린다. 신라 기와지붕을 올린 낮은 석재 전시동, 마당의 석탑과 석조 유물, 입구로 이어지는 넓은 길과 낮은 나무를 포함하되 입장료 안내판과 주요 캐릭터는 제외한다.",
+      "visual_role": "박물관 입구에서 탐험을 시작하는 공간적 배경",
+      "style_constraints": "중앙과 하단에 제목·말풍선·문제 UI를 올릴 수 있도록 세부 대비를 낮춘다.",
+      "composition_notes": "16:9 정면 약간 높은 시점, 건물은 상단 절반에 두고 전경에 넓은 safe zone을 남긴다. 입구 옆 안내판이 별도로 놓일 위치도 비운다.",
+      "negative_prompt": "실사 사진, 극사실적 3D, 과밀한 관광객, 주요 캐릭터, 입장료 안내판, 화폐, 읽을 수 있는 간판 문구, flat vector UI",
+      "usage_section_ids": [
+        "s1-title",
+        "s1-greeting",
+        "s1-admission",
+        "s1-fare",
+        "s2-ten-thousand"
+      ]
+    },
+    {
+      "id": "bg-museum-interior",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/bg_museum_interior.webp",
+      "purpose": "박물관 내부의 대화·문제·완료 화면에 재사용하는 전시실 배경",
+      "prompt_brief": "따뜻한 전시 조명이 비치는 경주 박물관 내부 전시실을 어린이 교육용 래스터 일러스트로 그린다. 유리 진열장과 멀리 흐릿한 익명 관람객 실루엣을 포함한다.",
+      "visual_role": "큰 수 학습이 이어지는 박물관 내부 공간과 완료 화면의 배경",
+      "style_constraints": "전시물 세부는 낮은 대비로 제한하고 주요 상호작용이 놓일 중앙 영역을 조용하게 유지한다.",
+      "composition_notes": "16:9 수평 시점, 좌우에 진열장을 두고 중앙과 하단에 넓은 safe zone을 남긴다.",
+      "negative_prompt": "실사 사진, 극사실적 렌더, 주요 캐릭터, 달 항아리, 불상, 신문, 자릿값 체험대, 읽을 수 있는 문구, 과도한 군중, flat vector UI",
+      "usage_section_ids": [
+        "s2-interior",
+        "s2-newspaper",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s3-place-value",
+        "s4-dialogue",
+        "s4-eok",
+        "s4-moon-jar",
+        "s4-buddha",
+        "s5-dialogue-intro",
+        "s5-jo",
+        "s5-check-dialogue",
+        "s5-true-false",
+        "s6-skip-ten-thousand",
+        "s6-skip-eok",
+        "s6-wrap-dialogue",
+        "s6-story-entry",
+        "s8-complete"
+      ]
+    },
+    {
+      "id": "title-lockup",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/title_lockup.webp",
+      "purpose": "도입 화면을 특정하는 고정 타이틀 아트",
+      "prompt_brief": "박물관 석재 문패와 작은 유물 장식을 결합한 타이틀에 `박물관에 숨은 큰 수를 찾아라!`와 `- 다섯 자리의 수 -`를 원문 그대로 또렷하게 새긴다.",
+      "visual_role": "첫 화면 중앙에서 탐험 주제와 차시 내용을 알리는 자족적 타이틀 그래픽",
+      "style_constraints": "문구가 장식과 한 덩어리로 보이되 초등학생이 태블릿에서 바로 읽을 수 있는 굵은 글자 형태를 사용한다.",
+      "composition_notes": "가로형 투명 배경, 중앙 정렬, 바깥에 충분한 투명 여백을 두며 애니메이션 프레임은 만들지 않는다.",
+      "negative_prompt": "실사 금속, 가는 캘리그래피, 복잡한 문양, 네온 효과, flat vector UI",
+      "usage_section_ids": [
+        "s1-title"
+      ]
+    },
+    {
+      "id": "child-idle",
+      "kind": "image",
+      "character_id": "child",
+      "intended_path": "output/assets/child_idle.webp",
+      "purpose": "초등학생 아이의 기준 정체성과 중립 대기 자세",
+      "prompt_brief": "머리를 하나로 묶은 초등학교 저학년 여자아이로, 분홍색 가디건과 남색 주름치마에 흰 양말과 운동화 차림이다. 이 아이가 박물관에서 자연스럽게 서 있는 전신 투명 배경 캐릭터 컷을 그린다. 다른 컷과 얼굴·머리 모양·옷차림이 완전히 같아야 한다.",
+      "visual_role": "캐릭터 일관성 판단의 기준 포즈",
+      "style_constraints": "편안한 중립 표정, 양팔을 자연스럽게 내린 자세, 정면을 보는 시선",
+      "composition_notes": "전신이 잘리지 않는 세로 구도, 투명 배경, 발 아래와 머리 위에 여백을 둔다.",
+      "negative_prompt": "다른 인물, 배경 장면, 손에 든 소품, 과장된 동작, 실사풍",
+      "usage_section_ids": [
+        "s1-greeting",
+        "s2-interior",
+        "s4-dialogue",
+        "s5-dialogue-intro",
+        "s5-check-dialogue",
+        "s6-wrap-dialogue"
+      ]
+    },
+    {
+      "id": "child-speaking",
+      "kind": "image",
+      "character_id": "child",
+      "intended_path": "output/assets/child_speaking.webp",
+      "purpose": "질문·감탄·마무리 대화에 재사용하는 아이의 말하기 포즈",
+      "prompt_brief": "머리를 하나로 묶은 초등학교 저학년 여자아이로, 분홍색 가디건과 남색 주름치마에 흰 양말과 운동화 차림이다. 이 아이가 박물관에서 말하거나 감탄하는 전신 투명 배경 캐릭터 컷을 그린다. child-idle 과 얼굴·머리 모양·옷차림이 완전히 같아야 한다.",
+      "visual_role": "학습자를 대신해 질문하고 감정을 표현하는 대화 캐릭터",
+      "style_constraints": "밝고 호기심 많은 표정, 한 손을 가볍게 들어 말하는 자세, 화면 오른쪽을 향한 시선",
+      "composition_notes": "전신이 잘리지 않는 세로 구도, 투명 배경, 오른쪽 말풍선을 위한 시선과 손 방향을 유지한다.",
+      "negative_prompt": "다른 인물, 배경, 손에 든 소품, 울거나 겁먹은 표정, 실사풍",
+      "usage_section_ids": [
+        "s1-greeting",
+        "s1-admission",
+        "s2-interior",
+        "s4-dialogue",
+        "s5-dialogue-intro",
+        "s5-check-dialogue",
+        "s6-wrap-dialogue"
+      ]
+    },
+    {
+      "id": "curator-idle",
+      "kind": "image",
+      "character_id": "curator",
+      "intended_path": "output/assets/curator_idle.webp",
+      "purpose": "큐레이터의 기준 정체성과 중립 대기 자세",
+      "prompt_brief": "남색 재킷과 흰 셔츠를 입고 목에 박물관 명찰을 건 성인 큐레이터로, 짧고 단정한 검은 머리에 온화한 표정이다. 이 큐레이터가 차분하게 서 있는 전신 투명 배경 캐릭터 컷을 그린다. 다른 컷과 얼굴·머리 모양·옷차림이 완전히 같아야 하며, 아이보다 키가 분명히 크다.",
+      "visual_role": "캐릭터 일관성 판단의 기준 포즈",
+      "style_constraints": "친근한 중립 미소, 양팔을 자연스럽게 둔 자세, 정면을 보는 시선",
+      "composition_notes": "전신이 잘리지 않는 세로 구도, 투명 배경, 발과 머리 주변에 여백을 둔다.",
+      "negative_prompt": "다른 인물, 박물관 배경, 손에 든 소품, 과장된 제스처, 실사풍",
+      "usage_section_ids": [
+        "s2-interior",
+        "s4-dialogue",
+        "s4-buddha",
+        "s5-dialogue-intro",
+        "s5-check-dialogue",
+        "s6-skip-ten-thousand",
+        "s6-skip-eok",
+        "s6-wrap-dialogue",
+        "s6-story-entry"
+      ]
+    },
+    {
+      "id": "curator-explaining",
+      "kind": "image",
+      "character_id": "curator",
+      "intended_path": "output/assets/curator_explaining.webp",
+      "purpose": "설명과 두 번째 오답 힌트에 재사용하는 큐레이터 포즈",
+      "prompt_brief": "남색 재킷과 흰 셔츠를 입고 목에 박물관 명찰을 건 성인 큐레이터로, 짧고 단정한 검은 머리에 온화한 표정이다. 이 큐레이터가 학습 내용을 친절하게 설명하는 전신 투명 배경 캐릭터 컷을 그린다. curator-idle 과 얼굴·머리 모양·옷차림이 완전히 같아야 하며, 아이보다 키가 분명히 크다.",
+      "visual_role": "큰 수 설명과 힌트를 제공하는 조력자 캐릭터",
+      "style_constraints": "차분한 미소, 한 손바닥으로 화면 왼쪽의 설명 영역을 가리키는 자세, 왼쪽을 향한 시선",
+      "composition_notes": "전신이 잘리지 않는 세로 구도, 투명 배경, 왼쪽 말풍선과 문제판을 위한 공간을 고려한다.",
+      "negative_prompt": "다른 인물, 배경, 지시봉이나 책 같은 소품, 위압적 표정, 실사풍",
+      "usage_section_ids": [
+        "s2-interior",
+        "s4-dialogue",
+        "s4-buddha",
+        "s5-dialogue-intro",
+        "s5-check-dialogue",
+        "s6-skip-ten-thousand",
+        "s6-skip-eok",
+        "s6-wrap-dialogue",
+        "s6-story-entry"
+      ]
+    },
+    {
+      "id": "admission-sign",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/admission_sign.webp",
+      "purpose": "외부 전경의 작은 표지와 확대 화면에 재사용하는 입장료 안내판",
+      "prompt_brief": "경주 박물관 입구의 실제 목재·석재 입장료 안내판을 그린다. 표 안에 `구분`, `성인`, `어린이`, `기본 전시`, `무료`, `특별전시`, `10000`, `6000`을 원문 그대로 읽기 좋게 새긴다.",
+      "visual_role": "10000원 입장료 상황을 만드는 장면 속 실제 안내판",
+      "style_constraints": "고정 표와 문구를 안내판 표면에 통합하고 특별전시 10000 항목은 읽기 쉬운 대비로 표현한다.",
+      "composition_notes": "정면 수평 시점, 세로형 투명 배경, 축소와 확대 양쪽에서 사용할 수 있도록 가장자리에 여백을 둔다.",
+      "negative_prompt": "현대 앱 UI, CSS 표, flat vector UI, 캐릭터, 가격표 외 추가 문구, 극사실적 사진",
+      "usage_section_ids": [
+        "s1-greeting",
+        "s1-admission"
+      ]
+    },
+    {
+      "id": "wallet-money-kit",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/wallet_money_kit.webp",
+      "purpose": "입장료 10000원 구성 활동에서 사용하는 지갑과 복제 가능한 화폐 소품",
+      "prompt_brief": "학생용 천 지갑과, 1000원권·5000원권 지폐와 500원·100원 동전 조각들을 박물관 기념품 체험대 위 소품처럼 그린다. 10000원권 지폐는 그리지 않는다. 각 권종은 여러 장을 겹쳐 쌓은 모습으로 보여 준다.",
+      "visual_role": "학습자가 화폐를 꺼내 오른쪽 배치 영역으로 옮기는 조작 대상",
+      "style_constraints": "화폐별 외형과 금액을 알아보기 쉽게 하되 판정 합계나 선택 상태는 그리지 않는다.",
+      "composition_notes": "지갑과 각 화폐 조각을 분리해 사용할 수 있는 투명 배경 시트로 구성하고, 모든 조각을 정면에 가깝게 보여 준다.",
+      "negative_prompt": "실제 화폐의 사진 복제, 10000원권 지폐, 합계 숫자, 선택 테두리, 배치 영역 UI, flat vector icon kit, 캐릭터",
+      "usage_section_ids": [
+        "s1-fare"
+      ]
+    },
+    {
+      "id": "museum-newspaper",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/museum_newspaper.webp",
+      "purpose": "신문 읽기와 두 숫자 쓰기 활동에 재사용하는 장면 속 기사",
+      "prompt_brief": "박물관 체험대 위에 펼친 어린이용 신문을 그린다. `신문 기사를 읽어 봅시다.`, `박물관에 추석 연휴 6일간 약 십오만명이 방문, 하루 삼만팔천칠십칠명이 다녀가다!`, `-인터넷 기사-`를 원문 그대로 인쇄한다.",
+      "visual_role": "십오만과 삼만팔천칠십칠을 생활 문맥에서 발견하는 실제 신문 기사",
+      "style_constraints": "문구는 신문 면에 통합하고 분홍색 강조 상자는 이미지에 굽지 않는다.",
+      "composition_notes": "약간 위에서 본 가로형 종이, 투명 배경, 강조 상자를 HTML로 옮길 수 있도록 기사 줄 주변을 깨끗하게 유지한다.",
+      "negative_prompt": "분홍색 강조 상자, 추가 기사, 캐릭터, 실사 사진, 앱 카드, CSS component",
+      "usage_section_ids": [
+        "s2-newspaper",
+        "s2-write-150000",
+        "s3-write-38077"
+      ]
+    },
+    {
+      "id": "place-value-rack",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/place_value_rack.webp",
+      "purpose": "만·억·조 학습과 힌트에서 재사용하는 자릿값 체험대의 고정 몸체",
+      "prompt_brief": "큰 수를 오른쪽부터 네 자리씩 묶는 박물관 체험대용 반복 모듈. 동일 크기의 빈 한지 슬롯 4개만 포함하고 단위명·숫자·상태는 모두 비운다.",
+      "visual_role": "조·억·만·일의 각 네 자리 그룹을 필요 수만큼 반복 배치하는 자릿값 체험대 모듈",
+      "style_constraints": "고정 몸체만 그리고 단위 이름, 숫자, 화살표, 배수, 정오 상태는 모두 비운다.",
+      "composition_notes": "정면 수평 시점의 가로형 투명 PNG. 빈 슬롯 4개의 중심·폭·높이를 완전히 동일하게 하고 좌우 끝 구조가 여러 모듈을 16~24px 간격으로 이어 놓아도 자연스럽게 보이게 한다. 각 슬롯 안에 큰 HTML 숫자와 위쪽 자리 이름을 얹을 충분한 safe zone을 둔다.",
+      "negative_prompt": "숫자, 천·백·십·일·만·억·조 글자, 화살표, 10배 표기, 켜진 강조색, flat vector UI, SVG style",
+      "usage_section_ids": [
+        "s2-ten-thousand",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s4-eok",
+        "s4-moon-jar",
+        "s4-buddha",
+        "s5-jo",
+        "s5-true-false"
+      ]
+    },
+    {
+      "id": "moon-jar",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/moon_jar.webp",
+      "purpose": "41억 2500만원 사례와 억 도입 대화에 사용하는 달 항아리 유물",
+      "prompt_brief": "박물관 전시 받침 위의 조선시대 백자 달 항아리를 부드러운 전시 조명 아래 어린이 교육용 래스터 일러스트로 그린다.",
+      "visual_role": "41억 2500만원이라는 큰 가격을 구체화하는 핵심 유물",
+      "style_constraints": "둥근 비대칭 형태와 은은한 백자 재질을 알아보기 쉽게 표현한다.",
+      "composition_notes": "정면에 가까운 단독 전시 구도, 투명 배경, 오른쪽 또는 아래 설명 문구를 위한 여백을 둔다.",
+      "negative_prompt": "가격 문구, 숫자, 캐릭터, 복잡한 전시실 배경, 실사 도자기 사진, 과도한 균열",
+      "usage_section_ids": [
+        "s4-dialogue",
+        "s4-moon-jar"
+      ]
+    },
+    {
+      "id": "buddha-statue",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/buddha_statue.webp",
+      "purpose": "감정가 32억 사례에 사용하는 박물관 불상 유물",
+      "prompt_brief": "박물관 전시 받침 위의 역사적 불상을 정중하고 단순화된 어린이 교육용 래스터 일러스트로 그린다.",
+      "visual_role": "32억 감정가를 구체화하는 핵심 유물",
+      "style_constraints": "청동빛과 낮은 채도의 금색을 사용하고 종교적 유물의 안정된 자세를 존중해 표현한다.",
+      "composition_notes": "정면 단독 전시 구도, 투명 배경, 오른쪽 입력 영역을 위해 왼쪽 배치에 알맞은 여백을 둔다.",
+      "negative_prompt": "감정가 문구, 숫자, 캐릭터, 실사 사진, 과도한 금빛 광택, 희화화된 표정",
+      "usage_section_ids": [
+        "s4-buddha"
+      ]
+    },
+    {
+      "id": "story-population",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/story_population.webp",
+      "purpose": "인구수 사례의 관련 그림",
+      "prompt_brief": "우리나라의 다양한 사람들이 함께 있는 모습을 박물관 전시 패널 속 래스터 삽화처럼 그린다.",
+      "visual_role": "인구수와 큰 수의 관계를 직관적으로 보여 주는 사례 그림",
+      "style_constraints": "사람들은 익명 군중으로 단순화하고 특정 반복 캐릭터는 포함하지 않는다.",
+      "composition_notes": "가로형 그림, 중앙 문장 영역과 분리할 수 있도록 그림 요소를 한쪽에 모으고 투명 또는 단순 배경을 사용한다.",
+      "negative_prompt": "인구 숫자, 사례 문장, 주요 캐릭터, 국가 정치 상징, 실사 사진, flat vector UI",
+      "usage_section_ids": [
+        "s7-population"
+      ]
+    },
+    {
+      "id": "story-distance",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/story_distance.webp",
+      "purpose": "서울과 부산 거리 사례의 관련 그림",
+      "prompt_brief": "서울과 부산을 잇는 길과 두 도시의 특징적인 스카이라인을 어린이용 지도 디오라마처럼 그린다.",
+      "visual_role": "도시 사이의 긴 거리를 시각화하는 사례 그림",
+      "style_constraints": "정확한 수치와 글자 라벨은 이미지에 넣지 않고 두 지점과 연결 경로만 명확히 보인다.",
+      "composition_notes": "가로형 단순 배경, 사례 문장을 얹을 넓은 safe zone을 남긴다.",
+      "negative_prompt": "400km, 400000m, 도시명 글자, 지도 앱 UI, 캐릭터, 실사 항공사진, flat vector icon",
+      "usage_section_ids": [
+        "s7-distance"
+      ]
+    },
+    {
+      "id": "story-sales",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/story_sales.webp",
+      "purpose": "박물관 굿즈 판매 금액 사례의 관련 그림",
+      "prompt_brief": "국립중앙박물관 굿즈를 연상시키는 소품들이 진열된 박물관 상품점 판매 장면을 어린이 교육용 래스터 삽화로 그린다.",
+      "visual_role": "큰 판매 금액이 생기는 생활 장면을 보여 주는 사례 그림",
+      "style_constraints": "상표와 매출 문구는 그리지 않고 상품과 계산 장면만 표현한다.",
+      "composition_notes": "가로형 장면, 관련 문장이 올라갈 중앙 또는 하단 safe zone을 남긴다.",
+      "negative_prompt": "MU:DS 로고, 2025년, 413억원, 가격표 문구, 주요 캐릭터, 실사 상품 사진, 쇼핑 앱 UI",
+      "usage_section_ids": [
+        "s7-sales"
+      ]
+    },
+    {
+      "id": "story-views",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/story_views.webp",
+      "purpose": "조회수 설명 화면의 관련 그림을 제공하되 비어 있는 수치 사례는 만들지 않는다.",
+      "prompt_brief": "태블릿으로 교육 영상을 보는 익명 어린이들의 모습을 박물관 미디어 체험 공간의 래스터 삽화로 그린다.",
+      "visual_role": "SNS나 영상을 본 사람 수라는 개념을 보조하는 사례 그림",
+      "style_constraints": "조회수 숫자나 새 사례 문장을 임의로 넣지 않는다.",
+      "composition_notes": "가로형 장면, 원문 사례 문장과 설명을 HTML로 배치할 넓은 safe zone을 남긴다.",
+      "negative_prompt": "조회수 숫자, 임의의 SNS 브랜드나 로고, 새 사례 문구, 주요 캐릭터, 실사 사진, 소셜 미디어 앱 UI",
+      "usage_section_ids": [
+        "s7-views"
+      ]
+    },
+    {
+      "id": "completion-badge",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/completion_badge.webp",
+      "purpose": "완료 화면을 특정하는 고정 보상 타이틀",
+      "prompt_brief": "박물관 메달과 월계 장식이 결합된 완료 뱃지 중앙에 `박물관에서 큰 수 찾기 완료`를 원문 그대로 새긴다.",
+      "visual_role": "학습 완료를 명확히 알리는 중앙 보상 그래픽",
+      "style_constraints": "문구와 장식은 한 덩어리로 통합하고 세계관의 청록·남색·석재 베이지를 유지한다.",
+      "composition_notes": "정사각형에 가까운 투명 배경, 중앙 정렬, 눌림 상태나 애니메이션 프레임은 만들지 않는다.",
+      "negative_prompt": "점수, 별 개수, 추가 보상 문구, 실사 메달, 네온 광택, flat vector UI",
+      "usage_section_ids": [
+        "s8-complete"
+      ]
+    },
+    {
+      "id": "certificate-paper",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/certificate_paper.webp",
+      "purpose": "동적 이름과 성적 요약을 올릴 박물관 인증서 용지",
+      "prompt_brief": "한지와 얇은 청록·남색 테두리, 작은 유물 문양이 있는 박물관 수리대원 인증서를 실제 종이 물건처럼 그린다.",
+      "visual_role": "이름과 학습 결과를 담는 장면 속 실제 인증서 용지",
+      "style_constraints": "고정 제목, 이름, 성적, 버튼 문구를 이미지에 넣지 않고 중앙을 깨끗하게 비운다.",
+      "composition_notes": "정면 수평 시점의 세로형 종이, 투명 배경, 제목·부제·성적·이름 입력을 위한 네 개의 넓은 safe zone을 둔다.",
+      "negative_prompt": "학교 수리대원 인증서 글자, 이름, 점수, 시간, 버튼, 서명, flat vector UI, CSS modal, 실사 스캔",
+      "usage_section_ids": [
+        "s8-certificate"
+      ]
+    },
+    {
+      "id": "stamp-correct",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp_correct.webp",
+      "purpose": "feedback-layer가 필수로 요구하는 정답 판정 도장",
+      "prompt_brief": "박물관 안내 데스크에서 사용하는 눌러 찍는 정사각 판정 도장을 그린다. 도장 면 안에 `정답이야!` 문구와 체크 심볼을 정확히 새긴다.",
+      "visual_role": "모든 평가 화면에서 정답을 즉시 알리는 물리적 판정 소품",
+      "style_constraints": "문구와 체크 심볼만 긍정 초록으로 표현하고 손잡이·몸체·테두리는 청록·남색·석재 베이지 세계관 팔레트를 따른다.",
+      "composition_notes": "정사각 투명 배경, 정면에 가까운 도장 면, 중앙 문구가 태블릿에서도 읽히게 하며 눌림 효과는 CSS로 처리한다.",
+      "negative_prompt": "오답 문구, X 심볼, 빨간 몸체, 캐릭터, 긴 손잡이로 가려진 도장 면, flat vector badge",
+      "usage_section_ids": [
+        "s1-fare",
+        "s2-ten-thousand",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s3-place-value",
+        "s4-eok",
+        "s4-moon-jar",
+        "s4-buddha",
+        "s5-jo",
+        "s5-true-false",
+        "s6-skip-ten-thousand",
+        "s6-skip-eok"
+      ]
+    },
+    {
+      "id": "stamp-wrong",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/stamp_wrong.webp",
+      "purpose": "feedback-layer가 필수로 요구하는 별도 오답 판정 도장",
+      "prompt_brief": "박물관 안내 데스크에서 사용하는 눌러 찍는 정사각 오답 판정 도장을 정답 도장과 별개의 물건으로 그린다. 도장 면 안에 경고 빨강의 X 심볼을 새긴다.",
+      "visual_role": "모든 평가 화면에서 오답을 즉시 알리는 물리적 판정 소품",
+      "style_constraints": "X 심볼은 경고 빨강을 유지하고 손잡이·몸체·테두리는 청록·남색·석재 베이지 세계관 팔레트를 따른다.",
+      "composition_notes": "정사각 투명 배경, 정면에 가까운 도장 면, 정답 도장의 색상 필터 변형이 아닌 독립 구도이며 눌림 효과는 CSS로 처리한다.",
+      "negative_prompt": "정답이야! 문구, 체크 심볼, 몸체 전체가 빨간색인 도장, 캐릭터, flat vector badge, 정답 도장의 단순 색상 변형",
+      "usage_section_ids": [
+        "s1-fare",
+        "s2-ten-thousand",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s3-place-value",
+        "s4-eok",
+        "s4-moon-jar",
+        "s4-buddha",
+        "s5-jo",
+        "s5-true-false",
+        "s6-skip-ten-thousand",
+        "s6-skip-eok"
+      ]
+    },
+    {
+      "id": "museum-payment-counter",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/museum_payment_counter.webp",
+      "purpose": "드래그한 화폐와 동적 합계를 올릴 박물관 입장 매표대 표면",
+      "prompt_brief": "경주 박물관 입구의 목재·석재 매표 카운터. 중앙에는 여러 지폐와 동전을 자유롭게 놓을 넓고 깨끗한 아이보리 지불 트레이를 비워 두고, 하단에는 HTML 합계가 들어갈 빈 청록 상태창을 둔다. 글자와 숫자는 그리지 않는다.",
+      "visual_role": "지갑에서 꺼낸 화폐를 올리고 합계를 확인하는 물리적 결제 장치",
+      "style_constraints": "기존 배경의 중간 굵기 선, 따뜻한 확산광, 청록·남색·석재 베이지 팔레트와 목재·황동 재질을 따른다.",
+      "composition_notes": "정면에 가까운 가로형 투명 PNG. 약 860×540px 비율, 지불 트레이는 전체의 70% 이상이며 외곽에서 최소 36px inset을 확보한다. 합계창은 하단 중앙에 넓게 비운다.",
+      "negative_prompt": "문구, 숫자, 화폐, 캐릭터, 버튼 라벨, 앱 카드, 흰 웹 패널, flat vector UI",
+      "usage_section_ids": [
+        "s1-fare"
+      ]
+    },
+    {
+      "id": "museum-question-board",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/museum_question_board.webp",
+      "purpose": "동적으로 변하는 미션·문항 문구를 올릴 가로형 박물관 질문판",
+      "prompt_brief": "목재와 얇은 황동 프레임 안에 넓은 한지 아이보리 표시 면이 있는 박물관 체험 질문판. 중앙은 HTML 문구를 위해 완전히 비우고 글자·숫자·아이콘은 넣지 않는다.",
+      "visual_role": "배경 위에 떠 있는 웹 카드 대신 장면 속 체험대에 부착된 질문 표면",
+      "style_constraints": "기존 place-value-rack 및 admission-sign과 같은 선 굵기, 따뜻한 조명, 청록·남색·베이지 팔레트",
+      "composition_notes": "가로 3.8:1 내외 투명 PNG. 중앙 safe zone은 전체 폭 84%, 높이 68% 이상이며 1~2줄의 큰 글자를 수용한다.",
+      "negative_prompt": "문구, 숫자, 앱 UI, 순수 흰 사각형, flat vector, 과도한 장식, 캐릭터",
+      "usage_section_ids": [
+        "s1-fare",
+        "s2-ten-thousand",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s3-place-value"
+      ]
+    },
+    {
+      "id": "museum-answer-tile",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/museum_answer_tile.webp",
+      "purpose": "동적 숫자·O/X·보기 문구를 얹는 재사용 가능한 선택 표찰 몸체",
+      "prompt_brief": "작은 박물관 감정 표찰 또는 체험대 삽입 카드. 목재·청록 프레임과 넓은 한지 중앙 면만 그리고 텍스트·숫자·상태는 비운다.",
+      "visual_role": "동적 답안을 담는 물리적 선택물",
+      "style_constraints": "둥글고 안정적인 중간 굵기 외곽선, 짧고 부드러운 그림자, 기존 체험대와 동일한 목재·청록·아이보리 재질",
+      "composition_notes": "정면 직사각 투명 PNG. 다양한 숫자 길이를 위해 중앙 safe zone을 폭 82%, 높이 70% 확보한다. hover·선택·정오 상태는 CSS로 처리한다.",
+      "negative_prompt": "문구, 숫자, O, X, 체크, 선택광, 앱 버튼, flat vector UI",
+      "usage_section_ids": [
+        "s2-ten-thousand",
+        "s3-read-ox",
+        "s3-place-value",
+        "s5-true-false",
+        "s6-skip-eok"
+      ]
+    },
+    {
+      "id": "museum-header-plaque",
+      "kind": "image",
+      "character_id": "",
+      "intended_path": "output/assets/museum_header_plaque.webp",
+      "purpose": "동적 장면 제목을 올릴 박물관 섹션 표찰",
+      "prompt_brief": "얇은 석재 베이지 몸체와 청록 테두리, 작은 곡옥 또는 황동 모서리 장식이 있는 가로형 박물관 표찰. 중앙 문구 영역은 비운다.",
+      "visual_role": "장면 상단 제목을 배경 속 안내 표찰로 통합하는 표면",
+      "style_constraints": "title-lockup보다 낮은 장식 밀도, 중간 굵기 외곽선, 낮의 부드러운 확산광과 내부의 따뜻한 조명 모두에 어울리는 중성 재질",
+      "composition_notes": "가로 4.5:1 내외 투명 PNG. 중앙 safe zone 폭 86%, 높이 68%. 큰 한 줄 HTML 제목을 수용한다.",
+      "negative_prompt": "문구, 숫자, 앱 pill, 네온, flat vector UI, 과도한 금장",
+      "usage_section_ids": [
+        "s2-ten-thousand",
+        "s2-newspaper",
+        "s2-write-150000",
+        "s3-write-38077",
+        "s3-read-ox",
+        "s3-place-value"
+      ]
+    }
+  ],
+  "asset_groups": [
+    {
+      "id": "group-museum-backgrounds",
+      "asset_ids": [
+        "bg-museum-exterior",
+        "bg-museum-interior"
+      ],
+      "grouping_reason": "외부에서 내부로 이동하는 공간의 건축 재질, 조명과 색 연결을 함께 맞춘다."
+    },
+    {
+      "id": "group-child-poses",
+      "asset_ids": [
+        "child-idle",
+        "child-speaking"
+      ],
+      "grouping_reason": "초등학생 아이의 고정 정체성을 두 포즈에서 유지한다."
+    },
+    {
+      "id": "group-curator-poses",
+      "asset_ids": [
+        "curator-idle",
+        "curator-explaining"
+      ],
+      "grouping_reason": "큐레이터의 고정 정체성을 기준 자세와 설명 자세에서 유지한다."
+    },
+    {
+      "id": "group-entry-props",
+      "asset_ids": [
+        "admission-sign",
+        "wallet-money-kit",
+        "museum-newspaper"
+      ],
+      "grouping_reason": "박물관 입장과 관람객 기사로 이어지는 초반 장면 소품의 재질과 시점을 맞춘다."
+    },
+    {
+      "id": "group-number-learning",
+      "asset_ids": [
+        "place-value-rack",
+        "moon-jar",
+        "buddha-statue"
+      ],
+      "grouping_reason": "억·조 학습 화면의 체험대와 핵심 유물에 동일한 내부 전시 조명을 적용한다."
+    },
+    {
+      "id": "group-story-cases-a",
+      "asset_ids": [
+        "story-population",
+        "story-distance"
+      ],
+      "grouping_reason": "수리 이야기 앞의 두 사례를 같은 레이아웃 밀도와 삽화 비율로 제작한다."
+    },
+    {
+      "id": "group-story-cases-b",
+      "asset_ids": [
+        "story-sales",
+        "story-views"
+      ],
+      "grouping_reason": "수리 이야기 뒤의 두 사례를 같은 박물관 생활 장면 화풍으로 연결한다."
+    },
+    {
+      "id": "group-completion",
+      "asset_ids": [
+        "completion-badge",
+        "certificate-paper"
+      ],
+      "grouping_reason": "완료 화면과 인증서의 박물관 문양과 보상 분위기를 통일한다."
+    },
+    {
+      "id": "group-feedback-stamps",
+      "asset_ids": [
+        "stamp-correct",
+        "stamp-wrong"
+      ],
+      "grouping_reason": "정답과 오답을 별도 asset으로 만들면서 도장 몸체의 크기·재질·시점을 일치시킨다."
+    },
+    {
+      "id": "asset_revision_001",
+      "asset_ids": [
+        "place-value-rack",
+        "museum-payment-counter",
+        "museum-question-board",
+        "museum-answer-tile",
+        "museum-header-plaque"
+      ],
+      "grouping_reason": "Content critique requested these assets together because they must align with the same revised visual direction."
+    }
+  ]
+}

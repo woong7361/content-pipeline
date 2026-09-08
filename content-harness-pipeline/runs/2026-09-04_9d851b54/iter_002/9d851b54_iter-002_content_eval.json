@@ -1,0 +1,34 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 5,
+      "interaction_flow_clarity": 4,
+      "functional_integrity": 3
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 3.24
+  },
+  "axis_rationales": {
+    "content_fidelity": "grep -cF 대조에서 누락·불일치 21개가 확인되었다. rendered_text 누락 7개: s1-admission '무료', s4-eok '1만(1000)', '10만(10000)', '100만(100000)', '1000만(1000000)', '1억(10000000)', s5-true-false '정답이야!'. 문항 prompt 원문 불일치 13개: q-10000-9000, q-10000-9900, q-10000-9990, q-10000-9999, q-write-150000, q-write-38077, q-place-7, q-eok-count, q-eok-3659, q-moon-jar-price, q-buddha-price, q-jo-count, q-jo-3659. answer 원문 불일치 1개: q-skip-30000의 '[60000] [90000] [120000]'. 대부분 화면에서는 태그와 동적 조립으로 유사 문구가 렌더링되지만, 필수 체크리스트 문자열은 HTML 원문에 그대로 존재하지 않는다. 4개 이상이므로 결정적 scale에 따라 1점이다.",
+    "learning_goal_alignment": "입장료 10000원 구성, 만·억·조의 관계, 수 읽기·쓰기, 자릿값, O/X 판별, 뛰어 세기가 목표를 직접 다루며 조작 결과도 수 개념에 연결된다. 다만 조회수 화면에서 판매액 사례가 반복되어 해당 화면의 조회수 맥락과 설명이 서로 맞지 않고, 자유로운 화폐 구성 활동의 피드백이 1000원권 10장 방식에 편중되어 5점 수준의 일관성에는 미치지 못한다.",
+    "feedback_scaffolding": "전체 24개 문항 모두 정답·오답 피드백을 갖추고 있으며, 단순 판정에 그치지 않고 덧셈 차이, 0의 개수, 네 자리씩 끊기, 자릿값, 증가량 등 정오의 이유를 설명한다. 지정 문항에는 두 번째 오답 이후 합계창, 자릿값 표, 10배 연결, 숫자 강조 또는 큐레이터 힌트가 제공되고 완료 화면도 존재한다.",
+    "interaction_flow_clarity": "화폐 활동과 카드 활동에 조작 순서가 명시되고, 키패드 확인·문항별 자동 전환·대사 진행·다음 CTA가 일관되게 제공된다. 다만 상단 단계 표시가 planner의 8단계 계약과 달리 7개 점으로 구성되고 첫 화면에서는 숨겨져 현재 위치 안내의 완전성이 떨어진다.",
+    "functional_integrity": "데스크톱 브라우저 실행에서 24개 문항의 정답 경로, 다음 화면 활성화, 화폐 구성, 카드 배치, 키패드 입력, 선택형 문항, 완료 화면, 인증서 열기·닫기가 동작했고 blocking runtime error는 발견되지 않았다. 깨진 필수 기능은 1개로, topbar-controls가 요구된 8단계 고정 HUD 대신 7개 점만 생성하며 타이틀 화면에서 HUD 전체를 숨긴다. 결정적 scale에 따라 3점이다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "learning_goal_alignment",
+    "functional_integrity"
+  ],
+  "calibration_note": "content_fidelity는 누락·불일치 21개로 필수 5.0에 미달하고, functional_integrity도 필수 기능 1개 결함으로 4.0에 미달한다. weighted_total 3.24도 최소 4.2보다 낮으며 no_missing_required_content 하드 게이트를 충족하지 못해 REJECT로 판정했다."
+}

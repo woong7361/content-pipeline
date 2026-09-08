@@ -1,0 +1,36 @@
+{
+  "rubric_name": "content-html:v4",
+  "verdict": "REJECT",
+  "rubric_scores": {
+    "scores": {
+      "content_fidelity": 1,
+      "learning_goal_alignment": 4,
+      "feedback_scaffolding": 4,
+      "interaction_flow_clarity": 3,
+      "functional_integrity": 1
+    },
+    "weights": {
+      "content_fidelity": 0.28,
+      "learning_goal_alignment": 0.22,
+      "feedback_scaffolding": 0.2,
+      "interaction_flow_clarity": 0.18,
+      "functional_integrity": 0.12
+    },
+    "weighted_total": 2.62
+  },
+  "axis_rationales": {
+    "content_fidelity": "grep -cF 대조 결과 누락·불일치 18개다: s1-admission의 '무료'; q-10000-9000·q-10000-9900·q-10000-9990·q-10000-9999의 원문 prompt 4개; q-write-150000, q-write-38077, q-place-7, q-eok-count, q-eok-3659, q-moon-jar-price, q-buddha-price, q-jo-count, q-jo-3659의 원문 prompt 9개; s5-true-false의 '정답이야!'; q-skip-30000의 prompt와 answer '[60000] [90000] [120000]' 2개; s6-story-entry의 '[다음 ▸]'. '[🏅 인증서 받기]'는 UTF-8 환경의 grep -cF에서 1회 확인되어 누락에서 제외했다. 총 18개이므로 결정적 척도에 따라 1점이다.",
+    "learning_goal_alignment": "입장료 구성, 만 단위 차이, 한글 수의 숫자 쓰기, 수 읽기, 자릿값, 억·조, 뛰어 세기가 목표를 직접 다룬다. 다만 두 번째 오답 힌트의 '1만(1000) → 10만(10000) → 100만(100000) → 1000만(1000000) → 1억(10000000)'은 각 수의 실제 값보다 10배 작아 핵심 개념과 충돌하고, 비교 목표는 제한적으로만 다뤄져 4점이다.",
+    "feedback_scaffolding": "24개 문항 모두 정답·오답 피드백을 갖고 있으며 다수는 자리 분리, 0의 개수, 증가량과 다음 확인 행동을 설명한다. 그러나 뛰어 세기 문항의 '빨간색 숫자를 잘 살펴봐!'와 '만의 자리가 얼마씩 늘어나는지 살펴봐'는 개념 설명이 짧고, 일부 공통 두 번째 오답 힌트는 문항별 원인을 충분히 구체화하지 않아 5점 수준에는 못 미친다.",
+    "interaction_flow_clarity": "29개 장면의 순차 이동과 키패드·선택형 문항의 기본 진행은 확인된다. 그러나 화폐 및 자릿값 카드 활동에서 실제 조작이 드래그가 아닌 클릭 방식인데 이를 화면에서 명시하지 않고, 뛰어 세기에서는 빈칸 선택 후 키패드를 사용해야 한다는 안내도 없어 시행착오가 필요하다. 타이틀에서 고정 HUD가 숨겨지고 8단계가 아닌 7개 점만 표시되는 점도 현재 단계 파악을 약화한다.",
+    "functional_integrity": "브라우저 실행에서 29개 장면 도달과 인증서 닫기는 정상이며 blocking runtime error는 발견되지 않았다. 그러나 깨진 필수 기능이 8개다: money-drag-drop 부재, card-drag-drop 부재, 지정 범위의 randomize-question 미구현, 8단계 진행 상태 미구현, 실제 24개 문항과 불일치하는 9문항 고정 성적 요약, 갤러리에 저장하지 않는 certificate-save, 아무 동작이 없는 exit-lesson, 아무 동작이 없는 next-lesson. 2개 이상이므로 결정적 척도에 따라 1점이다."
+  },
+  "weak_axes": [
+    "content_fidelity",
+    "learning_goal_alignment",
+    "feedback_scaffolding",
+    "interaction_flow_clarity",
+    "functional_integrity"
+  ],
+  "calibration_note": "weighted_total 2.62로 최소 총점 4.2에 미달하고 content_fidelity·interaction_flow_clarity·functional_integrity가 최소 축 점수에 미달한다. 필수 원문 항목 누락·불일치가 존재해 no_missing_required_content 하드 게이트도 충족하지 못하므로 REJECT다."
+}

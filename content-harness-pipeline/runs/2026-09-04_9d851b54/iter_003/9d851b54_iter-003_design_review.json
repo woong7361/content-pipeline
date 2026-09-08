@@ -1,0 +1,947 @@
+{
+  "status": "REJECT",
+  "checked_at": "2026-09-04T17:30:47+09:00",
+  "html_path": "output/index.html",
+  "reviewed_screenshots": [
+    {
+      "viewport": "desktop",
+      "capture_label": "initial",
+      "path": "iter_003/design_review/desktop.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "01_s1_greeting",
+      "path": "iter_003/design_review/desktop__01_s1_greeting.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__01_s1_greeting.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "02_s1_admission",
+      "path": "iter_003/design_review/desktop__02_s1_admission.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__02_s1_admission.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "03_s1_fare",
+      "path": "iter_003/design_review/desktop__03_s1_fare.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__03_s1_fare.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "04_s2_ten_thousand",
+      "path": "iter_003/design_review/desktop__04_s2_ten_thousand.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__04_s2_ten_thousand.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "05_s2_interior",
+      "path": "iter_003/design_review/desktop__05_s2_interior.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__05_s2_interior.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "06_s2_newspaper",
+      "path": "iter_003/design_review/desktop__06_s2_newspaper.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__06_s2_newspaper.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "07_s2_write_150000",
+      "path": "iter_003/design_review/desktop__07_s2_write_150000.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__07_s2_write_150000.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "08_s3_write_38077",
+      "path": "iter_003/design_review/desktop__08_s3_write_38077.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__08_s3_write_38077.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "09_s3_read_ox",
+      "path": "iter_003/design_review/desktop__09_s3_read_ox.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__09_s3_read_ox.webp",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "viewport": "desktop",
+      "capture_label": "10_s3_place_value",
+      "path": "iter_003/design_review/desktop__10_s3_place_value.webp",
+      "absolute_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__10_s3_place_value.webp",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "overall_assessment": "배경·캐릭터·신문·질문판·선택 표찰은 동일한 박물관 동화 화풍과 청록·남색·한지 재질을 안정적으로 유지하며, 1920×1080 무대도 충분히 채운다. 그러나 04_s2_ten_thousand에서 문항 콘텐츠가 질문판 하단 프레임을 침범하고, 09_s3_read_ox에서는 7개 자릿값 숫자가 실제 슬롯 내부면 아래로 벗어난다. 두 결함 모두 핵심 학습 표면의 경계 위반이므로 디자인 권고는 REJECT다. 에셋 재생성은 필요하지 않으며 DOM·CSS 정렬 보정으로 해결 가능하다.",
+  "scene_reviews": [
+    {
+      "scene_id": "initial",
+      "capture_label": "initial",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop.webp",
+      "scene_purpose": "박물관에서 큰 수를 찾는 탐험의 목표와 시작점을 제시한다.",
+      "overall_assessment": "박물관 외부 배경과 타이틀 락업이 화면을 충분히 채우고, 제목의 석재·곡옥 장식과 배경 건축이 같은 세계에 속해 보인다. 시작 CTA도 중심축에 안정적으로 놓였다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "박물관 정문 탐험 초대장",
+        "rationale": "현재 타이틀과 무대만으로 주제·분위기·시작점이 즉시 전달된다.",
+        "core_metaphor": "정문 앞에 펼쳐진 탐험 표지",
+        "visual_language": "석재 부조, 청록 곡옥, 남색 리본, 맑은 확산광",
+        "layout_strategy": "중앙 타이틀과 하단 CTA의 단순한 수직 축을 유지한다.",
+        "interaction_surfaces": [
+          "[시작하기] ticket-button"
+        ],
+        "implementation_notes": [
+          "현재 타이틀 크기와 배경 crop을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#s1-title .c-ticketButton [data-slot='label']",
+            "issue": "CTA 라벨은 실측상 정렬 결함이 없다.",
+            "evidence": "버튼 중심 대비 라벨 중심이 약 (-2px,+1px)로 허용 범위다.",
+            "suggested_fix": "공용 ticket-button의 현재 중앙정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -2,
+              "dy_px": 1,
+              "surface_w": 446,
+              "surface_h": 112
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "타이틀 락업과 CTA의 현재 크기·중심축을 유지한다."
+      ]
+    },
+    {
+      "scene_id": "01_s1_greeting",
+      "capture_label": "01_s1_greeting",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__01_s1_greeting.webp",
+      "scene_purpose": "아이와 함께 큰 수를 찾는 탐험이라는 학습 맥락을 형성한다.",
+      "overall_assessment": "아이의 크기와 표정이 초등학교 4학년 대상에 적합하고, 말풍선·아이·작은 입장료 안내판이 자연스러운 삼각 구도를 만든다. 배경의 입구 동선도 가려지지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "입구에서 만난 탐험 친구",
+        "rationale": "현재 장면만으로 화자와 다음 관찰 대상이 명확하다.",
+        "core_metaphor": "친구가 박물관 안쪽을 소개하는 첫 만남",
+        "visual_language": "밝은 캐릭터, 넓은 마당, 낮은 대비의 배경 건축",
+        "layout_strategy": "좌측 캐릭터, 중앙 말풍선, 우측 안내판의 시선 흐름을 유지한다.",
+        "interaction_surfaces": [
+          "speech-bubble의 다음 버튼"
+        ],
+        "implementation_notes": [
+          "선택된 speech-bubble 컴포넌트의 형태는 변경하지 않는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#s1-greeting .c-speechBubbleNext",
+            "issue": "말풍선의 다음 라벨은 실측상 표면 중앙과 일치한다.",
+            "evidence": "버튼 중심 대비 라벨 중심이 약 (0px,-1px)이다.",
+            "suggested_fix": "공용 speech-bubble의 현재 버튼 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -1,
+              "surface_w": 142,
+              "surface_h": 54
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "아이의 현재 크기와 안내판의 원경 배치를 유지한다."
+      ]
+    },
+    {
+      "scene_id": "02_s1_admission",
+      "capture_label": "02_s1_admission",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__02_s1_admission.webp",
+      "scene_purpose": "실생활에서 10000이 필요한 입장료 상황을 관찰하게 한다.",
+      "overall_assessment": "확대된 입장료 안내판은 충분히 크고 선명하며, 아이의 손짓과 시선이 안내판으로 연결된다. 안내판 고정 문구도 프레임 안에서 안정적으로 읽힌다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "입장료 표지판 관찰",
+        "rationale": "실제 장면 속 안내판을 학습 대상으로 사용하는 은유가 이미 완성되어 있다.",
+        "core_metaphor": "박물관 입구에서 가격 정보를 발견하는 관찰 활동",
+        "visual_language": "목재 기둥, 기와 장식, 석재 받침, 한지 표면",
+        "layout_strategy": "좌측 대화와 우측 확대 안내판의 2열 구도를 유지한다.",
+        "interaction_surfaces": [
+          "speech-bubble의 다음 버튼",
+          "입장료 안내판 표면"
+        ],
+        "implementation_notes": [
+          "안내판의 baked-in 고정 문구는 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#s1-admission .c-speechBubbleNext",
+            "issue": "다음 라벨은 표면 중심에 정확히 수용된다.",
+            "evidence": "버튼 중심 대비 라벨 중심이 약 (0px,0px)이다.",
+            "suggested_fix": "현재 공용 컴포넌트 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 144,
+              "surface_h": 54
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "안내판과 아이 사이의 현재 간격과 시선 방향을 유지한다."
+      ]
+    },
+    {
+      "scene_id": "03_s1_fare",
+      "capture_label": "03_s1_fare",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__03_s1_fare.webp",
+      "scene_purpose": "여러 화폐를 구성해 합계 10000원의 크기를 직접 경험하게 한다.",
+      "overall_assessment": "매표대가 장면의 주 조작 장치로 충분히 크고, 미션판·트레이·확인 CTA의 축도 명확하다. 다만 왼쪽 화폐가 지갑 없이 바닥 위에 흩어진 조각처럼 보여 ‘지갑에서 꺼내 매표대에 올린다’는 물리적 맥락이 약하다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "박물관 입장 결제대",
+        "rationale": "기존 매표대와 화폐 에셋이 충분하므로 지갑 crop을 추가해 출발점만 명확히 하면 된다.",
+        "core_metaphor": "지갑에서 돈을 꺼내 입장 트레이에 올리는 실제 결제",
+        "visual_language": "목재·황동 매표대, 천 지갑, 한지 화폐",
+        "layout_strategy": "왼쪽을 화폐 공급대, 오른쪽을 결제대로 분명히 나눈다.",
+        "interaction_surfaces": [
+          "화폐 선택 조각",
+          "매표대 지불 트레이",
+          "확인 ticket-button"
+        ],
+        "implementation_notes": [
+          "wallet-money-kit의 지갑 부분을 별도 crop으로 추가하고 화폐 조각 뒤에 배치한다.",
+          "선택된 ticket-button 형태는 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#s1-fare [data-slot='confirm'] [data-slot='label']",
+            "issue": "확인 라벨은 버튼 중심과 일치한다.",
+            "evidence": "버튼 중심 대비 라벨 중심이 약 (0px,-1px)이다.",
+            "suggested_fix": "현재 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": -1,
+              "surface_w": 300,
+              "surface_h": 112
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "medium",
+            "target": "#s1-fare .coin-tray and wallet-money-kit wallet crop",
+            "issue": "화폐의 출발점인 지갑이 보이지 않아 조작 소품이 마당 바닥에 놓인 이미지처럼 보인다.",
+            "evidence": "캡처의 왼쪽 하단에는 네 권종만 있으며 asset에 포함된 천 지갑은 사용되지 않는다. 밝은 지폐와 동전도 베이지 바닥에 부분적으로 묻힌다.",
+            "suggested_fix": "wallet-money-kit의 좌상단 지갑 부분을 별도 background crop으로 x=55..730, y=40..520 부근에 배치하고, 화폐 트레이를 지갑 앞쪽으로 25~35px 올린 뒤 기존 drop-shadow를 조금 강화한다.",
+            "alignment_offset": {
+              "measured": false,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 0,
+              "surface_h": 0
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "03_s1_fare",
+          "severity": "medium",
+          "axis": "asset_component_fit",
+          "target": "#s1-fare .coin-tray and wallet-money-kit wallet crop",
+          "issue": "화폐 선택물이 지갑과 분리되어 물리적 조작 맥락이 약하다.",
+          "evidence": "지갑 없이 권종 조각만 바닥 위에 배열되어 있다.",
+          "suggested_fix": "기존 wallet-money-kit에서 지갑 부분을 crop해 화폐 공급대의 배경 소품으로 추가한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#s1-fare 왼쪽에 wallet-money-kit의 지갑 crop을 추가하고 .coin-tray를 지갑 앞쪽으로 올린다.",
+        "화폐 조각에 적용된 그림자를 강화하되 새 패널이나 안내 문구는 만들지 않는다."
+      ]
+    },
+    {
+      "scene_id": "04_s2_ten_thousand",
+      "capture_label": "04_s2_ten_thousand",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__04_s2_ten_thousand.webp",
+      "scene_purpose": "10000과 네 수의 차이를 자릿값 단위로 연결한다.",
+      "overall_assessment": "박물관 질문판과 자릿값 체험대의 재질 통일성은 좋지만, 질문 문장이 CSS grid의 익명 행으로 세 조각 나뉘면서 마지막 ‘큰 수’가 질문판 하단 프레임을 침범한다. 핵심 학습 표면의 경계 위반이므로 high 결함이다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "큰 수 복원 체험대",
+        "rationale": "장면 은유와 에셋은 충분하며 질문판 내부 DOM만 한 행으로 고치면 된다.",
+        "core_metaphor": "부족한 수 조각을 체험대에서 골라 문장 빈칸에 끼우기",
+        "visual_language": "목재 질문판, 한지 빈칸, 청록 자릿값 슬롯",
+        "layout_strategy": "제목·조작 안내·문항·카드대를 유지하되 문항 콘텐츠를 단일 수평 행으로 고정한다.",
+        "interaction_surfaces": [
+          "질문판 빈칸",
+          "자릿값 체험대 네 슬롯"
+        ],
+        "implementation_notes": [
+          "#s2-ten-thousand의 문장·빈칸·후행 문구를 .prompt-line으로 묶는다.",
+          "에셋 자체는 재생성하지 않는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#s2-ten-thousand .q-prompt and .drop-blank",
+            "issue": "문항의 마지막 ‘큰 수’가 질문판 내부면과 하단 프레임을 넘어간다.",
+            "evidence": "질문판 내부면 하단은 약 y=543인데 글자 하단은 약 y=571이다. 문항 결합물 중심은 표면 중심 대비 약 (0px,+16px)이지만 3행 분해로 하단 경계를 28px 침범한다.",
+            "suggested_fix": "직접 text node와 .drop-blank를 .prompt-line 하나로 감싸 display:flex, align-items:center, justify-content:center, flex-wrap:nowrap, gap:8px을 적용한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 16,
+              "surface_w": 1020,
+              "surface_h": 188
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#s2-ten-thousand .q-prompt > .prompt-line",
+            "issue": "동적 빈칸과 문구가 질문판 safe zone에 통합되지 못하고 세 행으로 분리된다.",
+            "evidence": "CSS의 `.q-prompt { display:grid; place-items:center; }` 안에 직접 text node, `.drop-blank`, text node를 넣어 각각 별도 grid 행처럼 렌더된다. 픽셀에서 하단 문구가 프레임을 침범한다.",
+            "suggested_fix": "질문판 내부에 단일 flex wrapper를 만들고 콘텐츠 폭을 900px 이내로 제한한다. 필요하면 이 씬에서만 font-size를 58px까지 낮춘다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 16,
+              "surface_w": 1020,
+              "surface_h": 188
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#s2-ten-thousand .rack-tray .value-card",
+            "issue": "네 값은 슬롯 안에 들어가지만 바깥 슬롯에서 수평 편차가 누적된다.",
+            "evidence": "왼쪽부터 슬롯 중심 대비 대략 (+15px,+1px), (+4px,+1px), (-6px,+1px), (-18px,+1px)이다.",
+            "suggested_fix": "space-around 대신 asset의 네 슬롯 중심을 따르는 4열 grid를 사용한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -18,
+              "dy_px": 1,
+              "surface_w": 208,
+              "surface_h": 99
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "04_s2_ten_thousand",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#s2-ten-thousand .q-prompt and .drop-blank",
+          "issue": "문항 콘텐츠가 질문판 하단 프레임을 침범한다.",
+          "evidence": "내부면 하단 약 y=543 대비 글자 하단 약 y=571로 28px 초과한다.",
+          "suggested_fix": "문장 전체를 단일 nowrap flex 행으로 묶어 safe zone 중앙에 배치한다."
+        }
+      ],
+      "refine_suggestions": [
+        "#s2-ten-thousand 문항의 세 직접 자식을 .prompt-line으로 감싸 한 행 flex로 배치한다.",
+        ".rack-tray를 repeat(4,1fr) grid로 바꾸고 각 값의 중심을 asset 슬롯 중심에 맞춘다."
+      ]
+    },
+    {
+      "scene_id": "05_s2_interior",
+      "capture_label": "05_s2_interior",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__05_s2_interior.webp",
+      "scene_purpose": "배경을 전시실로 전환하고 큰 수를 안내할 큐레이터를 소개한다.",
+      "overall_assessment": "외부에서 내부로의 조명 변화가 자연스럽고, 중앙 통로와 좌우 진열장이 대화 무대로 충분한 깊이를 만든다. 첫 대사 시점의 빈 중앙 공간도 다음 화자 등장을 위한 여백으로 기능한다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "전시실 첫 진입",
+        "rationale": "따뜻한 전시 조명과 중앙 원근이 탐험 전환을 충분히 전달한다.",
+        "core_metaphor": "새로운 수를 발견할 전시실 문턱",
+        "visual_language": "따뜻한 목재 천장, 석재 벽, 낮은 대비의 진열장",
+        "layout_strategy": "좌측 아이와 중앙 말풍선, 비워 둔 우측 큐레이터 진입 영역을 유지한다.",
+        "interaction_surfaces": [
+          "speech-bubble의 다음 버튼"
+        ],
+        "implementation_notes": [
+          "배경의 중앙 safe zone을 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": [
+          {
+            "severity": "low",
+            "target": "#s2-interior [data-slot='bubble-child'] .c-speechBubbleNext",
+            "issue": "다음 라벨은 버튼 표면 중심에 맞는다.",
+            "evidence": "표면 중심 대비 약 (0px,0px)이다.",
+            "suggested_fix": "현재 공용 컴포넌트 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 0,
+              "surface_w": 144,
+              "surface_h": 54
+            }
+          }
+        ]
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "아이와 말풍선의 현재 크기 및 중앙 통로 여백을 유지한다."
+      ]
+    },
+    {
+      "scene_id": "06_s2_newspaper",
+      "capture_label": "06_s2_newspaper",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__06_s2_newspaper.webp",
+      "scene_purpose": "박물관 관람객 수에 쓰인 큰 수 표현을 문맥 속에서 살핀다.",
+      "overall_assessment": "신문 에셋이 화면의 주인공으로 충분히 크게 배치되고 종이의 기울기·그림자·한지 질감이 전시실과 잘 어울린다. 고정 기사 문구도 종이 경계 안에서 선명하다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "전시실 속 대형 기사 스크랩",
+        "rationale": "신문 자체가 장면형 학습 표면으로 충분히 작동한다.",
+        "core_metaphor": "기사에서 큰 수를 발견하는 확대 관찰",
+        "visual_language": "두꺼운 종이, 청록 구분선, 손으로 쓴 듯한 굵은 활자",
+        "layout_strategy": "상단 섹션 표찰과 중앙 신문의 두 단계 위계를 유지한다.",
+        "interaction_surfaces": [],
+        "implementation_notes": [
+          "신문의 현재 crop과 기울기를 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "museum-newspaper의 현재 크기·기울기·중앙 배치를 유지한다."
+      ]
+    },
+    {
+      "scene_id": "07_s2_write_150000",
+      "capture_label": "07_s2_write_150000",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__07_s2_write_150000.webp",
+      "scene_purpose": "한글로 읽은 십오만을 숫자로 바꾸어 쓴다.",
+      "overall_assessment": "신문 근거, 질문판, 키패드가 좌상·좌하·우측으로 나뉘어 정보 흐름이 명확하다. 질문판 문구는 중앙에 안정적으로 들어가고 공용 키패드도 조작 영역을 침범하지 않는다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "신문 기록 전사대",
+        "rationale": "기존 구도가 좋으며 신문에서 질문판으로 이어지는 시선만 유지하면 된다.",
+        "core_metaphor": "기사의 한글 수를 박물관 기록 장치에 숫자로 옮기기",
+        "visual_language": "신문 종이, 목재 질문판, 투명한 공용 키패드",
+        "layout_strategy": "근거 자료와 변환식, 입력 장치를 삼각형으로 배치한다.",
+        "interaction_surfaces": [
+          "키패드 표시창",
+          "숫자 키 12개",
+          "질문판"
+        ],
+        "implementation_notes": [
+          "선택된 keypad 컴포넌트의 형태는 변경하지 않는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#s2-write-150000 .kp-lead",
+            "issue": "변환식은 질문판 중심보다 약간 아래지만 허용 범위다.",
+            "evidence": "질문판 내부면 중심 대비 결합물 중심이 약 (-5px,+11px)이다.",
+            "suggested_fix": "다른 수정 시 현재 한 줄 중앙정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -5,
+              "dy_px": 11,
+              "surface_w": 864,
+              "surface_h": 138
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "#s2-write-150000 .c-keypad .c-key",
+            "issue": "키패드 12개 키의 라벨은 모두 표면 중심에 맞는다.",
+            "evidence": "각 키 라벨의 편차는 가로 -1~+1px, 세로 0~+1px 범위다.",
+            "suggested_fix": "공용 keypad의 현재 내부 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 1,
+              "surface_w": 138,
+              "surface_h": 80
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "공용 keypad를 보존하고 현재 질문판·신문과의 간격을 유지한다."
+      ]
+    },
+    {
+      "scene_id": "08_s3_write_38077",
+      "capture_label": "08_s3_write_38077",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__08_s3_write_38077.webp",
+      "scene_purpose": "한글로 읽은 삼만팔천칠십칠을 숫자로 바꾸어 쓴다.",
+      "overall_assessment": "분홍 강조 필름이 신문의 해당 행을 정확히 추적하고, 긴 한글 수 역시 질문판 안에 한 줄로 수용된다. 세 에셋의 재질과 조명도 일관된다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "기사 숫자 복원 기록대",
+        "rationale": "현재 구도가 이미 학습 근거와 입력 행동을 직접 연결한다.",
+        "core_metaphor": "강조된 기사 문장을 숫자 기록으로 복원",
+        "visual_language": "분홍 반투명 강조 필름, 한지 질문판, 박물관 기록 키패드",
+        "layout_strategy": "강조된 신문 행에서 질문판과 키패드로 이어지는 대각선 흐름을 유지한다.",
+        "interaction_surfaces": [
+          "키패드 표시창",
+          "숫자 키 12개",
+          "질문판"
+        ],
+        "implementation_notes": [
+          "신문 강조 overlay의 현재 좌표계를 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#s3-write-38077 .kp-lead",
+            "issue": "긴 변환식도 질문판 중심에 안정적으로 수용된다.",
+            "evidence": "표면 중심 대비 결합물 중심은 약 (-3px,+10px)이며 경계 침범이 없다.",
+            "suggested_fix": "현재 font-size와 nowrap 배치를 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -3,
+              "dy_px": 10,
+              "surface_w": 864,
+              "surface_h": 138
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "#s3-write-38077 .c-keypad .c-key",
+            "issue": "키패드 키 라벨은 각 표면 중심과 일치한다.",
+            "evidence": "12개 키에서 최대 편차는 약 (-1px,+1px)이다.",
+            "suggested_fix": "공용 keypad 내부 정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -1,
+              "dy_px": 1,
+              "surface_w": 138,
+              "surface_h": 80
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "신문 강조 필름과 질문판의 현재 시선 연결을 유지한다."
+      ]
+    },
+    {
+      "scene_id": "09_s3_read_ox",
+      "capture_label": "09_s3_read_ox",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__09_s3_read_ox.webp",
+      "scene_purpose": "숫자와 한글 읽기가 일치하는지 판별한다.",
+      "overall_assessment": "질문판과 O/X 감정 표찰은 잘 통합되지만, 자릿값 체험대의 자리 이름과 숫자가 실제 한지 슬롯보다 아래에 놓인다. 7개 populated slot 모두 숫자가 하단 프레임에 걸려 핵심 자릿값 근거를 훼손한다.",
+      "creative_direction": {
+        "recommendation_level": "light",
+        "concept_name": "두 모듈 자릿값 판독기",
+        "rationale": "기존 체험대 에셋은 적합하고 슬롯 오버레이 좌표만 교정하면 된다.",
+        "core_metaphor": "만·일 모듈의 계기판을 읽고 O/X를 판정",
+        "visual_language": "한지 슬롯, 청록 프레임, 목재 감정 표찰",
+        "layout_strategy": "질문판 아래에 두 자릿값 모듈을 유지하되 모든 자리 이름·숫자를 슬롯 내부면에 수용한다.",
+        "interaction_surfaces": [
+          "만 모듈의 populated slot 3개",
+          "일 모듈의 populated slot 4개",
+          "O 표찰",
+          "X 표찰"
+        ],
+        "implementation_notes": [
+          ".pv-module-slots의 상하 inset을 비대칭으로 바꿔 콘텐츠를 위로 이동한다.",
+          "place-value-rack은 재생성하지 않는다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "high",
+            "target": "#s3-read-ox .pv-module:first-child .pv-module-slot:not(.empty)",
+            "issue": "만 모듈의 자리 이름·숫자가 슬롯 하단으로 밀려 숫자가 프레임을 침범한다.",
+            "evidence": "대표 ‘백/3’ 결합 중심이 슬롯 면 중심 대비 약 (0px,+11px)이고 숫자 하단은 내부면보다 약 19px 아래다. 나머지 두 populated slot도 같은 양상이다.",
+            "suggested_fix": ".pv-module-slots를 실제 슬롯 면에 맞춰 위로 옮기고 .pv-slot-head와 .pv-slot-digit의 합산 높이를 50px 이내로 줄인다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 11,
+              "surface_w": 74,
+              "surface_h": 55
+            }
+          },
+          {
+            "severity": "high",
+            "target": "#s3-read-ox .pv-module:last-child .pv-module-slot",
+            "issue": "일 모듈 네 슬롯의 자리 이름·숫자도 모두 하단 경계를 침범한다.",
+            "evidence": "대표 ‘천/9’ 결합 중심은 슬롯 면 중심 대비 약 (+1px,+11px)이며 네 숫자의 하단이 청록 프레임 위로 내려온다.",
+            "suggested_fix": "첫 모듈과 동일한 inset·font-size·line-height 보정을 적용하고 네 슬롯을 개별 확인한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 1,
+              "dy_px": 11,
+              "surface_w": 74,
+              "surface_h": 55
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "high",
+            "target": "#s3-read-ox .pv-module-slots, .pv-module-slot, .pv-slot-head, .pv-slot-digit",
+            "issue": "오버레이 좌표계가 체험대 전체 높이를 기준으로 잡혀 실제 슬롯 내부면과 맞지 않는다.",
+            "evidence": "`.pv-module-slots { inset:8% 5%; }`가 하단 받침까지 포함한 452×150 몸체를 기준으로 중앙정렬한다. 픽셀에서는 7개 숫자가 모두 슬롯 아래로 벗어난다.",
+            "suggested_fix": "예시로 inset을 `6% 5% 25%`처럼 비대칭으로 바꾸고, head와 digit 사이 여백을 줄여 결합 중심을 약 11px 위로 이동한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 11,
+              "surface_w": 74,
+              "surface_h": 55
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#s3-read-ox .choice-btn.ox:first-of-type",
+            "issue": "O 기호는 표찰 중심보다 아주 조금 아래지만 허용 범위다.",
+            "evidence": "내부면 중심 대비 약 (-2px,+4px)이다.",
+            "suggested_fix": "현재 공용 중앙정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": -2,
+              "dy_px": 4,
+              "surface_w": 204,
+              "surface_h": 132
+            }
+          },
+          {
+            "severity": "low",
+            "target": "#s3-read-ox .choice-btn.ox:last-of-type",
+            "issue": "X 기호는 표찰 중심보다 아주 조금 아래지만 허용 범위다.",
+            "evidence": "내부면 중심 대비 약 (0px,+4px)이다.",
+            "suggested_fix": "현재 중앙정렬을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 4,
+              "surface_w": 204,
+              "surface_h": 132
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [
+        {
+          "scene_id": "09_s3_read_ox",
+          "severity": "high",
+          "axis": "asset_component_fit",
+          "target": "#s3-read-ox .pv-module-slots and descendants",
+          "issue": "7개 자릿값 숫자가 슬롯 내부면 아래로 벗어난다.",
+          "evidence": "대표 슬롯에서 결합 중심 +11px, 숫자 하단 약 19px 경계 초과가 측정된다.",
+          "suggested_fix": "오버레이를 약 11px 위로 이동하고 자리 이름·숫자의 합산 높이를 슬롯 안에 맞춘다."
+        }
+      ],
+      "refine_suggestions": [
+        "#s3-read-ox의 .pv-module-slots에 비대칭 top/bottom inset을 적용해 콘텐츠 중심을 약 11px 위로 이동한다.",
+        ".pv-slot-head와 .pv-slot-digit의 font-size·line-height를 줄이고 7개 populated slot을 각각 픽셀 확인한다."
+      ]
+    },
+    {
+      "scene_id": "10_s3_place_value",
+      "capture_label": "10_s3_place_value",
+      "screenshot_path": "C:\\Users\\PC-220627-03\\Desktop\\project\\my\\architecture-thinking\\content-harness-pipeline\\runs\\2026-09-04_9d851b54\\iter_003\\design_review\\desktop__10_s3_place_value.webp",
+      "scene_purpose": "큰 수 안에서 특정 숫자의 자릿값을 찾는다.",
+      "overall_assessment": "질문판의 두 줄 문항과 네 선택 표찰이 명확한 위계를 만들며 모든 숫자가 표찰 safe zone 안에 안정적으로 들어간다. 2×2 배열도 균형이 좋다.",
+      "creative_direction": {
+        "recommendation_level": "none",
+        "concept_name": "박물관 감정 표찰 선택대",
+        "rationale": "문항과 네 물리 표찰의 은유가 이미 명료하고 정렬도 안정적이다.",
+        "core_metaphor": "유물 감정 표찰 중 맞는 자릿값을 선택",
+        "visual_language": "목재·청록·황동 프레임과 한지 중앙면",
+        "layout_strategy": "상단 질문판과 하단 2×2 표찰 배열을 유지한다.",
+        "interaction_surfaces": [
+          "선택 표찰 4개"
+        ],
+        "implementation_notes": [
+          "현재 grid-2x2 구조를 유지한다."
+        ]
+      },
+      "text_review": {
+        "hero_mission_text": [],
+        "asset_internal_text": [
+          {
+            "severity": "low",
+            "target": "#s3-place-value .q-prompt",
+            "issue": "두 줄 문항은 질문판 중심보다 약간 아래지만 경계 안에 안정적으로 수용된다.",
+            "evidence": "내부면 중심 대비 결합물 중심이 약 (0px,+7px)이다.",
+            "suggested_fix": "현재 flex column 중앙정렬과 줄 간격을 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 0,
+              "dy_px": 7,
+              "surface_w": 1020,
+              "surface_h": 146
+            }
+          }
+        ],
+        "action_feedback_text": []
+      },
+      "checks": {
+        "asset_quality": [],
+        "background_stage": [],
+        "asset_component_fit": [
+          {
+            "severity": "low",
+            "target": "#s3-place-value .choice-grid.grid-2x2 .choice-btn",
+            "issue": "네 선택지 숫자는 모두 표찰 중심에 맞는다.",
+            "evidence": "좌상부터 대략 (+1px,+3px), (0px,+3px), (+2px,+1px), (0px,+1px)이며 모두 허용 범위다.",
+            "suggested_fix": "현재 380×156 grid와 place-items:center를 유지한다.",
+            "alignment_offset": {
+              "measured": true,
+              "dx_px": 2,
+              "dy_px": 3,
+              "surface_w": 324,
+              "surface_h": 96
+            }
+          }
+        ],
+        "card_button_panel_style": []
+      },
+      "priority_findings": [],
+      "refine_suggestions": [
+        "현재 질문판과 2×2 선택 표찰의 크기·간격·정렬을 유지한다."
+      ]
+    }
+  ],
+  "motion_review": {
+    "summary": "모션 축은 전반적으로 통과한다. common.css의 `.scene.active { animation:stageFadeIn ... }`, `.scene.leaving { animation:stageFadeOut ... }`와 common.js `showScene()`의 460ms leaving 유지로 즉시 스왑이 아닌 실제 전환을 제공한다. 타이틀 `fadeUp`, 캐릭터 `walkIn`·speechPop, 퀴즈의 0/160/200ms `qFadeIn` stagger, 입장료 장면의 0/200/320/440ms 순차 등장도 구현되어 있다. 정답은 `stampCorrect`와 `choiceReveal`, 오답은 `stampWrong`과 `shake`로 반응이 분리되며 CTA·표찰·키패드에는 hover·press·pulse가 있다.",
+    "findings": []
+  },
+  "asset_review": {
+    "overall_asset_fit": "주요 래스터 에셋은 고해상도이며 배경·캐릭터·신문·목재/한지 표면의 선 굵기, 채도, 확산광이 일관된다. high 결함은 에셋 자체가 아니라 HTML 오버레이 좌표와 레이아웃 문제이므로 신규 생성·재생성 예산을 사용할 필요가 없다.",
+    "keep_assets": [
+      {
+        "asset_id": "bg-museum-exterior",
+        "reason": "화면을 충분히 채우며 중앙·하단 safe zone과 경주 박물관 맥락이 명확하다.",
+        "suggested_action": "현재 crop과 크기를 유지한다."
+      },
+      {
+        "asset_id": "bg-museum-interior",
+        "reason": "외부와 재질 연속성이 있고 중앙 조작 영역의 대비가 낮아 무대로 적합하다.",
+        "suggested_action": "현재 full-stage 배치를 유지한다."
+      },
+      {
+        "asset_id": "title-lockup",
+        "reason": "고정 타이틀이 장식과 통합되어 있으며 배경 화풍과 일치한다.",
+        "suggested_action": "현재 크기와 중앙 배치를 유지한다."
+      },
+      {
+        "asset_id": "admission-sign",
+        "reason": "축소·확대 양쪽에서 선명하고 고정 표 문구가 프레임 안에 안정적으로 들어간다.",
+        "suggested_action": "현재 에셋을 유지한다."
+      },
+      {
+        "asset_id": "museum-payment-counter",
+        "reason": "넓은 지불 트레이와 합계창이 장면 속 실제 조작 장치로 보인다.",
+        "suggested_action": "현재 크기와 오른쪽 배치를 유지한다."
+      },
+      {
+        "asset_id": "museum-question-board",
+        "reason": "질문판 safe zone과 재질은 충분하며 경계 침범은 DOM 배치 문제다.",
+        "suggested_action": "재생성하지 말고 내부 콘텐츠 레이아웃만 수정한다."
+      },
+      {
+        "asset_id": "place-value-rack",
+        "reason": "네 슬롯의 크기·재질·시점이 일관되며 슬롯 이탈은 overlay 좌표 문제다.",
+        "suggested_action": "재생성하지 말고 슬롯 inset과 grid 중심을 수정한다."
+      },
+      {
+        "asset_id": "museum-answer-tile",
+        "reason": "O/X와 긴 숫자 모두 수용하며 물리 표찰로 잘 보인다.",
+        "suggested_action": "현재 에셋과 2×2 배치를 유지한다."
+      },
+      {
+        "asset_id": "museum-header-plaque",
+        "reason": "동적 장면 제목을 박물관 표찰로 통합한다.",
+        "suggested_action": "현재 에셋을 유지한다."
+      },
+      {
+        "asset_id": "museum-newspaper",
+        "reason": "신문 재질·기울기·고정 기사 타이포가 전시실 장면과 잘 맞는다.",
+        "suggested_action": "현재 에셋을 유지한다."
+      },
+      {
+        "asset_id": "child-speaking",
+        "reason": "표정과 손짓이 명확하고 외부·내부 배경과 화풍이 이어진다.",
+        "suggested_action": "현재 정체성과 크기를 유지한다."
+      }
+    ],
+    "reposition_assets": [
+      {
+        "asset_id": "wallet-money-kit",
+        "reason": "권종 crop은 유효하지만 지갑 부분이 빠져 화폐의 물리적 출발점이 약하다.",
+        "suggested_action": "에셋을 재생성하지 말고 좌상단 지갑 부분을 별도 crop으로 추가해 .coin-tray 뒤에 배치한다."
+      }
+    ],
+    "remove_assets": [],
+    "regenerate_assets": [],
+    "new_asset_requests": [],
+    "deferred_asset_candidates": []
+  },
+  "priority_findings": [
+    {
+      "scene_id": "04_s2_ten_thousand",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "#s2-ten-thousand .q-prompt and .drop-blank",
+      "issue": "문항 콘텐츠가 질문판 하단 경계를 침범한다.",
+      "evidence": "내부면 하단 약 y=543 대비 문구 하단 약 y=571로 28px 초과한다.",
+      "suggested_fix": "문장·빈칸·후행 문구를 단일 nowrap flex 행으로 묶는다."
+    },
+    {
+      "scene_id": "09_s3_read_ox",
+      "severity": "high",
+      "axis": "asset_component_fit",
+      "target": "#s3-read-ox .pv-module-slots, .pv-slot-head, .pv-slot-digit",
+      "issue": "자릿값 숫자 7개가 슬롯 내부면 아래로 벗어난다.",
+      "evidence": "대표 슬롯에서 중심 +11px, 숫자 하단 약 19px 경계 초과가 반복된다.",
+      "suggested_fix": "슬롯 overlay를 약 11px 위로 옮기고 두 행 타이포 높이를 줄인다."
+    },
+    {
+      "scene_id": "03_s1_fare",
+      "severity": "medium",
+      "axis": "asset_component_fit",
+      "target": "#s1-fare .coin-tray and wallet-money-kit wallet crop",
+      "issue": "지갑이 보이지 않아 화폐 선택물이 바닥에 놓인 조각처럼 보인다.",
+      "evidence": "asset에 포함된 지갑은 사용되지 않고 권종 crop만 왼쪽 하단에 배열되어 있다.",
+      "suggested_fix": "기존 wallet-money-kit의 지갑 부분을 crop해 화폐 공급대의 배경 소품으로 추가한다."
+    }
+  ],
+  "refine_suggestions": [
+    "#s2-ten-thousand의 직접 text node와 .drop-blank를 .prompt-line으로 감싸 display:flex, flex-wrap:nowrap, align-items:center, justify-content:center로 배치한다.",
+    "#s2-ten-thousand .rack-tray의 space-around를 4열 grid로 바꾸고 각 값 중심을 place-value-rack의 실제 네 슬롯 중심에 맞춘다.",
+    "#s3-read-ox .pv-module-slots의 top/bottom inset을 비대칭으로 조정해 콘텐츠를 약 11px 위로 이동한다.",
+    ".pv-slot-head와 .pv-slot-digit의 합산 높이를 실제 74×55px 슬롯 내부면에 들어가도록 font-size와 line-height를 줄인다.",
+    "#s1-fare에서 wallet-money-kit의 지갑 부분을 crop해 왼쪽 화폐 공급대에 추가하고 .coin-tray를 그 앞쪽으로 25~35px 올린다.",
+    "INPUT_JSON에 선택된 topbar, speech-bubble, keypad, ticket-button, feedback-layer의 형태는 교체하지 말고 현재 컴포넌트를 보존한다."
+  ]
+}
