@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lesson Design Review Output",
+  "description": "빌드된 차시 화면을 보고 낸 판정. 코드 게이트가 못 보는 층(보기 좋은가·원문대로인가)만 본다. Codex structured output 제약에 따라 properties의 모든 필드가 required다.",
+  "type": "object",
+  "required": ["status", "screens_reviewed", "priority_findings", "storyboard_gaps"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "REJECT"],
+      "description": "화면이 이 차시로 내보낼 만한가. 우선순위 high 가 하나라도 있으면 REJECT"
+    },
+    "screens_reviewed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "실제로 본 스크린샷 수"
+    },
+    "priority_findings": {
+      "type": "array",
+      "description": "고쳐야 할 것. 심각한 것부터. 없으면 빈 배열",
+      "items": {
+        "type": "object",
+        "required": ["screen", "priority", "issue", "evidence", "fix_target"],
+        "properties": {
+          "screen": {
+            "type": "string",
+            "description": "스크린샷 파일명"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "high=이대로 내보낼 수 없다, medium=고치는 게 낫다, low=취향"
+          },
+          "issue": {
+            "type": "string",
+            "description": "무엇이 문제인가. 화면을 보고 O/X 판정이 가능한 문장으로"
+          },
+          "evidence": {
+            "type": "string",
+            "description": "화면의 어느 부분에서 그렇게 보이는가"
+          },
+          "fix_target": {
+            "type": "string",
+            "enum": ["player-ext.css", "lesson.json", "asset", "unknown"],
+            "description": "어느 파일을 고쳐야 하는가. 배치·크기·색은 player-ext.css, 문구·순서·구조는 lesson.json, 그림 자체는 asset"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "storyboard_gaps": {
+      "type": "array",
+      "description": "스토리보드가 요구했는데 화면에 없는 것. 없으면 빈 배열",
+      "items": {
+        "type": "object",
+        "required": ["expected", "screen", "why"],
+        "properties": {
+          "expected": {
+            "type": "string",
+            "description": "스토리보드가 요구한 것"
+          },
+          "screen": {
+            "type": "string",
+            "description": "있어야 할 스크린샷 파일명. 어느 화면에도 없으면 빈 문자열"
+          },
+          "why": {
+            "type": "string",
+            "description": "왜 없다고 판단했는가"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Canonical Lesson Specification",
+  "type": "object",
+  "required": ["schema_version", "lesson", "requirements", "scenes", "questions", "assets", "decisions"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "lesson": {
+      "type": "object",
+      "required": ["title", "grade", "lesson_no", "learning_objectives"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "grade": {"type": "string", "minLength": 1},
+        "lesson_no": {"type": "string"},
+        "learning_objectives": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      },
+      "additionalProperties": true
+    },
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "statement", "source", "targets", "verification"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^REQ-[A-Z0-9-]+$"},
+          "kind": {"enum": ["content", "interaction", "visual", "asset", "accessibility", "decision"]},
+          "statement": {"type": "string", "minLength": 1},
+          "source": {
+            "type": "object",
+            "required": ["artifact", "locator"],
+            "properties": {
+              "artifact": {"type": "string", "minLength": 1},
+              "locator": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "targets": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "verification": {"enum": ["static", "functional", "visual", "manual"]}
+        },
+        "additionalProperties": false
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "order", "requirement_ids", "entry", "exit"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^SCN-[A-Z0-9-]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "order": {"type": "integer", "minimum": 1},
+          "requirement_ids": {"type": "array", "items": {"type": "string"}},
+          "entry": {"type": "string"},
+          "exit": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "scene_id", "prompt", "answer", "interaction", "requirement_ids"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^Q-[A-Z0-9-]+$"},
+          "scene_id": {"type": "string"},
+          "prompt": {"type": "string", "minLength": 1},
+          "answer": {},
+          "interaction": {"type": "string", "minLength": 1},
+          "requirement_ids": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "path", "role", "requirement_ids"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^AST-[A-Z0-9-]+$"},
+          "path": {"type": "string", "pattern": "^assets/"},
+          "role": {"type": "string", "minLength": 1},
+          "requirement_ids": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "question", "answer", "status", "targets"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^DEC-[A-Z0-9-]+$"},
+          "question": {"type": "string", "minLength": 1},
+          "answer": {"type": "string"},
+          "status": {"enum": ["confirmed", "open"]},
+          "targets": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

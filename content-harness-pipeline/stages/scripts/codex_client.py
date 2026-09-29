@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
 from stages.scripts import agent_audit
+from stages.scripts import usage_log
 
 def resolve_executable(name: str) -> str:
     """이름만 넘기지 않고 셸이 고르는 것과 같은 실행 파일을 찾아 준다.
@@ -31,7 +33,10 @@ def create_prompt_client(
     claude_bin: str,
     project_dir: Path,
     timeout_seconds: int,
+    allowed_tools: tuple[str, ...] = (),
 ):
+    """`allowed_tools` 는 claude 에만 쓴다 — 비대화형이라 허락할 사람이 없는 명령 중 **미리 허용할 것**.
+    codex 는 이미 `--dangerously-bypass-approvals-and-sandbox` 로 돈다."""
     if provider == PROVIDER_CODEX:
         return CodexClient(
             codex_bin=codex_bin,
@@ -43,6 +48,7 @@ def create_prompt_client(
             claude_bin=claude_bin,
             project_dir=project_dir,
             timeout_seconds=timeout_seconds,
+            allowed_tools=tuple(allowed_tools),
         )
     raise ValueError(f"unsupported LLM provider: {provider}")
 
@@ -55,6 +61,25 @@ class CodexClient:
     bypass_approvals_and_sandbox: bool = True
 
     def run_prompt(
+        self,
+        prompt: str,
+        output_schema: Path,
+        output_path: Path,
+        model: str | None = None,
+        stage: str | None = None,
+    ) -> dict | None:
+        """부르고, **걸린 시간과 토큰을 run 에 적는다**(`usage_log`). 실패해도 걸린 시간은 남긴다."""
+        started = time.monotonic()
+        try:
+            usage = self._run_prompt(prompt, output_schema, output_path, model, stage)
+        except BaseException as exc:
+            usage_log.record_call(stage, PROVIDER_CODEX, model, time.monotonic() - started, None, False,
+                                  f"{type(exc).__name__}: {exc}")
+            raise
+        usage_log.record_call(stage, PROVIDER_CODEX, model or None, time.monotonic() - started, usage, True)
+        return usage
+
+    def _run_prompt(
         self,
         prompt: str,
         output_schema: Path,
@@ -141,8 +166,33 @@ class ClaudeClient:
     timeout_seconds: int = 600
     permission_mode: str = "acceptEdits"
     bare: bool = False
+    # `acceptEdits` 는 파일 수정만 허락한다. 명령은 여기 적은 것만 돈다(예: `Bash(python -B -m stages.scripts.self_check:*)`).
+    allowed_tools: tuple[str, ...] = ()
+    # 사용자 전역 설정(~/.claude/settings.json)의 허용 규칙을 **물려받지 않는다.** 실측(2026-09-29) — 전역에
+    # `Bash(node -e ' *)` · 특정 경로 `rm -rf` 등이 있어 파이프라인의 claude 도 그 명령을 돌릴 수 있었다.
+    # PC 마다 전역 설정이 다르므로 이렇게 해야 어디서나 같은 권한으로 돈다.
+    setting_sources: str = "project"
 
     def run_prompt(
+        self,
+        prompt: str,
+        output_schema: Path,
+        output_path: Path,
+        model: str | None = None,
+        stage: str | None = None,
+    ) -> dict | None:
+        """부르고, **걸린 시간과 토큰을 run 에 적는다**(`usage_log`). 실패해도 걸린 시간은 남긴다."""
+        started = time.monotonic()
+        try:
+            usage = self._run_prompt(prompt, output_schema, output_path, model, stage)
+        except BaseException as exc:
+            usage_log.record_call(stage, PROVIDER_CLAUDE, model, time.monotonic() - started, None, False,
+                                  f"{type(exc).__name__}: {exc}")
+            raise
+        usage_log.record_call(stage, PROVIDER_CLAUDE, model or claude_model(usage), time.monotonic() - started, usage, True)
+        return usage
+
+    def _run_prompt(
         self,
         prompt: str,
         output_schema: Path,
@@ -211,8 +261,12 @@ class ClaudeClient:
                 load_schema_for_claude(output_schema),
                 "--permission-mode",
                 self.permission_mode,
+                "--setting-sources",
+                self.setting_sources,
             ]
         )
+        if self.allowed_tools:
+            command.extend(["--allowedTools", *self.allowed_tools])
         return command
 
 
@@ -327,3 +381,9 @@ def extract_claude_usage(result: dict) -> dict | None:
     if result.get("total_cost_usd") is not None:
         usage["total_cost_usd"] = result["total_cost_usd"]
     return usage or None
+
+
+def claude_model(usage: dict | None) -> str | None:
+    """claude 는 `--model` 없이 부르면 어느 모델이 돌았는지 `modelUsage` 키로만 알 수 있다."""
+    models = (usage or {}).get("model_usage") or {}
+    return next(iter(models), None) if isinstance(models, dict) else None

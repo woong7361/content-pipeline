@@ -12,12 +12,12 @@ PROJECT_DIR = Path(__file__).resolve().parent
 SCHEMA_DIR = PROJECT_DIR / "schemas"
 ARTIFACT_SCHEMAS = {
     "input": SCHEMA_DIR / "input.schema.json",
-    "planner_output": SCHEMA_DIR / "planner_output.schema.json",
-    "asset_generator_output": SCHEMA_DIR / "asset_generator_output.schema.json",
-    "builder_output": SCHEMA_DIR / "builder_output.schema.json",
-    "design_review_output": SCHEMA_DIR / "design_review_output.schema.json",
-    "content_critique_output": SCHEMA_DIR / "content_critique_output.schema.json",
-    "content_eval_output": SCHEMA_DIR / "content_eval_output.schema.json",
+    "content_stage_output": SCHEMA_DIR / "content_stage_output.schema.json",
+    "lesson_draft_output": SCHEMA_DIR / "lesson_draft_output.schema.json",
+    "asset_render_output": SCHEMA_DIR / "asset_render_output.schema.json",
+    "lesson_review_output": SCHEMA_DIR / "lesson_review_output.schema.json",
+    "screen_diff_output": SCHEMA_DIR / "screen_diff_output.schema.json",
+    "screen_fix_output": SCHEMA_DIR / "screen_fix_output.schema.json",
 }
 
 
@@ -50,9 +50,6 @@ def validate_file(file_path: Path, artifact: str, revalidation: bool = False) ->
         }
 
     schema = load_json(ARTIFACT_SCHEMAS[artifact])
-    if revalidation and artifact == "planner_output":
-        data = normalize_stored_planner_output(data)
-        schema = relax_stored_planner_schema(schema)
     errors = validate_schema(data, schema)
 
     # schema는 모양만 본다. 경로가 실제로 있는지는 파일시스템을 봐야 알고,
@@ -66,42 +63,6 @@ def validate_file(file_path: Path, artifact: str, revalidation: bool = False) ->
         "status": "REJECT" if errors else "PASS",
         "errors": errors,
     }
-
-
-def normalize_stored_planner_output(data: Any) -> Any:
-    """계약이 추가된 뒤에 굳은 planner 산출물이 안 들고 있는 키를 기본값으로 채운다.
-
-    기본값은 전부 "정보 없음"을 뜻하는 값(빈 출구, 진입 즉시 노출, 시도 제한 없음)이라
-    없던 사실을 지어내지 않는다. 파일은 건드리지 않고 검증에 쓰는 사본만 채운다.
-    """
-    if not isinstance(data, dict):
-        return data
-    data = json.loads(json.dumps(data))
-    for section in data.get("sections") or []:
-        if not isinstance(section, dict):
-            continue
-        section.setdefault("advance", {"interaction_id": "", "to_section_id": ""})
-        for element in section.get("elements") or []:
-            if isinstance(element, dict):
-                element.setdefault("reveal", {"when": "scene_enter", "index": 0, "question_id": ""})
-        for question in section.get("questions") or []:
-            if isinstance(question, dict):
-                question.setdefault("attempt_policy", {"max_attempts": 0, "on_exhausted": []})
-    return data
-
-
-def relax_stored_planner_schema(schema: dict[str, Any]) -> dict[str, Any]:
-    """생성 계약이 어휘를 닫은 자리를, 저장된 산출물에 한해 문자열로 되돌린다.
-
-    구 planner가 만든 `input_type` 이름과 빈 `answer`는 여기서 통과하더라도
-    파생기가 underivable(unsupported_interaction / unreadable_answer)로 모아
-    사람 판단으로 올린다. 재검증에서 REJECT하면 그 결정 지점에 도달하지도 못한다.
-    """
-    schema = json.loads(json.dumps(schema))
-    question_props = schema["properties"]["sections"]["items"]["properties"]["questions"]["items"]["properties"]
-    question_props["input_type"] = {"type": "string", "minLength": 1}
-    question_props["answer"].pop("minLength", None)
-    return schema
 
 
 def validate_style_reference_set(data: Any) -> list[str]:
@@ -153,19 +114,9 @@ def format_schema_error(error: Any) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate a pipeline JSON artifact.")
     parser.add_argument("file", type=Path)
-    parser.add_argument(
-        "--artifact",
-        required=True,
-        choices=[
-            "input",
-            "planner_output",
-            "asset_generator_output",
-            "builder_output",
-            "design_review_output",
-            "content_critique_output",
-            "content_eval_output",
-        ],
-    )
+    # 목록을 손으로 적지 않는다. artifact 를 추가하고 여기를 안 고쳐서
+    # CLI 로는 못 쓰는 상태가 실제로 생겼다(lesson_* 5종).
+    parser.add_argument("--artifact", required=True, choices=sorted(ARTIFACT_SCHEMAS))
     parser.add_argument("--write-result", type=Path)
     parser.add_argument(
         "--revalidation",

@@ -1,37 +1,40 @@
 # content-harness-pipeline
 
-이 문서는 `content-harness-pipeline` 안에서 AI 에이전트가 작업할 때 따라야 하는 프로젝트 규칙이다.
+이 파이프라인의 산출물은 **gyo6_content 차시 번들 초안**이다.
+기본 경로는 실제 콘텐츠 제작 흐름처럼 기획, 디자인, 인터뷰, 비주얼 설계, 개발을 나누어 실행하는
+`produce_lesson.py`다. 최종적으로 `runs/{run_id}/lesson/` 아래에 다음 파일을 만든다.
 
-이 파이프라인의 산출물은 **학습 콘텐츠 HTML 한 편**이다.
-스토리보드 markdown을 입력으로 받아, 기획 → asset 생성 → HTML 빌드 → 품질 루프를 거쳐
-`runs/{run_id}/output/index.html` 단일 파일과 `output/assets/`를 만든다.
+```text
+lesson.json
+player-ext.js
+player-ext.css
+manifest.json
+page-map.md
+```
 
-2차 산출물은 그 HTML이 만들어진 과정을 재현하고 개선할 수 있는 **반복 가능한 생성 시스템**이다.
+`runner.py` 기반의 Markdown 스토리보드 → 단일 HTML 초안 경로는 제거되었다. 새 작업에서
+`output/index.html`, `builder`, `design_refine`, `content_refine`, `content_eval` 흐름을 되살리지 않는다.
+`build_lesson.py`는 스토리보드에서 바로 lesson을 만드는 단축 경로이며, 기본 제작 파이프라인은 아니다.
+
+## 파일 인코딩
+
+PowerShell에서 한글 파일을 읽을 때는 항상 UTF-8을 명시한다.
+
+```powershell
+Get-Content -Raw -Encoding utf8 'lesson.json'
+```
+
+`???`가 보이면 원문이 그런 것이 아니라 잘못 읽었을 가능성이 높다. 깨진 문자열을 그대로 옮겨 적지 않는다.
 
 ## 기본 원칙
 
 - 구현 전 `docs/실행.md`, `schemas/*.schema.json`, `prompts/*_system.md`를 먼저 확인한다.
 - 기존 파일 계약, 파일명 규칙, run 디렉토리 구조를 우선한다.
-- 단계별 역할을 섞지 않는다.
 - LLM stage 사이의 핸드오프는 파일과 JSON payload로만 한다.
-- runner가 경로, 파일명, payload 구성을 제어한다.
 - stage 코드나 프롬프트가 임의로 run 디렉토리 전체를 훑어 읽게 만들지 않는다.
-- 검증 가능한 형태로 마무리한다. 코드 변경 후 가능한 경우 `python runner.py ...` 또는 `python validate.py ...` 계열 검증을 실행한다.
+- 검증 가능한 형태로 마무리한다. 코드 변경 후 가능한 경우 `build_lesson.py`, `install_lesson.py`, `review_lesson.py`, `validate.py` 계열 검증을 실행한다.
 
-## input.json은 skill로 만든다
-
-**`input.json`을 손으로 쓰지 않는다. `build-pipeline-input` skill을 쓴다.**
-
-`brief_hash`는 스토리보드 md의 sha256 앞 8자이고, 컴포넌트 이름과 teacher root는 디렉토리를 스캔해야 나온다.
-손으로 쓰면 틀리고, 틀리면 run 중간이 아니라 시작조차 못 한다.
-
-skill이 정하는 것: 스토리보드 / 따라갈 선생님 화풍 또는 `plain` / `must_follow` / 쓸 공용 컴포넌트 / 추가 요청.
-해시 계산과 `validate.py --artifact input` 통과까지 skill이 책임진다.
-
-이미 있는 input을 고칠 때도 같다 — 특히 `metadata.components`를 바꾸면 그 컴포넌트가 요구하는 art가
-`asset_plan`에 늘거나 줄므로, 고친 뒤 반드시 다시 검증한다.
-
-## 실행 명령어
+## 실행
 
 명령어는 `content-harness-pipeline` 디렉토리에서 실행한다.
 
@@ -40,502 +43,535 @@ cd content-harness-pipeline
 python -m pip install -r ./requirement.txt
 ```
 
-`requirement.txt`는 `jsonschema`, `playwright`, `Pillow`를 요구한다.
-`playwright`는 design review가 쓰는 스크린샷 캡처(`stages/visual_qa.py`)에 필요하고,
-`Pillow`는 그 캡처를 WebP로 압축하는 데 쓴다(`stages/scripts/screenshot_encode.py`).
-브라우저 바이너리는 별도로 받아야 한다.
+콘텐츠 제작형 파이프라인을 실행한다.
 
 ```bash
-python -m playwright install chromium
+python -B ./produce_lesson.py "../스토리보드.pdf" --run-id g4l02 --gyo6-root {GYO6}
 ```
 
-입력 JSON만 검증할 때:
+인터뷰 직전까지만 만든다.
 
 ```bash
-python -B ./validate.py ./input.json --artifact input
+python -B ./produce_lesson.py "../스토리보드.pdf" --run-id g4l02 --gyo6-root {GYO6} --through interview
 ```
 
-전체 파이프라인을 실행할 때:
+인터뷰 답변을 반영해서 이어서 만든다.
 
 ```bash
-python -B ./runner.py ./input.json
+python -B ./produce_lesson.py runs/g4l02 --gyo6-root {GYO6} --start-at interview_brief --interview-notes runs/g4l02/interview/answers.md
 ```
 
-같은 run_id 산출물을 의도적으로 다시 만들 때만 `--overwrite`를 붙인다.
+이미 만든 초안을 LLM 없이 다시 검사한다.
 
 ```bash
-python -B ./runner.py ./input.json --overwrite
+python -B ./build_lesson.py runs/g4l02 --gyo6-root {GYO6} --check-only
 ```
 
-비용 문제로 HTML을 다루는 무거운 stage(builder / design_refine / content_refine)만 Claude로 돌릴 수 있다.
+배치 전에 무엇을 옮길지만 본다.
 
 ```bash
-python -B ./runner.py ./input.json --overwrite --claude-html-stages --claude-model sonnet
+python -B ./install_lesson.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --dry-run
 ```
 
-계획이 굳기 전의 refine은 기본으로 돈다. 계획을 만든 그대로 굳히려면 끈다.
+**대사 음성 (Typecast 웹 편집기)** — 초안이 끝나고 인물 대표 그림이 있으면 `produce_lesson.py` 가 끝에서
+**대본을 내보내고 바탕화면 알림을 띄운 뒤 멈춘다**(`runs/{id}/audio/web/script.md` · 인물별 `script-*.txt`).
+사람이 웹 편집기(웹 요금제)에서 인물마다 목소리를 골라 만들고, 내려받은 파일을 `audio/web-inbox/` 에 넣은 뒤
+다시 돌린다. 웹 프로젝트는 그대로 남는다.
+
+**Typecast API 는 쓰지 않는다**(2026-09-29 사용자 결정). 웹 요금제와 API 요금제가 따로라 웹 요금제로는
+API 를 부를 수 없고, API 요금제는 사지 않는다. 한때 API 로 직접 만드는 경로가 있었으나 뺐다 — 되살리지 않는다.
+**가져오기(내려받은 파일 ↔ 대사 짝짓기)는 아직 없다** — 웹 편집기가 내려받는 파일 형식을 본 뒤 만든다.
 
 ```bash
-python -B ./runner.py ./input.json --no-planner-refine
+python -B ./voice_lesson.py runs/g4l02                  # 대본 내보내기(멈춤, 종료 코드 3) / 받은 파일 확인
+python -B ./voice_lesson.py runs/g4l02 --dry-run        # 소리를 붙일 줄·글자 수만
 ```
 
-이미 굳은 계획을 손대볼 때는 별도 스크립트를 쓴다. 대상 파일을 덮어쓰지 않고 `-o`로 정한 곳에 쓴다.
-`--check-only`는 LLM 없이 확정된 위반만 본다.
+가져오기가 생기면 `lesson/assets/audio/narration/vo-*.mp3` 로 놓고 `lesson.json` 에 `audioMap.narration` 과
+자리별 필드(컷 `sound` · 문제 `narration` · 힌트 `sound` · 이야기 카드 `narration.audio`)를 건다(`voice_lines.apply`).
+배치가 `assets/` 를 통째로 옮기므로 gyo6 `lessons/{슬롯}/{차시}/assets/audio/narration/` 에 놓인다.
+런타임이 재생하지 않는 자리(자막만 있는 컷 · 정답/오답 말풍선)는 대본에서 빼고 알린다.
+`--no-voice` 로 이 단계를 건너뛴다.
+
+**초안이 끝나면 반드시** 배치 → 빌드 → 화면 검증까지 돌린다. `produce_lesson.py` 의 마지막 검사는
+데이터만 보고 화면을 한 번도 열지 않는다. 그래서 끝날 때 이 명령을 안내하고 `verify_required` 를 로그에 남긴다.
 
 ```bash
-python -B ./refine_planner.py runs/{run_id}/{hash}_planner.json \
-    --input runs/{run_id}/{hash}_input.json -o runs/{run_id}/{hash}_planner_refined.json
+python -B ./install_lesson.py runs/g4l02 --target {GYO6} --lesson 4-1/02
+cd {GYO6} && npm run build:lesson -- 4-1/02
+python -B ./verify_lesson.py runs/g4l02 --target {GYO6} --lesson 4-1/02            # ①~④ 전부 (LLM 2회)
+python -B ./verify_lesson.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --skip-llm # ①~③만 (LLM 0회)
 ```
 
-중간 단계부터 이어서 돌릴 때는 `--run-id`로 기존 run을 지정하고 `--start-at`을 쓴다.
+걸린 것은 `runs/{id}/verify/to-{담당}.md` 로 나뉜다. 개발·그림 몫은 그 파일을 그대로 넘겨 다시 돌린다.
 
 ```bash
-python -B ./runner.py ./input.json --run-id 2026-07-31_dfbc1027 --start-at builder --overwrite
+# 개발 단계 되먹임 — 지금 산출물을 기준으로 목록만 고친다
+python -B ./produce_lesson.py runs/g4l02 --gyo6-root {GYO6} --start-at senior_developer --through develop --screen-report runs/g4l02/verify/to-developer.md
+# 그림 다시 굽기 — 목록의 그림만 치우고 다시 굽는다(경로가 빈 항목은 사람이 채운다)
+python -B ./produce_lesson.py runs/g4l02 --gyo6-root {GYO6} --start-at asset_render --through render --rerender-from runs/g4l02/verify/to-asset.json
 ```
 
-`--start-at loop`는 builder를 다시 부르지 않고 현재 `output/index.html` 상태에서 품질 루프만 다시 돈다.
-루프 도중에 죽은 run을 재개할 때 쓴다. iteration 번호는 1부터 다시 세므로 기존 iter 산출물은
-`--overwrite`로 덮인다.
+고친 뒤에는 배치 → 빌드 → 검증을 다시 돈다.
 
-단일 stage만 돌리는 플래그는 서로 함께 쓸 수 없다.
-
-```text
---planner-only  --asset-generator-only  --builder-only
---design-review-only  --design-refine-only
---content-critique-only  --content-eval-only
-```
-
-에이전트가 실제로 연 파일을 확인할 때:
+완성 화면을 **스토리보드 예시화면과 대조**해 고칠 것 목록을 받는다. 원본 PDF 가 있어야 한다 —
+예시화면 그림은 거기에만 있고, 전사한 `.md` 에는 설명 표만 있다.
 
 ```bash
-python -B ./audit_agent_access.py runs/{run_id}
+python -B ./diff_screens.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --storyboard ../스토리보드.pdf
+python -B ./diff_screens.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --storyboard ../스토리보드.pdf --pages 3-10
+python -B ./diff_screens.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --storyboard ../스토리보드.pdf --prepare-only
 ```
 
-더 많은 실행 예시는 `docs/실행.md`에 있다.
-
-Python 문법만 빠르게 확인할 때는 `__pycache__`가 생기지 않도록 `py_compile` 대신 `compile(...)` 기반 명령을 사용한다.
+대조는 "무엇이 다른가"까지다. **그대로 적용할 수 있는 수정안**까지 받으려면 `--fix-plan` 을 붙인다.
+소스(`lesson.json` · `player-ext.css` · `player-ext.js`)를 열어 앵커·현재 값·바꿀 값을 확정한다.
 
 ```bash
-python -B -c "from pathlib import Path; files=['runner.py','validate.py','stages/builder.py','stages/design_review.py']; [compile(Path(f).read_text(encoding='utf-8'), f, 'exec') for f in files]; print('syntax ok')"
+python -B ./diff_screens.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --storyboard ../스토리보드.pdf --fix-plan
+python -B ./diff_screens.py runs/g4l02 --target {GYO6} --lesson 4-1/02 --fix-plan-only   # 이미 있는 대조 결과 재사용
 ```
+
+`--fix-plan-only` 는 쪽 렌더도 캡처도 대조도 다시 하지 않는다. 대조를 다시 돌리면 같은 값을 또 사서 쓰는 셈이다.
 
 ## 파이프라인 흐름
 
 ```text
-input validate
+storyboard readability check
       ↓
-planner            → {brief_hash}_planner.json
+senior_planner      → planning/content-plan.md
       ↓
-planner_check      → 확정된 위반 목록 (LLM 0회)
+senior_designer     → design/wireframe.md + design/concept.md
       ↓
-planner_refine     → 고친 계획 (LLM 1회). --no-planner-refine 으로 끈다
+interview           → interview/questions.md + 사람 답변
       ↓
-회귀 검사          → 잃은 것이 있으면 기각하고 원본을 굳힌다 (LLM 0회)
+interview_brief     → planning/production-guide.md
       ↓
-[계획 인터뷰]      → 사람이 계획을 직접 고친다. 파이프라인 밖의 선택 단계
-      ↓            `--planner-only` 로 여기서 끊고, `--start-at asset` 로 이어 돈다
-asset_generator    → {brief_hash}_asset_generator.json + output/assets/
+visual_design       → design/visual-design.md + design/asset-plan.md
+                             + design/asset-plan.json   ← 기계용 사본
       ↓
-builder            → {brief_hash}_builder.json + output/index.html
+design review log   → review/design-review-log.md
       ↓
-품질 루프 (최대 --content-max-iterations, 기본 5)
+   ┌─────────────────────────┬──────────────────────────┐
+senior_developer              asset_render                ← **동시에 돈다**
+→ lesson/lesson.json          → lesson/assets/*.png
+  + page-map.md
+  + development-notes.md
+   └─────────────────────────┴──────────────────────────┘
+      ↓
+lesson_check + manifest generation   ← 여기까지 produce_lesson.py. **데이터만** 본다
+      ↓
+install_lesson
+      ↓
+gyo6_content build
+      ↓
+verify_lesson                       ← 화면 검증. 네 층을 싼 것부터
+   ① check_rendered                   화면 결함 — 깨진 그림·겹침·넘침·진행 막힘
+   ② run_functional_tests             문항마다 오답→재시도·힌트·정답을 **실제로 풀어** 본다
+   ③ 캡처                             ②가 끝까지 걸었으면 그 경로의 전 화면(문제 상태·인증서 포함),
+                                      멈췄으면 capture_lesson --scene-jump 로 나머지를 채운다
+   ④ lesson_review · screen_diff      ③을 보고 판정 / 스토리보드 예시화면과 대조 (①②가 막으면 건너뜀)
+      ↓
+verify/to-{developer,asset,storyboard,runtime,human}.md   ← 고칠 수 있는 담당자별로 나눈다
 ```
 
-품질 루프 한 iteration은 다음을 돈다.
+`produce_lesson.py`는 각 전문가 stage의 산출물을 파일로 남긴다. 최종 개발 산출물은 기존
+`lesson_draft_output` 계약을 따르므로 `install_lesson.py`로 바로 이어진다.
 
-```text
-design_review (visual_qa 스크린샷 포함) ┐
-content_critique                       ├ 매 iteration 세 산출물을 만든다
-content_eval                           ┘
-      ↓
-asset 변경 요청 있음 → asset revision → design_refine
-design_review REJECT → design_refine
-content_eval REJECT  → content_refine   (design_refine 뒤에 순차)
-```
+### 그림 규격은 **계획·구현·굽기 세 단계가 같은 문서**를 본다
 
-### 계획은 사람이 승인하는 자리다
+`prompts/lesson_contract.md` 는 `lesson.json` 을 쓰는 단계에만 실린다. 그래서 그림을
+**계획하는** 단계(`visual_design`)는 계약서를 한 줄도 못 봤고, 규격을 제 나름대로 다시 정했다.
 
-`planner` 뒤에 사람이 계획을 직접 고치는 자리가 있다. runner의 단계가 아니라 `--planner-only` 로
-끊고 `--start-at asset` 으로 잇는 **선택 단계**이며, `interview-plan` skill이 소유한다.
+실측 2026-09-23(`runs/g4l03`) — `asset-plan.json` 이 인물 6장을 `"허리 위까지만, 캔버스 아래
+끝에서 허리가 잘림"` 으로 지시하고 `"전신을 작게 그리기"` 를 금지했다. 계약서는 정확히 반대다.
+인물은 **전신**으로 그리고, 화면에서 가슴 위만 보이게 **자르는 것은 무대의 `overflow`** 다
+(`--char-bottom: -46cqh` 가 머리 0.238 인 전신 비례를 전제한다). 이미 잘린 그림을 무대가 또
+잘라 인물이 화면에서 더 작아졌다.
 
-그 자리에 서는 이유는 계획에 두 종류가 섞여 있기 때문이다.
+- 그림에 해당하는 규격만 `prompts/asset_spec_contract.md` 로 떼어, `visual_design` ·
+  `senior_developer` · 그림 배치 프롬프트에 **모두** 싣는다(`prompt_parts.with_asset_spec`).
+- `stages/scripts/asset_plan_check.py` 가 `asset-plan.json` 을 그 규격과 대조한다.
+  `enforce_asset_plan()` 이 `visual_design` 직후에 걸고, 걸리면 위반 목록을 그대로 되먹여
+  다시 부른다. 다 쓰고도 남으면 **멈추지 않고 크게 적는다** — 계획은 사람이 고칠 수 있는 서류다.
 
-- **빈 자리** — planner가 규칙상 채우지 못한 것. 스토리보드에 없는 학습 내용·수치·보상 구조를
-  만들지 못하게 막혀 있으므로, 원문이 비워둔 구조는 계획에서도 비어 있다.
-- **조용히 채워진 자리** — planner가 승인 없이 정한 것. 같은 규칙이 시각 층은 덮지 않아서
-  에셋의 그림 내용과 화면 연출은 planner가 스스로 만들어 낸다.
+**이 게이트도 산문 판정으로 먼저 지었다가 접었다.** `mustInclude` 의 "무대가 아래를 잘라
+**가슴 위만** 보이게 한다" 는 옳은 **설명문**이고 `forbidden` 의 "**발끝** 아래에 여백 두기" 는
+옳은 **금지문**인데, 낱말로는 지시문과 못 가른다. 둘 다 거짓 양성으로 걸렸다. 그래서 값을 본다 —
+인물 항목은 `"framing": "full-body"` 를 **필드로** 갖는다(`headRatio` 는 적으면 0.20~0.28).
 
-두 번째는 **계획을 열어보기 전에는 결정된 줄조차 알 수 없다.** 그대로 그림이 되고 그대로 화면이 된다.
+### 투명이라고 적은 그림은 알파를 **잰다**
 
-원문 쪽을 아무리 채워도 이 자리에는 닿지 못한다. 실측으로 확인된 것이다 — 원문이 정답 반응을
-사건(효과음·글로우)으로 적어둔 계획에서 네 문항의 `feedback.correct`가 전부 비어 있었다.
-사건은 연출 요소로 내려갔고 학습자가 읽을 문장은 아무 자리에도 없었다.
+`transparent: true` 인데 알파가 없으면 화면에서 사각형 판이 된다. 파일은 있으니 예전에는
+"끝났다" 로 셌다. `opaque_transparent_assets()` 가 재서 되먹임 목록에 넣고, 끝까지 남으면
+보고서의 `skipped` 와 `pipeline-log` 에 남긴다. 판정은 `asset_alpha.has_alpha` 가 한다 —
+**모드만 보면 안 된다.** RGBA 로 저장해 놓고 전 픽셀이 불투명한 경우가 있다.
 
-사람의 편집도 stage와 같은 게이트를 지난다. **편집 전 사본을 남기고, `planner_check`와
-회귀 검사와 schema를 통과해야 한다.** 손으로 고친다는 이유로 검사를 건너뛰지 않는다.
+### 개발과 그림은 동시에 돈다
 
-`stages/scripts/plan_scene_view.py`가 계획을 화면 단위 전개도로 되돌린다. LLM 0회이며,
-비어 있는 것과 채워져 있는 것을 같은 화면에 함께 놓는다 — 결손 목록만 뽑으면 두 번째 종류가
-통째로 보이지 않기 때문이다.
+`senior_developer` 와 `asset_render` 는 서로의 산출물을 읽지 않는다. 그림이 보는 것은
+`visual_design` 이 낸 목록이고, 개발이 하는 일은 그 목록을 `lesson.json` 의 `assetPrompt` 로
+옮겨 적는 것이다. 그래서 줄을 세울 이유가 없었다 — 실측으로 개발 18~36분, 그림 4~37분이었다.
 
-### 축은 독립이다
+겹치게 만든 장치는 **`design/asset-plan.json`** 하나다. `asset-plan.md` 는 사람이 읽는
+문서라 `(공통 5)` 처럼 줄여 쓴 자리가 있어 코드가 그대로 못 쓴다. 그 줄임을 코드가 펼치려
+들면 규칙이 바뀔 때마다 조용히 어긋나므로, **줄임 없이 펼친 사본을 `visual_design` 이 함께
+낸다.** `asset_jobs()` 는 `lesson.json` 이 있으면 그쪽을, 없으면 사이드카를 읽는다.
 
-design 축의 게이트는 `design_review`, content 축의 게이트는 `content_eval`이다.
-각 축은 **자기 게이트에만 반응한다.**
+- 겹치는 조건은 셋이다. 하나라도 빠지면 예전처럼 줄을 세운다 —
+  두 단계가 나란히 선택됐고, 사이드카가 있고, 그림 단계를 건너뛰지 않을 때.
+- **한쪽이 죽어도 다른 쪽은 끝까지 기다린다.** 그림 굽기를 중간에 끊으면 반쯤 구운 파일이 남는다.
+- 끝나면 `report_asset_plan_drift()` 가 계획과 `lesson.json` 의 목록을 대조한다.
+  동시 실행이 만드는 **유일한 새 위험**이 이것이다 — 개발자가 경로를 바꿔 적으면 구운 그림이
+  고아가 되고 화면이 빈다. 막지는 않는다(배치 단계가 어차피 다시 본다). 조용히 지나가지만 않게 한다.
 
-`content_eval`은 5축(`content-html:v4`)이고 구현 충실도와 기능 동작을 함께 판정한다.
-`content_critique`도 같은 것을 본다 — 판정이 아니라 방향이다.
+`asset_render` 의 입력은 `depends_any` 다 — `asset-plan.json` 과 `lesson/lesson.json` 중
+**하나만** 있으면 된다. 사이드카가 없는 옛 run 도 그대로 돈다.
 
-과거에는 이 둘이 `if/elif/else` 한 줄로 묶여 있어 `content_refine`이 "design_review가 PASS일 때만"
-도달하는 3순위 분기였다. 그 결과 design이 REJECT인 동안 `content_refine`이 한 번도 실행되지 않고
-`content_critique`는 매 iteration 생성만 되고 아무도 읽지 않았다(run `ch8c0716`, `ch8c0717`).
-이 구조를 다시 하나로 합치지 않는다.
+### 개발 단계만 되먹임 재시도를 돈다
 
-### 순서에도 이유가 있다
+`senior_developer`는 `check_lesson_standalone`이라는 촘촘한 게이트를 지나므로, 걸린 목록을
+**그대로** 프롬프트에 넣어 다시 부른다(`--max-retries`, 기본 2). 요약해서 주면 모델이 다른 곳을
+고친다. 실패한 `lesson.json`은 `.rejected`로 옮기고 지운다 — 남기면 다음 실행이 "이미 있음"으로
+건너뛰어 깨진 산출물이 조용히 최종본이 된다.
 
-`content_refine`은 항상 `design_refine` **뒤**에 돈다.
-`content_refine`은 CSS·레이아웃을 건드리지 않는 보수적인 stage이고,
-`design_refine`은 HTML을 통째로 다시 쓴다. 순서를 뒤집으면 design_refine이 content 수정을 지운다.
+앞 네 단계는 서류(md)를 내고 판정 기준이 schema뿐이라 되먹일 것이 없다. 그래서 루프를 걸지 않는다.
 
-### PASS 조건
+**개발 단계에 계약서가 함께 실린다.** 게이트가 요구하는 것(원자 어휘, step 4종과 `exitCondition`,
+`stimulus` 필드, `sourcePanel`·`acceptance` 3줄, `ui` 배치 옵트인, 타이틀 로고 고정 파일명)이
+전부 `prompts/lesson_contract.md`에만 적혀 있다. 이어 붙이지 않으면 모델은 그 규칙을 볼 길이
+없는데 게이트는 그대로 판정한다 — "모르는 규칙으로 채점당하는" 상태가 된다.
 
-`design_review`가 PASS이고, `content_eval`이 PASS이고,
-**asset 변경 요청이 없어야** 한다. 하나라도 아니면 다음 iteration으로 간다.
-`--content-max-iterations`를 소진하면 REJECT로 끝난다.
+### 개발 단계는 끝내기 전에 자가 검사를 돌린다 — 그 명령 하나만 허용한다
 
-asset 재생성·신규 요청은 `design_review`만 낸다.
-`content_critique_output.schema.json`에는 `asset_review`가 없고 `additionalProperties`도 막혀 있다.
+claude 단계는 `--permission-mode acceptEdits` 로 돈다(파일 수정만 허락, 명령은 거부 — 비대화형이라 허락할
+사람이 없다). 그래서 개발 단계가 고친 결과를 스스로 확인하지 못하고 다음 검증에서야 알았다.
 
-## run 디렉토리 구조
+- 개발 단계에만 `--allowedTools "Bash(python -B -m stages.scripts.self_check:*)"` 를 준다(`SELF_CHECK_TOOLS`).
+  `stages/scripts/self_check.py` 는 **읽기만** 한다 — 최종 판정과 같은 게이트 + `player-ext.js` 문법.
+  프롬프트 끝에 명령이 실리고 "위반 0 이 될 때까지 고친다" 를 요구한다. 화면은 못 본다(배치·빌드가 필요).
+- 모든 claude 호출은 `--setting-sources project` 로 부른다. 사용자 전역 설정(`~/.claude/settings.json`)의
+  허용 규칙을 물려받지 않게 하려는 것이다 — 실측으로 전역의 `Bash(node -e ' *)` 등이 파이프라인에도 먹었다.
+  PC 마다 전역 설정이 달라도 같은 권한으로 돈다.
+- 확인(2026-09-29): 자가 검사는 실행되고 `python -c` · `node -e` 는 "requires approval" 로 거부됐다.
+  `git status` 같은 읽기 전용 명령은 Claude Code 가 기본으로 허용한다.
 
-`run_id`는 `YYYY-MM-DD_{brief_hash}` 형식이다.
+### 토큰·시간은 run 마다 기록한다
 
-```text
-runs/2026-07-31_dfbc1027/
-  dfbc1027_input.json
-  dfbc1027_planner.json
-  dfbc1027_planner_pre_refine.json       # (조건부) refine을 채택했을 때의 고치기 전 계획
-  dfbc1027_planner_refine_rejected.json  # (조건부) 회귀 검사에 걸려 안 굳은 계획. 원인 분석용
-  dfbc1027_asset_generator.json
-  dfbc1027_builder.json
+LLM 호출은 전부 `codex_client.py` 의 두 클라이언트를 지나므로 **거기서** 시간과 토큰을 잰다(`usage_log.record_call`).
+실패·타임아웃도 걸린 시간을 남긴다. 어느 run 에 적을지는 진입 스크립트(`produce_lesson` · `verify_lesson` ·
+`diff_screens` · `review_lesson`)가 `usage_log.bind` 로 정하고, 코드 단계(`check_outputs` · 음성 대본 ·
+검증 ①②③)는 `usage_log.step` 으로 시간만 잰다. 결과는 `runs/{id}/usage-report.md`.
+2026-09-29 이전 run 은 사용량을 버리고 있었으므로 기록이 없다.
 
-  iter_001/
-    dfbc1027_iter-001_design_review.json
-    dfbc1027_iter-001_content_critique.json
-    dfbc1027_iter-001_content_eval.json
-    design_review/            # visual_qa 스크린샷
-    design_refine_preview/
-    content_refine_preview/
+실측 — "ok 만 답하라" 는 호출에도 claude 는 입력 약 5만 토큰($0.40)이 든다. CLI 가 저장소 맥락을 매번 읽는
+고정비다. 단계가 많을수록 이 고정비가 쌓인다.
 
-  output/
-    index.html                # 최종 산출물
-    assets/
-```
+### 종료 코드
 
-`output/index.html`은 단일 파일 계약을 따른다. 상세는 `prompts/common_html_contract.md`.
+| 코드 | 뜻 |
+|---|---|
+| 0 | 이번 실행 범위까지 끝났고 확정된 위반이 없다. `--through interview`로 끊은 경우도 0이다 |
+| 2 | 위반이 남았거나, **개발 단계까지 돌았는데 `lesson.json`이 없다.** 배치하지 않는다 |
+| 1 | 실행 자체가 실패했다 |
+
+개발까지 갔는데 산출물이 없는 것을 0으로 보고하면 자동화가 실패를 성공으로 읽는다.
+`--check-only`로 들어와도 `lesson_draft.json`은 있는데 `lesson.json`이 없으면 2다.
 
 ## 역할 경계
 
-### Planner
+### Lesson Draft
 
-- 입력: `{brief_hash}_input.json`, `md_path`가 가리키는 스토리보드 원문
-- 출력: `{brief_hash}_planner.json`
-- 책임: 화면 구성, scene/interaction 설계, 캐릭터 엔티티, asset_plan을 만든다.
-- 금지: HTML 작성, 자기 평가, 최종 판정.
-
-### Planner Refine
-
-- 입력: input, 스토리보드 md 원문, planner, `planner_check`가 확정한 위반 목록
-- 출력: 갱신된 `{brief_hash}_planner.json` (채택 시 원본은 `{brief_hash}_planner_pre_refine.json`으로 남는다)
-- 책임: 확정된 위반과 **스토리보드가 요구했는데 계획에 안 내려온 것**을 고친다.
-- 금지: 새로 기획하기, 판정·점수 만들기, 스토리보드에 없는 것 지어내기, 화면·문항·문구 줄이기.
-- **critique와 eval 역할은 코드가 맡는다.** 앞은 `stages/scripts/planner_check.py`가 참조 무결성과
-  시점 정합을 확정하고, 뒤는 같은 모듈의 회귀 검사가 채택 여부를 정한다. 모델은 계획만 내고 자기
-  결과를 판정하지 않는다 — 다른 stage와 같은 경계다.
-- **줄어든 것은 고친 것이 아니라 잃은 것으로 본다.** 계획을 통째로 다시 쓰는 stage라 고치는 김에
-  지울 수 있고, 이 파이프라인은 HTML 층에서 같은 일을 이미 겪었다(`design_refine`이 앞선 수정을
-  지워 순서를 고정해야 했다). 화면·요소·문항·asset·캐릭터 수와 학습자가 읽는 문구가 줄면 기각하고
-  원본을 굳힌다. 위반이 남아 있는 것은 막지 않는다 — 못 고친 것까지 되돌리면 같은 호출을 반복한다.
-- refine 실패는 run을 죽이지 않는다. 원본은 이미 schema를 통과했고, 여기서 멈추면 방금 만든 계획까지
-  잃는다. 대신 왜 못 고쳤는지 남긴다.
-
-### Asset Generator
-
-- 입력: input, planner
-- 출력: `{brief_hash}_asset_generator.json`, `output/assets/*`
-- 책임: `asset_plan`에 따라 이미지 asset을 생성한다.
-- 금지: HTML 작성, planner 설계 변경.
-
-### Builder
-
-- 입력: input, planner, asset_generator
-- 출력: `{brief_hash}_builder.json`, `output/index.html`
-- 책임: 단일 HTML을 만든다.
-- 금지: 자기 평가, 점수 생성, asset 재생성.
-
-### Design Review
-
-- 입력: input, planner, asset_generator, builder, `output/index.html`, **visual_qa 스크린샷 이미지**
-- 출력: `{brief_hash}_iter-{iteration}_design_review.json`
-- 책임: 시각 품질을 판정하고 우선순위 findings와 asset 재생성/신규 요청을 낸다.
-- 금지: HTML 직접 수정, content 축 판정.
-- design review는 HTML 텍스트만 읽지 않는다. `stages/visual_qa.py`가 먼저 스크린샷을 찍고 그 이미지를 입력으로 받는다.
-
-### Content Critique
-
-- 입력: input, planner, asset_generator, builder, HTML
-- 출력: `{brief_hash}_iter-{iteration}_content_critique.json`
-- 책임: 학습 품질에서 약한 지점과 다음 수정 방향을 제시한다. **구현 충실도와 기능 동작도 함께 본다** —
-  이것을 판정하던 실행 단계가 없으므로 여기서 안 보면 아무도 안 본다.
-- 지적에는 **어느 요소의 무엇이 문제인지** 근거를 붙인다. 근거 없는 인상은 refine이 쓸 수 없다.
-- 금지: 점수표 생성, HTML 재작성, 최종 판정, asset 요청.
-
-### Content Eval
-
-- 입력: planner, asset_generator, builder, HTML, `content_rubric.yaml`
-- 출력: `{brief_hash}_iter-{iteration}_content_eval.json`
-- 책임: 루브릭 기반 점수와 축별 근거를 낸다. 축은 5개(`content-html:v4`) — 구현 충실도,
-  학습 목표 정합, 피드백의 질, 흐름 명확성, 기능 무결성.
-- `content_fidelity`는 이 파이프라인에서 **문항·보기·정답·문구 누락을 막는 유일한 게이트**다.
-  `min_axis`가 5.0이라 누락이 하나라도 있으면 REJECT다.
-- 금지: critique를 읽고 채점하기, HTML 재작성.
-- **input을 받지 않는다.** `input.json`에는 스토리보드 본문이 없고 `md_path` 경로 문자열만 있다.
-  평가에 필요한 스펙은 planner 출력에서 온다.
-
-### Design Refine
-
-- 입력: input, planner, asset_generator, builder, HTML, design_review
-- 출력: 갱신된 `output/index.html`
-- 책임: design review findings를 HTML에 반영한다.
-- 금지: content_eval 점수 맞추기.
-
-### Content Refine
-
-- 입력: input, planner, asset_generator, builder, HTML, content_critique
-- 출력: 갱신된 `output/index.html`
-- 책임: content critique의 지적을 HTML에 반영한다.
-- 금지: CSS·레이아웃 통짜 재작성, eval 총점 원문 참조.
-
-### Visual QA
-
-- 입력: `output/index.html`
-- 출력: 스크린샷(`.webp`)과 `visual_qa_output.schema.json` 형태의 요약
-- 책임: playwright로 화면을 캡처해 design review에 이미지 근거를 제공한다.
-- **캡처는 저장 전에 코드가 압축한다.** playwright는 png/jpeg만 쓸 수 있어 전체 페이지 캡처가
-  장당 2MB에 이르고, 그 파일이 그대로 리뷰 입력이 된다. `stages/scripts/screenshot_encode.py`가
-  캡처를 메모리로 받아 WebP로 다시 인코딩하며, 압축은 부가 기능이라 실패하면 원본 PNG로 떨어지고
-  run을 죽이지 않는다. 품질은 `SCREENSHOT_WEBP_QUALITY` 환경변수로 조정한다(기본 80).
-- design review 안에서 자동 실행된다. 단독으로 돌리려면 `capture_visual_qa.py`를 쓴다.
+- 입력: 스토리보드 원본, gyo6_content 원자/훅/레이아웃 참조
+- 출력: `lesson/lesson.json`, `lesson/page-map.md`, `lesson_draft.json`, 선택적 `player-ext.js`, 선택적 `player-ext.css`
+- 책임: 스토리보드 내용을 gyo6_content 런타임이 읽는 lesson 데이터로 옮긴다.
+- 금지: 스토리보드에 없는 학습 내용·문항·보상 구조 지어내기, `manifest.json` 직접 작성.
 
 ### Validator
 
-- 입력: 검사 대상 JSON, 해당 schema, 기계적 계약, 필요한 rubric threshold
+- 입력: 검사 대상 JSON, schema, gyo6_content 원자 registry
 - 출력: PASS/REJECT/ERROR 성격의 검사 결과
-- 책임: schema, `brief_hash`, 필수 조건, 점수 하한처럼 기계적으로 판정 가능한 항목만 검사한다.
-- 금지: 시각 품질 판단, 창작, 비평, 점수 근거 작성.
+- 책임: schema, 필수 조건, 원문 누락, mojibake, 원자 사용 위반처럼 기계적으로 판정 가능한 항목을 막는다.
+- 금지: 창작 판단, 임의 수정.
 
-## 정보 차단 규칙
+### Install Lesson
 
-단계별로 허용된 입력만 payload로 전달한다.
-아래 표는 `stages/*.py`의 실제 함수 시그니처와 일치해야 한다. 시그니처를 바꾸면 이 표도 함께 고친다.
+- 입력: `runs/{run_id}/lesson/`
+- 출력: gyo6_content `lessons/{slot}/{id}/`
+- 책임: 대상 폴더 충돌을 확인하고 lesson 번들을 옮긴다. 옮긴 뒤 `runs/{id}/install-record.json` 에
+  run 쪽 원본과 gyo6 쪽에 쓴 파일의 해시를 남긴다(`stages/scripts/install_record.py`).
+- 금지: 초안 생성, 남의 완성 차시 덮어쓰기, **gyo6 쪽에서 따로 고친 것을 조용히 덮기.**
 
-| 단계 | 봐도 되는 것 | 보면 안 되는 것 |
-| --- | --- | --- |
-| Planner | input, 스토리보드 md 원문 | 이후 모든 산출물 |
-| Planner Refine | input, 스토리보드 md 원문, planner, 위반 목록 | 이후 모든 산출물 |
-| Asset Generator | input.metadata, planner | **input.brief**, builder, review, eval |
-| Builder | input.metadata, planner, asset_generator | **input.brief**, review, critique, eval |
-| Design Review | input.metadata, planner, asset, builder, HTML, 스크린샷 | **input.brief**, content_critique, content_eval |
-| Content Critique | input.metadata, planner, asset, builder, HTML | **input.brief**, content_eval, design_review |
-| Content Eval | planner, asset, builder, HTML, content_rubric | **input 전체**, content_critique, design_review |
-| Design Refine | input.metadata, planner, asset, builder, HTML, design_review | **input.brief**, content_eval 총점 |
-| Content Refine | input.metadata, planner, asset, builder, HTML, content_critique | **input.brief**, **content_eval 총점** |
-| Validate | 검사 대상 JSON, schema | LLM 대화 히스토리 |
+`--overwrite` 여도 지난 배치 뒤 gyo6 쪽에서 바뀐 파일이 있으면 멈추고 목록을 보여 준다. 기록이 없는
+옛 배치는 "지금 놓을 것과 다른 파일" 을 보여 주고 멈춘다(어느 쪽이 새것인지 못 가르므로). gyo6 쪽
+수정이 맞으면 run 으로 먼저 가져오고, 버려도 될 때만 `--discard-target-changes` 를 붙인다.
 
-### planner 이후에는 planner가 유일한 요구사항 원본이다
+실측(2026-09-29, 4-1/03) — gyo6 쪽에서 그림 6장을 다시 굽고 그림 지시 2곳을 고쳤는데 run 은 몰랐다.
+`--overwrite` 가 그것을 경고 없이 덮었다. 화면 결함의 원인도 같았다 — gyo6 쪽에서 다보탑을 탑이
+가운데인 그림으로 다시 구웠는데 각 좌표는 탑이 왼쪽인 옛 그림 기준이라 각이 하늘에 떴다.
+`verify_lesson.py` 도 이 기록으로 "검사할 화면이 이 run 의 것인가" 를 내용으로 본다(시각만 보면 통과했다).
 
-`input.json`은 성격이 다른 둘을 한 파일에 나른다.
+### Lesson Review
 
-- **`brief`** — 무엇을 어떤 범위로 만들라는 **기획 지시**. planner에게 하는 말이다.
-- **`metadata`** — 어떤 컴포넌트를 쓰고 어떤 style reference를 따르는가 하는 **제작 설정**.
+- 입력: 배치·빌드된 차시 화면 캡처, lesson, 선택적 스토리보드
+- 출력: `lesson_review_{slot-id}.json`
+- 책임: 실제 화면에서 진행 불능, 누락, 가독성 문제를 찾는다.
+- 금지: 직접 수정.
 
-planner 산출물이 스토리보드와 하류 사이의 계약이므로, planner를 지나면 그것이 유일한
-요구사항 원본이다. 기획 지시를 계속 실으면 "계획이 맞나 요청이 맞나"라는 분쟁이 생겨
-그 계층이 무너진다. 그래서 **`brief`는 planner와 planner_refine에서 끝나고, 그 이후 stage는
-`metadata`만 받는다**(`stages/scripts/prompt_parts.py`의 `downstream_input_view`).
+### Screen Diff
 
-지시받지 않은 요구사항을 컨텍스트에 띄워두는 것 자체가 문제다. 실측으로 확인된 것이다 —
-하류 프롬프트 어느 곳도 `brief`를 참조하라고 지시하지 않는데 여섯 stage 전부가 그것을
-싣고 있었고, 그 안에는 구현 범위와 개수를 지정하는 planner 대상 문장이 들어 있었다.
-지시가 없으므로 어느 stage가 그것을 실제로 읽었는지는 사후에도 알 수 없다.
+- 입력: **스토리보드 PDF 쪽 이미지**(번들 poppler 로 렌더), 배치·빌드된 차시 화면 캡처
+  (기본은 `--scene-jump` — base 의 `?dev` 장면 이동으로 **문제 화면까지** 찍는다), lesson
+- 출력: `screen_diff_{slot-id}.json`, `review/screen-diff-{slot-id}.md`
+- 책임: 완성 화면이 **기획된 그림처럼 보이는가**를 쪽 단위로 짝지어 보고, 고칠 것을 적는다.
+  배치·비례·색·글자·연출이 대상이고, 항목마다 어느 파일을 고칠지(`lesson.json` ·
+  `player-ext.css` · `player-ext.js` · `asset`)까지 정한다.
+- provider 는 **codex 고정**이다. 그림을 여는 도구가 그쪽에만 있어서, claude 로 부르면
+  경로만 읽고 "봤다"고 답하는 대조가 된다. `asset_render` 가 codex 고정인 것과 같은 이유다.
+- 금지: 판정("좋다/나쁘다")만 적기, 직접 수정, 화풍 차이를 `asset` 항목으로 올리기
+  (예시화면은 "디자인을 위한 단순 참고용"이라 구성·배치·비례만 지시다).
 
-감사는 파일 단위다. payload가 `metadata`만 싣는 이상 하류가 `input.json` 파일을 직접 여는 것은
-payload가 의도적으로 뺀 것까지 함께 읽는 일이므로, 그 접근은 전부 정황으로 센다.
+**Lesson Review 와 축이 다르다.** 게이트는 **결함**을 보고 이 대조는 **의도**를 본다.
+둘은 겹치지 않으므로 하나로 합치지 않는다.
 
-### 차단은 페이로드 계약이지 격리가 아니다
+### Verify Lesson (`verify_lesson.py`)
 
-표가 강제하는 것은 **코드가 프롬프트에 무엇을 싣는가**뿐이다. stage는 프로젝트 디렉토리를 cwd로 두고
-샌드박스 없이 돌기 때문에(`--dangerously-bypass-approvals-and-sandbox` / `permission-mode acceptEdits`)
-`runs/` 아래 파일을 직접 열 수 있다. 실측으로 확인된 것이다 — `content_eval`이 run 디렉토리에 있던
-파이프라인 외부 스크립트를 찾아내 **실행하고 그 출력을 판정에 썼다.**
+- 입력: 배치·빌드된 차시, `runs/{id}/` (lesson · spec · tests/functional-test-plan.json · asset-plan.json · 스토리보드)
+- 출력: `runs/{id}/verify/` — `report.md` · `findings.json` · `test-results.json` · `to-{담당}.md` · `to-asset.json`
+- 책임: 위 네 층을 돌리고, 걸린 것을 **고칠 수 있는 담당자**로 나눈다(`stages/scripts/verify_routing.py`).
+- 금지: 배치·빌드(만드는 일과 남의 레포를 건드리는 일을 섞지 않는다), 직접 수정,
+  못 본 화면이나 못 끝난 검사를 통과로 세기.
 
-그래서 규칙 하나가 표보다 앞선다.
+**기능 테스트는 어떻게 답을 아는가.** base 의 모든 문제는 `PROBLEM_ATOMS[k].mount(host, spec, ctx)` 를
+지난다(ext 원자도 같은 표에 등록된다). 그 mount 를 감싸 사양(정답 포함, `randomizeProblem` 결과까지)과
+채점 통로 `ctx.submit` 을 잡는다. `choicePick`·`multiPick`·`keypad`·`judgeRows` 는 **실제 버튼을 눌러** 풀고,
+그 밖의 원자(드래그·ext 원자)는 `ctx.submit` 을 직접 불러 **흐름만** 본다. 어느 쪽이었는지는 결과에
+`mode: ui | flow-only` 로 반드시 남긴다 — flow-only 는 그 원자의 채점 로직을 안 본 것이다.
 
-- **run 디렉토리에는 파이프라인이 만든 산출물만 둔다.** 실험 파일, 이전 run의 사본, 손으로 만든
-  스크립트를 그 안에 두지 않는다. 표는 "다른 stage 산출물"만 막지만, 실제 오염원은 **표에 이름이
-  없는 아무 파일**이다. 둘 곳이 필요하면 `runs/` 밖에 둔다.
-- 무엇을 실제로 열었는지는 `audit_agent_access.py`로 사후에 본다. 아래 "에이전트 접근 감사" 참고.
+**담당자 가르기** — 한 곳에서 다 고치려 하면 엉뚱한 자리를 고친다.
 
-핵심은 두 가지다.
+| 담당 | 무엇이 오는가 | 어떻게 보내는가 |
+|---|---|---|
+| developer | 배치·겹침·기능 실패·진행 막힘·원문과 다른 문구 · **그림↔좌표 불일치** | `--screen-report verify/to-developer.md` 로 개발 단계 재실행 |
+| asset | 그림 **자체**가 잘못 그려진 것, 굽지 못한 그림 | `--rerender-from verify/to-asset.json` 으로 그 그림만 다시 굽기 |
+| storyboard | 화면 문구가 **스토리보드 원문 그대로**인데 틀렸다는 지적 | 원고 담당 확인 → 인터뷰 답으로 반영 |
+| runtime | base(player.js)에서 난 오류 | gyo6 쪽에 알린다 |
+| human | `unknown` · 검사 도구가 끝까지 못 돈 것 · "장면 누락?"(구현 누락인지 캡처 누락인지 못 가른 것) | 사람이 담당을 정한다 |
 
-- **Eval은 Critique에 anchor되지 않는다.** `content_eval`은 critique 파일 경로를 아예 받지 않는다.
-- **Refine은 점수를 보지 않는다.** `content_refine`은 critique만 받는다. 점수를 보면 점수 맞추기가 시작된다.
+- 그림↔좌표 불일치는 **개발**이다. 구워진 그림을 기준으로 좌표를 맞춘다 — 다시 구워도 같은 자리에 나온다는
+  보장이 없다(개발과 그림이 동시에 돌아 개발자는 그림을 못 보고 계획만 보고 좌표를 잡는다).
+- 원문 판정은 **인용문이 원문에 그대로 있는가**만 본다(`verbatim_in_source`, 네 글자 이상). 문구 지적
+  (`fix_target: lesson.json`)에만 건다 — 배치 지적은 글이 원문과 같아도 개발 몫이다.
+- 그림 경로를 못 정하면 `to-asset.json` 에 **빈 경로로 남긴다.** 짐작으로 엉뚱한 그림을 다시 굽지 않는다.
+- 막는 것은 `blocking`(코드 판정: ①② 게이트·기능 실패)과 `high`(LLM 의 "이대로 못 내보낸다")다.
 
-## 프롬프트와 schema 규칙
+### Screen Fix (`--fix-plan`)
 
-- 역할별 system prompt를 섞지 않는다. `prompts/{stage}_system.md`는 그 stage 지시만 담는다.
-- 프롬프트를 바꿀 때는 어떤 schema 출력과 연결되는지 함께 확인한다.
-- 모든 stage가 공유하는 HTML 계약은 `prompts/common_html_contract.md` 한 곳에만 둔다.
-- schema를 우회하기 위해 임의 필드를 top-level에 추가하지 않는다.
+- 입력: `screen_diff_{slot-id}.json`, 같은 쪽 이미지와 화면 캡처, **번들 소스 3종**
+- 출력: `screen_fix_{slot-id}.json`, `review/screen-fix-{slot-id}.md`
+- 책임: 대조 항목을 **그대로 적용할 수 있는 수정안**으로 내린다. 항목마다 파일·앵커(CSS 선택자 ·
+  JSON 경로 · 함수명)·현재 값·바꿀 값·환산 근거·확인 방법·딸려 틀어질 것을 채운다.
+  적용 순서도 낸다(기하 먼저, 그 위에 얹히는 것 나중).
+- 왜 두 번 부르는가: 1차는 그림만 보면 되지만 2차는 **소스까지** 봐야 한다. 한 번에 시키면
+  `약 65~70% 로 줄인다` 처럼 그대로 못 고치는 문장이 나온다(실측 2026-09-11).
+- 금지: 값을 추측해서 채우기(정할 수 없으면 `needs_decision` 으로 넘긴다), base 수정안 내기,
+  `!important`, 데이터로 되는 것을 CSS 로 고치기, 배치로 해결되는 것을 그림 다시 굽기로 넘기기.
 
-Codex structured output schema 제약은 최상단 `CLAUDE.md`의 "문제사항과 교훈"을 따른다.
-요약하면 object의 `properties`에 있는 모든 필드는 `required`에 포함해야 하고,
-새 output schema를 만들면 실제 `codex exec --output-schema` 경로까지 한 번 검증한다.
+## run 디렉토리 구조
 
-## 실패와 검증 결과
-
-- 성공한 validate 결과는 기본적으로 별도 파일로 남기지 않는다.
-- 실패한 validate 결과만 원인 분석을 위해 `*.validation.json`으로 저장한다.
-- 저장된 산출물의 재검증(`--start-at` 재개 경로)은 `validate.py`의 revalidation 모드로 돈다.
-  생성 게이트는 지금 계약을 그대로 강제하고, 재검증은 **파이프라인이 아직 처리할 수 있는가**만 본다.
-  계약을 조일 때마다 기존 run의 재개 경로가 전부 죽으면 계약을 조일 수 없기 때문이다.
-  구 산출물의 처리 불가능한 값은 조용히 통과되지 않고 하류(test spec 파생)가 사람 판단으로 올린다.
-- `REJECT`는 파일은 생성됐지만 schema, 계약, 품질 하한, 필수 조건을 통과하지 못한 상태다.
-- `ERROR`는 stage 실행, 파일 읽기/쓰기, JSON 파싱, schema/rubric 로딩 등 파이프라인 자체가 진행하지 못한 상태다.
-- validate 호출은 검사 대상 파일을 직접 수정하지 않는다.
-- HTML 전문을 다루는 stage는 다른 stage보다 오래 걸린다.
-  `design_refine`과 `design_review`는 전역 `--timeout-seconds`와 별도로 더 큰 기본 timeout을 가진다.
-  무거운 stage를 추가할 때 전역 timeout에만 의존하지 않는다.
-
-## 금지 행동
-
-- LLM stage가 허용되지 않은 파일을 임의로 읽게 하지 않는다.
-- **run 디렉토리에 파이프라인 산출물이 아닌 파일을 두지 않는다.** stage가 그것을 읽고 실행한다.
-- Builder가 `self_score`, `verdict` 같은 자기 판정을 만들게 하지 않는다.
-- Content Critique가 점수표나 asset 요청을 만들게 하지 않는다.
-- Content Eval이 critique를 읽거나 input 원문을 받게 하지 않는다.
-- Refine stage에 eval 총점 원문을 넘기지 않는다.
-- design 축과 content 축의 게이트를 하나로 합치지 않는다.
-- `content_refine`을 `design_refine`보다 먼저 돌리지 않는다.
-- Validator가 시각 품질을 주관적으로 판단하게 하지 않는다.
-- 동일 run artifact를 사용자 의도 없이 덮어쓰지 않는다. 재실행 덮어쓰기는 명시적 `--overwrite`가 있을 때만 허용한다.
-
-## 에이전트 접근 감사
-
-`stages/scripts/agent_audit.py`가 stage마다 실행한 셸 명령을
-`runs/{run_id}/{brief_hash}_agent_audit.jsonl`에 남긴다. **막지 않고 관측만 한다.**
-
-```bash
-python -B ./audit_agent_access.py runs/{run_id}         # 위반 정황 보고
-python -B ./audit_agent_access.py runs/{run_id} --all    # 전체 명령
+```text
+runs/{run_id}/
+  storyboard.pdf              # 원본 사본. 확장자는 입력에 따라 달라진다.
+  pipeline-log.jsonl
+  planning/
+    content-plan.md
+    production-guide.md
+  design/
+    wireframe.md
+    concept.md
+    visual-design.md
+    asset-plan.md
+  interview/
+    questions.md
+  review/
+    design-review-checklist.md
+    design-review-log.md
+  lesson_draft.json           # lesson 초안 보고서
+  screen_diff_{slot-id}.json  # 화면 대조 원본 판정
+  screen_fix_{slot-id}.json   # 수정안 원본 판정
+  lesson/
+    lesson.json
+    player-ext.js
+    player-ext.css
+    manifest.json
+    page-map.md
+  review/
+    storyboard-pages/         # 스토리보드 PDF 쪽 이미지 (pdftoppm)
+    {slot-id}/                # 완성 화면 캡처 + capture.json
+    screen-diff-{slot-id}.md  # 무엇이 다른가
+    screen-fix-{slot-id}.md   # 어느 줄을 무엇으로 — 순서대로 적용한다
+  install-record.json         # install_lesson.py — {target|lesson: 원본 해시 · 배치한 파일 해시}
+  usage-log.jsonl             # 한 줄 = LLM 호출 1회(시간·토큰·비용) 또는 코드 단계 1개(시간)
+  usage-report.md             # 위를 사람이 읽는 표로 — 기록할 때마다 다시 만든다
+  verify/                     # verify_lesson.py
+    report.md                 # 층별 결과 · 담당자별 건수 · 다음 명령
+    findings.json             # 모든 지적 (담당자·심각도·근거 캡처)
+    test-results.json         # functional-test-plan 의 케이스별 결과
+    rendered.json             # ① check_rendered --json
+    lesson_review.json        # ④-1
+    screen_diff.json          # ④-2
+    to-developer.md · to-asset.md · to-asset.json · to-storyboard.md · to-runtime.md · to-human.md
+    screens/                  # ③ 캡처 + ② 상태별 캡처(f*.png) + functional-results.json
+    rejected-assets/{시각}/   # --rerender-from 이 치운 원본 그림 (lesson/ 밖 — 배치에 안 섞인다)
 ```
 
-- **codex 경로만 감사된다.** stdout이 JSONL이고 `item.completed`의 `command_execution` 항목에
-  명령 전문이 실린다. `--claude-html-stages`로 돈 stage는 `--output-format json`에 도구 기록이 없어
-  감사되지 않으며, 보고서가 그 사실을 따로 표시한다. **비어 있는 것은 "위반 없음"이 아니라 "모른다"다.**
-- 기록은 **정황이지 확정이 아니다.** 명령에 파일명이 나온 것은 열어 봤다는 강한 신호지만 grep 대상으로
-  이름만 스쳤을 수도 있다. 그래서 종료 코드로 게이트를 세우지 않는다.
-- 위반 판정 기준은 `agent_audit.FORBIDDEN`이며 위 "정보 차단 규칙" 표를 옮긴 것이다. **표를 고치면
-  거기도 함께 고친다.**
-- 감사 기록이 실패해도 run을 죽이지 않는다. 관측 장치가 본체를 멈추면 안 된다.
+## 실패에서 배운 것
 
-## 재사용 source
+### 스토리보드 세부는 **어느 단계에서도 요약하지 않는다**
 
-반복해서 쓰는 컴포넌트와 asset은 `source/` 아래에 둔다.
-설계는 `docs/reusable-source-design.md`를 따르고, 각 축의 사용 규칙은 그 디렉토리의 `CLAUDE.md`에 있다.
+> 규칙화 2026-09-11 · `problem.md` `[planner-storyboard-detail-loss]` 5회 누적 · 전문은 `solved-log.md`
 
-스캔 모듈이 **항상 싣는 규칙 블록**과 **선택용 manifest**를 만들어 프롬프트에 붙인다. 두 축이 같은 패턴이다.
+- 스토리보드의 문항·보기·정답·대사·연출 지시는 **어느 단계에서도 요약하지 않는다.**
+  지침서·계획서처럼 줄여 쓰는 문서라도 이 항목만은 원문 그대로 옮긴다.
+- 각 단계는 자기가 옮긴 항목에 **원본 출처**를 함께 적는다 — 몇 쪽, 설명 표 몇 번,
+  아니면 예시화면 그림인지. 출처가 없으면 "무엇이 빠졌는가"를 기계적으로 물을 수 없다.
+- 옮기지 못한 것은 **`unmapped`에 사유와 함께 보고한다.** 못 본 것을 안 본 채로 넘기지 않는다.
+- 하류 단계는 요약본이 아니라 **원본 문서를 직접 읽을 수 있어야 한다.**
+  `STAGES[].depends_on`에 원본을 넣는 것이 프롬프트 문구보다 먼저다.
 
-| 축 | 모듈 | 블록 | 붙는 stage |
-|---|---|---|---|
-| 컴포넌트 | `stages/scripts/common_components.py` | `COMMON_BASE_CSS` + `COMMON_COMPONENTS_JSON` | `builder`, `design_refine`, `content_refine` |
-| craft example | `stages/scripts/craft_examples.py` | `CRAFT_EXAMPLES_RULES` + `CRAFT_EXAMPLES_JSON` | `asset_generator` |
-| teacher 화풍 | `stages/scripts/teacher_source.py` | `STYLE_REFERENCE_SET_JSON` | `planner`, `asset_generator` |
+**손실 지점이 회차마다 달랐다는 것이 이 규칙의 핵심이다.** 한 군데를 막으면 다음은 다른 데서 샌다.
 
-- **목록을 프롬프트에도 input에도 손으로 적지 않는다.** 손으로 적으면 항목이 늘 때 사본과 디렉토리가 어긋난다.
-  새 컴포넌트·새 예시·새 화풍 참조는 디렉토리에 넣기만 하면 되고, 프롬프트와 input은 고치지 않는다.
-- teacher 축만 입구가 다르다. 프롬프트가 아니라 **`input.json`의 `metadata.style_reference_set`** 이 어느 선생님을
-  쓸지 고르고, `categories`를 생략하면 `root`의 md catalog를 스캔해 채운다.
-  항목별 `use`·`avoid`는 **`source/[teacher]/*.md`가 소유한다.** input에 다시 적지 않는다.
-- **이름이 같으면 teacher가 common을 덮는다.** 세부가 일반을 이긴다.
-  `source/[teacher]/components/keypad/`가 있으면 `source/common/components/keypad/`는 무시된다.
-  **병합이 아니라 통째 교체다** — 섞으면 teacher가 일부러 뺀 규칙이 common에서 되살아난다.
-  판정은 `stages/scripts/source_resolve.py`의 `shadowed_dirs()`가 하고 컴포넌트·craft example 축이 함께 쓴다.
-- **공용 컴포넌트는 이미지를 소유하지 않는다.** 버튼 몸체·도장 art는 콘텐츠마다 세계관이 달라 재사용 대상이 아니다.
-  `source/`의 어떤 파일도 `output/assets/`로 복사하지 않으며, art가 필요한 컴포넌트는 그 run이 생성한
-  asset 경로를 밖에서 받는다(`ticket-button`은 `--cta-body`, `feedback-layer`는 `data-*-src`).
-  이 규칙을 어기면 다른 차시의 팔레트가 화면에 섞이고, teacher/common 우선순위 판정도 무너진다.
-- 규칙 블록에는 **어긋나면 그 뒤 모든 판단이 함께 흔들리는 것**만 통째로 싣는다.
-  컴포넌트는 `:root` 토큰, craft example은 우선순위 규칙이 그렇다.
-  개별 항목의 상세 계약은 stage가 고른 뒤 `component.md` / `example.md`를 직접 열어 읽는다.
-- **컴포넌트 CSS·JS는 모델이 옮겨 적지 않는다.** `stages/scripts/component_bundle.py`의 `emit_common()`이
-  `output/common.css` · `output/common.js`를 원본에서 만들고, 모델은 `index.html`에 `<link>`·`<script src>`
-  두 줄만 유지한다. HTML을 쓰는 세 stage 뒤에서 `runner.finalize_html_artifact()`가 매번 다시 쓴다.
-  - **되돌릴 수 있는 것은 되돌리고, 되돌릴 수 없는 것만 검증한다.** `common.*`는 코드 소유라 덮어쓰면 그만이고,
-    `index.html`은 모델 소유라 되돌릴 수 없으므로 두 줄의 존재와 순서를 검증해 REJECT한다.
-  - drift는 **로그이지 게이트가 아니다.** 게이트로 만들면 정당한 오버라이드 시도까지 run을 죽인다.
-    같은 항목이 반복되면 모델이 틀린 게 아니라 컴포넌트가 부족하다는 신호로 읽는다.
-  - 보장하는 것은 "결과가 동일하다"가 아니라 **"컴포넌트 원본이 항상 온전히 그 자리에 있다"** 이다.
-    콘텐츠는 `<link>` 뒤 `<style>`에서 소스 순서로 오버라이드할 수 있고, 그건 막지 않는다.
-- 디자인 토큰의 원본은 `_shared/base.css` **한 곳**이다. 프롬프트의 `COMMON_BASE_CSS`는 **어떤 토큰이 있는지
-  알려주는 참고용**이지 옮겨 적을 원본이 아니다. `prompts/common_html_contract.md`에 값을 다시 적지 않는다.
-- 컴포넌트 사용 규칙(선택 기준, inline 순서, 계약 보존)은 `common_html_contract.md`의 "공용 컴포넌트 재사용" 한 곳에만 둔다.
-- **HTML을 다시 쓰는 stage가 `c-` prefix·`data-slot`·`window.Common*`를 바꾸지 않게 하는 조항을 지운다면 이 연결은 무의미해진다.** design_refine은 HTML을 통째로 재작성하므로 그 조항이 없으면 컴포넌트가 한 iteration 만에 풀어헤쳐진다.
-- **craft example은 참조와 결과의 관계가 나머지 축과 반대다.** 컴포넌트와 화풍 참조는 그대로 가져오는 것이 정답이지만,
-  craft example은 완성도만 가져오고 색·모티프·세계관은 그 run의 `art_direction`을 따라 새로 그려야 한다.
-  `art_direction`이 예시를 이긴다는 조항을 지우면 모델이 예시를 복제해 run마다 정한 화풍을 덮어쓴다.
+| 회차 | 손실 지점 |
+|---|---|
+| 1–3 | planner가 문항·보기·정답을 한 줄로 압축 / 정답 공란 / 출제 규칙 소실 |
+| 4 | `content-plan.md` → `production-guide.md` 요약. 개발 단계가 원본을 **읽지 않는 구조**였다 |
+| 5 | PDF → 전사 `.md`. 설명 표만 옮기고 **예시화면 그림 속 말풍선**을 버렸다 |
 
-## 삭제된 결정적 검증 층 (2026-08-20)
+재발하면 고치기 전에 **이번엔 어디서 샜는지**부터 적는다.
 
-test spec 파생과 playwright 실행 층을 지웠다. 다음 경로는 **이제 없다.**
+### 옵트인 선언은 그 선언이 **요구하는 나머지와 한 묶음**이다
 
-- `stages/functional_test.py`, `stages/scripts/test_spec_derive.py`, `stages/scenario_author.py`
-- `derive_test_spec.py`, `run_functional_test.py`, `author_scenarios.py`, `tests/`
-- `prompts/scenario_author_system.md`, `schemas/scenario_output.schema.json`
-- `runner.py`의 `run_test_spec_derive_stage`·`run_functional_test_stage`, `--accept-test-gaps`,
-  `RunContext`의 `test_spec_path`·`scenarios_path`·`test_report_path`·`functional_screenshots_dir`
-- 품질 루프의 **FAIL-skip 분기** — 이제 리뷰 3종이 매 iteration 돈다
+> 규칙화 2026-09-22 · `problem.md` `[gates-pass-but-screen-empty]` 9회 누적
 
-**지운 이유(실측).** 이 층이 있는 동안 `content_eval` 실행 횟수가 run당 4~5회에서 0~1회로 떨어졌다.
-`functional_test`가 REJECT면 리뷰 3종을 건너뛰는데 builder의 첫 HTML은 거의 항상 기능이 깨져 있어,
-iteration 예산이 전부 기능 수리로 소진됐기 때문이다. run `2026-08-12_65126dad-v3`은 3 iteration 내내
-REJECT라 `content_eval`이 **0회** 돌았고, `2026-08-19_7c829ae6`은 `functional_test 76/76 PASS`인 채로
-`content_eval 3.08/5`·`design_review 11건`이었다. 계기판과 실물이 반대를 가리켰다.
+base 가 `ui.*` 나 컷 필드로 켜 주는 기능은 **켜기만 해서는 화면이 완성되지 않는다.**
+켠 쪽이 나머지를 채운다 — 무엇을 채워야 하는지 모르면 **켜지 않는다.**
 
-**함께 되돌린 것.** `content_rubric.yaml`을 `content-html:v4`(5축)로 복원했다. 3축 축소는
-`content_fidelity`·`functional_integrity`를 `functional_test`가 판정한다는 전제 위에 있었고,
-그 전제가 사라지면 **문항 누락과 동작 결함을 게이트하는 곳이 0이 된다.** `content_critique`의
-"기능·충실도 지적 금지" 조항도 같은 이유로 해제했다.
+실측 두 건이 같은 형태였다. 초안 3개가 전부 켜 놓고 전부 나머지를 안 채웠는데
+**게이트·빌드·화면검사가 다 통과했다.**
 
-**다시 만들기 전에 읽을 것.** 세 번째로 같은 것을 만들지 않도록 경위가
-`docs/pipeline-redesign.md` 말미와 `problem.md`의 `[functional-test-net-value]`에 남아 있다.
-다시 넣는다면 **iteration 예산을 품질 루프와 나눠 쓰지 않는 형태**여야 한다. 그것이 이번 실패의 원인이다.
+| 켠 것 | 채워야 하는 나머지 | 안 채우면 |
+|---|---|---|
+| 컷의 `speechText` | `bubbleType: "narrationNext"` | 스피커·`다음 ▸` 이 통째로 안 나온다 |
+| `ui.castOnStage: "keep"` | `#app .cast-extra img { width: 100% }` | 말하지 않는 인물이 원본 픽셀로 떠서 혼자 거대해진다 |
 
-## 삭제된 글쓰기 파이프라인 잔재 (2026-08-11)
+**말풍선 컨트롤** — base 는 `type !== 'plain'` 일 때만 컨트롤을 그리고 `다음 ▸` 은
+`narrationNext` 에서만 붙인다(`player.js:1972`). 선언이 없으면 **소리가 타입을 정한다**
+(`resolveBubbleType`, 1932행 — `if (!hasSound) return 'plain'`). 배포 17차시는 대사 컷
+287개 중 286개가 선언을 안 하고도 멀쩡한데, 그쪽은 `sound` 를 달고 있어서다(244개).
+**우리는 오디오를 만들지 않으므로 그 통로가 없다** — 안 적으면 전부 `plain` 이다.
 
-글쓰기 파이프라인에서 넘어와 실행되지 않던 코드를 지웠다. 다음 경로는 **이제 없다.**
+사용자 결정(2026-09-22): **모든 말풍선에 `다음` 버튼과 스피커 아이콘을 기본으로 넣는다.
+오디오가 아직 없어도 강제로 나오게 한다. 빼는 것은 사람이 정한다.**
+그래서 `plain` 은 기본값이 아니다. `speechText` 가 있는 컷에는 `narrationNext` 를 적는다.
 
-- `runner.py`의 `run_writing_loop()`와 그 전용 헬퍼
-  (`build_draft`/`build_critique`/`build_eval`/`build_refine_request`/`build_final`,
-  `get_weak_axes`, `get_refine_contract_errors`, `format_eval_scores`,
-  `write_max_iteration_failed`, `categorize_failure`, `failure_rule`)
-- `RunContext`의 `draft_path`·`critique_path`·`eval_path`·`final_path`·`failed_path` 계열 속성
-- `--gen-model`, `--critique-model`, `--eval-model`, `--refine-model`, `--rubric` 인자와 `rubric.yaml`
-- `stages/generator.py`, `stages/critique.py`, `stages/evaluator.py`, `stages/refine.py`
-- `prompts/gen_system.md`, `critique_system.md`, `eval_system.md`, `refine_system.md`
-- `schemas/draft`, `critique`, `eval`, `final`, `gen_output`, `critique_output`, `eval_output`
-- `validate.py`의 같은 이름 artifact와 `validate_draft_contract` 계열 검증기,
-  그리고 그 검증기 전용이던 `--brief-hash`·`--iteration` 인자
+**말하지 않는 인물** — `updateCastExtras`(1876행)가 만드는 `<img>` 에는 클래스도 id 도 없다.
+base CSS 는 말하는 쪽만 `#charImg{width:100%}`(player.css:487)로 잡고 `.cast-extra img` 에는
+크기를 안 준다(2390행은 `display`·`filter` 뿐). `castOnStage:"keep"` 인 배포 4차시는
+**예외 없이** 차시 CSS 에서 크기를 준다 — 문서에만 없었던 사실상의 계약이었다.
 
-`content_rubric.yaml`과 `content_critique`/`content_eval` 계열은 **현재 파이프라인의 일부다.** 이름이 비슷하다고 함께 지우지 않는다.
-과거 run 산출물에서 이 이름을 보더라도 되살리지 않는다.
+게이트 두 종을 넣었다. 둘 다 **배포 17차시 거짓 양성 0건**을 먼저 확인했다.
+
+- `bubble_controls_missing` — **소리가 하나도 없는 차시**에서만 건다. 오디오가 있으면
+  선언 없이도 컨트롤이 켜지므로 거기 걸면 거짓 양성 286건이다.
+- `cast_extra_unsized` — `castOnStage:"keep"` 인데 `.cast-extra img` 에 `width`/`height` 가 없으면 건다.
+
+### 연출·배치 지시는 산문이 아니라 **필드로만** 화면에 닿는다
+
+컷의 `action` 산문에 `"편지를 클릭하면 화면이 밝아지며 전환"`이라고 적어도 아무 일도 안 일어난다.
+런타임은 `backgroundRef`·`motion`·`sound`·`characterEmotion`·`characterPosition`만 읽는다.
+그리고 **산문은 어떤 게이트도 못 읽는다** — schema PASS · `lesson_check` PASS · 빌드 성공을
+전부 통과한 뒤 사람 눈에만 걸렸다(2026-09-11, 3-1/05에서 장면별 인물 위치와 전환 연출이 전멸).
+
+연출은 `action`(사람이 원문과 대조하는 자리)과 필드(화면을 움직이는 자리) **양쪽에** 적는다.
+
+### 중간 단계가 요약하면 하류는 **그 존재 자체를 모른다**
+
+같은 사고의 상류 원인이 이것이다. 스토리보드 → `planning/content-plan.md`까지는 장면별
+인물 배치표가 정확히 남아 있었는데, `interview_brief`가 `production-guide.md`로 요약하면서
+떨어뜨렸다. 그런데 `senior_developer.depends_on`에는 `content-plan.md`가 없어 개발 단계가
+원본 계획을 **읽을 수조차 없었다.**
+
+- 하류가 원본을 직접 볼 수 있게 `depends_on`을 넓히는 것이 프롬프트 문구보다 먼저다.
+- 요약 단계에는 "이 표는 줄이지 말고 그대로 옮긴다"를 명시한다.
+- 누락을 기계적으로 물으려면 **출처가 있어야 한다.** 컷의 `source`가 그 자리다.
+
+### 게이트는 배포 차시에서 거짓 양성 0건일 때만 넣는다
+
+`action` 산문의 키워드로 빠진 필드를 추론하는 게이트를 만들어 배포 차시에 돌렸더니 거짓 양성
+3건이 나왔다 — 오디오 전용 컷의 표정 지시, 같은 배경 안의 서사적 "장면 전환", base가 이미
+하는 CTA 페이드인. **산문에서 의도를 추론하는 게이트는 0 거짓 양성이 안 된다. 넣지 않는다.**
+
+대신 **필드가 있는가**만 보면 갈린다. 배포 17개 차시의 컷 606개가 전부 `source`와 `layer`를
+들고 있었고(예외 0건) 우리 차시만 0이었다. `timing`·`motion`·`sound`는 차시별 편차가 커서
+못 쓴다. 새 게이트를 만들기 전에 **배포 차시에서 그 신호가 갈리는지부터 센다.**
+
+### 학습자 경로만 밟으면 **문제 화면은 한 장도 안 찍힌다**
+
+`tools/capture_lesson.mjs` 는 학습자가 누르는 길을 그대로 밟는다. "눌러도 안 넘어가는" 결함이
+그 과정에서 드러나므로 맞는 설계다. 그런데 그 길은 **문제 앞에서 멈춘다** — 드래그·선 긋기·
+키패드를 자동으로 풀 수 없기 때문이다.
+
+실측(2026-09-11) — 3-1/05 에서 찍힌 15장이 전부 컷씬이었고 미션 다섯 개의 배치는 한 장도
+안 찍혔다. 화면 대조가 문제 배치를 한 건도 안 낸 것은 판정을 안 해서가 아니라 **볼 수가
+없어서**였다. 안 찍힌 화면은 어떤 검사도 못 본다.
+
+- 배치를 보는 것이 목적이면 `--scene-jump` 를 쓴다. base 가 `?dev` 로 여는 장면 이동
+  패널(`.dev-scene-jump`)에 장면·대화 묶음·문제마다 버튼이 있어 풀지 않고 전부 닿는다.
+- 패널은 찍을 때 숨기고, 누르는 것은 페이지 안에서 `el.click()` 으로 한다 —
+  숨긴 요소는 좌표 클릭이 안 먹는다.
+- **두 모드를 다 남긴다.** 장면 이동은 진행 가능 여부를 못 본다(전부 점프하므로).
+  그건 기본 모드와 `check_rendered.mjs` 의 몫이다.
+
+### 움직이는 화면에서는 playwright 기본 클릭이 **영영 안 눌린다**
+
+`page.click()` 은 요소가 "visible · enabled · **stable**" 해질 때까지 기다린다. 그런데 이
+런타임은 버튼이 계속 움직인다 — 타이틀 숨쉬기, 말풍선 팝, 커서 따라다니기. 그래서 버튼이
+끝내 안정되지 않고 클릭이 타임아웃한다.
+
+실측(2026-09-11) — `tools/capture_lesson.mjs` 가 타이틀의 `편지를 클릭하세요` 를 못 눌렀고,
+실패를 `.catch(() => {})` 로 삼킨 뒤 **같은 버튼을 15번 다시 눌러** 같은 화면 15장을 남겼다.
+`stuck` 검사에도 안 걸렸다 — 타이틀이 애니메이션 중이라 픽셀 지문이 매번 달랐기 때문이다.
+`review_lesson.py` 도 같은 캡처기를 쓰므로 그동안 같은 것을 보고 있었다.
+
+- 일반 클릭이 실패하면 **`force: true` 로 한 번 더** 누른다.
+- **삼키지 않는다.** force 가 필요했다는 사실을 `click_notes` 에 남긴다 — 그게 "버튼이
+  가려졌다"는 신호일 수도 있다.
+- 겹쳐서 못 누르는 것은 `tools/check_rendered.mjs` 가 따로 본다. 캡처기의 일은 끝까지 도는 것이다.
+
+### 문자열 매칭 게이트는 주석을 먼저 걷어낸다
+
+`check_ext_css`는 `.charzone`·`.speech`·`!important`·단위를 문자열로 찾는다. 그래서 CSS
+주석에 적은 경고 문구를 규칙으로 읽었다 — `.charzone 에 overflow:hidden 을 걸면 안 된다`는
+주석이 `layout_conflict`로 잡혀 멀쩡한 번들이 반려됐고, 주석의 `216px`·`547px` 같은 실측
+메모가 px 카운트에 섞여 cq:px 비율까지 왜곡했다. 줄 앞이 `/*`인지만 보는 필터로는 **블록
+주석의 둘째 줄부터** 못 막는다. `strip_css_comments()`로 본문만 남겨 검사한다.
+
+### base가 `var(--...)`로 통로를 냈으면 **변수만 바꾼다**
+
+인물 크기·자리를 규칙으로 이기려다 두 번 연속 화면을 깼다.
+
+| 한 것 | 일어난 일 |
+|---|---|
+| `.charzone { overflow: hidden }` | `.speech`가 `.charzone`의 자식이라 말풍선까지 잘렸다 |
+| `#charImg { position: absolute }` | zone 높이가 0으로 접혀 인물이 무대 밖(y=720)으로 나갔다 |
+
+base의 `#app.char-fixed-y .charzone.char-left`는 명시도 (1,3,0)이라 밖에서 이기려면 선택자를
+계속 키우게 된다. 그쪽은 이미 `--char-bottom`·`--char-width`로 통로를 냈다. 그리고 수치는
+지어내지 말고 **배포된 차시의 같은 자리 값**을 찾아 기준으로 삼는다.
+
+## 금지
+
+- `runner.py` 기반 HTML 파이프라인을 다시 호출하거나 문서화하지 않는다.
+- `output/index.html`을 초안 산출물로 삼지 않는다.
+- builder/design/content 루프를 새 초안 경로로 되살리지 않는다.
+- 모델이 `manifest.json`을 쓰게 하지 않는다. manifest는 코드가 만든다.
+- 사용자 확인 없이 배치 대상의 기존 production 차시를 덮어쓰지 않는다.

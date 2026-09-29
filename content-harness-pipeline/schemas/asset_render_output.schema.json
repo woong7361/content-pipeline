@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Asset Render Output",
+  "description": "lesson.json이 참조하는 이미지를 실제로 생성한 결과 보고서. 파일은 모델이 직접 저장하고 이 JSON으로는 무엇을 저장했는지만 보고한다. Codex structured output 제약에 따라 properties의 모든 필드가 required다.",
+  "type": "object",
+  "required": [
+    "rendered",
+    "skipped",
+    "notes"
+  ],
+  "properties": {
+    "rendered": {
+      "type": "array",
+      "description": "실제로 만들어 저장한 이미지. lesson.json이 참조하는 경로와 정확히 같아야 한다",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "role",
+          "intent",
+          "chroma"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^assets/[A-Za-z0-9_\\-/]+\\.(png|jpe?g)$",
+            "description": "차시 폴더 기준 경로. lesson.json의 참조와 한 글자도 다르면 안 된다"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "background",
+              "character",
+              "ui",
+              "prop",
+              "photo"
+            ],
+            "description": "화면에서 맡는 역할. 저장 디렉토리와 일치해야 한다"
+          },
+          "intent": {
+            "type": "string",
+            "description": "이 그림이 화면에서 무엇을 하는가. 무엇을 비워 뒀는지도 함께 적는다"
+          },
+          "chroma": {
+            "type": "string",
+            "enum": [
+              "magenta",
+              "green",
+              "cyan",
+              "none"
+            ],
+            "description": "투명이 필요한 그림의 배경을 어떤 크로마 색으로 칠했는가. 코드가 그 색만 지운다. 배경 그림처럼 투명이 필요 없으면 none"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "skipped": {
+      "type": "array",
+      "description": "만들지 못했거나 만들지 않기로 한 것. 없으면 빈 배열",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "why"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "why": {
+            "type": "string",
+            "description": "사람이 넣어야 하는 사진/오디오, 생성 실패, 지시 부족 등"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notes": {
+      "type": "array",
+      "description": "화풍·정체성·비워 둔 자리에 대해 사람이 알아야 할 것. 없으면 빈 배열",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

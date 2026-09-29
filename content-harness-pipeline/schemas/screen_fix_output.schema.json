@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "screen_fix_output",
+  "description": "화면 대조에서 나온 고칠 것을 **그대로 적용할 수 있는 수정안**으로 내린 결과. 값과 앵커가 정확해야 한다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "fixes", "needs_decision", "order", "notes"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ready", "partial", "blocked"],
+      "description": "ready=전부 적용 가능 · partial=일부는 사람 결정이 필요 · blocked=소스를 못 읽어 만들지 못했다"
+    },
+    "fixes": {
+      "type": "array",
+      "description": "수정안. 하나가 한 곳을 고친다. 순서는 의존 관계를 따른다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "from_change",
+          "file",
+          "anchor",
+          "current",
+          "replacement",
+          "why_this_value",
+          "verify",
+          "risk",
+          "priority"
+        ],
+        "properties": {
+          "id": { "type": "string", "description": "이 수정안의 짧은 식별자. 예: fix-01" },
+          "from_change": {
+            "type": "string",
+            "description": "근거가 된 대조 항목. `{page} → {screen} / {aspect}` 형식"
+          },
+          "file": {
+            "type": "string",
+            "description": "고칠 파일의 **번들 안 상대 경로**. 예: lesson/player-ext.css · lesson/lesson.json · assets/backgrounds/post-office-alley.png"
+          },
+          "anchor": {
+            "type": "string",
+            "description": "파일 안에서 **정확히 어디인가**. CSS 는 선택자, lesson.json 은 JSON 경로($.steps[0]...), js 는 함수명. 없으면 '새로 추가'"
+          },
+          "current": {
+            "type": "string",
+            "description": "지금 값 또는 지금 코드. 파일에서 **그대로 옮긴다.** 없던 것이면 빈 문자열"
+          },
+          "replacement": {
+            "type": "string",
+            "description": "바꿀 값 또는 새 코드. **그대로 붙여넣을 수 있어야 한다.** 주변 코드 관례를 따른다"
+          },
+          "why_this_value": {
+            "type": "string",
+            "description": "왜 이 수치인가. 예시화면에서 잰 비율과 환산 과정을 적는다. '적당히'는 근거가 아니다"
+          },
+          "verify": {
+            "type": "string",
+            "description": "고친 뒤 화면에서 무엇을 보면 됐는지 아는가. 잴 수 있는 형태로"
+          },
+          "risk": {
+            "type": "string",
+            "description": "이걸 고치면 무엇이 함께 틀어질 수 있는가. 없으면 '없음'"
+          },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"] }
+        }
+      }
+    },
+    "needs_decision": {
+      "type": "array",
+      "description": "사람이 정해야 수정안을 만들 수 있는 것. 추측해서 채우지 않는다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from_change", "question", "options", "why_cannot_decide"],
+        "properties": {
+          "from_change": { "type": "string" },
+          "question": { "type": "string", "description": "무엇을 정해야 하는가" },
+          "options": {
+            "type": "array",
+            "description": "가능한 선택지와 각각의 대가",
+            "items": { "type": "string" }
+          },
+          "why_cannot_decide": { "type": "string", "description": "왜 이쪽에서 못 정하는가" }
+        }
+      }
+    },
+    "order": {
+      "type": "array",
+      "description": "적용 순서. `fixes[].id` 를 의존 관계대로 나열한다.",
+      "items": { "type": "string" }
+    },
+    "notes": { "type": "string", "description": "위에 안 들어가는 것. 없으면 빈 문자열" }
+  }
+}

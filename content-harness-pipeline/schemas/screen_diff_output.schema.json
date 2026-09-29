@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "screen_diff_output",
+  "description": "스토리보드 예시화면과 완성 화면을 쪽 단위로 대조한 결과. 판정이 아니라 고칠 것 목록이다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "pairs_compared", "unmatched_pages", "unmatched_screens", "changes", "notes"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["match", "needs_change", "blocked"],
+      "description": "match=고칠 것이 없다 · needs_change=목록이 있다 · blocked=대조 자체를 못 했다"
+    },
+    "pairs_compared": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "실제로 짝지어 본 (스토리보드 쪽, 화면) 쌍의 수"
+    },
+    "unmatched_pages": {
+      "type": "array",
+      "description": "짝이 될 화면을 못 찾은 스토리보드 쪽. 그 장면이 구현되지 않았다는 뜻일 수 있다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "expected", "reason"],
+        "properties": {
+          "page": { "type": "string", "description": "스토리보드 쪽 이미지 파일명" },
+          "expected": { "type": "string", "description": "그 쪽이 요구하는 화면" },
+          "reason": { "type": "string", "description": "왜 짝을 못 찾았는가" }
+        }
+      }
+    },
+    "unmatched_screens": {
+      "type": "array",
+      "description": "대응하는 스토리보드 쪽이 없는 완성 화면. 지어낸 화면일 수 있다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["screen", "reason"],
+        "properties": {
+          "screen": { "type": "string", "description": "화면 캡처 파일명" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "changes": {
+      "type": "array",
+      "description": "고칠 것. 각 항목은 한 곳을 가리키고 무엇을 어떻게 바꿀지 말한다.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "screen", "aspect", "storyboard_shows", "screen_shows", "change", "target_file", "priority"],
+        "properties": {
+          "page": { "type": "string", "description": "근거가 된 스토리보드 쪽 이미지 파일명" },
+          "screen": { "type": "string", "description": "대상 화면 캡처 파일명" },
+          "aspect": {
+            "type": "string",
+            "enum": ["layout", "size", "position", "color", "typography", "asset", "text", "motion", "missing", "extra"],
+            "description": "어느 축이 다른가"
+          },
+          "storyboard_shows": { "type": "string", "description": "스토리보드 그림에 **보이는** 것. 추측이 아니라 본 것만" },
+          "screen_shows": { "type": "string", "description": "완성 화면에 **보이는** 것" },
+          "change": { "type": "string", "description": "무엇을 어떻게 바꾸는가. 가능하면 수치로" },
+          "target_file": {
+            "type": "string",
+            "enum": ["lesson.json", "player-ext.css", "player-ext.js", "asset", "unknown"],
+            "description": "어느 파일을 고쳐야 하는가"
+          },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"] }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "대조하면서 알게 된 것 중 위 항목에 안 들어가는 것. 없으면 빈 문자열"
+    }
+  }
+}

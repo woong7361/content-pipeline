@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lesson Draft Direct Output",
+  "description": "스토리보드 원본에서 lesson.json을 직접 만드는 경로의 보고서. 파일은 모델이 직접 쓰고 이 JSON으로는 무엇을 썼는지만 보고한다. manifest.json은 코드가 만든다. Codex structured output 제약에 따라 properties의 모든 필드가 required다.",
+  "type": "object",
+  "required": [
+    "lesson_path",
+    "page_map_path",
+    "player_ext_js_path",
+    "player_ext_css_path",
+    "asset_refs",
+    "pages_total",
+    "pages_mapped",
+    "problems_total",
+    "draft_notes"
+  ],
+  "properties": {
+    "lesson_path": {
+      "type": "string",
+      "const": "lesson/lesson.json",
+      "description": "run 디렉토리 기준 lesson.json 저장 경로"
+    },
+    "page_map_path": {
+      "type": "string",
+      "const": "lesson/page-map.md",
+      "description": "1단계 페이지 대응표 저장 경로"
+    },
+    "player_ext_js_path": {
+      "type": "string",
+      "enum": ["", "lesson/player-ext.js"],
+      "description": "차시 전용 런타임 확장을 만들었으면 그 경로, 원자 어휘만으로 끝났으면 빈 문자열"
+    },
+    "player_ext_css_path": {
+      "type": "string",
+      "enum": ["", "lesson/player-ext.css"],
+      "description": "차시 전용 CSS를 만들었으면 그 경로, 안 만들었으면 빈 문자열"
+    },
+    "asset_refs": {
+      "type": "array",
+      "description": "lesson.json이 참조하는 asset 경로 전부. manifest는 이 목록으로 만든다",
+      "items": {
+        "type": "string",
+        "pattern": "^assets/[A-Za-z0-9_\\-/]+\\.(png|jpe?g|webp|mp3|wav|ogg|m4a)$"
+      }
+    },
+    "pages_total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "스토리보드의 전체 페이지 수. 페이지 개념이 없는 원본(md)이면 0"
+    },
+    "pages_mapped": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "페이지 대응표에 올린 행 수. 제외한 페이지도 사유를 적었으면 센다"
+    },
+    "problems_total": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "lesson.json에 실은 문제와 미션의 합"
+    },
+    "draft_notes": {
+      "type": "array",
+      "description": "원문에 없어서 비워 둔 자리, 읽지 못한 페이지, 옮기지 못한 대응표 행. 없으면 빈 배열",
+      "items": {
+        "type": "object",
+        "required": ["where", "what", "why"],
+        "properties": {
+          "where": {
+            "type": "string",
+            "description": "스토리보드 위치나 lesson.json 경로"
+          },
+          "what": {
+            "type": "string",
+            "description": "비워 두었거나 옮기지 못한 것"
+          },
+          "why": {
+            "type": "string",
+            "description": "원문에 없음 / 읽을 수 없음 / 어휘 밖 등"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
