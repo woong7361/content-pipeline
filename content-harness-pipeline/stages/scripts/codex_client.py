@@ -23,6 +23,7 @@ def resolve_executable(name: str) -> str:
 
 
 PROVIDER_CODEX = "codex"
+CAPACITY_BACKOFF_SECONDS = (30, 60, 120)
 PROVIDER_CLAUDE = "claude"
 
 
@@ -34,14 +35,17 @@ def create_prompt_client(
     project_dir: Path,
     timeout_seconds: int,
     allowed_tools: tuple[str, ...] = (),
+    effort: str = "",
 ):
     """`allowed_tools` 는 claude 에만 쓴다 — 비대화형이라 허락할 사람이 없는 명령 중 **미리 허용할 것**.
-    codex 는 이미 `--dangerously-bypass-approvals-and-sandbox` 로 돈다."""
+    codex 는 이미 `--dangerously-bypass-approvals-and-sandbox` 로 돈다.
+    `effort` 는 추론 강도(low · medium · high · xhigh · max · ultra). 빈 값이면 CLI 설정대로."""
     if provider == PROVIDER_CODEX:
         return CodexClient(
             codex_bin=codex_bin,
             project_dir=project_dir,
             timeout_seconds=timeout_seconds,
+            effort=effort,
         )
     if provider == PROVIDER_CLAUDE:
         return ClaudeClient(
@@ -49,6 +53,7 @@ def create_prompt_client(
             project_dir=project_dir,
             timeout_seconds=timeout_seconds,
             allowed_tools=tuple(allowed_tools),
+            effort=effort,
         )
     raise ValueError(f"unsupported LLM provider: {provider}")
 
@@ -59,6 +64,8 @@ class CodexClient:
     project_dir: Path
     timeout_seconds: int = 600
     bypass_approvals_and_sandbox: bool = True
+    # 추론 강도 — `-c model_reasoning_effort="…"` 로 넘긴다(~/.codex/config.toml 의 값을 이번 호출만 덮는다)
+    effort: str = ""
 
     def run_prompt(
         self,
@@ -94,21 +101,28 @@ class CodexClient:
         )
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            completed = subprocess.run(
-                command,
-                input=prompt,
-                text=True,
-                capture_output=True,
-                encoding="utf-8",
-                timeout=self.timeout_seconds,
-            )
-        except subprocess.TimeoutExpired as exc:
-            raise TimeoutError(
-                "Codex CLI timed out in non-interactive mode.\n"
-                f"command: {command}\n"
-                f"timeout_seconds: {self.timeout_seconds}"
-            ) from exc
+        # 서버 혼잡("Selected model is at capacity")은 입력 문제가 아니라 잠깐 기다리면 풀린다.
+        # 실측(2026-09-29) — 하루에 두 번(그림 배치 · 화면 판정) 이것으로 단계가 통째로 죽었다.
+        for wait in (*CAPACITY_BACKOFF_SECONDS, None):
+            try:
+                completed = subprocess.run(
+                    command,
+                    input=prompt,
+                    text=True,
+                    capture_output=True,
+                    encoding="utf-8",
+                    timeout=self.timeout_seconds,
+                )
+            except subprocess.TimeoutExpired as exc:
+                raise TimeoutError(
+                    "Codex CLI timed out in non-interactive mode.\n"
+                    f"command: {command}\n"
+                    f"timeout_seconds: {self.timeout_seconds}"
+                ) from exc
+            if completed.returncode == 0 or wait is None or "at capacity" not in (completed.stdout or ""):
+                break
+            print(f"  codex 서버 혼잡 — {wait}초 뒤 다시 부른다 ({stage or '?'})", flush=True)
+            time.sleep(wait)
 
         # 실패해도 남긴다 — 명령은 이미 실행됐고, 죽은 stage가 무엇을 열었는지가 더 중요하다.
         agent_audit.record_codex(stage, completed.stdout)
@@ -133,6 +147,8 @@ class CodexClient:
             resolve_executable(self.codex_bin),
             "exec",
         ]
+        if self.effort:
+            command.extend(["-c", f'model_reasoning_effort="{self.effort}"'])
         if model:
             command.extend(["--model", model])
 
@@ -172,6 +188,11 @@ class ClaudeClient:
     # `Bash(node -e ' *)` · 특정 경로 `rm -rf` 등이 있어 파이프라인의 claude 도 그 명령을 돌릴 수 있었다.
     # PC 마다 전역 설정이 다르므로 이렇게 해야 어디서나 같은 권한으로 돈다.
     setting_sources: str = "project"
+    # 작업 폴더(project_dir) 밖에서 파일을 고쳐야 할 때 — 예: 차시 작업대가 gyo6 차시 폴더를 직접 고친다.
+    # `acceptEdits` 는 작업 폴더와 여기 적은 폴더 안의 수정만 허락한다.
+    add_dirs: tuple[str, ...] = ()
+    # 추론 강도 — `--effort low|medium|high|xhigh|max`. 빈 값이면 CLI 설정대로
+    effort: str = ""
 
     def run_prompt(
         self,
@@ -251,6 +272,8 @@ class ClaudeClient:
             command.append("--bare")
         if model:
             command.extend(["--model", model])
+        if self.effort:
+            command.extend(["--effort", self.effort])
         command.extend(
             [
                 "-p",
@@ -267,6 +290,8 @@ class ClaudeClient:
         )
         if self.allowed_tools:
             command.extend(["--allowedTools", *self.allowed_tools])
+        for folder in self.add_dirs:
+            command.extend(["--add-dir", folder])
         return command
 
 

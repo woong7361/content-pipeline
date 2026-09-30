@@ -52,6 +52,64 @@
 - 재발 이력:
   - 없음 (2026-07-15 기준).
 
+### [planner-storyboard-detail-loss] 스토리보드 세부(문항·보기·정답·대사·연출)가 하류로 가며 사라짐
+
+- 대상: content-harness-pipeline/prompts/senior_planner_system.md · prompts/interview_brief_system.md · produce_lesson.py(`STAGES[].depends_on`) · stages/planner.py · schemas/planner_output.schema.json
+- 분류 태그: planner-storyboard-detail-loss
+- 최종 발생 횟수: 5
+- 규칙화일: 2026-09-11
+- 반영한 rule 위치: `content-harness-pipeline/CLAUDE.md` > "실패에서 배운 것" > "스토리보드 세부는 어느 단계에서도 요약하지 않는다"
+- rule 문구: 스토리보드 세부는 어느 단계에서도 요약하지 않는다. 각 단계는 옮긴 항목에 **원본 출처**(쪽·표 번호·예시화면 여부)를 함께 적고, 옮기지 못한 것은 `unmapped`에 사유와 함께 보고한다. 하류 단계는 요약본이 아니라 **원본 문서를 직접 읽을 수 있어야** 한다 — `depends_on`에 원본을 넣는다.
+- **손실 지점이 매번 달랐다는 것이 이 항목의 핵심이다.** 한 군데를 막으면 다음은 다른 데서 샌다.
+
+| 회차 | 날짜 | 손실 지점 |
+|---|---|---|
+| 1 | 2026-07-13 | planner가 문항·보기·정답을 `content_outline` 한 줄로 압축 |
+| 2 | 2026-07-31 | planner 산출에서 정답 공란·판정 불가 자연어·asset group 중복 |
+| 3 | 2026-08-14 | 기존 검사층은 전부 PASS인데 노출 시점 불일치·출제 규칙 소실 |
+| 4 | 2026-09-11 | `content-plan.md` → `production-guide.md` 요약 (개발 단계가 원본을 안 읽는 구조) |
+| 5 | 2026-09-11 | PDF → 전사 `.md` (설명 표만 옮기고 **예시화면 그림 속 말풍선**을 버림) |
+
+- 재발 이력:
+  - **2026-09-11 (규칙화 당일 재발, 6회차).** 새로 만든 화면 대조 단계(`diff_screens.py`)가 잡았다 — 사람 눈이 아니라 파이프라인이 처음으로 잡은 회차다.
+    원문 `storyboard.md:174` 는 "대사가 모두 종료되면 화면 중앙에 **퀘스트 알림창이 크게 팝업**됨 / 알림창 하단에 노란 `[ 수락하기 ]` 버튼 활성화(펄스)" 라고 못박았다.
+    전사본에도 그대로 남아 있었으므로 **요약 손실이 아니다.** `senior_developer` 가 그것을 base 원자(말풍선 + `ctaText`)로 **근사**했다 — 원문에 있는 UI 형태를 런타임이 이미 가진 것으로 바꿔치기한 것이다.
+    현재 rule 문구("어느 단계에서도 요약하지 않는다")는 **이 축을 안 덮는다.** 요약이 아니라 치환이기 때문이다.
+    제안하는 보강: "**원문이 UI 형태를 지정했으면 그 형태로 만든다.** base 원자에 비슷한 것이 있다는 이유로 바꿔치기하지 않는다. 원자로 안 되면 `player-ext` 로 만들고, 그것도 안 되면 `unmapped` 에 올린다." (승인 대기)
+
+---
+
+#### 규칙화 이전 전문 (problem.md 원본)
+
+### [planner-storyboard-detail-loss] planner.json이 storyboard 세부(문제 보기·대사·오디오·모션·효과)를 압축/누락함
+
+- 대상: content-harness-pipeline/stages/planner.py, schemas/planner_output.schema.json, prompts/planner_system.md (산출: runs/2026-07-08_ch802d08/ch802d08_planner.json)
+- 분류 태그: planner-storyboard-detail-loss
+- 상태: 제안됨 (**5회 도달 — rule 승격 제안, 승인 대기**)
+- 발생 횟수: 5
+- 최초 발생일: 2026-07-13
+- 최근 발생일: 2026-09-11
+- 사례:
+  - 2026-07-13: `2학년_8차시(시간)_임상현.md`(storyboard)와 `ch802d08_planner.json`을 비교하니 차이가 큼. storyboard가 요구한 요소(이미지, 대사, 문제 문구, 보기(distractor), 캐릭터 포즈, 효과, 애니메이션, 오디오/SFX)가 요약되거나 생략됨. 특히 활동2 12문제의 정확한 문제 문구·보기 3개·정답이 planner에서는 content_outline 한 줄로 압축되어 정답만 남고 오답 보기가 사라짐. 사용자가 schema가 너무 정적이거나 prompt 문제로 추정하고, storyboard를 온전히 담을 수정 방향을 요청.
+  - 2026-07-31: `runs/2026-07-31_dfbc1027/dfbc1027_planner.json` 검토 후 전체 수정 요청. schema는 PASS하지만 도형 세기 문항 2개의 `answer`가 비어 있고, 도형 찾기 정답 대상이 기계적으로 판정할 수 없는 자연어로만 표현됨. 원문의 `다음 차시 이동`이 완료 섹션에서 누락되고, 무작위 문제 생성 규칙과 고정 예시 문항의 역할이 모호하며, 동일 asset이 두 batch group에 중복되어 runner의 first-consume 로직상 뒤 그룹의 일관성 목적이 무효화됨. 사용자는 전체 보정 후 planner schema 통과를 요구.
+  - 2026-08-14: 사용자가 "planner 생성에 오류가 있는 것 같다"며 eval/critique/refine 3-stage와 test 명세 생성은 비용 때문에 못 붙인다는 제약과 함께 대안을 요청. 최신 산출(`runs/2026-08-14_dfbc1027/dfbc1027_planner.json`)을 실측하니 **schema PASS · 참조 무결성 0건 · 파생기 underivable 0건 · 스토리보드 문구 recall 90개 중 89개**로 기존 검사층은 전부 통과하는데, 두 가지가 남아 있었다. ① 캐러셀로 계획된 화면에서 문항 4개가 요소 하나에 `refs=[a,b,c,d] / reveal=scene_enter`로 묶여, 파생된 케이스가 페이지를 넘기지 않고 바로 조작한다(같은 화면의 문구는 `on_page`로 파생되어 **한 화면에 대해 문구와 문항의 노출 시점이 서로 다르게** 파생됨 → 실행 시 가짜 실패 → content_refine이 멀쩡한 HTML을 고치러 감). 같은 스키마로 문항마다 요소를 쪼개 `on_page/0..3`을 준 과거 산출(`2026-08-12_65126dad-v3`)이 있으므로 **표현할 자리가 없어서가 아니라 같은 사실을 두 방식으로 적은 것**이다. ② 무작위 출제 생성 규칙이 계획의 규칙 자리가 아니라 `channel: generation_rule` 요소 5줄(모두 `rendered_text: []`)로만 남고, 문항은 스토리보드의 예시값 4개로 굳음 — **2026-07-31 사례에서 이미 지적된 것과 같은 손실의 재발**.
+  - 2026-09-11: `runs/2026-09-10_g3l05-postoffice` (3학년 5차시 우체국). 사용자가 두 가지를 지적했다. ① "Scene2에서 배경이 바뀌면서 셈이와 수리의 위치가 오른쪽에 있어야 하는데 스토리보드 반영이 안 됐다." ② "효과 같은 부분이 다 빠져 있다 — 편지를 클릭하라든지, 화면이 밝아지면서 장면이 전환된다든지."
+    **검증 결과 — 손실 지점은 planner가 아니라 `content-plan.md` → `production-guide.md` 핸드오프였다.** 스토리보드 104·152행이 장면별 인물 위치를 못박았고, `senior_planner`는 그것을 `planning/content-plan.md`에 표로 정확히 옮겼다. 그런데 `senior_developer`의 `depends_on`은 `('planning/production-guide.md', 'design/visual-design.md', 'design/asset-plan.md')`뿐이라 **`content-plan.md`를 아예 읽지 않는다.** `interview_brief`가 만든 `production-guide.md`에는 그 표가 없었다. 즉 상류가 제대로 받아적어도 중간 단계가 요약하면서 떨어뜨리면 개발 단계는 존재 자체를 모른다.
+    ②도 같은 구조다. 연출 지시가 `steps[].stageDirections[].action`의 **산문**으로만 남았고(`"편지를 클릭하면 화면이 밝아지며 전환"`), 런타임이 읽는 필드(`backgroundRef`·`motion`·`sound`·`layer`·`characterEmotion`)는 비어 있었다. 배포된 차시(`lessons/1-1/04` 등)는 같은 내용을 전부 필드로 들고 있다. **산문은 어떤 게이트도 못 읽고 런타임도 못 읽는다** — schema PASS·lesson_check PASS·빌드 성공을 다 통과한 뒤 사람 눈에만 보였다.
+    - 조치(2026-09-11): (a) 14개 intro 컷과 5개 outro 컷에 `characterPosition`을 명시하고 `cast.postmaster.position`을 `left`로 정정 — 화면 실측으로 좌/우 전환 확인. (b) 스토리보드와 대조해 배경 전환 자리를 바로잡았다. Scene 2는 우체국 **앞 골목**(storyboard.md:149)인데 컷9가 이미 **내부 작업대**로 바꾸고 있었고, 정작 내부로 바뀌어야 할 Scene 3(storyboard.md:193)에는 배경 필드가 아예 없어 산문에만 남아 있었다 — 컷9의 잘못된 `backgroundRef`를 빼고 `step-2`에 부여했다. (c) **게이트를 새로 넣었다** — 아래 "규칙화 메모" 참조. (d) 구조 수정: `senior_developer.depends_on`에 `planning/content-plan.md` 추가, `senior_developer_system.md`에 "두 파일이 다르면 `content-plan.md`가 원본" 명시, `interview_brief_system.md`에 "장면별 인물 배치·연출 지시" 절을 만들고 그 표는 요약 금지로 못박음, `lesson_contract.md`에 `characterPosition` 행과 "원문에 이런 말이 나오면 이 필드를 채운다" 대응표 추가.
+  - 2026-09-11 (같은 날 2건째): 사용자가 "말풍선이 누락된 게 있다. content-plan.md부터 누락됐다"며 Scene 1의 대사 순서를 제시했다 — `"안녕, 나는 수리!"` → `"나는 셈이야!"` → `"우와, '198X년'이라고 적힌~"` → `"어디 보자... 어?~"`.
+    **검증 결과 — 앞의 자기소개 대사 2개는 스토리보드 설명 표에 아예 없다.** 원본 PDF 5쪽의 **예시화면 그림 안 말풍선**에만 있다(수리 좌측 `"안녕, 나는 수리!"` / 셈이 우측 `"나는 셈이야!"`). 설명 표 5번 "대사 및 연출(편지 발견)"은 대사를 셋만 싣는다. 파이프라인 입력으로 쓴 `storyboard.md`(PDF 전사본)도 설명 표만 옮겼기 때문에, `senior_planner`는 그 대사를 **볼 수 있는 경로가 없었다.**
+    즉 손실 지점이 또 달랐다. 앞 사례는 `content-plan.md` → `production-guide.md` 핸드오프였고, 이번은 **PDF → 전사 `.md`** 구간이다. 스토리보드에서 대사는 두 곳에 나뉘어 있다 — 설명 표와 예시화면 그림. 표만 읽으면 그림 속 대사가 통째로 사라진다.
+    - 조치(2026-09-11): `prompts/senior_planner_system.md`에 "대사는 설명 표에만 있지 않다 — 예시화면 그림 안 말풍선도 대사다. 둘을 합쳐야 전체다. 입력이 전사본이라 그림을 볼 수 없으면 `unmapped`에 보고한다"를 넣었다. Scene 1 대사 2개를 lesson.json에 복원.
+- 조치: 2026-07-13 분석 결과를 반영해 현재 schema/prompt에 `sections[].elements`, `questions`, `rendered_text` 구조가 도입됨. 2026-07-31 산출 planner에서 잔존한 의미적 누락을 수정함: 도형별 정답·클릭 target ID·다음 차시 interaction을 명시하고, 무작위 template/예시의 역할을 interaction에 고정하며, asset group 중복과 사용 참조 불일치를 정리함. 공식 planner schema PASS, 중복 ID·누락 참조·빈 정답·group 중복 검사도 PASS.
+  2026-08-14: 산출물을 매번 손으로 보정하는 대신 **`planner_refine` stage(LLM 1회)** 를 신설. 앞뒤로 LLM 0회 층을 붙여 critique/eval 역할은 코드가 맡는다 — 앞은 참조 무결성·시점 정합을 확정하는 `stages/scripts/planner_check.py`, 뒤는 화면·문항·문구가 줄면 REJECT하고 원본을 되살리는 회귀 검사(`design_refine`이 HTML을 통째로 다시 써 앞선 수정을 지우던 것과 같은 위험이라 필수). 점수도 게이트도 만들지 않으므로 남은 문제는 고친 결과를 기계 검사에 다시 통과시켜 안다.
+- 규칙화 메모(2026-09-11 추가): 4회. 구조 조치는 위 조치 (d)로 반영했다. 문서 규칙만으로는 막히지 않는다 — 읽히지 않는 파일에 적힌 규칙은 없는 규칙이다.
+  **게이트 시도와 결과.** 먼저 `action` 산문의 키워드로 빠진 필드를 추론하는 게이트를 만들어 배포 차시에 돌렸더니 **거짓 양성 3건**이 나왔다(오디오 전용 컷의 표정 지시 / 같은 배경 안의 서사적 "장면 전환" / base가 이미 하는 CTA 페이드인). 산문 추론은 0 거짓 양성이 안 되므로 **넣지 않았다.**
+  대신 필드 존재 여부만 세었더니 갈리는 신호가 나왔다 — 배포 17개 차시의 컷 **606개 전부**가 `source`와 `layer`를 들고 있고(예외 0건), 우리 차시만 39개 중 0개였다. `timing`·`motion`·`sound`는 차시별 편차가 커서 못 쓴다. `characterPosition`은 배포 어디에도 없다(전부 `cast[].position`으로 처리). 그래서 `check_stage_direction`에 `cut_source`·`cut_layer` 두 검사를 추가했다 — 배포 차시 606컷에서 0건, 우리 차시에서 78건 적발. `source`가 있어야 "스토리보드의 어떤 지시가 통째로 빠졌는가"를 기계적으로 물을 수 있다.
+- 규칙화 메모: 3회. 이 항목은 상위 원인(메타)에 가까움 — 하류 [typeB-problem-text-mismatch-spec], [typeA-prompt-text-small-terse], [spec-success-feedback-missing], [type-per-problem-answer-format] 계열이 "builder가 spec대로 안 만든다"로 반복되는데, 실은 planner가 spec을 온전히 안 넘긴 것이 상류 원인. 5회 이상 반복되면 "planner는 storyboard의 문제 문구·보기·정답·대사·전환/성공 메시지를 원문 그대로 보존하고, 자유문자열로 압축하지 말고 typed 슬롯(questions/dialogue/audio/feedback)에 담는다" 규칙을 planner_system.md에 제안 후보.
+
+---
+
 ### [character-asset-identity-alpha] 캐릭터 에셋이 포즈마다 다른 인물로 생성됨 (정체성 부분)
 
 - 대상: content-harness-pipeline (planner/design_review/asset_generator 경로 전반), 산출 예: runs/2026-07-08_ch802d08/output/assets/teacher_*.png, kid_librarian_*.png

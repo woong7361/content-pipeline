@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>초안 파이프라인</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --ink: #1d2330; --muted: #6a7282; --line: #dde1e8;
+    --accent: #2f6fde; --ok: #1f8a4c; --warn: #b7791f; --bad: #c0392b; --chip: #eef1f6; --hl: #fff7e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1d2128; --ink: #e6e9ef; --muted: #98a1b0; --line: #2e3440;
+            --accent: #6a9cf5; --ok: #4cc07f; --warn: #e0a84a; --bad: #ef6b5e; --chip: #272c35; --hl: #2d2718; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.5 "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif; }
+  .topnav { display: flex; gap: 4px; padding: 10px 16px 0; max-width: 1400px; margin: 0 auto; }
+  .topnav a { padding: 6px 14px; border-radius: 8px 8px 0 0; color: var(--muted); text-decoration: none; font-weight: 600; }
+  .topnav a.on { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-bottom-color: var(--card); }
+  .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 16px; max-width: 1400px; margin: 0 auto; padding: 0 16px 40px; }
+  .side { position: sticky; top: 12px; align-self: start; max-height: calc(100vh - 24px); overflow-y: auto;
+          background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-top: 12px; display: grid; gap: 4px; }
+  .side h5 { margin: 2px 4px 6px; font-size: 12px; color: var(--muted); }
+  .runs { display: grid; gap: 4px; }
+  .hidden { display: none !important; } /* 직접 입력 칸 숨김 — 다른 display 규칙보다 이겨야 한다 */
+  .content { min-width: 0; }
+  .models { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; display: grid; gap: 6px; }
+  .models label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+  .models select, .models input { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
+                                  border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; }
+  .models .mnote { font-size: 11px; color: var(--muted); margin: 0; }
+  .models .mmsg { font-size: 11px; color: var(--ok); min-height: 1em; }
+  .run { font: inherit; text-align: left; border: 1px solid transparent; background: transparent; color: var(--ink); border-radius: 8px;
+         padding: 6px 8px; cursor: pointer; display: grid; gap: 1px; }
+  .run:hover { background: var(--chip); }
+  .run.on { background: var(--accent); color: #fff; }
+  .run .rt { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .run.on .rt { color: #fff; opacity: .85; }
+  .badge { font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--chip); color: var(--muted); margin-left: 4px; }
+  .b-run { color: var(--warn); } .b-ok { color: var(--ok); } .b-bad { color: var(--bad); } .b-wait { color: var(--accent); }
+  .run.on .badge { background: rgba(255,255,255,.2); color: #fff; }
+  header { padding: 20px 0 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-top: 12px; }
+  .card h2 { font-size: 18px; margin: 0; }
+  .card h3 { font-size: 15px; margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 12px; }
+  .now { font-size: 16px; margin: 8px 0 4px; }
+  .now.running { color: var(--warn); } .now.idle { color: var(--muted); }
+  .flow { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+  .step { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); font-size: 12px; }
+  .s-done, .s-cached { border-color: var(--ok); color: var(--ok); }
+  .s-running { border-color: var(--warn); color: var(--warn); background: var(--hl); font-weight: 700; }
+  .s-rejected, .s-stopped { border-color: var(--bad); color: var(--bad); }
+  .s-pending, .s-skipped { color: var(--muted); }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  th, td { border: 1px solid var(--line); padding: 5px 7px; text-align: right; white-space: nowrap; }
+  th { background: var(--chip); font-weight: 600; }
+  td.l, th.l { text-align: left; }
+  tr.sum td { font-weight: 700; background: var(--chip); }
+  tr.r-running td { background: var(--hl); }
+  details { margin-top: 8px; }
+  details summary { cursor: pointer; font-size: 13px; padding: 4px 0; }
+  .empty { color: var(--muted); }
+  button, .btn { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--ink);
+                 border-radius: 8px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .danger { color: var(--bad); border-color: var(--bad); background: transparent; }
+  .newbtn { font: inherit; width: 100%; margin-bottom: 6px; }
+  .form { display: grid; gap: 10px; max-width: 640px; }
+  .form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  .form input[type=text], .form input[type=file] { font: inherit; color: var(--ink); background: var(--bg);
+                 border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .actions input { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+                   padding: 5px 8px; width: 110px; }
+  .qlist { display: grid; gap: 10px; margin-top: 10px; }
+  .qitem { border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: grid; gap: 6px; }
+  .qitem .qg { font-size: 11px; color: var(--muted); }
+  .qitem .qq { white-space: pre-wrap; word-break: break-word; }
+  .qitem textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+                    padding: 6px 8px; min-height: 38px; resize: vertical; }
+  .qitem.filled { border-color: var(--ok); }
+  .notice { padding: 8px 10px; border-radius: 8px; background: var(--hl); margin-top: 8px; }
+  /* 산출물 — 단계마다 파일 버튼, 그림은 썸네일(누르면 크게) */
+  .files-group { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+  .files-group:first-of-type { border-top: 0; }
+  .files-group .gl { font-weight: 700; font-size: 13px; padding-top: 4px; }
+  .files-group .gf { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .fbtn { font-size: 12px; padding: 3px 10px; border-radius: 999px; }
+  .fbtn .fsz { color: var(--muted); font-size: 11px; margin-left: 4px; }
+  .fpair { display: inline-flex; gap: 0; }
+  .fpair .fbtn { border-radius: 999px 0 0 999px; }
+  .fview { font-size: 11px; padding: 3px 8px; border-radius: 0 999px 999px 0; border-left: 0; color: var(--muted); }
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 6px; }
+  .thumbs button { padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--chip); overflow: hidden;
+                   aspect-ratio: 4 / 3; display: grid; place-items: center; }
+  .thumbs img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .thumbs button:hover { border-color: var(--accent); }
+  .overlay { position: fixed; inset: 0; background: rgba(10, 14, 22, .72); z-index: 50; display: grid; place-items: center; padding: 20px; }
+  .viewer { background: var(--card); color: var(--ink); border-radius: 12px; width: min(1000px, 100%); max-height: 92vh;
+            display: grid; grid-template-rows: auto 1fr; overflow: hidden; }
+  .viewer header, .lightbox .cap { display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .viewer header b { flex: 1; word-break: break-all; font-size: 14px; }
+  .viewer .vbody { overflow: auto; padding: 14px 18px; font-size: 14px; line-height: 1.6; }
+  .viewer pre { white-space: pre-wrap; word-break: break-word; font-size: 12px; margin: 0; }
+  .viewer .md table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+  .viewer .md th, .viewer .md td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+  .viewer .md code { background: var(--chip); padding: 1px 4px; border-radius: 4px; font-size: 12px; }
+  .viewer .md pre code { display: block; padding: 8px; }
+  .lightbox { display: grid; grid-template-rows: 1fr auto; gap: 8px; max-width: 96vw; max-height: 94vh; }
+  .lightbox img { max-width: 96vw; max-height: 82vh; object-fit: contain; background: repeating-conic-gradient(#ddd 0 25%, #fff 0 50%) 0 0 / 20px 20px;
+                  border-radius: 8px; justify-self: center; }
+  .lightbox .cap { background: var(--card); border-radius: 8px; border: 0; }
+  .lightbox .cap span { flex: 1; word-break: break-all; font-size: 13px; }
+  @media (max-width: 640px) { .files-group { grid-template-columns: 1fr; } }
+
+  .err { color: var(--bad); }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .side { position: sticky; top: 0; z-index: 5; max-height: none; display: block; min-width: 0; margin-top: 8px; border-radius: 0 0 12px 12px; }
+    .side h5 { display: none; }
+    .runs { display: flex; overflow-x: auto; gap: 4px; }
+    .run { white-space: nowrap; }
+    .run .rt { display: none; }
+  }
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/">차시 작업대</a><a href="/pipeline" class="on">초안 파이프라인</a></nav>
+<div class="layout">
+<aside class="side" aria-label="run 고르기"><button class="newbtn primary run" data-id="__new__">+ 새 초안 만들기</button><h5>run (최근 활동 순)</h5><div id="runs" class="runs"></div><div class="models" id="models" aria-label="AI 모델">
+    <h5>AI 모델</h5>
+    <label>클로드 <span class="mnote">코드 메모 · 초안의 기획~개발</span><select id="m-claude"></select></label>
+    <input id="m-claude-custom" class="hidden" placeholder="클로드 모델 이름 (Enter 로 저장)" spellcheck="false">
+    <label>추론 강도<select id="m-claude-effort"></select></label>
+    <label>코덱스 <span class="mnote">그림·검증 메모 · 초안의 그림 굽기</span><select id="m-codex"></select></label>
+    <input id="m-codex-custom" class="hidden" placeholder="코덱스 모델 이름 (Enter 로 저장)" spellcheck="false">
+    <label>추론 강도<select id="m-codex-effort"></select></label>
+    <p class="mnote">두 화면 공용 · 다음 작업부터 적용 · 도는 작업은 그대로</p>
+    <span class="mmsg" id="m-msg"></span>
+  </div></aside>
+<div class="content">
+  <header>
+    <h1>초안 파이프라인</h1>
+    <p>스토리보드 PDF 로 <b>초안을 만들고</b>(왼쪽 [+ 새 초안 만들기]), 인터뷰에 답하고, 끝나면 <b>gyo6에 넣습니다</b>. 지금 어느 단계를 도는지, 단계마다 토큰을 얼마나 썼는지도 봅니다. 3초마다 새로 읽습니다.</p>
+    <p class="meta">토큰 단위 1a = 1토큰 · 1b = 1,000a · 1c = 1,000b · 1d = 1,000c · 입력 토큰의 괄호 안은 캐시에서 읽은 양 · 비용은 클로드만 나옵니다(코덱스는 토큰만 줍니다) · 2026-09-29 이전 실행은 사용량 기록이 없습니다</p>
+  </header>
+  <div id="detail"><div id="draftbox"></div><div id="filesbox"></div><div id="statbox"><p class="empty">왼쪽에서 run 을 고르거나 [+ 새 초안 만들기]를 누르세요.</p></div></div>
+</div>
+</div>
+<script>
+// produce_lesson.py 의 --start-at / --through 값을 사람이 읽는 말로
+const STAGE_NAME = { senior_planner: "기획", senior_designer: "디자인", interview_brief: "제작 지침", lesson_spec: "요구 명세",
+  visual_design: "비주얼 설계", senior_developer: "개발", asset_render: "그림 굽기" };
+const THROUGH = { planning: "기획까지", interview: "인터뷰 질문까지", design: "디자인까지", develop: "개발까지", render: "그림까지", all: "끝까지" };
+const STATE = { done: "끝남", cached: "캐시", running: "도는 중", rejected: "실패", stopped: "끊김", pending: "대기", skipped: "안 돎" };
+let selected = "";
+try { selected = localStorage.getItem("pipe-run") || ""; } catch {}
+const openState = {};
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function time(s) { return s ? s.slice(5, 16).replace("T", " ") : ""; }
+// 토큰은 단위로 줄여 소수 첫째 자리까지(사용자 요청 2026-09-30) — 1a = 1토큰, 1b = 1,000a, 1c = 1,000b, 1d = 1,000c
+function tok(n) {
+  if (n == null) return "-";
+  const units = ["a", "b", "c", "d", "e"];
+  let v = Number(n), i = 0;
+  while (Math.abs(v) >= 1000 && i < units.length - 1) { v /= 1000; i++; }
+  if (Number(v.toFixed(1)) >= 1000 && i < units.length - 1) { v /= 1000; i++; }  // 999.96b → 1000.0b 가 아니라 1.0c
+  return v.toFixed(1) + units[i];
+}
+function money(n) { return n == null ? "-" : "$" + Number(n).toFixed(2); }
+function dur(sec) {
+  if (sec == null) return "-";
+  sec = Math.round(sec);
+  const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+  return h ? `${h}시간 ${m}분` : m ? `${m}분 ${s}초` : `${s}초`;
+}
+function badge(status) {
+  const cls = status === "도는 중" ? "b-run" : status === "끝남" ? "b-ok" : status === "인터뷰 답 대기" ? "b-wait" : "b-bad";
+  return `<span class="badge ${cls}">${esc(status)}</span>`;
+}
+function kindLabel(e) {
+  if (e.type === "verify") return `화면 검증 ${esc(e.lesson || "")}`;
+  return `초안 제작 · ${esc(STAGE_NAME[e.start_at] || e.start_at || "처음")}부터 ${esc(THROUGH[e.through] || e.through || "")}`;
+}
+
+function renderRuns(runs) {
+  if (!selected && runs.length) selected = (runs.find(r => r.running) || runs[0]).run_id;
+  document.getElementById("runs").innerHTML = runs.map(r => {
+    const last = r.last || {};
+    const cur = r.current;
+    const status = r.running ? "도는 중" : (last.status || "");
+    const cost = r.cumulative_totals && r.cumulative_totals.cost_usd != null ? ` · ${money(r.cumulative_totals.cost_usd)}` : "";
+    return `<button class="run ${r.run_id === selected ? "on" : ""}" data-id="${esc(r.run_id)}">
+      <span><b>${esc(r.run_id)}</b>${badge(status)}</span>
+      <span class="rt">${cur ? "● " + esc(cur.current.join(", ") || kindLabel(cur)) : esc(r.title)}</span>
+      <span class="rt">${time(r.updated)}${cost}</span></button>`;
+  }).join("") || `<p class="empty">pipeline-log.jsonl 이 있는 run 이 없습니다.</p>`;
+}
+
+function stageTable(e) {
+  const rows = e.stages;
+  if (!rows.length) return `<p class="meta">단계 기록이 없습니다(단계 시작 기록은 2026-09-30부터 남습니다).</p>`;
+  const t = e.totals;
+  return `<div class="table-wrap"><table>
+    <tr><th class="l">단계</th><th class="l">상태</th><th class="l">시작</th><th>걸린 시간</th><th>LLM 호출</th><th class="l">AI</th><th>입력 토큰 (캐시)</th><th>출력 토큰</th><th>비용</th></tr>
+    ${rows.map(r => `<tr class="r-${esc(r.state)}"><td class="l">${esc(r.label)}</td>
+      <td class="l">${STATE[r.state] || esc(r.state)}${r.failed ? ` · 실패 호출 ${r.failed}` : ""}${r.reason ? ` · ${esc(r.reason.slice(0, 40))}` : ""}</td>
+      <td class="l">${time(r.started)}</td><td>${r.state === "pending" || r.state === "skipped" ? "-" : dur(r.seconds)}</td>
+      <td>${r.llm_calls ?? "-"}</td><td class="l">${esc((r.providers || []).map(p => p === "claude" ? "클로드" : p === "codex" ? "코덱스" : p).join(", "))}</td>
+      <td>${r.input ? `${tok(r.input)} (${tok(r.cached)})` : "-"}</td><td>${r.output ? tok(r.output) : "-"}</td><td>${money(r.cost_usd)}</td></tr>`).join("")}
+    <tr class="sum"><td class="l" colspan="4">합계</td><td>${t.llm_calls}</td><td></td><td>${tok(t.input)} (${tok(t.cached)})</td><td>${tok(t.output)}</td><td>${money(t.cost_usd)}</td></tr>
+  </table></div>`;
+}
+
+// ── 초안 만들기 · 답 · gyo6에 넣기 ─────────────────────────────────────────
+async function post(path, body) {
+  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  return res.ok ? { ok: true } : { ok: false, error: data.error || "요청 실패" };
+}
+
+function renderNewForm() {
+  const box = document.getElementById("draftbox");
+  document.getElementById("statbox").innerHTML = "";
+  if (box.dataset.mode === "new") return;
+  box.dataset.mode = "new";
+  box.innerHTML = `<section class="card"><h2>새 초안 만들기</h2>
+    <p class="meta">스토리보드 PDF 를 올리면 기획 → 디자인까지 돌고 <b>인터뷰 질문</b>에서 멈춥니다(바탕화면 알림). 초안 한 개에 클로드 비용이 대략 $30 안팎 듭니다.</p>
+    <div class="form">
+      <label>스토리보드 PDF<input type="file" id="nf-pdf" accept="application/pdf,.pdf"></label>
+      <label>run 이름 (영문·숫자, 예: g4l05)<input type="text" id="nf-run" spellcheck="false"></label>
+      <label>넣을 차시 (선택, 예: 4-1/05 — 나중에 [gyo6에 넣기] 할 때 정해도 됩니다)<input type="text" id="nf-slot" spellcheck="false"></label>
+      <div class="actions"><button class="primary" id="nf-go">초안 만들기</button><span class="err" id="nf-err"></span></div>
+    </div></section>`;
+  const file = box.querySelector("#nf-pdf"), run = box.querySelector("#nf-run");
+  file.addEventListener("change", () => {
+    if (run.value || !file.files[0]) return;
+    const m = file.files[0].name.match(/(\d)-(\d)-(\d+)/);   // storyboard-4-1-4.pdf → g4l04
+    if (m) run.value = `g${m[1]}l${m[3].padStart(2, "0")}`;
+  });
+  box.querySelector("#nf-go").onclick = async () => {
+    const err = box.querySelector("#nf-err");
+    const f = file.files[0];
+    if (!f) { err.textContent = "PDF 를 고르세요"; return; }
+    if (!run.value.trim()) { err.textContent = "run 이름을 적으세요"; return; }
+    const btn = box.querySelector("#nf-go");
+    btn.disabled = true; err.textContent = "올리는 중…";
+    const data = await new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok(rd.result); rd.onerror = no; rd.readAsDataURL(f); });
+    const res = await post("/api/draft/new", { run_id: run.value.trim(), slot: box.querySelector("#nf-slot").value.trim(), filename: f.name, data });
+    btn.disabled = false;
+    if (!res.ok) { err.textContent = res.error; return; }
+    selected = run.value.trim();
+    try { localStorage.setItem("pipe-run", selected); } catch {}
+    box.dataset.mode = "";
+    refresh();
+  };
+}
+
+function renderDraft(dr) {
+  const box = document.getElementById("draftbox");
+  if (!dr) { box.innerHTML = ""; box.dataset.mode = ""; return; }
+  const mode = dr.running ? "running" : dr.waiting ? "waiting" : dr.done ? "done" : dr.can_continue ? "continue" : "idle";
+  const key = `${dr.run_id}:${mode}:${dr.questions.file}:${dr.questions.items.map(q => q.key).join("|")}:${dr.slot_exists}`;
+  const job = dr.job;
+  const jobLine = job ? `<p class="meta">작업대 작업: ${esc(job.summary || job.step || "")} ${job.state === "running" ? "● 도는 중" : ""} · ${time(job.started)}${job.ended ? " ~ " + time(job.ended) : ""}</p>
+    <details><summary>로그 끝부분</summary><pre style="max-height:240px;overflow:auto;white-space:pre-wrap;font-size:12px">${esc(job.tail)}</pre></details>` : "";
+  if (box.dataset.key === key) {                 // 같은 모양이면 답 칸은 그대로 두고 작업 줄만 바꾼다
+    const jl = box.querySelector(".jobline"); if (jl) { const open = jl.querySelector("details")?.open; jl.innerHTML = jobLine; if (open) jl.querySelector("details").open = true; }
+    return;
+  }
+  box.dataset.key = key; box.dataset.mode = mode;
+  const installed = dr.installed.length ? `<p class="meta">gyo6에 넣음: ${dr.installed.map(esc).join(", ")} — <a href="/">차시 작업대</a>에서 이어서 고칩니다</p>` : "";
+  let body = "";
+  if (mode === "running") {
+    body = `<p class="notice">● 파이프라인이 돌고 있습니다. 끝나거나 답이 필요하면 바탕화면 알림이 뜹니다.</p>
+      <div class="actions">${job && job.state === "running" ? `<button class="danger" id="dr-stop">멈춤</button>` : `<span class="meta">(터미널에서 직접 돌린 실행입니다 — 거기서 끄세요)</span>`}</div>`;
+  } else if (mode === "waiting") {
+    const items = dr.questions.items;
+    const pending = items.filter(q => !q.answered), answered = items.filter(q => q.answered);
+    const q = it => `<div class="qitem ${it.answered ? "filled" : ""}" data-key="${esc(it.key)}"><span class="qg">${esc(it.group)}</span>
+        <span class="qq">${esc(it.question)}</span><textarea placeholder="답 (비워 두면 확정 안 된 채로 넘어갑니다)">${esc(it.answer)}</textarea></div>`;
+    body = `<p class="notice">${dr.waiting === "interview" ? "인터뷰 질문" : "요구 명세의 정할 것"}에 답해 주세요 — 답이 필요한 것 <b>${pending.length}</b>건. 비워 둔 칸은 확정되지 않은 채로 넘어가고, 이후 단계가 지어내지 않습니다.</p>
+      <div class="qlist">${pending.map(q).join("")}</div>
+      ${answered.length ? `<details><summary>이미 답한 것 ${answered.length}건 (고칠 것만 고치세요)</summary><div class="qlist">${answered.map(q).join("")}</div></details>` : ""}
+      <div class="actions"><button id="dr-save">답 저장</button><button class="primary" id="dr-go">답 저장하고 이어서 만들기</button><span class="err" id="dr-err"></span></div>`;
+  } else if (mode === "done") {
+    body = `<p class="notice">초안이 끝났습니다. 넣을 차시를 확인하고 [gyo6에 넣기]를 누르면 배치 → 빌드 → 화면 검증까지 합니다.</p>
+      <div class="actions"><input type="text" id="dr-slot" value="${esc(dr.slot)}" placeholder="4-1/05" spellcheck="false">
+        <button class="primary" id="dr-install">gyo6에 넣기</button>
+        ${dr.slot_exists ? `<button class="danger" id="dr-overwrite">덮어쓰기로 넣기</button><span class="meta">gyo6 에 ${esc(dr.slot)} 이(가) 이미 있습니다</span>` : ""}
+        <span class="err" id="dr-err"></span></div>`;
+  } else if (mode === "continue") {
+    body = `<p class="notice">마지막 실행이 끝까지 가지 못했습니다(아래 '마지막 실행' 참고). 끝난 단계는 건너뛰고 이어서 돌 수 있습니다.</p>
+      <div class="actions"><button class="primary" id="dr-continue">이어서 만들기</button><span class="err" id="dr-err"></span></div>`;
+  }
+  box.innerHTML = body || installed || job ? `<section class="card"><h3>초안 작업 — ${esc(dr.run_id)}${dr.slot ? ` → ${esc(dr.slot)}` : ""}</h3>${body}${installed}<div class="jobline">${jobLine}</div></section>` : "";
+  const err = t => { const e = box.querySelector("#dr-err"); if (e) e.textContent = t; };
+  const answers = () => Object.fromEntries([...box.querySelectorAll(".qitem")].map(el => [el.dataset.key, el.querySelector("textarea").value]));
+  const act = async (path, body, confirmText) => {
+    if (confirmText && !confirm(confirmText)) return;
+    box.querySelectorAll("button").forEach(b => b.disabled = true);
+    const res = await post(path, { run_id: dr.run_id, ...body });
+    box.querySelectorAll("button").forEach(b => b.disabled = false);
+    if (!res.ok) { err(res.error); return; }
+    box.dataset.key = "";
+    refresh();
+  };
+  const on = (id, fn) => { const b = box.querySelector(id); if (b) b.onclick = fn; };
+  on("#dr-stop", () => act("/api/draft/stop", {}, "파이프라인을 멈출까요? 끝난 단계는 남고, [이어서 만들기]로 다시 돌 수 있습니다."));
+  on("#dr-save", async () => { await act("/api/draft/answers", { answers: answers() }); err("저장했습니다"); });
+  on("#dr-go", () => act("/api/draft/answers", { answers: answers(), continue: true }, "답을 저장하고 이어서 만들까요? (AI 비용이 듭니다)"));
+  on("#dr-continue", () => act("/api/draft/continue", {}, "이어서 만들까요? (AI 비용이 듭니다)"));
+  on("#dr-install", () => act("/api/draft/install", { slot: box.querySelector("#dr-slot").value.trim(), overwrite: false }));
+  on("#dr-overwrite", () => act("/api/draft/install", { slot: box.querySelector("#dr-slot").value.trim(), overwrite: true },
+    `gyo6 의 ${box.querySelector("#dr-slot").value.trim()} 을(를) 이 초안으로 덮어쓸까요? (gyo6 쪽에서 따로 고친 게 있으면 배치가 멈춥니다)`));
+  box.querySelectorAll(".qitem textarea").forEach(t => t.addEventListener("input", () => t.parentElement.classList.toggle("filled", !!t.value.trim())));
+}
+
+function renderDetail(d) {
+  const box = document.getElementById("statbox");
+  renderDraft(d.draft);
+  const ex = d.executions;
+  const cur = ex.find(e => e.running);
+  const latest = ex[0];
+  let head = "";
+  if (cur) {
+    const stage = cur.stages.find(s => s.state === "running");
+    head = `<p class="now running">● 도는 중 — ${esc(cur.current.join(" · ") || "시작 준비")}${stage ? ` (${dur(stage.seconds)}째)` : ""}</p>
+            <p class="meta">${kindLabel(cur)} · ${time(cur.started)} 시작</p>`;
+  } else if (latest) {
+    head = `<p class="now idle">지금 도는 작업 없음 — 마지막: ${kindLabel(latest)} ${badge(latest.status)} ${time(latest.ended || latest.started)}</p>`;
+  }
+  const focus = cur || latest;
+  const flow = focus && focus.type === "produce" && focus.stages.length ? `<div class="flow">${focus.stages
+    .filter(s => !["check_outputs", "voice_script"].includes(s.name) || s.state !== "pending")
+    .map(s => `<span class="step s-${esc(s.state)}">${esc(s.label)} · ${STATE[s.state] || esc(s.state)}</span>`).join("")}</div>` : "";
+  const ct = d.cumulative_totals;
+  const cumulative = d.cumulative.length ? `<div class="table-wrap"><table>
+    <tr><th class="l">단계</th><th>LLM 호출</th><th>입력 토큰 (캐시)</th><th>출력 토큰</th><th>비용</th></tr>
+    ${d.cumulative.map(c => `<tr><td class="l">${esc(c.label)}</td><td>${c.llm_calls}</td><td>${tok(c.input)} (${tok(c.cached)})</td><td>${tok(c.output)}</td><td>${money(c.cost_usd)}</td></tr>`).join("")}
+    <tr class="sum"><td class="l">합계</td><td>${ct.llm_calls}</td><td>${tok(ct.input)} (${tok(ct.cached)})</td><td>${tok(ct.output)}</td><td>${money(ct.cost_usd)}</td></tr>
+  </table></div>` : `<p class="meta">사용량 기록이 없습니다.</p>`;
+
+  box.innerHTML = `
+    <section class="card">
+      <h2>${esc(d.run_id)}</h2>
+      ${head}
+      ${flow}
+      ${focus ? `<h3 style="margin-top:12px">${focus === cur ? "지금 실행" : "마지막 실행"} — 단계별</h3>${stageTable(focus)}` : `<p class="empty">실행 기록이 없습니다.</p>`}
+    </section>
+    <section class="card">
+      <h3>run 전체 누계 — 단계별 토큰</h3>
+      ${cumulative}
+    </section>
+    <section class="card">
+      <h3>지난 실행 ${ex.length}개${d.total_executions > ex.length ? ` (전체 ${d.total_executions}개 중 최근)` : ""}</h3>
+      ${ex.map((e, i) => `<details data-k="${esc(d.run_id)}-${esc(e.started || e.ended)}" ${openState[`${d.run_id}-${e.started || e.ended}`] ? "open" : ""}>
+        <summary>${time(e.started) || time(e.ended)} · ${kindLabel(e)} ${badge(e.status)}
+          <span class="meta">토큰 ${tok(e.totals.input + e.totals.output)} · ${money(e.totals.cost_usd)}${e.type === "verify" && e.findings != null ? ` · 지적 ${e.findings} · 막는 것 ${e.blocking}` : ""}</span></summary>
+        ${stageTable(e)}</details>`).join("")}
+    </section>`;
+  box.querySelectorAll("details[data-k]").forEach(el => el.addEventListener("toggle", () => { openState[el.dataset.k] = el.open; }));
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".run");
+  if (!b) return;
+  selected = b.dataset.id;
+  document.getElementById("draftbox").dataset.key = "";
+  document.getElementById("draftbox").dataset.mode = "";
+  try { localStorage.setItem("pipe-run", selected); } catch {}
+  document.querySelectorAll(".run").forEach(x => x.classList.toggle("on", x === b));
+  refresh();
+});
+
+async function refresh() {
+  try {
+    const { runs, models } = await (await fetch("/api/pipeline")).json();
+    renderModels(models);
+    if (selected && selected !== "__new__" && !runs.some(r => r.run_id === selected)) {
+      // 방금 만든 run 은 pipeline-log 가 생기기 전 몇 초 동안 목록에 없다 — 상세는 그대로 부른다
+      const probe = await fetch(`/api/pipeline/run?id=${encodeURIComponent(selected)}`);
+      if (!probe.ok) selected = "";
+    }
+    renderRuns(runs);
+    if (selected === "__new__") { renderNewForm(); renderFiles(""); return; }
+    if (!selected) return;
+    const res = await fetch(`/api/pipeline/run?id=${encodeURIComponent(selected)}`);
+    if (!res.ok) { document.getElementById("statbox").innerHTML = `<p class="err">run 을 읽지 못했습니다.</p>`; return; }
+    renderDetail(await res.json());
+    renderFiles(selected);
+  } catch (err) {
+    document.getElementById("statbox").innerHTML = `<p class="err">작업대 서버에 연결하지 못했습니다.</p>`;
+  }
+}
+
+// ── 산출물 보기 — 단계별 파일 버튼 · 그림 썸네일(누르면 크게) ─────────────────
+const fileUrl = (run, path, thumb) => `/api/pipeline/file?id=${encodeURIComponent(run)}&path=${encodeURIComponent(path)}${thumb ? "&thumb=1" : ""}`;
+const IMAGE_OPEN = new Set(["asset_render"]);      // 처음부터 펼쳐 둘 그림 묶음
+let filesSig = "", filesGroups = [], filesRun = "";
+function kb(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + "MB" : Math.max(1, Math.round(n / 1024)) + "KB"; }
+
+async function renderFiles(run) {
+  const box = document.getElementById("filesbox");
+  if (!run || run === "__new__") { box.innerHTML = ""; filesSig = ""; return; }
+  let data;
+  try { data = await (await fetch(`/api/pipeline/files?id=${encodeURIComponent(run)}`)).json(); } catch { return; }
+  const groups = data.groups || [];
+  const sig = run + JSON.stringify(groups.map(g => [g.stage, g.files.map(f => f.path + f.mtime), g.images.map(i => i.path + i.mtime)]));
+  if (sig === filesSig) return;                     // 바뀐 게 없으면 그대로 — 펼친 칸·스크롤을 지킨다
+  const openNow = new Set([...box.querySelectorAll("details[data-stage]")].filter(d => d.open).map(d => d.dataset.stage));
+  const first = run !== filesRun;
+  filesSig = sig; filesGroups = groups; filesRun = run;
+  if (!groups.length) { box.innerHTML = ""; return; }
+  // md · json 같은 글 파일은 누르면 VS Code 로 연다(2026-09-30 사용자 요청). 옆 [보기]는 화면 안에서 잠깐 보기
+  const fileButton = f => f.kind === "text"
+    ? `<span class="fpair"><button class="fbtn" data-edit="${esc(f.path)}" title="VS Code 로 열기">${esc(f.name)}<span class="fsz">${kb(f.size)}</span></button><button class="fview" data-open="${esc(f.path)}" data-kind="text" title="화면 안에서 보기">보기</button></span>`
+    : `<button class="fbtn" data-open="${esc(f.path)}" data-kind="${f.kind}">${esc(f.name)}<span class="fsz">${kb(f.size)}</span></button>`;
+  box.innerHTML = `<section class="card"><h3>산출물 — 단계별</h3>
+    <p class="meta">md · json 등 글 파일은 누르면 <b>VS Code 로 열립니다</b>(옆 [보기]는 화면 안에서 보기). PDF 는 새 탭, 그림은 작게 보이고 누르면 크게(← → 넘기기 · Esc 닫기). <span id="files-msg"></span></p>
+    ${groups.map((g, gi) => `<div class="files-group"><span class="gl">${esc(g.label)}</span><div>
+      <div class="gf">${g.files.map(fileButton).join("")}</div>
+      ${g.images.length ? `<details data-stage="${esc(g.stage)}" ${(first ? IMAGE_OPEN.has(g.stage) : openNow.has(g.stage)) ? "open" : ""}>
+        <summary>그림 ${g.images.length}장</summary>
+        <div class="thumbs">${g.images.map((im, ii) => `<button data-g="${gi}" data-i="${ii}" title="${esc(im.path)}">
+          <img loading="lazy" src="${fileUrl(run, im.path, true)}" alt="${esc(im.name)}"></button>`).join("")}</div></details>` : ""}
+    </div></div>`).join("")}</section>`;
+}
+
+function closeOverlay() { document.querySelector(".overlay")?.remove(); document.removeEventListener("keydown", overlayKeys); }
+let overlayKeys = () => {};
+function openOverlay(inner, keys) {
+  closeOverlay();
+  const ov = document.createElement("div");
+  ov.className = "overlay";
+  ov.innerHTML = inner;
+  ov.addEventListener("click", e => { if (e.target === ov || e.target.closest("[data-close]")) closeOverlay(); });
+  document.body.appendChild(ov);
+  overlayKeys = e => { if (e.key === "Escape") closeOverlay(); else if (keys) keys(e); };
+  document.addEventListener("keydown", overlayKeys);
+  return ov;
+}
+
+function mdInline(s) {
+  // 이미 esc 된 글에 굵게·기울임·코드·링크만 입힌다(링크는 http(s) 만)
+  return s
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<i>$2</i>")
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+}
+function renderMarkdown(text) {
+  // 외부 라이브러리 없이 — CDN 을 못 받는 곳(프록시·오프라인)에서도 문서 모양으로 보이게.
+  // 산출물은 AI 가 쓴 글이라 안의 HTML 은 그대로 두지 않는다 — 한 줄씩 esc 한 뒤 md 만 입힌다.
+  const lines = text.replace(/\r/g, "").split("\n");
+  const out = [];
+  let i = 0;
+  // 칸 나누기 — 이스케이프한 \| 는 칸 경계가 아니라 글자다
+  const cells = row => row.trim().replace(/^\||\|$/g, "").split(/(?<!\\)\|/).map(c => mdInline(esc(c.trim().replace(/\\\|/g, "|"))));
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^```/.test(line)) {                                   // 코드 블록
+      const buf = []; i++;
+      while (i < lines.length && !/^```/.test(lines[i])) buf.push(esc(lines[i++]));
+      i++; out.push(`<pre><code>${buf.join("\n")}</code></pre>`); continue;
+    }
+    const h = /^(#{1,6})\s+(.*)$/.exec(line);
+    if (h) { out.push(`<h${h[1].length}>${mdInline(esc(h[2]))}</h${h[1].length}>`); i++; continue; }
+    if (/^\s*\|.*\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1])) {   // 표
+      const head = cells(line); i += 2; const rows = [];
+      while (i < lines.length && /^\s*\|.*\|\s*$/.test(lines[i])) rows.push(cells(lines[i++]));
+      out.push(`<table><tr>${head.map(c => `<th>${c}</th>`).join("")}</tr>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</table>`);
+      continue;
+    }
+    if (/^\s*>/.test(line)) {                                  // 인용
+      const buf = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) buf.push(mdInline(esc(lines[i++].replace(/^\s*>\s?/, ""))));
+      out.push(`<blockquote>${buf.join("<br>")}</blockquote>`); continue;
+    }
+    if (/^\s*([-*]|\d+\.)\s+/.test(line)) {                   // 목록(들여쓰기 한 단계까지)
+      const ordered = /^\s*\d+\./.test(line); const buf = [];
+      while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) {
+        const deep = /^\s{2,}/.test(lines[i]);
+        buf.push(`<li${deep ? ' style="margin-left:18px"' : ""}>${mdInline(esc(lines[i++].replace(/^\s*([-*]|\d+\.)\s+/, "")))}</li>`);
+      }
+      out.push(ordered ? `<ol>${buf.join("")}</ol>` : `<ul>${buf.join("")}</ul>`); continue;
+    }
+    if (/^\s*(---|\*\*\*)\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+    if (!line.trim()) { i++; continue; }
+    // 문단 — 첫 줄은 무조건 가져간다. 위 분기가 다 안 받은 줄(예: 표 모양이 아닌 `|` 줄)을 여기서도 안 받으면
+    // i 가 그대로라 무한 반복에 빠져 탭이 굳었다(2026-10-01, problem.md [dashboard-md-viewer-hang])
+    const buf = [mdInline(esc(lines[i++]))];
+    while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|```|\s*>|\s*([-*]|\d+\.)\s+|\s*\|)/.test(lines[i])) buf.push(mdInline(esc(lines[i++])));
+    out.push(`<p>${buf.join("<br>")}</p>`);
+  }
+  return out.join("\n");
+}
+
+async function openInEditor(path) {
+  const msg = document.getElementById("files-msg");
+  const res = await post("/api/pipeline/open", { run_id: filesRun, path });
+  if (msg) {
+    msg.style.color = res.ok ? "var(--ok)" : "var(--bad)";
+    msg.textContent = res.ok ? `· VS Code 로 열었습니다: ${path}` : `· ${res.error}`;
+  }
+}
+
+async function openFile(path, kind) {
+  const url = fileUrl(filesRun, path, false);
+  if (kind === "pdf") { window.open(url, "_blank", "noopener"); return; }
+  const ov = openOverlay(`<div class="viewer"><header><b>${esc(path)}</b>
+      <a class="btn" href="${url}" target="_blank" rel="noopener">새 탭에서</a><button data-close>닫기 (Esc)</button></header>
+      <div class="vbody"><p class="meta">불러오는 중…</p></div></div>`);
+  let text = "";
+  try { text = await (await fetch(url)).text(); } catch { text = "(불러오지 못했습니다)"; }
+  const body = ov.querySelector(".vbody");
+  if (path.endsWith(".md")) body.innerHTML = `<div class="md">${renderMarkdown(text)}</div>`;
+  else if (path.endsWith(".json")) { let t = text; try { t = JSON.stringify(JSON.parse(text), null, 2); } catch {} body.innerHTML = `<pre>${esc(t)}</pre>`; }
+  else body.innerHTML = `<pre>${esc(text)}</pre>`;
+}
+
+function openImage(gi, ii) {
+  const images = filesGroups[gi].images;
+  let i = ii;
+  const show = ov => {
+    const im = images[i];
+    ov.querySelector("img").src = fileUrl(filesRun, im.path, false);
+    ov.querySelector(".cap span").textContent = `${filesGroups[gi].label} · ${i + 1}/${images.length} · ${im.path} · ${kb(im.size)}`;
+  };
+  const ov = openOverlay(`<div class="lightbox"><img alt="">
+      <div class="cap"><button data-nav="-1">←</button><span></span><button data-nav="1">→</button>
+      <a class="btn" target="_blank" rel="noopener">원본</a><button data-close>닫기</button></div></div>`,
+    e => { if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); });
+  const step = d => { i = (i + d + images.length) % images.length; show(ov); ov.querySelector("a.btn").href = fileUrl(filesRun, images[i].path, false); };
+  ov.querySelectorAll("[data-nav]").forEach(b => b.onclick = () => step(+b.dataset.nav));
+  ov.querySelector("a.btn").href = fileUrl(filesRun, images[i].path, false);
+  show(ov);
+}
+
+document.addEventListener("click", e => {
+  const ed = e.target.closest("#filesbox [data-edit]");
+  if (ed) { openInEditor(ed.dataset.edit); return; }
+  const f = e.target.closest("#filesbox [data-open]");
+  if (f) { openFile(f.dataset.open, f.dataset.kind); return; }
+  const t = e.target.closest("#filesbox .thumbs button");
+  if (t) openImage(+t.dataset.g, +t.dataset.i);
+});
+
+refresh();
+setInterval(refresh, 3000);
+
+// ── AI 모델 · 추론 강도 고르기(사이드바 아래) — 두 화면 공용 설정, 다음 작업부터 적용 ──
+// 목록은 각 CLI 가 받아 둔 것(클로드: ~/.claude/cache/model-catalog · 코덱스: ~/.codex/models_cache.json)을 서버가 읽어 준다
+let modelState = null;
+const effortName = e => (modelState && modelState.effort_label[e]) || e;
+function modelInfo(which, id) {
+  const list = which === "claude" ? modelState.claude_models : modelState.codex_models;
+  const key = id || (which === "codex" ? modelState.codex_default : "");
+  return list.find(x => x.id === key) || null;
+}
+function renderModels(m) {
+  if (!m) return;
+  modelState = m;
+  const busy = id => [`m-${id}`, `m-${id}-custom`, `m-${id}-effort`].some(x => document.activeElement === document.getElementById(x));
+  const fill = (id, value, list, defaultLabel) => {
+    const sel = document.getElementById(`m-${id}`), custom = document.getElementById(`m-${id}-custom`);
+    const known = list.some(x => x.id === value);
+    const opt = x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`;
+    const main = list.filter(x => x.main), rest = list.filter(x => !x.main);
+    const html = `<option value="">${esc(defaultLabel)}</option>`
+      + (rest.length ? `<optgroup label="주 모델">${main.map(opt).join("")}</optgroup><optgroup label="그 밖의 버전">${rest.map(opt).join("")}</optgroup>`
+                     : main.map(opt).join(""))
+      + `<option value="__custom__">직접 입력…</option>`;
+    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
+    sel.value = value && !known ? "__custom__" : value;
+    custom.classList.toggle("hidden", !(value && !known));
+    if (value && !known) custom.value = value;
+  };
+  const fillEffort = (id, model, effort, cliDefault) => {
+    const sel = document.getElementById(`m-${id}-effort`);
+    const info = modelInfo(id, model);
+    const efforts = info ? info.efforts : ["low", "medium", "high", "xhigh", "max"];
+    let first = "기본";
+    if (info && info.recommended) first = `기본 (추천: ${effortName(info.recommended)})`;
+    else if (cliDefault && !model) first = `기본 (CLI 설정: ${effortName(cliDefault)})`;
+    const html = efforts.length ? `<option value="">${esc(first)}</option>` + efforts.map(e => `<option value="${e}">${esc(effortName(e))}</option>`).join("")
+                                : `<option value="">이 모델은 추론 강도가 없습니다</option>`;
+    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
+    sel.disabled = !efforts.length;
+    sel.value = efforts.includes(effort) ? effort : "";
+  };
+  if (!busy("claude")) {
+    fill("claude", m.claude, m.claude_models, "기본 (CLI 설정)");
+    fillEffort("claude", m.claude, m.claude_effort, "");
+  }
+  if (!busy("codex")) {
+    fill("codex", m.codex, m.codex_models, m.codex_default ? `기본 (CLI 설정: ${m.codex_default})` : "기본 (CLI 설정)");
+    fillEffort("codex", m.codex, m.codex_effort, m.codex_default_effort);
+  }
+}
+async function saveModels(patch) {
+  const s = modelState || {};
+  const body = { claude: s.claude || "", codex: s.codex || "", claude_effort: s.claude_effort || "", codex_effort: s.codex_effort || "" };
+  Object.assign(body, patch);
+  // 모델을 바꿨는데 고른 강도를 그 모델이 지원하지 않으면 '기본'으로 되돌린다
+  for (const which of ["claude", "codex"]) {
+    const info = modelState && modelInfo(which, body[which]);
+    if (info && body[`${which}_effort`] && !info.efforts.includes(body[`${which}_effort`])) body[`${which}_effort`] = "";
+  }
+  const res = await fetch("/api/models", { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  const msg = document.getElementById("m-msg");
+  if (!res.ok) { msg.style.color = "var(--bad)"; msg.textContent = data.error || "저장 실패"; return; }
+  const name = (which) => { const i = modelInfo(which, body[which]); return (i ? i.name : body[which]) || "기본"; };
+  msg.style.color = "";
+  msg.textContent = `저장함 — 클로드: ${name("claude")} · ${body.claude_effort ? effortName(body.claude_effort) : "기본"} / 코덱스: ${name("codex")} · ${body.codex_effort ? effortName(body.codex_effort) : "기본"}`;
+  document.activeElement && document.activeElement.blur();
+  renderModels(data.models);
+}
+for (const which of ["claude", "codex"]) {
+  const sel = document.getElementById(`m-${which}`), custom = document.getElementById(`m-${which}-custom`);
+  const effort = document.getElementById(`m-${which}-effort`);
+  sel.addEventListener("change", () => {
+    if (sel.value === "__custom__") { custom.classList.remove("hidden"); custom.focus(); return; }
+    custom.classList.add("hidden");
+    saveModels({ [which]: sel.value });
+  });
+  custom.addEventListener("keydown", e => { if (e.key === "Enter" && custom.value.trim()) saveModels({ [which]: custom.value.trim() }); });
+  effort.addEventListener("change", () => saveModels({ [`${which}_effort`]: effort.value }));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk_image_output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "notes",
+    "summary"
+  ],
+  "properties": {
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "result",
+          "headline",
+          "files",
+          "detail",
+          "follow_up"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "rendered",
+              "created",
+              "partial",
+              "needs_confirm",
+              "not_done"
+            ]
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "chroma"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "chroma": {
+                  "type": "string",
+                  "enum": [
+                    "magenta",
+                    "green",
+                    "cyan",
+                    "none"
+                  ]
+                }
+              }
+            }
+          },
+          "detail": {
+            "type": "string"
+          },
+          "follow_up": {
+            "type": "string",
+            "description": "새로 만든 그림을 화면에 붙이려면 코드에서 할 일(없으면 빈 문자열). 작업대가 이것으로 코드 메모를 이어서 넣는다"
+          },
+          "headline": {
+            "type": "string",
+            "description": "카드에 보일 한 줄 요약(40자 안팎, 사람 말로)"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

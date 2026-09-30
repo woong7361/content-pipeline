@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk_verify_output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "notes",
+    "summary"
+  ],
+  "properties": {
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "expected",
+          "headline",
+          "observed",
+          "result",
+          "evidence",
+          "detail"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string",
+            "description": "메모가 확인해 달라는 상태를 한 문장으로 — 판정 전에 먼저 적는다"
+          },
+          "observed": {
+            "type": "string",
+            "description": "캡처·도구로 실제로 본 것"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "passed",
+              "failed",
+              "unclear"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "detail": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string",
+            "description": "카드에 보일 한 줄 요약(40자 안팎, 사람 말로)"
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

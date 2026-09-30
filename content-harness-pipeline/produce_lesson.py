@@ -21,6 +21,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import hashlib
 import json
 import shutil
@@ -36,7 +37,7 @@ from stages.scripts.atom_registry import (
     describe as describe_atom_registry,
     load_atom_registry,
 )
-from stages.scripts.codex_client import PROVIDER_CLAUDE, create_prompt_client
+from stages.scripts.codex_client import PROVIDER_CLAUDE, PROVIDER_CODEX, create_prompt_client
 from stages.scripts.layout_reference import build_layout_reference_section
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -74,6 +75,8 @@ KST = timezone(timedelta(hours=9))
 PROJECT_DIR = Path(__file__).resolve().parent
 PROMPTS_DIR = PROJECT_DIR / "prompts"
 REJECTED_EXIT = 2
+# 사람이 답할 차례라 멈췄다 — 요구 명세에 '정할 것(open decision)' 이 남았다. 질문지에 올리고 멈춘다.
+WAITING_EXIT = 3
 
 
 @dataclass(frozen=True)
@@ -212,7 +215,11 @@ def main() -> int:
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--runs-dir", type=Path, default=PROJECT_DIR / "runs")
     parser.add_argument("--provider", choices=("codex", "claude"), default=PROVIDER_CLAUDE)
-    parser.add_argument("--model", default=None)
+    parser.add_argument("--model", default=None, help="모든 LLM 단계에 같은 모델(옛 옵션). 아래 둘이 있으면 그쪽이 먼저다")
+    parser.add_argument("--claude-model", default=None, help="클로드로 부르는 단계의 모델(예: opus, sonnet)")
+    parser.add_argument("--codex-model", default=None, help="코덱스로 부르는 단계(그림 굽기 등)의 모델(예: gpt-6-astra)")
+    parser.add_argument("--claude-effort", default=None, choices=["low", "medium", "high", "xhigh", "max", "ultra"], help="클로드 추론 강도(없으면 CLI 설정)")
+    parser.add_argument("--codex-effort", default=None, choices=["low", "medium", "high", "xhigh", "max", "ultra"], help="코덱스 추론 강도(없으면 ~/.codex/config.toml)")
     parser.add_argument("--codex-bin", default="codex")
     parser.add_argument("--claude-bin", default="claude")
     parser.add_argument("--timeout-seconds", type=int, default=1800)
@@ -319,6 +326,9 @@ def main() -> int:
         # 검사만 할 때는 이번 실행이 어디까지 갔는지가 없다. 보고서 존재 여부로 판단한다.
         return check_outputs(run_dir, args, expected_lesson=False)
 
+    selected = select_stages(args.start_at, args.through)
+    # pid · stages 는 초안 대시보드(`lesson_desk.py` /pipeline)가 "지금 도는가 · 어디까지 가는가" 를 보는 데 쓴다.
+    # 로그만으로는 도중에 죽은 실행과 도는 실행을 못 가른다(끝 이벤트가 없기는 둘 다 같다).
     write_pipeline_log(
         run_dir,
         "pipeline_start",
@@ -328,10 +338,12 @@ def main() -> int:
             "start_at": args.start_at,
             "provider": args.provider,
             "model": args.model or "default",
+            "claude_model": args.claude_model or args.model or "default",
+            "codex_model": args.codex_model or args.model or "default",
+            "pid": os.getpid(),
+            "stages": [stage.name for stage in selected],
         },
     )
-
-    selected = select_stages(args.start_at, args.through)
     registry = load_atom_registry(args.gyo6_root.resolve() if args.gyo6_root else None)
 
     # 개발과 그림은 서로를 기다리지 않는다 — 둘 다 `visual_design` 만 있으면 된다.
@@ -348,6 +360,8 @@ def main() -> int:
     while index < len(selected):
         stage = selected[index]
         if pair and stage.name == pair[0].name:
+            for started in pair:
+                write_pipeline_log(run_dir, "stage_start", {"stage": started.name})
             run_developer_and_assets_together(pair, run_dir, storyboard_path, args, registry)
             if not args.no_cache:
                 for done in pair:
@@ -360,6 +374,7 @@ def main() -> int:
             write_pipeline_log(run_dir, "stage_cached", {"stage": stage.name})
             index += 1
             continue
+        write_pipeline_log(run_dir, "stage_start", {"stage": stage.name})
         ensure_dependencies(run_dir, stage)
         if stage.name == "asset_render":
             run_asset_render(stage, run_dir, args, force=True)
@@ -368,7 +383,16 @@ def main() -> int:
         else:
             run_stage(stage, run_dir, storyboard_path, args, force=True)
         if stage.name == "lesson_spec":
-            validate_spec_file(run_dir)
+            open_decisions = validate_spec_file(run_dir)
+            if open_decisions:
+                # 캐시에 적지 않는다 — 답을 받아 다시 돌 때 이 단계가 다시 돌아야 한다
+                write_pipeline_log(run_dir, "stage_done", {"stage": stage.name, "report": stage.report_name})
+                write_interview_package(run_dir)
+                write_pipeline_log(run_dir, "pipeline_end", {"exit_code": WAITING_EXIT, "waiting": "decisions",
+                                                             "decisions": open_decisions})
+                print(f"요구 명세에 정할 것 {len(open_decisions)}건이 남았다: {', '.join(open_decisions)}")
+                print(f"질문지에 올렸다: {run_dir / 'interview'} — 답을 적고 --start-at interview_brief 로 이어서 돌린다.")
+                return WAITING_EXIT
         if stage.name == "visual_design":
             enforce_asset_plan(stage, run_dir, storyboard_path, args)
         if not args.no_cache:
@@ -382,6 +406,7 @@ def main() -> int:
             if args.through == "interview":
                 print(f"인터뷰 질문: {run_dir / 'interview' / 'questions.md'}")
                 print("답변을 정리한 뒤 --interview-notes 로 넘겨 이어서 실행한다.")
+                write_pipeline_log(run_dir, "pipeline_end", {"exit_code": 0, "waiting": "interview"})
                 return 0
 
     if any(stage.name in ("visual_design", "senior_developer") for stage in selected):
@@ -569,14 +594,20 @@ def print_dag(dag: PipelineDag) -> None:
         print(f"  {name} <- {', '.join(parents) if parents else '(root)'}")
 
 
-def validate_spec_file(run_dir: Path) -> None:
+def validate_spec_file(run_dir: Path) -> list[str]:
+    """구조가 틀렸으면 예외. 정할 것(open decision)만 남았으면 그 id 목록을 돌려준다 — 사람이 답할 차례다.
+
+    예전에는 둘 다 예외로 죽어서, 정할 것이 질문지에 오르지 않았다(2026-09-29 4-1/04 — 손으로 질문지에 붙였다).
+    """
     path = run_dir / "spec" / "lesson-spec.json"
     if not path.exists():
         raise FileNotFoundError(f"lesson_spec가 단일 명세를 만들지 않았다: {path}")
     spec = json.loads(path.read_text(encoding="utf-8"))
-    errors = validate_lesson_spec(spec, PROJECT_DIR / "schemas" / "lesson_spec.schema.json")
+    errors = [e for e in validate_lesson_spec(spec, PROJECT_DIR / "schemas" / "lesson_spec.schema.json")
+              if not e.startswith("unresolved decisions")]
     if errors:
         raise RuntimeError("lesson-spec 검증 실패: " + "; ".join(errors[:8]))
+    return [str(item.get("id")) for item in spec.get("decisions", []) if item.get("status") == "open"]
 
 
 def pair_developer_and_assets(
@@ -982,6 +1013,16 @@ def pack_batches(jobs: list[dict], batch_size: int) -> list[list[dict]]:
     return batches
 
 
+def model_for(provider: str, args: argparse.Namespace) -> str | None:
+    """제공자별 모델. 예전에는 --model 하나를 모든 단계에 넘겨서, 클로드 모델 이름을 주면 코덱스 단계(그림)가 깨졌다."""
+    specific = args.codex_model if provider == PROVIDER_CODEX else args.claude_model
+    return specific or args.model
+
+
+def effort_for(provider: str, args: argparse.Namespace) -> str:
+    return (args.codex_effort if provider == PROVIDER_CODEX else args.claude_effort) or ""
+
+
 def provider_for(stage: ProductionStage, args: argparse.Namespace) -> str:
     """이 단계를 어느 쪽으로 부를지. 그림 단계만 예외다.
 
@@ -1207,6 +1248,7 @@ def render_batch(
         claude_bin=args.claude_bin,
         project_dir=PROJECT_DIR,
         timeout_seconds=args.timeout_seconds,
+        effort=effort_for(IMAGE_CAPABLE_PROVIDER, args),
     )
     with tempfile.TemporaryDirectory(prefix=f"content-asset-{index}-") as temp_dir:
         temp_output = Path(temp_dir) / "batch-output.json"
@@ -1214,7 +1256,7 @@ def render_batch(
             prompt=prompt,
             output_schema=ARTIFACT_SCHEMAS[stage.artifact],
             output_path=temp_output,
-            model=args.model,
+            model=model_for(IMAGE_CAPABLE_PROVIDER, args),
             stage=f"{stage.name}#{index}",
         )
         result = validate_file(temp_output, artifact=stage.artifact)
@@ -1477,15 +1519,17 @@ def run_stage(
         timeout_seconds=args.timeout_seconds,
         # 개발 단계만 자가 검사 명령 **하나**를 돌릴 수 있다. 쓰는 명령·git·삭제는 허용하지 않는다.
         allowed_tools=SELF_CHECK_TOOLS if stage.artifact == "lesson_draft_output" else (),
+        effort=effort_for(provider, args),
     )
-    print(f"{stage.name} provider={provider} model={args.model or 'default'}")
+    print(f"{stage.name} provider={provider} model={model_for(provider, args) or 'default'}"
+          f" effort={effort_for(provider, args) or 'default'}")
     with tempfile.TemporaryDirectory(prefix=f"content-{stage.name}-") as temp_dir:
         temp_output = Path(temp_dir) / "stage-output.json"
         client.run_prompt(
             prompt=prompt,
             output_schema=ARTIFACT_SCHEMAS[stage.artifact],
             output_path=temp_output,
-            model=args.model,
+            model=model_for(provider, args),
             stage=stage.name,
         )
         result = validate_file(temp_output, artifact=stage.artifact)
@@ -1578,6 +1622,12 @@ def build_prompt(
         if stage.artifact == "lesson_draft_output"
         else "반드시 RUN_DIR 아래의 expected_files를 작성한 뒤, schema에 맞는 JSON 객체 하나만 마지막 응답으로 출력합니다."
     )
+    # 사람이 읽는 것은 한국어로 쓴다. 실측(2026-09-29, g4l04) — 규칙이 없어 senior_designer 의 인터뷰 질문
+    # 20건이 영어로 나왔다. 질문지는 사람이 답하는 서류라 언어가 섞이면 그대로 답이 흔들린다.
+    final_instruction += (
+        "\n사람이 읽는 문서(md)와 보고서의 summary·open_questions 는 **한국어로** 씁니다. "
+        "코드·경로·필드 이름은 원래 표기 그대로 둡니다."
+    )
     return f"""{guide}{retry_block}
 
 CONTEXT_JSON:
@@ -1641,6 +1691,18 @@ def collect_open_questions(run_dir: Path) -> list[tuple[str, list[str]]]:
     return collected
 
 
+def open_decision_questions(run_dir: Path) -> list[str]:
+    path = run_dir / "spec" / "lesson-spec.json"
+    if not path.exists():
+        return []
+    try:
+        spec = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    return [f"[{item.get('id')}] {str(item.get('question') or '').strip()}"
+            for item in spec.get("decisions", []) if item.get("status") == "open"]
+
+
 def read_existing_answers(path: Path) -> dict[str, str]:
     """이미 만들어 둔 질문지에서 `질문 → 답` 을 읽어 온다.
 
@@ -1680,7 +1742,8 @@ def question_key(heading: str) -> str:
     """질문 번호를 떼고 본문 앞부분만 남긴다. 번호가 밀려도 같은 질문으로 알아본다."""
     import re as _re
 
-    return _re.sub(r"^Q[\w-]+\.\s*", "", heading).strip()[:80]
+    # '이미 답한 것' 칸은 `A3. [구분] 질문` 모양이다. 예전에는 Q 번호만 떼서 이 칸의 답을 다음 번에 못 알아봤다.
+    return _re.sub(r"^(?:Q[\w-]+\.|A\d+\.\s*\[[^\]]*\])\s*", "", heading).strip()[:80]
 
 
 BASELINE_QUESTIONS = [
@@ -1715,6 +1778,13 @@ def write_interview_package(run_dir: Path) -> None:
                 answered.append((label, question.strip(), known[key]))
             else:
                 pending.append((label, question.strip()))
+    # 요구 명세가 남긴 정할 것(open decision) — 이것도 사람이 답한다
+    for question in open_decision_questions(run_dir):
+        key = question_key(question)
+        if key in known:
+            answered.append(("단일 명세 — 정할 것", question, known[key]))
+        else:
+            pending.append(("단일 명세 — 정할 것", question))
     for question in BASELINE_QUESTIONS:
         key = question_key(question)
         if key in known:

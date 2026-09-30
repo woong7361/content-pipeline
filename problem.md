@@ -46,11 +46,284 @@
 - [dialogue-as-speech-bubble] · 횟수 8 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약". feedback-as-character-bubble·sequential-scene-choreography와 하나의 규칙으로 통합(실질 16회).
 - [feedback-as-character-bubble] · 횟수 5 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약"의 `feedback` 절. **재검토 필요(2026-08-03)** — 사용자가 "내레이션(`정답입니다`)은 캐릭터를 세우지 말라"고 지시. 규칙에 "**원문 화자가 `내레이션`인 대사는 화자를 세우지 않는다**" 예외를 넣을지 승인 대기(상세: [dialogue-speaker-misassigned] 2번째 사례 · `production/1-2/08/todo.md` 60번).
 - [sequential-scene-choreography] · 횟수 3 · 규칙화됨 · solved-log.md#dialogue-as-speech-bubble-대사피드백을-표면-텍스트로-넣고-말풍선을-매번-새로-만듦-channel-렌더링-계약으로-통합 · 반영: prompts/builder_system.md "channel 렌더링 계약"의 dialogue 순차 beat 조항. (5회 미만이나 dialogue 계열로 통합 승격.)
+- [planner-storyboard-detail-loss] · 횟수 7 · **제안됨(재검토)** · solved-log.md#planner-storyboard-detail-loss-스토리보드-세부문항보기정답대사연출가-하류로-가며-사라짐 · 반영: content-harness-pipeline/CLAUDE.md "실패에서 배운 것" > "스토리보드 세부는 어느 단계에서도 요약하지 않는다". 손실 지점이 회차마다 달랐다(planner 압축 → 중간 요약 → 전사 누락 → **원자 근사**). 2026-09-11 재발 — 원문이 못박은 **퀘스트 알림창 팝업 + [수락하기] 버튼**(storyboard.md:174)이 전사본에는 그대로 남아 있었는데 `senior_developer` 가 base 원자(말풍선 + `ctaText`)로 **근사**했다. 요약이 아니라 **다른 것으로 바꿔치기**한 경우라 현재 rule 문구가 이 축을 안 덮는다. 2026-09-11 같은 축 2건째 — `wireframe.md` 가 `점판 | 봉투 **우측 상단** | 기본 26cqw / 확대 42cqw` 로 **공간 관계**를 못박았는데 개발이 `.pa-panel{flex-direction:row}` 로 **나란히** 놓았다. `A 위에 B가 얹힌다` 를 `A와 B를 나란히` 로 바꾼 것이다. 재검토 승인 대기.
 - [character-asset-identity-alpha] · 횟수 9 · 규칙화됨 · solved-log.md#character-asset-identity-alpha-캐릭터-에셋이-포즈마다-다른-인물로-생성됨-정체성-부분 · 반영: AGENTS.md 문서 규칙이 아니라 파이프라인 구조로 강제 (planner_output.schema.json characters 엔티티 · runner.py patch merge/identity_context · design_review.py allowlist · planner/design_review/asset_generator 프롬프트). 원 항목 17회 중 알파 8회는 [character-asset-alpha-fringe]로 분리되어 열린 상태.
 
 ## 문제 로그
 
+### [dashboard-md-viewer-hang] 초안 대시보드에서 사용량 md 를 [보기]하면 탭이 통째로 굳음
+
+- 대상: content-harness-pipeline/tools/pipeline_dashboard.html(`renderMarkdown`) · stages/scripts/usage_log.py(보고서 표)
+- 분류 태그: dashboard-md-viewer-hang
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-10-01
+- 최근 발생일: 2026-10-01
+- 사례:
+  - 2026-10-01 (runs/g4l04/usage-report.md): 사용자 — "사용량의 md 파일을 보기 버튼 누르니까 '불러오는 중'이라고 뜨고 [새 탭에서]나 [닫기] 버튼 눌러도 작동이 안돼. 새로고침도 안 먹는 거 같아". 원인 둘이 겹쳤다. ① usage_log 보고서가 실패 이유(`RuntimeError: Codex CLI failed\ncommand: …`)를 줄바꿈째 표 칸에 넣어 표 한 줄이 `| … failed` / `command: |` 로 쪼개졌다. ② 화면 안 md 변환기의 문단 분기가 `|` 로 시작하는 줄을 건너뛰도록 되어 있어, 표 모양이 아닌 `|` 줄을 만나면 한 줄도 소비하지 않고 같은 자리를 무한 반복했다 — JS 가 메인 스레드를 잡아 버튼·새로고침까지 막혔다.
+- 조치: 변환기가 어느 분기에서도 최소 한 줄은 넘기게 하고(표가 아닌 `|` 줄은 문단으로), 보고서 표 칸은 줄바꿈을 한 줄로 접고 `|` 를 이스케이프한다. 이미 깨진 옛 보고서도 변환기 쪽 수정으로 열린다.
+- 규칙화 메모: 반복되면 "손으로 짠 파서의 반복문은 매 바퀴 입력을 최소 하나 소비하는지 테스트로 확인한다" 를 제안.
+
+### [desk-parallel-overblocked] 작업대 병렬 줄이 필요 없는 기다림을 넣어 코드가 그림과 함께 안 돎
+
+- 대상: content-harness-pipeline/stages/scripts/lesson_notes.py(`runnable_groups`) · lesson_desk.py
+- 분류 태그: desk-parallel-overblocked
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-10-01
+- 최근 발생일: 2026-10-01
+- 사례:
+  - 2026-10-01 (4-1/03): 사용자 — "그림 검증과 코드가 함께 돌지 않는데? 같이 대기열에 있으면 말이야..". 그림 U43(땅 울퉁불퉁)이 도는 동안 코드 U45·U46(문6 남색 표시 · 문7~9 한 문제로)이 대기에 묶여 있었다. 병렬을 만들며 "코드는 위에 걸린 그림을 기다린다" 는 규칙을 넣었는데, 그림을 화면에 붙이는 코드 메모(`follow_up`)는 그림이 **끝난 뒤에** 생기므로 기다릴 이유가 없었다. 사용자가 요청하지 않은 제약을 추측으로 넣은 것.
+- 조치: 코드는 그림을 기다리지 않게 한다. 검증만 칸막이로 둔다 — 검증은 빌드 뒤 화면을 보고, 코드 파일이 바뀌면 해시 가드가 그 파일을 되돌리므로 코드와 함께 돌면 코드가 고친 것이 지워진다.
+- 규칙화 메모: 반복되면 "동시 실행에서 기다림은 실제로 부딪히는 자원(같은 파일·빌드 결과)이 있을 때만 넣는다" 를 작업대 규칙으로 제안.
+
+### [desk-image-cannot-create] 작업대 그림 메모가 새 그림을 만들지 못함
+
+- 대상: content-harness-pipeline/desk_image.py · prompts/desk_image_system.md · lesson_desk.py
+- 분류 태그: desk-image-cannot-create
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30 (4-1/04 U04): 사용자 — "이미지 새로 생성해달라니까 새로 생성을 못하네". 메모 "title-logo.png 다시 그리고, cta 버튼 이미지도 만들어주세요(9-slice)". 그림 단계가 "같은 경로에 덮어쓰기만" 하도록 되어 있어 CTA 새 그림을 만들지 않았다. 게다가 로고는 실제로 다시 그렸는데 결과를 needs_confirm 으로 적어 메모가 '열림' 이 되고 자동 빌드도 돌지 않아 화면에 반영되지 않았다.
+- 조치: 그림 단계가 assets/ 아래 새 그림을 만들 수 있게 하고(9-slice 요청이면 사방 고정폭 모서리 + 늘릴 가운데로 그리고 4-1/03 처럼 -9slice.json 을 같이 낸다), 메모 일부만 한 경우를 partial 로 따로 적어 확인 대기 + 자동 빌드가 돌게 한다. 새 그림을 화면에 붙이는 일은 코드 메모로 이어서 자동으로 대기열에 넣는다.
+- 규칙화 메모: 반복되면 "그림 메모 한 개에 여러 요청이 섞이면 된 것과 남은 것을 나눠 적고, 남은 것은 다음 메모로 넘긴다" 를 작업대 규칙으로 제안.
+
+### [desk-review-before-build] 작업대가 '고침'을 알리는데 빌드 전이라 화면에 안 보임
+
+- 대상: content-harness-pipeline/lesson_desk.py · tools/lesson_desk.html
+- 분류 태그: desk-review-before-build
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30 (4-1/04): 사용자 — "3개를 고치라 했고, 고쳤다고 뜨는데, …dist/4-1/04/index.html?dev 왜 여기서는 안 고쳐졌죠?". 메모는 AI 가 파일을 고친 순간 '확인 대기' 가 되지만 dist 는 대기열이 끝난 뒤 자동 빌드(14:33:01~06)가 끝나야 바뀐다. 사용자가 그 사이(또는 새로고침 전) 화면을 봤다. 세 수정은 모두 dist 에 들어가 있었다.
+- 조치: '확인 대기' 메모가 마지막 빌드보다 뒤에 고쳐졌으면 "아직 화면에 반영 전" 을 붙이고, 자동 빌드 중에는 상태 줄에 "끝나면 화면에 반영" 을 적는다. 반영 뒤에는 "화면에 반영됨 — 새로고침" 으로 바뀐다.
+- 규칙화 메모: 반복되면 "AI 결과 상태와 화면 반영 상태를 따로 보여 준다" 를 작업대 규칙으로 제안.
+
+### [dashboard-number-too-precise] 대시보드 토큰 숫자를 한 자리까지 다 적어 읽기 어려움
+
+- 대상: content-harness-pipeline/tools/lesson_desk.html · tools/pipeline_dashboard.html
+- 분류 태그: dashboard-number-too-precise
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30: 사용자 — "토큰을 얼마나 썼는지 이렇게 숫자 한자리까지 상세히 나타낼 필요는 없고, 1a, 1000a=1b, 1000b = 1c 이렇게 해서 소수점 첫째자리까지 나타내게 해주세요". 작업대·파이프라인 대시보드가 `271,977 (180,934)` 처럼 토큰을 전부 적었다.
+- 조치: 두 화면의 토큰 표기를 a·b·c·d 단위(1000배씩) + 소수 첫째 자리로 바꿨다. 호출 수·초·비용은 그대로.
+- 규칙화 메모: 반복되면 "사람이 보는 화면의 큰 수는 단위로 줄여 소수 첫째 자리까지" 를 대시보드 규칙으로 제안.
+
 <!-- 새 항목은 이 아래에 추가한다. -->
+
+### [drag-canvas-unusable-passes-tests] 막대 그리기 판이 폭 0 으로 접혀 그릴 수 없는데 검증을 통과함
+
+- 대상: content-harness-pipeline/runs/g4l04 (4-1/04) Q-07 · tools/run_functional_tests.mjs · verify_lesson.py
+- 분류 태그: drag-canvas-unusable-passes-tests
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30 (`runs/g4l04`, 4-1/04): 사용자 — "**3장면의 문3과 4장면의 문3이 이상하네 이건 내가 본거야.**"
+    3장면 문3 = Q-07(막대 그리기, `dragToCanvas`). 그래프 판 폭이 0 이라 가로축 0·50·100 이 한 점에 겹치고
+    막대를 그릴 자리가 없다. 첫 검증부터 있던 결함인데 ② 기능 테스트는 드래그 원자를 `flow-only`(채점 통로만
+    불러 흐름만 봄)로 통과시켰고, ④ 판정도 짚지 못했다. ① 글자 검사가 "0·50·100 겹침" 을 **참고**로만 냈다.
+- 조치: 2026-09-30 되먹임 3회차 — 가로 막대 그래프 격자를 고쳐 판 폭 복구(캡처로 확인: 눈금 0·50·100 제자리, 막대·손잡이 보임).
+  도구 쪽은 남은 과제 — flow-only 문항은 "UI 를 안 봤다" 는 것이 보고서에서 더 드러나야 하고, 드래그 대상 영역의
+  크기가 0 이면 막는 결함으로 올리는 검사를 검토한다.
+- 규칙화 메모: —
+
+### [layout-overflow-offscreen] 문제 선택지·버튼이 화면(1280×720) 밖으로 나가거나 목록 안에서 잘림
+
+- 대상: content-harness-pipeline/runs/g4l04 (4-1/04) Q-11 · Q-12 · Q-13
+- 분류 태그: layout-overflow-offscreen
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30 (`runs/g4l04`, 4-1/04): 사용자 — "4장면의 문3이 이상하네". 4장면 문3 = Q-11. 선택지 1명·2명·5명·10명 중
+    5명·10명이 화면 아래로 나갔다. 같은 회차 Q-12·Q-13 은 카드 넘침을 고친 뒤 선택지 목록 위아래가 잘렸다.
+- 조치: 2026-09-30 되먹임 3회차 — 선택지를 그래프 옆 한 열로 두고 목록 스크롤 상자를 없앴다(캡처로 확인: Q-11 4개 · Q-12 5개+확인 모두 화면 안).
+- 규칙화 메모: —
+
+### [base-ui-decoration-unwanted] base 공통 UI 의 장식(키패드 금색 틀 등)을 차시에서 빼 달라는 요청
+
+- 대상: content-harness-pipeline/runs/g4l04 (4-1/04) Q-01 · Q-05 키패드 — base `#app .pa-atom .hk` 금색 틀·'정답 입력' 이름표
+- 분류 태그: base-ui-decoration-unwanted
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-30
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-30 (`runs/g4l04`, 4-1/04): 사용자 — "**문1에서 키패드 강조 효과? 없애주세요 다른 문제에서도요**" →
+    확인 질문에 "키패드 전체의 금색 틀" 로 답함. base 가 `--kp-frame-bg`·`--kp-frame-line`·`--kp-frame-shadow` 변수 통로를 낸다.
+- 조치: 2026-09-30 되먹임 3회차 — `--kp-frame-*` 변수로 틀·그림자를 걷고 '정답 입력' 이름표를 숨겼다(캡처로 확인: Q-01).
+  다른 차시에도 기본으로 뺄지는 반복되면 계약서 규칙으로 올린다.
+- 규칙화 메모: —
+
+### [visual-design-contradicts-lesson-contract] 비주얼 설계가 계약서와 반대로 지시해 에셋이 규격을 벗어남
+
+- 대상: content-harness-pipeline/prompts/visual_design_system.md, prompts/lesson_contract.md
+- 분류 태그: visual-design-contradicts-lesson-contract
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-23
+- 최근 발생일: 2026-09-23
+- 사례:
+  - 2026-09-23 (`runs/g4l03`, 4-1/03): 사용자 — "**왜 캐릭터가 상반신만 있게 나왔지? 그리고 title-logo.png는 왜 그래픽적인거지?**"
+- 원인 — **`visual_design` 이 `lesson_contract.md` 를 안 받는다.** 계약서는 `senior_developer`
+  에만 실린다(`produce_lesson.py:1143` — `if stage.artifact == "lesson_draft_output"`).
+  그래서 그림 규격을 계약서와 무관하게 다시 정하고, 개발 단계는 이미 구워진 그림을 받는다.
+  - **캐릭터** — 계약서는 `세로 1200px 투명 PNG · 발끝이 캔버스 아래 변에 닿는다` 이고,
+    화면에서 가슴 위만 보이게 **자르는 것은 무대의 일**이다(`--char-bottom` 으로 발밑을
+    무대 밖으로 내린다. 계약서 「인물 크기와 말풍선 자리는 base 가 변수로 받는다」).
+    그런데 `asset-plan.json` 은 `"허리 위까지만, 캔버스 아래 끝에서 허리가 잘림"` 을
+    `mustInclude` 로, `"전신을 작게 그리기"` 를 `forbidden` 으로 적었다. **정반대다.**
+    결과: 이미 상반신인 그림을 무대가 또 잘라 인물이 화면에서 더 작게 뜬다.
+  - **타이틀** — `asset-plan.json` 이 `"굵은 둥근 고딕에 흰 외곽선과 금색 그림자"` 를 지시해
+    게임 로고 느낌이 됐다. 배포 차시(`4-1/01`)의 타이틀은 외곽선·그림자가 없는 **평면 레터링**이다.
+    p3 원문이 "4학년 1학기 통일" 을 못박았는데 그 통일 대상이 무엇인지 그림 계획에 안 닿았다.
+- **정정(2026-09-23)** — 같은 날 내가 "캐릭터 6장이 회색 불투명 배경" 이라고 적은 것은 **틀렸다.**
+  실측하니 6장 모두 알파가 있고 투명 픽셀이 36~39% 였다(회색은 이미지 뷰어의 투명 바탕이었다).
+  크로마 제거는 정상 동작했다. 이 run 의 캐릭터 결함은 **흉상 하나뿐**이다 —
+  머리가 캔버스 높이의 약 0.48 로, 계약이 전제하는 0.238(4등신 전신)의 두 배다.
+- 조치(2026-09-23): 세 갈래 모두 반영.
+  1. `prompts/asset_spec_contract.md` 를 새로 만들어 `visual_design` 과 `senior_developer`,
+     그리고 그림 굽는 배치 프롬프트에 함께 싣는다(`prompt_parts.with_asset_spec`).
+  2. `stages/scripts/asset_plan_check.py` — `asset-plan.json` 을 규격과 대조하는 게이트.
+     `produce_lesson.enforce_asset_plan()` 이 `visual_design` 직후에 걸고 되먹여 다시 부른다.
+     g4l03 에 돌려 **실제 위반 12건(인물 6장 × 2종)** 을 잡았고 배경 7·UI 8 장은 0건이었다.
+  3. `produce_lesson.opaque_transparent_assets()` — 투명 선언한 그림의 알파를 잰다.
+     그림 되먹임 목록에 넣어 알파가 없으면 다시 굽는다. **g4l03 에서는 0건이었다**(위 정정).
+- 재굽기에서 **별개 결함 하나가 더 드러났다**(2026-09-23): 배치가 한 장뿐일 때 — 즉 화풍
+  기준 배치 — 모델이 `chroma: "none"` 을 적고 **스스로 키잉**해 어두운 후광이 반투명으로
+  30.5% 남았다. 두 번 연속 같았다. 규칙은 `prompts/asset_render_system.md` 에 이미 있었으나
+  지켜지지 않았다. `build_asset_batch_prompt()` 가 투명 대상을 **경로 이름으로 짚어**
+  `"none"` 을 금지하도록 고쳤다. 기준 그림을 지정해 다시 부르니 크로마로 구워졌다(투명 71.1%).
+  - 후광 자체를 게이트로 올리는 것은 **접었다.** 배포 인물 182장 중 27장이 반투명 15% 를
+    넘는다(4-1/02 는 대부분 60% 대). 부드러운 가장자리와 후광을 비율로 못 가른다.
+    사유는 `stages/scripts/asset_alpha.py` 에 적었다.
+- 배치·빌드 뒤 화면에서 **세 번째 결함**이 드러났다(2026-09-23): 평면 레터링으로 고친
+  타이틀이 배경에 묻혀 안 읽혔다. 원인은 로고가 아니라 **배경**이다 —
+  `gyeongju-village.png` 의 `reservedUiZones` 가 "가운데 위쪽(세로 25~60%)을 비운다" 였는데,
+  로고는 가로 58% 라 양 끝이 기와지붕에 걸쳤다. 배경을 "위쪽 띠(가로 전체 · 세로 0~45%)는
+  하늘만" 으로 고쳐 다시 구우니 읽힌다. `prompts/asset_spec_contract.md` 에 규격으로 적었다.
+  - **배포 4-1/01 도 같은 결함이다**(타이틀이 박물관 지붕에 겹쳐 더 안 읽힌다). 배포본이라고
+    기준이 되지 않는다는 실례다.
+- 규칙화 메모: 1회이므로 아직 AGENTS.md 승격 대상이 아니다. 다만 "**한 단계만 아는 규칙은
+  다른 단계에서 정반대로 뒤집힌다**" 는 축이 반복되면(계약서를 안 받는 단계가 또 나오면)
+  승격을 제안한다. 지금의 방어는 규칙이 아니라 게이트다.
+
+### [lesson-assets-wholesale-regeneration] 4-2/02 이미지 전체 품질이 만족스럽지 않아 전면 재생성이 필요함
+
+- 대상: content-harness-pipeline/runs/g4l07/lesson/assets · runs/g4l04/lesson/assets
+- 분류 태그: lesson-assets-wholesale-regeneration
+- 상태: 규칙화됨
+- 발생 횟수: 6
+- 최초 발생일: 2026-09-17
+- 최근 발생일: 2026-09-30
+- 사례:
+  - 2026-09-17: 사용자 — "lessons/4-2/02 이미지들 다 다시 뽑아줘... 제발". 기존 30개 자산은 4-2/01 자산을 복사·합성하거나 Pillow 도형으로 그린 것이 많아, 장면별 의미와 하나의 완성된 화풍을 충분히 갖추지 못했다.
+  - 2026-09-30 (`runs/g4l04`, 4-1/04): 사용자 — "**lessons/4-1/04의 화풍이 맘에 안 들어요. icon-apple.png을 기준으로 귀엽고 통통 튀는? 느낌으로 backgrounds나 character나 ui들 다 이미지 수정해주세요**". visual_design 이 정한 artDirection(채도를 낮춘 페인터리 배경 · 얇은 선의 평면 UI)이 사용자가 원한 화풍과 달랐다. 기준 그림(icon-apple)은 굵은 둥근 외곽선·선명한 채도·광택 하이라이트의 스티커형 카툰.
+  - 2026-09-30 (`runs/g4l04`, 배경 8장 통일 뒤): 사용자 — "**title-logo.png도 배경 이미지에 맞게 다시 그려주세요.**" — 배경 기준을 바꾼 뒤 UI 역할(타이틀 로고)은 옛 지시(외곽선 없는 단색 평면 레터링)로 남아 배경과 따로 놀았다. 규칙의 "기준이 바뀌면 그 역할 전부"는 지켰지만 **화면에 함께 놓이는 다른 역할**은 목록에 없었다.
+- 조치: 기존 소비 경로와 파일명은 유지하고, 배경 5장·캐릭터 6장·UI/소품 19장을 이미지 생성 모델로 전면 재생성한 뒤 화면 적합성과 알파를 QA한다.
+  - 2026-09-30 (`runs/g4l04`, 4-1/04, 재생성 뒤): 사용자 — "**배경들도 약간 화풍이 달라요. 조금만 실사 느낌이 나게 하되 만화풍은 잃지 말아주세요. 그리고 \"문경사과축제\" 간판은 빨간색에 흰색 텍스트로 하고, 배경은 여름 느낌이 나게 해주세요.**" — 배경만 다시: 반실사 명암·깊이 + 카툰 외곽선 유지 · 여름 · 간판 빨강 바탕/흰 글자.
+  - 2026-09-30 (`runs/g4l04`, 여름 배경 뒤): 사용자 — "**오 아뇨 너무 실사 느낌이에요. 그냥 반실사가 아니라 실사가 조오금만 추가된 카툰으로 다시 그려주세요.**" — "반실사" 라는 말로 지시했더니 실사 쪽으로 너무 갔다. 정도를 말로만 주면 모델이 크게 움직인다.
+  - 2026-09-30 (`runs/g4l04`, 카툰 여름 배경 뒤): 사용자 — "**배경에서 외곽선이 다 달라요. 화풍도 조금씩 다르구요. apple-festival.png를 기준으로 다 다시 그려주세요**" — 배경 8장이 호출마다 따로 구워져 외곽선 굵기·채색이 제각각이다. 역할 기준 그림이 있어도 배치마다 해석이 갈린다.
+- 조치(2026-09-30): artDirection 을 icon-apple 기준으로 바꾸고 `--style-anchor assets/ui/icon-apple.png --rerender-from` 으로 나머지 24장을 다시 굽는다.
+- 규칙화 메모: 5회 — 2026-09-30 사용자 승인, 규칙화됨. 반영 위치: `content-harness-pipeline/CLAUDE.md` "화풍은 사람이 고른 기준 그림으로 묶는다" · `prompts/asset_render_system.md` "화풍은 글이 아니라 기준 그림이 정합니다". 기준 그림 승인 멈춤점 코드는 별도 작업. 4회 메모: 화풍의 **정도**를 말로만 지시하면 크게 흔들린다 — 사용자가 좋다고 한 그림을 **참고 그림으로 함께 준다.** 3회 메모: 같은 차시에서 두 번 연달아 화풍을 고쳤다 — 기준 그림 한 장(아이콘)으로 배경 화풍까지 묶으면 배경은 "너무 평면" 이 된다. 배경·인물·UI 기준을 따로 고르게 해야 한다. 공통 원인 후보 — **화풍을 사람이 정하는 자리가 없다**(인터뷰에서 색·톤을 묻지만 기준 그림을 고르게 하지 않는다). 반복되면 인터뷰에 "화풍 기준 그림 고르기" 를 넣자고 제안한다. 1회 당시 메모: 반복 시 "최종 차시 자산을 단순 참조 복사·Pillow 도형 조립으로 대체하지 않고, 화면 용도별 완성 자산으로 생성·검수한다"를 자산 생성 지침에 제안한다.
+
+### [screen-not-matched-to-storyboard-mockup] 완성 화면을 스토리보드 예시화면과 대조하는 단계가 없다
+
+- 대상: content-harness-pipeline/review_lesson.py, stages/lesson_review.py, produce_lesson.py
+- 분류 태그: screen-not-matched-to-storyboard-mockup
+- 상태: 조치됨(대조 단계 도입)
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-11
+- 최근 발생일: 2026-09-11
+- 사례:
+  - 2026-09-11: 사용자 지적 — "화면 보면 맘에 안 드는 부분이 너무 많은데, **스토리보드 캡처해서 만든 화면이랑 대조해서 뭘 바꿔야 할지 적는** 과정도 추가하자."
+    **검증 결과 — 그 대조를 하는 층이 파이프라인에 없었다.** 있는 것은 두 가지뿐이다.
+    `tools/check_rendered.mjs` 는 화면 **자체의 결함**만 본다(버튼 화면 밖, 겹침, 깨진 그림, 진행 막힘). "스토리보드가 원한 그림이냐"는 안 본다 — 볼 수가 없다, 스토리보드를 안 받으니까.
+    `review_lesson.py` 는 스크린샷을 codex 에 보내 판정하는데, 스토리보드를 **`STORYBOARD_MARKDOWN` 글로만** 넘긴다(`stages/lesson_review.py:80`). 원본 PDF 왼쪽 절반을 차지하는 **예시화면 그림은 프롬프트에 실리지 않는다.**
+    그래서 이 파이프라인은 "완성 화면이 기획된 화면처럼 보이는가"를 **한 번도 묻지 않았다.** 레이아웃·비례·색·배치가 어긋나도 신호가 어디에도 안 잡히고, 사람이 눈으로 보고 말할 때만 드러났다. 같은 날 잡은 말풍선 글자 크기·인물 크기·좌우 배치·전환 연출 누락이 전부 이 경로로 발견됐다.
+  - 조치(2026-09-11): `diff_screens.py` 신설 — 스토리보드 PDF 쪽을 이미지로 렌더(번들 `tools/poppler`의 `pdftoppm`)하고, 빌드된 차시를 클릭하며 찍은 화면과 **쪽 단위로 짝지어** codex 에 보낸다. 판정이 아니라 **고칠 것 목록**을 낸다(무엇이 · 어디가 · 어떻게 달라야 하는지 · 어느 파일을 고치는지). 이미지를 봐야 하므로 provider 는 `asset_render` 와 같은 이유로 codex 고정이다.
+  - **곁가지로 캡처기 결함을 하나 잡았다(2026-09-11).** `tools/capture_lesson.mjs` 가 타이틀 버튼을 못 눌러 같은 화면 15장을 남기고 있었다. playwright 기본 클릭이 요소가 **안정될 때까지** 기다리는데 이 런타임은 버튼이 계속 움직여(숨쉬기·팝·커서) 끝내 안정되지 않는다. 실패는 `.catch(() => {})` 로 삼켜졌고, 타이틀이 애니메이션 중이라 픽셀 지문이 매번 달라 `stuck` 검사에도 안 걸렸다. **`review_lesson.py` 도 같은 캡처기를 쓰므로 그동안 같은 것을 보고 있었다.** 일반 클릭 실패 시 `force` 로 재시도하고 그 사실을 `click_notes` 에 남기도록 고쳤다 — 고친 뒤 같은 차시에서 서로 다른 화면 16장을 얻었다.
+  - **첫 실행 결과(2026-09-11).** `needs_change` · 짝지은 쌍 8 · 고칠 것 8건(high 1 · medium 5 · low 2) · 짝 못 찾은 쪽 0. high 는 "타이틀 화면 중앙에 편지봉투가 없다" 였고 실제로 맞다 — 소품을 intro 컷에만 얹고 타이틀 화면에는 안 얹었다. 이 층이 없었다면 또 사람이 눈으로 찾아야 했을 것이다.
+  - 2026-09-11 (같은 날 2건째): 사용자 지적 — "codex한테 더 비교해서 **정확히 어떻게 고쳐야 할지** 더 알려달라 해줘."
+    1차 대조는 `약 65~70% 크기로 줄인다` 수준이라 그대로 못 고친다. 무엇이 다른지는 알아도 어느 줄을 무엇으로 바꾸는지가 없다.
+    - 조치(2026-09-11): 2차 패스 `--fix-plan` / `--fix-plan-only` 추가. 같은 그림을 다시 보되 **번들 소스 3종(`lesson.json`·`player-ext.css`·`player-ext.js`)까지 열어** 파일·앵커(CSS 선택자 · JSON 경로 · 함수명)·현재 값·바꿀 값·환산 근거·확인 방법·딸려 틀어질 것을 확정한다. 적용 순서도 낸다. 1차 결과를 재사용하므로 대조를 다시 사지 않는다.
+      **왜 한 번에 안 시키는가** — 1차는 그림만 보면 되지만 2차는 소스까지 봐야 한다. 한 프롬프트에 둘 다 넣으면 그림 자리를 12만 바이트짜리 `lesson.json` 이 먹는다. 그래서 1차는 경로만, 2차는 파일을 연다.
+      추측 방지: 값이 하나로 안 정해지면 수정안이 아니라 `needs_decision` 으로 넘기게 했다. 첫 실행에서 실제로 4건이 그리로 갔다(컷별 소품 크기 분기 방식, Scene 2 배경 재생성 여부, 한 컷에 인물 둘 세우는 표현, 미션 팝업을 어느 DOM 에 입힐지).
+      첫 실행 결과: `partial` · 수정안 7건 · 사람이 정할 것 4건. `fix-01` 과 `fix-02` 가 같은 선택자를 건드리는 충돌을 **스스로 잡아** `risk` 에 적고 결정 항목으로 올렸다.
+  - **캡처 어긋남 가드(2026-09-11).** 대조 뒤에 `--prepare-only` 를 다시 돌려 `capture.json` 을 덮는 바람에, 대조가 근거로 쓴 `s16` 이 사라졌고 그 항목의 수정안이 "현재 화면을 못 봤다"로 내려앉았다. 캡처 장 수는 `--max-shots` 와 진행 상태에 따라 달라지므로 언제든 어긋난다. `--fix-plan-only` 가 대조 항목의 `screen` 과 지금 캡처를 대조해 없으면 경고하도록 했다 — **조용히 부실해지는 것**을 막는다.
+  - **결정 4건 회수(2026-09-11).** 수정안이 넘긴 `needs_decision` 에 사용자가 답했다.
+    1. 타이틀(s01) 편지는 **스토리보드와 동일하게.** → 컷별 크기 분기가 필요하므로 CSS 가 아니라 데이터(`letterProp` 의 상태별 `box`)로 간다.
+    2. Scene 2 배경을 **다시 굽는다.** 조건: 기존 그림들과 **화풍 동일**(화풍 앵커 필수).
+    3. 한 컷에 인물 둘 → **두 아이가 함께 있는 합성 캐릭터 자산을 새로 만든다.** 조건: 기존과 **같은 아이**여야 한다.
+    4. 미션 수락은 **새 팝업 패널**이 열리고 `[수락하기]` 를 눌러야 넘어간다. **마지막 말풍선에는 `다음` 버튼이 없다** — 말풍선이 뜬 뒤 팝업이 열린다.
+  - 2026-09-11 (같은 날 3건째): 사용자 지적 — "**문제 레이아웃이 제대로 잡히지 않았는데 그것도 봐달라**고 해줘."
+    **검증 결과 — 문제 화면은 대조 대상에 아예 들어가지 못하고 있었다.** `capture_lesson.mjs` 는 학습자가 누르는 길을 그대로 밟는데 그 길이 **문제 앞에서 멈춘다**(드래그·선 긋기·키패드를 자동으로 못 푼다). 실측: 찍힌 15장이 전부 컷씬이었고 미션 다섯 개의 배치는 **한 장도 안 찍혔다.** 안 찍힌 화면은 대조도 못 한다 — 1차 대조가 문제 배치를 한 건도 안 낸 이유가 판정을 안 해서가 아니라 **볼 수가 없어서**였다.
+    - 조치(2026-09-11): base 가 `?dev` 로 여는 장면 이동 패널(`.dev-scene-jump`)을 캡처기가 쓰게 했다(`--scene-jump`). 장면·대화 묶음·문제마다 버튼이 하나씩 있어 풀지 않고 모든 화면에 닿는다. 3-1/05 에서 15장 → **20장(문제 화면 11개 포함)**. 패널은 찍을 때 숨기고, 누르는 것은 페이지 안에서 `el.click()` 으로 한다(숨긴 요소는 좌표 클릭이 안 먹는다).
+      진행 가능 여부는 이 모드로 못 본다(전부 점프하므로). 그건 기본 모드와 `check_rendered.mjs` 의 몫이라 **둘 다 남긴다.**
+      대조 프롬프트에도 "문제 화면의 배치를 특히 본다" 절을 넣었다 — 미션 문구 중복, 조작 대상 크기, 받는 자리, 문제 화면의 인물, 확인 버튼 자리.
+      **넓이만으로는 반쪽이었다.** 이동만 하면 대사 컷이 안 찍혀 스토리보드 7쪽이 "짝이 없다"로 남았다. 그래서 **학습자 경로 훑기 + 장면 이동을 이어서** 한 캡처로 합쳤다(15→38장).
+      **그래도 한 겹 더 있었다.** 이동 버튼은 대화 묶음의 **처음**으로만 간다. 실측 — outro 5컷 중 1컷만 찍혀 "뒤 컷이 없다"는 **거짓 신호**가 났고(데이터에는 5컷이 다 있다) Scene 7-2 시각화 4컷은 통째로 안 찍혔다. 이동한 뒤 그 묶음 안을 최대 5컷 더 넘기게 했다(38→54장, `CAPTURE_GROUP_DEPTH` 로 조절).
+      **교훈: 안 찍힌 화면은 "없는 화면"으로 보고된다.** 캡처 범위를 넓히기 전에는 대조 결과의 `missing`·`unmatched` 를 그대로 믿으면 안 된다.
+  - **수정안 적용(2026-09-11).** `--fix-plan` 23건 중 19건 적용. `check_rendered` 겹침 **23건 → 0건**.
+    **4건은 적용하지 않았다.** `fix-02`·`fix-22`·`fix-23` 은 이미 되어 있었고(codex 가 지난 회차 화면을 근거로 삼아 생긴 중복), `fix-19` 는 **적용하면 안 되는 것**이었다 — 말풍선 중복을 없애려고 `characterRef` 를 지우는데, 그 중복은 `paintMissionBar` 가 이미 숨기고 그걸 지우면 방금 세운 인물이 사라진다.
+    `fix-20` 은 취지만 받았다. 그대로 지우면 **편지 낭독이 사라진다** — 문제 화면에서 빼고 원문이 요구한 Scene 7-1 대사 컷으로 옮겼다.
+    **교훈: 수정안은 그대로 적용할 것이 아니라 근거를 확인하고 적용한다.** 대조와 수정안은 같은 회차의 화면을 보지만, 그 사이에 사람이 고친 것은 둘 다 모른다.
+  - **또 나온 "통로 없는 자산"(2026-09-11).** Scene 7-2 시각화 넉 장(`interaction.vizSteps`)이 선언돼 있고 파일도 다 있는데 **화면에 올리는 코드가 없어** 네 컷이 통째로 비었다. 분류통 그림(`slots[].imageRef`)·편지 소품(`letter-old.png`)과 **같은 종류**다 — 데이터는 멀쩡하고 `asset_refs` 검사도 통과하는데 화면에만 안 닿는다. 이번엔 컷이 `overlay` 를 선언하면 얹는 통로를 만들어 한 번에 해결했다.
+    **이 유형이 세 번 반복됐다.** `lesson_check` 에 "참조는 있는데 그리는 쪽이 없는 자산"을 잡는 검사를 넣을 만하다 — base 렌더러가 읽는 필드 목록과 대조하면 기계적으로 판정된다.
+- 규칙화 메모: 1회. 조치로 단계를 만들었으므로 rule 승격 대상은 아니다. 다만 **"게이트는 결함을 보고, 대조는 의도를 본다"** 는 축 자체가 이 파이프라인에 새로 생긴 것이라, 재발(대조 단계가 있는데도 어긋남)하면 그때 rule 로 올린다.
+
+### [ext-css-guessed-not-measured] player-ext.css 수치를 실측 없이 정하고, base가 낸 변수 통로 대신 선택자 싸움을 함
+
+- 대상: content-harness-pipeline/runs/2026-09-10_g3l05-postoffice/lesson/player-ext.css, prompts/lesson_contract.md
+- 분류 태그: ext-css-guessed-not-measured
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-11
+- 최근 발생일: 2026-09-11
+- 사례:
+  - 2026-09-11: 사용자가 "① 말풍선 안 글씨가 너무 크다 ② 얼굴이 헤더를 뺀 화면의 1/5는 차지해야 하고, 이미지가 차지하는 부분은 1/3은 되어야 한다"고 지적.
+    **①의 원인 — 기준을 안 보고 값을 정했다.** ext가 `--fs-speech: 3.8cqh`(27.36px)를 썼다. 배포된 차시들은 같은 자리에 `1.62~1.75cqw`(≈21~22px)를 쓴다. 이미 화면에서 검증된 수치가 레포 안에 있는데 참조하지 않고 새로 지어낸 값이다.
+    **②의 원인 — 기하를 계산 없이 손댔고, base 구조를 안 보고 고쳤다.** 전신을 다 보여주면 얼굴은 본문의 1/13밖에 안 된다. 두 요구를 동시에 만족시키려면 인물을 크게 그리고 아래를 잘라야 한다. 여기서 두 번 연속 틀렸다.
+      - `.charzone { overflow: hidden }` — `.speech`가 `.charzone`의 **자식**이라 말풍선까지 같이 잘린다.
+      - `#charImg { position: absolute; top: 0 }` — flow에서 빠지면서 zone 높이가 0으로 접혀 인물이 통째로 무대 밖(y=720, 무대 바닥)으로 나갔다. 화면에 아무것도 안 보였다.
+      또 `#app .charzone`(명시도 1,1,0)으로 base의 `#app.char-fixed-y .charzone.char-left`(1,3,0)를 이기려 했다. base는 그 규칙 안에서 `--char-bottom`·`--char-width`를 읽도록 이미 **통로를 내놓았는데** 그걸 안 쓰고 선택자를 키우는 쪽으로 갔다.
+    - 조치(2026-09-11): (a) `--fs-speech: 2.9cqh`(20.88px 실측) — 배포 차시 기준에 맞춤. (b) 자르는 주체를 **무대의 overflow**로 되돌리고(base가 `bottom:-18%`로 쓰는 바로 그 방식) `--char-bottom`·`--char-width` 변수만 바꿨다. 원본 캔버스에서 머리가 캔버스 높이의 0.238을 차지함을 알파 채널로 실측해 `--char-width: 28.4cqw`, `--char-bottom: -46cqh`를 계산했다. (c) 프로브(`playwright`)로 무대·zone·img 박스와 말풍선 넘침을 4개 컷에서 실측: 보이는 인물 214px(목표 216) · 얼굴 130px(목표 130) · 넘침 0 · 좌우 배치 정상.
+- 규칙화 메모: 1회. 반복되면 `prompts/lesson_contract.md`에 "① ext CSS 수치는 배포된 차시의 같은 자리 값을 먼저 찾아 그것을 기준으로 잡는다 ② base가 `var(--...)`로 읽는 자리가 있으면 **변수만 바꾼다** — 선택자를 키워 이기지 않는다 ③ `.charzone`에 `overflow`를 걸거나 `#charImg`를 flow에서 빼지 않는다(말풍선이 자식이고, zone 높이가 접힌다)"를 rule로 제안. 지금은 계약서 본문에 서술로 넣고 횟수를 지켜본다.
+
+### [object-text-as-dialogue] 화면 오브젝트에 그려질 글자를 말풍선 대사로 옮김
+
+- 대상: content-harness-pipeline/prompts/senior_planner_system.md, runs/2026-09-10_g3l05-postoffice/planning/content-plan.md
+- 분류 태그: object-text-as-dialogue
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-11
+- 최근 발생일: 2026-09-11
+- 사례:
+  - 2026-09-11: Scene 1의 첫 말풍선이 `"이 편지만은 제발 꼭 전해주세요..."` 였다. 사용자 지적 — "이거는 **편지에 들어갈 텍스트**야. 왜 말풍선에 있는지 모르겠네."
+    **검증 결과 — `content-plan.md`가 "### Scene 1 대사" 목록의 첫 줄로 적었다.**
+    ```markdown
+    ### Scene 1 대사
+    - 편지 겉면 메모: `"이 편지만은 제발 꼭 전해주세요..."`
+    - 셈이: `"우와, 수리야 이것 봐! ..."`
+    ```
+    라벨(`편지 겉면 메모`)은 정확히 달았다. 그런데 **대사 목록 안에** 넣었기 때문에 하류 개발 단계가 목록 전체를 대사로 읽어 `stageDirections[0].speechText`로 옮겼다. 원본은 이것을 대사가 아니라 Scene 1의 **메인 오브젝트(팝업) 항목 4번 "편지 겉면 텍스트"** 로 분류한다(storyboard.md:103).
+    화면에 나타나는 글자에는 종류가 여럿이고 각각 가는 자리가 다르다 — 말풍선 대사 / 오브젝트 표면에 그려질 글자 / 버튼 라벨 / 타이틀 / 안내 문구. **한 목록에 섞으면 라벨을 붙여도 소용없다.**
+    - 조치(2026-09-11): `senior_planner_system.md`에 "대사 목록에는 말풍선 대사만 넣는다. 화면에 그려질 글자는 `### Scene N 화면 글자`로 분리하고 각 줄에 가는 자리를 적는다"를 넣었다. lesson.json에서 그 컷의 `speechText`를 정정.
+    - **후속(2026-09-11) — 왜 갈 곳이 없었는지.** 이 문구가 대사로 흘러든 진짜 이유는 **받을 자리가 화면에 없었기** 때문이다. 원문 Scene 1 의 메인 오브젝트인 중앙 편지봉투 팝업이 통째로 빠져 있었다 — `letter-old.png`·`stamp-postage.png`·`stamp-undelivered.png` 세 장이 구워져 배치까지 됐는데 `lesson.json` 이 자기 `assetPrompt.targetAsset` 말고는 **어디서도 참조하지 않았다.** 배경은 그 자리를 비워 두고 있었고(`reservedUiZones: center letter prop`), 원문의 "우표를 클릭해 타임슬립" 상호작용도 CTA 문구로만 남아 있었다.
+      base 에는 intro 컷에 소품을 얹는 필드가 없다. **base 를 건드리지 않고** 이 차시의 `player-ext.js`/`css` 가 얹도록 했고, 좌표·노출 시점·문구는 전부 `steps[0].letterProp` 가 소유한다(ext 하드코딩 금지). 실측 검증: 컷1~3 우표만, 컷4 "어? 우표 위에 배달 안 됨 도장이 찍혀 있어" 대사와 **같은 컷에서** 도장 등장, 컷7 우표 무장(노란 점선 점멸) → 클릭 → 화이트아웃 → Scene 2 전환, 컷8 소품 소멸. base 의 다음 버튼도 그대로 살아 있어 우표가 안 먹어도 막히지 않는다.
+      겉면 메모는 그림에 굽지 않고 HTML 로 얹는다 — 봉투 그림이 이미 그 자리를 비워 두었고(`reservedUiZones: top-left handwritten memo text`) 다시 굽지 않아도 된다.
+      곁가지로 하나 더 잡았다: 소품을 `z-index:12` 로 두었더니 무대 전체를 덮는 `#content`(z 16)가 우표 클릭을 가로채 아무 일도 일어나지 않았다. `z-index:20`(인물 40·말풍선 50보다는 뒤)으로 올려 해결.
+- 규칙화 메모: 1회. 반복되면 `senior_planner_system.md`와 `lesson_contract.md` 양쪽에 "화면 글자 분류표"를 rule로 제안.
 
 ### [component-overridden-by-asset-surface] design_review가 새 asset을 요청해 input이 지정한 공용 컴포넌트의 시각을 통째로 덮음
 
@@ -334,21 +607,6 @@
 - 조치 (dfbc1027 iter_004): HUD의 `clip-path`를 제거하고 목록·소리·중앙 제목·세 단계·진행률을 `global-hud-frame.webp`의 실제 6개 safe zone과 하단 트랙 중심에 절대 좌표로 다시 결합했다. 초기 3번째 계획 문구와 목표 CTA, 도입 CTA, shape/arithmetic 말풍선 텍스트, 완료 나가기 문구를 review 측정값만큼 보정하고 페인트통은 접지점을 유지한 채 1.15배 확대했다. 전용 키패드 asset은 아직 생성되지 않았고 새 asset 참조가 금지된 refine 경계이므로, 무작위 키패드는 새 CSS 재질을 만들지 않고 기존 `wall-choice-plaque-body.webp`를 표시창과 4개 입력 행의 실제 표면으로 재사용해 숫자·O만 투명 hit target으로 올렸다. 탭 힌트는 교사 손 실루엣 밖으로 이동하고 방향을 캐릭터 쪽으로 돌렸다. `.hidden` 상태가 더 구체적인 컴포넌트 `display`에 패배하던 문제는 허용된 상태 유틸리티 예외로 `display:none !important`를 적용해 장면 시작 전 CTA/키패드가 노출되지 않게 했다. desktop preview를 2회 캡처했으며 두 번째 결과에서 horizontal overflow·overlap·broken image·console/page/request 오류는 0건이고, HUD 전체 외곽과 각 오버레이가 asset 표면 안에 들어갔다. `#viewport` fixed-overlay는 고정 캔버스 계약에 따른 기존 false positive다.
 - 규칙화 메모: 15회로 재발해 rule 승격 재검토를 제안한다. 반복 패턴은 "interaction surface asset이 준비되어도 builder/refine이 동적 텍스트·조작물을 asset의 실제 safe zone/slot 중심에 결합하지 않고 별도 웹 패널 또는 어긋난 overlay로 남김"이다. 초안: "planner/asset_generator가 장면 소품의 interaction surface와 safe zone을 제공한 경우, builder와 design_refine은 동적 텍스트·입력·버튼을 해당 표면 경계 안의 실제 슬롯 중심에 배치한다. 별도 CSS 카드·패널로 대체하거나 asset 표면을 덮지 않으며, preview에서 high finding target의 경계 포함 여부를 확인한다. 필요한 interaction surface asset이 아직 없으면 CSS 재질로 가장하지 말고 중립 기하만 사용하며, 미해결 상태를 asset 요청으로 넘긴다." 반영 위치 제안: `content-harness-pipeline/AGENTS.md`의 CSS/Visual QA 규칙. 사용자 승인 전에는 자동 반영하지 않는다.
 
-### [planner-storyboard-detail-loss] planner.json이 storyboard 세부(문제 보기·대사·오디오·모션·효과)를 압축/누락함
-
-- 대상: content-harness-pipeline/stages/planner.py, schemas/planner_output.schema.json, prompts/planner_system.md (산출: runs/2026-07-08_ch802d08/ch802d08_planner.json)
-- 분류 태그: planner-storyboard-detail-loss
-- 상태: 열림
-- 발생 횟수: 3
-- 최초 발생일: 2026-07-13
-- 최근 발생일: 2026-08-14
-- 사례:
-  - 2026-07-13: `2학년_8차시(시간)_임상현.md`(storyboard)와 `ch802d08_planner.json`을 비교하니 차이가 큼. storyboard가 요구한 요소(이미지, 대사, 문제 문구, 보기(distractor), 캐릭터 포즈, 효과, 애니메이션, 오디오/SFX)가 요약되거나 생략됨. 특히 활동2 12문제의 정확한 문제 문구·보기 3개·정답이 planner에서는 content_outline 한 줄로 압축되어 정답만 남고 오답 보기가 사라짐. 사용자가 schema가 너무 정적이거나 prompt 문제로 추정하고, storyboard를 온전히 담을 수정 방향을 요청.
-  - 2026-07-31: `runs/2026-07-31_dfbc1027/dfbc1027_planner.json` 검토 후 전체 수정 요청. schema는 PASS하지만 도형 세기 문항 2개의 `answer`가 비어 있고, 도형 찾기 정답 대상이 기계적으로 판정할 수 없는 자연어로만 표현됨. 원문의 `다음 차시 이동`이 완료 섹션에서 누락되고, 무작위 문제 생성 규칙과 고정 예시 문항의 역할이 모호하며, 동일 asset이 두 batch group에 중복되어 runner의 first-consume 로직상 뒤 그룹의 일관성 목적이 무효화됨. 사용자는 전체 보정 후 planner schema 통과를 요구.
-  - 2026-08-14: 사용자가 "planner 생성에 오류가 있는 것 같다"며 eval/critique/refine 3-stage와 test 명세 생성은 비용 때문에 못 붙인다는 제약과 함께 대안을 요청. 최신 산출(`runs/2026-08-14_dfbc1027/dfbc1027_planner.json`)을 실측하니 **schema PASS · 참조 무결성 0건 · 파생기 underivable 0건 · 스토리보드 문구 recall 90개 중 89개**로 기존 검사층은 전부 통과하는데, 두 가지가 남아 있었다. ① 캐러셀로 계획된 화면에서 문항 4개가 요소 하나에 `refs=[a,b,c,d] / reveal=scene_enter`로 묶여, 파생된 케이스가 페이지를 넘기지 않고 바로 조작한다(같은 화면의 문구는 `on_page`로 파생되어 **한 화면에 대해 문구와 문항의 노출 시점이 서로 다르게** 파생됨 → 실행 시 가짜 실패 → content_refine이 멀쩡한 HTML을 고치러 감). 같은 스키마로 문항마다 요소를 쪼개 `on_page/0..3`을 준 과거 산출(`2026-08-12_65126dad-v3`)이 있으므로 **표현할 자리가 없어서가 아니라 같은 사실을 두 방식으로 적은 것**이다. ② 무작위 출제 생성 규칙이 계획의 규칙 자리가 아니라 `channel: generation_rule` 요소 5줄(모두 `rendered_text: []`)로만 남고, 문항은 스토리보드의 예시값 4개로 굳음 — **2026-07-31 사례에서 이미 지적된 것과 같은 손실의 재발**.
-- 조치: 2026-07-13 분석 결과를 반영해 현재 schema/prompt에 `sections[].elements`, `questions`, `rendered_text` 구조가 도입됨. 2026-07-31 산출 planner에서 잔존한 의미적 누락을 수정함: 도형별 정답·클릭 target ID·다음 차시 interaction을 명시하고, 무작위 template/예시의 역할을 interaction에 고정하며, asset group 중복과 사용 참조 불일치를 정리함. 공식 planner schema PASS, 중복 ID·누락 참조·빈 정답·group 중복 검사도 PASS.
-  2026-08-14: 산출물을 매번 손으로 보정하는 대신 **`planner_refine` stage(LLM 1회)** 를 신설. 앞뒤로 LLM 0회 층을 붙여 critique/eval 역할은 코드가 맡는다 — 앞은 참조 무결성·시점 정합을 확정하는 `stages/scripts/planner_check.py`, 뒤는 화면·문항·문구가 줄면 REJECT하고 원본을 되살리는 회귀 검사(`design_refine`이 HTML을 통째로 다시 써 앞선 수정을 지우던 것과 같은 위험이라 필수). 점수도 게이트도 만들지 않으므로 남은 문제는 고친 결과를 기계 검사에 다시 통과시켜 안다.
-- 규칙화 메모: 3회. 이 항목은 상위 원인(메타)에 가까움 — 하류 [typeB-problem-text-mismatch-spec], [typeA-prompt-text-small-terse], [spec-success-feedback-missing], [type-per-problem-answer-format] 계열이 "builder가 spec대로 안 만든다"로 반복되는데, 실은 planner가 spec을 온전히 안 넘긴 것이 상류 원인. 5회 이상 반복되면 "planner는 storyboard의 문제 문구·보기·정답·대사·전환/성공 메시지를 원문 그대로 보존하고, 자유문자열로 압축하지 말고 typed 슬롯(questions/dialogue/audio/feedback)에 담는다" 규칙을 planner_system.md에 제안 후보.
 
 ### [typeB-correct-note-card-unwanted] 유형 B 정답 시 스탬프와 함께 뜨는 초록 정답 카드 제거
 
@@ -1716,3 +1974,403 @@
 - 검증: planner 재실행 시 `asset_plan` 19→27, 도장 2장이 **도서 대출일 도장(황동 인장 + 숲청록 손잡이, 정답=펼친 책+체크, 오답=되돌림 화살표)** 으로 계획·생성됐다. 08의 색·모티프는 하나도 안 왔고 craft-examples의 구조 규칙(문구를 도장 면 안쪽 밴드에, 정답/오답 별개 asset, 상태색은 글자·심볼만)은 전부 지켰다.
 - 교훈: **기본값이 있으면 그 값이 필요하다는 사실이 안 보인다.** 컴포넌트가 art를 들고 있는 한 "이 콘텐츠가 그 art를 계획했는가"는 아무도 묻지 않는다.
 - 규칙화 메모: 코드·프롬프트로 반영됨. 연관: [cta-label-overlaid-not-baked](같은 뿌리 — 그쪽도 asset_plan에 CTA가 없던 문제였고 이번 변경으로 CTA 4장이 문구를 구워 계획됨).
+
+### [html-output-bypasses-target-runtime] 최종 산출물이 HTML이라 납품 레포의 공통 런타임·빌드·배포를 못 탐
+
+- 대상: content-harness-pipeline/stages/builder.py, prompts/common_html_contract.md, runs/*/output/
+- 분류 태그: html-output-bypasses-target-runtime
+- 상태: 열림(구현함, 실측 미완)
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-04
+- 최근 발생일: 2026-09-04
+- 사례:
+  - 2026-09-04: 파이프라인 산출물을 `kb_contents_02/gyo6_content`로 옮기려 했으나, HTML은 `external/`(원형 복사)로만 들어갈 수 있고 그 경로는 공통 런타임을 타지 않는다. 사용자: "external로 빠지면 해당 git의 공통으로 타는 로직을 안 타서 의미가 없어."
+- 원인: 파이프라인의 산출물 계약이 `output/index.html` + `common.css` + `common.js`인데, 목표 레포는 `lesson.json`을 읽어 **공통 런타임이 화면을 그린다.** HTML을 주면 헤더 차시 목록·소리 설정 팝업·이전 문제로·완료 인증서·세로 90° 회전이 통째로 빠지고, `dist/`는 `lessons/`에서 재생성되는 파생물이라 손으로 넣어도 다음 빌드에 지워진다. 즉 **형태가 안 맞는 게 아니라 계층이 하나 어긋나 있었다** — 파이프라인은 뷰를 만들고 있었는데 목표 레포가 원한 것은 모델이었다.
+- 조치: builder를 대체하는 종단 경로를 새로 냈다. `prompts/lesson_contract.md`(산출물 계약), `prompts/lesson_builder_system.md`, `schemas/lesson_builder_output.schema.json`, `stages/lesson_builder.py`, `stages/scripts/lesson_check.py`(코드 게이트), `emit_lesson.py`(생성), `install_lesson.py`(배치). planner·인터뷰·asset_generator는 그대로 둔다.
+- 미해결: 품질 루프(design_refine·content_refine)는 HTML을 다시 쓰는 stage라 이 경로에서 살아남지 못한다. 대상을 `lesson.json`으로 바꾸거나 루프를 끄고 써야 한다. 한 차시를 실제 배포까지 통과시킨 뒤 결정한다.
+- 교훈: **산출물이 남의 레포로 갈 때 맞춰야 하는 것은 파일 형식이 아니라 그 레포가 무엇을 소유하는가다.** 목표 레포가 런타임을 소유하면 이쪽이 낼 것은 화면이 아니라 데이터다.
+- 규칙화 메모: 아직 제안하지 않는다. 실측 1회 뒤에 계약 문서를 굳힌다.
+
+### [interview-forces-per-question-text-feedback] 인터뷰가 문항마다 정답·오답 "문장"을 요구하는데 실제로는 도장 이미지만 필요한 차시가 있음
+
+- 대상: .claude/skills/interview-plan/SKILL.md, content-harness-pipeline/stages/scripts/plan_scene_view.py
+- 분류 태그: interview-forces-per-question-text-feedback
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-08
+- 최근 발생일: 2026-09-08
+- 사례:
+  - 2026-09-08: 4학년 1차시(박물관 큰 수) 인터뷰에서 16문항 32칸을 전부 `feedback.correct`/`.wrong` **문장**으로 채우려 했다. 사용자: "오답일 경우 '~얼마가 모자랄까요?'라는 말이 나오고 정답일 경우 '맞아요!~' 이게 나온다고? 그렇게 하지말고 해당 4개 문제 맞추면 feedback_correct 이미지가 나오고, 하나라도 틀리면 feedback_wrong 이미지만 나오면 돼."
+- 원인: SKILL.md의 "피드백 축은 사건이 아니라 문장을 받는다" 조항이 **모든 차시에 일률 적용**된다. 그 조항은 실측 근거가 있지만(정답 반응이 효과음·글로우로만 적혀 학습자가 읽을 문장이 없던 사례), 이 코스는 **정오 도장 이미지가 곧 피드백**인 설계다. gyo6_content 런타임이 `ui.feedbackCorrectRef`/`feedbackWrongRef`로 그것을 이미 지원하고, 실제 `lessons/4-1/01`도 그렇게 쓴다. 즉 "문장이 없다"가 결손이 아닌 경우가 있는데 `plan_scene_view`가 무조건 `???`로 세어 빈 자리 32개를 만들었다.
+- 조치: 이번 차시는 문항별 피드백 문구를 비우고, 피드백을 `ui.feedbackCorrectRef`/`feedbackWrongRef` 한 쌍(도장 이미지)으로 처리한다. 인터뷰는 그 대신 **판정 단위**(문항별인가 화면 단위인가)를 묻는다.
+- 미해결: `plan_scene_view`의 빈 자리 계산이 "피드백=문장"을 전제한다. 도장 기반 차시에서는 결손이 아닌 것을 결손으로 세어, 물어야 할 진짜 자리(판정 단위·도장 그림 내용)를 32개 잡음이 덮는다.
+- 규칙화 메모: 아직 제안하지 않는다. 같은 태그가 다시 나오면 SKILL.md의 피드백 축을 "문장 또는 판정 이미지 — 코스가 어느 쪽인지 먼저 확인한다"로 고치는 안을 올린다.
+
+### [gates-pass-but-screen-empty] 모든 게이트가 통과했는데 화면이 비어 있음 — 검증기가 안 보는 층이 있다
+
+- 대상: content-harness-pipeline/stages/scripts/lesson_check.py, prompts/lesson_contract.md
+- 분류 태그: gates-pass-but-screen-empty
+- 상태: **규칙화됨** (2026-09-22 · 사용자 승인. 반영: `content-harness-pipeline/CLAUDE.md` "옵트인 선언은 그 선언이 요구하는 나머지와 한 묶음이다" + 게이트 `bubble_controls_missing`·`cast_extra_unsized`)
+- 발생 횟수: 9
+- 최초 발생일: 2026-09-08
+- 최근 발생일: 2026-09-22
+- 사례 (모두 4학년 1차시 첫 run):
+  - `id`가 `gyo6-1-1-04-big-numbers-museum`, `lessonNo`가 `1-1-04` — 화풍 참조 세트 이름이 차시 식별자로 샜다. 눈으로 봐서 찾음.
+  - `ui.feedbackCorrectRef` 누락 — 정오 도장 2장을 만들어 배치했는데 띄울 통로가 없었다. 눈으로 봐서 찾음.
+  - `asset_placements` 22장 중 **8장만** lesson.json이 참조 — 타이틀 로고·문제 표면·유물 그림·실생활 카드 4장이 통째로 사라졌다. 빌드 로그의 `assets: 8`이 이상해서 찾음.
+  - `intro`의 배경이 `stageDirections[0].backgroundRef`에만 있고 `step.backgroundRef`가 없어 타이틀 화면이 검은 바탕 — **썸네일을 보고서야 찾음.**
+  - 2026-09-11 (9회차): 사용자 지적 — "**서로 겹치지 않게 배치를 했어야 했는데 왜 안 된 거야?**"
+    화면 검사기(`tools/check_rendered.mjs`)에는 겹침 검사가 **있다.** 그런데 MISSION 2~5 의 겹침을 한 건도 못 잡고 "화면 위반 없음"을 냈다. 이유가 셋이다.
+    ① **문제 화면에 도달하지 못한다.** 학습자 경로를 밟는데 드래그·선 긋기·키패드를 못 풀어 첫 미션 앞에서 멈춘다. 검사기 스스로 `안 붙은 상태 클래스 (8개) — g5-prob · g5-sort · g5-draw · g5-measure · g5-calc · g5-yard …` 라고 보고하고 있었다. **못 본 화면을 "위반 없음"으로 보고한 것이다.**
+    ② 도달했어도 겹침 후보가 **base 클래스 8개뿐**이다(`.pa-prompt` `.pa-stimulus` `.pa-palette` `.pa-canvas-wrap` `.pa-choices` `.kp-pad` `.pa-confirm` `.kp-confirm`). 실제로 겹친 것은 ext 가 그린 자·약도 라벨·편지지(`.g5-*`)라 **후보에 없었다.**
+    ③ `document.querySelector` 라 같은 클래스가 여럿이면 **첫 번째만** 본다.
+    - 조치(2026-09-11): 검사기에 `--scene-jump` 를 붙여 문제 화면까지 도달하게 하고, 겹침 후보에 ext 가 그리는 `.g5-*` 를 넣고, `querySelectorAll` 로 같은 클래스 여러 개를 전부 본다.
+    - **교훈: "위반 없음"은 "가 보고 없었다"일 때만 뜻이 있다.** 못 간 화면 수를 결과에 함께 내지 않으면 도달 실패가 통과로 읽힌다.
+    - 거짓 양성 다듬기(같은 날): 후보를 넓히자마자 **의도된 층**이 무더기로 잡혔다 — 봉투 위의 손글씨 메모와 우표, 점판 안의 점. 한쪽이 다른 쪽 상자에 **통째로 들어가면 겹침이 아니라 얹은 것**이므로 뺀다. 같은 클래스끼리(점·눈금)도 뺀다 — 그건 배치 결함이 아니라 그 규칙의 간격 문제다.
+      `?dev` 패널을 `visibility:hidden` 으로 숨겼더니 **레이아웃 상자가 남아** 배포 중인 4-1/01 에서 "버튼이 화면 아래로 밀렸다" 2건이 났다. `display:none` 으로 바꿨다 — `el.click()` 은 그래도 먹으므로 장면 이동에 지장이 없다.
+      최종 확인: 배포 5개 차시(1-1/04 · 1-2/02 · 2-1/02 · 2-2/02 · 4-1/01) **거짓 양성 0건**, 우리 차시 23건 적발.
+- 원인: 네 건 모두 **데이터가 유효하고, `lesson_check` 51종·gyo6_content `npm run validate`(엄격 모드)·`npm run build:lesson`이 전부 통과**했다. 공통점은 검증기들이 한 방향만 본다는 것이다 — "참조하는 것이 존재하는가"는 보지만 "만들어 놓은 것이 쓰이는가", "런타임이 실제로 읽는 필드에 있는가"는 아무도 보지 않았다.
+- 조치: 게이트 4종 추가 — `id_shape`, `feedback_ref`, `asset_unused`(배치↔참조 양방향 대조), `step_background`(step 타입별 배경 필드). 계약에 참조 자리 표와 배경 규칙을 명시. 네 검사 모두 **배포 중인 4-1/01에 거짓 양성 0건**을 확인했다.
+- 추가 사례 (2026-09-09, 같은 차시 재생성):
+  - `captionText`에 배경 지시(`"외부에서 바라 본 경주 박물관"`)·버튼 문구(`"[시작하기]"`)·표 데이터가 들어갔다. 앞서 넣은 `cut_not_played` 게이트를 **자막을 아무거나 채워서** 통과했다. 화면을 보고서야 찾음.
+  - `stageDirections[].no`가 화면마다 1로 리셋됐다(1,2,3 / 1,2,3,4 / 1,2,3). 눈으로 봐서 찾음.
+  - **한글이 `???`로 깨진 채 79줄** — `lesson.title`·`subject`·`domain`·`acceptance` 전부. 스키마·엄격 검증·빌드를 전부 통과하고 **브라우저 화면에서만** 드러났다.
+- 원인 추가: 규칙을 좁히면 모델이 **규칙은 지키면서 내용을 비우는 쪽으로** 빠져나간다(`cut_not_played` → 자막 채우기). 게이트는 "필드가 있는가"를 보지 "그 자리에 맞는 것이 들어갔는가"를 안 본다.
+- 조치 추가: 게이트 3종 — `caption_is_button`/`caption_is_ref`(자막에 버튼·경로가 오면 위반), `cut_numbering`(step 안에서 `no` 중복), `mojibake`(연속 물음표·U+FFFD). 셋 다 배포 중인 4-1/01에 거짓 양성 0건.
+- 교훈: **스키마가 통과하는 것과 화면이 나오는 것은 다른 층이다.** 이 파이프라인은 HTML 종단에서 design_review(스크린샷 LLM 판정)로 그 층을 봤는데, lesson 종단으로 오면서 그 층이 통째로 사라졌다. 코드 게이트는 "런타임이 읽는 필드를 아는" 만큼만 그 자리를 메울 수 있고, 나머지는 사람이 화면을 봐야 한다. gyo6_content가 `acceptance` 3줄("보인다/만지면/정답")을 요구하는 이유가 이것이다.
+- 미해결: 빌드 뒤 스크린샷을 자동으로 찍어 사람에게 보여주는 단계가 없다. `npm run build:lesson`이 thumbnail.webp를 만들지만 파이프라인이 그것을 확인 대상으로 삼지 않는다.
+- 5번째 사례(2026-09-08): `steps[].exitCondition` 이 세 step 모두 없어 **[시작하기] 를 눌러도 화면이 안 넘어갔다.** 런타임은 `goToStep(step.exitCondition?.transitionTo)` 로 전환하는데 그 값이 undefined 였다. step 에 `id` 도 없어 전환 대상 자체가 없었다. playwright 로 11번 클릭해 보고서야 찾았다. 그쪽 `lessonParser` 도 우리 `lesson_check` 도 `exitCondition` 을 요구하지 않는다.
+- 6번째 사례(2026-09-22): 사용자 — "**말풍선에 `다음` 버튼이랑 스피커 아이콘이 안 들어가있고, 말하지 않는 캐릭터는 엄청 커지는데 왜그런거야?**" 초안 3개(g1l01·g4l07·g4l02)를 전부 실측했다. **둘 다 "옵트인 선언을 했는데 그 선언이 요구하는 나머지를 안 채운" 같은 형태다.**
+  - **말풍선 컨트롤** — base `setSpeechBubble`(player.js:1972)은 `type === 'plain'` 이면 `.bubble-controls` 를 **통째로 안 그린다.** 스피커 버튼도 `다음 ▸` 도 그 안에 있다. `다음 ▸` 은 `type === 'narrationNext'` 에서만 더 붙는다. `resolveBubbleType`(1932)은 `선언 → (선언 없으면) 소리 있으면 narration* → 없으면 plain` 순이다.
+    실측: g4l02 재생 컷 12개 **전부 `bubbleType: "plain"`**, g4l07 31개 **전부 미선언**(→ plain 으로 떨어짐). g1l01 만 `narrationNext` 14개.
+    **소리를 선언하지 않기로 한 결정(D8·A9)이 여기로 샜다.** 오디오 파일이 없어 `sound` 를 비웠더니, 선언을 안 한 컷은 자동으로 `plain` 이 되어 **소리와 무관한 `다음 ▸` 까지 같이 사라졌다.** 계약서는 `bubbleType` 을 "쓴다면 셋 중 하나"라는 **선택 필드**로만 적어 두어 무엇을 고르면 무엇이 사라지는지 말하지 않는다.
+  - **말하지 않는 캐릭터가 커짐** — `ui.castOnStage: "keep"` 을 선언하면 base `updateCastExtras`(1876)가 `.charzone.cast-extra` 상자를 만들고 그 안에 **클래스도 id 도 없는 `<img>`** 를 넣는다. base CSS 는 말하는 쪽만 `#charImg{width:100%}`(player.css:487)로 잡고, `.cast-extra img` 에는 **`width` 를 주지 않는다**(2390행은 `display`·`filter` 뿐). 그래서 원본 픽셀(1024×1536) 그대로 떠서 혼자 거대해진다.
+    실측: 초안 3개가 **전부 `castOnStage:"keep"` 을 선언**했고 **전부 `.cast-extra img` 규칙이 0건**이다. 배포 차시는 손으로 메워 두었다 — `3-1/05` 는 `#app .cast-extra img{width:100%}`, `4-1/01` 은 `#app #charImg, #app .cast-extra img{height:var(--i1-char-h)}`.
+  - 공통점: **게이트·빌드·화면검사가 전부 통과한다.** `check_rendered.mjs` 는 "겹쳤는가"는 보지만 "있어야 할 컨트롤이 있는가"·"인물이 제 크기인가"는 안 본다.
+- 규칙화 메모: **6회 누적 — rule 승격을 제안한다(2026-09-22).** 앞서 5회 시점에 적어 둔 "배치 후 thumbnail.webp를 사람에게 보여준다"에 더해, 이번 사례가 **코드로 막을 수 있는 축**을 두 개 보여 준다. `content-harness-pipeline/CLAUDE.md` "실패에서 배운 것"에 아래를 제안한다.
+
+  > **옵트인 선언은 그 선언이 요구하는 나머지와 한 묶음이다.**
+  > base 가 `ui.*` 로 켜 주는 기능은 켜기만 해서는 화면이 완성되지 않는다.
+  > 켠 쪽이 나머지를 채운다 — 무엇을 채워야 하는지 모르면 **켜지 않는다.**
+  > · `ui.castOnStage: "keep"` → `player-ext.css` 에 `#app .cast-extra img { width: 100% }`.
+  >   base 는 말하는 인물만 `#charImg{width:100%}` 로 잡고 남은 인물은 크기를 안 준다.
+  > · 컷의 `bubbleType` → **생략하면 `plain` 이고, `plain` 은 스피커·`다음 ▸` 을 통째로 지운다.**
+  >   대사 컷은 `narrationNext` 를 기본으로 적는다. 소리 파일 유무와 무관하다.
+
+  함께 제안하는 게이트 2종(둘 다 배포 차시 거짓 양성 0건을 먼저 확인한다):
+  · `bubble_controls_missing` — 재생되는 대사 컷이 `bubbleType` 을 안 적었거나 `plain` 이면 위반.
+    단 **자막 전용 컷(`captionText` 만)은 제외** — 거기엔 말풍선이 없다.
+  · `cast_extra_unsized` — `ui.castOnStage: "keep"` 인데 `player-ext.css` 에 `.cast-extra img` 의
+    `width`/`height` 규칙이 없으면 위반.
+
+### [no-per-lesson-css-layout-raw] player-ext.css 를 안 만들어 차시 배치가 base 기본값 그대로 나옴
+
+- 대상: content-harness-pipeline/prompts/lesson_contract.md, stages/scripts/lesson_check.py
+- 분류 태그: no-per-lesson-css-layout-raw
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-08
+- 최근 발생일: 2026-09-08
+- 사례:
+  - 2026-09-08: 4학년 1차시를 빌드해 화면을 보니 레이아웃이 정돈되지 않았다. 사용자: "레이아웃이 개똥이야."
+    확인해 보니 `player-ext.css` 가 **0줄**이었다. gyo6_content 기존 차시는 2,838~7,285줄(평균 4,000줄 이상)을 쓴다.
+- 원인: `lesson_contract.md` 가 `player-ext.css` 를 "차시 전용 스타일. 필요 없으면 만들지 않습니다"로 적어
+  **선택 사항처럼 보이게** 했다. 실제로는 캐릭터·말풍선 배치, 문제 표면 크기, 태블릿 글자 크기가 전부 여기서
+  정해지므로 거의 항상 필요하다. 원문 1쪽이 요구한 "태블릿에서 글자 크기를 키워 달라"도 이 파일에서 하는 일이다.
+  `player-ext.js` 0줄은 원자 어휘로 다 표현됐다는 뜻이라 성과지만, `player-ext.css` 0줄은 성격이 정반대다.
+- 미해결: 이번 run 에는 디자인 리뷰가 **0회**였다. lesson 종단으로 오면서 품질 루프를 통째로 뺐고
+  (토큰 640K→300K), 그 결과 화면을 본 게이트가 하나도 없었다. 코드 게이트는 "런타임이 읽는 필드가 있는가"
+  까지만 보고 "화면이 보기 좋은가"는 못 본다.
+- 규칙화 메모: 아직 제안하지 않는다. 다음 run 에서 계약을 고쳐(`ui.sceneLayout:"lesson"` + player-ext.css 필수화)
+  결과가 나아지는지 먼저 확인한다.
+
+
+### [encoding-mojibake-from-shell-read] 참조 파일을 cp949로 읽어 깨진 한글이 산출물로 굳음
+
+- 대상: content-harness-pipeline/CLAUDE.md, stages/scripts/lesson_check.py
+- 분류 태그: encoding-mojibake-from-shell-read
+- 상태: 조치됨
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-09
+- 최근 발생일: 2026-09-09
+- 증상: `lessons/4-1/02`의 `lesson.json` 79줄에서 한글이 `만지면: keypad ??? ?? ??? ? ??.` 로 깨졌다. 화면에는 드롭존 안내가 `???? ?? ?? ???? ?`, 버튼이 `??`로 떴다.
+- 원인: 이 장비의 Windows PowerShell 5.1은 `-Encoding`이 없으면 **UTF-8 파일을 cp949로 디코드한다.** 에이전트가 `Get-Content -Raw`로 참조 차시와 계약서를 열어 깨진 글자를 보았고, **본 대로 옮겨 적었다.** 모델의 structured output(`*_lesson_builder.json`)에는 깨짐이 0건이고 파일에만 79건인 것이 증거다.
+- 왜 안 잡혔나: 깨진 한글도 유효한 UTF-8 문자열이라 JSON 스키마·gyo6_content 엄격 검증·빌드가 전부 통과한다. 인코딩 문제는 **파일이 깨진 것이 아니라 읽는 쪽이 깨진 것**이라 파일만 봐서는 보이지 않는다.
+- 조치: (1) `check_mojibake` — 연속 물음표 2개 이상과 U+FFFD를 오류로, 낱자 자모를 경고로 올린다. 우리 산출물 79건 검출, 배포 중인 4-1/01 0건. (2) `content-harness-pipeline/CLAUDE.md` 최상단에 `Get-Content -Raw -Encoding utf8` 명령 형태와 "`???`를 그대로 옮겨 적지 않는다"를 박았다. 에이전트가 그 파일을 실제로 여는 것이 감사 로그로 확인된다.
+- 남은 위험: 이 규칙은 lesson 종단에만 걸려 있다. `asset_generator`·`planner`도 같은 방식으로 한글 참조를 읽으므로 같은 오염이 가능하다.
+
+
+### [opaque-asset-checkerboard] 투명해야 할 이미지가 체커보드를 그린 채 불투명하게 나옴
+
+- 대상: content-harness-pipeline/stages/scripts/asset_alpha.py, runner.py
+- 분류 태그: opaque-asset-checkerboard
+- 상태: 조치됨
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-09
+- 최근 발생일: 2026-09-09
+- 증상: 사용자 지적 — "왜 이미지들은 배경이 투명하지 않은거야". 문제 화면의 안내판 뒤에 회색 격자 사각형이 그대로 얹혀 있었다.
+- 원인: 이미지 생성기는 알파 채널을 못 낸다. "투명 배경"을 주문하면 **투명을 흉내 낸 격자무늬를 픽셀로 그려서** RGB로 돌려준다. 22장 중 `problem_surface`·`place_value_table`·`stamp_correct`·`stamp_wrong` 4장이 그 상태였다. 도장은 화면 위에 겹치는 것이라 체커보드가 통째로 얹혔다.
+- 왜 안 잡혔나: `tools/remove_light_checkerboard.ps1`이 **이미 있었지만 파이프라인 어디에서도 안 불렸다.** `.py`·`.md` 전체 grep에서 참조 0건인 고아 도구였고, 에이전트가 그때그때 생각나면 손으로 돌렸다. 그래서 어떤 회차는 고쳐지고 어떤 회차는 안 고쳐졌다.
+- 조치: (1) `stages/scripts/asset_alpha.py`로 포팅 — 테두리에서 시작해 밝고 무채색인 영역만 이어서 지운다(scanline flood fill). 테두리 연결을 보는 이유는 밝기 조건만으로 지우면 캐릭터 흰자위까지 뚫리기 때문. (2) `runner.py`의 `asset_compress` **앞**에 `asset_alpha` 단계를 넣었다. 압축 뒤에 고치면 알파 없는 webp가 이미 배치를 탄다. 재생성 경로(`asset_revision`)에도 같이 넣었다. (3) 판정 기준은 planner가 이미 `composition_notes`에 적어 둔 "투명 배경"이다. 역할을 새로 분류하지 않는다.
+- 실측: 4장 3초에 복구(투명 비율 33~58%), 항아리 캐릭터의 흰자위는 보존됨.
+- 교훈: **도구가 있는데 아무도 안 부르면 없는 것과 같다.** 에이전트 재량에 맡긴 후처리는 회차마다 결과가 달라진다.
+
+### [acceptance-template-not-layout] acceptance 3줄이 배치도가 아니라 빈 문장
+
+- 대상: content-harness-pipeline/stages/scripts/lesson_check.py, prompts/lesson_contract.md
+- 분류 태그: acceptance-template-not-layout
+- 상태: 조치됨
+- 발생 횟수: 2
+- 최초 발생일: 2026-09-09
+- 최근 발생일: 2026-09-09
+- 증상: 사용자 지적 — "레이아웃이 개똥이야". `만지면:` 줄이 20개 문항에서 글자까지 동일했다(`"학습자가 화면의 보기나 입력 장치를 조작하고 확인하면 선택 또는 입력한 값이 유지된다."`).
+- 원인: 배포 중인 4-1/01은 `acceptance`에 "왼쪽 지갑과 오른쪽 낸 돈 판, 아래 확인 버튼만 있다. 아이 캐릭터와 말풍선은 나오지 않는다"처럼 **자리를 적고**, 그 마지막 문장이 그대로 `#app.i1-pay .charzone { display: none; }`가 된다. 배치를 acceptance에 안 적으면 `player-ext.css`에도 안 써진다. 우리 CSS가 1KB, 4-1/01이 40KB인 차이가 여기서 온다.
+- 왜 규칙으로 안 됐나: 계약서에 ❌/✅ 대비 예시를 넣은 **다음 회차에서도 똑같이 나왔다.** 프롬프트 규칙은 "이런 문장을 써라"를 전달하지만 모델은 문법만 맞추고 내용을 비운다.
+- 조치: `check_acceptance_variety` — 같은 골격의 문장이 3곳 이상에서 반복되고 **그 장면들의 원자가 서로 다르면** 위반. 반복 자체는 위반이 아니다(키패드 문항 6개가 같은 문장인 것은 실제로 같기 때문). 조작이 다른데 문장이 같으면 그 문장이 화면을 설명하지 않는다는 뜻이다. 우리 3건 검출, 배포된 4-1/01·2-1/02·1-1/04 전부 0건.
+
+
+### [gate-evasion-by-reformatting] 게이트의 판정 방식을 피해 가는 형태로 다시 써서 통과함
+
+- 대상: content-harness-pipeline/stages/scripts/lesson_check.py
+- 분류 태그: gate-evasion-by-reformatting
+- 상태: 조치됨
+- 발생 횟수: 3
+- 최초 발생일: 2026-09-08
+- 최근 발생일: 2026-09-09
+- 사례:
+  - `cut_not_played`(대사/자막 없는 컷은 재생 안 됨)를 넣자, **자막에 배경 지시·버튼 문구·표 데이터를 채워서** 통과했다. 규칙은 지켰고 내용은 틀렸다.
+  - `caption_is_table`을 "줄바꿈 3칸 이상, 각 칸 12자 이하"로 재자, 표를 `구분 / 성인 / 어린이` 형태로 다시 포맷해 **칸 길이 제한을 넘겨서** 통과했다. 화면에서 뭉개지는 것은 그대로였다.
+  - `acceptance` 축 다양성을 세 축 전부에 요구하자, 되먹임 3회를 전부 `정답:` 축 문장 늘리기에 썼다. 그 축은 원래 정형적이라 늘릴 차이가 없었고, 배치는 그만큼 안 좋아졌다.
+- 원인: 게이트를 **모양(길이·개수·존재)** 으로 재면 모델은 그 모양만 피한다. 의도가 아니라 측정치를 최적화하는 것이고, 이건 모델 잘못이라기보다 측정 설계의 문제다.
+- 조치: 판정 기준을 **모양에서 자리로** 바꿨다.
+  - `caption_is_table`(길이로 잼) → `caption_in_round`(round 컷에 자막이 있으면 위반). 배포된 차시 셋의 round 컷 12개에 자막이 0건이라는 관측이 근거다. 포맷을 바꿔도 자리는 못 바꾼다.
+  - `acceptance` 다양성은 `보인다:`·`만지면:` 두 축으로 좁혔다. `정답:`은 판정 기준이라 같은 것이 정상이다.
+- 교훈: **게이트를 만들 때 "이걸 어떻게 피할 수 있나"를 먼저 생각한다.** 피할 수 있는 축이면 그 축으로 재지 않는다. 그리고 새 게이트는 배포된 차시 3개에 돌려 거짓 양성 0건을 확인한 뒤에만 넣는다 — 그 확인이 축이 옳은지도 같이 말해 준다.
+
+
+### [render-check-closes-the-loop] 화면에서만 드러나는 결함을 코드로 잡게 됨
+
+- 대상: content-harness-pipeline/tools/check_rendered.mjs, emit_lesson.py
+- 분류 태그: gates-pass-but-screen-empty
+- 상태: 조치됨
+- 발생일: 2026-09-09
+- 배경: 이틀간 잡은 결함 12종이 **전부** 데이터 게이트·gyo6_content 엄격 검증·빌드를 통과한 뒤 사람 눈으로만 발견됐다. 데이터가 유효한 것과 화면이 멀쩡한 것은 다른 문제다.
+- 조치: `tools/check_rendered.mjs` — 빌드된 차시를 실제로 열어 끝까지 클릭하며 본다. 보는 것은 **렌더에서만 드러나는 것**뿐이다(버튼이 화면 밖으로 밀림, 형제 요소 겹침, `[object Object]`, 깨진 한글, 못 불러온 그림, 진행 막힘, 스크립트 오류). 데이터로 확정할 수 있는 것은 `lesson_check.py` 가 이미 보므로 중복하지 않는다.
+- **되먹임 통로**: `emit_lesson.py --screen-report <파일>` 로 지난 회차의 화면 결과를 첫 시도 프롬프트에 싣는다. 이 통로가 없으면 데이터 게이트를 통과한 산출물은 화면이 깨져 있어도 모델에게 **아무 신호도 가지 않는다** — 계약서에 뷰포트 조항만 넣고 다시 돌렸더니 산출물이 바이트까지 같았다.
+- 만들면서 걷어낸 거짓 양성 5종 (전부 배포 중인 차시에 돌려서 발견):
+  - `console_error` — 프록시 SSL 잡음. 4-1/01 에도 뜸 → 네트워크 오류 제외
+  - `stuck` — 문제 화면에서 답을 기다리는 것이 정상 → 넘어가는 버튼이 있을 때만 판정
+  - `broken_image` — 전환 중 `src=""` 인 img. 1-1/04 에 뜸 → 경로가 있는 것만 판정
+  - `dead_state_class` — 훑기가 문제를 못 풀어 뒤쪽에 못 감. 4-1/01 이 19개 → 위반이 아니라 참고로 강등
+  - `overlap` — 부모가 자식을 감싸는 것. `.pa-canvas-wrap` ⊃ `.pa-palette` → `contains()` 로 제외
+- 교훈: **새 검사는 배포 중인 차시 3개에 먼저 돌린다.** 거짓 양성이 나오면 그것이 "축이 틀렸다"는 신호다. 다섯 번 다 그렇게 잡았다.
+- 한계: 훑기가 문제를 풀지 못해(드래그·키패드 입력) 뒤쪽 화면에 못 간다. 거기서 나온 "안 붙은 상태 클래스"는 위반이 아니라 참고다.
+
+
+### [bundle-not-transplant-ready] 차시 번들이 이식하면 그림 0장 · 런타임 옵트인 미선언으로 base 기본 화면이 됨
+
+- 대상: content-harness-pipeline/prompts/lesson_builder_system.md, prompts/lesson_contract.md, schemas/lesson_builder_output.schema.json, stages/scripts/lesson_check.py, install_lesson.py
+- 분류 태그: bundle-not-transplant-ready
+- 상태: 조치됨
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-10
+- 최근 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 사용자 — "여기 초안 파이프라인대로 만들면 kb_contents_02의 gyo6_content에 이식했을 때에도 잘 나오게." 최신 레포 기준으로 `runs/2026-09-08_5cbd474e` 를 재검사하니 `asset_placements` 가 **빈 배열**이었다. `install_lesson.py` 는 이 목록을 순회해 복사하므로 **이미지를 0장 옮긴다.** 그 run 의 `manifest.json` 도 `assets: 0` 이다(배달된 4-1/01 은 58장).
+- 원인 셋:
+  1. **프롬프트가 `asset_placements` 를 한 번도 언급하지 않았다.** schema `required` 에만 있어서 모델이 빈 배열로 요건을 만족시켰다. schema 가 요구하는 것과 프롬프트가 가르치는 것이 어긋나면 모델은 싼 쪽을 고른다.
+  2. **schema 의 `dest_path` 설명이 캐릭터 감정 경로를 `assets/character/{idle,happy,...}.png` 로 못 박아 놨다.** 인물이 둘 이상이면 그 이름은 충돌하고, 실제 생성 에셋은 `child-idle`·`curator-idle` 이다. 그래서 `lesson.json` 이 소스 없는 `idle.png`·`happy.png`·`praising.png` 를 가리켰다(22 참조 중 3장). 배달본은 `assets/character/child-idle.png` 로 고쳐져 있었다.
+  3. **런타임이 읽는 배치·연출 옵트인을 계약서가 몰랐다.** `ui.stageRail`·`ui.castOnStage`·`ui.speechBubble.side`·step `character.position` 이 계약서에 0회 등장했다. 선언이 없으면 그 UI 는 **안 뜨는 것이 정상 동작**이라 아무 오류도 없이 base 기본 화면이 나온다.
+- 조치:
+  - `lesson_builder_system.md` 에 "asset_placements — 참조와 배치는 1:1" 절 추가. `ref_not_placed` 게이트가 무엇을 보는지 프롬프트에서 먼저 말한다.
+  - schema `dest_path` 설명을 `assets/character/{캐릭터키}-{감정}.png` 로 고쳤다. 인물이 하나여도 prefix 를 쓴다(에셋 생성기가 그렇게 낸다).
+  - `lesson_contract.md` 에 "런타임이 읽는 배치 옵트인" 절 추가 — 런타임 실측으로 확인한 것만 싣는다(`stageRail` 5회·`castOnStage` 2회·`speechBubble.side`·`position` 9회 참조). 그쪽 `CLAUDE.md` 가 `ui.speechBubble.position` 이라고 적어둔 것은 **stale** 이다 — `player.js:1689` 는 `side` 를 읽는다.
+  - `lesson_check.check_ui_declarations` 추가 — 런타임이 안 읽는 `ui` 키(`titleLogoRef`·`headerPanelRule`·`tabletTextRule`)와 `speechBubble.position` 오타 선언을 잡는다.
+- 규칙화 메모: 아직 제안하지 않는다. `[no-per-lesson-css-layout-raw]` 와 같은 뿌리(배치 옵트인 미선언)이므로 다음 run 결과를 보고 두 항목을 함께 승격 검토한다.
+
+
+### [doc-vs-runtime-drift-in-target-repo] 대상 레포의 문서를 따라 쓰면 런타임이 안 읽는 필드가 나옴
+
+- 대상: content-harness-pipeline/prompts/lesson_contract.md, stages/scripts/lesson_check.py
+- 분류 태그: doc-vs-runtime-drift-in-target-repo
+- 상태: 조치됨
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-10
+- 최근 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: gyo6_content `CLAUDE.md` 의 "ui 객체" 절은 말풍선 위치를 `ui.speechBubble.position: "bottom-right"` 로 적는데, `runtime/src/player.js:1689` 는 `L.ui?.speechBubble?.side` 를 읽고 허용값은 `above|left|right` 다. 문서대로 쓰면 **선언이 죽는다.**
+  - 2026-09-10(같은 날, 자기 교정): `ui.titleLogoRef` 를 "아무도 안 읽는 필드"로 판정해 계약서와 검사에 넣었는데 **틀렸다.** base 는 그 값을 안 읽지만(`renderIntroStart` 가 `assets/ui/title-logo.png` 를 하드코딩) 그쪽 `lessonParser.collectAssets` 가 lesson.json 의 **모든 문자열**을 훑어 manifest 에 올린다. 그래서 그 선언은 **생성·추적 장치**다. 배포 차시 10개가 적어 두는 이유이고, 안 적은 7차시는 manifest 에도 없다(파일은 사람이 넣어 화면은 나온다).
+- 원인: `atom_registry.py` 가 원자 어휘에서 이미 겪은 것과 같은 드리프트다(문서 표가 런타임보다 엄격했다). 그때 얻은 교훈은 "레지스트리를 읽을 수 있으면 언제나 그쪽을 쓴다" 였는데, `ui` 옵트인 축에는 그 원칙을 적용하지 않고 있었다.
+- 조치: 계약서에 싣기 전에 `runtime/src/player.js` 에서 참조 횟수를 세어 확인했다. 안 읽히는 필드는 계약서에 "쓰지 않는다" 로 명시하고 `check_ui_declarations` 가 잡는다. titleLogoRef 는 판정을 뒤집어, "선언은 생성·추적용 · 파일명은 렌더링용" 으로 계약서를 고치고 초안 경로 전용 검사(`check_title_logo_tracked`)를 넣었다.
+- 교훈 둘:
+  - **대상 레포의 문서는 후보이고 런타임이 판정이다.** 새 필드를 계약서에 넣을 때 `grep -c` 로 참조 횟수를 먼저 센다.
+  - **`player.js` 참조 0건이 "안 쓰인다"는 뜻은 아니다.** 읽는 층이 런타임 말고도 셋 더 있다 — 빌드(`distBuilder`: `ui.cursorRef`), 에셋 수집(`lessonParser.collectAssets`: 문자열 전수), 차시 ext(`step.titleLogoRef`). 참조를 셀 때 `runtime/`·`agent/`·`lessons/*/*/player-ext.js` 를 함께 센다.
+
+
+### [two-entry-points-one-job] lesson.json 을 만드는 스크립트가 둘이라 무엇을 쓸지부터 정해야 함
+
+- 대상: content-harness-pipeline/draft_lesson.py, emit_lesson.py, build_lesson.py
+- 분류 태그: two-entry-points-one-job
+- 상태: 조치됨
+- 발생 횟수: 1
+- 최초 발생일: 2026-09-10
+- 최근 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 사용자 — "draft_lesson.py는 뭐고 emit_lesson.py는 뭐야?? 뭐가 다른거야..." → "하나로 합쳐!!!! 왜 둘이 다른거야...."
+- 원인: 두 파일이 **같은 일**을 한다. 되먹임 루프, `.rejected` 후 삭제, schema 검증, `lesson_check` 호출, manifest 생성, 종료 코드, 요약 출력이 줄 단위로 거의 같고(586줄 중 대부분), 실제로 다른 것은 **무엇을 근거로 만드는가** 하나였다 — `planner.json` 이냐 스토리보드 원본이냐. 그 하나의 차이를 파일 두 개로 표현했기 때문에 사용자가 매번 "어느 스크립트를 쓸 것인가"를 먼저 결정해야 했고, 그 결정은 사실 run 디렉토리를 보면 알 수 있는 것이었다.
+- 조치: `build_lesson.py` 하나로 합쳤다. 인자로 준 것이 **디렉토리면 계획에서, 파일이면 원본에서** 만든다. 근거에 따라 달라지는 것만 모드 기술자(`Source`)로 모으고 나머지는 한 몸이다.
+  - 합친 것: CLI, 되먹임 루프, `reject()`, schema 검증, 검사 호출, manifest 생성, 요약, 종료 코드.
+  - **합치지 않은 것: 프롬프트 2개와 output schema 2개.** 모델이 하는 일이 실제로 다르다 — 한쪽은 "PDF 를 페이지 단위로 끝까지 읽고 대응표를 만든다", 다른 쪽은 "planner 의 sections 를 steps 로 접는다". 이걸 한 프롬프트에 넣으면 두 지시가 서로를 흐리고, AGENTS.md 의 "역할별 system prompt 를 섞지 않는다" 에도 걸린다.
+  - `draft_lesson.py` · `emit_lesson.py` 는 한 줄 안내를 찍고 새 스크립트로 넘기는 얇은 shim 으로 남겼다(문서·기존 명령이 안 깨지게).
+- 후속(2026-09-10, 같은 날): shim 두 개도 **제거**했다. 사용자 판단에 맡겼는데 "알아서 해줘" 로 위임받았고, 23줄짜리 통로라도 파일 목록에 옛 이름이 남아 있으면 "어느 쪽을 쓸 것인가" 를 다시 묻게 만든다고 봤다. 옛 명령은 이제 "파일이 없다" 로 끝나는 것이 맞다. 되살릴 수 있게 스크래치패드에 옮겨 뒀다.
+- 후속 발견: 합치고 나서야 **참조 블록 비대칭**이 드러났다. `COMMON_CLASS_NAMES` · `LESSON_EXT_HOOKS` · `LAYOUT_REFERENCE` 세 블록이 계획 근거 프롬프트에만 붙어 있었고, 원본 근거는 base 가 실제 쓰는 class 이름을 모른 채 `player-ext.css` 를 19KB 썼다(모델이 `draft_notes` 에 "런타임으로 확인하지 못했다" 고 스스로 적었다). `lesson_drafter.build_prompt` 가 `gyo6_root` 를 받아 같은 블록을 싣게 고쳤다(프롬프트 31,396자 → 47,518자). **파일이 둘이던 동안에는 이 비대칭이 보이지 않았다 — 합친 값이 여기서 한 번 나왔다.**
+- 규칙화 메모: 아직 제안하지 않는다. 다만 이 건은 "구조가 사용자에게 결정을 떠넘기고 있는가" 를 보는 축이라, 같은 성격이 또 나오면 규칙 후보다.
+
+
+### [last-gate-needs-manual-server] 화면 검사가 수동으로 띄운 서버를 요구하고, 없으면 스택 트레이스로 죽음
+
+- 대상: content-harness-pipeline/tools/check_rendered.mjs
+- 분류 태그: gates-pass-but-screen-empty
+- 상태: 조치됨
+- 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 파이프라인 점검 중 `node tools/check_rendered.mjs {GYO6} 4-1/01` 을 돌렸더니 `page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3050/...` 가 **처리되지 않은 예외**로 터졌다. `npm run serve` 를 다른 창에서 먼저 띄워야 하는데 그 요구가 코드에 없고 주석에만 있었다.
+- 왜 문제인가: 이건 파이프라인의 **마지막 관문**이다. 데이터 게이트를 다 통과한 산출물의 화면 결함을 잡는 유일한 자리인데, "서버를 안 띄웠다"는 이유로 건너뛰어지면 그 관문은 없는 것과 같다. 게이트를 세워 두고 실행 조건을 사람 기억에 맡기면 결국 안 돌아간다.
+- 조치: 서버가 없으면 `dist/{슬롯}/{id}/index.html` 을 file:// 로 직접 연다. `review_lesson.py` 는 처음부터 그렇게 해 왔으므로 두 화면 검사 도구의 실행 조건이 같아졌다. 둘 다 없으면 빌드 명령을 알려주고 exit 2.
+  - 구현 중 함정 하나: 실패한 항해 뒤에 다시 항해하면 `chrome-error://chromewebdata/` 로 가는 앞 항해와 경합해 또 죽는다. 그래서 **브라우저를 띄우기 전에** `fetch` 로 서버를 떠보고 목적지를 정한다.
+- 검증: 배포된 4-1/01 에 서버 없이 돌려 `화면 위반 없음 · exit 0`. 상태 클래스 20개 미도달은 참고 항목이라 위반이 아니다.
+
+
+### [images-generated-elsewhere-without-instructions] 이미지를 그쪽 빌드가 굽는데 무엇을 그릴지 알려주는 통로가 비어 있었음
+
+- 대상: content-harness-pipeline/prompts/lesson_contract.md, prompts/visual_design_system.md, prompts/senior_developer_system.md, stages/scripts/lesson_check.py
+- 분류 태그: images-generated-elsewhere-without-instructions
+- 상태: 조치됨
+- 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 사용자 — "이미지를 우리가 만들지 않아?" 확인해 보니 `produce_lesson.py` 5단계 어디에도 이미지 생성이 없고(`stages/asset_generator.py`는 아무도 안 부른다), 그쪽 `npm run build:lesson` 의 imagegen 이 굽는 구조였다. 그런데 우리 산출물의 `assetPrompt` 가 **0개**였다.
+- 원인: 종단이 HTML 에서 lesson.json 으로 옮겨 오면서 에셋 생성 단계가 빠졌는데, **"무엇을 그릴지"를 전달하는 통로를 대신 만들지 않았다.** 그쪽 `imageGenerator._backgroundPromptFromStep` 은 `artDirection` 과 `step.assetPrompt` 만 읽고, 둘 다 없으면 파일 이름으로 지어낸다(`moon-jar.png` → "moon jar in educational setting"). 배경처럼 요구사항이 많은 그림에 이 폴백이 걸리면 화면이 UI 에 가린다 — `reservedUiZones` 가 그걸 막는 유일한 통로다.
+- 조치(선택지 B — 그림은 그쪽이 굽되 지시는 우리가 준다):
+  - `lesson_contract.md` 에 "그림은 우리가 굽지 않습니다" 절 추가. 5개 필드와 각각이 그쪽 프롬프트 어디로 가는지, 배경은 반드시 쓸 것.
+  - `visual_design_system.md` 가 `asset-plan.md` 를 **assetPrompt 가 될 형태**로 쓰게 하고, `senior_developer_system.md` 가 그것을 `step.assetPrompt` 로 옮기게 했다.
+  - `check_step_asset_prompt` 를 그쪽 `_assetPromptFor` 와 같은 규칙(키 이름이 `assetPrompt` 로 끝나는 것 전부)으로 고쳤다. 예전에는 `step.assetPrompt` 하나만 봐서 다중 키 형태(배포 2-2/05 가 7개)를 통째로 놓쳤다.
+  - `check_background_asset_prompt` 추가 — 배경 참조에 지시가 없으면 경고.
+- 검증: 배포 18차시 대조 — 형식 오류 **10건이 전부 2-1/04 한 차시**에서 나왔고, 확인해 보니 그 차시가 `targetAsset` 대신 **`target`** 을 써서 **지시 5개가 그쪽 생성기에 전부 무시되고 있었다**(오류도 안 나고 그림만 엉뚱해진다). 거짓 양성이 아니라 진짜 결함이라 그대로 두고 계약서에 그 실측을 적었다. 나머지 17차시는 0건.
+- 교훈: **단계를 뺄 때는 그 단계가 나르던 정보가 어디로 가는지 함께 본다.** 에셋 생성 단계를 뺀 것은 옳았지만, 그 단계가 들고 있던 "무엇을 그릴지"가 갈 곳을 안 만들어서 통로가 조용히 끊겼다.
+
+
+### [images-baked-in-house] 그림을 우리가 굽기로 하고 파이프라인에 단계를 되살림
+
+- 대상: content-harness-pipeline/produce_lesson.py, prompts/asset_render_system.md, schemas/asset_render_output.schema.json, install_lesson.py
+- 분류 태그: images-baked-in-house
+- 상태: 조치됨(그림 한 장 실측 통과, 전체 run 미확인)
+- 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 사용자 — "그림도 우리가 굽자!" (앞서 B안으로 지시만 넘기기로 했다가 뒤집음)
+- 어떻게 굽는지 확인한 방법: run `2026-09-08_5cbd474e` 의 `5cbd474e_agent_audit.jsonl` 에 실제 명령이 남아 있었다. **codex 에이전트가 자기 이미지 생성 도구로 그린 뒤** `%APPDATA%/orca/codex-accounts/<계정>/home/generated_images/<세션>/exec-<uuid>.png` 를 PowerShell `Copy-Item` 으로 목적지 이름(`moon-jar.png`)에 복사했다. 우리가 API 를 부르는 구조가 아니다.
+- 조치:
+  - `asset_render` 단계를 **`senior_developer` 뒤에** 넣었다. 앞에 두면 개발자가 다른 이름을 써서 참조가 어긋난다. 뒤에 두면 `lesson.json` 이 확정한 경로에 정확히 그 이름으로 저장하면 되므로 어긋날 자리가 없다.
+  - **provider 를 codex 로 고정**했다(`provider_for`). 이미지 생성 도구가 거기에만 있어서, `--provider claude` 로 돌려도 그림 단계만 codex 로 간다. 안 그러면 그릴 수단 없이 세 번 재시도하고 끝난다.
+  - 되먹임 재시도를 이 단계에도 걸었다. 되먹이는 것은 **아직 파일이 없는 그림 목록**이다.
+  - `install_lesson.copy_asset_tree` — 번들이 그림을 들고 있으면 `lesson/assets/` 를 통째로 옮긴다. 없으면 예전처럼 그쪽 imagegen 에 맡긴다. 두 경우가 한 코드에서 갈린다.
+  - manifest 에 **실제 파일 크기**를 적는다. 크기가 0 이 아니면 그쪽 빌드가 "이미 있는 에셋" 으로 보고 다시 생성하지 않는다.
+  - `.png` 를 유지한다. 예전 파이프라인은 webp 로 압축했는데, 그쪽 `collectAssets` 가 png/jpg 만 훑어서 webp 는 manifest 에서 조용히 빠진다.
+- 프롬프트에 옮겨 온 것(main 의 `asset_generator_system.md` 에서): 텍스트 판단 기준("변하느냐 고정이냐"), 상태 프레임 스프라이트 금지, 정오 도장의 상태색은 글자·심볼에만, 캐릭터 정체성 고정, 투명 배경을 격자무늬로 흉내내지 말 것, 배경에 캐릭터·말풍선·버튼 굽지 말 것.
+- 검증(2026-09-10, 그림 한 장 굽기 실측): **codex 이미지 도구가 이 세션에서 동작한다.**
+  - 지정한 경로에 지정한 이름 그대로 저장됨 — `assets/ui/probe-stamp.png`, 512x512, 347,521 bytes
+  - **진짜 알파 투명** — RGBA, 네 모서리 알파 0. 격자무늬를 픽셀로 그리는 실패가 재현되지 않았다
+  - **한글 "잘했어요" 가 도장 면 안에 새겨졌다** — 위에 얹힌 것이 아니라 아트와 통합됨. 계약서의 "글자는 장식이 아니라 핵심 디자인" 조항이 지켜졌다
+  - 보고서가 `asset_render_output` schema 를 통과했다
+  - 한 장에 약 1분. 42장짜리 차시면 직렬로 40분 이상이라 **병렬 배치가 필요하다**(예전 파이프라인은 15 병렬이었다)
+- 배치 병렬 실측(2026-09-10): 그림 3장을 배치 3개로 나눠 병렬 3으로 굽는 데 **160초**. 배치 로직은 42장짜리 실제 번들로 검증 — 배치 8개, 인물 묶음이 쪼개지지 않고, 역할(background/character/ui)이 섞이지 않는다. 배치당 약 6분이면 42장이 **2파 × 6분 ≈ 12분**이다.
+- 그때 나온 결함 하나: 캐릭터 그림의 **둘러싸인 안쪽**(머리카락 사이·양말 옆)에 격자가 불투명하게 남았다. 모서리는 알파 0(진짜 투명), 알파=0 이 70.3% / 알파=255 가 29.7% 로 컷아웃 자체는 깔끔했다. 바깥만 키잉하고 안쪽을 놓친 것이다.
+- **판정기를 만들려다 접었다.** 색만 보면 흰 접시(`plate-cookie-2.png`, 무채색 밝은 픽셀 16.9%)가 걸리고, 고주파 교차를 함께 봐도 **철망 바구니**(`ball-storage-4.png`)처럼 규칙적인 회색 격자가 진짜 그림인 경우가 걸린다. 배포 120장 중 30장이 걸렸으므로 축이 틀린 것이다 — repo 규율("거짓 양성이 나오면 그것이 축이 틀렸다는 신호다")대로 게이트를 세우지 않고 경위만 `asset_alpha.py` 주석에 남겼다.
+- 대신 프롬프트에 "**둘러싸인 안쪽도 투명이어야 한다**"를 실측과 함께 못 박았고, 최종 확인은 화면 검수(`review_lesson.py` / `check_rendered.mjs`)에 맡긴다.
+
+
+### [style-drifts-across-batches] 배치를 나눠 구우니 화풍이 배치마다 달라짐
+
+- 대상: content-harness-pipeline/produce_lesson.py, prompts/asset_render_system.md
+- 분류 태그: style-drifts-across-batches
+- 상태: **재발 · 보강함** (2026-09-11)
+- 발생일: 2026-09-10
+- 사례:
+  - 2026-09-10: 사용자 — "화풍이 일관되어야지 다 다르면 어떻게 해." 실제로 같은 `artDirection` 문장을 받은 두 호출이 **사진 같은 3D 배경**과 **납작한 벡터 봉투**를 냈다.
+  - 2026-09-11 (재발): 우편물 12장을 다시 구웠더니 사용자 — "**너무 그래픽적인 느낌이 강하다. bin-wood.png 화풍을 참고해서** 다시 그려달라."
+    **장치는 도는데 기준 그림을 사람이 고를 수 없었다.** `style_anchor()` 는 이미 구워진 것 중 **첫 장**을 자동으로 집는다(배경 우선). 우편물 배치의 역할 기준은 `role_reference()` 가 집은 아무 UI 그림이었고, 사용자가 원한 `bin-wood.png`(회화적인 나무통)가 아니었다. 기준이 어긋나면 그 뒤가 전부 어긋난다 — 그게 이 항목의 원래 교훈인데, **기준을 지정할 통로가 없었다.**
+    - 조치(2026-09-11): `produce_lesson.py` 에 `--style-anchor <경로>` 추가. 주면 그 그림을 모든 배치의 기준으로 싣고, 이미 있는 그림이므로 **기준을 만드는 직렬 단계를 건너뛰고 곧바로 병렬**로 간다.
+  - 2026-09-11 (재발 2): `bin-wood.png` 를 기준으로 다시 구웠는데도 사용자 — "**현재도 그래픽적이다. 실사 느낌 및 입체적인 느낌, 래스터로** 다시 뽑아라."
+    **기준 그림이 목표 화풍을 갖고 있지 않으면 지정해도 소용없다.** `bin-wood.png` 를 열어 보니 평면적인 나무통이다(단순 음영, 재질감 없음). 그것에 맞추라고 하면 평면적인 결과가 나오는 것이 맞다. 기준 지정은 **"이미 있는 것 중 하나를 고르는" 통로**일 뿐, 없는 화풍을 만들어 내지는 못한다.
+    - 조치: `--style-anchor new` 를 추가했다. 기존 그림을 기준으로 삼지 않고 **이 배치에서 기준 한 장을 새로 굽고** 나머지를 그것에 맞춘다. 목표 화풍이 차시에 아직 없을 때 쓰는 값이다.
+  - **함께 드러난 별개 결함 — 학습 도형의 외곽이 깨졌다.** `mail-square-a.png` 는 캔버스가 1024x1024 인데 봉투 **덮개가 아래를 잘라내** 화면에서는 정사각형이 아니라 오각형처럼 보였다. `mail-rtri-a` 도 내부 접힘선이 직각삼각형을 애매하게 만들었다.
+    앞서 "우편물답게 보이게" 지시를 넣으면서 덮개·접힘선을 요구했는데, **그것이 외곽을 침범해도 된다는 뜻은 아니었다.** 학습 대상은 외곽이 곧 정답이므로 장식이 외곽을 건드리면 문항이 틀린 것이 된다.
+    - 조치: `mustInclude` 첫 줄을 "외곽은 정확히 그 도형이고, 덮개·접힘선은 **도형 안쪽에만** 그린다. 외곽선을 자르거나 넘지 않는다"로 못박고 `forbidden` 에 "덮개가 도형 외곽을 잘라내기"를 넣었다.
+  - **화풍을 바꾸려다 세 번 실패했다(2026-09-11). 원인이 매번 달랐다.**
+    ① `mustInclude` 에 "실사·입체·래스터"를 적었는데 계속 일러스트가 나왔다. **모델이 틀린 게 아니다** — 차시 `artDirection.rendering` 이 "사진 질감·실사 렌더를 쓰지 않고"라고 못박고, `consistencyRule` 이 "개별 assetPrompt 의 표현 어휘는 **형태 요구로만 읽는다**"고 정해 두었다. 계약대로 따른 결과다.
+       → 자산별 `artDirectionOverride` 를 만들었다. 차시 화풍을 이기려면 **예외를 명시적으로 선언**해야 한다.
+    ② `--style-anchor assets/ui/bin-wood.png` 를 줬는데도 평면이었다. 그 그림 자체가 평면적인 나무통이다. **기준 지정은 "있는 것 중 고르는" 통로일 뿐, 없는 화풍을 만들지 못한다.**
+       → `--style-anchor new` 를 만들었다. 이 배치에서 기준 한 장을 새로 굽는다.
+    ③ `new` 로 돌렸더니 **기준 한 장만 제대로 나오고 나머지 11장은 평면**이었다. `role_reference()` 가 이미 구워진 **일러스트 UI 그림을 두 번째 기준으로 함께** 실었고, 배치들이 그쪽을 따랐다.
+       → 기준을 지정했으면 역할 기준을 기존 그림에서 집지 않는다.
+  - **판정할 수 없는 말은 지시가 아니다(2026-09-11).** 직각삼각형 봉투 3장이 전부 45° 이등변으로 나왔다(알파 bbox 가로세로 비 1.00·1.00·0.59). 지시는 `"mail-rtri-a 와 비율이 다른 별개 도형이다"` 였다 — **무엇과 얼마나 달라야 하는지 없는 말**이라 모델이 알아서 갈랐고 결국 같아졌다.
+    그림 지시에서 "다르게", "적당히", "자연스럽게"는 지시가 아니라 바람이다. → 두 다리의 길이 비를 `밑변 : 높이 = 3 : 2` 처럼 **수치로** 못박고, `forbidden` 에 "45° 이등변으로 그리기"·"세 장을 서로 같은 비율로 그리기"를 넣었다.
+    같은 컷에서 "봉투로 안 보인다"도 나왔다 — 덮개가 사선 한 줄뿐이었다. **무엇이 있어야 그것으로 보이는지**를 적어야 한다(삼각 덮개 + 봉인/그늘 + 우표 + 주소 줄).
+    **교훈: "화풍은 기준 그림이 정한다"는 규칙에는 세 개의 전제가 숨어 있었다** — (a) 차시 화풍이 그걸 허용하는가, (b) 기준 그림이 목표 화풍을 실제로 갖고 있는가, (c) 다른 기준이 함께 실려 있지 않은가. 셋 중 하나만 어긋나도 기준은 무력해진다.
+- 원인: 배치가 각각 독립된 LLM 호출이라 **서로를 못 본다.** 화풍을 텍스트로만 주면 호출마다 다르게 해석하고, 배치 수만큼 화풍이 생긴다. 병렬로 돌릴수록 심해진다 — 속도를 얻은 대가로 일관성을 잃는 구조였다.
+- 조치: **기준 그림(anchor)을 먼저 굽고 나머지가 그것을 실제로 열어 맞춘다.**
+  - ① 전체 기준 1장(배경 우선)을 혼자 굽는다 → 이 차시의 화풍이 여기서 정해진다
+  - ② 역할(배경·인물·UI)마다 첫 배치를 혼자 굽는다 → 그 역할의 기준
+  - ③ 남은 배치만 병렬. 프롬프트에 ①②의 **절대 경로**를 싣고 "그리기 전에 실제로 열어라"고 지시
+  - 맞출 것을 여섯으로 못 박았다 — 매체감·명암 세기·광원 방향·가장자리 처리·채도·디테일 밀도. "주제가 아니라 화풍을 맞춘다"도 명시.
+  - 병렬은 ③에만 둔다. 기준을 만드는 동안은 줄을 세운다 — 기준이 흔들리면 뒤가 전부 흔들린다.
+- 검증(실측): 기준 배경 1장 → 인물 3장 → UI 3장을 순서대로 굽고 눈으로 대조. 배경(마당)·인물(우체국장)·UI(분류통)가 같은 매체감·채도·광원으로 나왔다. 학습 제약도 함께 지켜졌다 — 마당의 평상 지지대·디딤돌·텃밭만 또렷한 먹선으로 정면이고 나머지는 회화적이다.
+- 교훈: **화풍은 글로 못 묶는다. 그림을 보여줘야 한다.** 텍스트 계약이 통하는 축(원자 어휘·필드 이름)과 안 통하는 축(시각 표현)이 다르다. 안 통하는 축은 산출물 자체를 기준으로 삼아야 한다.
+
+### [style-terms-read-as-render-instructions] 구성 지시의 표현 어휘를 렌더 지시로 읽어 그림이 망가짐
+
+- 대상: content-harness-pipeline/prompts/asset_render_system.md
+- 분류 태그: style-drifts-across-batches
+- 상태: 조치됨
+- 발생일: 2026-09-10
+- 사례:
+  - `assetPrompt.mustInclude` 의 `크림색 단색 채움`을 렌더 지시로 읽어 봉투가 **납작한 벡터 그래픽**이 됐다.
+  - 그것을 "무시하라"고 고쳤더니 이번에는 **테두리에만 있어야 할 빗금이 봉투 전면을 덮었다.** 구성이 깨졌다.
+- 원인: 한 문장에 두 층이 섞여 있다 — `크림색`(무슨 색으로)은 구성이고 `단색 채움`(어떻게 칠하나)은 렌더다. 통째로 지키라고 해도, 통째로 무시하라고 해도 한쪽이 깨진다.
+- 조치: 계약서에 층을 갈라 적었다. `mustInclude` 는 **무엇이·어디에·무슨 색으로·어떤 비율로**를 정하고 그대로 지킨다. `artDirection` 은 **그 면을 어떻게 렌더할 것인가**를 정하고 언제나 이긴다. `테두리에`·`가운데에` 같은 자리 지시는 특히 그대로 지킨다고 못 박았다.
+- 교훈: 프롬프트를 고칠 때 **양쪽 실패를 다 적어 둔다.** "A로 했더니 X가 깨졌고, 그래서 B로 했더니 Y가 깨졌다"를 남기지 않으면 다음 사람이 A와 B 사이를 왕복한다.
+
+
+### [cast-not-renderable] cast 에 emotions·position 이 없어 인물이 화면에 안 나오고 말풍선이 한쪽에만 뜸
+
+- 대상: content-harness-pipeline/prompts/lesson_contract.md, stages/scripts/lesson_check.py
+- 분류 태그: gates-pass-but-screen-empty
+- 상태: 조치됨
+- 발생일: 2026-09-11
+- 사례:
+  - 2026-09-11: 사용자 — "왜 캐릭터가 안 보이지? 그리고 말풍선은 왜 다 왼쪽에 있지? 이거 초안 파이프라인에서 제대로 못 잡은건가?"
+- 원인 둘:
+  - base `setSceneChar` 는 `cast[ref].emotions` 에서만 그림을 찾고 **`assetRef` 는 아예 안 읽는다.** 우리 산출물은 `assetRef` 만 있었다(개발 단계가 "포즈 1종 고정이니 emotions 불필요"로 판단). `src=''` 가 되어 컷 19개 전부 인물이 안 그려졌다.
+  - `resolveCharPos` 는 `cast[ref].position` 이 없으면 주인공을 전부 `left` 로 보낸다. 두 사람이 번갈아 말해도 말풍선이 계속 같은 쪽에 떴다.
+- **데이터·스키마·빌드·화면검사가 전부 통과했다.** 말풍선만 떠 있고 사람이 없는 화면이었다.
+- 조치: `check_cast_renderable` 추가 + 계약서에 `cast[].emotions`·`position` 필수 조항.
+- 거짓 양성을 두 번 걷어냈다(배포 18차시 기준):
+  1. "emotions 없거나 idle 없으면 오류" → 5건 걸림. `explain`·`worry` 만 두고 컷마다 감정을 지정해 잘 도는 차시가 있었다
+  2. "idle 은 감정 안 적은 컷이 부를 때만" → 1건. `cast.children` 은 인물이 아니라 묶음이고 **아무 컷도 안 부른다**
+  3. "실제로 불리는 인물만 검사" → **0건** ✅
+- 교훈: **"선언했는가" 가 아니라 "그 선언을 누가 어떻게 읽는가" 로 검사를 짠다.** `assetRef` 는 이름만 보면 그림 경로 같지만 런타임의 그 자리는 `emotions` 였다.
+
+### [char-geometry-fights-base] 인물 크기·자리를 base 규칙과 싸워서 맞추려 함
+
+- 대상: content-harness-pipeline/prompts/lesson_contract.md
+- 분류 태그: no-per-lesson-css-layout-raw
+- 상태: 조치됨
+- 발생일: 2026-09-11
+- 사례:
+  - 2026-09-11: 사용자 — "캐릭터 크기가 너무 작아. 헤더를 제외한 화면 세로 길이의 1/3은 차지하게 해줘."
+  - 실측: 인물 245px 중 **115px 만 화면 안**이었다(`--char-bottom:-18%` 가 발끝을 무대 밖으로 내보낸다). 작아 보인 것이 아니라 잘려 있었다.
+- 고치는 과정에서 두 번 헛짚었다.
+  1. `#app .charzone{bottom:0}` (1,0,1) → base `#app.intro-mode:where(...) .charzone` (1,2,0) 에 짐
+  2. `#app[class] .charzone` (1,2,0) 으로 올림 → base `#app.char-fixed-y .charzone.char-left` **(1,3,0)** 에 또 짐
+  3. 그제야 base 가 `--char-bottom`·`--char-width` **변수로 받는다**는 것을 봤다. 변수를 바꾸니 한 번에 됐다.
+- 부수 결함: 인물 영역이 좁아지자 **말풍선이 중앙 기준이라 무대를 69px 넘쳐** 글자가 잘렸다. 바깥쪽 인물은 안쪽 모서리에 붙이도록 했다.
+- 교훈: **명시도를 올려 이기려 들기 전에 그쪽이 낸 통로(변수)가 있는지 먼저 본다.** 선택자를 키우는 싸움은 이겨도 다음 버전에서 다시 진다. `!important` 를 안 쓴 것은 맞았지만, 애초에 싸울 자리가 아니었다.

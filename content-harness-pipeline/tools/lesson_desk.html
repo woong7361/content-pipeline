@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차시 작업대</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --ink: #1d2330; --muted: #6a7282; --line: #dde1e8;
+    --accent: #2f6fde; --ok: #1f8a4c; --warn: #b7791f; --bad: #c0392b; --chip: #eef1f6; --hl: #fff7e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14171c; --card: #1d2128; --ink: #e6e9ef; --muted: #98a1b0; --line: #2e3440;
+            --accent: #6a9cf5; --ok: #4cc07f; --warn: #e0a84a; --bad: #ef6b5e; --chip: #272c35; --hl: #2d2718; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 14px/1.5 "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif; }
+  .topnav { display: flex; gap: 4px; padding: 10px 16px 0; max-width: 1400px; margin: 0 auto; }
+  .topnav a { padding: 6px 14px; border-radius: 8px 8px 0 0; color: var(--muted); text-decoration: none; font-weight: 600; }
+  .topnav a.on { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-bottom-color: var(--card); }
+  .layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 16px; max-width: 1400px; margin: 0 auto; padding: 0 16px; }
+  .side { position: sticky; top: 12px; align-self: start; max-height: calc(100vh - 24px); overflow-y: auto;
+          background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 12px; }
+  .side h5 { margin: 10px 0 6px; font-size: 12px; color: var(--muted); font-weight: 700; }
+  .side h5:first-child { margin-top: 0; }
+  .side .group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .side button { border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+  .side button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .side .lessons { display: grid; gap: 4px; }
+  .side .lessons button { border-radius: 8px; text-align: left; display: grid; grid-template-columns: auto 1fr auto; gap: 6px;
+                          align-items: center; padding: 5px 8px; }
+  .side .lessons .lt { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .side .lessons button.on .lt { color: #fff; opacity: .85; }
+  .side .dot { font-size: 11px; color: var(--warn); white-space: nowrap; }
+  .side button.on .dot { color: #fff; }
+  .content { min-width: 0; }
+  .models { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; display: grid; gap: 6px; }
+  .models label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+  .models select, .models input { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
+                                  border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; }
+  .models .mnote { font-size: 11px; color: var(--muted); margin: 0; }
+  .models .mmsg { font-size: 11px; color: var(--ok); min-height: 1em; }
+  header { padding: 20px 0 8px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  header p { margin: 0; color: var(--muted); }
+  main { padding: 8px 0 40px; display: grid; gap: 16px; }
+  .hidden { display: none !important; } /* 필터·편집 전환 — 요소의 다른 display 규칙보다 반드시 이겨야 한다 */
+  h3.sem { font-size: 15px; margin: 12px 0 -4px; color: var(--muted); }
+  .title { color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+  .head h2 { font-size: 18px; margin: 0; }
+  .meta { color: var(--muted); font-size: 12px; }
+  .actions { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+  button, .btn { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--ink);
+                 border-radius: 8px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .danger { color: var(--bad); border-color: var(--bad); background: transparent; }
+  .qstate { margin-top: 8px; font-size: 13px; }
+  .qstate.running { color: var(--warn); } .qstate.paused { color: var(--bad); } .qstate.idle { color: var(--muted); }
+  .path { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .path code { font-size: 12px; color: var(--ink); background: var(--chip); padding: 2px 6px; border-radius: 6px; word-break: break-all; }
+  .path .tag { padding: 0 6px; border-radius: 999px; background: var(--chip); }
+  .path .tag.custom { color: var(--warn); }
+  .path .warn { color: var(--bad); }
+  .path button { padding: 2px 10px; font-size: 12px; }
+  .path input { flex: 1; min-width: 240px; font: inherit; font-size: 12px; color: var(--ink); background: var(--bg);
+                border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; }
+  .add { display: flex; gap: 8px; margin: 12px 0 8px; }
+  .add textarea { flex: 1; min-height: 64px; resize: vertical; font: inherit; color: var(--ink);
+                  background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+  .kinds { display: flex; flex-direction: column; gap: 4px; }
+  .kinds label { position: relative; cursor: pointer; }
+  /* 라디오 버튼 자체는 감추고(키보드·스크린리더로는 그대로 고를 수 있다) 옆의 span 을 버튼처럼 그린다 */
+  .kinds input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+  .kinds span { display: block; text-align: center; min-width: 52px; padding: 5px 10px; font-size: 13px;
+                border: 1px solid var(--line); border-radius: 8px; background: var(--chip); color: var(--ink); }
+  .kinds label:hover span { border-color: var(--accent); }
+  .kinds input:checked + span { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .kinds input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .submit { display: flex; flex-direction: column; gap: 6px; width: 170px; }
+  .submit select { font: inherit; font-size: 12px; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+                   border-radius: 6px; padding: 4px; }
+  .submit .save { flex: 1; }
+  h4.sec { font-size: 13px; margin: 14px 0 6px; color: var(--muted); font-weight: 700; }
+  ol.queue, ul.notes { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  ol.queue li, ul.notes li { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: start;
+                padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
+  ol.queue li.working { background: var(--hl); border-color: var(--warn); }
+  ol.queue li.queued { cursor: grab; }
+  ol.queue li.queued:active { cursor: grabbing; }
+  ol.queue li.dragging { opacity: .45; }
+  ol.queue li.drop-before { box-shadow: 0 -3px 0 var(--accent); }
+  ol.queue li.drop-after { box-shadow: 0 3px 0 var(--accent); }
+  .grip { color: var(--muted); font-size: 16px; line-height: 1; margin-right: 2px; user-select: none; }
+  .pos { font-weight: 700; color: var(--muted); min-width: 22px; text-align: right; }
+  .nid { font-weight: 700; color: var(--muted); display: grid; gap: 2px; justify-items: start; }
+  .kind { font-size: 11px; font-weight: 400; padding: 0 6px; border-radius: 999px; background: var(--chip); }
+  .k-code { color: var(--accent); } .k-image { color: var(--ok); } .k-verify { color: var(--warn); }
+  .ntext { white-space: pre-wrap; word-break: break-word; }
+  .nlog { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  /* AI 결과 — 한 줄 요약만 보이고 자세한 설명은 접어 둔다(2026-09-30). 펼친 상태는 2초 새로고침에도 유지 */
+  details.nres { margin-top: 4px; font-size: 12px; }
+  details.nres > summary { list-style: none; display: flex; gap: 6px; align-items: baseline; margin-top: 0;
+    color: var(--ink, inherit); font-size: 13px; }
+  details.nres > summary::-webkit-details-marker { display: none; }
+  details.nres > summary::before { content: "▸"; color: var(--muted); font-size: 11px; }
+  details.nres[open] > summary::before { content: "▾"; }
+  .rtag { font-size: 11px; padding: 0 7px; border-radius: 999px; background: var(--chip); white-space: nowrap; font-weight: 700; }
+  .rtag.r-ok { color: var(--ok); } .rtag.r-ask { color: var(--warn); } .rtag.r-bad { color: var(--bad); }
+  .rhead { font-weight: 600; word-break: break-word; }
+  .rwhen { color: var(--muted); font-size: 11px; white-space: nowrap; margin-left: auto; }
+  .rbody { margin: 6px 0 2px 16px; padding: 6px 10px; border-left: 3px solid var(--line); color: var(--muted);
+    white-space: pre-wrap; word-break: break-word; line-height: 1.55; }
+  .nact { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+  .nact button { padding: 2px 8px; font-size: 12px; }
+  .st { font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--chip); white-space: nowrap; }
+  .st-queued { color: var(--accent); } .st-working { color: var(--warn); } .st-open { color: var(--bad); }
+  .st-review { color: var(--ok); }
+  .built { font-size: 11px; padding: 1px 6px; border-radius: 999px; white-space: nowrap; }
+  .built.no { color: var(--warn); background: var(--hl); } .built.yes { color: var(--ok); background: var(--chip); } .st-done { color: var(--muted); text-decoration: line-through; }
+  li.done .ntext { color: var(--muted); }
+  .job { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+  .job-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .job details + .job-line { margin-top: 10px; }   /* 두 줄이 함께 돌면 작업이 둘 보인다 */
+  .js-running { color: var(--warn); } .js-ok { color: var(--ok); } .js-failed, .js-stopped { color: var(--bad); }
+  details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 6px; }
+  pre { max-height: 260px; overflow: auto; background: var(--bg); border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px; font-size: 12px; white-space: pre-wrap; word-break: break-all; margin: 6px 0 0; }
+  .hist { color: var(--muted); font-size: 12px; margin: 6px 0 0; padding-left: 16px; }
+  .usage .table-wrap { overflow-x: auto; margin-top: 6px; }
+  .usage table { border-collapse: collapse; width: 100%; font-size: 12px; }
+  .usage th, .usage td { border: 1px solid var(--line); padding: 4px 6px; text-align: right; white-space: nowrap; }
+  .usage th { background: var(--chip); font-weight: 600; }
+  .usage td.l, .usage th.l { text-align: left; }
+  .usage tr.sum td { font-weight: 700; background: var(--chip); }
+  .empty { color: var(--muted); }
+  .guide { margin: 4px 0 12px; }
+  .guide details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0 16px; }
+  .guide summary { cursor: pointer; padding: 14px 0; font-size: 16px; font-weight: 700; color: var(--ink); margin: 0; }
+  .guide summary .meta { font-weight: 400; margin-left: 8px; }
+  .guide h4 { font-size: 14px; margin: 16px 0 6px; }
+  .guide ol, .guide ul { margin: 0; padding-left: 20px; }
+  .guide li { margin: 3px 0; }
+  .guide table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 4px 0; }
+  .guide th, .guide td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  .guide th { background: var(--chip); }
+  .guide code { background: var(--chip); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  .guide .body { padding-bottom: 16px; }
+  .guide .table-wrap { overflow-x: auto; }
+  .err { color: var(--bad); font-size: 12px; min-height: 1em; }
+  @media (max-width: 800px) {
+    /* 좁은 화면 — 사이드바를 위에 붙은 가로 줄로 바꾼다. 스크롤해도 위에 남는다 */
+    .layout { grid-template-columns: 1fr; }
+    .side { position: sticky; top: 0; z-index: 5; max-height: none; margin-top: 8px; padding: 8px; border-radius: 0 0 12px 12px;
+            display: grid; gap: 4px; }
+    .side h5 { display: none; }
+    .side .group, .side .lessons { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
+    .side .lessons button { display: inline-flex; white-space: nowrap; }
+    .side .lessons .lt { display: none; }
+  }
+  @media (max-width: 640px) {
+    .actions { margin-left: 0; width: 100%; }
+    .add { flex-wrap: wrap; }
+    .kinds { flex-direction: row; }
+    .add textarea { flex-basis: 100%; }
+    .submit { width: 100%; flex-direction: row; }
+    ol.queue li, ul.notes li { grid-template-columns: auto 1fr; }
+    .nact { grid-column: 1 / -1; justify-content: flex-start; }
+  }
+  select.kindsel { font: inherit; font-size: 12px; color: var(--ink); background: var(--card); border: 1px solid var(--line);
+                   border-radius: 6px; padding: 2px 4px; }
+  /* [그림 보기] — 그림 메모가 고치거나 만든 그림의 전·후 */
+  .imgview { position: fixed; inset: 0; z-index: 50; background: rgba(10, 12, 16, .94); display: flex;
+             flex-direction: column; padding: 16px; gap: 10px; color: #eef1f6; }
+  .imgview.hidden { display: none; }
+  .imgview .ivbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .imgview .ivbar b { font-size: 15px; }
+  .imgview .ivbar .sp { flex: 1; }
+  .imgview .ivbar button { background: #2a2f38; color: #eef1f6; border-color: #444b57; }
+  .imgview .ivnote { font-size: 12px; color: #b8c0cc; }
+  .imgview .ivpanes { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .imgview figure { margin: 0; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+  .imgview figcaption { font-size: 13px; font-weight: 600; }
+  .imgview figure a { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px;
+                      /* 투명한 곳이 보이게 체크무늬 위에 */
+                      background: repeating-conic-gradient(#c9ced6 0% 25%, #f1f3f6 0% 50%) 0 0 / 20px 20px; }
+  .imgview figure img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .imgview .ivthumbs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .imgview .ivthumbs button.on { background: var(--accent); border-color: var(--accent); }
+</style>
+</head>
+<body>
+<nav class="topnav"><a href="/" class="on">차시 작업대</a><a href="/pipeline">초안 파이프라인</a></nav>
+<div class="layout">
+<aside class="side" aria-label="차시 고르기">
+  <h5>학년</h5><div class="group" id="f-grade"></div>
+  <h5>학기</h5><div class="group" id="f-term"></div>
+  <h5>차시</h5><div class="lessons" id="f-lesson"></div>
+  <div class="models" id="models" aria-label="AI 모델">
+    <h5>AI 모델</h5>
+    <label>클로드 <span class="mnote">코드 메모 · 초안의 기획~개발</span><select id="m-claude"></select></label>
+    <input id="m-claude-custom" class="hidden" placeholder="클로드 모델 이름 (Enter 로 저장)" spellcheck="false">
+    <label>추론 강도<select id="m-claude-effort"></select></label>
+    <label>코덱스 <span class="mnote">그림·검증 메모 · 초안의 그림 굽기</span><select id="m-codex"></select></label>
+    <input id="m-codex-custom" class="hidden" placeholder="코덱스 모델 이름 (Enter 로 저장)" spellcheck="false">
+    <label>추론 강도<select id="m-codex-effort"></select></label>
+    <p class="mnote">두 화면 공용 · 다음 작업부터 적용 · 도는 작업은 그대로</p>
+    <span class="mmsg" id="m-msg"></span>
+  </div>
+</aside>
+<div class="content">
+<header>
+  <h1>차시 작업대</h1>
+  <p>화면에서 본 것을 차시마다 종류와 함께 <b>적으면 바로 AI 가 처리</b>합니다. 대기열 위에서부터 차례로 하고, 순서는 바꿀 수 있습니다. <b>빌드</b>는 빌드·화면 결함 검사·기능 테스트만 합니다(AI 없음). KB 서버 전송은 하지 않습니다.</p>
+  <p class="meta">코드 메모 → 클로드가 lesson.json·player-ext 를 고침 · 그림 메모 → 코덱스가 그림을 다시 구움 · 검증 메모 → 빌드 후 코덱스가 화면을 열어 확인만 함</p>
+  <p class="meta" id="root"></p>
+</header>
+<section class="guide">
+  <details id="guide">
+    <summary>사용법<span class="meta">눌러서 펼치기 · 접기</span></summary>
+    <div class="body">
+      <h4>한눈에</h4>
+      <ol>
+        <li>왼쪽 사이드바의 <b>학년 · 학기 · 차시</b> 버튼으로 볼 차시를 고릅니다(스크롤해도 따라옵니다). 보이는 카드만 바뀌고, 다른 차시에서 돌던 작업은 계속됩니다. 처리 중인 차시에는 ● 가 붙습니다.</li>
+        <li>차시 카드에서 <b>[화면 보기]</b>로 빌드된 화면을 봅니다.</li>
+        <li>고칠 것이 보이면 종류(<b>코드 · 그림 · 검증</b>)를 고르고 메모 칸에 적은 뒤 <b>[적기]</b>(또는 Ctrl+Enter). <b>누르면 바로 처리가 시작됩니다.</b></li>
+        <li>여러 개를 연달아 적으면 <b>대기열</b>에 쌓이고 위에서부터 처리됩니다(코드와 그림은 함께 돕니다 — 아래 '대기열과 순서').</li>
+        <li>끝난 메모는 <b>처리된 메모</b>로 내려갑니다. 대기열이 다 비면 <b>자동으로 빌드</b>됩니다. 메모에 <b>"아직 화면 반영 전"</b>이 붙어 있으면 빌드가 끝나지 않은 것이니 기다리세요. <b>"화면 반영됨"</b>으로 바뀌면 <b>[화면 보기]</b>(열어 둔 화면은 새로고침)로 확인하고 <b>[완료]</b>로 닫습니다.</li>
+      </ol>
+
+      <h4>메모 종류 — 누가 무엇을 하나</h4>
+      <div class="table-wrap"><table>
+        <tr><th>종류</th><th>맡는 AI</th><th>하는 일</th><th>이렇게 적으세요</th></tr>
+        <tr><td>코드</td><td>클로드</td><td>lesson.json · player-ext.css · player-ext.js 를 고칩니다</td><td>3장면 문3 — 보기 글자가 잘림 / 말풍선 글자를 주아체로</td></tr>
+        <tr><td>그림</td><td>코덱스</td><td>그림 파일을 같은 이름·크기로 다시 굽습니다</td><td>문경사과축제 배경 — 간판을 빨간 판에 흰 글자로 (어느 그림인지 꼭)</td></tr>
+        <tr><td>검증</td><td>코덱스</td><td>빌드한 뒤 화면을 열어 눌러 보고 확인만 합니다. 파일은 안 바꿉니다</td><td>문1에서 두 번 틀리면 힌트가 뜨는지 확인</td></tr>
+      </table></div>
+      <ul>
+        <li>자리(장면 번호 · 문항 · 인물 · 파일 이름)를 적어 주세요. 자리가 없으면 AI 가 짐작하지 않고 <b>확인 필요</b>로 돌려줍니다.</li>
+        <li>한 메모에 한 가지만 적으면 결과를 보기 쉽습니다.</li>
+      </ul>
+
+      <h4>대기열과 순서</h4>
+      <ul>
+        <li>새 메모는 기본으로 대기열 <b>맨 뒤</b>에 들어갑니다. [적기] 위의 칸에서 <b>"U05 앞에"</b>처럼 고르면 그 메모 앞에 끼워 넣습니다.</li>
+        <li>종류를 잘못 골랐으면 메모 오른쪽의 <b>종류 칸</b>에서 바꿉니다. 대기 중이면 종류만 바뀌고, 이미 처리된 메모는 바꾼 종류의 AI 에게 <b>다시 맡깁니다</b>(앞서 다른 AI 가 바꾼 것은 그대로 남습니다). 처리 중인 메모는 바꿀 수 없습니다.</li>
+        <li>대기 중인 메모는 <b>↑ ↓</b> 로, 또는 <b>⠿ 를 잡고 끌어서</b> 다른 대기 메모 사이에 놓아 순서를 바꿉니다(놓을 자리에 파란 줄이 보입니다). 처리 중인 메모는 옮기거나 지울 수 없고, 그 위로 끌어 놓을 수도 없습니다.</li>
+        <li>한 번에 대기열 맨 앞의 <b>같은 종류가 연달아 있는 묶음</b>을 AI 한 번에 맡깁니다(AI 를 부를 때마다 고정비가 들어서). 예: 코드·코드·그림·코드 → [코드 2개] → [그림] → [코드].</li>
+        <li><b>코드(클로드)와 그림(코덱스)은 서로 기다리지 않고 함께 돕니다.</b> 코드끼리, 그림끼리는 한 번에 하나씩입니다.
+          <b>검증만 칸막이</b>라 위의 것이 다 끝나야 돌고, 아래 것은 검증이 끝날 때까지 기다립니다(검증은 빌드된 화면을 보므로 그사이 코드가 바뀌면 안 돼서).
+          예: 코드 A · 그림 B · 코드 C · 검증 D → A 와 B 가 함께 → A 가 끝나면 C → 다 끝나면 D.</li>
+        <li>작업 하나가 끝날 때마다 대기열을 다시 읽으므로, 도는 중에 끼워 넣거나 순서를 바꿔도 바로 반영됩니다.</li>
+        <li>여러 개를 순서까지 정해 놓고 돌리고 싶으면 먼저 <b>[멈춤]</b>을 누르고 적은 뒤 <b>[다시 시작]</b>을 누릅니다.</li>
+      </ul>
+
+      <h4>처리가 끝나면</h4>
+      <ul>
+        <li>그림 메모가 그림을 고치거나 새로 만들었으면 <b>[그림 보기]</b> 버튼이 생깁니다. 누르면 작업 전 · 후를 나란히 보여 줍니다(새 그림은 후만). ← → 로 넘기고 Esc 로 닫고, 그림을 누르면 원본이 새 탭에 열립니다.</li>
+        <li>메모 아래에 <b>결과 배지와 한 줄 요약</b>만 보입니다. 무엇을 어떻게 바꿨는지와 작업 기록은 <b>▸ 를 눌러 펼쳐</b> 봅니다(기본은 접힘).</li>
+        <li>처리된 메모는 <b>최근에 적은 것이 맨 위</b>입니다. 대기열은 처리 순서 그대로입니다.</li>
+        <li>된 것(고침 · 그림 새로 구움 · 검증 통과) → <b>확인 대기</b>. 화면을 보고 [완료]를 누릅니다.</li>
+        <li>안 된 것(그림 필요 · 확인 필요 · 못 고침 · 검증 실패) → <b>열림</b>. 이유가 메모 아래에 적힙니다. <b>저절로 다시 돌지 않습니다</b> — 같은 이유로 또 실패하며 비용만 들어서요. 새로 적거나 [다시 맡기기]를 누릅니다.</li>
+        <li>AI 작업 전 파일은 따로 복사해 둡니다. 실패하면 그 작업이 바꾼 것을 되돌립니다.</li>
+        <li><b>자동 빌드</b> — 대기열이 다 비고 도는 작업(클로드 · 코덱스 둘 다)이 끝나면 한 번 빌드합니다(빌드 → 화면 결함 검사 → 기능 테스트). 이번에 코드·그림이 실제로 바뀌었을 때만 하고, [멈춤]으로 세웠을 때는 하지 않습니다. 작업마다 빌드하지 않는 것은 한 번에 4분쯤 걸려 대기열이 밀리기 때문입니다.</li>
+      </ul>
+
+      <h4>버튼</h4>
+      <div class="table-wrap"><table>
+        <tr><th>버튼</th><th>하는 일</th></tr>
+        <tr><td>적기</td><td>메모를 대기열에 넣고 바로 처리를 시작합니다(이미 도는 중이면 차례를 기다립니다)</td></tr>
+        <tr><td>이번 작업 끝나면 멈춤</td><td>AI 작업이 도는 중에 보입니다. 도는 작업은(클로드·코덱스가 함께 돌면 둘 다) 끝까지 마치게 두고 다음 메모로 넘어가지 않고 멈춥니다. 바뀐 것이 있으면 바로 빌드합니다. 다시 누르면 예약 취소. <b>중간 결과를 보고 싶을 때는 이쪽</b>이 좋습니다</td></tr>
+        <tr><td>지금 멈춤</td><td>도는 작업을(둘이 함께 돌면 둘 다) 바로 끊고 그 작업이 바꾼 것을 되돌립니다(그 작업의 AI 비용은 버려지고, 그사이 직접 고친 것도 되돌아갑니다). 작업이 잘못 가고 있을 때 씁니다</td></tr>
+        <tr><td>다시 시작</td><td>멈춘 대기열을 이어서 처리합니다</td></tr>
+        <tr><td>빌드</td><td>gyo6 빌드 → 화면 결함 검사 → 기능 테스트. AI 를 부르지 않습니다. AI 작업이 도는 중에는 못 누릅니다. <b>KB 서버로 보내지 않습니다</b>(서버는 gyo6 에서 <code>npm run deploy</code>)</td></tr>
+        <tr><td>화면 보기</td><td>빌드된 차시를 새 탭으로 엽니다. 빌드한 적이 없으면 안 보입니다</td></tr>
+        <tr><td>↑ ↓ · 지우기</td><td>대기 중인 메모의 순서를 바꾸거나 뺍니다</td></tr>
+        <tr><td>완료 · 다시 맡기기 · 지우기</td><td>처리된 메모를 닫거나, 대기열 맨 뒤로 다시 넣거나, 지웁니다</td></tr>
+        <tr><td>수정 (작업 경로)</td><td>AI 가 고칠 폴더를 바꿉니다. [기본으로]는 gyo6 <code>lessons/학기/차시</code> 로 되돌립니다. 작업이 도는 중에는 못 바꿉니다</td></tr>
+      </table></div>
+
+      <h4>AI 모델</h4>
+      <ul>
+        <li>사이드바 맨 아래 <b>AI 모델</b>에서 클로드와 코덱스 모델을 고릅니다. 차시 작업대와 초안 파이프라인이 같은 설정을 씁니다.</li>
+        <li><b>클로드</b> — 코드 메모, 초안의 기획~개발 단계 · <b>코덱스</b> — 그림·검증 메모, 초안의 그림 굽기.</li>
+        <li>고르면 바로 저장되고 <b>다음 작업부터</b> 적용됩니다. 도는 작업은 원래 모델로 끝까지 갑니다.</li>
+        <li>모델 아래 <b>추론 강도</b>(Low · Medium · High · Extra high · Max, 코덱스는 Ultra 까지)도 고릅니다. 고른 모델이 지원하는 것만 보이고, "기본(추천: …)"은 그 모델의 추천값입니다. 강도가 높을수록 꼼꼼하지만 느리고 비용이 늘어납니다.</li>
+        <li>클로드는 주 모델(Opus 5.5 · Fable 5.1 · Sonnet 5.5 · Haiku 4.5) 아래 "그 밖의 버전"(Opus 4.8 · 4.7 · 4.6 등)이 있습니다.</li>
+        <li>목록에 없는 모델은 <b>직접 입력…</b>을 고르고 이름을 적은 뒤 Enter. "기본"은 각 CLI 에 설정된 모델입니다.</li>
+        <li>어떤 모델로 돌았는지는 AI 사용량 표의 "종류 · AI" 칸 괄호에 나옵니다.</li>
+      </ul>
+
+      <h4>알림</h4>
+      <ul>
+        <li>작업대가 켜져 있으면 브라우저를 닫아도 <b>Windows 바탕화면 알림</b>이 뜹니다.</li>
+        <li><b>실패하면 바로</b> — 어느 차시의 무슨 작업이 왜 실패했는지(예: "코덱스 로그인이 끊겼습니다 — codex login 후 [다시 맡기기]").</li>
+        <li><b>대기열이 다 끝나면</b> — 자동 빌드까지 끝난 뒤 한 번: 고침 · 못 한 것 · 실패 수와 "화면에 반영됨".</li>
+      </ul>
+
+      <h4>AI 사용량</h4>
+      <ul>
+        <li>카드 아래 <b>AI 사용량</b>을 펼치면 AI 작업마다 입력·출력 토큰, 비용, 걸린 시간이 나옵니다.</li>
+        <li>차시마다 <b>최근 10개</b>만 남기고 오래된 것은 지웁니다.</li>
+        <li>비용은 클로드만 나옵니다. 코덱스는 토큰만 알려 줍니다. 입력 토큰의 괄호 안은 캐시에서 읽은 양입니다.</li>
+        <li>토큰 단위: <b>1a</b> = 1토큰, <b>1b</b> = 1,000a, <b>1c</b> = 1,000b(100만), <b>1d</b> = 1,000c. 소수 첫째 자리까지 나옵니다.</li>
+      </ul>
+
+      <h4>알아 둘 것</h4>
+      <ul>
+        <li>AI 는 <b>gyo6 차시 폴더를 직접</b> 고칩니다. 고친 뒤 gyo6 에서 커밋해야 서버 배포(<code>npm run deploy</code>)가 됩니다.</li>
+        <li>한 차시에서는 작업이 하나씩만 돕니다. 다른 차시는 동시에 돌아갑니다.</li>
+        <li>작업 경로가 <code>…/lessons/학기/차시</code> 모양이 아니면(예: 파이프라인 run 폴더) 코드·그림만 되고 빌드·검증은 안 됩니다.</li>
+        <li>작업대를 끄면(Ctrl+C) 돌던 작업은 끊깁니다. 다음에 켤 때 그 작업을 되돌리고 그 차시 대기열을 <b>멈춤</b>으로 둡니다. [다시 시작]을 누르세요.</li>
+        <li>작업 로그는 카드 아래 <b>로그 끝부분</b>에서 보고, 전체는 <code>desk/학기-차시/jobs/</code> 에 있습니다.</li>
+      </ul>
+
+      <h4>켜는 법</h4>
+      <ul>
+        <li><code>content-harness-pipeline</code> 폴더의 <b>작업대 켜기.bat</b> 을 더블클릭합니다. 서버가 켜지고 브라우저가 열립니다(이미 켜져 있으면 브라우저만 엽니다).</li>
+        <li>검은 창은 <b>닫지 말고 최소화</b>해 두세요. 닫으면 작업대가 꺼집니다. 끌 때는 그 창에서 Ctrl+C.</li>
+        <li>터미널에서 직접 켜려면 그 폴더에서 <code>python -B ./lesson_desk.py</code> → 브라우저로 <code>http://127.0.0.1:8790</code></li>
+        <li>처음 한 번만 <code>--gyo6-root &lt;gyo6_content 경로&gt;</code> 를 붙입니다. 다음부터는 기억합니다.</li>
+        <li>보일 학기를 바꾸려면 <code>--semesters 3-1,3-2,4-1,4-2</code></li>
+      </ul>
+    </div>
+  </details>
+</section>
+<main id="list"><p class="empty">불러오는 중…</p></main>
+</div>
+</div>
+<script>
+const STATUS = { queued: "대기", working: "처리 중", review: "확인 대기", open: "열림", done: "완료" };
+const JOB = { running: "도는 중", ok: "끝남", failed: "실패", stopped: "멈춤" };
+const KIND = { ai: "AI 작업", fix: "AI 고치기", build: "빌드", deploy: "빌드" };
+const NOTE_KIND = { code: "코드", image: "그림", verify: "검증" };
+const AI_OF = { code: "클로드", image: "코덱스", verify: "코덱스" };
+const cards = new Map();
+// 학년 × 학기 필터. 화면에 보이는 카드만 바꾼다 — 작업은 서버에서 돌아서 다른 학년으로 넘어가도 계속된다.
+const filter = { grade: "all", term: "all", lesson: "all" };
+try { for (const k of Object.keys(filter)) filter[k] = localStorage.getItem(`desk-${k}`) || "all"; } catch {}
+const gradeOf = sem => sem.split("-")[0];
+const termOf = sem => sem.split("-")[1];
+const semShown = sem => (filter.grade === "all" || gradeOf(sem) === filter.grade) && (filter.term === "all" || termOf(sem) === filter.term);
+const shown = (sem, lesson) => semShown(sem) && (filter.lesson === "all" || filter.lesson === lesson);
+const busyOf = l => l.queue_running || (l.job && l.job.state === "running");
+let lastLessons = [];
+
+function renderSidebar(lessons) {
+  lastLessons = lessons;
+  const busy = lessons.filter(busyOf);
+  const count = test => { const n = busy.filter(test).length; return n ? `<span class="dot">● ${n}</span>` : ""; };
+  const group = (id, key, values, name, test) => {
+    if (filter[key] !== "all" && !values.includes(filter[key])) filter[key] = "all";
+    const btn = (v, text) => `<button data-key="${key}" data-v="${v}" class="${filter[key] === v ? "on" : ""}">${text} ${count(l => v === "all" || test(l, v))}</button>`;
+    document.getElementById(id).innerHTML = btn("all", "전체") + values.map(v => btn(v, name(v))).join("");
+  };
+  group("f-grade", "grade", [...new Set(lessons.map(l => gradeOf(l.semester)))], v => `${v}학년`, (l, v) => gradeOf(l.semester) === v);
+  group("f-term", "term", [...new Set(lessons.map(l => termOf(l.semester)))].sort(), v => `${v}학기`, (l, v) => termOf(l.semester) === v);
+  // 차시 목록은 고른 학년·학기에 속한 것만. 고른 차시가 빠지면 전체로 되돌린다
+  const visible = lessons.filter(l => semShown(l.semester));
+  if (filter.lesson !== "all" && !visible.some(l => l.lesson === filter.lesson)) filter.lesson = "all";
+  const item = l => {
+    const queued = l.notes.filter(n => n.status === "queued").length;
+    const mark = busyOf(l) ? `<span class="dot">● 처리 중</span>` : (queued ? `<span class="dot">대기 ${queued}</span>` : (l.paused ? `<span class="dot">■</span>` : ""));
+    return `<button data-key="lesson" data-v="${esc(l.lesson)}" class="${filter.lesson === l.lesson ? "on" : ""}" title="${esc(l.title)}">
+      <b>${esc(l.lesson)}</b><span class="lt">${esc(l.title)}</span>${mark}</button>`;
+  };
+  document.getElementById("f-lesson").innerHTML =
+    `<button data-key="lesson" data-v="all" class="${filter.lesson === "all" ? "on" : ""}"><b>전체 차시</b><span class="lt"></span>${count(l => semShown(l.semester))}</button>`
+    + visible.map(item).join("");
+}
+
+function applyFilter() {
+  for (const el of cards.values()) el.classList.toggle("hidden", !shown(el.dataset.sem, el.dataset.lesson));
+  document.querySelectorAll("h3.sem").forEach(h => h.classList.toggle("hidden",
+    ![...cards.values()].some(el => el.dataset.sem === h.dataset.sem && shown(el.dataset.sem, el.dataset.lesson))));
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".side button[data-key]");
+  if (!b) return;
+  filter[b.dataset.key] = b.dataset.v;
+  if (b.dataset.key !== "lesson") filter.lesson = "all";
+  for (const k of Object.keys(filter)) { try { localStorage.setItem(`desk-${k}`, filter[k]); } catch {} }
+  renderSidebar(lastLessons);
+  applyFilter();
+  if (b.dataset.key === "lesson" && filter.lesson !== "all") window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// 사용법을 펼쳐 두었는지 기억한다(이 브라우저에서만)
+(() => {
+  const guide = document.getElementById("guide");
+  try { guide.open = localStorage.getItem("desk-guide") === "open"; } catch {}
+  guide.addEventListener("toggle", () => { try { localStorage.setItem("desk-guide", guide.open ? "open" : "closed"); } catch {} });
+})();
+
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function time(s) { return s ? s.slice(5, 16).replace("T", " ") : ""; }
+// 토큰은 단위로 줄여 소수 첫째 자리까지(사용자 요청 2026-09-30) — 1a = 1토큰, 1b = 1,000a, 1c = 1,000b, 1d = 1,000c
+function tok(n) {
+  if (n == null) return "-";
+  const units = ["a", "b", "c", "d", "e"];
+  let v = Number(n), i = 0;
+  while (Math.abs(v) >= 1000 && i < units.length - 1) { v /= 1000; i++; }
+  if (Number(v.toFixed(1)) >= 1000 && i < units.length - 1) { v /= 1000; i++; }  // 999.96b → 1000.0b 가 아니라 1.0c
+  return v.toFixed(1) + units[i];
+}
+function short(s, n = 24) { s = String(s || "").replace(/\s+/g, " "); return s.length > n ? s.slice(0, n) + "…" : s; }
+
+async function post(path, body, card) {
+  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (card) card.querySelector(".err").textContent = res.ok ? "" : (data.error || "요청 실패");
+  refresh();
+  return res.ok;
+}
+
+function makeCard(row) {
+  const el = document.createElement("section");
+  el.className = "card";
+  el.innerHTML = `
+    <div class="head">
+      <h2>${esc(row.lesson)}</h2>
+      <span class="title">${esc(row.title)}</span>
+      <span class="meta stamps"></span>
+      <div class="actions">
+        <a class="btn view" target="_blank" rel="noopener">화면 보기</a>
+        <button class="build">빌드</button>
+        <button class="softctl hidden"></button>
+        <button class="runctl"></button>
+      </div>
+    </div>
+    <div class="qstate"></div>
+    <div class="path">
+      <span>작업 경로</span>
+      <span class="path-view"><code class="wd"></code> <span class="tag"></span> <span class="warn"></span></span>
+      <button class="edit-path">수정</button>
+      <span class="path-edit hidden">
+        <input type="text" spellcheck="false" aria-label="AI 가 고칠 차시 폴더">
+        <button class="save-path">저장</button>
+        <button class="reset-path">기본으로</button>
+        <button class="cancel-path">취소</button>
+      </span>
+    </div>
+    <div class="add">
+      <div class="kinds">
+        <label title="클로드가 lesson.json·player-ext 를 고칩니다"><input type="radio" name="k-${esc(row.lesson)}" value="code" checked><span>코드</span></label>
+        <label title="코덱스가 그림 파일을 다시 굽습니다"><input type="radio" name="k-${esc(row.lesson)}" value="image"><span>그림</span></label>
+        <label title="빌드한 뒤 코덱스가 화면을 열어 확인만 합니다"><input type="radio" name="k-${esc(row.lesson)}" value="verify"><span>검증</span></label>
+      </div>
+      <textarea placeholder="화면에서 본 것 (예: 3장면 문3 — 보기 글자가 잘림 / 인물 옷을 여름옷으로 / 문1에서 두 번 틀리면 힌트가 뜨는지 확인)"></textarea>
+      <div class="submit">
+        <select class="before" aria-label="넣을 자리"><option value="">대기열 맨 뒤에</option></select>
+        <button class="primary save">적기</button>
+      </div>
+    </div>
+    <div class="err"></div>
+    <h4 class="sec qhead"></h4>
+    <ol class="queue"></ol>
+    <h4 class="sec dhead"></h4>
+    <ul class="notes"></ul>
+    <div class="job"></div>
+    <details class="usage"><summary></summary><div class="table-wrap"></div></details>`;
+  const ref = () => ({ lesson: row.lesson });
+  const ta = el.querySelector("textarea");
+  const beforeSel = el.querySelector(".before");
+  const save = async () => {
+    if (!ta.value.trim()) return;
+    const kind = el.querySelector(".kinds input:checked")?.value || "code";
+    if (await post("/api/notes", { ...ref(), text: ta.value, kind, before: beforeSel.value }, el)) { ta.value = ""; beforeSel.value = ""; }
+  };
+  el.querySelector(".save").onclick = save;
+  ta.addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) save(); });
+  el.querySelector(".build").onclick = () => post("/api/build", ref(), el);
+  el.querySelector(".runctl").onclick = () => {
+    const r = el._row;
+    if (r.paused) return post("/api/resume", ref(), el);
+    if (confirm("지금 멈출까요? 처리 중인 작업을 끊고 그 작업이 바꾼 것을 되돌립니다(그 작업의 AI 비용은 버려지고, 그사이 직접 고친 것도 되돌아갑니다).\n\n하던 작업은 마치게 두려면 [이번 작업 끝나면 멈춤]을 누르세요.")) post("/api/stop", ref(), el);
+  };
+  // 이번 작업 끝나면 멈춤 — 도는 작업은 마치게 두고 다음 메모로 넘어가지 않는다. 바뀐 게 있으면 바로 빌드
+  el.querySelector(".softctl").onclick = () => post("/api/pause_after", { ...ref(), on: !el._row.pause_after }, el);
+  const pathView = el.querySelector(".path-view"), pathEdit = el.querySelector(".path-edit");
+  const editBtn = el.querySelector(".edit-path"), pathInput = el.querySelector(".path-edit input");
+  const editing = on => { pathEdit.classList.toggle("hidden", !on); pathView.classList.toggle("hidden", on); editBtn.classList.toggle("hidden", on); };
+  editBtn.onclick = () => { pathInput.value = el._row.work_dir; editing(true); pathInput.focus(); };
+  el.querySelector(".cancel-path").onclick = () => editing(false);
+  const savePath = async value => { if (await post("/api/path", { ...ref(), path: value }, el)) editing(false); };
+  el.querySelector(".save-path").onclick = () => savePath(pathInput.value);
+  el.querySelector(".reset-path").onclick = () => savePath("");
+  pathInput.addEventListener("keydown", e => { if (e.key === "Enter") savePath(pathInput.value); if (e.key === "Escape") editing(false); });
+  const onNoteClick = e => {
+    const b = e.target.closest("button[data-act]");
+    if (!b) return;
+    const id = b.dataset.id, act = b.dataset.act;
+    if (act === "delete") { if (confirm(`${id} 메모를 지울까요?`)) post("/api/notes/delete", { ...ref(), id }, el); }
+    else if (act === "move") post("/api/notes/move", { ...ref(), id, before: b.dataset.before }, el);
+    else if (act === "requeue") post("/api/notes/requeue", { ...ref(), id }, el);
+    else if (act === "images") openImages(el._row, id);
+    else post("/api/notes/status", { ...ref(), id, status: act }, el);
+  };
+  el.querySelector(".queue").onclick = onNoteClick;
+  const queue = el.querySelector(".queue");
+  const clearMarks = () => queue.querySelectorAll(".drop-before, .drop-after").forEach(x => x.classList.remove("drop-before", "drop-after"));
+  const dropSpot = e => {
+    const li = e.target.closest("li.queued");
+    if (!li || li.dataset.id === el._dragId) return null;
+    const box = li.getBoundingClientRect();
+    return { li, after: e.clientY > box.top + box.height / 2 };
+  };
+  queue.addEventListener("dragstart", e => {
+    const li = e.target.closest("li.queued");
+    if (!li) { e.preventDefault(); return; }
+    el._dragging = true;
+    el._dragId = li.dataset.id;
+    li.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", li.dataset.id);
+  });
+  queue.addEventListener("dragover", e => {
+    if (!el._dragging) return;
+    const spot = dropSpot(e);
+    clearMarks();
+    if (!spot) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    spot.li.classList.add(spot.after ? "drop-after" : "drop-before");
+  });
+  queue.addEventListener("drop", e => {
+    const spot = dropSpot(e);
+    clearMarks();
+    if (!spot) return;
+    e.preventDefault();
+    // 아래 절반에 놓으면 그 메모 다음 — 다음 대기 메모 앞(없으면 맨 뒤)
+    let before = spot.li.dataset.id;
+    if (spot.after) {
+      const items = [...queue.querySelectorAll("li.queued")].filter(x => x.dataset.id !== el._dragId);
+      const next = items[items.indexOf(spot.li) + 1];
+      before = next ? next.dataset.id : "";
+    }
+    const id = el._dragId;
+    el._dragging = false;
+    post("/api/notes/move", { ...ref(), id, before }, el);
+  });
+  queue.addEventListener("dragend", () => {
+    el._dragging = false;
+    el._dragId = "";
+    clearMarks();
+    queue.querySelectorAll(".dragging").forEach(x => x.classList.remove("dragging"));
+  });
+  el.querySelector(".notes").onclick = onNoteClick;
+  const onKindChange = e => {
+    const s = e.target.closest("select.kindsel");
+    if (!s) return;
+    const note = el._row.notes.find(n => n.id === s.dataset.id);
+    const kind = s.value;
+    s.blur();   // 다시 그리기를 막던 것을 푼다
+    if (!note || kind === (note.kind || "code")) return;
+    if (note.status !== "queued" && !confirm(`${note.id} 를 ${NOTE_KIND[kind]} 메모로 바꿔 ${AI_OF[kind]}에게 다시 맡길까요?`)) {
+      s.value = note.kind || "code";
+      return;
+    }
+    post("/api/notes/kind", { ...ref(), id: note.id, kind }, el);
+  };
+  el.querySelector(".queue").onchange = onKindChange;
+  el.querySelector(".notes").onchange = onKindChange;
+  return el;
+}
+
+/* 메모 기록 한 줄 → { 언제, 누가, 결과, 요약, 자세히 }.
+   모양: "<시각> <누가> — <결과>: <요약>\n<자세히>" (lesson_desk.apply_ai_result). 요약 줄이 없던 옛 기록은
+   첫 문장을 요약으로 쓰고 전체를 자세히로 둔다. 모양이 다르면(사람 조작 기록 등) 그대로 한 줄로 보인다. */
+function parseLog(line) {
+  const m = /^(\S+)\s+(.*)$/s.exec(line || "");
+  const when = m && /^\d{4}-\d\d-\d\dT/.test(m[1]) ? m[1] : "";
+  const rest = when ? m[2] : (line || "");
+  const r = /^(.+?) — ([^:\n]{1,20}): ([\s\S]*)$/.exec(rest);
+  if (!r) return { when, who: "", result: "", head: rest, body: "" };
+  const text = r[3].trim();
+  const nl = text.indexOf("\n");
+  let head, body;
+  if (nl > 0 && nl <= 80) { head = text.slice(0, nl).trim(); body = text.slice(nl + 1).trim(); }
+  else {   // 요약 줄이 없던 옛 기록 — 첫 문장(…다. / …요. / ! / ?)만 요약으로, 전체는 자세히로
+    const sent = /^([^]{6,90}?(?:다|요)[.!?]|[^]{6,90}?[!?])(?=\s|$)/.exec(text);
+    head = sent ? sent[1] : (text.length > 70 ? text.slice(0, 70) + "…" : text);
+    body = text.length > head.length ? text : "";
+  }
+  return { when, who: r[1], result: r[2].trim(), head, body };
+}
+const OPEN_LOGS = new Set();   // 펼쳐 둔 결과(메모 id) — 2초마다 다시 그려도 펼친 채로 둔다
+document.addEventListener("toggle", e => {
+  const d = e.target;
+  if (!(d instanceof HTMLDetailsElement) || !d.dataset.logKey) return;
+  if (d.open) OPEN_LOGS.add(d.dataset.logKey); else OPEN_LOGS.delete(d.dataset.logKey);
+}, true);
+function resultTag(result) {
+  const cls = /고침|통과|새로|만듦|굽/.test(result) ? "r-ok" : /확인|필요|일부/.test(result) ? "r-ask" : result ? "r-bad" : "";
+  return result ? `<span class="rtag ${cls}">${esc(result)}</span>` : "";
+}
+function historyLines(n, limit = 6) {
+  // 작업 기록 — 펼쳤을 때만 보인다. 최근 것부터
+  const lines = (n.log || []).slice(-limit).reverse().map(line => {
+    const p = parseLog(line);
+    return `${time(p.when)}  ${p.who ? p.who + " — " : ""}${p.result ? p.result + ": " : ""}${p.head}`;
+  });
+  return lines.length ? `\n\n작업 기록\n${lines.join("\n")}` : "";
+}
+function noteLog(n) {
+  // 서버가 결과를 구조로 붙였으면({kind, label, headline, detail, at}) 그것을 먼저 쓴다 — 없으면(옛 메모) 로그를 쪼갠다
+  const r = n.result;
+  if (r && r.headline && !["queued", "working"].includes(n.status)) {
+    const key = `${n.id}|${r.at}`;
+    return `<details class="nres" data-log-key="${esc(key)}"${OPEN_LOGS.has(key) ? " open" : ""}>
+      <summary>${resultTag(r.label)}<span class="rhead">${esc(r.headline)}</span><span class="rwhen">${esc(time(r.at))} · 자세히</span></summary>
+      <div class="rbody">${esc((r.detail || "(자세한 설명 없음)") + historyLines(n))}</div></details>`;
+  }
+  if (!n.log || !n.log.length) return "";
+  const line = n.log[n.log.length - 1];
+  const p = parseLog(line);
+  if (!p.body) return `<div class="nlog">${resultTag(p.result)} ${esc(p.head)}</div>`;
+  const key = `${n.id}|${p.when}`;
+  return `<details class="nres" data-log-key="${esc(key)}"${OPEN_LOGS.has(key) ? " open" : ""}>
+      <summary>${resultTag(p.result)}<span class="rhead">${esc(p.head)}</span><span class="rwhen">${esc(time(p.when))}</span></summary>
+      <div class="rbody">${esc(p.body)}</div></details>`;
+}
+function noteHead(n) {
+  const k = n.kind || "code";
+  return `<span class="nid">${esc(n.id)}<span class="kind k-${esc(k)}" title="${AI_OF[k]}">${NOTE_KIND[k]}</span></span>
+      <div><div class="ntext">${esc(n.text)}</div>${noteLog(n)}</div>`;
+}
+
+// 종류 고치기(2026-10-01 사용자 요청 — 그림으로 맡길 것을 코드로 적었다). 처리 중인 메모는 AI 가 들고 있어 못 바꾼다.
+// 이미 처리된 메모는 바꾸면 그 종류로 다시 대기열에 들어간다
+function kindSelect(n) {
+  const k = n.kind || "code";
+  const tip = n.status === "queued" ? "종류를 잘못 골랐으면 바꿉니다" : "바꾸면 그 종류의 AI 에게 다시 맡깁니다";
+  return `<select class="kindsel" data-id="${esc(n.id)}" title="${tip}">`
+    + Object.entries(NOTE_KIND).map(([v, name]) => `<option value="${v}"${v === k ? " selected" : ""}>${v === k ? "종류: " : "→ "}${name}</option>`).join("")
+    + `</select>`;
+}
+// 종류 칸을 연 채로 2초 새로고침이 목록을 다시 그리면 칸이 닫힌다 — 그동안은 다시 그리지 않는다
+const pickingKind = el => document.activeElement && document.activeElement.matches("select.kindsel") && el.contains(document.activeElement);
+
+function renderQueue(el, row) {
+  if (el._dragging || pickingKind(el)) return;  // 끄는 도중에 2초 새로고침이 목록을 다시 그리면 끌던 것이 사라진다
+  const inQueue = row.notes.filter(n => n.status === "working" || n.status === "queued");
+  const queued = inQueue.filter(n => n.status === "queued");
+  el.querySelector(".qhead").textContent = inQueue.length ? `대기열 ${inQueue.length}개 — 위에서부터 처리` : "대기열 — 비어 있음";
+  el.querySelector(".queue").innerHTML = inQueue.map((n, i) => {
+    const qi = queued.indexOf(n);
+    const b = (act, label, extra = "", dis = false) => `<button data-act="${act}" data-id="${esc(n.id)}" ${extra} ${dis ? "disabled" : ""}>${label}</button>`;
+    const acts = n.status === "working" ? `<span class="st st-working">처리 중</span>`
+      : `<span class="st st-queued">대기</span>` + kindSelect(n)
+        + b("move", "↑", `data-before="${qi > 0 ? esc(queued[qi - 1].id) : ""}" title="위로"`, qi <= 0)
+        + b("move", "↓", `data-before="${qi + 2 < queued.length ? esc(queued[qi + 2].id) : ""}" title="아래로"`, qi >= queued.length - 1)
+        + b("delete", "지우기");
+    const grip = n.status === "queued" ? `<span class="grip" title="끌어서 순서 바꾸기">⠿</span>` : "";
+    return `<li class="${esc(n.status)}" data-id="${esc(n.id)}" ${n.status === "queued" ? 'draggable="true"' : ""}><span class="pos">${grip}${i + 1}</span>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:8px">${noteHead(n)}</div>
+      <div class="nact">${acts}</div></li>`;
+  }).join("");
+  // 넣을 자리 — 고른 값이 아직 대기 중이면 유지한다(2초마다 다시 그려도 사람이 고른 것을 지우지 않는다)
+  const sel = el.querySelector(".before");
+  const want = sel.value;
+  const opts = `<option value="">대기열 맨 뒤에</option>` + queued.map(n => `<option value="${esc(n.id)}">${esc(n.id)} 앞에 — ${esc(short(n.text))}</option>`).join("");
+  if (sel.dataset.sig !== opts) { sel.innerHTML = opts; sel.dataset.sig = opts; sel.value = queued.some(n => n.id === want) ? want : ""; }
+  sel.disabled = !queued.length;
+}
+
+function renderDone(el, row) {
+  if (pickingKind(el)) return;
+  // 최근에 적은 메모가 맨 위(2026-09-30 사용자 요청). 대기열은 처리 순서라 이 정렬을 쓰지 않는다
+  const num = n => parseInt(String(n.id).slice(1), 10) || 0;
+  const done = row.notes.filter(n => !["working", "queued"].includes(n.status))
+    .sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")) || num(b) - num(a));
+  el.querySelector(".dhead").textContent = done.length ? `처리된 메모 ${done.length}개` : "";
+  el.querySelector(".notes").innerHTML = done.map(n => {
+    const b = (act, label) => `<button data-act="${act}" data-id="${esc(n.id)}">${label}</button>`;
+    const acts = [];
+    // 그림 메모가 고치거나 만든 그림 — 누르면 전·후를 바로 본다(2026-10-01 사용자 요청)
+    const imgs = (n.result && n.result.images) || [];
+    if (imgs.length) acts.push(`<button class="primary" data-act="images" data-id="${esc(n.id)}">그림 보기 (${imgs.length})</button>`);
+    if (n.status === "review" || n.status === "open") acts.push(b("done", "완료"));
+    acts.push(b("requeue", "다시 맡기기"), kindSelect(n), b("delete", "지우기"));
+    // AI 가 고친 것과 화면에 반영된 것은 다르다 — 빌드가 끝나야 dist 가 바뀐다(2026-09-30, 4-1/04 에서 헷갈림)
+    let built = "";
+    if (n.status === "review" && n.kind !== "verify") {
+      built = (!row.built_at || n.updated_at > row.built_at)
+        ? `<span class="built no" title="대기열이 끝나면 자동 빌드됩니다. 그 전에는 화면이 예전 그대로입니다">아직 화면 반영 전</span>`
+        : `<span class="built yes" title="빌드된 화면에 들어갔습니다. 열어 둔 화면은 새로고침하세요">화면 반영됨 · 새로고침</span>`;
+    }
+    return `<li class="${esc(n.status)}">${noteHead(n)}
+      <div class="nact"><span class="st st-${esc(n.status)}">${STATUS[n.status] || esc(n.status)}</span>${built}${acts.join("")}</div></li>`;
+  }).join("");
+}
+
+function renderUsage(el, row) {
+  const box = el.querySelector(".usage");
+  const rows = row.usage || [];
+  const cost = rows.reduce((s, u) => s + (u.cost_usd || 0), 0);
+  const tokens = rows.reduce((s, u) => s + (u.input || 0) + (u.output || 0), 0);
+  box.querySelector("summary").textContent = rows.length
+    ? `AI 사용량 — 최근 ${rows.length}개 작업 · 토큰 ${tok(tokens)} · 클로드 비용 $${cost.toFixed(2)}`
+    : "AI 사용량 — 아직 없음";
+  const sig = JSON.stringify(rows);
+  if (box.dataset.sig === sig) return;
+  box.dataset.sig = sig;
+  box.querySelector(".table-wrap").innerHTML = rows.length ? `<table>
+    <tr><th class="l">작업 시각</th><th class="l">메모</th><th class="l">종류 · AI</th><th>입력 토큰 (캐시)</th><th>출력 토큰</th><th>비용</th><th>시간</th><th class="l">결과</th></tr>
+    ${rows.map(u => `<tr><td class="l">${time(u.started) || esc(u.id)}</td><td class="l">${esc((u.note_ids || []).join(", "))}</td>
+      <td class="l">${NOTE_KIND[u.note_kind] || "-"} · ${u.provider === "claude" ? "클로드" : u.provider === "codex" ? "코덱스" : esc(u.provider)}${u.model && u.model !== "default" ? ` (${esc(u.model)})` : ""}</td>
+      <td>${tok(u.input)} (${tok(u.cached)})</td><td>${tok(u.output)}</td>
+      <td>${u.cost_usd == null ? "-" : "$" + u.cost_usd.toFixed(2)}</td><td>${Math.round(u.seconds)}초</td>
+      <td class="l">${JOB[u.state] || esc(u.state)}</td></tr>`).join("")}
+    <tr class="sum"><td class="l" colspan="3">합계</td><td>${tok(rows.reduce((s, u) => s + (u.input || 0), 0))} (${tok(rows.reduce((s, u) => s + (u.cached || 0), 0))})</td>
+      <td>${tok(rows.reduce((s, u) => s + (u.output || 0), 0))}</td><td>$${cost.toFixed(2)}</td>
+      <td>${Math.round(rows.reduce((s, u) => s + (u.seconds || 0), 0))}초</td><td></td></tr>
+  </table>` : `<p class="meta">AI 작업이 끝나면 여기 쌓입니다(최근 10개).</p>`;
+}
+
+function update(el, row) {
+  el._row = row;
+  const job = row.job;
+  const running = job && job.state === "running";
+  const busy = busyOf(row);
+  const queued = row.notes.filter(n => n.status === "queued").length;
+  el.querySelector(".stamps").textContent = [row.edited_at && `수정 ${time(row.edited_at)}`, row.built_at && `빌드 ${time(row.built_at)}`].filter(Boolean).join(" · ");
+  const view = el.querySelector(".view");
+  view.href = row.view || "#";
+  view.style.display = row.view ? "" : "none";
+  const build = el.querySelector(".build");
+  build.disabled = busy || !row.buildable;
+  build.title = !row.buildable ? "작업 경로가 gyo6 lessons/<학기>/<차시> 가 아니라 빌드할 수 없습니다" : (busy ? "작업이 끝난 뒤나 멈춘 뒤에 빌드할 수 있습니다" : "");
+  const ctl = el.querySelector(".runctl");
+  const aiBusy = busy && !(running && job.kind === "build");
+  ctl.textContent = row.paused ? (queued ? `다시 시작 (${queued})` : "다시 시작") : (aiBusy ? "지금 멈춤" : "멈춤");
+  ctl.className = "runctl " + (row.paused ? "primary" : "danger");
+  ctl.title = row.paused ? "멈춘 대기열을 이어서 처리합니다"
+    : aiBusy ? "처리 중인 작업을 바로 끊고 되돌립니다(그 작업의 AI 비용은 버려집니다)"
+    : "멈춰 두고 메모를 여러 개 적은 뒤 [다시 시작]하면 적은 순서대로 처리합니다";
+  // [이번 작업 끝나면 멈춤] — AI 작업이 도는 중에만 보인다. 예약하면 [멈춤 예약 취소]
+  const soft = el.querySelector(".softctl");
+  soft.classList.toggle("hidden", row.paused || !aiBusy);
+  soft.textContent = row.pause_after ? "멈춤 예약 취소" : "이번 작업 끝나면 멈춤";
+  soft.title = row.pause_after ? "예약을 취소하고 대기열을 끝까지 처리합니다"
+    : "도는 작업은 끝까지 마치게 두고, 다음 메모로 넘어가지 않고 멈춥니다. 바뀐 것이 있으면 바로 빌드합니다";
+
+  const qs = el.querySelector(".qstate");
+  // 클로드 줄(코드)과 코덱스 줄(그림·검증)이 함께 돌 수 있다 — 도는 AI 작업을 전부 적는다
+  const aiJobs = (row.jobs || []).filter(j => j.kind === "ai");
+  if (aiJobs.length) { qs.className = "qstate running";
+    qs.textContent = "● 처리 중 — " + aiJobs.map(j => `${j.note_ids.join(", ")} (${NOTE_KIND[j.note_kind] || ""} · ${AI_OF[j.note_kind] || ""}) · ${j.step}`).join("  ‖  ")
+    + (row.pause_after ? ` · ⏸ ${aiJobs.length > 1 ? "도는 작업이 다" : "이번 작업이"} 끝나면 멈추고 빌드합니다` : ""); }
+  else if (running) {
+    qs.className = "qstate running";
+    const building = job.step === "빌드" || job.step.startsWith("빌드 대기");
+    const inc = (job.note_ids || []).length ? ` · 포함: ${job.note_ids.join(", ")}` : " · 새로 들어가는 메모 없음";
+    qs.textContent = `● ${job.auto ? "자동 빌드" : "빌드"} 중 — ${job.step}${inc}`
+      + (building ? " · 끝나면 화면에 반영됩니다" : " · 화면에는 이미 반영됨(검사 중)")
+      + (queued ? ` · 끝나면 대기 ${queued}개를 이어서 처리` : "");
+  }
+  else if (row.paused) { qs.className = "qstate paused"; qs.textContent = `■ 멈춤 — 대기 ${queued}개. [다시 시작]을 누르면 이어서 처리합니다`; }
+  else { qs.className = "qstate idle"; qs.textContent = queued ? `대기 ${queued}개 — 곧 시작합니다` : "쉬는 중 — 메모를 적으면 바로 처리합니다"; }
+  // 아직 빌드 안 된 변경 — 다음 빌드에 들어갈 메모(빌드 중이 아닐 때만)
+  const unbuilt = row.unbuilt || [];
+  if (!(running && job.kind === "build") && unbuilt.length) qs.textContent += ` · 아직 빌드 안 된 메모: ${unbuilt.join(", ")}`;
+
+  el.querySelector(".wd").textContent = row.work_dir;
+  const tag = el.querySelector(".path .tag");
+  tag.textContent = row.work_custom ? "직접 지정" : "기본";
+  tag.classList.toggle("custom", row.work_custom);
+  el.querySelector(".path .warn").textContent = !row.work_ok ? "lesson.json 이 없습니다" : (!row.buildable ? "빌드·검증 불가 경로" : "");
+  el.querySelector(".edit-path").disabled = busy;
+
+  renderQueue(el, row);
+  renderDone(el, row);
+  renderUsage(el, row);
+
+  const jobBox = el.querySelector(".job");
+  const wasOpen = new Set([...jobBox.querySelectorAll("details[data-job]")].filter(d => d.open).map(d => d.dataset.job));
+  // 도는 작업이 있으면 전부(두 줄이 함께 돌 수 있다), 없으면 마지막 작업 하나
+  const shown = (row.jobs || []).length ? row.jobs : (job ? [job] : []);
+  const shownIds = new Set(shown.map(j => j.id));
+  const hist = row.history.filter(h => !shownIds.has(h.id));
+  // 빌드는 이번에 새로 들어가는 메모를 함께 적는다(2026-09-30 사용자 요청)
+  const buildLabel = j => `${j.auto ? "자동 빌드" : "빌드"} — ${(j.note_ids || []).length ? j.note_ids.join(", ") + " 포함" : "새 메모 없음"}`;
+  const label = j => j.kind === "ai" && j.note_kind ? `${NOTE_KIND[j.note_kind]} ${(j.note_ids || []).join(", ")}`
+    : (j.kind === "build" ? buildLabel(j) : (KIND[j.kind] || j.kind));
+  jobBox.innerHTML = shown.map(j => {
+    const live = j.state === "running";
+    return `
+    <div class="job-line">
+      <b>${esc(label(j))}</b>
+      <span class="js-${esc(j.state)}">${JOB[j.state]}${live && j.step ? ` — ${esc(j.step)}` : ""}</span>
+      <span>${esc(j.summary)}</span>
+      <span class="meta">${time(j.started)}${j.ended ? " ~ " + time(j.ended) : ""} · ${esc(j.log)}</span>
+    </div>
+    <details data-job="${esc(j.id)}"${wasOpen.has(j.id) || live ? " open" : ""}><summary>로그 끝부분</summary><pre>${esc(j.tail)}</pre></details>`;
+  }).join("")
+    + (hist.length ? `<ul class="hist">${hist.map(h => `<li>${time(h.started)} ${esc(label(h))} — ${JOB[h.state] || esc(h.state)} ${esc(h.summary)}</li>`).join("")}</ul>` : "");
+  for (const pre of jobBox.querySelectorAll("pre")) if (shown.some(j => j.state === "running")) pre.scrollTop = pre.scrollHeight;
+}
+
+async function refresh() {
+  let data;
+  try { data = await (await fetch("/api/state")).json(); } catch { return; }
+  const list = document.getElementById("list");
+  document.getElementById("root").textContent = `gyo6: ${data.gyo6_root}`;
+  if (!data.lessons.length) { list.innerHTML = `<p class="empty">gyo6 에 보일 차시가 없습니다.</p>`; cards.clear(); return; }
+  list.querySelector(".empty")?.remove();
+  for (const row of data.lessons) {
+    const key = row.lesson;
+    if (!cards.has(key)) {
+      if (!list.querySelector(`h3[data-sem="${row.semester}"]`)) {
+        const h = document.createElement("h3");
+        h.className = "sem"; h.dataset.sem = row.semester; h.textContent = `${row.semester.replace("-", "학년 ")}학기`;
+        list.appendChild(h);
+      }
+      const el = makeCard(row); el.dataset.sem = row.semester; el.dataset.lesson = row.lesson; cards.set(key, el); list.appendChild(el);
+    }
+    update(cards.get(key), row);
+  }
+  renderSidebar(data.lessons);
+  applyFilter();
+  renderModels(data.models);
+}
+refresh();
+setInterval(refresh, 2000);
+
+// ── AI 모델 · 추론 강도 고르기(사이드바 아래) — 두 화면 공용 설정, 다음 작업부터 적용 ──
+// 목록은 각 CLI 가 받아 둔 것(클로드: ~/.claude/cache/model-catalog · 코덱스: ~/.codex/models_cache.json)을 서버가 읽어 준다
+let modelState = null;
+const effortName = e => (modelState && modelState.effort_label[e]) || e;
+function modelInfo(which, id) {
+  const list = which === "claude" ? modelState.claude_models : modelState.codex_models;
+  const key = id || (which === "codex" ? modelState.codex_default : "");
+  return list.find(x => x.id === key) || null;
+}
+function renderModels(m) {
+  if (!m) return;
+  modelState = m;
+  const busy = id => [`m-${id}`, `m-${id}-custom`, `m-${id}-effort`].some(x => document.activeElement === document.getElementById(x));
+  const fill = (id, value, list, defaultLabel) => {
+    const sel = document.getElementById(`m-${id}`), custom = document.getElementById(`m-${id}-custom`);
+    const known = list.some(x => x.id === value);
+    const opt = x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`;
+    const main = list.filter(x => x.main), rest = list.filter(x => !x.main);
+    const html = `<option value="">${esc(defaultLabel)}</option>`
+      + (rest.length ? `<optgroup label="주 모델">${main.map(opt).join("")}</optgroup><optgroup label="그 밖의 버전">${rest.map(opt).join("")}</optgroup>`
+                     : main.map(opt).join(""))
+      + `<option value="__custom__">직접 입력…</option>`;
+    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
+    sel.value = value && !known ? "__custom__" : value;
+    custom.classList.toggle("hidden", !(value && !known));
+    if (value && !known) custom.value = value;
+  };
+  const fillEffort = (id, model, effort, cliDefault) => {
+    const sel = document.getElementById(`m-${id}-effort`);
+    const info = modelInfo(id, model);
+    const efforts = info ? info.efforts : ["low", "medium", "high", "xhigh", "max"];
+    let first = "기본";
+    if (info && info.recommended) first = `기본 (추천: ${effortName(info.recommended)})`;
+    else if (cliDefault && !model) first = `기본 (CLI 설정: ${effortName(cliDefault)})`;
+    const html = efforts.length ? `<option value="">${esc(first)}</option>` + efforts.map(e => `<option value="${e}">${esc(effortName(e))}</option>`).join("")
+                                : `<option value="">이 모델은 추론 강도가 없습니다</option>`;
+    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
+    sel.disabled = !efforts.length;
+    sel.value = efforts.includes(effort) ? effort : "";
+  };
+  if (!busy("claude")) {
+    fill("claude", m.claude, m.claude_models, "기본 (CLI 설정)");
+    fillEffort("claude", m.claude, m.claude_effort, "");
+  }
+  if (!busy("codex")) {
+    fill("codex", m.codex, m.codex_models, m.codex_default ? `기본 (CLI 설정: ${m.codex_default})` : "기본 (CLI 설정)");
+    fillEffort("codex", m.codex, m.codex_effort, m.codex_default_effort);
+  }
+}
+async function saveModels(patch) {
+  const s = modelState || {};
+  const body = { claude: s.claude || "", codex: s.codex || "", claude_effort: s.claude_effort || "", codex_effort: s.codex_effort || "" };
+  Object.assign(body, patch);
+  // 모델을 바꿨는데 고른 강도를 그 모델이 지원하지 않으면 '기본'으로 되돌린다
+  for (const which of ["claude", "codex"]) {
+    const info = modelState && modelInfo(which, body[which]);
+    if (info && body[`${which}_effort`] && !info.efforts.includes(body[`${which}_effort`])) body[`${which}_effort`] = "";
+  }
+  const res = await fetch("/api/models", { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  const msg = document.getElementById("m-msg");
+  if (!res.ok) { msg.style.color = "var(--bad)"; msg.textContent = data.error || "저장 실패"; return; }
+  const name = (which) => { const i = modelInfo(which, body[which]); return (i ? i.name : body[which]) || "기본"; };
+  msg.style.color = "";
+  msg.textContent = `저장함 — 클로드: ${name("claude")} · ${body.claude_effort ? effortName(body.claude_effort) : "기본"} / 코덱스: ${name("codex")} · ${body.codex_effort ? effortName(body.codex_effort) : "기본"}`;
+  document.activeElement && document.activeElement.blur();
+  renderModels(data.models);
+}
+for (const which of ["claude", "codex"]) {
+  const sel = document.getElementById(`m-${which}`), custom = document.getElementById(`m-${which}-custom`);
+  const effort = document.getElementById(`m-${which}-effort`);
+  sel.addEventListener("change", () => {
+    if (sel.value === "__custom__") { custom.classList.remove("hidden"); custom.focus(); return; }
+    custom.classList.add("hidden");
+    saveModels({ [which]: sel.value });
+  });
+  custom.addEventListener("keydown", e => { if (e.key === "Enter" && custom.value.trim()) saveModels({ [which]: custom.value.trim() }); });
+  effort.addEventListener("change", () => saveModels({ [`${which}_effort`]: effort.value }));
+}
+
+// ── [그림 보기] — 그림 메모가 고치거나 만든 그림을 전·후로 (2026-10-01 사용자 요청) ──
+// 전 = 작업 전 백업, 후 = 그 작업이 낸 그림. ← → 로 넘기고 Esc 로 닫는다. 그림을 누르면 원본을 새 탭에
+const viewer = document.createElement("div");
+viewer.className = "imgview hidden";
+document.body.appendChild(viewer);
+let viewing = null;   // {lesson, note, i}
+function imageUrl(lesson, job, path, ver) {
+  return `/api/desk/image?lesson=${encodeURIComponent(lesson)}&job=${encodeURIComponent(job)}&path=${encodeURIComponent(path)}&ver=${ver}`;
+}
+function drawImages() {
+  const { lesson, note, i } = viewing;
+  const r = note.result, imgs = r.images, cur = imgs[i];
+  const pane = (ver, title) => {
+    const url = imageUrl(lesson, r.job, cur.path, ver);
+    return `<figure><figcaption>${title}</figcaption><a href="${url}" target="_blank" rel="noopener" title="원본을 새 탭에서">
+      <img src="${url}" alt="${esc(title)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'그림을 못 찾았습니다',style:'color:#333'}))"></a></figure>`;
+  };
+  viewer.innerHTML = `
+    <div class="ivbar"><b>${esc(note.id)} · ${esc(cur.path)}</b><span class="rtag ${cur.new ? "r-ok" : "r-ask"}">${cur.new ? "새로 만든 그림" : "고친 그림"}</span>
+      <span class="sp"></span>${imgs.length > 1 ? `<button data-iv="prev">← 이전</button><span>${i + 1} / ${imgs.length}</span><button data-iv="next">다음 →</button>` : ""}
+      <button data-iv="close">닫기 (Esc)</button></div>
+    <div class="ivnote">${esc(r.headline || "")}</div>
+    ${imgs.length > 1 ? `<div class="ivthumbs">${imgs.map((m, k) => `<button data-iv="go" data-k="${k}" class="${k === i ? "on" : ""}">${esc(m.path.split("/").pop())}</button>`).join("")}</div>` : ""}
+    <div class="ivpanes">${cur.new ? pane("after", "새로 만든 그림") : pane("before", "전 — 작업 전") + pane("after", "후 — 이 작업이 그린 것")}</div>`;
+}
+function openImages(row, id) {
+  const note = row.notes.find(n => n.id === id);
+  if (!note || !note.result || !(note.result.images || []).length) return;
+  viewing = { lesson: row.lesson, note, i: 0 };
+  drawImages();
+  viewer.classList.remove("hidden");
+}
+function closeImages() { viewer.classList.add("hidden"); viewer.innerHTML = ""; viewing = null; }
+function stepImages(d) {
+  const n = viewing.note.result.images.length;
+  viewing.i = (viewing.i + d + n) % n;
+  drawImages();
+}
+viewer.addEventListener("click", e => {
+  const b = e.target.closest("button[data-iv]");
+  if (b) {
+    if (b.dataset.iv === "close") closeImages();
+    else if (b.dataset.iv === "prev") stepImages(-1);
+    else if (b.dataset.iv === "next") stepImages(1);
+    else if (b.dataset.iv === "go") { viewing.i = +b.dataset.k; drawImages(); }
+    return;
+  }
+  if (e.target === viewer) closeImages();   // 바깥 어두운 곳을 누르면 닫는다
+});
+document.addEventListener("keydown", e => {
+  if (!viewing) return;
+  if (e.key === "Escape") closeImages();
+  else if (e.key === "ArrowLeft") stepImages(-1);
+  else if (e.key === "ArrowRight") stepImages(1);
+});
+</script>
+</body>
+</html>

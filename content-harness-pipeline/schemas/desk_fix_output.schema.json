@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk_fix_output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "notes",
+    "self_check",
+    "summary"
+  ],
+  "properties": {
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "result",
+          "headline",
+          "files",
+          "detail"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "fixed",
+              "needs_image",
+              "needs_confirm",
+              "not_fixed"
+            ]
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "detail": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "self_check": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "failed",
+        "not_run"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

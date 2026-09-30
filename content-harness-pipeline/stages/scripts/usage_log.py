@@ -35,13 +35,16 @@ REPORT_NAME = "usage-report.md"
 _lock = threading.Lock()
 _run_dir: Path | None = None
 _session = ""
+_tag = ""
 
 
-def bind(run_dir: Path, session: str) -> None:
-    """이 프로세스의 기록을 run_dir 에 적는다. session 은 어느 명령이 돌았는지(표에서 묶는 단위)."""
-    global _run_dir, _session
+def bind(run_dir: Path, session: str, tag: str = "") -> None:
+    """이 프로세스의 기록을 run_dir 에 적는다. session 은 어느 명령이 돌았는지(표에서 묶는 단위).
+    tag 는 부른 쪽이 기록을 다시 찾을 열쇠다 — 차시 작업대는 작업 번호를 넣어 작업별 사용량을 묶는다."""
+    global _run_dir, _session, _tag
     _run_dir = run_dir
     _session = f"{datetime.now(KST).strftime('%m-%d %H:%M')} {session}"
+    _tag = tag
 
 
 def normalize(provider: str, usage: dict | None) -> dict:
@@ -61,7 +64,8 @@ def normalize(provider: str, usage: dict | None) -> dict:
 def _write(record: dict) -> None:
     if _run_dir is None:
         return
-    record = {"at": datetime.now(KST).isoformat(timespec="seconds"), "session": _session, **record}
+    record = {"at": datetime.now(KST).isoformat(timespec="seconds"), "session": _session,
+              **({"tag": _tag} if _tag else {}), **record}
     with _lock:
         with (_run_dir / LOG_NAME).open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
@@ -148,7 +152,10 @@ def write_report(run_dir: Path) -> None:
         mine = [r for r in rows if r["session"] == session]
         lines += [f"### {session}", "", "| 시각 | 단계 | 제공자 | 모델 | 시간 | 입력 | 캐시 | 출력 | 결과 |", "|---|---|---|---|---:|---:|---:|---:|---|"]
         for r in mine:
-            result = "✓" if r["ok"] else f"✗ {r.get('error', '')[:40]}"
+            # 실패 이유는 여러 줄일 수 있다(`Codex CLI failed\ncommand: …`) — 표 칸에 줄바꿈이나 | 가 들어가면
+            # 표 한 줄이 쪼개진다(2026-10-01, problem.md [dashboard-md-viewer-hang]). 한 줄로 접고 | 는 이스케이프한다
+            error = " ".join(str(r.get("error", "")).split())[:40].replace("|", "\\|")
+            result = "✓" if r["ok"] else f"✗ {error}"
             lines.append(
                 f"| {r['at'][11:19]} | {r['stage']} | {r['provider']} | {r['model']} | {_dur(r['seconds'])} | "
                 f"{_num(r['input'])} | {_num(r['cached'])} | {_num(r['output'])} | {result} |"

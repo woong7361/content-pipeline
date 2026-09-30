@@ -41,6 +41,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -93,6 +94,8 @@ def main() -> int:
 
     run_dir = args.run_dir.resolve()
     usage_log.bind(run_dir, f"verify_lesson {args.lesson}")
+    # 초안 대시보드가 "검증이 도는 중인가" 를 pid 로 본다(끝 기록만으로는 도중에 죽은 것과 못 가른다).
+    append_log(run_dir, {"lesson": args.lesson, "pid": os.getpid()}, event="verify_start")
     target = args.target.resolve()
     lesson_dir = run_dir / "lesson"
     lesson_path = lesson_dir / "lesson.json"
@@ -256,16 +259,23 @@ def run_llm_layers(run_dir: Path, lesson_path: Path, screens_dir: Path, verify_d
     print("\n④-1 화면 판정 (lesson_review, codex)")
     review_path = verify_dir / "lesson_review.json"
     storyboard_md = run_dir / "storyboard.md"
-    review_lesson(
-        capture_dir=screens_dir,
-        lesson_path=lesson_path,
-        storyboard_path=storyboard_md if storyboard_md.exists() else None,
-        output_path=review_path,
-        codex_bin=args.codex_bin,
-        claude_bin=args.claude_bin,
-        model=args.model,
-        timeout_seconds=args.timeout_seconds,
-    )
+    # 지난 실행의 판정이 남아 있으면 이번 호출이 실패해도 그것을 새 결과로 읽는다. 먼저 치운다.
+    review_path.unlink(missing_ok=True)
+    try:
+        review_lesson(
+            capture_dir=screens_dir,
+            lesson_path=lesson_path,
+            storyboard_path=storyboard_md if storyboard_md.exists() else None,
+            output_path=review_path,
+            codex_bin=args.codex_bin,
+            claude_bin=args.claude_bin,
+            model=args.model,
+            timeout_seconds=args.timeout_seconds,
+        )
+    except (RuntimeError, TimeoutError) as exc:
+        # 판정이 죽어도 ①②③ 결과와 보고서는 남긴다. 못 본 것은 통과가 아니므로 사람 몫으로 올린다.
+        print(f"  화면 판정 실패: {str(exc).splitlines()[0][:160]}")
+        review_path.unlink(missing_ok=True)
     if review_path.exists() and validate_file(review_path, artifact="lesson_review_output")["status"] == "PASS":
         review = read_json(review_path)
         items += from_review(review, screens_dir, source_text, planned)
@@ -287,17 +297,22 @@ def run_llm_layers(run_dir: Path, lesson_path: Path, screens_dir: Path, verify_d
         layers["④-2 스토리보드 대조"] = "건너뜀 — 스토리보드 PDF 쪽 이미지를 못 만들었다(예시화면 그림은 PDF 에만 있다)"
         return items
     diff_path = verify_dir / "screen_diff.json"
-    diff_screens(
-        capture_dir=screens_dir,
-        page_dir=page_dir,
-        lesson_path=lesson_path,
-        output_path=diff_path,
-        storyboard_text=storyboard_md.read_text(encoding="utf-8") if storyboard_md.exists() else "",
-        codex_bin=args.codex_bin,
-        claude_bin=args.claude_bin,
-        model=args.model,
-        timeout_seconds=args.timeout_seconds,
-    )
+    diff_path.unlink(missing_ok=True)
+    try:
+        diff_screens(
+            capture_dir=screens_dir,
+            page_dir=page_dir,
+            lesson_path=lesson_path,
+            output_path=diff_path,
+            storyboard_text=storyboard_md.read_text(encoding="utf-8") if storyboard_md.exists() else "",
+            codex_bin=args.codex_bin,
+            claude_bin=args.claude_bin,
+            model=args.model,
+            timeout_seconds=args.timeout_seconds,
+        )
+    except (RuntimeError, TimeoutError) as exc:
+        print(f"  스토리보드 대조 실패: {str(exc).splitlines()[0][:160]}")
+        diff_path.unlink(missing_ok=True)
     if diff_path.exists() and validate_file(diff_path, artifact="screen_diff_output")["status"] == "PASS":
         diff = read_json(diff_path)
         write_diff_markdown(diff, verify_dir / "screen-diff.md")
@@ -498,8 +513,8 @@ def write_report(verify_dir: Path, lesson: str, layers: dict[str, str], findings
     (verify_dir / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def append_log(run_dir: Path, payload: dict) -> None:
-    record = {"at": datetime.now(KST).isoformat(), "event": "verify_end", **payload}
+def append_log(run_dir: Path, payload: dict, event: str = "verify_end") -> None:
+    record = {"at": datetime.now(KST).isoformat(), "event": event, **payload}
     with (run_dir / "pipeline-log.jsonl").open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
