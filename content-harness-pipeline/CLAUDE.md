@@ -133,6 +133,9 @@ python -B ./lesson_desk.py --gyo6-root {GYO6}     # http://127.0.0.1:8790 — �
 python -B ./lesson_desk.py --semesters 3-1,3-2,4-1,4-2
 ```
 
+다른 PC 에 설치는 `작업대 설치.bat`(→ `tools/install_desk.ps1`, 2026-10-02 사용자 요청 — 클릭 한 번) · 절차서 `docs/다른_PC_설치.md`.
+프로그램 설치(winget) → AI CLI · 로그인(실제 호출로 확인) → pip → gyo6 npm · playwright → `desk/config.json` → poppler → 테스트 · 시험 서버(8799,
+8790 이 켜져 있으면 건너뜀) → 바탕화면 바로가기. bat 하나만 복사해 실행하면 레포를 먼저 받는다. 다시 돌려도 된 단계는 건너뛴다.
 사람은 바탕화면 「차시 작업대」(= `작업대 켜기.bat`, **바로가기는 이것 하나** — 2026-10-01 사용자 요청)를 더블클릭한다.
 켜기 전에 `tools/desk_launch_check.ps1` 이 이미 켜진 작업대를 본다 — 꺼져 있으면 켜고, 켜져 있고 최신이면 브라우저만 열고,
 **켠 뒤 서버 코드가 바뀌었으면**(`/api/state` 의 `restart_needed`, 그 값이 없는 예전 서버 포함) 서버 창째 끄고 새로 켠다.
