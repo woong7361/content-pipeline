@@ -325,6 +325,37 @@ class LessonNotesTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 lesson_notes.set_status(desk, ["U01"], "bogus")
 
+    def test_attached_images_reach_prompt(self) -> None:
+        """메모에 붙인 그림은 desk 폴더에 저장하고, AI 에게 넘길 때 절대 경로를 붙인다."""
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Path(tmp)
+            note = lesson_notes.add(desk, "보기 글자가 잘림 — 캡처의 빨간 곳")
+            lesson_notes.attach(desk, note["id"], [("image.png", b"\x89PNG..."), ("b.JPG", b"jpg")])
+            saved = lesson_notes.load(desk)[0]["images"]
+            self.assertEqual(len(saved), 2)
+            self.assertTrue((desk / saved[0]).is_file())
+            self.assertTrue(saved[1].endswith("img-2.jpg"))
+            block = lesson_notes.prompt_block(lesson_notes.load(desk)[0], desk)
+            self.assertIn(str((desk / saved[0]).resolve()), block)
+            with self.assertRaises(ValueError):
+                lesson_notes.attach(desk, note["id"], [("notes.txt", b"x")])
+
+    def test_edit_text_only_while_queued(self) -> None:
+        """처리 전(대기) 메모만 글을 고친다 — AI 가 집어 간 뒤에 고치면 반영되지 않으므로 거절한다."""
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Path(tmp)
+            note = lesson_notes.add(desk, "문3 글자 잘림")
+            lesson_notes.edit_text(desk, note["id"], "  문3 보기 글자 잘림 — 보기 2번  ")
+            saved = lesson_notes.load(desk)[0]
+            self.assertEqual(saved["text"], "문3 보기 글자 잘림 — 보기 2번")
+            self.assertEqual(saved["status"], "queued")
+            self.assertTrue(saved["log"][-1].endswith("사람이 글을 고침"))
+            with self.assertRaises(ValueError):
+                lesson_notes.edit_text(desk, note["id"], "   ")
+            lesson_notes.set_status(desk, [note["id"]], "working", "AI 가 집음")
+            with self.assertRaises(ValueError):
+                lesson_notes.edit_text(desk, note["id"], "늦게 고침")
+
     def test_ids_never_reused_after_delete(self) -> None:
         """작업 기록·사용량이 번호로 메모를 가리키므로 지운 번호를 다시 쓰지 않는다."""
         with tempfile.TemporaryDirectory() as tmp:
@@ -353,21 +384,22 @@ class LessonNotesTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 lesson_notes.remove(desk, "U01")                   # 지우지도 못한다
 
-    def test_next_group_takes_leading_same_kind_run(self) -> None:
+    def test_code_lane_takes_leading_same_kind_run(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             desk = Path(tmp)
             lesson_notes.add(desk, "c1", "code")
             lesson_notes.add(desk, "c2", "code")
             lesson_notes.add(desk, "i1", "image")
             lesson_notes.add(desk, "c3", "code")
-            ids = lambda: [n["id"] for n in lesson_notes.next_group(lesson_notes.load(desk))]
-            self.assertEqual(ids(), ["U01", "U02"])               # 같은 종류 연속 묶음만
+            code = lambda: [[n["id"] for n in g] for lane, g in lesson_notes.runnable_groups(lesson_notes.load(desk)) if lane == "claude"]
+            self.assertEqual(code(), [["U01", "U02"]])            # 같은 종류 연속 묶음만
             lesson_notes.set_status(desk, ["U01", "U02"], "review")
-            self.assertEqual(ids(), ["U03"])
-            lesson_notes.add(desk, "앞에 끼운 코드", "code", before="U03")   # 순서를 바꾸면 다음 묶음이 바뀐다
-            self.assertEqual(ids(), ["U05"])
+            self.assertEqual(code(), [["U04"]])
+            lesson_notes.add(desk, "앞에 끼운 코드", "code", before="U04")   # 순서를 바꾸면 다음 묶음이 바뀐다
+            self.assertEqual(code(), [["U05", "U04"]])
             lesson_notes.set_status(desk, ["U03", "U04", "U05"], "open")
-            self.assertEqual(ids(), [])                            # 열림은 저절로 다시 돌지 않는다
+            self.assertEqual(code(), [])                           # 열림은 저절로 다시 돌지 않는다
+            self.assertFalse(lesson_notes.has_queued(lesson_notes.load(desk)))
 
     def test_runnable_groups_runs_code_and_image_side_by_side(self) -> None:
         """코드(클로드) ∥ 그림(코덱스) — 서로 기다리지 않는다. 검증만 칸막이."""
@@ -396,6 +428,28 @@ class LessonNotesTests(unittest.TestCase):
             self.assertEqual(plan({"codex"}), [])
             lesson_notes.set_status(desk, ["U04"], "review")
             self.assertEqual(plan(), [("codex", ["U05"])])
+
+    def test_build_checkpoint_is_a_barrier(self) -> None:
+        """빌드 지점(2026-10-01) — A · B 를 처리하고 빌드한 뒤 C."""
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Path(tmp)
+            for text, kind in [("A", "code"), ("B", "image"), ("여기까지 처리하고 빌드", "build"), ("C", "code"), ("D", "code")]:
+                lesson_notes.add(desk, text, kind)
+
+            def plan(busy=frozenset()):
+                return [(lane, [n["id"] for n in group])
+                        for lane, group in lesson_notes.runnable_groups(lesson_notes.load(desk), busy)]
+
+            self.assertEqual(plan(), [("claude", ["U01"]), ("codex", ["U02"])])   # 빌드 지점 아래 C 는 아직
+            lesson_notes.set_status(desk, ["U01", "U02"], "working")
+            lesson_notes.set_status(desk, ["U01"], "review")
+            self.assertEqual(plan({"codex"}), [])                 # B 가 끝나야 빌드
+            lesson_notes.set_status(desk, ["U02"], "review")
+            self.assertEqual(plan(), [("build", ["U03"])])        # 빌드는 혼자
+            lesson_notes.set_status(desk, ["U03"], "working")
+            self.assertEqual(plan({"build"}), [])                 # 빌드하는 동안 C 는 기다린다
+            lesson_notes.set_status(desk, ["U03"], "done")
+            self.assertEqual(plan(), [("claude", ["U04", "U05"])])
 
     def test_runnable_groups_image_does_not_wait_for_code(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -432,6 +486,29 @@ class LessonNotesTests(unittest.TestCase):
             self.assertNotIn("result", notes["U02"])                  # 지난 결과는 치운다
             self.assertIn("다시 맡김", notes["U02"]["log"][-1])
             self.assertEqual([n["id"] for n in lesson_notes.load(desk)], ["U01", "U02", "U03"])   # 자리는 그대로
+
+    def test_refine_requeues_with_previous_result(self) -> None:
+        """보완해서 다시 맡기기 — 원래 메모는 그대로, 지난 결과와 보완 메모가 AI 프롬프트에 함께 간다."""
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Path(tmp)
+            lesson_notes.add(desk, "철탑 노란 부분이 빛나게", "image")
+            lesson_notes.set_result(desk, "U01", "review", {"kind": "rendered", "label": "그림 새로 구움",
+                                                            "headline": "노란 부분에 빛을 넣었어요", "detail": "- 바깥 빛 번짐 추가",
+                                                            "images": [{"path": "assets/bg/tower.png", "new": False}]})
+            with self.assertRaises(ValueError):
+                lesson_notes.refine(desk, "U01", "   ")
+            lesson_notes.refine(desk, "U01", "빛을 조금 약하게")
+            note = lesson_notes.load(desk)[0]
+            self.assertEqual((note["status"], note["text"]), ("queued", "철탑 노란 부분이 빛나게"))
+            self.assertNotIn("result", note)
+            block = lesson_notes.prompt_block(note)
+            for part in ("철탑 노란 부분이 빛나게", "보완 1", "노란 부분에 빛을 넣었어요", "assets/bg/tower.png", "빛을 조금 약하게"):
+                self.assertIn(part, block)
+            lesson_notes.set_status(desk, ["U01"], "working")
+            with self.assertRaises(ValueError):
+                lesson_notes.refine(desk, "U01", "또")
+            plain = lesson_notes.add(desk, "그냥 메모", "code")
+            self.assertEqual(lesson_notes.prompt_block(plain), "### U02\n\n그냥 메모")   # 보완이 없으면 예전 모양 그대로
 
     def test_release_working_only_given_ids(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -558,7 +635,7 @@ class DeskFailureTests(unittest.TestCase):
 
 
 class DraftInterviewTests(unittest.TestCase):
-    """작업대에서 초안을 만들 때 — 정할 것에서 멈추고, 화면에서 적은 답을 파이프라인이 다시 읽는다."""
+    """작업대에서 초안을 만들 때 — 인터뷰에서 한 번 멈추고(정할 것은 멈추지 않고 정리), 화면에서 적은 답을 파이프라인이 다시 읽는다."""
 
     def test_open_decisions_pause_instead_of_crash(self) -> None:
         import produce_lesson
@@ -572,6 +649,42 @@ class DraftInterviewTests(unittest.TestCase):
             produce_lesson.write_interview_package(run)
             text = (run / "interview" / "questions.md").read_text(encoding="utf-8")
             self.assertIn("[DEC-01] 그래프 눈금 간격은?", text)                     # 질문지에 오른다
+
+    def test_decisions_after_interview_never_pause(self) -> None:
+        """인터뷰는 한 번(2026-10-02 사용자 결정) — 남은 정할 것은 멈추지 않고 assumed 로 정리해 assumed.md 에 모은다."""
+        import produce_lesson
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp)
+            spec = sample_spec()
+            spec["decisions"] = [
+                {"id": "DEC-01", "question": "눈금 간격은?", "answer": "", "status": "open", "targets": []},
+                {"id": "DEC-02", "question": "시작 버튼 자리", "answer": "왼쪽 아래 — 예시화면", "status": "assumed", "targets": ["REQ-UI-01"]},
+                {"id": "DEC-03", "question": "영역", "answer": "변화와 관계", "status": "confirmed", "targets": []},
+            ]
+            (run / "spec").mkdir()
+            (run / "spec" / "lesson-spec.json").write_text(json.dumps(spec, ensure_ascii=False), encoding="utf-8")
+            assumed = produce_lesson.settle_decisions(run, produce_lesson.validate_spec_file(run))
+            self.assertEqual(assumed, ["DEC-01", "DEC-02"])
+            saved = json.loads((run / "spec" / "lesson-spec.json").read_text(encoding="utf-8"))
+            self.assertFalse([d for d in saved["decisions"] if d["status"] == "open"])
+            self.assertEqual(produce_lesson.validate_spec_file(run), [])
+            text = (run / produce_lesson.ASSUMED_NAME).read_text(encoding="utf-8")
+            self.assertIn("DEC-02 — 시작 버튼 자리", text)
+            self.assertIn("왼쪽 아래 — 예시화면", text)
+
+    def test_design_table_questions_reach_interview(self) -> None:
+        """디자인 문서 표에만 적힌 질문도 인터뷰에 오른다 — 보고서 open_questions 에 있는 번호는 겹쳐 싣지 않는다."""
+        import produce_lesson
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp)
+            (run / "design").mkdir()
+            (run / "design" / "wireframe.md").write_text("\n".join([
+                "| 번호 | 질문 | 선택지 |", "|---|---|---|",
+                "| Q-D1 | 모바일 세로 대응? | (a) 레터박스(권장) (b) 세로 배치 |",
+                "| Q-D2 | 문제 화면 인물 | (a) 숨김 (b) 남김 |",
+            ]), encoding="utf-8")
+            found = produce_lesson.table_only_questions(run, ["Q-D2: 문제 화면에서 인물을 숨길지"])
+            self.assertEqual(found, ["Q-D1: 모바일 세로 대응? — 선택지: (a) 레터박스(권장) (b) 세로 배치"])
 
     def test_answers_saved_from_screen_are_read_back(self) -> None:
         import produce_lesson
@@ -591,6 +704,123 @@ class DraftInterviewTests(unittest.TestCase):
             self.assertTrue(any(p.name.startswith("questions.bak-") for p in (run / "interview").iterdir()))
             with self.assertRaises(ValueError):
                 interview_form.save(run, {"없는 질문": "x"})
+
+
+class VoiceImportTests(unittest.TestCase):
+    """음성 파일 넣기 — 자동 짝짓기 · 교체 · 원래 형식 유지."""
+
+    LESSON = {
+        "cast": {"child": {"name": "아이"}},
+        "audioMap": {"narration": {"take1": "assets/audio/narration/take1.mp3"}, "sfx": {"sparkle": "assets/audio/sfx/sparkle.mp3"}},
+        "steps": [{"stageDirections": [
+            {"id": "c1", "speechText": "안녕! 오늘은 박물관에 가 보자.", "sound": "take1"},
+            {"id": "c2", "speechText": "입장료를 볼까?"},
+            {"id": "c3", "speechText": "특별전시도 보고 싶은데 만 원이구나."},
+        ]}],
+    }
+
+    def test_auto_match_text_then_order(self) -> None:
+        from stages.scripts import voice_import
+        table = voice_import.rows(self.LESSON, "all")
+        self.assertEqual([r["current"] for r in table], ["take1", "", ""])
+        pairs = voice_import.auto_match(table, ["05_아이_특별전시도 보고.wav", "001.mp3", "002.mp3"])
+        self.assertEqual(pairs["vo-c3"], {"file": "05_아이_특별전시도 보고.wav", "method": "글자"})   # 번호가 커도 글자가 먼저
+        self.assertEqual((pairs["vo-c1"]["file"], pairs["vo-c2"]["file"]), ("001.mp3", "002.mp3"))
+        self.assertEqual(pairs["vo-c1"]["method"], "순서")
+        self.assertEqual([r["key"] for r in voice_import.rows(self.LESSON, "empty")], ["vo-c2", "vo-c3"])
+
+    def test_apply_replaces_keeps_format_and_shelves_old(self) -> None:
+        from stages.scripts import voice_import
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            lesson_dir = root / "lesson"
+            (lesson_dir / "assets/audio/narration").mkdir(parents=True)
+            (lesson_dir / "assets/audio/narration/take1.mp3").write_bytes(b"old")
+            raw = json.dumps(self.LESSON, ensure_ascii=False, indent=2).replace("\n", "\r\n") + "\r\n"
+            (lesson_dir / "lesson.json").write_bytes(raw.encode("utf-8"))
+            session = voice_import.stage(root / "sess", self.LESSON, "all", [("001.wav", b"new1"), ("002.mp3", b"new2")])
+            result = voice_import.apply(lesson_dir, root / "sess", {k: v["file"] for k, v in session["pairs"].items()}, root / "removed")
+            self.assertEqual((result["placed"], result["replaced"]), (2, 1))
+            after_raw = (lesson_dir / "lesson.json").read_bytes().decode("utf-8")
+            self.assertTrue(all(line.endswith("\r") for line in after_raw.split("\n")[:-1]))   # CRLF 그대로
+            after = json.loads(after_raw)
+            self.assertEqual(after["steps"][0]["stageDirections"][0]["sound"], "vo-c1")
+            self.assertEqual(after["audioMap"]["narration"]["vo-c1"], "assets/audio/narration/vo-c1.wav")   # 받은 확장자 그대로
+            self.assertNotIn("take1", after["audioMap"]["narration"])                       # 아무도 안 쓰면 뺀다
+            self.assertTrue((root / "removed/assets/audio/narration/take1.mp3").is_file())   # 지우지 않고 보관
+            self.assertIn("sparkle", after["audioMap"]["sfx"])                              # 상관없는 소리는 그대로
+            with self.assertRaises(ValueError):
+                voice_import.apply(lesson_dir, root / "sess", {"vo-c2": "002.mp3"}, root / "removed")   # 이미 넣은 세션
+            # 올린 뒤에 대사 글이 바뀌면 엉뚱한 줄에 소리가 붙지 않게 막는다
+            session2 = voice_import.stage(root / "sess2", after, "empty", [("x.mp3", b"x")])
+            changed = json.loads(after_raw)
+            changed["steps"][0]["stageDirections"][2]["speechText"] = "바뀐 대사"
+            (lesson_dir / "lesson.json").write_bytes(json.dumps(changed, ensure_ascii=False, indent=2).encode("utf-8"))
+            if session2["pairs"]:
+                with self.assertRaises(ValueError):
+                    voice_import.apply(lesson_dir, root / "sess2", {k: v["file"] for k, v in session2["pairs"].items()}, root / "removed")
+
+
+class DeliveryQaTests(unittest.TestCase):
+    """커밋 전 점검 — 체크리스트 읽기 · 에셋 참조 · 코드/코덱스 판정 합치기."""
+
+    def test_checklist_items_parsed_from_markdown(self) -> None:
+        from stages.scripts import delivery_qa
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "c.md"
+            path.write_text("## A\n\n- [ ] **A1. 외부 절대 URL 없음** — `index.html`에 CDN 없음\n  - 검증: rg ...\n"
+                            "- [x] **E3. 문장 단위 줄바꿈** — 문장 끝마다\n- 그냥 줄\n", encoding="utf-8")
+            items = delivery_qa.checklist_items(path)
+        self.assertEqual([(i["id"], i["title"]) for i in items], [("A1", "외부 절대 URL 없음"), ("E3", "문장 단위 줄바꿈")])
+
+    def test_source_refs_skip_meta_and_prose(self) -> None:
+        """메타 자리(artDirection · styleRef · assetPrompt)와 설명문 속 경로는 404 판정에서 뺀다(배포 21차시 실측)."""
+        from stages.scripts import delivery_qa
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp)
+            (src / "lesson.json").write_text(json.dumps({
+                "artDirection": {"styleRef": "assets/style/style-sheet.png"},
+                "cast": {"child": {"assetRef": "assets/character/child.png", "styleRef": "assets/style/x.png"}},
+                "steps": [{"assetPrompt": {"targetAsset": "assets/backgrounds/a.png"},
+                           "backgroundRef": "assets/backgrounds/b.png",
+                           "note": "화풍 앵커: assets/backgrounds/old.png — 정리됨",
+                           "sound": "assets/audio/v1.wav"}],
+            }), encoding="utf-8")
+            (src / "player-ext.js").write_text("const m = {'assets/photos/old.jpg': 'assets/photos/new.jpg'};", encoding="utf-8")
+            data, code = delivery_qa.source_refs(src)
+            self.assertEqual(data, {"assets/character/child.png", "assets/backgrounds/b.png", "assets/audio/v1.wav"})
+            self.assertEqual(code, {"assets/photos/old.jpg", "assets/photos/new.jpg"})
+            dist = src / "dist"
+            (dist / "assets/backgrounds").mkdir(parents=True)
+            (dist / "assets/audio").mkdir(parents=True)
+            (dist / "assets/backgrounds/b.webp").write_bytes(b"x")    # 빌드가 png → webp
+            (dist / "assets/audio/v1.mp3").write_bytes(b"x")          # 빌드가 wav → mp3
+            self.assertTrue(delivery_qa.exists_any_suffix(dist, "assets/backgrounds/b.png"))
+            self.assertTrue(delivery_qa.exists_any_suffix(dist, "assets/audio/v1.wav"))
+            self.assertFalse(delivery_qa.exists_any_suffix(dist, "assets/character/child.png"))
+
+    def test_merge_uses_recheck_for_code_items_and_claude_for_screen_items(self) -> None:
+        """클로드가 점검·고침(2026-10-01) — 코드로 재는 항목은 다시 빌드한 뒤 다시 잰 결과가 최종이다."""
+        import desk_qa
+        code = lambda i, r, obs="": {"id": i, "title": i, "result": r, "observed": obs, "evidence": [], "by": "code"}
+        before = [code("B3", "fail", "png 1개"), code("D1", "fail", "404 2개"), code("C5", "warn", "console — AI 가 가린다"),
+                  code("C1", "pass"), {"id": "E3", "title": "E3", "result": "unchecked", "observed": "", "evidence": [], "by": ""},
+                  {"id": "E7", "title": "E7", "result": "unchecked", "observed": "", "evidence": [], "by": ""}]
+        self.assertEqual([i["id"] for i in before if desk_qa.needs_ai(i)], ["B3", "D1", "C5", "E3", "E7"])
+        ai = [{"id": "B3", "result_before": "fail", "action": "protractor.png 를 webp 로", "result": "fixed", "observed": "", "evidence": [],
+               "files": ["assets/ui/protractor.webp"], "fix_hint": ""},
+              {"id": "D1", "result_before": "fail", "action": "참조 고침", "result": "fixed", "observed": "", "evidence": [], "files": [], "fix_hint": ""},
+              {"id": "C5", "result_before": "warn", "action": "", "result": "pass", "observed": "공통 런타임 것", "evidence": [], "files": [], "fix_hint": ""},
+              {"id": "E3", "result_before": "fail", "action": "개행 8곳 정리", "result": "fixed", "observed": "임의 개행 8건", "evidence": [],
+               "files": ["lesson.json"], "fix_hint": ""}]
+        after = [code("B3", "pass"), code("D1", "fail", "404 1개"), code("C5", "warn", "console — AI 가 가린다"), code("C1", "pass")]
+        merged = {i["id"]: i for i in desk_qa.merge(before, ai, after)}
+        self.assertEqual((merged["B3"]["result"], merged["B3"]["before"]), ("fixed", "fail"))   # 다시 재서 통과 → 고침
+        self.assertEqual(merged["D1"]["result"], "fail")              # 고쳤다고 했지만 다시 재니 아직 걸림 → 실패
+        self.assertEqual(merged["C5"]["result"], "pass")              # 'AI 가 가린다' 경고는 클로드 판정
+        self.assertEqual(merged["C1"]["result"], "pass")
+        self.assertEqual((merged["E3"]["result"], merged["E3"]["files"]), ("fixed", ["lesson.json"]))
+        self.assertEqual(merged["E7"]["result"], "unchecked")         # 클로드가 빠뜨리면 못 본 것으로 남는다
 
 
 if __name__ == "__main__":

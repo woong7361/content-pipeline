@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk_qa_output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "items",
+    "headline",
+    "summary"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "result_before",
+          "action",
+          "result",
+          "observed",
+          "evidence",
+          "files",
+          "fix_hint"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "체크리스트 항목 번호(A1 · E3 …)"
+          },
+          "result_before": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "warn",
+              "na",
+              "unchecked"
+            ],
+            "description": "고치기 전 판정"
+          },
+          "action": {
+            "type": "string",
+            "description": "이 항목 때문에 무엇을 고쳤는지(파일 · 자리 · 전후 값). 안 고쳤으면 빈 문자열"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fixed",
+              "fail",
+              "warn",
+              "na",
+              "unchecked"
+            ],
+            "description": "끝난 뒤 판정 — 고쳤으면 fixed, 원래 통과면 pass, 못 고쳤으면 fail/warn"
+          },
+          "observed": {
+            "type": "string",
+            "description": "실제로 본 것 — 명령 출력 · 캡처에서 본 것"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "이 항목 때문에 바꾼 파일(차시 폴더 기준)"
+          },
+          "fix_hint": {
+            "type": "string",
+            "description": "못 고친 fail · warn 이면 왜 못 고쳤고 어디(공통 런타임 · 빌드 설정 · 그림)를 무엇으로 고쳐야 하는지. 없으면 빈 문자열"
+          }
+        }
+      }
+    },
+    "headline": {
+      "type": "string",
+      "description": "카드에 보일 한 줄 요약(40자 안팎, 사람 말로)"
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

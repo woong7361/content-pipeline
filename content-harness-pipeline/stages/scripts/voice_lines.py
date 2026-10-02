@@ -37,10 +37,12 @@ class Line:
     node: dict = field(repr=False)
     previous_text: str = ""
     next_text: str = ""
+    current: str = ""            # 지금 걸린 소리 id(교체할 때만 — collect(include_existing=True))
+    ext: str = ".mp3"            # 놓을 파일 확장자. 받은 파일이 wav 면 wav 그대로 둔다(gyo6 빌드가 mp3 로 바꾼다)
 
     @property
     def path(self) -> str:
-        return f"{AUDIO_DIR}/{self.audio_id}.mp3"
+        return f"{AUDIO_DIR}/{self.audio_id}{self.ext}"
 
 
 def protagonist(lesson: dict) -> str:
@@ -50,6 +52,26 @@ def protagonist(lesson: dict) -> str:
     if isinstance(cast, list) and cast and isinstance(cast[0], dict):
         return str(cast[0].get("id") or "main")
     return "main"
+
+
+def speaker_aliases(lesson: dict) -> dict[str, str]:
+    """같은 사람의 다른 포즈를 한 화자로 묶는다 — 목소리는 한 사람이 하나다.
+
+    실측(2026-09-29, g4l04) — 엔딩 포즈를 `girlWave`(여자아이(엔딩 — 손 흔들기))처럼 cast 에 따로 올려
+    화자가 5명으로 잡혔다. 이름이 `다른 인물의 이름 + (…)` 이면 그 인물로 묶는다.
+    """
+    cast = lesson.get("cast") or {}
+    if not isinstance(cast, dict):
+        return {}
+    by_name = {str(v.get("name")).strip(): k for k, v in cast.items()
+               if isinstance(v, dict) and v.get("name") and "(" not in str(v.get("name"))}
+    aliases = {}
+    for key, value in cast.items():
+        name = str((value or {}).get("name") or "")
+        base = name.split("(", 1)[0].strip()
+        if "(" in name and base in by_name and by_name[base] != key:
+            aliases[key] = by_name[base]
+    return aliases
 
 
 def speakable(text: str) -> str:
@@ -66,8 +88,12 @@ def safe_id(raw: str) -> str:
     return re.sub(r"[^A-Za-z0-9_-]+", "-", raw).strip("-") or "line"
 
 
-def collect(lesson: dict) -> tuple[list[Line], list[str]]:
-    """재생 순서대로 글을 모은다. 두 번째 값은 **모으지 못한 것**(재생 통로 없음·충돌)."""
+def collect(lesson: dict, include_existing: bool = False) -> tuple[list[Line], list[str]]:
+    """재생 순서대로 글을 모은다. 두 번째 값은 **모으지 못한 것**(재생 통로 없음·충돌).
+
+    include_existing — 이미 다른 소리가 걸린 줄도 모은다(`current` 에 그 id). 사람이 음성을 **교체**할 때 쓴다
+    (2026-10-01 음성 넣기). 기본은 지금처럼 빈 줄과 우리가 붙인 줄만 — 배포 차시의 소리를 실수로 덮지 않게.
+    """
     main = protagonist(lesson)
     lines: list[Line] = []
     skipped: list[str] = []
@@ -93,24 +119,26 @@ def collect(lesson: dict) -> tuple[list[Line], list[str]]:
             if cut.get("captionText"):
                 skipped.append(f"{cut.get('id') or where}: 자막만 있는 컷 — 런타임이 소리를 재생하지 않는다")
             return
-        if not own_sound(cut.get("sound")):
-            skipped.append(f"{cut.get('id') or where}: 이미 다른 소리({cut.get('sound')})가 걸려 있다")
+        current = cut.get("sound")
+        if not own_sound(current) and not include_existing:
+            skipped.append(f"{cut.get('id') or where}: 이미 다른 소리({current})가 걸려 있다")
             return
         lines.append(Line(new_id(cut.get("id"), "cut"), "cut", str(cut.get("characterRef") or main),
-                          speakable(speech), cut))
+                          speakable(speech), cut, current=str(current or "")))
 
     def visit_problem(problem: dict, where: str) -> None:
         text = problem.get("semiDialogue") or problem.get("prompt")
         narration = problem.get("narration")
-        if text and (narration is None or (isinstance(narration, str) and own_sound(narration))):
+        if text and (narration is None or isinstance(narration, str)) and (include_existing or narration is None or own_sound(narration)):
             pid = problem.get("id")
             lines.append(Line(new_id(f"{pid}-prompt" if pid else None, "problem"), "problem",
-                              str(problem.get("characterRef") or main), speakable(text), problem))
+                              str(problem.get("characterRef") or main), speakable(text), problem, current=str(narration or "")))
         hint = problem.get("hintAfterWrong")
-        if isinstance(hint, dict) and hint.get("speechText") and own_sound(hint.get("sound")):
+        if isinstance(hint, dict) and hint.get("speechText") and (include_existing or own_sound(hint.get("sound"))):
             pid = problem.get("id")
             lines.append(Line(new_id(f"{pid}-hint" if pid else None, "hint"), "hint",
-                              str(hint.get("characterRef") or main), speakable(hint["speechText"]), hint))
+                              str(hint.get("characterRef") or main), speakable(hint["speechText"]), hint,
+                              current=str(hint.get("sound") or "")))
 
     def visit_slides(scene: dict) -> None:
         for slide in scene.get("slides") or []:
@@ -121,10 +149,11 @@ def collect(lesson: dict) -> tuple[list[Line], list[str]]:
                 continue
             narration = slide.get("narration")
             current = narration.get("audio") if isinstance(narration, dict) else narration
-            if not own_sound(current):
+            if not own_sound(current) and not include_existing:
                 skipped.append(f"{slide.get('id')}: 이미 다른 소리가 걸려 있다")
                 continue
-            lines.append(Line(new_id(slide.get("id"), "slide"), "slide", NARRATOR, speakable(text), slide))
+            lines.append(Line(new_id(slide.get("id"), "slide"), "slide", NARRATOR, speakable(text), slide,
+                              current=str(current or "")))
 
     def walk(node: object, where: str) -> None:
         if isinstance(node, dict):
@@ -145,6 +174,10 @@ def collect(lesson: dict) -> tuple[list[Line], list[str]]:
                 walk(value, f"{where}[{i}]")
 
     walk(lesson.get("steps") or [], "steps")
+
+    aliases = speaker_aliases(lesson)
+    for line in lines:
+        line.speaker = aliases.get(line.speaker, line.speaker)
 
     # 앞뒤 대사를 붙인다 — 같은 화자끼리가 아니라 **들리는 순서**의 앞뒤다(대화의 톤이 이어진다).
     for i, line in enumerate(lines):

@@ -12,7 +12,7 @@
                      (웹 프로젝트는 그대로 남는다)
     ③ 가져오기       내려받은 파일을 대사와 짝지어 lesson/assets/audio/narration/vo-*.mp3 로 놓고
                      lesson.json 에 audioMap.narration 과 자리별 소리를 건다(`voice_lines.apply`).
-                     **아직 없다** — 웹 편집기가 내려받는 파일 형식을 본 뒤 만든다.
+                     화면의 [음성 파일 넣기]가 한다(`stages/scripts/voice_import.py`, 2026-10-01) — 자동 짝짓기 + 사람 확인.
 
 왜 웹인가 — 사용자는 Typecast 웹 요금제만 쓴다. Typecast 는 웹 서비스와 API 요금제를 따로 운영하므로
 웹 요금제로는 API 를 부를 수 없다(2026-09-29 사용자 결정 — API 경로는 파이프라인에서 뺐다).
@@ -95,12 +95,12 @@ def run_web(run_dir: Path) -> int:
     if not received:
         return announce_web(run_dir, lesson, lines, first_time=fresh)
 
-    # 가져오기는 웹 편집기가 내려받는 **실제 파일 형식**을 본 뒤에 짝짓는 규칙을 정한다.
-    # 문장별로 나뉘는지, 파일 이름이 어떻게 붙는지 모르는 채로 순서만 믿고 짝지으면 대사가 어긋난다.
+    # 가져오기(대사와 짝짓기)는 화면에서 한다 — 자동으로 짝지은 뒤 사람이 들어 보고 확인해야 하기 때문이다
+    # (`stages/scripts/voice_import.py`, 초안 파이프라인 화면 · 차시 작업대 카드의 [음성 파일 넣기], 2026-10-01).
     print(f"\n{INBOX}/ 에 파일 {len(received)}개가 있다:")
     for path in received[:10]:
         print(f"  · {path.relative_to(inbox).as_posix()}")
-    print("\n가져오기(대사와 짝짓기)는 아직 없다 — 웹 편집기가 내려받는 파일 형식을 확인한 뒤 만든다.")
+    print("\n넣기: 초안 파이프라인 화면(http://127.0.0.1:8790/pipeline)에서 이 run 을 고르고 [음성 파일 넣기]에 이 파일들을 올린다.")
     return WAITING_EXIT
 
 

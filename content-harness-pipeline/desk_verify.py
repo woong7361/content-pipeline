@@ -79,7 +79,7 @@ def main() -> int:
             shutil.copy2(lesson_dir / name, snapshot / name)
     before = hashes(lesson_dir)
 
-    body = "\n\n".join(f"### {n['id']}\n\n{n['text'].strip()}" for n in notes)
+    body = "\n\n".join(lesson_notes.prompt_block(n, desk_dir) for n in notes)
     prompt = "\n\n".join([
         PROMPT.read_text(encoding="utf-8").strip(),
         f"LESSON: {args.lesson}\nLESSON_DIR: {lesson_dir}\nGYO6_ROOT: {gyo6}\nVIEW_URL: {args.view_url}\nOUT_DIR: {out_dir}",

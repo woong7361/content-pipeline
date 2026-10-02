@@ -62,6 +62,19 @@ def shelve_orphans(lesson_dir: Path, desk_dir: Path, before: set[str], reported:
     return stray
 
 
+def code_ran_alongside(desk_dir: Path, since: str) -> bool:
+    """이 그림 작업이 도는 동안 코드 메모 작업(클로드)이 함께 돌았나 — 지금 돌고 있거나, 이 작업이 시작한 뒤에 끝났다.
+
+    코드 메모는 그림 이름을 바꾸거나 새 파일을 만들 수 있다(2026-10-01). 그러면 assets/ 에 새로 생긴 파일이
+    이 그림 작업의 찌꺼기인지 코드가 만든 것인지 못 가른다 — 그때는 치우지 않고 알리기만 한다.
+    """
+    if (desk_dir / "active-job-claude.json").exists():
+        return True
+    log = desk_dir / "jobs.jsonl"
+    rows = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines() if line.strip()] if log.exists() else []
+    return any(r.get("note_kind") == "code" and (r.get("ended") or "") >= since for r in rows)
+
+
 def image_facts(assets: Path) -> dict[str, dict]:
     """그리기 전 그림마다 픽셀 크기와 투명 여부 — 그린 뒤 대조한다."""
     from PIL import Image
@@ -103,9 +116,10 @@ def main() -> int:
         print("그릴 그림 메모가 없다")
         return 1
 
+    started = datetime.now(lesson_notes.KST).isoformat(timespec="seconds")
     before = image_facts(lesson_dir / "assets")
     before_files = all_files(lesson_dir / "assets")
-    body = "\n\n".join(f"### {n['id']}\n\n{n['text'].strip()}" for n in notes)
+    body = "\n\n".join(lesson_notes.prompt_block(n, desk_dir) for n in notes)
     prompt = "\n\n".join([
         PROMPT.read_text(encoding="utf-8").strip(),
         f"LESSON: {args.lesson}\nLESSON_DIR: {lesson_dir}",
@@ -155,7 +169,15 @@ def main() -> int:
             item["detail"] = "\n".join([item.get("detail", "").rstrip(), *extra]).strip()
         print(f"  {item['id']}: {item['result']} — {item['detail']}")
     reported = {str(e.get("path", "")).replace("\\", "/") for item in result.get("notes", []) for e in item.get("files", [])}
-    stray = shelve_orphans(lesson_dir, desk_dir, before_files, reported)
+    if code_ran_alongside(desk_dir, started):
+        # 코드 메모가 함께 돌았다 — 새 파일이 그쪽 것(이름 바꾼 그림 등)일 수 있어 치우지 않고 알리기만 한다
+        keep = reported | {Path(r).with_suffix(".json").as_posix() for r in reported}
+        unknown = sorted(all_files(lesson_dir / "assets") - before_files - keep)
+        if unknown:
+            print(f"  코드 작업이 함께 돌아 결과에 안 적힌 새 파일 {len(unknown)}개를 치우지 않음: {', '.join(unknown)}")
+        stray = []
+    else:
+        stray = shelve_orphans(lesson_dir, desk_dir, before_files, reported)
     if stray:
         where = (desk_dir / "orphans").as_posix()
         print(f"  결과에 안 적힌 새 파일 {len(stray)}개를 차시 밖으로 옮김({where}): {', '.join(stray)}")

@@ -27,7 +27,7 @@ import tempfile
 from pathlib import Path
 
 from stages.scripts.atom_registry import load_atom_registry
-from stages.scripts.lesson_check import check_lesson_standalone, collect_asset_refs, errors_only
+from stages.scripts.lesson_check import check_lesson_standalone, collect_asset_refs, errors_only, resolve_source
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -51,6 +51,13 @@ def gate(folder: Path, registry) -> list[dict]:
         if (run / "lesson" / "player-ext.css").exists():
             draft["player_ext_css_path"] = "lesson/player-ext.css"
         return errors_only(check_lesson_standalone(lesson, draft, run, registry))
+
+
+def broken_refs(folder: Path) -> set[str]:
+    """lesson.json 이 가리키는데 그 폴더에 파일이 없는 그림 경로(확장자는 따지지 않는다 — webp 로 압축돼 있을 수 있다)."""
+    refs: set[str] = set()
+    collect_asset_refs(json.loads((folder / "lesson.json").read_text(encoding="utf-8")), refs)
+    return {ref for ref in refs if resolve_source(folder, ref) is None}
 
 
 def key(item: dict) -> str:
@@ -86,14 +93,21 @@ def main() -> int:
     before = {key(v) for v in gate(args.baseline.resolve(), registry)}
     new = [v for v in gate(lesson_dir, registry) if key(v) not in before]
 
+    # 코드 메모가 파일 이름을 바꾸거나 지울 수 있게 되면서(2026-10-01) — 작업 전엔 있던 그림이 이제 깨졌는지 본다.
+    # 작업 전 사본이 차시 폴더 전체(그림 포함)이므로 양쪽을 같은 방식으로 잴 수 있다
+    baseline = args.baseline.resolve()
+    broken = sorted(broken_refs(lesson_dir) - (broken_refs(baseline) if (baseline / "lesson.json").exists() else set()))
+
     for item in new:
         print(f"- 새 위반: [{item.get('kind')}] {item.get('where')} — {item.get('detail')}")
+    for ref in broken:
+        print(f"- 깨진 그림 참조: lesson.json 이 가리키는 {ref} 파일이 차시 폴더에 없다(작업 전에는 있었거나 새로 넣은 참조)")
     if js_error:
         print(f"\nplayer-ext.js 문법 오류:\n{js_error}")
-    if not new and not js_error:
-        print("\n자가 검사 통과 — 새 게이트 위반 0 · ext 문법 정상")
+    if not new and not js_error and not broken:
+        print("\n자가 검사 통과 — 새 게이트 위반 0 · 깨진 그림 참조 0 · ext 문법 정상")
         return 0
-    print(f"\n자가 검사 실패 — 새 게이트 위반 {len(new)}건{' · ext 문법 오류' if js_error else ''}")
+    print(f"\n자가 검사 실패 — 새 게이트 위반 {len(new)}건 · 깨진 그림 참조 {len(broken)}건{' · ext 문법 오류' if js_error else ''}")
     return 2
 
 

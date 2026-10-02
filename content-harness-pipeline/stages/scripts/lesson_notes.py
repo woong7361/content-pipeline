@@ -39,7 +39,7 @@ from pathlib import Path
 KST = timezone(timedelta(hours=9))
 NOTES_NAME = "notes.json"
 STATUSES = ("queued", "working", "review", "open", "done")
-KINDS = ("code", "image", "verify")
+KINDS = ("code", "image", "verify", "build")   # build = 빌드 지점(2026-10-01) — 메모가 아니라 "여기까지 처리하고 빌드"
 
 
 def now() -> str:
@@ -181,11 +181,116 @@ def set_kind(desk_dir: Path, note_id: str, kind: str) -> dict:
     return note
 
 
-def remove(desk_dir: Path, note_id: str) -> list[dict]:
+def edit_text(desk_dir: Path, note_id: str, text: str) -> dict:
+    """처리 전(대기) 메모의 글을 고친다(2026-10-02 사용자 요청). AI 가 집어 간 뒤에는 고치지 않는다 — 고친 글이 반영되지 않는다."""
+    text = text.strip()
+    if not text:
+        raise ValueError("메모 글이 비었다")
     notes = load(desk_dir)
-    if any(n["id"] == note_id and n["status"] == "working" for n in notes):
+    at = _index(notes, note_id)
+    if at is None:
+        raise ValueError(f"없는 메모: {note_id}")
+    note = notes[at]
+    if note["status"] != "queued":
+        raise ValueError("대기 중인 메모만 고칠 수 있다 — 이미 AI 가 처리를 시작했다")
+    if kind_of(note) == "build":
+        raise ValueError("빌드 지점은 고칠 글이 없다")
+    if note["text"] == text:
+        return note
+    note["text"] = text
+    save(desk_dir, notes)
+    set_status(desk_dir, [note_id], "queued", "사람이 글을 고침")
+    return note
+
+
+def refine(desk_dir: Path, note_id: str, text: str) -> dict:
+    """보완해서 다시 맡기기(2026-10-01 사용자 요청) — 원래 메모는 두고 보완 메모를 덧붙여 다시 대기열에 넣는다.
+
+    AI 가 지난번에 무엇을 했는지 알아야 "조금 고쳐" 가 통하므로, 지난 결과(headline · detail · 그림 경로)를
+    보완 기록에 함께 남긴다 — `prompt_block` 이 그것을 AI 에게 넘긴다. 결과 자체는 다시 맡길 때 치워진다.
+    """
+    text = text.strip()
+    if not text:
+        raise ValueError("보완할 내용을 적어 주세요")
+    if is_working(desk_dir, note_id):
+        raise ValueError("처리 중인 메모는 보완할 수 없다 — 끝난 뒤에 한다")
+    notes = load(desk_dir)
+    at = _index(notes, note_id)
+    if at is None:
+        raise ValueError(f"없는 메모: {note_id}")
+    note = notes[at]
+    prev = note.get("result") or {}
+    note.setdefault("refinements", []).append({
+        "at": now(), "text": text,
+        "prev": {k: prev[k] for k in ("label", "headline", "detail", "images") if prev.get(k)},
+    })
+    save(desk_dir, notes)
+    set_status(desk_dir, [note_id], "queued", f"사람이 보완해 다시 맡김 — {text[:40]}")
+    return note
+
+
+ATTACH_DIR = "attachments"   # desk/{id}/attachments/{메모 번호}/ — 메모에 붙여 넣은 그림
+ATTACH_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+ATTACH_MAX = 10
+ATTACH_MAX_BYTES = 15 * 1024 * 1024
+
+
+def attach(desk_dir: Path, note_id: str, files: list[tuple[str, bytes]]) -> list[str]:
+    """메모에 그림을 붙인다(2026-10-01 사용자 요청 — 메모 칸에 캡처를 붙여 넣기). 메모의 `images` 에 desk 폴더 기준 경로를 적는다."""
+    if len(files) > ATTACH_MAX:
+        raise ValueError(f"그림은 한 메모에 {ATTACH_MAX}장까지")
+    notes = load(desk_dir)
+    note = next((n for n in notes if n["id"] == note_id), None)
+    if note is None:
+        raise ValueError(f"없는 메모: {note_id}")
+    folder = desk_dir / ATTACH_DIR / note_id
+    folder.mkdir(parents=True, exist_ok=True)
+    saved = list(note.get("images") or [])
+    for i, (name, blob) in enumerate(files, len(saved) + 1):
+        suffix = Path(name).suffix.lower() or ".png"
+        if suffix not in ATTACH_SUFFIXES:
+            raise ValueError(f"그림 파일이 아니다: {name}")
+        if len(blob) > ATTACH_MAX_BYTES:
+            raise ValueError(f"그림이 너무 크다(15MB 까지): {name}")
+        target = folder / f"img-{i}{suffix}"
+        target.write_bytes(blob)
+        saved.append(target.relative_to(desk_dir).as_posix())
+    note["images"] = saved
+    save(desk_dir, notes)
+    return saved
+
+
+def prompt_block(note: dict, desk_dir: Path | None = None) -> str:
+    """AI 에게 넘길 메모 한 건 — 원래 메모(붙인 그림 경로 포함), 보완했으면 지난 결과와 보완 메모를 차례로."""
+    parts = [f"### {note['id']}", "", note["text"].strip()]
+    if note.get("images"):
+        base = desk_dir.resolve() if desk_dir else None
+        paths = [str(base / rel) if base else rel for rel in note["images"]]
+        parts += ["", "사람이 이 메모에 붙인 그림(화면 캡처 등) — **직접 열어 보고** 메모가 가리키는 자리를 확인한다:",
+                  *[f"- {p}" for p in paths]]
+    for i, ref in enumerate(note.get("refinements") or [], 1):
+        prev = ref.get("prev") or {}
+        parts += ["", f"#### 보완 {i} — 지난번 결과를 보고 사람이 덧붙인 것. 원래 메모와 함께 이것을 반영한다"]
+        if prev:
+            done = f"지난번 결과: {prev.get('label', '')} — {prev.get('headline', '')}".strip()
+            parts.append(done)
+            if prev.get("images"):
+                parts.append("지난번에 바꾼 그림: " + ", ".join(img["path"] for img in prev["images"]))
+            if prev.get("detail"):
+                parts += ["지난번 설명:", prev["detail"].strip()]
+        parts += ["보완 메모:", ref["text"].strip()]
+    return "\n".join(parts)
+
+
+def is_working(desk_dir: Path, note_id: str) -> bool:
+    """AI 가 들고 있는 메모인가 — 들고 있는 동안은 지우거나 상태·종류를 바꾸지 않는다."""
+    return any(n["id"] == note_id and n["status"] == "working" for n in load(desk_dir))
+
+
+def remove(desk_dir: Path, note_id: str) -> list[dict]:
+    if is_working(desk_dir, note_id):
         raise ValueError("처리 중인 메모는 지울 수 없다 — 먼저 멈춘다")
-    notes = [n for n in notes if n["id"] != note_id]
+    notes = [n for n in load(desk_dir) if n["id"] != note_id]
     save(desk_dir, notes)
     return notes
 
@@ -201,7 +306,8 @@ def release_working(desk_dir: Path, message: str, to: str = "open", ids: list[st
 
 
 # 작업 줄 — 코드는 클로드, 그림·검증은 코덱스(2026-09-30 사용자 결정). 줄마다 한 번에 한 작업씩, 두 줄은 함께 돈다.
-LANE = {"code": "claude", "image": "codex", "verify": "codex"}
+LANE = {"code": "claude", "image": "codex", "verify": "codex", "build": "build"}
+BARRIERS = ("verify", "build")   # 칸막이 — 위에 걸린 것이 다 끝나야 돌고, 아래 것은 이것이 끝나야 돈다
 
 
 def runnable_groups(notes: list[dict], busy: set[str] | frozenset[str] = frozenset()) -> list[tuple[str, list[dict]]]:
@@ -211,9 +317,10 @@ def runnable_groups(notes: list[dict], busy: set[str] | frozenset[str] = frozens
     (코드는 세 파일, 그림은 그림 파일). 새 그림을 화면에 붙이는 코드 메모(`follow_up`)는 그림이 **끝난 뒤에** 생기므로
     기다릴 일이 없다. 처음에 "코드는 위의 그림을 기다린다" 를 넣었다가 상관없는 코드 메모까지 묶여 뺐다
     (problem.md [desk-parallel-overblocked]).
-    - 검증만 칸막이다 — 앞에 걸린 것이 없고 두 줄이 다 쉴 때만 돌고, 뒤의 것은 검증이 끝날 때까지 기다린다.
+    - 검증 · 빌드 지점은 칸막이다 — 앞에 걸린 것이 없고 두 줄이 다 쉴 때만 돌고, 뒤의 것은 그것이 끝날 때까지 기다린다.
       검증은 빌드 뒤 화면을 보고, 코드 파일이 바뀌면 해시 가드가 되돌린다 — 코드와 함께 돌면 코드가 고친 것이 지워진다.
-    묶음은 걸린 메모 가운데 그 메모부터 **이어지는 같은 종류 대기 메모**다(처리 중 메모나 다른 종류에서 끊는다).
+      빌드 지점(2026-10-01 사용자 요청)은 "A · B 까지 처리하고 빌드한 뒤 C" — 대기열이 다 빌 때까지 빌드를 미루지 않게.
+    묶음은 걸린 메모 가운데 그 메모부터 **이어지는 같은 종류 대기 메모**다(처리 중 메모나 다른 종류에서 끊는다). 빌드 지점은 하나씩.
     """
     busy = set(busy)
     pending = [n for n in notes if n.get("status") in ("queued", "working")]
@@ -223,14 +330,14 @@ def runnable_groups(notes: list[dict], busy: set[str] | frozenset[str] = frozens
         kind = kind_of(note)
         lane = LANE[kind]
         if note["status"] == "queued" and lane not in busy:
-            if kind == "verify":
+            if kind in BARRIERS:
                 ok = not before and not busy
             else:
-                ok = "verify" not in before
+                ok = not any(k in BARRIERS for k in before)
             if ok:
                 group = [note]
                 for later in pending[i + 1:]:
-                    if later["status"] != "queued" or kind_of(later) != kind:
+                    if kind == "build" or later["status"] != "queued" or kind_of(later) != kind:
                         break
                     group.append(later)
                 out.append((lane, group))
@@ -239,18 +346,9 @@ def runnable_groups(notes: list[dict], busy: set[str] | frozenset[str] = frozens
     return out
 
 
-def next_group(notes: list[dict]) -> list[dict]:
-    """대기열 맨 앞 메모와, 대기열에서 그 뒤로 **이어지는 같은 종류** 메모들."""
-    queued = [n for n in notes if n.get("status") == "queued"]
-    if not queued:
-        return []
-    kind = kind_of(queued[0])
-    group = []
-    for note in queued:
-        if kind_of(note) != kind:
-            break
-        group.append(note)
-    return group
+def has_queued(notes: list[dict]) -> bool:
+    """처리할 메모가 남았나. 무엇을 먼저 할지는 `runnable_groups` 가 정한다."""
+    return any(n.get("status") == "queued" for n in notes)
 
 
 def desk_id(lesson_ref: str) -> str:

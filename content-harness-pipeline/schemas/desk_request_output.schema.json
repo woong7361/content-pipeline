@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "desk_request_output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "items",
+    "headline",
+    "summary"
+  ],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "kind",
+          "pages",
+          "source_quote",
+          "question"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "작업대 메모로 그대로 넣을 글 — 이 차시의 어느 자리를 어떻게 바꾸는지 혼자 읽어도 알 수 있게"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "code",
+              "image",
+              "verify"
+            ]
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "이 항목이 나온 PDF 쪽 번호(1부터)"
+          },
+          "source_quote": {
+            "type": "string",
+            "description": "요청서의 원래 문구를 그대로(줄이지 않는다)"
+          },
+          "question": {
+            "type": "string",
+            "description": "자리나 뜻이 분명하지 않으면 사람에게 물을 것. 분명하면 빈 문자열"
+          }
+        }
+      }
+    },
+    "headline": {
+      "type": "string",
+      "description": "카드에 보일 한 줄 요약(40자 안팎)"
+    },
+    "summary": {
+      "type": "string"
+    }
+  }
+}

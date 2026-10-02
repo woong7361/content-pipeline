@@ -1,0 +1,82 @@
+/* 차시 작업대(/)와 초안 파이프라인(/pipeline)이 함께 쓰는 것 — 색 · 바탕 · 위 탭 · 사이드바 틀 · AI 모델 칸 · 버튼.
+   두 화면에 같은 규칙이 복사돼 있던 것을 모았다(2026-10-01 정리). 화면마다 다른 것은 각 페이지의 <style> 에 둔다. */
+:root {
+  --bg: #f5f6f8; --card: #ffffff; --ink: #1d2330; --muted: #6a7282; --line: #dde1e8;
+  --accent: #2f6fde; --ok: #1f8a4c; --warn: #b7791f; --bad: #c0392b; --chip: #eef1f6; --hl: #fff7e6;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #14171c; --card: #1d2128; --ink: #e6e9ef; --muted: #98a1b0; --line: #2e3440;
+          --accent: #6a9cf5; --ok: #4cc07f; --warn: #e0a84a; --bad: #ef6b5e; --chip: #272c35; --hl: #2d2718; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 14px/1.5 "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif; }
+.hidden { display: none !important; } /* 필터·편집·직접 입력 칸 숨김 — 요소의 다른 display 규칙보다 반드시 이겨야 한다 */
+
+.restart-banner { position: sticky; top: 0; z-index: 60; padding: 10px 16px; background: var(--bad); color: #fff;
+                  font-weight: 700; text-align: center; }
+.topnav { display: flex; gap: 4px; padding: 10px 16px 0; max-width: 1400px; margin: 0 auto; }
+.topnav a { padding: 6px 14px; border-radius: 8px 8px 0 0; color: var(--muted); text-decoration: none; font-weight: 600; }
+.topnav a.on { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-bottom-color: var(--card); }
+
+.side { position: sticky; top: 12px; align-self: start; max-height: calc(100vh - 24px); overflow-y: auto;
+        background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-top: 12px; }
+/* 사이드바 스크롤바 — 얇고 둥글게. 평소엔 옅게, 사이드바에 마우스를 올리면 진하게(2026-10-01 사용자 요청).
+   scrollbar-color 는 Chrome 121+ · Edge · Firefox, ::-webkit-scrollbar 는 그보다 옛 Chrome 용이다 */
+.side { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+.side:hover { scrollbar-color: var(--muted) transparent; }
+.side::-webkit-scrollbar, .side *::-webkit-scrollbar { width: 8px; height: 8px; }
+.side::-webkit-scrollbar-track, .side *::-webkit-scrollbar-track { background: transparent; }
+.side::-webkit-scrollbar-thumb, .side *::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px;
+                                                                   border: 2px solid var(--card); }
+.side:hover::-webkit-scrollbar-thumb, .side:hover *::-webkit-scrollbar-thumb { background: var(--muted); }
+.side * { scrollbar-width: thin; scrollbar-color: inherit; }   /* 좁은 화면의 가로 줄(학년·차시 버튼)도 같은 모양 */
+.content { min-width: 0; }
+.models { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.models .mbody { display: grid; gap: 6px; margin-top: 8px; }
+.models summary { cursor: pointer; display: grid; gap: 2px; list-style: none; }
+.models summary::-webkit-details-marker { display: none; }
+.models .mtitle { font-size: 12px; font-weight: 700; color: var(--muted); }
+.models .mtitle::before { content: "▸ "; }
+.models details[open] .mtitle::before { content: "▾ "; }
+.models .mpicked { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.models details[open] .mpicked { display: none; }
+.models label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
+.models select, .models input { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
+                                border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; }
+.models .mnote { font-size: 11px; color: var(--muted); margin: 0; }
+.models .mmsg { font-size: 11px; color: var(--ok); min-height: 1em; }
+
+header { padding: 20px 0 8px; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+header p { margin: 0; color: var(--muted); }
+.meta { color: var(--muted); font-size: 12px; }
+.empty { color: var(--muted); }
+
+button, .btn { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--ink);
+               border-radius: 8px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.danger { color: var(--bad); border-color: var(--bad); background: transparent; }
+
+/* 음성 파일 넣기 — 두 화면 공용 */
+details.voice { margin-top: 10px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+details.voice > summary { cursor: pointer; font-size: 13px; }
+.v-up { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 8px 0; font-size: 13px; }
+.v-up select, .v-file { font: inherit; font-size: 12px; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 6px; }
+.v-up input[type=file] { font-size: 12px; max-width: 260px; }
+.v-table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.v-table th, .v-table td { border: 1px solid var(--line); padding: 4px 6px; vertical-align: top; text-align: right; }
+.v-table .l { text-align: left; }
+.v-table .v-text { white-space: pre-wrap; min-width: 14em; }
+.v-table button.v-play { padding: 0 6px; font-size: 11px; }
+.v-file { max-width: 220px; }
+.v-how { font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--chip); margin-left: 4px; }
+.v-how-order { color: var(--warn); } .v-how-ok { color: var(--ok); }
+.v-acts { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+
+@media (max-width: 800px) {
+  /* 좁은 화면 — 사이드바를 위에 붙은 가로 줄로 바꾼다. 스크롤해도 위에 남는다 */
+  .side { top: 0; z-index: 5; max-height: none; margin-top: 8px; border-radius: 0 0 12px 12px; }
+  .side h5 { display: none; }
+}

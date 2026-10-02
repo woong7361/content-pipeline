@@ -182,8 +182,12 @@ class ClaudeClient:
     timeout_seconds: int = 600
     permission_mode: str = "acceptEdits"
     bare: bool = False
-    # `acceptEdits` 는 파일 수정만 허락한다. 명령은 여기 적은 것만 돈다(예: `Bash(python -B -m stages.scripts.self_check:*)`).
+    # 미리 허용할 명령(예: `Bash(python -B -m stages.scripts.self_check:*)`). 그 밖의 명령은 대개 거부되지만 **전부는 아니다** —
+    # 실측(2026-10-01, Claude Code CLI) `acceptEdits` 는 작업 폴더 안의 `mkdir` · `mv` · `rm` 같은 파일 명령을 목록과 상관없이
+    # 자동 허락했다(`rm c.txt` 가 돌았다). 막아야 하는 것은 아래 `disallowed_tools` 에 적는다 — 거부가 허용보다 앞선다.
     allowed_tools: tuple[str, ...] = ()
+    # 거부할 명령 — `--disallowedTools`. 예: `Bash(rm:*)` (차시 작업대 코드 메모는 지우지 않고 보관 폴더로 옮기게 한다)
+    disallowed_tools: tuple[str, ...] = ()
     # 사용자 전역 설정(~/.claude/settings.json)의 허용 규칙을 **물려받지 않는다.** 실측(2026-09-29) — 전역에
     # `Bash(node -e ' *)` · 특정 경로 `rm -rf` 등이 있어 파이프라인의 claude 도 그 명령을 돌릴 수 있었다.
     # PC 마다 전역 설정이 다르므로 이렇게 해야 어디서나 같은 권한으로 돈다.
@@ -290,6 +294,8 @@ class ClaudeClient:
         )
         if self.allowed_tools:
             command.extend(["--allowedTools", *self.allowed_tools])
+        if self.disallowed_tools:
+            command.extend(["--disallowedTools", *self.disallowed_tools])
         for folder in self.add_dirs:
             command.extend(["--add-dir", folder])
         return command

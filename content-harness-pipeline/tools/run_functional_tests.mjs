@@ -183,6 +183,14 @@ const shot = async (label) => {
   shotNo += 1;
   const file = `f${String(shotNo).padStart(3, '0')}-${label.replace(/[^\w.-]+/g, '_')}.png`;
   await page.mouse.move(1270, 710);
+  /* 화면 전환(페이드) 도중에 찍으면 화면 전체가 어둡게 찍혀 판정이 "짙은 오버레이" 로 오판한다
+     (실측 2026-09-29, 4-1/04 — 막는 것 2건이 그것이었다). #app 의 애니메이션이 끝날 때까지 기다린다. */
+  for (let i = 0; i < 10; i += 1) {
+    const busy = await page.evaluate(() => document.getAnimations().some((a) => a.playState === 'running'
+      && a.effect && a.effect.target === document.getElementById('app'))).catch(() => false);
+    if (!busy) break;
+    await page.waitForTimeout(150);
+  }
   await page.screenshot({ path: join(outDir, file) });
   results.timeline.push({ file, label });
   return file;
@@ -298,6 +306,28 @@ async function testProblem(st) {
     shots: [],
   };
   results.problems.push(record);
+
+  /* 문제에 **도입 연출**이 있으면(대사 → `다음` → 그제서야 입력 영역이 보인다) 그것부터 넘긴다.
+     실측(2026-09-30, 4-1/03) — 사람이 Q-01 에 도입 대사를 넣자, 도구가 안 보이는 키패드를 누르다 "정답을 냈는데
+     안 넘어간다" 로 오판했고 뒤 문항이 전부 미도달로 잡혔다. 입력 영역이 실제로 보일 때까지 `다음` 을 누른다. */
+  const firstTerminal = mounts.find((m) => m.terminal);
+  if (firstTerminal) {
+    for (let i = 0; i < 12; i += 1) {
+      const visible = await page.evaluate((index) => {
+        const host = document.querySelector(`[data-qa-mount="${index}"]`);
+        if (!host) return false;
+        const r = host.getBoundingClientRect();
+        let opacity = 1;
+        for (let n = host; n; n = n.parentElement) opacity *= Number(getComputedStyle(n).opacity || 1);
+        return r.width > 2 && r.height > 2 && opacity > 0.5 && getComputedStyle(host).visibility !== 'hidden';
+      }, firstTerminal.index);
+      if (visible) break;
+      if (i === 0) record.shots.push(await shot(`${id}-intro`));
+      const next = await page.evaluate(FIND_NEXT, NEXT_SELECTORS);
+      if (next) await press(page.locator(next).first(), `${id} 도입 ${next}`);
+      await page.waitForTimeout(900);
+    }
+  }
   record.shots.push(await shot(`${id}-before`));
 
   if (!mounts.some((m) => m.terminal)) {
@@ -392,6 +422,7 @@ try {
   const tested = new Set();
   let lastKey = '';
   let sameRuns = 0;
+  let idleRetries = 0;   // 화면 전환을 기다려 준 횟수(전체)
   for (let loop = 0; loop < 400; loop += 1) {
     await page.evaluate(WRAP);
     const st = await state();
@@ -419,10 +450,86 @@ try {
         await page.waitForTimeout(500);
       }
     }
+    /* 버튼은 있는데 **조상이 투명**해서 못 찾는 경우가 있다 — 화면 전환 애니메이션(`stage-fade-in`)이
+       끝나지 않고 `#app` 이 opacity 0 에 머문 것이다. 실측(2026-09-29, 4-1/04) — 같은 자리에서 3번 중
+       2번 그랬다. 조금 더 기다려 보고, 그래도 그대로면 "끝" 이 아니라 **진행 막힘**으로 적는다.
+       조용히 끝으로 처리하면 뒤 문항이 전부 "미도달" 로 잘못 보고된다. */
+    if (!next) {
+      const hiddenByFade = () => page.evaluate((selectors) => selectors.some((sel) =>
+        [...document.querySelectorAll(sel)].some((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width < 2 || getComputedStyle(el).display === 'none' || el.disabled) return false;
+          let o = 1;
+          for (let n = el; n; n = n.parentElement) o *= Number(getComputedStyle(n).opacity || 1);
+          return o < 0.5;
+        })), NEXT_SELECTORS);
+      for (let retry = 0; retry < 3 && !next && await hiddenByFade(); retry += 1) {
+        await page.waitForTimeout(2000);
+        next = await page.evaluate(FIND_NEXT, NEXT_SELECTORS);
+      }
+      if (!next && await hiddenByFade()) {
+        results.stuck = true;
+        results.stuck_detail = '넘어가는 버튼이 투명한 채로 남았다 — 화면 전환(stage-fade)이 끝나지 않아 '
+          + `화면이 보이지 않는다: ${st.mode}`;
+        await shot('stuck-transparent');
+        break;
+      }
+    }
+    /* 포기하기 전에 **화면 전환이 막 시작됐는지** 본다. 스스로 넘어가는 컷이 있는 차시에서는 버튼을 13초
+       찾다 포기하는 바로 그 순간에 다음 장면의 페이드인이 시작된다 — 실측(2026-09-29, 4-1/04) 멈춘 자리에서
+       `stageFadeIn` 이 t=0 이었고 0.5초 뒤 opacity 1 이었다. 전환이 돌고 있으면 끝날 때까지 기다리고 다시 찾는다. */
+    if (!next && idleRetries < 6) {
+      const animating = await page.evaluate(() => document.getAnimations()
+        .some((a) => a.playState === 'running' && a.effect && a.effect.target === document.getElementById('app')));
+      if (animating) {
+        idleRetries += 1;
+        await page.waitForTimeout(1500);
+        continue;
+      }
+    }
     if (!next) {
       const peek = await state();
       if (peek.panel && !tested.has(`${peek.stepIdx}:${peek.probIdx}`)) continue;
       results.ended = `더 누를 버튼이 없다: ${peek.mode} · ${peek.text}`;
+      // 화면 전환 애니메이션이 **멈춘 것인지, 계속 다시 시작되는 것인지** 가른다. 1.5초 동안 #app 의
+      // opacity 와 돌고 있는 애니메이션을 잰다. 다시 시작되면 currentTime 이 계속 0 근처로 돌아간다.
+      results.stop_animations = [];
+      for (let sample = 0; sample < 4; sample += 1) {
+        results.stop_animations.push(await page.evaluate(() => ({
+          appOpacity: getComputedStyle(document.getElementById('app')).opacity,
+          appClass: document.getElementById('app').className,
+          animations: document.getAnimations().slice(0, 6).map((a) => ({
+            name: a.animationName || a.transitionProperty || a.constructor.name,
+            state: a.playState,
+            t: Math.round(a.currentTime ?? -1),
+            target: (() => { const el = a.effect && a.effect.target; return el ? `${el.tagName.toLowerCase()}${el.id ? '#' + el.id : ''}` : '?'; })(),
+          })),
+        })));
+        await page.waitForTimeout(500);
+      }
+      // 왜 못 눌렀는지 남긴다 — 버튼이 없는 것인지, 있는데 가려졌거나 투명한 것인지.
+      results.stop_diagnosis = await page.evaluate((selectors) => selectors.flatMap((sel) =>
+        [...document.querySelectorAll(sel)].map((el) => {
+          const r = el.getBoundingClientRect();
+          const s = getComputedStyle(el);
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const top = r.width ? document.elementFromPoint(cx, cy) : null;
+          let chainOpacity = 1;
+          const faded = [];
+          for (let n = el; n; n = n.parentElement) {
+            const o = Number(getComputedStyle(n).opacity || 1);
+            chainOpacity *= o;
+            if (o < 1) faded.push(`${n.tagName.toLowerCase()}${n.id ? '#' + n.id : ''}.${[...n.classList].join('.')} opacity=${o}`);
+          }
+          return {
+            sel, text: (el.innerText || '').trim().slice(0, 20), w: Math.round(r.width), h: Math.round(r.height),
+            display: s.display, visibility: s.visibility, opacity: s.opacity, chainOpacity: Number(chainOpacity.toFixed(2)),
+            pointerEvents: s.pointerEvents, disabled: !!el.disabled, hidden: !!el.hidden,
+            coveredBy: top && top !== el && !el.contains(top) ? `${top.tagName.toLowerCase()}.${[...top.classList].join('.')}` : '',
+            fadedAncestors: faded,
+          };
+        })), NEXT_SELECTORS);
       await shotEnd(peek);
       break;
     }

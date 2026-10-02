@@ -4,34 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>초안 파이프라인</title>
+<link rel="stylesheet" href="/static/desk_common.css">
 <style>
-  :root {
-    --bg: #f5f6f8; --card: #ffffff; --ink: #1d2330; --muted: #6a7282; --line: #dde1e8;
-    --accent: #2f6fde; --ok: #1f8a4c; --warn: #b7791f; --bad: #c0392b; --chip: #eef1f6; --hl: #fff7e6;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #14171c; --card: #1d2128; --ink: #e6e9ef; --muted: #98a1b0; --line: #2e3440;
-            --accent: #6a9cf5; --ok: #4cc07f; --warn: #e0a84a; --bad: #ef6b5e; --chip: #272c35; --hl: #2d2718; }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 14px/1.5 "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif; }
-  .topnav { display: flex; gap: 4px; padding: 10px 16px 0; max-width: 1400px; margin: 0 auto; }
-  .topnav a { padding: 6px 14px; border-radius: 8px 8px 0 0; color: var(--muted); text-decoration: none; font-weight: 600; }
-  .topnav a.on { background: var(--card); color: var(--ink); border: 1px solid var(--line); border-bottom-color: var(--card); }
   .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 16px; max-width: 1400px; margin: 0 auto; padding: 0 16px 40px; }
-  .side { position: sticky; top: 12px; align-self: start; max-height: calc(100vh - 24px); overflow-y: auto;
-          background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-top: 12px; display: grid; gap: 4px; }
+  .side { padding: 10px; display: grid; gap: 4px; }
   .side h5 { margin: 2px 4px 6px; font-size: 12px; color: var(--muted); }
   .runs { display: grid; gap: 4px; }
-  .hidden { display: none !important; } /* 직접 입력 칸 숨김 — 다른 display 규칙보다 이겨야 한다 */
-  .content { min-width: 0; }
-  .models { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; display: grid; gap: 6px; }
-  .models label { display: grid; gap: 3px; font-size: 12px; color: var(--muted); }
-  .models select, .models input { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
-                                  border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px; width: 100%; }
-  .models .mnote { font-size: 11px; color: var(--muted); margin: 0; }
-  .models .mmsg { font-size: 11px; color: var(--ok); min-height: 1em; }
   .run { font: inherit; text-align: left; border: 1px solid transparent; background: transparent; color: var(--ink); border-radius: 8px;
          padding: 6px 8px; cursor: pointer; display: grid; gap: 1px; }
   .run:hover { background: var(--chip); }
@@ -41,13 +19,9 @@
   .badge { font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--chip); color: var(--muted); margin-left: 4px; }
   .b-run { color: var(--warn); } .b-ok { color: var(--ok); } .b-bad { color: var(--bad); } .b-wait { color: var(--accent); }
   .run.on .badge { background: rgba(255,255,255,.2); color: #fff; }
-  header { padding: 20px 0 8px; }
-  h1 { font-size: 20px; margin: 0 0 4px; }
-  header p { margin: 0; color: var(--muted); }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-top: 12px; }
   .card h2 { font-size: 18px; margin: 0; }
   .card h3 { font-size: 15px; margin: 0 0 8px; }
-  .meta { color: var(--muted); font-size: 12px; }
   .now { font-size: 16px; margin: 8px 0 4px; }
   .now.running { color: var(--warn); } .now.idle { color: var(--muted); }
   .flow { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
@@ -65,12 +39,6 @@
   tr.r-running td { background: var(--hl); }
   details { margin-top: 8px; }
   details summary { cursor: pointer; font-size: 13px; padding: 4px 0; }
-  .empty { color: var(--muted); }
-  button, .btn { font: inherit; border: 1px solid var(--line); background: var(--chip); color: var(--ink);
-                 border-radius: 8px; padding: 6px 12px; cursor: pointer; text-decoration: none; }
-  button:disabled { opacity: .45; cursor: not-allowed; }
-  .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .danger { color: var(--bad); border-color: var(--bad); background: transparent; }
   .newbtn { font: inherit; width: 100%; margin-bottom: 6px; }
   .form { display: grid; gap: 10px; max-width: 640px; }
   .form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
@@ -87,6 +55,9 @@
                     padding: 6px 8px; min-height: 38px; resize: vertical; }
   .qitem.filled { border-color: var(--ok); }
   .notice { padding: 8px 10px; border-radius: 8px; background: var(--hl); margin-top: 8px; }
+  .out-label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+  .out-path { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+              padding: 6px 8px; width: 100%; }
   /* 산출물 — 단계마다 파일 버튼, 그림은 썸네일(누르면 크게) */
   .files-group { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; padding: 8px 0; border-top: 1px solid var(--line); }
   .files-group:first-of-type { border-top: 0; }
@@ -123,8 +94,7 @@
   .err { color: var(--bad); }
   @media (max-width: 800px) {
     .layout { grid-template-columns: 1fr; }
-    .side { position: sticky; top: 0; z-index: 5; max-height: none; display: block; min-width: 0; margin-top: 8px; border-radius: 0 0 12px 12px; }
-    .side h5 { display: none; }
+    .side { display: block; min-width: 0; }
     .runs { display: flex; overflow-x: auto; gap: 4px; }
     .run { white-space: nowrap; }
     .run .rt { display: none; }
@@ -134,26 +104,21 @@
 <body>
 <nav class="topnav"><a href="/">차시 작업대</a><a href="/pipeline" class="on">초안 파이프라인</a></nav>
 <div class="layout">
-<aside class="side" aria-label="run 고르기"><button class="newbtn primary run" data-id="__new__">+ 새 초안 만들기</button><h5>run (최근 활동 순)</h5><div id="runs" class="runs"></div><div class="models" id="models" aria-label="AI 모델">
-    <h5>AI 모델</h5>
-    <label>클로드 <span class="mnote">코드 메모 · 초안의 기획~개발</span><select id="m-claude"></select></label>
-    <input id="m-claude-custom" class="hidden" placeholder="클로드 모델 이름 (Enter 로 저장)" spellcheck="false">
-    <label>추론 강도<select id="m-claude-effort"></select></label>
-    <label>코덱스 <span class="mnote">그림·검증 메모 · 초안의 그림 굽기</span><select id="m-codex"></select></label>
-    <input id="m-codex-custom" class="hidden" placeholder="코덱스 모델 이름 (Enter 로 저장)" spellcheck="false">
-    <label>추론 강도<select id="m-codex-effort"></select></label>
-    <p class="mnote">두 화면 공용 · 다음 작업부터 적용 · 도는 작업은 그대로</p>
-    <span class="mmsg" id="m-msg"></span>
-  </div></aside>
+<aside class="side" aria-label="run 고르기"><button class="newbtn primary run" data-id="__new__">+ 새 초안 만들기</button><h5>run (최근 활동 순)</h5><div id="runs" class="runs"></div><div class="models" id="models" aria-label="AI 모델"></div></aside>
 <div class="content">
   <header>
     <h1>초안 파이프라인</h1>
     <p>스토리보드 PDF 로 <b>초안을 만들고</b>(왼쪽 [+ 새 초안 만들기]), 인터뷰에 답하고, 끝나면 <b>gyo6에 넣습니다</b>. 지금 어느 단계를 도는지, 단계마다 토큰을 얼마나 썼는지도 봅니다. 3초마다 새로 읽습니다.</p>
     <p class="meta">토큰 단위 1a = 1토큰 · 1b = 1,000a · 1c = 1,000b · 1d = 1,000c · 입력 토큰의 괄호 안은 캐시에서 읽은 양 · 비용은 클로드만 나옵니다(코덱스는 토큰만 줍니다) · 2026-09-29 이전 실행은 사용량 기록이 없습니다</p>
   </header>
-  <div id="detail"><div id="draftbox"></div><div id="filesbox"></div><div id="statbox"><p class="empty">왼쪽에서 run 을 고르거나 [+ 새 초안 만들기]를 누르세요.</p></div></div>
+  <div id="detail"><div id="draftbox"></div><div id="voicebox" class="card hidden"></div><div id="filesbox"></div><div id="statbox"><p class="empty">왼쪽에서 run 을 고르거나 [+ 새 초안 만들기]를 누르세요.</p></div></div>
 </div>
 </div>
+<script src="/static/desk_common.js"></script>
+<script>
+// 공통 JS 를 못 받았으면(작업대 서버가 이 화면보다 예전 것) 스타일 없이도 보이게 알린다 — 공통 파일에 기대지 않는다
+if (typeof postJson === "undefined") document.body.insertAdjacentHTML("afterbegin", '<div style="padding:10px 16px;background:#c0392b;color:#fff;font:700 14px sans-serif;text-align:center">작업대 서버가 이 화면보다 예전 버전입니다 — 바탕화면 「차시 작업대」를 다시 누르면 새 코드로 켭니다.</div>');
+</script>
 <script>
 // produce_lesson.py 의 --start-at / --through 값을 사람이 읽는 말로
 const STAGE_NAME = { senior_planner: "기획", senior_designer: "디자인", interview_brief: "제작 지침", lesson_spec: "요구 명세",
@@ -161,20 +126,10 @@ const STAGE_NAME = { senior_planner: "기획", senior_designer: "디자인", int
 const THROUGH = { planning: "기획까지", interview: "인터뷰 질문까지", design: "디자인까지", develop: "개발까지", render: "그림까지", all: "끝까지" };
 const STATE = { done: "끝남", cached: "캐시", running: "도는 중", rejected: "실패", stopped: "끊김", pending: "대기", skipped: "안 돎" };
 let selected = "";
+let gyo6Root = "";   // 작업대가 보는 gyo6 — 최종 산출 경로의 기본값 안내에 쓴다
 try { selected = localStorage.getItem("pipe-run") || ""; } catch {}
 const openState = {};
 
-function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-function time(s) { return s ? s.slice(5, 16).replace("T", " ") : ""; }
-// 토큰은 단위로 줄여 소수 첫째 자리까지(사용자 요청 2026-09-30) — 1a = 1토큰, 1b = 1,000a, 1c = 1,000b, 1d = 1,000c
-function tok(n) {
-  if (n == null) return "-";
-  const units = ["a", "b", "c", "d", "e"];
-  let v = Number(n), i = 0;
-  while (Math.abs(v) >= 1000 && i < units.length - 1) { v /= 1000; i++; }
-  if (Number(v.toFixed(1)) >= 1000 && i < units.length - 1) { v /= 1000; i++; }  // 999.96b → 1000.0b 가 아니라 1.0c
-  return v.toFixed(1) + units[i];
-}
 function money(n) { return n == null ? "-" : "$" + Number(n).toFixed(2); }
 function dur(sec) {
   if (sec == null) return "-";
@@ -222,8 +177,7 @@ function stageTable(e) {
 
 // ── 초안 만들기 · 답 · gyo6에 넣기 ─────────────────────────────────────────
 async function post(path, body) {
-  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
+  const { res, data } = await postJson(path, body);
   return res.ok ? { ok: true } : { ok: false, error: data.error || "요청 실패" };
 }
 
@@ -237,7 +191,9 @@ function renderNewForm() {
     <div class="form">
       <label>스토리보드 PDF<input type="file" id="nf-pdf" accept="application/pdf,.pdf"></label>
       <label>run 이름 (영문·숫자, 예: g4l05)<input type="text" id="nf-run" spellcheck="false"></label>
-      <label>넣을 차시 (선택, 예: 4-1/05 — 나중에 [gyo6에 넣기] 할 때 정해도 됩니다)<input type="text" id="nf-slot" spellcheck="false"></label>
+      <label>최종 산출 경로 (선택 — 나중에 [gyo6에 넣기] 할 때 정해도 됩니다)
+        <input type="text" id="nf-out" spellcheck="false" placeholder="${esc(gyo6Root || "C:\\…\\gyo6_content")}\\lessons\\4-1\\05">
+        <span class="meta">gyo6 체크아웃의 <code>lessons\\학기\\차시</code> 폴더. 차시만 적으면(예: 4-1/05) 지금 gyo6 로 넣습니다</span></label>
       <div class="actions"><button class="primary" id="nf-go">초안 만들기</button><span class="err" id="nf-err"></span></div>
     </div></section>`;
   const file = box.querySelector("#nf-pdf"), run = box.querySelector("#nf-run");
@@ -254,7 +210,7 @@ function renderNewForm() {
     const btn = box.querySelector("#nf-go");
     btn.disabled = true; err.textContent = "올리는 중…";
     const data = await new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok(rd.result); rd.onerror = no; rd.readAsDataURL(f); });
-    const res = await post("/api/draft/new", { run_id: run.value.trim(), slot: box.querySelector("#nf-slot").value.trim(), filename: f.name, data });
+    const res = await post("/api/draft/new", { run_id: run.value.trim(), output: box.querySelector("#nf-out").value.trim(), filename: f.name, data });
     btn.disabled = false;
     if (!res.ok) { err.textContent = res.error; return; }
     selected = run.value.trim();
@@ -264,11 +220,19 @@ function renderNewForm() {
   };
 }
 
+// 저장 안 한 인터뷰 답 — 칠 때마다 이 브라우저에 run 별로 보관한다. [답 저장] 전에 차시 작업대에 갔다 오면
+// 페이지가 바뀌어 답이 통째로 사라졌다(2026-10-01, problem.md [dashboard-unsaved-answers-lost]). 저장에 성공하면 지운다
+const keptKey = run => `pipe-answers:${run}`;
+function loadKept(run) { try { return JSON.parse(localStorage.getItem(keptKey(run)) || "{}"); } catch { return {}; } }
+function saveKept(run, kept) {
+  try { Object.keys(kept).length ? localStorage.setItem(keptKey(run), JSON.stringify(kept)) : localStorage.removeItem(keptKey(run)); } catch {}
+}
+
 function renderDraft(dr) {
   const box = document.getElementById("draftbox");
   if (!dr) { box.innerHTML = ""; box.dataset.mode = ""; return; }
   const mode = dr.running ? "running" : dr.waiting ? "waiting" : dr.done ? "done" : dr.can_continue ? "continue" : "idle";
-  const key = `${dr.run_id}:${mode}:${dr.questions.file}:${dr.questions.items.map(q => q.key).join("|")}:${dr.slot_exists}`;
+  const key = `${dr.run_id}:${mode}:${dr.questions.file}:${dr.questions.items.map(q => q.key).join("|")}:${dr.slot_exists}:${dr.final_path}`;
   const job = dr.job;
   const jobLine = job ? `<p class="meta">작업대 작업: ${esc(job.summary || job.step || "")} ${job.state === "running" ? "● 도는 중" : ""} · ${time(job.started)}${job.ended ? " ~ " + time(job.ended) : ""}</p>
     <details><summary>로그 끝부분</summary><pre style="max-height:240px;overflow:auto;white-space:pre-wrap;font-size:12px">${esc(job.tail)}</pre></details>` : "";
@@ -277,7 +241,8 @@ function renderDraft(dr) {
     return;
   }
   box.dataset.key = key; box.dataset.mode = mode;
-  const installed = dr.installed.length ? `<p class="meta">gyo6에 넣음: ${dr.installed.map(esc).join(", ")} — <a href="/">차시 작업대</a>에서 이어서 고칩니다</p>` : "";
+  // 넣은 곳은 전체 경로로. 작업대가 보는 gyo6 에 넣었을 때만 작업대 안내를 붙인다
+  const installed = dr.installed.length ? `<p class="meta">넣은 곳: ${dr.installed.map(esc).join(", ")}${dr.installed.some(p => p.startsWith(dr.default_root)) ? ` — <a href="/">차시 작업대</a>에서 이어서 고칩니다` : ""}</p>` : "";
   let body = "";
   if (mode === "running") {
     body = `<p class="notice">● 파이프라인이 돌고 있습니다. 끝나거나 답이 필요하면 바탕화면 알림이 뜹니다.</p>
@@ -285,17 +250,26 @@ function renderDraft(dr) {
   } else if (mode === "waiting") {
     const items = dr.questions.items;
     const pending = items.filter(q => !q.answered), answered = items.filter(q => q.answered);
-    const q = it => `<div class="qitem ${it.answered ? "filled" : ""}" data-key="${esc(it.key)}"><span class="qg">${esc(it.group)}</span>
-        <span class="qq">${esc(it.question)}</span><textarea placeholder="답 (비워 두면 확정 안 된 채로 넘어갑니다)">${esc(it.answer)}</textarea></div>`;
+    const kept = loadKept(dr.run_id);
+    const shown = it => (it.key in kept ? kept[it.key] : it.answer) || "";   // 저장 안 한 답이 있으면 그것을 먼저
+    const unsaved = items.filter(it => it.key in kept && kept[it.key] !== it.answer);
+    const q = it => `<div class="qitem ${shown(it).trim() ? "filled" : ""}" data-key="${esc(it.key)}"><span class="qg">${esc(it.group)}</span>
+        <span class="qq">${esc(it.question)}</span><textarea placeholder="답 (비워 두면 확정 안 된 채로 넘어갑니다)">${esc(shown(it))}</textarea></div>`;
+    const answeredOpen = answered.some(it => unsaved.includes(it)) ? " open" : "";
     body = `<p class="notice">${dr.waiting === "interview" ? "인터뷰 질문" : "요구 명세의 정할 것"}에 답해 주세요 — 답이 필요한 것 <b>${pending.length}</b>건. 비워 둔 칸은 확정되지 않은 채로 넘어가고, 이후 단계가 지어내지 않습니다.</p>
+      <p class="meta" id="dr-kept">${unsaved.length ? `저장 안 한 답 ${unsaved.length}건을 이어서 보여 줍니다(이 브라우저에 임시 보관) — [답 저장]을 눌러야 파이프라인이 읽습니다` : "적는 답은 이 브라우저에 바로 임시 보관됩니다 — 다른 화면에 갔다 와도 남습니다. 파이프라인은 [답 저장] 뒤에 읽습니다"}</p>
       <div class="qlist">${pending.map(q).join("")}</div>
-      ${answered.length ? `<details><summary>이미 답한 것 ${answered.length}건 (고칠 것만 고치세요)</summary><div class="qlist">${answered.map(q).join("")}</div></details>` : ""}
+      ${answered.length ? `<details${answeredOpen}><summary>이미 답한 것 ${answered.length}건 (고칠 것만 고치세요)</summary><div class="qlist">${answered.map(q).join("")}</div></details>` : ""}
       <div class="actions"><button id="dr-save">답 저장</button><button class="primary" id="dr-go">답 저장하고 이어서 만들기</button><span class="err" id="dr-err"></span></div>`;
   } else if (mode === "done") {
-    body = `<p class="notice">초안이 끝났습니다. 넣을 차시를 확인하고 [gyo6에 넣기]를 누르면 배치 → 빌드 → 화면 검증까지 합니다.</p>
-      <div class="actions"><input type="text" id="dr-slot" value="${esc(dr.slot)}" placeholder="4-1/05" spellcheck="false">
-        <button class="primary" id="dr-install">gyo6에 넣기</button>
-        ${dr.slot_exists ? `<button class="danger" id="dr-overwrite">덮어쓰기로 넣기</button><span class="meta">gyo6 에 ${esc(dr.slot)} 이(가) 이미 있습니다</span>` : ""}
+    // 최종 산출 경로(2026-10-01 사용자 요청) — 지정한 gyo6 체크아웃의 lessons\학기\차시. 그 체크아웃에서 배치 → 빌드 → 화면 검증
+    const out = dr.final_path || `${dr.default_root}\\lessons\\`;
+    body = `<p class="notice">초안이 끝났습니다. <b>최종 산출 경로</b>를 확인하고 [gyo6에 넣기]를 누르면 그 폴더에 배치 → 빌드 → 화면 검증까지 합니다.</p>
+      <label class="out-label">최종 산출 경로<input type="text" id="dr-out" class="out-path" value="${esc(out)}" spellcheck="false"></label>
+      <p class="meta">gyo6 체크아웃의 <code>lessons\\학기\\차시</code> 폴더(차시만 적으면 지금 gyo6: ${esc(dr.default_root)})${dr.other_checkout ? ` · <b>작업대가 보는 gyo6 와 다른 체크아웃</b>이라 넣은 차시는 차시 작업대에 안 나타납니다` : ""}</p>
+      <div class="actions"><button class="primary" id="dr-install">gyo6에 넣기</button>
+        <button class="danger${dr.slot_exists ? "" : " hidden"}" id="dr-overwrite">덮어쓰기로 넣기</button>
+        ${dr.slot_exists ? `<span class="meta">이 경로에 이미 차시가 있습니다</span>` : ""}
         <span class="err" id="dr-err"></span></div>`;
   } else if (mode === "continue") {
     body = `<p class="notice">마지막 실행이 끝까지 가지 못했습니다(아래 '마지막 실행' 참고). 끝난 단계는 건너뛰고 이어서 돌 수 있습니다.</p>
@@ -309,24 +283,46 @@ function renderDraft(dr) {
     box.querySelectorAll("button").forEach(b => b.disabled = true);
     const res = await post(path, { run_id: dr.run_id, ...body });
     box.querySelectorAll("button").forEach(b => b.disabled = false);
-    if (!res.ok) { err(res.error); return; }
+    if (!res.ok) { err(res.error); return false; }
     box.dataset.key = "";
     refresh();
+    return true;
+  };
+  const saveAnswers = async (cont, confirmText) => {
+    if (await act("/api/draft/answers", { answers: answers(), ...(cont ? { continue: true } : {}) }, confirmText)) {
+      saveKept(dr.run_id, {});   // questions.md 에 들어갔으니 임시 보관은 지운다
+      if (!cont) err("저장했습니다");
+    }
   };
   const on = (id, fn) => { const b = box.querySelector(id); if (b) b.onclick = fn; };
   on("#dr-stop", () => act("/api/draft/stop", {}, "파이프라인을 멈출까요? 끝난 단계는 남고, [이어서 만들기]로 다시 돌 수 있습니다."));
-  on("#dr-save", async () => { await act("/api/draft/answers", { answers: answers() }); err("저장했습니다"); });
-  on("#dr-go", () => act("/api/draft/answers", { answers: answers(), continue: true }, "답을 저장하고 이어서 만들까요? (AI 비용이 듭니다)"));
+  on("#dr-save", () => saveAnswers(false));
+  on("#dr-go", () => saveAnswers(true, "답을 저장하고 이어서 만들까요? (AI 비용이 듭니다)"));
   on("#dr-continue", () => act("/api/draft/continue", {}, "이어서 만들까요? (AI 비용이 듭니다)"));
-  on("#dr-install", () => act("/api/draft/install", { slot: box.querySelector("#dr-slot").value.trim(), overwrite: false }));
-  on("#dr-overwrite", () => act("/api/draft/install", { slot: box.querySelector("#dr-slot").value.trim(), overwrite: true },
-    `gyo6 의 ${box.querySelector("#dr-slot").value.trim()} 을(를) 이 초안으로 덮어쓸까요? (gyo6 쪽에서 따로 고친 게 있으면 배치가 멈춥니다)`));
-  box.querySelectorAll(".qitem textarea").forEach(t => t.addEventListener("input", () => t.parentElement.classList.toggle("filled", !!t.value.trim())));
+  const outPath = () => box.querySelector("#dr-out").value.trim();
+  on("#dr-install", async () => {
+    // 이미 차시가 있다고 거절되면 [덮어쓰기로 넣기]를 보인다(경로를 바꿔 적은 경우 미리 알 수 없다)
+    if (await act("/api/draft/install", { output: outPath(), overwrite: false }) === false && /이미 차시가 있다/.test(box.querySelector("#dr-err")?.textContent || ""))
+      box.querySelector("#dr-overwrite")?.classList.remove("hidden");
+  });
+  on("#dr-overwrite", () => act("/api/draft/install", { output: outPath(), overwrite: true },
+    `${outPath()} 을(를) 이 초안으로 덮어쓸까요? (gyo6 쪽에서 따로 고친 게 있으면 배치가 멈춥니다)`));
+  const savedAnswer = Object.fromEntries((dr.questions.items || []).map(it => [it.key, it.answer]));
+  box.querySelectorAll(".qitem textarea").forEach(t => t.addEventListener("input", () => {
+    t.parentElement.classList.toggle("filled", !!t.value.trim());
+    const kept = loadKept(dr.run_id), key = t.parentElement.dataset.key;
+    if (t.value === savedAnswer[key]) delete kept[key]; else kept[key] = t.value;   // 저장된 답과 같아지면 보관할 것이 없다
+    saveKept(dr.run_id, kept);
+  }));
 }
 
 function renderDetail(d) {
   const box = document.getElementById("statbox");
   renderDraft(d.draft);
+  // 음성 파일 넣기(2026-10-01) — lesson.json 이 생긴 run 에만. 차시 작업대 카드와 같은 부품(desk_common.js renderVoice)
+  const vbox = document.getElementById("voicebox");
+  vbox.classList.toggle("hidden", !d.has_lesson);
+  if (d.has_lesson) renderVoice(vbox, { run_id: d.run_id || selected }, d.voice, refresh);
   const ex = d.executions;
   const cur = ex.find(e => e.running);
   const latest = ex[0];
@@ -383,15 +379,17 @@ document.addEventListener("click", e => {
 
 async function refresh() {
   try {
-    const { runs, models } = await (await fetch("/api/pipeline")).json();
+    const { runs, models, restart_needed, gyo6_root } = await (await fetch("/api/pipeline")).json();
+    gyo6Root = gyo6_root || gyo6Root;
     renderModels(models);
+    showRestartBanner(restart_needed);
     if (selected && selected !== "__new__" && !runs.some(r => r.run_id === selected)) {
       // 방금 만든 run 은 pipeline-log 가 생기기 전 몇 초 동안 목록에 없다 — 상세는 그대로 부른다
       const probe = await fetch(`/api/pipeline/run?id=${encodeURIComponent(selected)}`);
       if (!probe.ok) selected = "";
     }
     renderRuns(runs);
-    if (selected === "__new__") { renderNewForm(); renderFiles(""); return; }
+    if (selected === "__new__") { renderNewForm(); renderFiles(""); document.getElementById("voicebox").classList.add("hidden"); return; }
     if (!selected) return;
     const res = await fetch(`/api/pipeline/run?id=${encodeURIComponent(selected)}`);
     if (!res.ok) { document.getElementById("statbox").innerHTML = `<p class="err">run 을 읽지 못했습니다.</p>`; return; }
@@ -557,85 +555,6 @@ document.addEventListener("click", e => {
 refresh();
 setInterval(refresh, 3000);
 
-// ── AI 모델 · 추론 강도 고르기(사이드바 아래) — 두 화면 공용 설정, 다음 작업부터 적용 ──
-// 목록은 각 CLI 가 받아 둔 것(클로드: ~/.claude/cache/model-catalog · 코덱스: ~/.codex/models_cache.json)을 서버가 읽어 준다
-let modelState = null;
-const effortName = e => (modelState && modelState.effort_label[e]) || e;
-function modelInfo(which, id) {
-  const list = which === "claude" ? modelState.claude_models : modelState.codex_models;
-  const key = id || (which === "codex" ? modelState.codex_default : "");
-  return list.find(x => x.id === key) || null;
-}
-function renderModels(m) {
-  if (!m) return;
-  modelState = m;
-  const busy = id => [`m-${id}`, `m-${id}-custom`, `m-${id}-effort`].some(x => document.activeElement === document.getElementById(x));
-  const fill = (id, value, list, defaultLabel) => {
-    const sel = document.getElementById(`m-${id}`), custom = document.getElementById(`m-${id}-custom`);
-    const known = list.some(x => x.id === value);
-    const opt = x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`;
-    const main = list.filter(x => x.main), rest = list.filter(x => !x.main);
-    const html = `<option value="">${esc(defaultLabel)}</option>`
-      + (rest.length ? `<optgroup label="주 모델">${main.map(opt).join("")}</optgroup><optgroup label="그 밖의 버전">${rest.map(opt).join("")}</optgroup>`
-                     : main.map(opt).join(""))
-      + `<option value="__custom__">직접 입력…</option>`;
-    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
-    sel.value = value && !known ? "__custom__" : value;
-    custom.classList.toggle("hidden", !(value && !known));
-    if (value && !known) custom.value = value;
-  };
-  const fillEffort = (id, model, effort, cliDefault) => {
-    const sel = document.getElementById(`m-${id}-effort`);
-    const info = modelInfo(id, model);
-    const efforts = info ? info.efforts : ["low", "medium", "high", "xhigh", "max"];
-    let first = "기본";
-    if (info && info.recommended) first = `기본 (추천: ${effortName(info.recommended)})`;
-    else if (cliDefault && !model) first = `기본 (CLI 설정: ${effortName(cliDefault)})`;
-    const html = efforts.length ? `<option value="">${esc(first)}</option>` + efforts.map(e => `<option value="${e}">${esc(effortName(e))}</option>`).join("")
-                                : `<option value="">이 모델은 추론 강도가 없습니다</option>`;
-    if (sel.dataset.sig !== html) { sel.innerHTML = html; sel.dataset.sig = html; }
-    sel.disabled = !efforts.length;
-    sel.value = efforts.includes(effort) ? effort : "";
-  };
-  if (!busy("claude")) {
-    fill("claude", m.claude, m.claude_models, "기본 (CLI 설정)");
-    fillEffort("claude", m.claude, m.claude_effort, "");
-  }
-  if (!busy("codex")) {
-    fill("codex", m.codex, m.codex_models, m.codex_default ? `기본 (CLI 설정: ${m.codex_default})` : "기본 (CLI 설정)");
-    fillEffort("codex", m.codex, m.codex_effort, m.codex_default_effort);
-  }
-}
-async function saveModels(patch) {
-  const s = modelState || {};
-  const body = { claude: s.claude || "", codex: s.codex || "", claude_effort: s.claude_effort || "", codex_effort: s.codex_effort || "" };
-  Object.assign(body, patch);
-  // 모델을 바꿨는데 고른 강도를 그 모델이 지원하지 않으면 '기본'으로 되돌린다
-  for (const which of ["claude", "codex"]) {
-    const info = modelState && modelInfo(which, body[which]);
-    if (info && body[`${which}_effort`] && !info.efforts.includes(body[`${which}_effort`])) body[`${which}_effort`] = "";
-  }
-  const res = await fetch("/api/models", { method: "POST", headers: { "Content-Type": "application/json", "X-Desk": "1" }, body: JSON.stringify(body) });
-  const data = await res.json().catch(() => ({}));
-  const msg = document.getElementById("m-msg");
-  if (!res.ok) { msg.style.color = "var(--bad)"; msg.textContent = data.error || "저장 실패"; return; }
-  const name = (which) => { const i = modelInfo(which, body[which]); return (i ? i.name : body[which]) || "기본"; };
-  msg.style.color = "";
-  msg.textContent = `저장함 — 클로드: ${name("claude")} · ${body.claude_effort ? effortName(body.claude_effort) : "기본"} / 코덱스: ${name("codex")} · ${body.codex_effort ? effortName(body.codex_effort) : "기본"}`;
-  document.activeElement && document.activeElement.blur();
-  renderModels(data.models);
-}
-for (const which of ["claude", "codex"]) {
-  const sel = document.getElementById(`m-${which}`), custom = document.getElementById(`m-${which}-custom`);
-  const effort = document.getElementById(`m-${which}-effort`);
-  sel.addEventListener("change", () => {
-    if (sel.value === "__custom__") { custom.classList.remove("hidden"); custom.focus(); return; }
-    custom.classList.add("hidden");
-    saveModels({ [which]: sel.value });
-  });
-  custom.addEventListener("keydown", e => { if (e.key === "Enter" && custom.value.trim()) saveModels({ [which]: custom.value.trim() }); });
-  effort.addEventListener("change", () => saveModels({ [`${which}_effort`]: effort.value }));
-}
 </script>
 </body>
 </html>

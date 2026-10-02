@@ -97,7 +97,7 @@
           "id": {"type": "string", "pattern": "^DEC-[A-Z0-9-]+$"},
           "question": {"type": "string", "minLength": 1},
           "answer": {"type": "string"},
-          "status": {"enum": ["confirmed", "open"]},
+          "status": {"enum": ["confirmed", "assumed", "open"]},
           "targets": {"type": "array", "items": {"type": "string"}}
         },
         "additionalProperties": false

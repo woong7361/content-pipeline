@@ -13,8 +13,9 @@
 인터뷰는 사람이 답을 채우는 멈춤점이다. `--through interview`까지 먼저 돌리고,
 답변을 `--interview-notes`로 넘겨 나머지 단계를 이어간다.
 
-그림은 **개발 뒤에** 굽는다. 그래야 `lesson.json`이 확정한 경로에 정확히 그 이름으로
-저장할 수 있다 — 먼저 구우면 개발자가 다른 이름을 쓰고 참조가 어긋난다.
+그림은 개발과 **동시에** 굽는다 — 둘 다 `visual_design` 이 낸 `design/asset-plan.json` 만 있으면 된다
+(사이드카가 없는 옛 run 은 예전처럼 개발 뒤에 `lesson.json` 을 보고 굽는다). 끝나면 계획과 `lesson.json` 의
+그림 목록을 대조해 경로가 어긋났는지 알린다(`report_asset_plan_drift`).
 그림 단계만 provider가 codex로 고정된다(이미지 생성 도구가 거기 있다).
 """
 
@@ -24,6 +25,7 @@ import argparse
 import os
 import hashlib
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -383,16 +385,12 @@ def main() -> int:
         else:
             run_stage(stage, run_dir, storyboard_path, args, force=True)
         if stage.name == "lesson_spec":
-            open_decisions = validate_spec_file(run_dir)
-            if open_decisions:
-                # 캐시에 적지 않는다 — 답을 받아 다시 돌 때 이 단계가 다시 돌아야 한다
-                write_pipeline_log(run_dir, "stage_done", {"stage": stage.name, "report": stage.report_name})
-                write_interview_package(run_dir)
-                write_pipeline_log(run_dir, "pipeline_end", {"exit_code": WAITING_EXIT, "waiting": "decisions",
-                                                             "decisions": open_decisions})
-                print(f"요구 명세에 정할 것 {len(open_decisions)}건이 남았다: {', '.join(open_decisions)}")
-                print(f"질문지에 올렸다: {run_dir / 'interview'} — 답을 적고 --start-at interview_brief 로 이어서 돌린다.")
-                return WAITING_EXIT
+            # 인터뷰 뒤에는 멈추지 않는다(2026-10-02 사용자 결정 — problem.md [interview-second-round]).
+            # 예전에는 정할 것(open decision)이 남으면 종료 3 으로 멈춰 인터뷰를 한 번 더 받았다
+            assumed = settle_decisions(run_dir, validate_spec_file(run_dir))
+            if assumed:
+                write_pipeline_log(run_dir, "decisions_assumed", {"decisions": assumed})
+                print(f"요구 명세 — AI 가 정한 것 {len(assumed)}건(멈추지 않고 진행): {run_dir / ASSUMED_NAME}")
         if stage.name == "visual_design":
             enforce_asset_plan(stage, run_dir, storyboard_path, args)
         if not args.no_cache:
@@ -608,6 +606,43 @@ def validate_spec_file(run_dir: Path) -> list[str]:
     if errors:
         raise RuntimeError("lesson-spec 검증 실패: " + "; ".join(errors[:8]))
     return [str(item.get("id")) for item in spec.get("decisions", []) if item.get("status") == "open"]
+
+
+ASSUMED_NAME = "interview/assumed.md"
+
+
+def settle_decisions(run_dir: Path, open_ids: list[str]) -> list[str]:
+    """인터뷰 뒤에 남은 정할 것을 사람에게 다시 묻지 않고 정리한다. AI 가 정한(`assumed`) id 목록을 돌려준다.
+
+    명세 단계는 정하지 못한 것을 `assumed`(정한 값 — 근거)로 적게 되어 있다. 그래도 `open` 이 남으면 코드는 값을
+    지어내지 않고 "정하지 못함" 으로 표시만 바꿔 진행한다 — 하류는 원문 기준으로 처리한다.
+    정한 것은 `interview/assumed.md` 에 모아 사람이 나중에 훑게 한다(틀리면 질문지에 답을 적고 interview_brief 부터 다시).
+    """
+    path = run_dir / "spec" / "lesson-spec.json"
+    spec = json.loads(path.read_text(encoding="utf-8"))
+    decisions = spec.get("decisions", [])
+    if open_ids:
+        for item in decisions:
+            if item.get("id") in open_ids:
+                item["status"] = "assumed"
+                item["answer"] = f"정하지 못함 — 원문 기준으로 처리. 인터뷰 뒤라 다시 묻지 않음{' · 메모: ' + item['answer'] if item.get('answer') else ''}"
+        path.write_text(json.dumps(spec, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    assumed = [item for item in decisions if item.get("status") == "assumed"]
+    target = run_dir / ASSUMED_NAME
+    if not assumed:
+        target.unlink(missing_ok=True)
+        return []
+    lines = ["# AI 가 정한 것", "",
+             f"인터뷰 답과 원문으로 정해지지 않은 {len(assumed)}건을 **멈추지 않고** 명세 단계가 정했습니다(2026-10-02 사용자 결정 — 인터뷰는 한 번).",
+             "틀린 것이 있으면 `interview/questions.md` 에 답을 적고 [답 저장하고 이어서 만들기](= `--start-at interview_brief`)로 다시 돌립니다.",
+             "`판독 불확실` 이 붙은 것은 학습 내용(정답·문항 수)에 닿으니 먼저 보세요.", ""]
+    for item in assumed:
+        lines += [f"## {item.get('id')} — {str(item.get('question') or '').strip()}", "",
+                  f"- 정한 것: {str(item.get('answer') or '').strip()}",
+                  f"- 닿는 요구: {', '.join(item.get('targets') or []) or '-'}", ""]
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("\n".join(lines), encoding="utf-8")
+    return [str(item.get("id")) for item in assumed]
 
 
 def pair_developer_and_assets(
@@ -1686,9 +1721,36 @@ def collect_open_questions(run_dir: Path) -> list[tuple[str, list[str]]]:
         except json.JSONDecodeError:
             continue
         questions = [q for q in (report.get("open_questions") or []) if isinstance(q, str) and q.strip()]
+        if stage.name == "senior_designer":
+            questions += table_only_questions(run_dir, questions)
         if questions:
             collected.append((stage.name, questions))
     return collected
+
+
+DESIGN_QUESTION_ROW = re.compile(r"^\|\s*(Q-[A-Z]+\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]*?)\s*\|")
+
+
+def table_only_questions(run_dir: Path, reported: list[str]) -> list[str]:
+    """디자인 문서의 질문 표(`| Q-D4 | 질문 | 선택지 |`)에만 있고 보고서 `open_questions` 에는 없는 질문.
+
+    사람에게 묻는 자리는 인터뷰 한 번뿐이라(2026-10-02 사용자 결정) 여기서 빠지면 아무도 안 묻고 뒤 단계가 정한다.
+    실측(g4l05) — Q-D1 · D4 · D5 · D10 · D14 · C5 가 표에만 있어 인터뷰에 안 실렸고, 명세 단계가 다시 물었다.
+    """
+    have = {m.group(0) for q in reported for m in re.finditer(r"Q-[A-Z]+\d+", q)}
+    found: list[str] = []
+    for name in ("design/wireframe.md", "design/concept.md"):
+        path = run_dir / name
+        if not path.exists():
+            continue
+        for line in path.read_text(encoding="utf-8").splitlines():
+            match = DESIGN_QUESTION_ROW.match(line.strip())
+            if not match or match.group(1) in have:
+                continue
+            have.add(match.group(1))
+            options = f" — 선택지: {match.group(3)}" if match.group(3) else ""
+            found.append(f"{match.group(1)}: {match.group(2)}{options}")
+    return found
 
 
 def open_decision_questions(run_dir: Path) -> list[str]:

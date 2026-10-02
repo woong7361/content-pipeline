@@ -19,7 +19,7 @@ GROUPS: list[tuple[str, str, list[str], list[str]]] = [
     ("storyboard", "원본 스토리보드", ["storyboard.pdf", "storyboard.md"], ["review/storyboard-pages/*.png"]),
     ("senior_planner", "기획", ["planning/content-plan.md"], []),
     ("senior_designer", "디자인", ["design/wireframe.md", "design/concept.md"], []),
-    ("interview", "인터뷰", ["interview/questions.md", "interview/questions-new.md"], []),
+    ("interview", "인터뷰", ["interview/questions.md", "interview/questions-new.md", "interview/assumed.md"], []),
     ("interview_brief", "제작 지침", ["planning/production-guide.md"], []),
     ("lesson_spec", "요구 명세", ["spec/lesson-spec.json"], []),
     ("visual_design", "비주얼 설계", ["design/visual-design.md", "design/asset-plan.md", "design/asset-plan.json"],
