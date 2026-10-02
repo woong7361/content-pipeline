@@ -51,6 +51,19 @@
 
 ## 문제 로그
 
+### [desk-image-viewer-hides-bounds] 작업대 [그림 보기]가 그림 테두리 · 실제 크기 · 여백을 알 수 없게 보여 줌
+
+- 대상: content-harness-pipeline/tools/lesson_desk.html (`.imgview`, drawImages)
+- 분류 태그: desk-image-viewer-hides-bounds
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-10-02
+- 최근 발생일: 2026-10-02
+- 사례:
+  - 2026-10-02: 사용자 — "그림 보여줄 때, 화면을 꽉차게 보여줘서 실제 그림 크기??와 여백이 어느정도 있는 지 알기 어려워". 체크무늬를 그림이 아니라 칸 전체에 깔아서 그림의 가장자리와 투명 여백이 배경과 구분되지 않았고, 픽셀 크기 · 축소 비율도 안 보였다. 그림 굽기에 "여백 거의 없게" 를 넣은 직후라 여백을 확인하는 것이 목적이었다.
+- 조치: 체크무늬는 그림 위에만 깔고 칸은 어둡게, 그림 경계를 선으로. 원본 픽셀 크기 · 표시 비율 · 투명 여백(위·아래·왼쪽·오른쪽 px, 내용 상자)을 재서 적고 내용 상자를 점선으로 표시. [실제 크기] 토글.
+- 규칙화 메모: 반복되면 "그림을 보여 주는 화면은 픽셀 크기 · 경계 · 투명 여백을 함께 보인다" 를 제안.
+
 ### [interview-second-round] 인터뷰를 마쳤는데 요구 명세 단계가 질문을 또 냄
 
 - 대상: content-harness-pipeline/produce_lesson.py(collect_open_questions · validate_spec_file 멈춤) · prompts/senior_designer · interview_brief · lesson_spec

@@ -215,7 +215,7 @@
   select.kindsel { font: inherit; font-size: 12px; color: var(--ink); background: var(--card); border: 1px solid var(--line);
                    border-radius: 6px; padding: 2px 4px; }
   /* [그림 보기] — 그림 메모가 고치거나 만든 그림의 전·후 */
-  .imgview { position: fixed; inset: 0; z-index: 50; background: rgba(10, 12, 16, .94); display: flex;
+  .imgview { position: fixed; inset: 0; z-index: 50; background: #0f1217; display: flex;
              flex-direction: column; padding: 16px; gap: 10px; color: #eef1f6; }
   .imgview.hidden { display: none; }
   .imgview .ivbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -226,10 +226,16 @@
   .imgview .ivpanes { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
   .imgview figure { margin: 0; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
   .imgview figcaption { font-size: 13px; font-weight: 600; }
-  .imgview figure a { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; border-radius: 8px;
-                      /* 투명한 곳이 보이게 체크무늬 위에 */
-                      background: repeating-conic-gradient(#c9ced6 0% 25%, #f1f3f6 0% 50%) 0 0 / 20px 20px; }
-  .imgview figure img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .imgview figcaption a { color: #9cc3ff; font-weight: 400; font-size: 12px; margin-left: 6px; }
+  /* 그림 칸은 어둡게, 체크무늬는 그림 위에만 — 그림의 가장자리와 투명 여백이 보이게(2026-10-02 사용자 지적: 꽉 차게 보여 크기·여백을 모름) */
+  .imgview .stage { flex: 1; min-height: 0; overflow: auto; display: flex; border-radius: 8px; background: #1b1f26; padding: 12px; }
+  .imgview .frame { position: relative; flex: none; margin: auto; line-height: 0; outline: 1px solid #ffd54a;
+                    background: repeating-conic-gradient(#c9ced6 0% 25%, #f1f3f6 0% 50%) 0 0 / 16px 16px; }
+  .imgview .frame img { display: block; }
+  .imgview .bbox { position: absolute; outline: 1px dashed #ff4d6d; pointer-events: none; }
+  .imgview .ivinfo { font-size: 12px; color: #c9d1dc; line-height: 1.5; min-height: 3em; }
+  .imgview .ivinfo b { color: #ffd54a; font-weight: 600; }
+  .imgview .ivinfo .m { color: #ff8fa3; }
   .imgview .ivthumbs { display: flex; gap: 6px; flex-wrap: wrap; }
   .imgview .ivthumbs button.on { background: var(--accent); border-color: var(--accent); }
 </style>
@@ -295,7 +301,9 @@
       <ul>
         <li>결과가 조금 아쉬우면 <b>[보완해서 다시 맡기기]</b> — 칸에 고칠 점만 적으면, 원래 메모와 지난 결과를 함께 AI 에게 넘겨 같은 메모를 다시 처리합니다. 보완한 내용은 메모 아래에 "보완 1, 2…"로 남습니다. 같은 내용 그대로 다시 하려면 [다시 맡기기].</li>
         <li>그림 메모가 바꾼 그림의 <b>경로</b>(작업 경로 기준, 예: <code>assets/ui/btn.png</code>)와 고침·새로 만듦이 결과 아래에 늘 보입니다.</li>
-        <li>그림 메모가 그림을 고치거나 새로 만들었으면 <b>[그림 보기]</b> 버튼이 생깁니다. 누르면 작업 전 · 후를 나란히 보여 줍니다(새 그림은 후만). ← → 로 넘기고 Esc 로 닫고, 그림을 누르면 원본이 새 탭에 열립니다.</li>
+        <li>그림 메모가 그림을 고치거나 새로 만들었으면 <b>[그림 보기]</b> 버튼이 생깁니다. 누르면 작업 전 · 후를 나란히 보여 줍니다(새 그림은 후만). ← → 로 넘기고 Esc 로 닫고, [원본 새 탭 ↗]으로 원본을 엽니다.
+          노란 선이 그림 크기(캔버스), 빨간 점선이 투명하지 않은 내용이 있는 곳 — 그 사이가 투명 여백이고, 아래에 픽셀 크기 · 줄인 비율 · 여백(px · %)이 적힙니다.
+          기본은 화면에 맞춰 <b>줄이기만</b> 하고(키우지 않음, 전 · 후 같은 비율), [실제 크기 (100%)]로 원래 크기를 봅니다.</li>
         <li>메모 아래에 <b>결과 배지와 한 줄 요약</b>만 보입니다. 무엇을 어떻게 바꿨는지와 작업 기록은 <b>▸ 를 눌러 펼쳐</b> 봅니다(기본은 접힘).</li>
         <li>처리된 메모는 <b>최근에 적은 것이 맨 위</b>입니다. 대기열은 처리 순서 그대로입니다.</li>
         <li>된 것(고침 · 그림 새로 구움 · 검증 통과) → <b>확인 대기</b>. 화면을 보고 [완료]를 누릅니다.</li>
@@ -1144,17 +1152,76 @@ function drawImages() {
   const r = note.result, imgs = r.images, cur = imgs[i];
   const pane = (ver, title) => {
     const url = imageUrl(lesson, r.job, cur.path, ver);
-    return `<figure><figcaption>${title}</figcaption><a href="${url}" target="_blank" rel="noopener" title="원본을 새 탭에서">
-      <img src="${url}" alt="${esc(title)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'그림을 못 찾았습니다',style:'color:#333'}))"></a></figure>`;
+    return `<figure><figcaption>${title}<a href="${url}" target="_blank" rel="noopener">원본 새 탭 ↗</a></figcaption>
+      <div class="stage"><div class="frame"><img src="${url}" alt="${esc(title)}" onerror="this.closest('.stage').textContent='그림을 못 찾았습니다'"><div class="bbox hidden"></div></div></div>
+      <div class="ivinfo">재는 중…</div></figure>`;
   };
   viewer.innerHTML = `
     <div class="ivbar"><b>${esc(note.id)} · ${esc(cur.path)}</b><span class="rtag ${cur.new ? "r-ok" : "r-ask"}">${cur.new ? "새로 만든 그림" : "고친 그림"}</span>
       <span class="sp"></span>${imgs.length > 1 ? `<button data-iv="prev">← 이전</button><span>${i + 1} / ${imgs.length}</span><button data-iv="next">다음 →</button>` : ""}
+      <button data-iv="scale" title="화면에 맞춤은 줄이기만 하고 키우지 않습니다">${ivActual ? "화면에 맞춤" : "실제 크기 (100%)"}</button>
       <button data-iv="close">닫기 (Esc)</button></div>
     <div class="ivnote">${esc(r.headline || "")}</div>
     ${imgs.length > 1 ? `<div class="ivthumbs">${imgs.map((m, k) => `<button data-iv="go" data-k="${k}" class="${k === i ? "on" : ""}">${esc(m.path.split("/").pop())}</button>`).join("")}</div>` : ""}
-    <div class="ivpanes">${cur.new ? pane("after", "새로 만든 그림") : pane("before", "전 — 작업 전") + pane("after", "후 — 이 작업이 그린 것")}</div>`;
+    <div class="ivpanes">${cur.new ? pane("after", "새로 만든 그림") : pane("before", "전 — 작업 전") + pane("after", "후 — 이 작업이 그린 것")}</div>
+    <div class="ivnote">노란 선 = 그림 크기(캔버스) · 빨간 점선 = 투명하지 않은 내용이 있는 곳. 그 사이가 투명 여백입니다. 전 · 후는 같은 비율로 줄입니다.</div>`;
+  viewer.querySelectorAll(".frame img").forEach(img => img.complete && img.naturalWidth ? measureImage(img) : img.addEventListener("load", () => measureImage(img)));
 }
+// 그림 크기와 투명 여백 재기 — 알파가 8 넘는 픽셀의 상자. 같은 서버의 그림이라 캔버스로 읽을 수 있다
+let ivActual = false;   // true = 실제 크기(100%), false = 화면에 맞춤(줄이기만)
+function measureImage(img) {
+  const W = img.naturalWidth, H = img.naturalHeight;
+  let box = null, transparent = false;
+  try {
+    const c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const g = c.getContext("2d", { willReadFrequently: true });
+    g.drawImage(img, 0, 0);
+    const d = g.getImageData(0, 0, W, H).data;
+    let x0 = W, y0 = H, x1 = -1, y1 = -1;
+    for (let y = 0, i = 3; y < H; y++) {
+      for (let x = 0; x < W; x++, i += 4) {
+        if (d[i] < 255) transparent = true;
+        if (d[i] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+      }
+    }
+    box = x1 < 0 ? "empty" : { x0, y0, x1, y1 };
+  } catch { box = null; }
+  img._iv = { W, H, box, transparent };
+  layoutImages();
+}
+function layoutImages() {
+  const imgs = [...viewer.querySelectorAll(".frame img")].filter(i => i._iv);
+  if (!imgs.length) return;
+  // 전 · 후를 같은 비율로 — 따로 맞추면 크기가 달라진 것이 안 보인다
+  const scale = ivActual ? 1 : Math.min(1, ...imgs.map(img => {
+    const st = img.closest(".stage");
+    return Math.min((st.clientWidth - 24) / img._iv.W, (st.clientHeight - 24) / img._iv.H);
+  }));
+  for (const img of imgs) {
+    const { W, H, box, transparent } = img._iv;
+    img.style.width = `${Math.round(W * scale)}px`;
+    img.style.height = `${Math.round(H * scale)}px`;
+    const bb = img.parentElement.querySelector(".bbox");
+    const info = img.closest("figure").querySelector(".ivinfo");
+    let margin;
+    if (box === null) margin = "여백을 재지 못했습니다";
+    else if (box === "empty") margin = `<span class="m">전부 투명합니다</span>`;
+    else if (!transparent) margin = "투명한 곳 없음(불투명 그림) — 여백은 그림 속 바탕색으로 판단하세요";
+    else {
+      const m = { 위: box.y0, 아래: H - 1 - box.y1, 왼쪽: box.x0, 오른쪽: W - 1 - box.x1 };
+      const pct = (v, all) => Math.round(v / all * 100);
+      margin = `투명 여백 ${Object.entries(m).map(([k, v]) => `${k} <span class="m">${v}px(${pct(v, k === "위" || k === "아래" ? H : W)}%)</span>`).join(" · ")}`
+        + `<br>내용 ${box.x1 - box.x0 + 1}×${box.y1 - box.y0 + 1}px`;
+    }
+    const showBox = box && box !== "empty" && transparent;
+    bb.classList.toggle("hidden", !showBox);
+    if (showBox) Object.assign(bb.style, { left: `${box.x0 / W * 100}%`, top: `${box.y0 / H * 100}%`,
+      width: `${(box.x1 - box.x0 + 1) / W * 100}%`, height: `${(box.y1 - box.y0 + 1) / H * 100}%` });
+    info.innerHTML = `<b>${W}×${H}px</b> · 화면에 ${Math.round(scale * 100)}%${scale === 1 ? "(실제 크기)" : "로 줄임"}<br>${margin}`;
+  }
+}
+window.addEventListener("resize", () => { if (viewing) layoutImages(); });
 function openImages(row, id) {
   const note = row.notes.find(n => n.id === id);
   if (!note || !note.result || !(note.result.images || []).length) return;
@@ -1175,6 +1242,7 @@ viewer.addEventListener("click", e => {
     else if (b.dataset.iv === "prev") stepImages(-1);
     else if (b.dataset.iv === "next") stepImages(1);
     else if (b.dataset.iv === "go") { viewing.i = +b.dataset.k; drawImages(); }
+    else if (b.dataset.iv === "scale") { ivActual = !ivActual; b.textContent = ivActual ? "화면에 맞춤" : "실제 크기 (100%)"; layoutImages(); }
     return;
   }
   if (e.target === viewer) closeImages();   // 바깥 어두운 곳을 누르면 닫는다
