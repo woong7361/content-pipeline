@@ -10,7 +10,9 @@ from pathlib import Path
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_DIR))
 
-from stages.scripts import desk_failures, install_record, interview_form, lesson_notes, pipeline_status, voice_lines  # noqa: E402
+from stages.scripts import (  # noqa: E402
+    desk_failures, install_record, interview_form, lesson_notes, pipeline_status, redo_report, voice_lines,
+)
 from stages.scripts.pipeline_graph import DagNode, PipelineDag, StageCache  # noqa: E402
 from stages.scripts.spec_tests import build_test_plan, validate_lesson_spec, verify_lesson_against_spec  # noqa: E402
 from stages.scripts.verify_routing import (  # noqa: E402
@@ -339,6 +341,24 @@ class LessonNotesTests(unittest.TestCase):
             self.assertIn(str((desk / saved[0]).resolve()), block)
             with self.assertRaises(ValueError):
                 lesson_notes.attach(desk, note["id"], [("notes.txt", b"x")])
+
+    def test_refine_with_images(self) -> None:
+        """보완해서 다시 맡길 때 붙인 그림은 그 보완 기록에 따로 저장하고, AI 에게 보완 메모와 함께 경로를 넘긴다."""
+        with tempfile.TemporaryDirectory() as tmp:
+            desk = Path(tmp)
+            note = lesson_notes.add(desk, "버튼 다시 그리기")
+            lesson_notes.attach(desk, note["id"], [("a.png", b"png")])
+            lesson_notes.set_status(desk, [note["id"]], "review", "AI 고침")
+            with self.assertRaises(ValueError):   # 그림이 아니면 보완 기록도 남기지 않는다
+                lesson_notes.refine(desk, note["id"], "빛 약하게", [("x.txt", b"x")])
+            self.assertFalse(lesson_notes.load(desk)[0].get("refinements"))
+            lesson_notes.refine(desk, note["id"], "빛 약하게 — 캡처의 노란 곳", [("c.png", b"png"), ("d.webp", b"webp")])
+            saved = lesson_notes.load(desk)[0]
+            self.assertEqual(saved["images"], ["attachments/U01/img-1.png"])          # 원래 메모 그림은 그대로
+            self.assertEqual(saved["refinements"][0]["images"], ["attachments/U01/r1-img-1.png", "attachments/U01/r1-img-2.webp"])
+            self.assertTrue((desk / "attachments/U01/r1-img-2.webp").is_file())
+            block = lesson_notes.prompt_block(saved, desk)
+            self.assertIn(str((desk / "attachments/U01/r1-img-1.png").resolve()), block.split("#### 보완 1")[1])
 
     def test_edit_text_only_while_queued(self) -> None:
         """처리 전(대기) 메모만 글을 고친다 — AI 가 집어 간 뒤에 고치면 반영되지 않으므로 거절한다."""
@@ -761,6 +781,29 @@ class VoiceImportTests(unittest.TestCase):
                     voice_import.apply(lesson_dir, root / "sess2", {k: v["file"] for k, v in session2["pairs"].items()}, root / "removed")
 
 
+class VoiceReplaceSoundTests(unittest.TestCase):
+    """연결 표의 조각 [바꾸기] — id 와 걸린 자리는 그대로, 파일만 바꾼다."""
+
+    def test_replace_keeps_id_moves_old_and_updates_extension(self) -> None:
+        from stages.scripts import voice_import
+        with tempfile.TemporaryDirectory() as tmp:
+            lesson_dir, removed = Path(tmp) / "lesson", Path(tmp) / "removed"
+            (lesson_dir / "assets/audio/narration").mkdir(parents=True)
+            (lesson_dir / "assets/audio/narration/vo-s-2.mp3").write_bytes(b"old")
+            lesson = {"audioMap": {"narration": {"vo-s-2": "assets/audio/narration/vo-s-2.mp3", "shared": "x.mp3", "also": "x.mp3"}},
+                      "steps": [{"slides": [{"narration": {"audio": "vo-s-1", "sequence": ["vo-s-1", "vo-s-2"]}}]}]}
+            (lesson_dir / "lesson.json").write_text(json.dumps(lesson, ensure_ascii=False, indent=2), encoding="utf-8")
+            result = voice_import.replace_sound(lesson_dir, "vo-s-2", "new.wav", b"new", removed)
+            self.assertEqual(result["path"], "assets/audio/narration/vo-s-2.wav")
+            self.assertEqual((lesson_dir / result["path"]).read_bytes(), b"new")
+            self.assertEqual((removed / "assets/audio/narration/vo-s-2.mp3").read_bytes(), b"old")   # 지우지 않고 보관
+            saved = json.loads((lesson_dir / "lesson.json").read_text(encoding="utf-8"))
+            self.assertEqual(saved["audioMap"]["narration"]["vo-s-2"], result["path"])
+            self.assertEqual(saved["steps"][0]["slides"][0]["narration"]["sequence"], ["vo-s-1", "vo-s-2"])
+            with self.assertRaises(ValueError):   # 같은 파일을 다른 id 도 쓰면 거절
+                voice_import.replace_sound(lesson_dir, "shared", "n.mp3", b"n", removed)
+
+
 class DeliveryQaTests(unittest.TestCase):
     """커밋 전 점검 — 체크리스트 읽기 · 에셋 참조 · 코드/코덱스 판정 합치기."""
 
@@ -821,6 +864,24 @@ class DeliveryQaTests(unittest.TestCase):
         self.assertEqual(merged["C1"]["result"], "pass")
         self.assertEqual((merged["E3"]["result"], merged["E3"]["files"]), ("fixed", ["lesson.json"]))
         self.assertEqual(merged["E7"]["result"], "unchecked")         # 클로드가 빠뜨리면 못 본 것으로 남는다
+
+
+class RedoReportTests(unittest.TestCase):
+    """[스토리보드와 대조해 다시 만들기] — 대조 결과 + 사람 메모 → 개발 단계 되먹임 목록."""
+
+    def test_uses_only_files_written_after_start(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp)
+            (run / "review").mkdir()
+            fix = run / "review" / "screen-fix-4-1-05.md"
+            fix.write_text("- 지난번 수정안", encoding="utf-8")
+            later = fix.stat().st_mtime + 10
+            self.assertEqual(redo_report.build(run, "4-1/05", "", later), "")   # 지난 수정안은 다시 쓰지 않는다
+            text = redo_report.build(run, "4-1/05", "인물이 크다", later)
+            self.assertIn("인물이 크다", text)
+            self.assertNotIn("지난번 수정안", text)
+            text = redo_report.build(run, "4-1/05", "", fix.stat().st_mtime)
+            self.assertIn("지난번 수정안", text)
 
 
 if __name__ == "__main__":

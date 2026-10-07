@@ -51,6 +51,19 @@
 
 ## 문제 로그
 
+### [desk-card-layout-stretch] 작업대 메모 카드 배치가 내용 길이에 따라 깨짐
+
+- 대상: content-harness-pipeline/tools/lesson_desk.html (메모 줄 CSS — `.nid` · `.nact` 등)
+- 분류 태그: desk-card-layout-stretch
+- 상태: 열림
+- 발생 횟수: 1
+- 최초 발생일: 2026-10-02
+- 최근 발생일: 2026-10-02
+- 사례:
+  - 2026-10-02: 사용자 — "메모가 길어지면, "코드", "그림", "검증" 텍스트 태그가 위아래로 늘어나는데, 그러지 않게 해줘". `.nid` 가 grid 라 메모 줄 높이만큼 늘어나면 줄(행)이 같이 늘어나 종류 배지가 세로로 길쭉해졌다(grid 기본 `align-content: stretch`). 앞서 같은 화면에서 메모 글이 한 글자씩 세로로 꺾이던 것(오른쪽 버튼 칸이 폭을 먹음)도 같은 종류 — 짧은 시험 데이터로만 보고 긴 메모로는 안 봤다.
+- 조치: `.nid` 를 위쪽 정렬(`align-content: start`)로 — 배지는 글 길이와 상관없이 한 줄 높이.
+- 규칙화 메모: 반복되면 "작업대 화면을 바꾸면 긴 메모 · 긴 결과 · 좁은 화면으로도 캡처해 본다" 를 제안.
+
 ### [desk-image-viewer-hides-bounds] 작업대 [그림 보기]가 그림 테두리 · 실제 크기 · 여백을 알 수 없게 보여 줌
 
 - 대상: content-harness-pipeline/tools/lesson_desk.html (`.imgview`, drawImages)

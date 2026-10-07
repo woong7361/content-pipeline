@@ -91,6 +91,15 @@ API 를 부를 수 없고, API 요금제는 사지 않는다. 한때 API 로 직
 - 올린 뒤 대사 글이 바뀌었으면 넣기를 막는다(엉뚱한 줄에 붙지 않게). 넣은 세션은 다시 못 넣는다.
 - 작업대는 AI 작업 · 빌드가 도는 중엔 넣기를 막고, 넣으면 바로 빌드한다. 초안은 run 의 `lesson/` 에 넣고 [gyo6에 넣기]로 반영한다.
 - 세션: 작업대 `desk/{id}/voice/{작업 번호}/` · 초안 `runs/{run}/audio/import/{작업 번호}/`(files/ · session.json · lesson.before.json).
+- **[대사 · 음성 연결 보기]**(2026-10-06 사용자 요청 — 넣지 않아도 보게) — 같은 칸 아래 접힌 표. 펼칠 때만 `/api/voice/lines`
+  (`voice_links` = `voice_import.rows(lesson, "all")` + 파일 있는지)를 읽는다. 대사마다 자리 · 누가 · 소리 id(▶ 듣기) · 없음 · **파일 없음**,
+  재생 안 하는 자리(자막만 있는 컷)는 따로. 넣기 칸과 따로 그려 2초 새로고침에 닫히지 않는다.
+  이야기 카드의 `narration.sequence`(소리 여러 개를 차례로 — **4-1/04 의 player-ext.js 만** 튼다, base 는 `audio` 하나)는 조각마다 보인다.
+- **줄마다 [넣기]·[바꾸기] · 끌어 놓기**(2026-10-06 사용자 요청) — 표에서 파일 하나를 그 자리에 바로 건다(소리 칸 · 조각 줄에 끌어 놓아도 같다, 한 칸에 하나)(`/api/voice/put`, `voice_put`).
+  줄은 파일 하나짜리 '교체 포함' 세션을 만들어 [넣기]와 같은 `voice_import.apply` 로 건다(표에 보인 대사 글이 지금과 다르면 거절).
+  sequence 카드는 줄 단위로는 거절하고 **조각마다** `voice_import.replace_sound` — id · 걸린 자리는 그대로 파일만 바꾸고 확장자가
+  바뀌면 audioMap 경로만 고친다(다른 id 와 같은 파일이면 거절). 예전 파일 · lesson.json 은 `removed/voice-{작업 번호}/` 로.
+  **빌드하지 않는다** — 한 줄마다 빌드하면 빌드가 다음 넣기를 막는다. 다 넣고 [빌드].
 
 ```bash
 python -B ./voice_lesson.py runs/g4l02                  # 대본 내보내기(멈춤, 종료 코드 3) / 받은 파일 확인
@@ -201,6 +210,8 @@ python -B ./lesson_desk.py --semesters 3-1,3-2,4-1,4-2
   (data URL)로 같이 올린다. 서버는 메모를 만든 뒤 같은 요청 안에서 `lesson_notes.attach` 로 `desk/{id}/attachments/{메모}/img-N.확장자`
   에 저장하고 메모의 `images` 에 적는다(png · jpg · webp · gif, 10장 · 장당 15MB — 어기면 메모째 지운다). `prompt_block(note, desk_dir)` 가
   그 **절대 경로**를 메모 끝에 붙여 세 AI 가 열어 보게 한다(desk 폴더는 코드 메모에 `--add-dir` 로 열려 있다). 카드는 `/api/desk/attachment` 로 썸네일.
+  보완 칸에도 붙인다(2026-10-02) — `refine(…, files)` 가 `r{보완 번호}-img-N` 으로 저장해 그 보완 기록의 `images` 에 적고(원래 메모 그림과 따로),
+  `prompt_block` 이 그 보완 아래에 경로를 싣는다. 저장 전에 전부 검사해 잘못된 그림이면 보완 기록도 남기지 않는다. 화면 쪽은 `takeImages` · `readImages` · `pendingThumbs` 를 두 칸이 같이 쓴다.
 - **처리기 깨우기** — 한 줄이 도는 동안 처리기는 끝난 작업을 기다린다. 그사이 메모를 적거나 옮기거나 종류를 바꾸면 `kick` 이
   `WAKE[차시]` 에 None 을 넣어 깨운다 — 그러지 않으면 코드가 도는 동안 적은 그림 메모가 코드가 끝날 때까지 쉬는 줄에서 기다린다.
 - **[그림 보기]**(2026-10-01 사용자 요청) — 그림 메모가 고치거나 만든 그림을 카드에서 바로 전·후로 본다.
@@ -320,6 +331,12 @@ run 마다 지금 어느 단계를 도는지, 실행마다·단계마다 토큰�
   작업대는 설정의 gyo6 하나만 보므로 **다른 체크아웃에 넣은 차시는 작업대에 안 나타난다** — 화면 · 끝 알림에 그렇게 적는다.
 - [gyo6에 넣기] — `install_lesson` → `build:lesson`(빌드 줄 세우기) → `verify_lesson --skip-llm`. 같은 차시가 있으면
   막고 [덮어쓰기로 넣기]를 보인다. 넣은 차시는 차시 작업대에 바로 나타난다.
+- **[스토리보드와 대조해 다시 만들기]**(2026-10-06 사용자 요청 — 초안이 이상하면 스토리보드를 다시 보고 고치게) — 넣은 뒤에만 보인다
+  (`redo_from_storyboard`). `diff_screens --fix-plan`(빌드된 화면 ↔ 예시화면, 코덱스) → `stages/scripts/redo_report.py`(사람 메모 +
+  **이번 작업에서 새로 쓴** 수정안, 없으면 대조 결과 → `review/redo/{시각}.md`. 둘 다 비면 종료 3 으로 개발을 안 부른다) →
+  `produce_lesson {원본 PDF} --start-at senior_developer --through develop --screen-report …`(PDF 를 넘겨야 개발이 스토리보드를 연다) →
+  덮어쓰기 배치 → 빌드 → 화면 검증. 그림은 다시 굽지 않는다. 넣은 뒤 gyo6 쪽이 바뀌었으면(작업대에서 고친 차시) 덮어쓰게 되므로,
+  run 쪽이 바뀌었으면 대조한 화면과 소스가 어긋나므로 **AI 를 부르기 전에** 거절한다.
 - 알림: 답 대기 · 초안 끝 · gyo6 넣음 · 실패. 작업 로그는 `runs/{run}/desk-jobs/`.
 - **산출물 카드**(2026-09-30 사용자 요청) — run 을 고르면 단계 순서대로 그 단계가 낸 파일이 버튼으로 나온다
   (`stages/scripts/run_artifacts.py` 의 `GROUPS`). md · json · css · js 는 누르면 **VS Code 로 연다**(2026-09-30 사용자 요청 —

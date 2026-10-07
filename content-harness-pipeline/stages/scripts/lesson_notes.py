@@ -203,11 +203,12 @@ def edit_text(desk_dir: Path, note_id: str, text: str) -> dict:
     return note
 
 
-def refine(desk_dir: Path, note_id: str, text: str) -> dict:
+def refine(desk_dir: Path, note_id: str, text: str, files: list[tuple[str, bytes]] | None = None) -> dict:
     """보완해서 다시 맡기기(2026-10-01 사용자 요청) — 원래 메모는 두고 보완 메모를 덧붙여 다시 대기열에 넣는다.
 
     AI 가 지난번에 무엇을 했는지 알아야 "조금 고쳐" 가 통하므로, 지난 결과(headline · detail · 그림 경로)를
     보완 기록에 함께 남긴다 — `prompt_block` 이 그것을 AI 에게 넘긴다. 결과 자체는 다시 맡길 때 치워진다.
+    `files` 는 보완 칸에 붙인 그림(2026-10-02 사용자 요청) — 그 보완 기록의 `images` 에 적는다(원래 메모의 그림과 따로).
     """
     text = text.strip()
     if not text:
@@ -220,10 +221,12 @@ def refine(desk_dir: Path, note_id: str, text: str) -> dict:
         raise ValueError(f"없는 메모: {note_id}")
     note = notes[at]
     prev = note.get("result") or {}
-    note.setdefault("refinements", []).append({
-        "at": now(), "text": text,
-        "prev": {k: prev[k] for k in ("label", "headline", "detail", "images") if prev.get(k)},
-    })
+    refinements = note.setdefault("refinements", [])
+    entry = {"at": now(), "text": text,
+             "prev": {k: prev[k] for k in ("label", "headline", "detail", "images") if prev.get(k)}}
+    if files:
+        entry["images"] = _save_images(desk_dir, note_id, f"r{len(refinements) + 1}-img", files)
+    refinements.append(entry)
     save(desk_dir, notes)
     set_status(desk_dir, [note_id], "queued", f"사람이 보완해 다시 맡김 — {text[:40]}")
     return note
@@ -237,37 +240,46 @@ ATTACH_MAX_BYTES = 15 * 1024 * 1024
 
 def attach(desk_dir: Path, note_id: str, files: list[tuple[str, bytes]]) -> list[str]:
     """메모에 그림을 붙인다(2026-10-01 사용자 요청 — 메모 칸에 캡처를 붙여 넣기). 메모의 `images` 에 desk 폴더 기준 경로를 적는다."""
-    if len(files) > ATTACH_MAX:
-        raise ValueError(f"그림은 한 메모에 {ATTACH_MAX}장까지")
     notes = load(desk_dir)
     note = next((n for n in notes if n["id"] == note_id), None)
     if note is None:
         raise ValueError(f"없는 메모: {note_id}")
-    folder = desk_dir / ATTACH_DIR / note_id
-    folder.mkdir(parents=True, exist_ok=True)
     saved = list(note.get("images") or [])
-    for i, (name, blob) in enumerate(files, len(saved) + 1):
+    note["images"] = saved + _save_images(desk_dir, note_id, "img", files, start=len(saved) + 1)
+    save(desk_dir, notes)
+    return note["images"]
+
+
+def _save_images(desk_dir: Path, note_id: str, prefix: str, files: list[tuple[str, bytes]], start: int = 1) -> list[str]:
+    """그림을 `attachments/{메모}/{prefix}-N.확장자` 로 저장하고 desk 폴더 기준 경로를 돌려준다. 전부 검사한 뒤에 쓴다(반쯤 저장하지 않게)."""
+    if len(files) > ATTACH_MAX:
+        raise ValueError(f"그림은 한 번에 {ATTACH_MAX}장까지")
+    checked = []
+    for name, blob in files:
         suffix = Path(name).suffix.lower() or ".png"
         if suffix not in ATTACH_SUFFIXES:
             raise ValueError(f"그림 파일이 아니다: {name}")
         if len(blob) > ATTACH_MAX_BYTES:
             raise ValueError(f"그림이 너무 크다(15MB 까지): {name}")
-        target = folder / f"img-{i}{suffix}"
+        checked.append((suffix, blob))
+    folder = desk_dir / ATTACH_DIR / note_id
+    folder.mkdir(parents=True, exist_ok=True)
+    saved = []
+    for i, (suffix, blob) in enumerate(checked, start):
+        target = folder / f"{prefix}-{i}{suffix}"
         target.write_bytes(blob)
         saved.append(target.relative_to(desk_dir).as_posix())
-    note["images"] = saved
-    save(desk_dir, notes)
     return saved
 
 
 def prompt_block(note: dict, desk_dir: Path | None = None) -> str:
     """AI 에게 넘길 메모 한 건 — 원래 메모(붙인 그림 경로 포함), 보완했으면 지난 결과와 보완 메모를 차례로."""
     parts = [f"### {note['id']}", "", note["text"].strip()]
+    base = desk_dir.resolve() if desk_dir else None
+    where = lambda rels: [f"- {base / rel if base else rel}" for rel in rels]
     if note.get("images"):
-        base = desk_dir.resolve() if desk_dir else None
-        paths = [str(base / rel) if base else rel for rel in note["images"]]
         parts += ["", "사람이 이 메모에 붙인 그림(화면 캡처 등) — **직접 열어 보고** 메모가 가리키는 자리를 확인한다:",
-                  *[f"- {p}" for p in paths]]
+                  *where(note["images"])]
     for i, ref in enumerate(note.get("refinements") or [], 1):
         prev = ref.get("prev") or {}
         parts += ["", f"#### 보완 {i} — 지난번 결과를 보고 사람이 덧붙인 것. 원래 메모와 함께 이것을 반영한다"]
@@ -279,6 +291,8 @@ def prompt_block(note: dict, desk_dir: Path | None = None) -> str:
             if prev.get("detail"):
                 parts += ["지난번 설명:", prev["detail"].strip()]
         parts += ["보완 메모:", ref["text"].strip()]
+        if ref.get("images"):
+            parts += ["이 보완에 붙인 그림 — **직접 열어 보고** 보완 메모가 가리키는 자리를 확인한다:", *where(ref["images"])]
     return "\n".join(parts)
 
 

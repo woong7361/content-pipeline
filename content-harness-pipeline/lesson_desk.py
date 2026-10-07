@@ -63,6 +63,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import io
 import json
 import mimetypes
@@ -82,7 +83,7 @@ PROJECT_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_DIR))
 
 from stages.scripts import (  # noqa: E402
-    desk_failures, interview_form, lesson_notes, notify, pipeline_status, run_artifacts, usage_log,
+    desk_failures, install_record, interview_form, lesson_notes, notify, pipeline_status, run_artifacts, usage_log,
 )
 from stages.scripts.lesson_notes import KST  # noqa: E402
 
@@ -116,7 +117,7 @@ CHECK_STEPS = ("화면 결함 검사", "기능 테스트")  # 0 통과 · 1 걸�
 NOT_BUILDABLE = "작업 경로가 gyo6 체크아웃의 lessons/<학기>/<차시> 가 아니라 빌드할 수 없다"
 
 KIND_LABEL = {"ai": "AI 맡기기", "build": "빌드", "draft": "초안", "install": "gyo6에 넣기", "qa": "커밋 전 점검",
-              "request": "수정 요청서 나누기"}
+              "request": "수정 요청서 나누기", "redo": "스토리보드와 대조해 다시 만들기"}
 REQUESTS_DIR = "requests"   # desk/{id}/requests/{작업 번호}/ — request.pdf · pages/ · split.json · items.json · meta.json
 QA_DIR = "qa"   # desk/{id}/qa/{작업 번호}/ — code.json · codex.json · report.json · report.md · 캡처
 UPLOADS_DIR = DESK_DIR / "uploads"
@@ -125,7 +126,9 @@ DRAFT_JOBS_DIR = "desk-jobs"
 RUN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{1,39}$")
 SLOT_RE = re.compile(r"^\d-\d/\d{2}$")
 # 이 종료 코드는 실패가 아니다 — 초안: 3 = 사람이 답할 차례 · 화면 검증: 2 = 막는 지적 있음(보고서로 본다)
-SOFT_EXIT = {"초안 만들기": {3}, "이어서 만들기": {3}, "화면 검증": {2}}
+SOFT_EXIT = {"초안 만들기": {3}, "이어서 만들기": {3}, "화면 검증": {2},
+             "스토리보드 대조": {2}}   # diff_screens 2 = 다른 점을 찾았다(정상)
+REDO_NOTHING = 3   # stages/scripts/redo_report.py — 대조도 메모도 비어 고칠 것 없음
 
 SETTINGS = {"gyo6_root": Path(), "semesters": ["3-1", "3-2", "4-1", "4-2"], "port": 8790, "notify": True,
             "claude_model": "", "codex_model": "", "claude_effort": "", "codex_effort": ""}   # 빈 값 = CLI 기본
@@ -718,14 +721,14 @@ def finish(job: Job, rc: int) -> None:
             if job.state == "ok":
                 job.state, job.summary = "failed", "나눈 목록이 없다 — 로그에서 확인"
             write_request_meta(request_dir, status="failed", error=job.summary)
-    elif job.kind in ("draft", "install"):
+    elif job.kind in ("draft", "install", "redo"):
         finish_draft(job)
 
     job.ended = datetime.now(KST)
     tally(job)
     if job.state == "failed":
         what = f"{NOTE_KIND_LABEL.get(job.note_kind, '')} {', '.join(job.note_ids)}".strip() if job.kind == "ai" else \
-            KIND_LABEL.get(job.kind, job.kind) if job.kind in ("draft", "install", "qa", "request") else ("자동 빌드" if job.auto else "빌드")
+            KIND_LABEL.get(job.kind, job.kind) if job.kind in ("draft", "install", "redo", "qa", "request") else ("자동 빌드" if job.auto else "빌드")
         alert(f"{job.lesson} 작업 실패 — {what}", job.summary)
     write_log(job, f"끝 — {job.state} {job.summary}")
     record = {k: v for k, v in job.public().items() if k != "tail"}
@@ -1009,6 +1012,15 @@ def run_queue(lesson_ref: str) -> None:
             changed = True  # 고침·그림 새로 구움이 하나라도 있었다(확인 필요만 나왔으면 파일이 그대로다)
 
 
+def decode_images(body: dict) -> list[tuple[str, bytes]]:
+    """화면이 붙여 보낸 그림(`images: [{name, data: data URL}]`) → (이름, 바이트). 메모 칸 · 보완 칸이 같이 쓴다."""
+    try:
+        return [(str(i.get("name") or "paste.png"), base64.b64decode(str(i.get("data", "")).split(",", 1)[-1]))
+                for i in (body.get("images") or [])]
+    except (ValueError, AttributeError) as exc:
+        raise ValueError(f"그림을 읽지 못했다: {exc}") from exc
+
+
 def kick(lesson_ref: str) -> None:
     """대기열에 할 일이 있고 멈춤이 아니고 아무것도 안 돌면 처리기를 띄운다."""
     with LOCK:
@@ -1286,7 +1298,48 @@ def voice_session_dir(target: dict, session: str) -> Path:
     return target["sessions"] / session
 
 
-def voice_apply(target: dict, session: str, pairs: dict) -> dict:
+def voice_put(target: dict, body: dict) -> dict:
+    """연결 표에서 줄 하나(또는 이야기 카드 조각 하나)에 음성 파일을 직접 넣는다(2026-10-06 사용자 요청).
+
+    줄(key + 표에 보인 대사 글) — 파일 하나짜리 '교체 포함' 세션을 만들어 [넣기]와 같은 길(`voice_import.apply`)로 건다.
+    조각(sound) — `narration.sequence` 의 소리 id 는 그대로 두고 파일만 바꾼다(`voice_import.replace_sound`).
+    한 줄마다 빌드하면 줄을 이어 넣는 동안 빌드가 넣기를 막으므로 **빌드하지 않는다** — 다 넣고 [빌드].
+    """
+    import base64
+    from stages.scripts import voice_import
+    reason = voice_busy(target)
+    if reason:
+        raise ValueError(reason)
+    name = Path(str(body.get("name", ""))).name
+    blob = base64.b64decode(str(body.get("data", "")).split(",", 1)[-1])
+    if not blob:
+        raise ValueError("빈 파일이다")
+    stamp = new_stamp()
+    removed = target["removed"] / f"voice-{stamp}"
+    sound = str(body.get("sound", ""))
+    if sound:
+        removed.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(target["lesson_dir"] / "lesson.json", removed / "lesson.before.json")   # 되돌릴 일이 생기면
+        return voice_import.replace_sound(target["lesson_dir"], sound, name, blob, removed)
+    key, text = str(body.get("key", "")), str(body.get("text", ""))
+    lesson = json.loads((target["lesson_dir"] / "lesson.json").read_text(encoding="utf-8"))
+    row = next((r for r in voice_import.rows(lesson, "all") if r["key"] == key), None)
+    if row is None or row["text"] != text:
+        raise ValueError("표를 연 뒤에 차시 대사가 바뀌었다 — 표를 다시 펼친다")
+    line = next(l for l in voice_lines_all(lesson) if l.audio_id == key)
+    narration = line.node.get("narration") if line.kind == "slide" else None
+    if isinstance(narration, dict) and narration.get("sequence"):
+        raise ValueError("소리가 여러 개로 나뉜 카드다 — 조각마다 [넣기]로 바꾼다")
+    voice_import.stage(target["sessions"] / stamp, lesson, "all", [(name, blob)])
+    return voice_apply(target, stamp, {key: name}, build=False)
+
+
+def voice_lines_all(lesson: dict) -> list:
+    from stages.scripts import voice_lines
+    return voice_lines.collect(lesson, include_existing=True)[0]
+
+
+def voice_apply(target: dict, session: str, pairs: dict, build: bool = True) -> dict:
     from stages.scripts import voice_import
     reason = voice_busy(target)
     if reason:
@@ -1295,7 +1348,7 @@ def voice_apply(target: dict, session: str, pairs: dict) -> dict:
     shutil.copy2(target["lesson_dir"] / "lesson.json", session_dir / "lesson.before.json")   # 되돌릴 일이 생기면
     result = voice_import.apply(target["lesson_dir"], session_dir, {str(k): str(v or "") for k, v in pairs.items()},
                                 target["removed"] / f"voice-{session}")
-    if target["kind"] == "lesson" and build_target(target["ref"]):
+    if build and target["kind"] == "lesson" and build_target(target["ref"]):
         start_build(target["ref"])   # 넣은 소리를 바로 들어 볼 수 있게
     return result
 
@@ -1311,6 +1364,27 @@ def voice_state(target: dict) -> dict | None:
             continue
         return {"id": session_dir.name, **data}
     return None
+
+
+def voice_links(target: dict) -> dict:
+    """대사 ↔ 소리 연결 — 음성을 넣지 않아도 지금 lesson.json 에 걸린 것을 본다(2026-10-06 사용자 요청). 읽기만."""
+    from stages.scripts import voice_import, voice_lines
+    lesson_path = target["lesson_dir"] / "lesson.json"
+    if not lesson_path.is_file():
+        raise ValueError("lesson.json 이 아직 없다")
+    lesson = json.loads(lesson_path.read_text(encoding="utf-8"))
+    rows = voice_import.rows(lesson, "all")
+    lines, skipped = voice_lines.collect(lesson, include_existing=True)   # skipped = 런타임이 재생하지 않는 자리
+    found = lambda rel: bool(rel) and (target["lesson_dir"] / rel).is_file()
+    for row, line in zip(rows, lines):   # rows 도 같은 collect 로 만든다 — 순서가 같다
+        row["exists"] = found(row["current_path"])   # 걸려 있는데 파일이 없으면 화면에서 소리가 안 난다
+        # 이야기 카드 한 장에 소리 여러 개 — narration.sequence(4-1/04 의 player-ext.js 가 차례로 튼다. base 는 audio 하나만)
+        narration = line.node.get("narration") if line.kind == "slide" else None
+        sequence = narration.get("sequence") if isinstance(narration, dict) else None
+        if isinstance(sequence, list) and sequence:
+            row["sequence"] = [{"id": str(sid), "path": voice_import.audio_path(lesson, str(sid)),
+                                "exists": found(voice_import.audio_path(lesson, str(sid)))} for sid in sequence]
+    return {"rows": rows, "skipped": skipped}
 
 
 def latest_qa(lesson_ref: str) -> dict | None:
@@ -1378,6 +1452,8 @@ def draft_state(run_id: str) -> dict:
         "final_path": str(final) if final else "", "target_root": str(root), "default_root": str(gyo6()),
         "other_checkout": root.resolve() != gyo6().resolve(),
         "slot_exists": bool(final) and (final / "lesson.json").exists(),
+        # [스토리보드와 대조해 다시 만들기] — 지금 넣을 곳에 이 run 을 넣은 기록이 있어야(빌드된 화면을 대조한다)
+        "can_redo": not running and lesson_ready and installed_entry(run_id)[2] is not None,
         "can_continue": not running and last is not None and (bool(waiting) or last["status"] in ("끊김", "실패", "위반 남음")),
         "job": job.public() if job else None,
         "questions": interview_form.load(RUNS_DIR / run_id) if waiting else {"file": "", "items": []},
@@ -1494,19 +1570,26 @@ def install_draft(run_id: str, output: str, overwrite: bool) -> None:
 def finish_draft(job: Job) -> None:
     """초안 작업이 끝났다 — 무엇을 할 차례인지 요약하고 알린다."""
     run_id = job.lesson
+    if job.kind == "redo" and job.results.get("고칠 목록") == REDO_NOTHING and not job.stop_requested:
+        # 대조에서 다른 점을 못 찾았고 메모도 없다 — 실패가 아니라 할 일이 없는 것
+        job.state = "ok"
+        job.summary = "스토리보드와 대조했지만 다른 점을 못 찾았다 — 이상한 곳을 메모 칸에 적고 다시 누른다"
+        alert(f"{run_id} 대조 — 고칠 것 없음", job.summary)
+        return
     if job.state == "stopped":
         job.summary = "멈춤 — [이어서 만들기]로 다시 돌릴 수 있다(끝난 단계는 캐시로 건너뛴다)"
         return
     if job.state != "ok":
         return  # 실패 알림은 finish 가 공통으로 보낸다
-    if job.kind == "install":
+    if job.kind in ("install", "redo"):
         root, slot = draft_output(run_id)
         verify = job.results.get("화면 검증")
         tail_text = "화면 검증 통과" if verify == 0 else "화면 검증에서 막는 지적 있음 — runs/{}/verify/report.md".format(run_id)
         where = ("이제 차시 작업대에서 고칠 수 있다" if root.resolve() == gyo6().resolve()
                  else f"작업대가 보는 gyo6 와 다른 체크아웃이라 작업대에는 안 나타난다({root})")
-        job.summary = f"{root / 'lessons' / slot} 에 넣고 빌드함 · {tail_text} — {where}"
-        alert(f"{run_id} → {slot} gyo6에 넣음", job.summary)
+        done = "스토리보드를 다시 보고 고쳐 " if job.kind == "redo" else ""
+        job.summary = f"{done}{root / 'lessons' / slot} 에 넣고 빌드함 · {tail_text} — {where}"
+        alert(f"{run_id} → {slot} {'다시 만들어 넣음' if job.kind == 'redo' else 'gyo6에 넣음'}", job.summary)
         return
     last = last_produce(run_id)
     if last and last.get("waiting"):
@@ -1521,6 +1604,64 @@ def finish_draft(job: Job) -> None:
     else:
         job.summary = "끝났지만 초안(lesson.json)이 없다 — 로그를 확인"
         alert(f"{run_id} 초안 확인 필요", job.summary)
+
+
+def installed_entry(run_id: str) -> tuple[Path, str, dict | None]:
+    """지금 넣을 곳(draft_output)에 이 run 을 넣은 기록 — 없으면 None."""
+    root, slot = draft_output(run_id)
+    return root, slot, install_record.entry(RUNS_DIR / run_id, root, slot) if slot else None
+
+
+def redo_from_storyboard(run_id: str, note: str) -> None:
+    """초안이 이상하게 나왔다 — 스토리보드를 다시 보고 고친다(2026-10-06 사용자 요청).
+
+    넣은 화면을 스토리보드 예시화면과 대조(diff_screens --fix-plan, 코덱스) → 사람 메모와 묶어 되먹임 목록
+    (redo_report) → 개발 단계만 다시(produce_lesson --screen-report, 원본 PDF 를 함께 넘겨 개발이 스토리보드를 연다)
+    → 덮어쓰기 배치 → 빌드 → 화면 검증. 대조는 **빌드된 화면**을 봐야 하므로 gyo6 에 넣은 뒤에만 된다.
+    """
+    root, slot, record = installed_entry(run_id)
+    if record is None:
+        raise ValueError("먼저 [gyo6에 넣기] — 대조는 빌드된 화면을 스토리보드와 비교한다")
+    lesson_dir, dest = RUNS_DIR / run_id / "lesson", root / "lessons" / slot
+    # 넣은 뒤 어느 쪽이든 바뀌었으면 대조한 화면과 고칠 소스가 어긋난다 — AI 비용을 쓰기 전에 막는다
+    drift = install_record.target_drift(record, dest)
+    if drift:
+        raise ValueError(f"넣은 뒤 gyo6 쪽에서 바뀐 파일이 있다({', '.join(drift[:5])}) — 다시 만들면 덮어써진다. "
+                         "그 차시는 차시 작업대에서 고친다")
+    changed = install_record.source_drift(record, lesson_dir)
+    if changed:
+        raise ValueError(f"넣은 뒤 run 쪽이 바뀌어 화면과 다르다({', '.join(changed[:5])}) — 먼저 [덮어쓰기로 넣기]")
+    if not (root / "dist" / slot / "index.html").exists():
+        raise ValueError(f"빌드된 화면이 없다 — 먼저 [gyo6에 넣기](빌드까지 한다): {root / 'dist' / slot}")
+    pdf = PROJECT_DIR / draft_meta(run_id).get("pdf", "")
+    if not pdf.is_file() or pdf.suffix.lower() != ".pdf":
+        pdf = RUNS_DIR / run_id / "storyboard.pdf"
+    if not pdf.is_file():
+        raise ValueError("스토리보드 PDF 를 찾지 못했다 — 예시화면 그림은 PDF 에만 있다")
+
+    run_dir = RUNS_DIR / run_id
+    stamp = datetime.now(KST)
+    redo_dir = run_dir / "review" / "redo"
+    redo_dir.mkdir(parents=True, exist_ok=True)
+    name = stamp.strftime("%Y%m%d-%H%M%S")
+    note_path, report = redo_dir / f"{name}-note.md", redo_dir / f"{name}.md"
+    note_path.write_text(note.strip() + "\n", encoding="utf-8")
+    py = sys.executable
+    codex = ["--model", SETTINGS["codex_model"]] if SETTINGS["codex_model"] else []
+    start_draft_job(run_id, f"스토리보드와 대조해 다시 만들기 → {dest}", [
+        ("스토리보드 대조", [py, "-B", "diff_screens.py", str(run_dir), "--target", str(root), "--lesson", slot,
+                         "--storyboard", str(pdf), "--fix-plan", *codex], PROJECT_DIR),
+        ("고칠 목록", [py, "-B", "-m", "stages.scripts.redo_report", str(run_dir), "--lesson", slot,
+                    "--since", str(stamp.timestamp()), "--note", str(note_path), "--out", str(report)], PROJECT_DIR),
+        ("개발 다시", [py, "-B", "produce_lesson.py", str(pdf), "--run-id", run_id, "--gyo6-root", str(gyo6()),
+                   "--start-at", "senior_developer", "--through", "develop", "--no-voice",
+                   "--screen-report", str(report), *pipeline_model_args()], PROJECT_DIR),
+        ("배치", [py, "-B", "install_lesson.py", str(run_dir), "--target", str(root), "--lesson", slot, "--overwrite"],
+         PROJECT_DIR),
+        ("빌드", [NPM, "run", "build:lesson", "--", slot], root),
+        ("화면 검증", [py, "-B", "verify_lesson.py", str(run_dir), "--target", str(root), "--lesson", slot,
+                   "--skip-llm"], PROJECT_DIR),
+    ], kind="redo")
 
 
 def stop_draft(run_id: str) -> None:
@@ -1748,6 +1889,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self.not_found()
             found = desk_dir(lesson_ref) / lesson_notes.ATTACH_DIR / note_id / name
             return self.send_image(found, 240 if query.get("thumb") == "1" else None) if found.is_file() else self.not_found()
+        if path == "/api/voice/lines":
+            try:
+                return self.send_json(voice_links(voice_target(query.get("lesson", ""), query.get("run", ""))))
+            except ValueError as exc:
+                return self.send_json({"error": str(exc)}, 400)
         if path == "/api/voice/audio":
             # ▶ 듣기 — 세션에 올린 파일(file=) 또는 지금 걸린 소리(current= 차시 기준 경로). 정해진 폴더 안의 음성만
             try:
@@ -1858,14 +2004,11 @@ class Handler(BaseHTTPRequestHandler):
             busy = lesson_ref in RUNNERS or (current is not None and current.state == "running")
             if path == "/api/notes":
                 note = lesson_notes.add(folder, str(body.get("text", "")), str(body.get("kind", "code")), before)
-                images = list(body.get("images") or [])
+                images = decode_images(body)
                 if images:
                     # 메모 칸에 붙여 넣은 그림(2026-10-01) — LOCK 안에서 붙인 뒤에 kick 해야 AI 가 그림 없는 메모를 집지 않는다
-                    import base64
                     try:
-                        lesson_notes.attach(folder, note["id"], [(str(i.get("name") or "paste.png"),
-                                                                  base64.b64decode(str(i.get("data", "")).split(",", 1)[-1]))
-                                                                 for i in images])
+                        lesson_notes.attach(folder, note["id"], images)
                     except ValueError:
                         lesson_notes.remove(folder, note["id"])   # 그림이 잘못됐으면 메모도 넣지 않는다(반쪽 메모가 돌지 않게)
                         raise
@@ -1884,7 +2027,7 @@ class Handler(BaseHTTPRequestHandler):
                 lesson_notes.set_status(folder, [note_id], "queued", "사람이 다시 맡김")
                 kick(lesson_ref)
             elif path == "/api/notes/refine":
-                lesson_notes.refine(folder, note_id, str(body.get("text", "")))
+                lesson_notes.refine(folder, note_id, str(body.get("text", "")), decode_images(body))   # 보완 칸에 붙인 그림(2026-10-02)
                 kick(lesson_ref)
             elif path == "/api/notes/status":
                 if lesson_notes.is_working(folder, note_id):
@@ -1936,6 +2079,8 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/voice/upload":
                 return self.send_json({"ok": True, "session": voice_upload(target, str(body.get("mode", "empty")),
                                                                          list(body.get("files") or []))})
+            if path == "/api/voice/put":
+                return self.send_json({"ok": True, **voice_put(target, body)})
             if path == "/api/voice/apply":
                 return self.send_json({"ok": True, **voice_apply(target, str(body.get("session", "")), dict(body.get("pairs") or {}))})
             if path == "/api/voice/discard":
@@ -1964,6 +2109,8 @@ class Handler(BaseHTTPRequestHandler):
                 continue_draft(run_id)
             elif path == "/api/draft/install":
                 install_draft(run_id, str(body.get("output") or body.get("slot") or ""), bool(body.get("overwrite")))
+            elif path == "/api/draft/redo":
+                redo_from_storyboard(run_id, str(body.get("note") or ""))
             elif path == "/api/draft/stop":
                 stop_draft(run_id)
             else:

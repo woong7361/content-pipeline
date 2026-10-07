@@ -82,7 +82,7 @@
   ol.queue li.drop-after { box-shadow: 0 3px 0 var(--accent); }
   .grip { color: var(--muted); font-size: 16px; line-height: 1; margin-right: 2px; user-select: none; }
   .pos { font-weight: 700; color: var(--muted); min-width: 22px; text-align: right; }
-  .nid { font-weight: 700; color: var(--muted); display: grid; gap: 2px; justify-items: start; }
+  .nid { font-weight: 700; color: var(--muted); display: grid; gap: 2px; justify-items: start; align-content: start; align-self: start; }   /* 메모가 길어도 종류 배지가 세로로 늘지 않게 */
   .kind { font-size: 11px; font-weight: 400; padding: 0 6px; border-radius: 999px; background: var(--chip); }
   .k-code { color: var(--accent); } .k-image { color: var(--ok); } .k-verify { color: var(--warn); } .k-build { color: var(--muted); }
   ol.queue li.queued:has(.k-build) { background: var(--chip); border-style: dashed; }   /* 빌드 지점은 메모와 다르게 보이게 */
@@ -208,6 +208,7 @@
   .add { flex-wrap: wrap; }
   .paste-thumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; flex-basis: 100%; order: 10; padding-top: 6px; }
   .paste-thumbs:empty { display: none; }
+  .refine .paste-thumbs { order: 0; padding-top: 0; }   /* 보완 칸에서는 글 바로 아래(버튼 위)에 */
   .paste-thumbs .pt { position: relative; }
   .paste-thumbs img, .nimgs img { height: 64px; max-width: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); display: block; }
   .paste-thumbs .pt button { position: absolute; top: -6px; right: -6px; padding: 0 5px; font-size: 11px; border-radius: 999px; }
@@ -249,6 +250,7 @@
   <h5>차시</h5><div class="lessons" id="f-lesson"></div>
   <div class="acts act-left" id="act-left" aria-label="차시 작업 버튼"></div>
   <div class="models" id="models" aria-label="AI 모델"></div>
+  <button class="to-top" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="맨 위로">↑ 맨 위로</button>
 </aside>
 <div class="content">
 <header>
@@ -299,7 +301,7 @@
 
       <h4>처리가 끝나면</h4>
       <ul>
-        <li>결과가 조금 아쉬우면 <b>[보완해서 다시 맡기기]</b> — 칸에 고칠 점만 적으면, 원래 메모와 지난 결과를 함께 AI 에게 넘겨 같은 메모를 다시 처리합니다. 보완한 내용은 메모 아래에 "보완 1, 2…"로 남습니다. 같은 내용 그대로 다시 하려면 [다시 맡기기].</li>
+        <li>결과가 조금 아쉬우면 <b>[보완해서 다시 맡기기]</b> — 칸에 고칠 점만 적으면, 원래 메모와 지난 결과를 함께 AI 에게 넘겨 같은 메모를 다시 처리합니다. Enter 로 바로 맡깁니다(줄을 바꾸려면 Shift+Enter). 이 칸에도 캡처를 <b>Ctrl+V · 끌어 놓기</b>로 붙일 수 있습니다(AI 가 열어 봅니다). 보완한 내용은 메모 아래에 "보완 1, 2…"로 남습니다. 같은 내용 그대로 다시 하려면 [다시 맡기기].</li>
         <li>그림 메모가 바꾼 그림의 <b>경로</b>(작업 경로 기준, 예: <code>assets/ui/btn.png</code>)와 고침·새로 만듦이 결과 아래에 늘 보입니다.</li>
         <li>그림 메모가 그림을 고치거나 새로 만들었으면 <b>[그림 보기]</b> 버튼이 생깁니다. 누르면 작업 전 · 후를 나란히 보여 줍니다(새 그림은 후만). ← → 로 넘기고 Esc 로 닫고, [원본 새 탭 ↗]으로 원본을 엽니다.
           노란 선이 그림 크기(캔버스), 빨간 점선이 투명하지 않은 내용이 있는 곳 — 그 사이가 투명 여백이고, 아래에 픽셀 크기 · 줄인 비율 · 여백(px · %)이 적힙니다.
@@ -550,24 +552,8 @@ function makeCard(row) {
   // 메모에 그림 붙이기(2026-10-01 사용자 요청) — Ctrl+V 나 끌어다 놓기. [적기] 때 같이 올리고, AI 는 그 그림을 열어 본다
   el._pending = [];
   const thumbs = el.querySelector(".paste-thumbs");
-  const drawPending = () => {
-    thumbs.innerHTML = el._pending.map((img, i) => `<span class="pt"><img src="${img.data}" alt=""><button data-pt="${i}" title="빼기">✕</button></span>`).join("")
-      + (el._pending.length ? `<span class="meta">그림 ${el._pending.length}장 — [적기] 때 같이 올립니다</span>` : "");
-  };
-  const addImages = async files => {
-    const read = f => new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok({ name: f.name || "paste.png", data: rd.result }); rd.onerror = no; rd.readAsDataURL(f); });
-    const images = files.filter(f => f && f.type.startsWith("image/"));
-    if (!images.length) return false;
-    el._pending.push(...await Promise.all(images.map(read)));
-    drawPending();
-    return true;
-  };
-  ta.addEventListener("paste", e => {
-    const files = [...(e.clipboardData?.items || [])].filter(i => i.kind === "file").map(i => i.getAsFile());
-    if (files.some(f => f && f.type.startsWith("image/"))) { e.preventDefault(); addImages(files); }   // 글은 그대로 붙고, 그림만 따로 받는다
-  });
-  ta.addEventListener("dragover", e => { if ([...e.dataTransfer.items].some(i => i.type.startsWith("image/"))) e.preventDefault(); });
-  ta.addEventListener("drop", e => { const files = [...e.dataTransfer.files]; if (files.some(f => f.type.startsWith("image/"))) { e.preventDefault(); addImages(files); } });
+  const drawPending = () => { thumbs.innerHTML = pendingThumbs(el._pending, "pt", "[적기] 때 같이 올립니다"); };
+  takeImages(ta, async files => { el._pending.push(...await readImages(files)); drawPending(); });
   thumbs.addEventListener("click", e => { const b = e.target.closest("button[data-pt]"); if (b) { el._pending.splice(+b.dataset.pt, 1); drawPending(); } });
   let saving = false;   // 엔터를 연달아 눌러도 한 번만 올린다
   const save = async () => {
@@ -660,7 +646,12 @@ function makeCard(row) {
     else if (act === "move") post("/api/notes/move", { ...ref(), id, before: b.dataset.before }, el);
     else if (act === "requeue") post("/api/notes/requeue", { ...ref(), id }, el);
     else if (act === "images") openImages(el._row, id);
-    else if (act === "refine") { el._refine = { id, draft: el._refine?.id === id ? el._refine.draft : "" }; renderDone(el, el._row); el.querySelector("textarea.refine-text")?.focus(); }
+    else if (act === "refine") {
+      const keep = el._refine?.id === id ? el._refine : null;
+      el._refine = { id, draft: keep ? keep.draft : "", images: keep ? keep.images : [] };
+      renderDone(el, el._row); el.querySelector("textarea.refine-text")?.focus();
+    }
+    else if (act === "refine-img-del") { el._refine?.images.splice(+b.dataset.k, 1); drawRefineThumbs(); }
     else if (act === "refine-cancel") { el._refine = null; renderDone(el, el._row); }
     else if (act === "refine-send") sendRefine(id);
     else if (act === "edit") {
@@ -744,8 +735,18 @@ function makeCard(row) {
     const text = (el._refine?.draft || "").trim();
     if (!text) { el.querySelector(".err").textContent = "보완할 내용을 적어 주세요"; return; }
     document.activeElement?.blur();
-    if (await post("/api/notes/refine", { ...ref(), id, text }, el)) el._refine = null;
+    if (await post("/api/notes/refine", { ...ref(), id, text, images: el._refine?.images || [] }, el)) el._refine = null;
   };
+  // 보완 칸에도 그림 붙이기(2026-10-02 사용자 요청). 쓰는 중엔 목록을 다시 그리지 않으므로 썸네일 칸만 고친다
+  const drawRefineThumbs = () => {
+    const box = el.querySelector(".refine-thumbs");
+    if (box && el._refine) box.innerHTML = pendingThumbs(el._refine.images, "refine-img-del", "[다시 맡기기] 때 같이 올립니다");
+  };
+  takeImages(el.querySelector(".notes"), async files => {
+    if (!el._refine) return;
+    el._refine.images.push(...await readImages(files));
+    drawRefineThumbs();
+  }, "textarea.refine-text");
   const saveEdit = async id => {
     const text = (el._edit?.draft || "").trim();
     if (!text) { el.querySelector(".err").textContent = "메모 글이 비었습니다"; return; }
@@ -765,8 +766,12 @@ function makeCard(row) {
   el.querySelector(".notes").addEventListener("input", e => {
     if (e.target.matches("textarea.refine-text") && el._refine) el._refine.draft = e.target.value;
   });
+  // 엔터 = [다시 맡기기](2026-10-06 사용자 요청 — 예전엔 Ctrl+Enter). 메모 적기 칸과 같은 규칙
   el.querySelector(".notes").addEventListener("keydown", e => {
-    if (e.target.matches("textarea.refine-text") && e.key === "Enter" && (e.ctrlKey || e.metaKey)) sendRefine(e.target.dataset.id);
+    if (!e.target.matches("textarea.refine-text")) return;
+    if (e.key !== "Enter" || e.shiftKey || e.isComposing || e.keyCode === 229) return;
+    e.preventDefault();
+    sendRefine(e.target.dataset.id);
   });
   return el;
 }
@@ -833,23 +838,51 @@ function imagePaths(images) {
   return `<div class="rimgs">그림 ${images.map(m => `<code>${esc(m.path)}</code><span class="rimg-kind">${m.new ? "새로 만듦" : "고침"}</span>`).join(" · ")}</div>`;
 }
 // 보완해서 다시 맡긴 기록 — 원래 메모 아래에 차례로
-function refinements(n) {
+function refinements(n, lesson) {
   const list = n.refinements || [];
-  return list.length ? `<ol class="refines">${list.map((r, i) => `<li><b>보완 ${i + 1}</b> <span class="rwhen">${esc(time(r.at))}</span> ${esc(r.text)}</li>`).join("")}</ol>` : "";
+  return list.length ? `<ol class="refines">${list.map((r, i) => `<li><b>보완 ${i + 1}</b> <span class="rwhen">${esc(time(r.at))}</span> ${esc(r.text)}${attachThumbs(lesson, n.id, r.images)}</li>`).join("")}</ol>` : "";
 }
-// 메모에 붙인 그림 썸네일 — 누르면 원본을 새 탭에
-function noteImages(n, lesson) {
-  const imgs = n.images || [];
-  if (!imgs.length) return "";
-  const url = (rel, thumb) => `/api/desk/attachment?lesson=${encodeURIComponent(lesson)}&note=${encodeURIComponent(n.id)}&file=${encodeURIComponent(rel.split("/").pop())}${thumb ? "&thumb=1" : ""}`;
-  return `<div class="nimgs">${imgs.map(rel => `<a href="${url(rel)}" target="_blank" rel="noopener" title="크게 보기"><img src="${url(rel, true)}" alt="붙인 그림" loading="lazy"></a>`).join("")}</div>`;
+// 메모 · 보완에 붙인 그림 썸네일 — 누르면 원본을 새 탭에
+function attachThumbs(lesson, noteId, rels) {
+  if (!rels || !rels.length) return "";
+  const url = (rel, thumb) => `/api/desk/attachment?lesson=${encodeURIComponent(lesson)}&note=${encodeURIComponent(noteId)}&file=${encodeURIComponent(rel.split("/").pop())}${thumb ? "&thumb=1" : ""}`;
+  return `<div class="nimgs">${rels.map(rel => `<a href="${url(rel)}" target="_blank" rel="noopener" title="크게 보기"><img src="${url(rel, true)}" alt="붙인 그림" loading="lazy"></a>`).join("")}</div>`;
+}
+const noteImages = (n, lesson) => attachThumbs(lesson, n.id, n.images);
+// 붙여 넣기 · 끌어 놓기로 그림 받기 — 메모 칸과 보완 칸이 같이 쓴다. 글은 그대로 붙고 그림만 따로 받는다
+function takeImages(root, onFiles, selector = null) {
+  const hit = e => !selector || e.target.matches(selector);
+  const images = files => files.filter(f => f && f.type.startsWith("image/"));
+  root.addEventListener("paste", e => {
+    if (!hit(e)) return;
+    const files = images([...(e.clipboardData?.items || [])].filter(i => i.kind === "file").map(i => i.getAsFile()));
+    if (files.length) { e.preventDefault(); onFiles(files); }
+  });
+  root.addEventListener("dragover", e => { if (hit(e) && [...e.dataTransfer.items].some(i => i.type.startsWith("image/"))) e.preventDefault(); });
+  root.addEventListener("drop", e => {
+    if (!hit(e)) return;
+    const files = images([...e.dataTransfer.files]);
+    if (files.length) { e.preventDefault(); onFiles(files); }
+  });
+}
+const readImages = files => Promise.all(files.map(f => new Promise((ok, no) => {
+  const rd = new FileReader();
+  rd.onload = () => ok({ name: f.name || "paste.png", data: rd.result });
+  rd.onerror = no;
+  rd.readAsDataURL(f);
+})));
+// 올리기 전 그림 줄 — ✕ 로 뺀다. act 는 메모 칸("pt" — data-pt) / 보완 칸(data-act)
+function pendingThumbs(list, act, when) {
+  const del = i => act === "pt" ? `data-pt="${i}"` : `data-act="${act}" data-k="${i}"`;
+  return list.map((img, i) => `<span class="pt"><img src="${img.data}" alt=""><button ${del(i)} title="빼기">✕</button></span>`).join("")
+    + (list.length ? `<span class="meta">그림 ${list.length}장 — ${when}</span>` : "");
 }
 function noteHead(n, lesson = "") {
   const k = n.kind || "code";
   if (k === "build") return `<span class="nid">${esc(n.id)}<span class="kind k-build" title="작업대가 빌드합니다">빌드</span></span>
       <div><div class="ntext">🔨 ${esc(n.text)}</div>${noteLog(n)}</div>`;
   return `<span class="nid">${esc(n.id)}<span class="kind k-${esc(k)}" title="${AI_OF[k]}">${NOTE_KIND[k]}</span></span>
-      <div><div class="ntext">${esc(n.text)}</div>${noteImages(n, lesson)}${refinements(n)}${noteLog(n)}</div>`;
+      <div><div class="ntext">${esc(n.text)}</div>${noteImages(n, lesson)}${refinements(n, lesson)}${noteLog(n)}</div>`;
 }
 
 // 종류 고치기(2026-10-01 사용자 요청 — 그림으로 맡길 것을 코드로 적었다). 처리 중인 메모는 AI 가 들고 있어 못 바꾼다.
@@ -921,7 +954,8 @@ function renderDone(el, row) {
     const close = [...(n.status === "review" || n.status === "open" ? [b("done", "완료")] : []), b("delete", "지우기")];
     // 보완 메모 칸 — 연 메모만. 쓰던 글은 el._refine 에 두어 다시 그려도 남는다
     const form = el._refine && el._refine.id === n.id ? `<div class="refine">
-        <textarea class="refine-text" data-id="${esc(n.id)}" placeholder="지난 결과에서 고칠 점·덧붙일 것 (예: 빛나는 효과를 조금 약하게 / 노란 부분만). Ctrl+Enter 로 맡기기">${esc(el._refine.draft)}</textarea>
+        <textarea class="refine-text" data-id="${esc(n.id)}" placeholder="지난 결과에서 고칠 점·덧붙일 것 (예: 빛나는 효과를 조금 약하게 / 노란 부분만). 캡처는 Ctrl+V · 끌어 놓기. Enter 로 맡기기 · Shift+Enter 줄바꿈">${esc(el._refine.draft)}</textarea>
+        <div class="paste-thumbs refine-thumbs">${pendingThumbs(el._refine.images || [], "refine-img-del", "[다시 맡기기] 때 같이 올립니다")}</div>
         <div class="refine-acts"><span class="meta">원래 메모와 지난 결과를 함께 ${AI_OF[n.kind || "code"]}에게 넘깁니다</span>
           <button class="primary" data-act="refine-send" data-id="${esc(n.id)}">다시 맡기기</button><button data-act="refine-cancel" data-id="${esc(n.id)}">취소</button></div></div>` : "";
     // AI 가 고친 것과 화면에 반영된 것은 다르다 — 빌드가 끝나야 dist 가 바뀐다(2026-09-30, 4-1/04 에서 헷갈림)

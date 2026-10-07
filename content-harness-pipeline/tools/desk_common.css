@@ -32,6 +32,8 @@ body { margin: 0; background: var(--bg); color: var(--ink);
 .side:hover::-webkit-scrollbar-thumb, .side:hover *::-webkit-scrollbar-thumb { background: var(--muted); }
 .side * { scrollbar-width: thin; scrollbar-color: inherit; }   /* 좁은 화면의 가로 줄(학년·차시 버튼)도 같은 모양 */
 .content { min-width: 0; }
+/* 왼쪽 사이드바 맨 아래 [↑ 맨 위로](2026-10-07 사용자 요청) */
+.to-top { width: 100%; margin-top: 12px; }
 .models { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
 .models .mbody { display: grid; gap: 6px; margin-top: 8px; }
 .models summary { cursor: pointer; display: grid; gap: 2px; list-style: none; }
@@ -70,6 +72,8 @@ details.voice > summary { cursor: pointer; font-size: 13px; }
 .v-table .l { text-align: left; }
 .v-table .v-text { white-space: pre-wrap; min-width: 14em; }
 .v-table button.v-play { padding: 0 6px; font-size: 11px; }
+.v-table tr.v-none td { color: var(--muted); }   /* 소리가 안 걸린 대사 */
+.v-table .v-drop.v-over { outline: 2px dashed var(--accent); outline-offset: -2px; background: var(--hl); }   /* 끌어 놓을 칸 */
 .v-file { max-width: 220px; }
 .v-how { font-size: 11px; padding: 0 6px; border-radius: 999px; background: var(--chip); margin-left: 4px; }
 .v-how-order { color: var(--warn); } .v-how-ok { color: var(--ok); }
@@ -79,4 +83,5 @@ details.voice > summary { cursor: pointer; font-size: 13px; }
   /* 좁은 화면 — 사이드바를 위에 붙은 가로 줄로 바꾼다. 스크롤해도 위에 남는다 */
   .side { top: 0; z-index: 5; max-height: none; margin-top: 8px; border-radius: 0 0 12px 12px; }
   .side h5 { display: none; }
+  .to-top { display: none; }   /* 좁은 화면은 사이드바가 위에 붙어 있어 필요 없다 */
 }

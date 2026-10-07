@@ -31,6 +31,7 @@ function renderVoice(box, target, voice, refresh) {
   box._voice = voice;
   const sig = JSON.stringify([target, voice]);
   if (box.dataset.sig === sig) return;
+  if (box.dataset.sig) loadVoiceLinks(box);   // 넣기 · 버리기로 세션이 바뀌면 연결도 바뀌었을 수 있다(펼쳐 있을 때만 다시 읽는다)
   if (box.contains(document.activeElement) && document.activeElement.matches("select.v-file")) return;   // 고르는 중
   box.dataset.sig = sig;
   const open = box.querySelector("details.voice")?.open ?? !!(voice && voice.status === "ready");
@@ -59,15 +60,88 @@ function renderVoice(box, target, voice, refresh) {
     const moved = (voice.moved || []).length;
     body = `<p class="meta">마지막으로 넣음: ${Object.keys(voice.applied || {}).length}줄${moved ? ` · 예전 파일 ${moved}개 보관` : ""} — 새 파일을 올리면 다시 짝짓습니다</p>`;
   }
-  box.innerHTML = `<details class="voice"${open ? " open" : ""}><summary><b>음성 파일 넣기</b>${voice && voice.status === "ready" ? " — 확인하고 넣을 차례" : ""}</summary>
+  box.querySelector(".v-import").innerHTML = `<details class="voice"${open ? " open" : ""}><summary><b>음성 파일 넣기</b>${voice && voice.status === "ready" ? " — 확인하고 넣을 차례" : ""}</summary>
     <div class="v-up"><select class="v-mode"><option value="empty">빈 대사만 채우기</option><option value="all">교체 포함(모든 대사)</option></select>
       <input type="file" class="v-files" multiple accept="audio/*,.mp3,.wav,.ogg,.m4a">
       <button class="v-send">올려서 짝짓기</button>
       <span class="meta">대사 한 줄마다 따로 받은 파일 여러 개를 한꺼번에</span></div>${body}</details>`;
 }
+// 대사 ↔ 음성 연결 보기(2026-10-06 사용자 요청) — 파일을 넣지 않아도 지금 lesson.json 에 걸린 소리를 본다.
+// 넣기 칸과 따로 그려 2초 새로고침에 닫히지 않게 하고, 펼칠 때만 서버에서 읽는다.
+// 줄마다 [넣기]/[바꾸기]로 그 줄에 파일 하나를 바로 건다(같은 날 사용자 요청, /api/voice/put). 이야기 카드 조각은 조각마다
+const VOICE_KIND = { cut: "컷", problem: "문제", hint: "힌트", slide: "이야기 카드" };
+async function loadVoiceLinks(box) {
+  const holder = box.querySelector(".v-links");
+  if (!holder?.open || !box._target) return;
+  const t = box._target.lesson ? `lesson=${encodeURIComponent(box._target.lesson)}` : `run=${encodeURIComponent(box._target.run_id)}`;
+  const body = holder.querySelector(".v-links-body");
+  const data = await fetch(`/api/voice/lines?${t}`).then(r => r.json()).catch(() => ({ error: "읽지 못했습니다" }));
+  if (data.error) { body.innerHTML = `<p class="err">${esc(data.error)}</p>`; return; }
+  const rows = data.rows || [];
+  box._linkRows = rows;
+  const put = (i, k, label) => `<button class="v-put" data-row="${i}"${k == null ? "" : ` data-piece="${k}"`} title="이 자리에 음성 파일 넣기">${label}</button>`;
+  const has = rows.filter(r => r.current).length;
+  const broken = rows.filter(r => r.sequence ? r.sequence.some(s => !s.exists) : r.current && !r.exists).length;
+  body.innerHTML = `<p class="meta">대사 ${rows.length}줄 · 소리 걸림 <b>${has}</b> · 없음 <b>${rows.length - has}</b>${broken ? ` · <b class="err">파일 없음 ${broken}</b>` : ""}</p>
+    <div class="table-wrap"><table class="v-table"><tr><th>#</th><th class="l">자리</th><th class="l">누가</th><th class="l">대사</th><th class="l">소리</th></tr>
+    ${rows.map((r, i) => `<tr class="${r.current ? "" : "v-none"}"><td>${i + 1}</td><td class="l">${esc(VOICE_KIND[r.kind] || r.kind)}</td>
+      <td class="l">${esc(r.speaker_name)}</td><td class="l v-text">${esc(r.text)}</td>
+      <td class="l${r.sequence ? "" : " v-drop"}" data-row="${i}">${r.sequence ? `<span class="meta">이어서 ${r.sequence.length}개</span>` + r.sequence.map((s, k) => s.exists
+          ? `<div class="v-drop" data-row="${i}" data-piece="${k}">${k + 1}. <button class="v-play" data-current="${esc(s.path)}" title="듣기">▶</button> <span class="meta">${esc(s.id)}</span> ${put(i, k, "바꾸기")}</div>`
+          : `<div class="v-drop" data-row="${i}" data-piece="${k}">${k + 1}. <span class="err">${esc(s.id)} — 파일 없음</span> ${put(i, k, "넣기")}</div>`).join("")
+        : !r.current ? `<span class="meta">없음</span> ${put(i, null, "넣기")}`
+        : r.exists ? `<button class="v-play" data-current="${esc(r.current_path)}" title="듣기">▶</button> <span class="meta">${esc(r.current)}</span> ${put(i, null, "바꾸기")}`
+        : `<span class="err">${esc(r.current)} — 파일 없음</span> <span class="meta">${esc(r.current_path || "audioMap 에 없음")}</span> ${put(i, null, "넣기")}`}</td></tr>`).join("")}</table></div>
+    ${(data.skipped || []).length ? `<details><summary class="meta">소리를 재생하지 않는 자리 ${data.skipped.length}곳</summary><ul class="meta">${data.skipped.map(s => `<li>${esc(s)}</li>`).join("")}</ul></details>` : ""}`;
+}
 function wireVoice(box, refresh) {
   box.dataset.wired = "1";
   box._edits = {};
+  box.innerHTML = `<div class="v-import"></div><details class="voice v-links"><summary><b>대사 · 음성 연결 보기</b></summary>
+    <p class="meta">줄마다 [넣기]·[바꾸기]로, 또는 소리 칸에 파일을 끌어 놓아 바로 겁니다 — 빌드는 하지 않으니 다 넣은 뒤 [빌드]. 바뀐 예전 파일은 보관 폴더로 옮깁니다</p>
+    <p class="v-links-msg meta"></p><input type="file" class="v-put-file" accept="audio/*,.mp3,.wav,.ogg,.m4a" style="display:none">
+    <div class="v-links-body"><p class="meta">읽는 중…</p></div></details>`;
+  box.querySelector(".v-links").addEventListener("toggle", () => loadVoiceLinks(box));
+  const putFile = box.querySelector(".v-put-file");
+  putFile.addEventListener("change", () => putVoice(box._put, putFile.files[0]));
+  // 끌어 놓기 — 소리 칸(조각이면 그 조각 줄)에 놓는다. 칸 밖에 놓아도 브라우저가 파일을 열고 화면을 떠나지 않게 막는다
+  const links = box.querySelector(".v-links");
+  const zoneOf = e => e.target.closest?.(".v-drop");
+  const lit = z => links.querySelectorAll(".v-drop.v-over").forEach(el => el !== z && el.classList.remove("v-over"));
+  links.addEventListener("dragover", e => {
+    if (![...(e.dataTransfer?.types || [])].includes("Files")) return;
+    e.preventDefault();
+    const z = zoneOf(e);
+    e.dataTransfer.dropEffect = z ? "copy" : "none";
+    lit(z); z?.classList.add("v-over");
+  });
+  links.addEventListener("dragleave", e => { if (!links.contains(e.relatedTarget)) lit(null); });
+  links.addEventListener("drop", e => {
+    if (![...(e.dataTransfer?.types || [])].includes("Files")) return;
+    e.preventDefault();
+    lit(null);
+    const z = zoneOf(e), files = [...e.dataTransfer.files];
+    if (!z) return;
+    if (files.length !== 1) { const n = box.querySelector(".v-links-msg"); n.className = "v-links-msg err"; n.textContent = "한 칸에 파일 하나만 놓습니다"; return; }
+    putVoice({ row: Number(z.dataset.row), piece: z.dataset.piece == null ? null : Number(z.dataset.piece) }, files[0]);
+  });
+  async function putVoice(at, f) {
+    const note = box.querySelector(".v-links-msg");
+    if (!f || !at) return;
+    if (!/\.(mp3|wav|ogg|m4a)$/i.test(f.name)) { note.className = "v-links-msg err"; note.textContent = `음성 파일이 아닙니다: ${f.name} (mp3 · wav · ogg · m4a)`; return; }
+    const row = box._linkRows[at.row], piece = at.piece == null ? null : row.sequence[at.piece];
+    const where = piece ? `${row.text.split("\n")[0]} — 조각 ${at.piece + 1}(${piece.id})` : row.text.split("\n")[0];
+    if ((piece || row.current) && !confirm(`「${where}」의 소리를 ${f.name} 로 바꿀까요?`)) return;
+    note.textContent = `넣는 중… ${f.name}`;
+    const data = await new Promise((ok, no) => { const rd = new FileReader(); rd.onload = () => ok(rd.result); rd.onerror = no; rd.readAsDataURL(f); });
+    const { res, data: r } = await postJson("/api/voice/put", { ...box._target, name: f.name, data,
+      ...(piece ? { sound: piece.id } : { key: row.key, text: row.text }) });
+    note.textContent = res.ok ? `넣었습니다 — 「${where}」 ← ${f.name}${r.moved?.length ? ` · 예전 파일 ${r.moved.length}개 보관` : ""} · 화면에 반영하려면 [빌드]`
+                              : (r.error || "넣지 못했습니다");
+    note.className = `v-links-msg ${res.ok ? "meta" : "err"}`;
+    loadVoiceLinks(box);
+    box.dataset.sig = ""; refresh();
+  }
   const msg = text => { let m = box.querySelector(".v-msg"); if (!m) { m = document.createElement("p"); m.className = "v-msg err"; box.querySelector("details")?.appendChild(m); } m.textContent = text; };
   const send = async (path, extra) => {
     const { res, data } = await postJson(path, { ...box._target, ...extra });
@@ -83,7 +157,10 @@ function wireVoice(box, refresh) {
   box.addEventListener("click", async e => {
     const b = e.target.closest("button");
     if (!b) return;
-    if (b.matches(".v-play")) {
+    if (b.matches(".v-put")) {
+      box._put = { row: Number(b.dataset.row), piece: b.dataset.piece == null ? null : Number(b.dataset.piece) };
+      putFile.value = ""; putFile.click();
+    } else if (b.matches(".v-play")) {
       voicePlayer.src = b.dataset.file ? voiceAudioUrl(box._target, { session: box._voice.id, file: b.dataset.file })
                                        : voiceAudioUrl(box._target, { current: b.dataset.current });
       voicePlayer.play().catch(() => msg("재생하지 못했습니다"));

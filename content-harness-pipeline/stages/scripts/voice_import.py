@@ -206,3 +206,38 @@ def apply(lesson_dir: Path, session_dir: Path, pairs: dict[str, str], removed_di
     session.update(status="applied", applied={line.audio_id: source.name for line, source in chosen}, moved=moved)
     session_path.write_text(json.dumps(session, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return {"placed": len(chosen), "replaced": len([l for l, _ in chosen if l.current]), "moved": moved}
+
+
+def replace_sound(lesson_dir: Path, sound_id: str, name: str, blob: bytes, removed_dir: Path) -> dict:
+    """이미 걸린 소리 id 하나의 **파일만** 바꾼다 — id 와 걸린 자리는 그대로(2026-10-06 사용자 요청, 연결 표에서 직접 넣기).
+
+    이야기 카드 `narration.sequence` 의 조각처럼 대사 한 줄에 매이지 않은 소리를 바꿀 때 쓴다. 확장자가 달라지면
+    audioMap 의 경로만 고친다. 예전 파일은 removed_dir 로 옮긴다(지우지 않는다). 다른 id 와 같은 파일을 쓰면 거절한다.
+    """
+    suffix = Path(name).suffix.lower()
+    if suffix not in AUDIO_SUFFIXES:
+        raise ValueError(f"음성 파일이 아니다: {name} (mp3 · wav · ogg · m4a)")
+    lesson_path = lesson_dir / "lesson.json"
+    raw = lesson_path.read_bytes().decode("utf-8")
+    lesson = json.loads(raw)
+    narration_map = (lesson.get("audioMap") or {}).get("narration") or {}
+    old = narration_map.get(sound_id)
+    if not isinstance(old, str) or not old:
+        raise ValueError(f"audioMap.narration 에 없는 소리: {sound_id}")
+    sharing = [k for g in (lesson.get("audioMap") or {}).values() if isinstance(g, dict)
+               for k, v in g.items() if v == old and k != sound_id]
+    if sharing:
+        raise ValueError(f"{old} 를 다른 소리({', '.join(sharing)})도 쓴다 — 바꾸면 그쪽도 바뀐다")
+    new = Path(old).with_suffix(suffix).as_posix()
+    moved = []
+    if (lesson_dir / old).is_file():
+        dest = removed_dir / old
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(lesson_dir / old), str(dest))
+        moved.append(old)
+    (lesson_dir / new).parent.mkdir(parents=True, exist_ok=True)
+    (lesson_dir / new).write_bytes(blob)
+    if new != old:
+        narration_map[sound_id] = new
+        lesson_path.write_text(dump_like(raw, lesson), encoding="utf-8", newline="")
+    return {"placed": 1, "replaced": 1, "moved": moved, "path": new}

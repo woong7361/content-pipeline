@@ -51,8 +51,11 @@
   .qitem { border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: grid; gap: 6px; }
   .qitem .qg { font-size: 11px; color: var(--muted); }
   .qitem .qq { white-space: pre-wrap; word-break: break-word; }
-  .qitem textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+  .redo { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 10px; display: grid; gap: 6px; }
+  .redo h4 { margin: 0; font-size: 14px; }
+  .qitem textarea, .redo textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
                     padding: 6px 8px; min-height: 38px; resize: vertical; }
+  .redo textarea { min-height: 60px; }
   .qitem.filled { border-color: var(--ok); }
   .notice { padding: 8px 10px; border-radius: 8px; background: var(--hl); margin-top: 8px; }
   .out-label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); margin-top: 8px; }
@@ -104,7 +107,7 @@
 <body>
 <nav class="topnav"><a href="/">차시 작업대</a><a href="/pipeline" class="on">초안 파이프라인</a></nav>
 <div class="layout">
-<aside class="side" aria-label="run 고르기"><button class="newbtn primary run" data-id="__new__">+ 새 초안 만들기</button><h5>run (최근 활동 순)</h5><div id="runs" class="runs"></div><div class="models" id="models" aria-label="AI 모델"></div></aside>
+<aside class="side" aria-label="run 고르기"><button class="newbtn primary run" data-id="__new__">+ 새 초안 만들기</button><h5>run (최근 활동 순)</h5><div id="runs" class="runs"></div><div class="models" id="models" aria-label="AI 모델"></div><button class="to-top" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="맨 위로">↑ 맨 위로</button></aside>
 <div class="content">
   <header>
     <h1>초안 파이프라인</h1>
@@ -232,7 +235,7 @@ function renderDraft(dr) {
   const box = document.getElementById("draftbox");
   if (!dr) { box.innerHTML = ""; box.dataset.mode = ""; return; }
   const mode = dr.running ? "running" : dr.waiting ? "waiting" : dr.done ? "done" : dr.can_continue ? "continue" : "idle";
-  const key = `${dr.run_id}:${mode}:${dr.questions.file}:${dr.questions.items.map(q => q.key).join("|")}:${dr.slot_exists}:${dr.final_path}`;
+  const key = `${dr.run_id}:${mode}:${dr.questions.file}:${dr.questions.items.map(q => q.key).join("|")}:${dr.slot_exists}:${dr.final_path}:${dr.can_redo}`;
   const job = dr.job;
   const jobLine = job ? `<p class="meta">작업대 작업: ${esc(job.summary || job.step || "")} ${job.state === "running" ? "● 도는 중" : ""} · ${time(job.started)}${job.ended ? " ~ " + time(job.ended) : ""}</p>
     <details><summary>로그 끝부분</summary><pre style="max-height:240px;overflow:auto;white-space:pre-wrap;font-size:12px">${esc(job.tail)}</pre></details>` : "";
@@ -243,6 +246,12 @@ function renderDraft(dr) {
   box.dataset.key = key; box.dataset.mode = mode;
   // 넣은 곳은 전체 경로로. 작업대가 보는 gyo6 에 넣었을 때만 작업대 안내를 붙인다
   const installed = dr.installed.length ? `<p class="meta">넣은 곳: ${dr.installed.map(esc).join(", ")}${dr.installed.some(p => p.startsWith(dr.default_root)) ? ` — <a href="/">차시 작업대</a>에서 이어서 고칩니다` : ""}</p>` : "";
+  // 스토리보드와 대조해 다시 만들기(2026-10-06 사용자 요청) — 넣은 화면이 이상하면 스토리보드를 다시 보고 고친다
+  const redo = dr.can_redo ? `<div class="redo"><h4>화면이 이상하게 나왔으면 — 스토리보드를 다시 보고 고치기</h4>
+      <p class="meta">넣은 화면을 스토리보드 예시화면과 쪽마다 대조해 고칠 목록을 만들고(코덱스), 그 목록과 아래 메모로 개발 단계를 다시 돌린 뒤(클로드)
+        같은 자리에 덮어써 넣고 빌드 → 화면 검증까지 합니다. 그림은 다시 굽지 않습니다. 개발 단계에 20~35분쯤 걸립니다.</p>
+      <textarea id="dr-redo-note" placeholder="(선택) 이상한 곳 — 예: 3쪽 미션 화면 보기 배치가 스토리보드와 다름 / 인물이 너무 큼. 비워 두면 대조 결과만으로 고칩니다"></textarea>
+      <div class="actions"><button class="primary" id="dr-redo">스토리보드와 대조해 다시 만들기</button><span class="err" id="dr-redo-err"></span></div></div>` : "";
   let body = "";
   if (mode === "running") {
     body = `<p class="notice">● 파이프라인이 돌고 있습니다. 끝나거나 답이 필요하면 바탕화면 알림이 뜹니다.</p>
@@ -270,7 +279,7 @@ function renderDraft(dr) {
       <div class="actions"><button class="primary" id="dr-install">gyo6에 넣기</button>
         <button class="danger${dr.slot_exists ? "" : " hidden"}" id="dr-overwrite">덮어쓰기로 넣기</button>
         ${dr.slot_exists ? `<span class="meta">이 경로에 이미 차시가 있습니다</span>` : ""}
-        <span class="err" id="dr-err"></span></div>`;
+        <span class="err" id="dr-err"></span></div>${redo}`;
   } else if (mode === "continue") {
     body = `<p class="notice">마지막 실행이 끝까지 가지 못했습니다(아래 '마지막 실행' 참고). 끝난 단계는 건너뛰고 이어서 돌 수 있습니다.</p>
       <div class="actions"><button class="primary" id="dr-continue">이어서 만들기</button><span class="err" id="dr-err"></span></div>`;
@@ -307,6 +316,14 @@ function renderDraft(dr) {
   });
   on("#dr-overwrite", () => act("/api/draft/install", { output: outPath(), overwrite: true },
     `${outPath()} 을(를) 이 초안으로 덮어쓸까요? (gyo6 쪽에서 따로 고친 게 있으면 배치가 멈춥니다)`));
+  on("#dr-redo", async () => {
+    // 거절 이유(gyo6 쪽에서 고친 것 있음 등)는 이 버튼 옆에 — act 는 위 [gyo6에 넣기] 줄에 적는다
+    if (await act("/api/draft/redo", { note: box.querySelector("#dr-redo-note").value },
+      "스토리보드와 대조해 다시 만들까요? 대조(코덱스) + 개발 단계(클로드)를 다시 돌려 AI 비용이 들고, 끝나면 넣은 차시를 덮어씁니다.") === false) {
+      box.querySelector("#dr-redo-err").textContent = box.querySelector("#dr-err").textContent;
+      box.querySelector("#dr-err").textContent = "";
+    }
+  });
   const savedAnswer = Object.fromEntries((dr.questions.items || []).map(it => [it.key, it.answer]));
   box.querySelectorAll(".qitem textarea").forEach(t => t.addEventListener("input", () => {
     t.parentElement.classList.toggle("filled", !!t.value.trim());
